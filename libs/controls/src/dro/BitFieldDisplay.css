@@ -1,0 +1,47 @@
+.bit-item {
+    display: inline-block;
+}
+
+.bit-item.rw .bit-label {
+    cursor: pointer;
+}
+
+.bit-item.rw:hover {
+    background: #ebebeb;
+}
+
+.bit {
+    margin: 1px;
+    width: 10px;
+    height: 10px;
+    background: #ededed;
+    cursor: pointer;
+}
+
+.bit-label {
+    font-family: monospace;
+    font-size: 12px;
+    margin-left: -4px;
+    margin-right: -4px;
+    padding-top: 4px;
+    padding-bottom: 10px;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    transform: rotate(180deg) scale(0.9, 1);
+    cursor: default;
+    user-select: none;
+    /*background: red;*/
+}
+
+.bit.bit-readonly {
+    cursor: default;
+}
+
+.bit.bit-set {
+    background: #00c400 !important;
+}
+
+.bit.bit-readonly.bit-set {
+    background: #b3af00 !important;
+}
+

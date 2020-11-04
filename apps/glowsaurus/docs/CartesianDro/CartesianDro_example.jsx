@@ -1,0 +1,4 @@
+import * as React from "react";
+import {CartesianDro} from '@glowbuzzer/controls';
+
+export default () => <CartesianDro kinematicsConfigurationIndex={0}/>
