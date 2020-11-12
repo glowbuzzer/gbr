@@ -3,7 +3,7 @@ import { ACTIVITYTYPE, KINEMATICSCONFIGURATIONTYPE } from "../types"
 import { useSelector } from "react-redux"
 import { RootState } from "@glowbuzzer/store"
 
-const DEFAULT_JOINT_CONFIG = { vmax: 2000, amax: 40000, jmax: 800000, scale: 1000.0 }
+const DEFAULT_JOINT_CONFIG = { pmin: -100, pmax: 100, vmax: 2000, amax: 40000, jmax: 800000, scale: 1000.0 }
 
 export const configSlice = createSlice({
     name: "config",
@@ -64,6 +64,11 @@ export const configSlice = createSlice({
                 kinematicsParameters: {
                     kinematicsConfigurationType: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
                     cartesianParameters: {
+                        extents: [
+                            [-100, 100],
+                            [-100, 100],
+                            [-100, 100]
+                        ],
                         linearVmax: 10000,
                         linearAmax: 100000,
                         linearJmax: 1000000,

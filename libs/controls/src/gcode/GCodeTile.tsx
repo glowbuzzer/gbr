@@ -5,8 +5,7 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
 import { Button, Checkbox } from "antd"
-import { useGCode } from "../../../store/src/gcode"
-import { usePrefs } from "@glowbuzzer/store"
+import { useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -21,13 +20,19 @@ export const GCodeTile = () => {
 
     const sender = useGCode()
     const prefs = usePrefs()
+    const preview = usePreview()
 
     function send_gcode() {
         setGCodeLS(gcode)
         sender.send(gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
 
-    const update_m2_pref = v => {
+    function update_gcode(gcode: string) {
+        preview.setGCode(gcode)
+        setGCode(gcode)
+    }
+
+    function update_m2_pref(v) {
         prefs.set("send_m2", v.target.checked)
     }
 
@@ -43,7 +48,7 @@ export const GCodeTile = () => {
                 </>
             }
         >
-            <AceEditor readOnly={false} theme="github" mode="text" width={"100%"} height={"100%"} value={gcode} onChange={value => setGCode(value)} />
+            <AceEditor readOnly={false} theme="github" mode="text" width={"100%"} height={"100%"} value={gcode} onChange={update_gcode} />
         </Tile>
     )
 }

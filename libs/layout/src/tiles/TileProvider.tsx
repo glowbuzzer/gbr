@@ -1,6 +1,7 @@
 import * as React from "react"
-import { createContext, FC, useContext, useState } from "react"
-import { useLocalStorage } from "./LocalStorageHook"
+import {FC, useContext} from "react"
+import {useLocalStorage} from "./LocalStorageHook"
+import {tileLayoutContext, TileLayoutContextType} from "./TileContext";
 
 function fromEntries(iterable) {
     return [...iterable].reduce((obj, [key, val]) => {
@@ -19,16 +20,6 @@ export type TileDefinition = {
 }
 
 export type TileConfiguration = { [index: string]: TileDefinition }
-
-type TileInstance = TileDefinition & { id: string; visible: boolean }
-
-type TileLayoutContextType = {
-    tiles: TileInstance[]
-    setVisible(id: string, visible: boolean): void
-    onLayoutChange(layout): void
-}
-
-const tileContext = createContext<TileLayoutContextType | undefined>(undefined)
 
 type TileProviderProps = {
     tiles: TileConfiguration
@@ -52,11 +43,11 @@ export const TileProvider: FC<TileProviderProps> = ({ tiles, children }) => {
             console.log("LAYOUT CHANGE", layout)
         }
     }
-    return <tileContext.Provider value={context}>{children}</tileContext.Provider>
+    return <tileLayoutContext.Provider value={context}>{children}</tileLayoutContext.Provider>
 }
 
 export const useTiles = () => {
-    const context = useContext(tileContext)
+    const context = useContext(tileLayoutContext)
     if (!context) {
         throw new Error("No tile context. Missing TileProvider in hierarchy?")
     }

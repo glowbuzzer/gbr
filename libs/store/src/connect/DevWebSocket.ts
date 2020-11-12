@@ -26,16 +26,17 @@ export class DevWebSocket implements WebSocket {
             let y
             let msg = false
             while (this.tick < now) {
+                const value = this.tick / (1000 / configTICK_RATE_HZ)
+                const osc = (value / 182) * Math.PI
+                const rads = (value / 90) * Math.PI
+                x = Math.sin(rads) * 100 * Math.sin(osc)
+                y = Math.cos(rads) * 100
+
                 if (this.tick % mod === 0) {
                     msg = true
                 }
-                if (this.tick % (1000 / configTICK_RATE_HZ) === 0) {
-                    const value = this.tick / (1000 / configTICK_RATE_HZ)
-                    const osc = (value / 182) * Math.PI
-                    const rads = (value / 90) * Math.PI
-                    x = Math.sin(rads) * 100 * Math.sin(osc)
-                    y = Math.cos(rads) * 100
 
+                if (this.tick % (1000 / configTICK_RATE_HZ) === 0) {
                     telemetry.push({
                         x,
                         y,

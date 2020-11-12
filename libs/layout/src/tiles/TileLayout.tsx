@@ -5,6 +5,10 @@ import { useTiles } from "./TileProvider"
 
 const ReactGridLayout = WidthProvider(RGL)
 
+const TileContainer = styled.div`
+    height: 100%;
+`
+
 export const TileLayout = () => {
     const { tiles, onLayoutChange } = useTiles()
 
@@ -13,12 +17,10 @@ export const TileLayout = () => {
         x,
         y,
         w: width,
-        h: height
+        h: height,
+        minH: 2,
+        minW: x === 0 ? 2 : 4
     }))
-
-    const TileContainer = styled.div`
-        height: 100%;
-    `
 
     const containers = Object.entries(tiles)
         .filter(([, tile]) => tile.visible)

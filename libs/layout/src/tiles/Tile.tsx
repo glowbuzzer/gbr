@@ -1,17 +1,11 @@
-import React, { createContext, CSSProperties, FC, useContext, useState } from "react"
+import React, { CSSProperties, FC, useContext, useState } from "react"
 import styled from "styled-components"
 import { Button, Modal } from "antd"
 import { EditOutlined } from "@ant-design/icons"
-
-type TileContextType = {
-    showSettings: boolean
-    setShowSettings(value: boolean): void
-}
-
-const tileContext = createContext<TileContextType>(null)
+import { tileContext } from "./TileContext"
 
 type TileSettingsProps = {
-    onConfirm(): void
+    onConfirm?(): void
 }
 
 export const TileSettings: FC<TileSettingsProps> = ({ onConfirm, children }) => {
@@ -27,68 +21,34 @@ export const TileSettings: FC<TileSettingsProps> = ({ onConfirm, children }) => 
 }
 
 type TileProps = {
-    title?
-    className?: string
-    style?: CSSProperties
+    title
     footer?
     controls?
     settings?
 }
 
-const _Tile: FC<TileProps> = ({
-    title,
-    controls = undefined,
-    settings = null,
-    footer = undefined,
-    className = "",
-    style = {},
-    children,
-    ...props
-}) => {
-    const [showSettings, setShowSettings] = useState(false)
-
-    return (
-        <div {...props} className={"widget " + className} style={style}>
-            <tileContext.Provider value={{ showSettings, setShowSettings }}>
-                {title && (
-                    <div className="title">
-                        <div className="draggable">{title}</div>
-                        {(controls || settings) && (
-                            <span className="controls">
-                                {controls}
-                                {settings}
-                            </span>
-                        )}
-                    </div>
-                )}
-                <div className="content">{children}</div>
-                {footer && <div className="footer">{footer}</div>}
-            </tileContext.Provider>
-        </div>
-    )
-}
-export const Tile = styled(_Tile)<{ title: string }>`
+const StyledTile = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
     border: 1px solid ${props => props.theme.colors.border};
+    border-radius: 5px;
     > .title {
-        position: relative;
+        display: flex;
+        align-items: center;
         padding: 4px 8px;
-        height: 35px;
         border-bottom: 1px solid
             ${props => {
                 return props.theme.colors.border
             }};
+        .text {
+            flex-grow: 1;
+            color: grey;
+            font-size: 1.1em;
+        }
     }
     .draggable {
         cursor: grab;
-        position: absolute;
-        padding: 4px 8px;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
     }
     > .content {
         padding: 4px 8px;
@@ -117,6 +77,26 @@ export const Tile = styled(_Tile)<{ title: string }>`
         border-top: 1px solid ${props => props.theme.colors.border};
     }
     .controls {
-        float: right;
+        button {
+            border-radius: 5px;
+        }
     }
 `
+
+export const Tile: FC<TileProps> = ({ title, controls = undefined, settings = null, footer = undefined, children }) => {
+    const [showSettings, setShowSettings] = useState(false)
+
+    return (
+        <StyledTile>
+            <tileContext.Provider value={{ showSettings, setShowSettings }}>
+                <div className="title">
+                    <div className="text draggable">{title}</div>
+                    {controls && <div className="controls">{controls}</div>}
+                    {settings && <div className="settings">{settings}</div>}
+                </div>
+                <div className="content">{children}</div>
+                {footer && <div className="footer">{footer}</div>}
+            </tileContext.Provider>
+        </StyledTile>
+    )
+}

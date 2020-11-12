@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { GCodeAdapter } from "./GCodeAdapter"
-import { useDispatch } from "react-redux"
+import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KinematicsConfigurationMcStatus } from "../types"
+import { RootState } from "../root"
 
 export const gcodeSlice = createSlice({
     name: "gcode",
@@ -23,9 +24,9 @@ export const gcodeSlice = createSlice({
         },
         append(state, action) {
             const buffer: Record<string, unknown>[] = []
-            const interpreter = new GCodeAdapter(buffer, state.current_positions)
+            const interpreter = new GCodeSenderAdapter(buffer, state.current_positions)
 
-            interpreter.loadFromStringSync(action.payload)
+            interpreter.execute(action.payload)
             state.buffer.push(...buffer)
         },
         consume(state, action) {

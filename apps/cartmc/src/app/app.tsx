@@ -6,14 +6,10 @@ import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
 import { Menu } from "antd"
-import { Tile, TileConfiguration, TileLayout, TileProvider, useTiles } from "@glowbuzzer/layout"
-import { ConnectTile, GCodeTile } from "@glowbuzzer/controls"
-import { TelemetryTile } from "@glowbuzzer/controls"
+import { TileConfiguration, TileLayout, TileProvider, useTiles } from "@glowbuzzer/layout"
+import { ConnectTile, DevToolsTile, GCodeTile, TelemetryTile, ToolPathTile } from "@glowbuzzer/controls"
 import { DrivesTile } from "./tiles/DrivesTile"
-import { DevToolsTile } from "@glowbuzzer/controls"
-import { ToolPathTile } from "@glowbuzzer/controls"
 import { SimpleDroTile } from "./tiles/SimpleDroTile"
-import { SparklineDynamic } from "@glowbuzzer/controls"
 
 const StyledApp = styled.div``
 
@@ -37,8 +33,51 @@ const AppInner = () => {
     )
 }
 
+// const TestTile = () => {
+//     return (
+//         <Tile
+//             title={<div>This is tile title</div>}
+//             footer={<div>This is tile footer</div>}
+//             settings={
+//                 <TileSettings>
+//                     <div>These are tile settings</div>
+//                 </TileSettings>
+//             }
+//         >
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//             <p>This is tile content</p>
+//         </Tile>
+//     )
+// }
+
 export const App = () => {
     const tiles: TileConfiguration = {
+        // test: {
+        //     x: 0,
+        //     y: 0,
+        //     width: 3,
+        //     height: 2,
+        //     title: "Test",
+        //     render: <TestTile />
+        // }
         connection: {
             x: 0,
             y: 0,

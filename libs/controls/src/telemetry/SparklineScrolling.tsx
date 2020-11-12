@@ -1,11 +1,29 @@
 import * as React from "react"
+import { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { useTelemetry } from "@glowbuzzer/store"
 import styled from "styled-components"
 
-export const SparklineScrolling = styled(({ ...props }) => {
-    // const data = []
+type Datapoint = {
+    t: number
+    values: number[]
+}
+
+type SparklineScrollingSeriesOptions = {
+    color: string
+}
+
+type SparklineScrollingProps = {
+    data: Datapoint[]
+    domain: number[]
+    options: SparklineScrollingSeriesOptions[]
+}
+
+type SparklineScrollingLineInfo = {
+    line: d3.Line<Datapoint>
+    selection: d3.Selection<d3.BaseType, unknown, HTMLDivElement, unknown>
+}
+
+export const SparklineScrolling = styled(({ options, data, domain }: SparklineScrollingProps) => {
     const height = 200
     const xmargin = 20
     const ymargin = 20
@@ -13,7 +31,8 @@ export const SparklineScrolling = styled(({ ...props }) => {
     const scaleRef = useRef(null)
     const axisRef = useRef(null)
     const elemRef = useRef<HTMLDivElement>(null)
-    const telemetry = useTelemetry()
+    const linesRef = useRef<SparklineScrollingLineInfo[]>(null)
+
     const [width, setWidth] = useState(800)
 
     // const now = useRef(0)
@@ -34,16 +53,15 @@ export const SparklineScrolling = styled(({ ...props }) => {
         return () => observer.disconnect()
     }, [])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const xScale = d3
             .scaleLinear()
             .domain([0, 500])
-            // .domain([time + duration, time - duration * 2 - time_frame])
-            //    .domain([time - duration, start_time + duration])
             .range([0, width - xmargin * 2])
+
         const yScale = d3
             .scaleLinear()
-            .domain([-100, 100])
+            .domain(domain)
             .range([height - ymargin * 2, 0])
 
         scaleRef.current = {
@@ -79,76 +97,69 @@ export const SparklineScrolling = styled(({ ...props }) => {
             .attr("height", height - ymargin * 2)
             .attr("transform", "translate(-1.5, 20)")
 
-        svg.append("g")
-            .attr("clip-path", "url(#clip)")
-            .classed("line_", true)
-            .append("path")
-            .datum(telemetry)
-            .classed("line", true)
-            .style("fill", "none")
-            .style("stroke", "steelblue")
-            .style("stroke-width", "1.5px")
-    }, [width])
+        options.forEach((o, index) =>
+            svg
+                .append("g")
+                .attr("clip-path", "url(#clip)")
+                .classed("line_" + index, true)
+                .append("path")
+                .datum([])
+                .classed("line", true)
+                .style("fill", "none")
+                .style("stroke", o.color)
+                .style("stroke-width", "1.5px")
+        )
 
-    useLayoutEffect(
-        () => {
-            const { xScale, yScale } = scaleRef.current
-            const { xAxis } = axisRef.current
-
-            // const snap = new Date().getTime()
-            // const diff = Math.min(snap - now.current, 2000)
-            // console.log("DIFF", diff)
-            // now.current = snap
-
-            const line = d3
-                .line()
+        linesRef.current = options.map((_, index) => ({
+            line: d3
+                .line<Datapoint>()
                 .x(function (d) {
-                    return xScale(d["t"])
+                    return xScale(d.t)
                 })
                 .y(function (d) {
-                    return yScale(d["x"])
-                })
+                    return yScale(d.values[index])
+                }),
+            selection: d3
+                .select(elemRef.current)
+                .selectAll(".line_" + index)
+                .select("path")
+        }))
+    }, [width, options])
 
-            const lineselection = d3.select(elemRef.current).selectAll(".line_").select("path").datum(telemetry)
+    useEffect(() => {
+        const { xScale } = scaleRef.current
+        const { xAxis } = axisRef.current
 
-            const t2 = telemetry[telemetry.length - 1]?.t
+        const t2 = data[data.length - 1]?.t
 
-            const shift = (width - xmargin * 2) / 20 // xScale.range()[1] / (duration / 50 - 2)
-            // console.log("RANGE", xScale.range(), "SHIFT", shift)
-            lineselection
-                .interrupt()
-                .transition()
-                .duration(duration * 2)
-                .ease(d3.easeLinear)
-                .attr("transform", "translate(" + -shift + "," + ymargin + ")")
-            // .attr("transform", "translate(" + -156 + "," + margin + ")")
+        // const shift = (width - xmargin * 2) / 20 // xScale.range()[1] / (duration / 50 - 2)
+        // console.log("RANGE", xScale.range(), "SHIFT", shift)
 
-            // if (telemetry[0].t < time - time_frame - duration) {
-            //     console.log("shift")
-            //     data.shift()
-            // }
-
-            lineselection.attr("d", line).attr("transform", "translate(0," + ymargin + ")")
-
-            // start_time = time - duration * 2 - time_frame
-
-            // xScale.domain([0, 500]).range([width - margin * 2, 0])
-            xScale.domain([t2 - duration, t2]).range([0, width - xmargin * 2])
-
-            const selection = d3.select(elemRef.current).select("g").selectAll(".x.axis")
+        linesRef.current.forEach(({ line, selection }) => {
             selection
-                .transition()
-                .duration(duration * 2)
-                .ease(d3.easeLinear)
-                .call(xAxis)
-                .remove()
-        },
-        [
-            /*telemetry, width*/
-        ]
-    )
+                // TODO: figure out how to make it scroll smoothly!
+                // .interrupt()
+                // .transition()
+                // .duration(duration * 2)
+                // .ease(d3.easeLinear)
+                .attr("d", line)
+                .attr("transform", "translate(0," + ymargin + ")")
 
-    return <div ref={elemRef} {...props} />
+            selection.datum(data)
+        })
+
+        xScale.domain([t2 - duration, t2]).range([0, width - xmargin * 2])
+
+        const selection = d3.select(elemRef.current).select("g").selectAll(".x.axis")
+        selection
+            // .transition()
+            // .duration(duration * 2)
+            // .ease(d3.easeLinear)
+            .call(xAxis)
+        // .remove()
+    }, [data, width])
+
+    return <div ref={elemRef} />
 })`
     width: 100%;
 `

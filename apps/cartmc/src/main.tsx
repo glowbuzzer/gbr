@@ -2,7 +2,7 @@ import React from "react"
 import ReactDOM from "react-dom"
 
 import App from "./app/app"
-import { GlowbuzzerApp } from "@glowbuzzer/store"
+import {GlowbuzzerApp} from "@glowbuzzer/store"
 // import { createStore } from 'redux';
 // import { Provider } from 'react-redux';
 //
@@ -21,7 +21,13 @@ import { GlowbuzzerApp } from "@glowbuzzer/store"
 
 ReactDOM.render(
     <GlowbuzzerApp>
-        <App />
+        <App/>
     </GlowbuzzerApp>,
     document.getElementById("root")
 )
+
+const m = import.meta as any
+if (m.hot) {
+    console.log("ACCEPT HOT REPLACEMENT")
+    m.hot.accept();
+}
