@@ -34,7 +34,6 @@ class StatusProcessor extends ProcessorBase {
 
         if (first) {
             if (actualTarget !== requestedTarget) {
-                console.log("UPDATING TARGET STATE ON LOAD!!!", MachineTarget[requestedTarget])
                 ws.send(updateMachineTargetMsg(requestedTarget))
             }
             if (!msg.status.kc) {
@@ -82,7 +81,7 @@ window.connection = ((): Connection => {
                 const devToolsProcessor = new DevToolsProcessor()
 
                 dispatch(connectionSlice.actions.connecting())
-                ws = new DevWebSocket(url)
+                ws = new WebSocket(url)
                 ws.onopen = () => dispatch(connectionSlice.actions.connected())
                 ws.onclose = () => dispatch(connectionSlice.actions.disconnected())
                 ws.onerror = err => {
@@ -100,12 +99,12 @@ window.connection = ((): Connection => {
                         }
                         if (msg.stream) {
                             dispatch(gcodeSlice.actions.status(msg.stream))
-                            GCodeStreamer.update(dispatch, getState().gcode, msg => {
+                            GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
                                 console.log("sending gcode")
 
                                 ws.send(
                                     JSON.stringify({
-                                        stream: msg
+                                        stream: streamItems
                                     })
                                 )
                             })

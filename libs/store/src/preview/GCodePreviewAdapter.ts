@@ -1,37 +1,92 @@
 import GCodeInterpreter from "../gcode/GCodeInterpreter"
-import { Vector3 } from "three"
+import { GCodeSegment } from "./index"
+import { EllipseCurve, Vector3 } from "three"
 
-function toVector3(vals: number[]) {
-    return new Vector3(...vals)
+function fromVector3(p: Vector3): number[] {
+    return [p.x, p.y, p.z]
 }
+
+function fromHexString(s: string) {
+    // convert web color code, eg '#c0c0c0' into THREE rgb floats in range [0,1]
+    const num = parseInt(s.substr(1), 16)
+    const r = num >> 16
+    const g = (num & 0xff00) >> 8
+    const b = num & 0xff
+
+    const numbers = [r / 255, g / 255, b / 255]
+    console.log("COL", numbers)
+    return numbers
+}
+
+const RAPID_COLOR = fromHexString("#a94d4d")
+const MOVE_COLOR = fromHexString("#a7c0fd")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
 
-    constructor(current_positions) {
-        super((cmd, params) => {
-            // console.log("Unhandled gcode: ", cmd, params)
-        }, current_positions)
+    toSegments(points: Vector3[], color: number[]): GCodeSegment[] {
+        const result: GCodeSegment[] = []
+        points.slice(1).forEach((p, index) =>
+            result.push({
+                from: fromVector3(points[index]),
+                to: fromVector3(p),
+                color
+            })
+        )
+        return result
+    }
+
+    toArc(params, ccw: boolean): EllipseCurve {
+        const [[x1, y1], [x2, y2]] = this.updateModals(params)
+        const I = params.I || 0
+        const J = params.J || 0
+
+        // const offset = new Vector3(I, J, 0)
+        const [cx, cy] = [x1 + I, y1 + J]
+
+        const r = Math.hypot(x1 - cx, y1 - cy)
+        const r_check = Math.hypot(x2 - cx, y2 - cy)
+        const delta = Math.abs(r - r_check)
+        if (delta > 0.001) {
+            // TODO: error handling
+            console.error("Invalid arc - points not equidistant from centre!", delta)
+        }
+        const startAngle = Math.atan2(y1 - cy, x1 - cx)
+        const endAngle = Math.atan2(y2 - cy, x2 - cx)
+        return new EllipseCurve(cx, cy, r, r, startAngle, endAngle, !ccw /* not sure why? */, 0)
     }
 
     G0(params) {
-        const [from, to] = this.updateModals(params).map(toVector3)
+        const [from, to] = this.updateModals(params)
         this.segments.push({
             from,
             to,
-            color: 0
+            color: RAPID_COLOR
         })
     }
 
     G1(params) {
-        this.updateModals(params)
+        const [from, to] = this.updateModals(params)
+        this.segments.push({
+            from,
+            to,
+            color: MOVE_COLOR
+        })
     }
 
-    G2(params) {}
+    G2(params) {
+        const arc = this.toArc(params, false)
+        const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
+        this.segments.push(...this.toSegments(points, MOVE_COLOR))
+    }
 
-    G3(params) {}
+    G3(params) {
+        const arc = this.toArc(params, true)
+        const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
+        this.segments.push(...this.toSegments(points, MOVE_COLOR))
+    }
 
-    G61() {}
-
-    G64() {}
+    // G61() {}
+    //
+    // G64() {}
 }

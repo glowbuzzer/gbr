@@ -8,12 +8,8 @@ import { ThemeProvider } from "styled-components"
 import { rootReducer } from "./root"
 
 const store = configureStore({
-    reducer: rootReducer
-    // middleware(getDefault) {
-    //     const mw = getDefault()
-    //     console.log(mw)
-    //     return [connectionMiddleware(), ...mw]
-    // }
+    reducer: rootReducer,
+    middleware: getDefault => getDefault({ immutableCheck: false, serializableCheck: false })
 })
 
 const Startup = () => {
@@ -36,6 +32,7 @@ const theme = {
 
 declare module "styled-components" {
     type Theme = typeof theme
+
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     export interface DefaultTheme extends Theme {}
 }

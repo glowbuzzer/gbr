@@ -54,6 +54,7 @@ export const useToolPath = (kc: number) => {
     // select the given kc out of all toolpaths
     const toolPath = useSelector(({ toolPath }: RootState) => toolPath[kc]?.path || [{ x: 0, y: 0, z: 0 }], shallowEqual)
     const dispatch = useDispatch()
+
     return {
         path: toolPath,
         reset() {

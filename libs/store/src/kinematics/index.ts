@@ -1,10 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import * as THREE from "three"
 import deepEqual from "fast-deep-equal"
 import { KinematicsConfigurationMcStatus } from "../types"
 import { useFrames } from "../util/useFrames"
+import { useConnect } from "../connect"
+import { updateStatusFrequencyMsg } from "../devtools"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -59,7 +61,7 @@ export const kinematicsSlice = createSlice({
 })
 
 // we're not allowed to put THREE objects into state because they are not serializable,
-// so we need to convert the vanilla pojso into THREE version for downstream
+// so we need to convert the vanilla json objects into THREE version for downstream
 function unmarshall(state): KinematicsState {
     if (!state) {
         // ensure downstream always has something to work with even if just a default
@@ -87,14 +89,35 @@ function unmarshall(state): KinematicsState {
     }
 }
 
+export function updateFroPercentageMsg(kc: number, value: number) {
+    return JSON.stringify({
+        command: {
+            kinematicsConfiguration: {
+                [kc]: {
+                    command: {
+                        froPercentage: value
+                    }
+                }
+            }
+        }
+    })
+}
+
 export const useKinematics = (kc: number, frameIndex: number) => {
     // select the given kc
     const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
-    // const dispatch = useDispatch()
     const frames = useFrames()
+    const dispatch = useDispatch()
+    const connection = useConnect()
 
     return {
         ...state,
-        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, state.frameIndex, frameIndex)
+        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, state.frameIndex, frameIndex),
+        setFroPercentage(value: number) {
+            window.localStorage.setItem(`kinematics.${kc}.statusFrequency`, JSON.stringify(value))
+            dispatch(dispatch => {
+                connection.send(updateFroPercentageMsg(kc, value))
+            })
+        }
     }
 }

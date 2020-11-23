@@ -1,4 +1,3 @@
-/* eslint no-continue: 0 */
 import { parseStringSync } from "./GCodeParser"
 
 /**
@@ -52,28 +51,25 @@ function update_axis(axis, value, current_positions) {
     current_positions[index] = value
 }
 
-// type GCodeHandler = (params) => void
-type GCodeDefaultHandler = (cmd, params) => void
-
 class GCodeInterpreter {
     private motionMode = "G0"
     protected readonly current_positions: number[]
 
-    private readonly defaultHandler: GCodeDefaultHandler
-
-    constructor(defaultHandler: GCodeDefaultHandler, current_positions: number[]) {
-        this.defaultHandler = defaultHandler
+    constructor(current_positions: number[]) {
         this.current_positions = current_positions
     }
 
     protected updateModals(params) {
         const prev = [...this.current_positions]
         Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions))
-        return [prev, ...this.current_positions]
+        // console.log("FROM", prev, "TO", this.current_positions)
+        return [prev, [...this.current_positions]]
     }
 
     interpret(data) {
         const groups = partitionWordsByGroup(data.words)
+
+        console.log("DATA", data, "GROUPS", groups)
 
         for (let i = 0; i < groups.length; ++i) {
             const words = groups[i]
@@ -138,22 +134,16 @@ class GCodeInterpreter {
 
             if (typeof this[cmd] === "function") {
                 const func = this[cmd].bind(this)
-                func(args)
-            } else if (typeof this.defaultHandler === "function") {
-                this.defaultHandler(cmd, args)
+                func(args, data)
             }
         }
     }
 
-    execute(str, callback = null) {
+    execute(str) {
         const list = parseStringSync(str)
         for (let i = 0; i < list.length; ++i) {
             this.interpret(list[i])
-            if (callback) {
-                callback(list[i], i)
-            }
         }
-        return list
     }
 }
 

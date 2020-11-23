@@ -1,13 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { GCodePreviewAdapter } from "./GCodePreviewAdapter"
-import { Vector3 } from "three"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 
+// TODO: snowpack doesn't recognise types for export??
 export type GCodeSegment = {
-    from: Vector3
-    to: Vector3
-    color: number
+    from: number[]
+    to: number[]
+    color: number[]
 }
 
 export const previewSlice = createSlice({

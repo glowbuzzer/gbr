@@ -7,11 +7,14 @@ import { RootState } from "../root"
 export const gcodeSlice = createSlice({
     name: "gcode",
     initialState: {
+        updateId: -1, // update id of empty buffer in m4 will be zero (read_head << 16 + write_head)
         ready: false,
         current_positions: [],
         paused: false,
         capacity: 0,
-        buffer: []
+        buffer: [],
+        active: false,
+        tag: 0
     },
     reducers: {
         init(state, action) {
@@ -23,18 +26,31 @@ export const gcodeSlice = createSlice({
             state.ready = true
         },
         append(state, action) {
-            const buffer: Record<string, unknown>[] = []
-            const interpreter = new GCodeSenderAdapter(buffer, state.current_positions)
-
+            console.log("Starting interpreter")
+            const interpreter = new GCodeSenderAdapter(state.buffer, state.current_positions)
             interpreter.execute(action.payload)
-            state.buffer.push(...buffer)
+            console.log("Interpreter done")
         },
         consume(state, action) {
             // remove requested count from the front of the queue
-            state.buffer.splice(0, action.payload)
+            const count = action.payload
+            // remove sent items from buffer queue
+            state.buffer.splice(0, count)
+            // reduce capacity of control (until new capacity status update)
+            state.capacity -= count
         },
         status: (state, action) => {
-            state.capacity = action.payload.capacity
+            const { capacity, id, tag, active } = action.payload
+
+            // tag is udf for current item, active is whether any item is currently executing
+            state.tag = tag
+            state.active = active
+
+            if (state.updateId !== id) {
+                // new capacity status update
+                state.capacity = capacity
+                state.updateId = id
+            }
         },
         pause: (state, action) => {
             state.paused = true
@@ -46,9 +62,12 @@ export const gcodeSlice = createSlice({
 })
 
 export function useGCode() {
+    const { active, tag } = useSelector(({ gcode: { active, tag } }: RootState) => ({ active, tag }), shallowEqual)
     const dispatch = useDispatch()
 
     return {
+        active,
+        lineNum: tag,
         send(gcodeString) {
             dispatch(gcodeSlice.actions.append(gcodeString))
         }

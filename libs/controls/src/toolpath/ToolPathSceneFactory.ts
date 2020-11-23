@@ -1,10 +1,16 @@
 import * as THREE from "three"
 import { DoubleSide, LineBasicMaterial, PointLight, Vector3 } from "three"
 import { OrbitControls } from "./OrbitControls"
-import { GCodeSegment } from "../../../store/src/preview"
+import { GCodeSegment } from "@glowbuzzer/store"
 
 if (typeof window !== "undefined") {
-    ;(window as any).THREE = THREE
+    const wnd = window as any
+    wnd.THREE = THREE
+}
+
+function toVector3(vals: number[]) {
+    const [x, y, z] = vals
+    return new Vector3(x, y, z)
 }
 
 export type ToolPathScene = {
@@ -121,7 +127,10 @@ export const ToolPathSceneFactory = (container: any, width: number, height: numb
             renderer.render(scene, camera)
         },
         setPreview(segments: GCodeSegment[]) {
-            previewGeometry.setFromPoints(segments.flatMap(s => [s.from, s.to]))
+            previewGeometry.setFromPoints(segments.flatMap(s => [toVector3(s.from), toVector3(s.to)]))
+            previewMaterial.setValues({ color: 0x0, vertexColors: true })
+            ;(preview.geometry as any).attributes.position.needsUpdate = true
+            renderer.render(scene, camera)
         }
     }
 }

@@ -169,7 +169,7 @@ const SparklineCartesian = () => {
 
     const data = telemetry.map(d => ({
         t: d.t,
-        values: settings.cartesianAxes.map((a, index) => a && d[axis_keys[index]]).filter(o => o)
+        values: settings.cartesianAxes.map((a, index) => a && d[axis_keys[index]]).filter(o => o !== undefined)
     }))
     const vel =
         settings.velEnabled &&

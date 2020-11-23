@@ -1,9 +1,54 @@
-const configTICK_RATE_HZ = 25 // try to make 1000 divisible by this number
+import { Vector3 } from "three"
+import { SimulatedArc, SimulatedMoveLine, SimulatedMoveToPosition } from "./dev"
+import { configTICK_RATE_HZ, millisecondsPerMachineTick } from "./dev/AbstractSimulatedActivity"
+
+const DevActivityStream = tcp => {
+    const queue: any[] = []
+    let current
+
+    return {
+        add(items: any[]) {
+            for (const item of items) {
+                switch (item.activityType) {
+                    case 1:
+                        queue.push(new SimulatedMoveLine(item))
+                        break
+                    case 2:
+                        queue.push(new SimulatedArc(item))
+                        break
+                    case 5:
+                        queue.push(new SimulatedMoveToPosition(item))
+                        break
+                    default:
+                        console.log("Unrecognised stream item", item)
+                }
+            }
+        },
+
+        tick() {
+            if (!current) {
+                current = queue.splice(0, 1)[0]
+                if (current) {
+                    current.init(tcp)
+                    console.log("NEW CURRENT", current)
+                }
+            }
+            if (current && current.exec) {
+                if (!current.exec(tcp)) {
+                    current = null
+                }
+            }
+        }
+    }
+}
 
 export class DevWebSocket implements WebSocket {
     private readonly interval
     private tick = new Date().getTime()
     private statusFrequency = 100
+    private readonly telemetry = []
+    private readonly tcp = new Vector3()
+    private readonly processor = DevActivityStream(this.tcp)
 
     onopen: () => void
     onclose: () => void
@@ -15,91 +60,101 @@ export class DevWebSocket implements WebSocket {
             this.onopen()
         }, 0)
 
-        const telemetry = []
-
         this.interval = setInterval(() => {
             const scale = Math.max(1.0, this.statusFrequency / 10.0) // input range [0,100] --> [1,10]
-            const mod = 1000 / scale
+            const millisecondsPerStatusMessage = 1000 / scale
 
             const now = new Date().getTime()
-            let x
-            let y
-            let msg = false
+            // let msg = false
             while (this.tick < now) {
-                const value = this.tick / (1000 / configTICK_RATE_HZ)
-                const osc = (value / 182) * Math.PI
-                const rads = (value / 90) * Math.PI
-                x = Math.sin(rads) * 100 * Math.sin(osc)
-                y = Math.cos(rads) * 100
-
-                if (this.tick % mod === 0) {
-                    msg = true
+                if (this.tick % millisecondsPerMachineTick === 0) {
+                    this.execute_tick_handler()
+                }
+                if (this.tick % millisecondsPerStatusMessage === 0) {
+                    this.transmit_status()
+                    // msg = true
                 }
 
-                if (this.tick % (1000 / configTICK_RATE_HZ) === 0) {
-                    telemetry.push({
-                        x,
-                        y,
-                        z: 0
-                    })
-                }
                 this.tick++
             }
 
-            if (!msg) {
-                return
-            }
-
-            this.onmessage({
-                data: JSON.stringify({
-                    telemetry,
-                    stream: {
-                        capacity: 10
-                    },
-                    devtools: {
-                        statusFrequency: this.statusFrequency
-                    },
-                    status: {
-                        machine: {
-                            heartbeat: 0,
-                            statusWord: 0b100111,
-                            controlWord: 0,
-                            target: 2,
-                            targetConnectRetryCnt: 0
-                        },
-                        joint: Array.from({ length: 3 }).map((_, index) => ({
-                            controlWord: 0,
-                            statusWord: 0,
-                            actPos: index === 0 ? x : index === 1 ? y : 0,
-                            actVel: 0,
-                            actAcc: 0
-                        })),
-                        kc: [
-                            {
-                                cartesianActPos: { x: x, y: y, z: 0 },
-                                cartesianActVel: { x: 0, y: 0, z: 0 },
-                                cartesianActAcc: { x: 0, y: 0, z: 0 },
-                                cartesianActOrientation: { x: 0, y: 0, z: 0, w: 1 },
-                                froTarget: 100,
-                                froActual: 100,
-                                configuration: 0
-                            }
-                        ],
-                        task: Array.from({ length: 3 }).map((_, index) => ({
-                            name: `Task ${index}`,
-                            status: {
-                                taskState: 0,
-                                currentActivityIndex: 0
-                            }
-                        }))
-                    }
-                })
-            })
-            telemetry.splice(0)
+            // if (msg) {
+            //     this.transmit_status()
+            // }
         }, 1000 / configTICK_RATE_HZ)
     }
 
+    execute_tick_handler() {
+        this.processor.tick()
+        // const value = this.tick / (1000 / configTICK_RATE_HZ)
+        // const osc = (value / 182) * Math.PI
+        // const rads = (value / 90) * Math.PI
+        // this.tcp.setX(Math.sin(rads) * 100 * Math.sin(osc))
+        // this.tcp.setY(Math.cos(rads) * 100)
+
+        if (this.tick % (1000 / configTICK_RATE_HZ) === 0) {
+            this.telemetry.push({
+                x: this.tcp.x,
+                y: this.tcp.y,
+                z: this.tcp.z
+            })
+        }
+    }
+
+    transmit_status() {
+        const { x, y, z } = this.tcp
+        const actPos = [x, y, z]
+        this.onmessage({
+            data: JSON.stringify({
+                telemetry: this.telemetry,
+                stream: {
+                    capacity: 10, // we can actually store lots
+                    id: Math.floor(Math.random() * 1000000) // indicate that capacity has changed every time
+                },
+                devtools: {
+                    statusFrequency: this.statusFrequency
+                },
+                status: {
+                    machine: {
+                        heartbeat: 0,
+                        statusWord: 0b100111,
+                        controlWord: 0,
+                        target: 2,
+                        targetConnectRetryCnt: 0
+                    },
+                    joint: Array.from({ length: 3 }).map((_, index) => ({
+                        controlWord: 0,
+                        statusWord: 0,
+                        actPos: actPos[index],
+                        actVel: 0,
+                        actAcc: 0
+                    })),
+                    kc: [
+                        {
+                            cartesianActPos: { x, y, z },
+                            cartesianActVel: { x: 0, y: 0, z: 0 },
+                            cartesianActAcc: { x: 0, y: 0, z: 0 },
+                            cartesianActOrientation: { x: 0, y: 0, z: 0, w: 1 },
+                            froTarget: 100,
+                            froActual: 100,
+                            configuration: 0
+                        }
+                    ],
+                    task: Array.from({ length: 3 }).map((_, index) => ({
+                        name: `Task ${index}`,
+                        status: {
+                            taskState: 0,
+                            currentActivityIndex: 0
+                        }
+                    }))
+                }
+            })
+        })
+        this.telemetry.splice(0)
+    }
+
     send(msgString) {
+        // this receives sends from the client
         const msg = JSON.parse(msgString)
         console.log("Dummy message handler", msg)
         if (msg.devtools) {
@@ -107,6 +162,9 @@ export class DevWebSocket implements WebSocket {
             if (!isNaN(statusFrequency)) {
                 this.statusFrequency = statusFrequency
             }
+        }
+        if (msg.stream) {
+            this.processor.add(msg.stream)
         }
     }
 

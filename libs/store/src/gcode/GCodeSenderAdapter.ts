@@ -1,5 +1,6 @@
 import GCodeInterpreter from "./GCodeInterpreter"
 import { EllipseCurve, Vector3 } from "three"
+import { GCodeLine } from "./lineParser"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
@@ -30,7 +31,7 @@ function arcParams(params, ccw, start, end) {
 
     const midpoint = curve.getPointAt(0.5) // get the point half way along the arc
 
-    console.log("arc start=", start, "end=", end, "centre", centre, "start_angle=", start_angle, "end_angle=", end_angle, "waypoint=", midpoint)
+    // console.log("arc start=", start, "end=", end, "centre", centre, "start_angle=", start_angle, "end_angle=", end_angle, "waypoint=", midpoint)
     // TODO: check if midpoint is distinct from start/end
     return {
         arc: {
@@ -52,14 +53,18 @@ function arcParams(params, ccw, start, end) {
     }
 }
 
+function args(line: GCodeLine) {
+    return {
+        tag: line.lineNum
+    }
+}
+
 // noinspection JSUnusedGlobalSymbols
 export class GCodeSenderAdapter extends GCodeInterpreter {
     private readonly buffer: any[]
 
     constructor(buffer, current_positions) {
-        super((cmd, params) => {
-            console.log("Unhandled gcode: ", cmd, params)
-        }, current_positions)
+        super(current_positions)
 
         this.buffer = buffer
     }
@@ -70,11 +75,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
-    G0(params) {
+    G0(params, line: GCodeLine) {
         this.updateModals(params)
 
         this.buffer.push({
             activityType: 5, // move to position
+            ...args(line),
             moveToPosition: {
                 moveParams,
                 cartesianPosition: {
@@ -90,11 +96,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             }
         })
     }
-    G1(params) {
+
+    G1(params, line: GCodeLine) {
         this.updateModals(params)
 
         this.buffer.push({
             activityType: 1, // move line
+            ...args(line),
             moveLine: {
                 moveParams,
                 line: {
@@ -107,36 +115,42 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             }
         })
     }
-    G2(params) {
+
+    G2(params, line: GCodeLine) {
         const start = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
         this.updateModals(params)
         const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
 
         this.buffer.push({
             activityType: 2, // move arc cw
+            ...args(line),
             moveArc: {
                 moveParams,
                 ...arcParams(params, false, start, end)
             }
         })
     }
-    G3(params) {
+
+    G3(params, line: GCodeLine) {
         const start = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
         this.updateModals(params)
         const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
 
         this.buffer.push({
             activityType: 2, // move arc ccw
+            ...args(line),
             moveArc: {
                 moveParams,
                 ...arcParams(params, true, start, end)
             }
         })
     }
+
     G61() {
         // exact stop mode (the default)
         moveParams.blendType = 0 // NOBLEND
     }
+
     G64() {
         moveParams.blendType = 1 // OVERLAPPED
         // TODO: this should be tolerance in overlapped scheme
