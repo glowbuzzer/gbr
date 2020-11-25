@@ -72,13 +72,11 @@ export const JogTile = () => {
     }
 
     function updateJogSpeed(e) {
-        console.log(e)
-        // setJogSpeed(e.value)
+        setJogSpeed(e.target.value)
     }
 
     function updateJogStep(e) {
-        console.log(e)
-        // setJogStep(v.value)
+        setJogStep(e.target.value)
     }
 
     function startJog(joint, direction: JogDirection) {
@@ -122,62 +120,73 @@ export const JogTile = () => {
             <TileInner>
                 <ButtonLayoutDiv>
                     <div>
-                        <Button>
-                            <ArrowUpOutlined
-                                onMouseDown={() => startJog(1, JogDirection.POSITIVE)}
-                                onMouseUp={() => stopJog(1)}
-                                onClick={() => stepJog(1, JogDirection.POSITIVE)}
-                            />
+                        <Button
+                            onClick={() => stepJog(1, JogDirection.POSITIVE)}
+                            onMouseDown={() => startJog(1, JogDirection.POSITIVE)}
+                            onMouseUp={() => stopJog(1)}
+                        >
+                            <ArrowUpOutlined />
                         </Button>
                     </div>
                     <div>
-                        <Button>
-                            <ArrowLeftOutlined
-                                onMouseDown={() => startJog(0, JogDirection.NEGATIVE)}
-                                onMouseUp={() => stopJog(0)}
-                                onClick={() => stepJog(0, JogDirection.NEGATIVE)}
-                            />
+                        <Button
+                            onClick={() => stepJog(0, JogDirection.NEGATIVE)}
+                            onMouseDown={() => startJog(0, JogDirection.NEGATIVE)}
+                            onMouseUp={() => stopJog(0)}
+                        >
+                            <ArrowLeftOutlined />
                         </Button>
-                        <Button>
-                            <ArrowRightOutlined
-                                onMouseDown={() => startJog(0, JogDirection.POSITIVE)}
-                                onMouseUp={() => stopJog(0)}
-                                onClick={() => stepJog(0, JogDirection.POSITIVE)}
-                            />
+                        <Button
+                            onClick={() => stepJog(0, JogDirection.POSITIVE)}
+                            onMouseDown={() => startJog(0, JogDirection.POSITIVE)}
+                            onMouseUp={() => stopJog(0)}
+                        >
+                            <ArrowRightOutlined />
                         </Button>
                     </div>
                     <div>
-                        <Button>
-                            <ArrowDownOutlined
-                                onMouseDown={() => startJog(1, JogDirection.NEGATIVE)}
-                                onMouseUp={() => stopJog(1)}
-                                onClick={() => stepJog(1, JogDirection.NEGATIVE)}
-                            />
+                        <Button
+                            onClick={() => stepJog(1, JogDirection.NEGATIVE)}
+                            onMouseDown={() => startJog(1, JogDirection.NEGATIVE)}
+                            onMouseUp={() => stopJog(1)}
+                        >
+                            <ArrowDownOutlined />
                         </Button>
                     </div>
                 </ButtonLayoutDiv>
                 <ButtonLayoutDiv>
                     <div>
-                        <Button>
+                        <Button
+                            onClick={() => stepJog(2, JogDirection.POSITIVE)}
+                            onMouseDown={() => startJog(2, JogDirection.POSITIVE)}
+                            onMouseUp={() => stopJog(2)}
+                        >
                             <ArrowUpOutlined />
                         </Button>
                     </div>
                     <div>
-                        <Button>
+                        <Button
+                            onClick={() => stepJog(2, JogDirection.NEGATIVE)}
+                            onMouseDown={() => startJog(2, JogDirection.NEGATIVE)}
+                            onMouseUp={() => stopJog(2)}
+                        >
                             <ArrowDownOutlined />
                         </Button>
                     </div>
                 </ButtonLayoutDiv>
 
-                <Form layout="inline" wrapperCol={{ span: 6 }}>
+                <Form layout="horizontal" labelCol={{ span: 8 }} wrapperCol={{ span: 8 }}>
                     <Form.Item label="Jog Speed %">
                         <Input type="number" value={jogSpeed} onChange={updateJogSpeed} />
                     </Form.Item>
-                    {jogMode === JogMode.JOGMODE_JOINT_STEP && (
-                        <Form.Item label="Step Distance">
-                            <Input type="number" value={jogStep} onChange={updateJogStep} />
-                        </Form.Item>
-                    )}
+                    <Form.Item label="Step Distance">
+                        <Input
+                            type="number"
+                            value={jogStep}
+                            onChange={updateJogStep}
+                            disabled={jogMode !== JogMode.JOGMODE_JOINT_STEP && jogMode !== JogMode.JOGMODE_CARTESIAN_STEP}
+                        />
+                    </Form.Item>
                 </Form>
             </TileInner>
         </Tile>

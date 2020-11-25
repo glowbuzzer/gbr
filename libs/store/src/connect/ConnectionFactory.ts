@@ -9,7 +9,7 @@ import { gcodeSlice } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { RootState } from "@glowbuzzer/store"
+import { processJogStateChanges, RootState } from "@glowbuzzer/store"
 import { jogSlice } from "../jogging"
 
 abstract class ProcessorBase {
@@ -26,6 +26,7 @@ abstract class ProcessorBase {
 class StatusProcessor extends ProcessorBase {
     process_internal(msg, dispatch, ws, getState, first) {
         const { actualTarget, requestedTarget, nextControlWord } = getState().machine
+        const previousJogState = [...getState().jog]
 
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
@@ -33,6 +34,9 @@ class StatusProcessor extends ProcessorBase {
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
         msg.status.jog && dispatch(jogSlice.actions.status(msg.status.jog))
+
+        // compare previous jog states with latest
+        processJogStateChanges(previousJogState, getState().jog, msg => ws.send(msg))
 
         if (first) {
             if (actualTarget !== requestedTarget) {

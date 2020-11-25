@@ -89,3 +89,28 @@ export function useJog(jogIndex: number) {
         }
     }
 }
+
+export function processJogStateChanges(prev: JogStoreState[], current: JogStoreState[], send) {
+    for (let n = 0; n < prev.length; n++) {
+        const p = prev[n]
+        const c = current[n]
+        if (p.state !== JogState.JOGSTATE_STEP_COMPLETE && c.state === JogState.JOGSTATE_STEP_COMPLETE) {
+            // jog step completed, so send command to reset to none, ready for next jog step
+            // (we don't hold a queue of jog steps)
+            send(
+                JSON.stringify({
+                    command: {
+                        jog: {
+                            [n]: {
+                                command: {
+                                    jogFlags: 0,
+                                    mode: JogMode.JOGMODE_NONE
+                                }
+                            }
+                        }
+                    }
+                })
+            )
+        }
+    }
+}
