@@ -10,6 +10,7 @@ import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
 import { RootState } from "@glowbuzzer/store"
+import { jogSlice } from "../jogging"
 
 abstract class ProcessorBase {
     protected first = true
@@ -31,6 +32,7 @@ class StatusProcessor extends ProcessorBase {
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
+        msg.status.jog && dispatch(jogSlice.actions.status(msg.status.jog))
 
         if (first) {
             if (actualTarget !== requestedTarget) {

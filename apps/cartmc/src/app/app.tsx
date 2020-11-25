@@ -2,7 +2,7 @@ import React from "react"
 
 import { Menu } from "antd"
 import { TileConfiguration, TileLayout, TileProvider, useTiles } from "@glowbuzzer/layout"
-import { ConnectTile, DevToolsTile, FeedRateTile, GCodeTile, TelemetryTile, ToolPathTile } from "@glowbuzzer/controls"
+import { ConnectTile, DevToolsTile, FeedRateTile, GCodeTile, JogTile, TelemetryTile, ToolPathTile } from "@glowbuzzer/controls"
 import { DrivesTile } from "./tiles/DrivesTile"
 import { SimpleDroTile } from "./tiles/SimpleDroTile"
 import { TestTile } from "./tiles/TestTile"
@@ -60,6 +60,14 @@ export const App = () => {
             title: "Feedrate",
             render: <FeedRateTile />
         },
+        jogging: {
+            x: 0,
+            y: 0,
+            width: 2,
+            height: 4,
+            title: "Jogging",
+            render: <JogTile />
+        },
         simpledro: {
             x: 0,
             y: 0,
@@ -80,7 +88,7 @@ export const App = () => {
             x: 0,
             y: 0,
             width: 2,
-            height: 2,
+            height: 4,
             title: "Developer Tools",
             render: <DevToolsTile />
         },

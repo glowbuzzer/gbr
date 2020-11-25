@@ -12,6 +12,7 @@ import {
 } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
+import { StyledControls } from "../util/styled"
 
 const FormTag = styled(Tag)`
     padding-top: 5px;
@@ -50,24 +51,6 @@ const ConnectForm = () => {
         </Form>
     )
 }
-
-const StyledControls = styled.span`
-    /*
-    .danger.ant-radio-button-wrapper-checked {
-        background: #960000;
-        color: white;
-    }
-    .danger {
-        color: #960000;
-    }
-    */
-    .ant-radio-button-wrapper:first-child {
-        border-radius: 10px 0 0 10px;
-    }
-    .ant-radio-button-wrapper:last-child {
-        border-radius: 0 10px 10px 0;
-    }
-`
 
 export const ConnectTile = () => {
     const connection = useConnect()
@@ -111,22 +94,6 @@ export const ConnectTile = () => {
                             Operate
                         </Radio.Button>
                     </Radio.Group>
-                    {/*
-                    <Switch
-                        disabled={connection.state !== ConnectionState.CONNECTED}
-                        checkedChildren="Simulation"
-                        unCheckedChildren="Live"
-                        checked={machine.actualTarget === MachineTarget.FIELDBUS}
-                        onChange={change_target}
-                    />
-                    &nbsp;
-                    <Switch
-                        checkedChildren="Standby"
-                        unCheckedChildren="Operate"
-                        checked={state === MachineState.OPERATION_ENABLED}
-                        onChange={change_desired_state}
-                    />
-*/}
                 </StyledControls>
             }
         >

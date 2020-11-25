@@ -2,7 +2,7 @@ import "./connect/ConnectionFactory"
 
 export { GlowbuzzerApp } from "./GlowbuzzerApp"
 export { ConnectionState, useConnect } from "./connect"
-export { DesiredState, MachineTarget, useMachine, MachineState, determine_machine_state } from "./machine"
+export { DesiredState, MachineTarget, useMachine, MachineState, determine_machine_state, possible_transitions } from "./machine"
 export { useConfig } from "./config"
 export { usePrefs } from "./prefs"
 export { useGCode } from "./gcode"
@@ -14,6 +14,7 @@ export * from "./util/frame_utils"
 export * from "./util/useFrames"
 export { useToolPath } from "./toolpath"
 export * from "./devtools"
+export * from "./jogging"
 
 export { ACTIVITYTYPE, KINEMATICSCONFIGURATIONTYPE } from "./types"
 

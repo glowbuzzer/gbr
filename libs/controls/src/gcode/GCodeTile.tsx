@@ -7,7 +7,7 @@ import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
 import { Button, Checkbox } from "antd"
 import { useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
-import { IMarker } from "react-ace/src/types"
+import { IMarker } from "react-ace"
 import styled, { css } from "styled-components"
 
 function getGCodeLS() {

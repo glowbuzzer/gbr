@@ -94,8 +94,13 @@ export const useMachine = () => {
         },
         setDesiredState(state: DesiredState) {
             dispatch(machineSlice.actions.setDesiredState(state))
+        },
+        setMachineControlWord(controlWord: number) {
+            dispatch(dispatch => {
+                connection.send(updateMachineControlWordMsg(controlWord))
+            })
         }
     }
 }
 
-export { MachineState, DesiredState, determine_machine_state } from "./MachineStateHandler"
+export { MachineState, DesiredState, determine_machine_state, possible_transitions } from "./MachineStateHandler"

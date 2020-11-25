@@ -10,6 +10,7 @@ import { toolPathSlice } from "./toolpath"
 import { kinematicsSlice } from "./kinematics"
 import { devToolsSlice } from "./devtools"
 import { previewSlice } from "./preview"
+import { jogSlice } from "./jogging"
 
 export const rootReducer = combineReducers({
     config: configSlice.reducer,
@@ -18,6 +19,7 @@ export const rootReducer = combineReducers({
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,
     joints: jointsSlice.reducer,
+    jog: jogSlice.reducer,
     gcode: gcodeSlice.reducer,
     preview: previewSlice.reducer,
     toolPath: toolPathSlice.reducer,

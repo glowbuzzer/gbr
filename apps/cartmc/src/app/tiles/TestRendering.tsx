@@ -11,9 +11,9 @@ extend({ OrbitControls })
 const extent = 10
 
 // generate nice figure with lots of points
-const x_period = 11
-const y_period = 23
-const z_period = 13
+const x_period = 10
+const y_period = 20
+const z_period = 30
 const res = 0.005
 
 const CameraControls = () => {
