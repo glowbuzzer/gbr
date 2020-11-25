@@ -1,7 +1,7 @@
 import * as React from "react"
-import {FC, useContext} from "react"
-import {useLocalStorage} from "./LocalStorageHook"
-import {tileLayoutContext, TileLayoutContextType} from "./TileContext";
+import { FC, useContext } from "react"
+import { useLocalStorage } from "./LocalStorageHook"
+import { tileLayoutContext, TileLayoutContextType } from "./TileContext"
 
 function fromEntries(iterable) {
     return [...iterable].reduce((obj, [key, val]) => {
@@ -33,7 +33,6 @@ export const TileProvider: FC<TileProviderProps> = ({ tiles, children }) => {
     const context: TileLayoutContextType = {
         tiles: tilesAsArray.map(t => ({ ...t, visible: visibility[t.id] })),
         setVisible(id: string, value: boolean) {
-            console.log("SET VISIBLE", id, value)
             setVisibility(visibility => ({
                 ...visibility,
                 [id]: value

@@ -7,12 +7,13 @@ const ReactGridLayout = WidthProvider(RGL)
 
 const TileContainer = styled.div`
     height: 100%;
+    background: white;
 `
 
 export const TileLayout = () => {
     const { tiles, onLayoutChange } = useTiles()
 
-    const layout: Layout[] = Object.entries(tiles).map(([index, { id, x, y, width, height }]) => ({
+    const layout: Layout[] = Object.entries(tiles).map(([, { id, x, y, width, height }]) => ({
         i: id,
         x,
         y,
