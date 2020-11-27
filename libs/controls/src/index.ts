@@ -12,6 +12,7 @@ export * from "./misc/FrameView"
 
 export * from "./prefs/UnitIndicator"
 export * from "./prefs/UnitSelector"
+export * from "./prefs/PreferencesDialog"
 
 export * from "./toolpath/ToolPathDisplay"
 export * from "./toolpath/ToolPathTile"

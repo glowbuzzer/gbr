@@ -28,6 +28,7 @@ class StatusProcessor extends ProcessorBase {
         const { actualTarget, requestedTarget, nextControlWord } = getState().machine
         const previousJogState = [...getState().jog]
 
+        dispatch(connectionSlice.actions.ping())
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))

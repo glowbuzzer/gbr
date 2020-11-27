@@ -13,44 +13,16 @@ import {
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
 import { StyledControls } from "../util/styled"
+import { TrafficLight } from "./TrafficLight"
 
 const FormTag = styled(Tag)`
     padding-top: 5px;
 `
 
-const ConnectForm = () => {
-    const connection = useConnect()
-    const prefs = usePrefs()
-    const machine = useMachine()
-
-    const connect = () => connection.connect(prefs.current.url)
-    const disconnect = () => connection.disconnect()
-
-    function update_url(e) {
-        prefs.set("url", e.target.value)
-    }
-
-    return (
-        <Form layout={"inline"}>
-            <Form.Item name="url" label="url">
-                <Input defaultValue={prefs.current.url} onChange={update_url} />
-            </Form.Item>
-            <Form.Item>
-                {connection.state === ConnectionState.CONNECTED ? (
-                    <Button type="primary" htmlType="submit" onClick={disconnect}>
-                        Disconnect
-                    </Button>
-                ) : (
-                    <Button type="primary" htmlType="submit" onClick={connect} disabled={connection.state === ConnectionState.CONNECTING}>
-                        Connect
-                    </Button>
-                )}
-            </Form.Item>
-            {connection.error}
-            {connection.connected && <FormTag>{MachineState[machine.currentState]}</FormTag>}
-        </Form>
-    )
-}
+const FlexCentered = styled.div`
+    display: flex;
+    gap: 4px;
+`
 
 export const ConnectTile = () => {
     const connection = useConnect()
@@ -66,38 +38,49 @@ export const ConnectTile = () => {
 
     const state = determine_machine_state(machine.statusWord)
 
+    function connect() {
+        connection.setAutoConnect(true)
+    }
+
     return (
         <Tile
             title="Connection"
             controls={
-                <StyledControls>
-                    <Radio.Group
-                        disabled={connection.state !== ConnectionState.CONNECTED}
-                        size={"small"}
-                        value={machine.actualTarget}
-                        onChange={change_target}
-                    >
-                        <Radio.Button value={MachineTarget.SIMULATION}>Simulate</Radio.Button>
-                        <Radio.Button className="danger" value={MachineTarget.FIELDBUS}>
-                            Live
-                        </Radio.Button>
-                    </Radio.Group>
-                    &nbsp;
-                    <Radio.Group
-                        disabled={connection.state !== ConnectionState.CONNECTED}
-                        size={"small"}
-                        value={state === MachineState.OPERATION_ENABLED ? DesiredState.OPERATIONAL : DesiredState.STANDBY}
-                        onChange={change_desired_state}
-                    >
-                        <Radio.Button value={DesiredState.STANDBY}>Standby</Radio.Button>
-                        <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
-                            Operate
-                        </Radio.Button>
-                    </Radio.Group>
-                </StyledControls>
+                <FlexCentered>
+                    <TrafficLight padded width={20} color="red" />
+                    <StyledControls>
+                        <Radio.Group
+                            disabled={connection.state !== ConnectionState.CONNECTED}
+                            size={"small"}
+                            value={machine.actualTarget}
+                            onChange={change_target}
+                        >
+                            <Radio.Button value={MachineTarget.SIMULATION}>Simulate</Radio.Button>
+                            <Radio.Button className="danger" value={MachineTarget.FIELDBUS}>
+                                Live
+                            </Radio.Button>
+                        </Radio.Group>
+                        &nbsp;
+                        <Radio.Group
+                            disabled={connection.state !== ConnectionState.CONNECTED}
+                            size={"small"}
+                            value={state === MachineState.OPERATION_ENABLED ? DesiredState.OPERATIONAL : DesiredState.STANDBY}
+                            onChange={change_desired_state}
+                        >
+                            <Radio.Button value={DesiredState.STANDBY}>Standby</Radio.Button>
+                            <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
+                                Operate
+                            </Radio.Button>
+                        </Radio.Group>
+                    </StyledControls>
+                </FlexCentered>
             }
         >
-            <ConnectForm />
+            <div>
+                {connection.connected || <h3>Not connected</h3>}
+                {!connection.connected && !connection.autoConnect && <Button onClick={connect}>Connect</Button>}
+                {connection.connected && <FormTag>{MachineState[machine.currentState]}</FormTag>}
+            </div>
         </Tile>
     )
 }

@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 
-import { Menu } from "antd"
+import { Menu, Modal } from "antd"
 import { TileConfiguration, TileLayout, TileProvider, useTiles } from "@glowbuzzer/layout"
 import { ConnectTile, DevToolsTile, FeedRateTile, GCodeTile, JogTile, TelemetryTile, ToolPathTile } from "@glowbuzzer/controls"
 import { DrivesTile } from "./tiles/DrivesTile"
@@ -11,16 +11,29 @@ import styled from "styled-components"
 import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
+import { PreferencesDialog } from "@glowbuzzer/controls"
 
 const StyledApp = styled.div``
 
 const AppInner = () => {
     const { tiles, setVisible } = useTiles()
+    const [showPreferences, setShowPreferences] = useState(false)
+
+    function handleClick(e) {
+        switch (e.key) {
+            case "file:prefs":
+                setShowPreferences(true)
+                break
+        }
+    }
 
     return (
         <StyledApp>
-            <Menu mode="horizontal">
-                <Menu.Item>File</Menu.Item>
+            <PreferencesDialog visible={showPreferences} onClose={() => setShowPreferences(false)} />
+            <Menu mode="horizontal" onClick={handleClick}>
+                <Menu.SubMenu title="File">
+                    <Menu.Item key="file:prefs">Preferences...</Menu.Item>
+                </Menu.SubMenu>
                 <Menu.SubMenu title="View">
                     {tiles.map(tile => (
                         <Menu.Item key={tile.id} onClick={() => setVisible(tile.id, !tile.visible)}>
