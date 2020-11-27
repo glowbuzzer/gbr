@@ -14,24 +14,27 @@ export const connectionSlice = createSlice({
     initialState: {
         state: ConnectionState.DISCONNECTED,
         error: null,
-        lastStatus: null as Date,
-        autoConnect: true
+        autoConnect: true,
+        statusReceived: true // assume all okay at start
     },
     reducers: {
         connected: state => ({ ...state, state: ConnectionState.CONNECTED }),
-        connecting: state => ({ ...state, state: ConnectionState.CONNECTING, error: null }),
+        connecting: state => {
+            state.state = ConnectionState.CONNECTING
+            state.statusReceived = true
+            state.error = null
+        },
         disconnected: state => ({ ...state, state: ConnectionState.DISCONNECTED }),
         autoConnect: (state, action) => ({ ...state, autoConnect: action.payload }),
         error: (state, action) => ({ ...state, state: ConnectionState.DISCONNECTED, error: action.payload }),
-        ping: state => ({ ...state, lastStatus: new Date() })
+        statusReceived: (state, action) => {
+            state.statusReceived = action.payload
+        }
     }
 })
 
 export const useConnect = () => {
-    const { state, error, autoConnect } = useSelector(
-        ({ connection: { state, error, autoConnect } }: RootState) => ({ state, error, autoConnect }),
-        shallowEqual
-    )
+    const { state, error, autoConnect, statusReceived } = useSelector(({ connection }: RootState) => connection, shallowEqual)
     const dispatch = useDispatch()
     const prefs = usePrefs()
 
@@ -41,6 +44,7 @@ export const useConnect = () => {
         state,
         error,
         autoConnect,
+        statusReceived,
         connected: state === ConnectionState.CONNECTED,
         connect(url) {
             dispatch(window.connection.connect(url))

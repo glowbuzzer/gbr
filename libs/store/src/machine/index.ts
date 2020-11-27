@@ -10,12 +10,28 @@ export enum MachineTarget {
     SIMULATION
 }
 
+export enum FaultCode {
+    FAULT_CAUSE_ESTOP = 1 << 0,
+    FAULT_CAUSE_DRIVE_FAULT = 1 << 1,
+    FAULT_CAUSE_GBC_FAULT_REQUEST = 1 << 2,
+    FAULT_CAUSE_HEARTBEAT_LOST = 1 << 3,
+    FAULT_CAUSE_LIMIT_REACHED = 1 << 4,
+    FAULT_CAUSE_DRIVE_STATE_CHANGE_TIMEOUT = 1 << 5,
+    FAULT_CAUSE_DRIVE_FOLLOW_ERROR = 1 << 6,
+    FAULT_CAUSE_DRIVE_NO_REMOTE = 1 << 7,
+    FAULT_CAUSE_ECAT = 1 << 8,
+    FAULT_CAUSE_DRIVE_ALARM = 1 << 9
+}
+
 // this is the data coming back from board in status.machine
 type MachineStatus = {
     statusWord: number
     controlWord: number
+    activeFault: number
     requestedTarget: MachineTarget
     actualTarget: MachineTarget
+    heartbeat?: number
+    heartbeatReceived: boolean
 }
 
 // this is transitory app state
@@ -51,15 +67,21 @@ export const machineSlice = createSlice({
     initialState: {
         requestedTarget: MachineTarget.SIMULATION,
         actualTarget: undefined,
-        desiredState: DesiredState.OPERATIONAL
+        desiredState: DesiredState.OPERATIONAL,
+        heartbeatReceived: true
     } as MachineStatus & MachineStateHandling,
     reducers: {
         status: (state, action) => {
             // called with status.machine from the json every time board sends status message
-            const { statusWord, controlWord, target } = action.payload
+            const { statusWord, controlWord, activeFault, target } = action.payload
             state.statusWord = statusWord
             state.controlWord = controlWord
+            state.activeFault = activeFault
             state.actualTarget = target
+
+            // check if the heartbeat has changed
+            state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
+            state.heartbeat = action.payload.heartbeat
 
             // set the next machine state to be sent (handled in connect/index.ts)
             state.currentState = determine_machine_state(state.statusWord)

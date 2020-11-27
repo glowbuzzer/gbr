@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Button, Form, Input, Radio, Tag } from "antd"
+import { Button, Radio, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -8,15 +8,15 @@ import {
     MachineTarget,
     useConnect,
     useMachine,
-    usePrefs
+    FaultCode
 } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
 import { StyledControls } from "../util/styled"
 import { TrafficLight } from "./TrafficLight"
 
-const FormTag = styled(Tag)`
-    padding-top: 5px;
+const PaddedTag = styled(Tag)`
+    margin-top: 5px;
 `
 
 const FlexCentered = styled.div`
@@ -42,12 +42,24 @@ export const ConnectTile = () => {
         connection.setAutoConnect(true)
     }
 
+    function determine_traffic_light_color() {
+        if (!(connection.connected && connection.statusReceived)) {
+            return "red"
+        }
+        if (!machine.heartbeatReceived || machine.activeFault !== 0) {
+            return "orange"
+        }
+        return "green"
+    }
+
+    const traffic_light_color = determine_traffic_light_color()
+
     return (
         <Tile
             title="Connection"
             controls={
                 <FlexCentered>
-                    <TrafficLight padded width={20} color="red" />
+                    <TrafficLight padded width={20} color={traffic_light_color} />
                     <StyledControls>
                         <Radio.Group
                             disabled={connection.state !== ConnectionState.CONNECTED}
@@ -78,8 +90,18 @@ export const ConnectTile = () => {
         >
             <div>
                 {connection.connected || <h3>Not connected</h3>}
+                {connection.statusReceived || <h3>No status received</h3>}
+                {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
                 {!connection.connected && !connection.autoConnect && <Button onClick={connect}>Connect</Button>}
-                {connection.connected && <FormTag>{MachineState[machine.currentState]}</FormTag>}
+                {connection.connected && connection.statusReceived && <PaddedTag>{MachineState[machine.currentState]}</PaddedTag>}
+                {Object.values(FaultCode)
+                    .filter(k => typeof k === "number")
+                    .filter((k: number) => machine.activeFault & k)
+                    .map(k => (
+                        <PaddedTag key={k} color="red">
+                            {FaultCode[k].substr("FAULT_CAUSE_".length)}
+                        </PaddedTag>
+                    ))}
             </div>
         </Tile>
     )
