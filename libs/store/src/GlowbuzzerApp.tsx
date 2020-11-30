@@ -8,6 +8,7 @@ import styled, { css, ThemeProvider } from "styled-components"
 import { rootReducer } from "./root"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
+import { useConfigReceived } from "./config"
 
 const store = configureStore({
     reducer: rootReducer,
@@ -69,6 +70,7 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
 
 const GlowbuzzerContainer = props => {
     const connection = useConnect()
+    const configReceived = useConfigReceived()
 
     const [countdown, setCountdown] = useState(2)
     const [showRetry, setShowRetry] = useState(true)
@@ -78,7 +80,6 @@ const GlowbuzzerContainer = props => {
     useEffect(() => {
         if (connection.autoConnect && !connection.connected) {
             timer.current = setInterval(() => {
-                console.log("INTERVAL!")
                 setCountdown(countdown => {
                     countdown--
                     if (countdown === 0) {
@@ -108,7 +109,7 @@ const GlowbuzzerContainer = props => {
 
     return (
         <div>
-            <GlowbuzzerDimmerStyle visible={!connection.connected && connection.autoConnect}>
+            <GlowbuzzerDimmerStyle visible={!(connection.connected && configReceived) && connection.autoConnect}>
                 <div className="reconnect-panel">
                     <div>
                         {showRetry && countdown > 2 ? (
@@ -124,8 +125,10 @@ const GlowbuzzerContainer = props => {
                                     </Button>
                                 </p>
                             </>
+                        ) : connection.connected ? (
+                            "Waiting for config..."
                         ) : (
-                            <p>Connecting...</p>
+                            "Connecting..."
                         )}
                     </div>
                 </div>

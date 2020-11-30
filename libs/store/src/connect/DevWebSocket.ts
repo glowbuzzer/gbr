@@ -1,6 +1,7 @@
 import { Vector3 } from "three"
 import { SimulatedArc, SimulatedMoveLine, SimulatedMoveToPosition } from "./dev"
 import { configTICK_RATE_HZ, millisecondsPerMachineTick } from "./dev/AbstractSimulatedActivity"
+import { DEFAULT_CONFIG } from "../config"
 
 const DevActivityStream = tcp => {
     const queue: any[] = []
@@ -77,20 +78,11 @@ export class DevWebSocket implements WebSocket {
 
                 this.tick++
             }
-
-            // if (msg) {
-            //     this.transmit_status()
-            // }
         }, 1000 / configTICK_RATE_HZ)
     }
 
     execute_tick_handler() {
         this.processor.tick()
-        // const value = this.tick / (1000 / configTICK_RATE_HZ)
-        // const osc = (value / 182) * Math.PI
-        // const rads = (value / 90) * Math.PI
-        // this.tcp.setX(Math.sin(rads) * 100 * Math.sin(osc))
-        // this.tcp.setY(Math.cos(rads) * 100)
 
         if (this.tick % (1000 / configTICK_RATE_HZ) === 0) {
             this.telemetry.push({
@@ -116,7 +108,7 @@ export class DevWebSocket implements WebSocket {
                 },
                 status: {
                     machine: {
-                        heartbeat: 0,
+                        heartbeat: this.tick,
                         statusWord: 0b100111,
                         controlWord: 0,
                         target: 2,
@@ -165,6 +157,18 @@ export class DevWebSocket implements WebSocket {
         }
         if (msg.stream) {
             this.processor.add(msg.stream)
+        }
+        if (msg.request?.get_config) {
+            // the only request we support at the moment is get_config
+            setTimeout(() => {
+                this.onmessage({
+                    data: JSON.stringify({
+                        responses: {
+                            get_config_response: DEFAULT_CONFIG
+                        }
+                    })
+                })
+            }, 2000)
         }
     }
 

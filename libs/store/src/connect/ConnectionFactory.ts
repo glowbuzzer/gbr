@@ -10,6 +10,8 @@ import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
 import { processJogStateChanges, RootState } from "@glowbuzzer/store"
 import { jogSlice } from "../jogging"
+import { DevWebSocket } from "./DevWebSocket"
+import { configSlice } from "../config"
 
 abstract class ProcessorBase {
     protected first = true
@@ -55,6 +57,14 @@ class StatusProcessor extends ProcessorBase {
     }
 }
 
+class ResponseProcessor extends ProcessorBase {
+    process_internal(msg, dispatch, ws, getState, first) {
+        if (msg.response.get_config_response) {
+            dispatch(configSlice.actions.set(msg.response.get_config_response))
+        }
+    }
+}
+
 class DevToolsProcessor extends ProcessorBase {
     protected process_internal(msg, dispatch, ws: WebSocket, getState: () => RootState, first: boolean) {
         if (first) {
@@ -84,6 +94,7 @@ window.connection = ((): Connection => {
         connect(url): AppThunk {
             return async (dispatch, getState) => {
                 const statusProcessor = new StatusProcessor()
+                const responseProcessor = new ResponseProcessor()
                 const devToolsProcessor = new DevToolsProcessor()
 
                 function no_status_handler() {
@@ -104,6 +115,13 @@ window.connection = ((): Connection => {
                 ws = new WebSocket(url)
                 ws.onopen = () => {
                     start_status_timeout()
+                    ws.send(
+                        JSON.stringify({
+                            request: {
+                                get_config: true
+                            }
+                        })
+                    )
                     dispatch(connectionSlice.actions.connected())
                 }
                 ws.onclose = () => {
@@ -135,6 +153,10 @@ window.connection = ((): Connection => {
                                     })
                                 )
                             })
+                        }
+                        if (msg.response) {
+                            // responses to request we have sent
+                            responseProcessor.process(msg, dispatch, ws, getState)
                         }
                         if (msg.devtools) {
                             devToolsProcessor.process(msg, dispatch, ws, getState)

@@ -89,7 +89,7 @@ export const GCodeTile = () => {
         >
             <StyledDiv readOnly={stream.active}>
                 <AceEditor
-                    readOnly={stream.active}
+                    readOnly={stream.active || false}
                     mode="gcode"
                     theme="github"
                     width={"100%"}

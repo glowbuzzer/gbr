@@ -46,7 +46,7 @@ export const ConnectTile = () => {
         if (!(connection.connected && connection.statusReceived)) {
             return "red"
         }
-        if (!machine.heartbeatReceived || machine.activeFault !== 0) {
+        if (!machine.heartbeatReceived || machine.activeFault) {
             return "orange"
         }
         return "green"
@@ -59,7 +59,7 @@ export const ConnectTile = () => {
             title="Connection"
             controls={
                 <FlexCentered>
-                    <TrafficLight padded width={20} color={traffic_light_color} />
+                    <TrafficLight width={20} color={traffic_light_color} />
                     <StyledControls>
                         <Radio.Group
                             disabled={connection.state !== ConnectionState.CONNECTED}

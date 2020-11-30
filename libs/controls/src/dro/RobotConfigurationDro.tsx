@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Tag } from "antd"
-import { ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined, ArrowDownOutlined, ReloadOutlined } from "@ant-design/icons"
-import { useConfig, useKinematics } from "@glowbuzzer/store"
+import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined, ReloadOutlined } from "@ant-design/icons"
+import { useKinematics } from "@glowbuzzer/store"
 
 export const RobotConfigurationDro = () => {
     const kinematics = useKinematics(0, 0)
