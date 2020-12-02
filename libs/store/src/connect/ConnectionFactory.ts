@@ -130,8 +130,10 @@ window.connection = ((): Connection => {
                     dispatch(connectionSlice.actions.disconnected())
                 }
                 ws.onerror = () => {
-                    ws.close()
-                    ws = null
+                    if (ws) {
+                        ws.close()
+                        ws = null
+                    }
                     clear_status_timeout()
                     dispatch(connectionSlice.actions.disconnected())
                 }

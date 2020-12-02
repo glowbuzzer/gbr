@@ -153,7 +153,18 @@ const SparklineCartesian = () => {
     const visible = usePageVisibility()
     const config = useConfig()
 
-    const pos_domain = useMemo(() => config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters.extents[0], [config])
+    const pos_domain = useMemo(() => {
+        const {
+            xNeglimit,
+            xPosLimit,
+            yNeglimit,
+            yPosLimit,
+            zNeglimit,
+            zPosLimit
+        } = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
+        return [xNeglimit, xPosLimit, yNeglimit, yPosLimit, zNeglimit, zPosLimit].reduce((max, current) => Math.max(max, Math.abs(current)))
+    }, [config])
+
     const { linearVmax: vmax, linearAmax: amax } = useMemo(() => config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters, [
         config
     ])
