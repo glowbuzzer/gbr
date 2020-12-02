@@ -15,7 +15,6 @@ export const TrafficLight = styled(({ ...props }) => (
         <circle cx={32} cy={32} r={32} filter="url(#counter)" />
     </svg>
 )).attrs<{ width: number; color: string }>(props => ({ ...props, width: props.width || 32 }))`
-    // margin: ${props => (props.padded ? "8px" : "0")};
     circle {
         fill: ${props => props.color};
     }

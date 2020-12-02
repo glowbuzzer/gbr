@@ -25,12 +25,9 @@ export const DEFAULT_CONFIG = {
                     tcpRotationalVmax: 100,
                     tcpRotationalAmax: 1000,
                     tcpRotationalJmax: 10000,
-                    xPosLimit: 10,
-                    xNeglimit: -10,
-                    yPosLimit: 10,
-                    yNeglimit: -10,
-                    zPosLimit: 10,
-                    zNeglimit: -10
+                    xExtents: [-10, 10],
+                    yExtents: [-10, 10],
+                    zExtents: [-10, 10]
                 }
             }
         }

@@ -12,7 +12,7 @@ export { useJoints } from "./joints/index"
 export { useKinematics } from "./kinematics"
 export * from "./util/frame_utils"
 export * from "./util/useFrames"
-export { useToolPath } from "./toolpath"
+export * from "./toolpath"
 export * from "./devtools"
 export * from "./jogging"
 

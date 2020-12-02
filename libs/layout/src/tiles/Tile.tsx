@@ -1,19 +1,34 @@
-import React, { CSSProperties, FC, useContext, useState } from "react"
+import React, { FC, useContext, useState } from "react"
 import styled from "styled-components"
 import { Button, Modal } from "antd"
 import { EditOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"
 
 type TileSettingsProps = {
-    onConfirm?(): void
+    title?: string
+    onConfirm(): void
+    onReset?(): void
 }
 
-export const TileSettings: FC<TileSettingsProps> = ({ onConfirm, children }) => {
+export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset, children }) => {
     const { showSettings, setShowSettings } = useContext(tileContext)
+
+    function cancel() {
+        if (onReset) {
+            onReset()
+        }
+        setShowSettings(false)
+    }
+
+    function ok() {
+        onConfirm()
+        setShowSettings(false)
+    }
+
     return (
         <>
             <Button onClick={() => setShowSettings(!showSettings)} icon={<EditOutlined />} />
-            <Modal visible={showSettings} onCancel={() => setShowSettings(false)} onOk={onConfirm}>
+            <Modal title={title} visible={showSettings} onCancel={cancel} onOk={ok}>
                 {children}
             </Modal>
         </>

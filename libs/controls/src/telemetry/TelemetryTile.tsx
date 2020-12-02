@@ -154,15 +154,9 @@ const SparklineCartesian = () => {
     const config = useConfig()
 
     const pos_domain = useMemo(() => {
-        const {
-            xNeglimit,
-            xPosLimit,
-            yNeglimit,
-            yPosLimit,
-            zNeglimit,
-            zPosLimit
-        } = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
-        return [xNeglimit, xPosLimit, yNeglimit, yPosLimit, zNeglimit, zPosLimit].reduce((max, current) => Math.max(max, Math.abs(current)))
+        const { xExtents, yExtents, zExtents } = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
+        // produce overall [min, max] from individual x, y, z [min, max]
+        return [xExtents, yExtents, zExtents].reduce(([min, max], xyz) => [Math.min(min, xyz[0]), Math.max(max, xyz[1])], [0, 0])
     }, [config])
 
     const { linearVmax: vmax, linearAmax: amax } = useMemo(() => config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters, [
@@ -209,9 +203,6 @@ export const TelemetryTile = () => {
     // const data = useTelemetryData()
     return (
         <Tile title="Telemetry" settings={<TelemetrySettings />}>
-            {/*{data.map(d => (*/}
-            {/*    <span>{d.x} </span>*/}
-            {/*))}*/}
             <SparklineCartesian />
         </Tile>
     )

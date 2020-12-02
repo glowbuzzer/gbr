@@ -3,9 +3,10 @@ import { useEffect, useMemo, useRef } from "react"
 import { extend, useThree } from "react-three-fiber"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import * as THREE from "three"
-import { Float32BufferAttribute, Vector3 } from "three"
+import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import simplify from "./simplify"
 import { DynamicLine } from "./DynamicLine"
+import { Line, Text } from "@react-three/drei"
 
 // TODO: hack alert - cannot export from lib project??
 declare type GCodeSegment = any
@@ -50,30 +51,84 @@ export const ToolPathAutoSize = ({ extent, children }) => {
     )
 }
 
+const DrawingExtent = ({ label, position, distance, rotation }: { label: string; position: Vector3; distance: number; rotation: Euler }) => {
+    const OFFSET = 10
+
+    if (Math.abs(distance) < 0.00001) {
+        return null
+    }
+    const points = [
+        position,
+        position.clone().add(new Vector3(0, -OFFSET, 0)),
+        position.clone().add(new Vector3(distance, -OFFSET, 0)),
+        position.clone().add(new Vector3(distance, 0, 0))
+    ].map(v => [v.x, v.y, v.z] as [number, number, number])
+
+    // noinspection RequiredAttributes
+    return (
+        <group position={position} rotation={rotation}>
+            <Line color="#909090" points={points} dashed={true} dashSize={5} />
+            <Text
+                position={new Vector3(0, -OFFSET, 0)}
+                color={"#909090"}
+                fontSize={10}
+                maxWidth={100}
+                lineHeight={1}
+                letterSpacing={0}
+                textAlign={"left"}
+                font="arial"
+                anchorX="left"
+                anchorY="top"
+            >
+                {label} {distance.toFixed(2)} mm
+            </Text>
+        </group>
+    )
+}
+
 export const PreviewPath = ({ preview }) => {
-    const previewPoints = useMemo(() => {
-        const flat = preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat()
-        return flat
-    }, [preview])
+    const previewPoints = useMemo(() => preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat(), [preview])
+
+    // calculate lower and upper limits of all points
+    const boundingBox = useMemo(
+        () =>
+            preview.reduce(
+                (boundingBox, point) => {
+                    boundingBox[0] = Math.min(boundingBox[0], point.from[0], point.to[0])
+                    boundingBox[1] = Math.min(boundingBox[1], point.from[1], point.to[1])
+                    boundingBox[2] = Math.min(boundingBox[2], point.from[2], point.to[2])
+                    boundingBox[3] = Math.max(boundingBox[3], point.from[0], point.to[0])
+                    boundingBox[4] = Math.max(boundingBox[4], point.from[1], point.to[1])
+                    boundingBox[5] = Math.max(boundingBox[5], point.from[2], point.to[2])
+                    return boundingBox
+                },
+                [0, 0, 0, 0, 0, 0]
+            ),
+        [preview]
+    )
 
     const colors = useMemo(() => {
         const floats = preview.flatMap(s => [s.color, s.color].flat())
         return new Float32BufferAttribute(floats, 3)
     }, [preview])
 
+    // noinspection RequiredAttributes
     return useMemo(
         () => (
-            <lineSegments>
-                <bufferGeometry
-                    onUpdate={geom => {
-                        geom.addAttribute("color", colors)
-                        geom.setFromPoints(previewPoints)
-                    }}
-                />
-                <lineBasicMaterial vertexColors={true} linewidth={1} />
-            </lineSegments>
+            <>
+                <lineSegments>
+                    <bufferGeometry
+                        onUpdate={geom => {
+                            geom.addAttribute("color", colors)
+                            geom.setFromPoints(previewPoints)
+                        }}
+                    />
+                    <lineBasicMaterial vertexColors={true} linewidth={1} />
+                </lineSegments>
+                <DrawingExtent label="X" position={new Vector3(0, 0, 0)} distance={boundingBox[3] - boundingBox[0]} rotation={new Euler()} />
+            </>
         ),
-        [previewPoints, colors]
+        [previewPoints, colors, boundingBox]
     )
 }
 
