@@ -5,6 +5,7 @@ import deepEqual from "fast-deep-equal"
 
 export type ToolPathSettingsType = {
     overrideWorkspace: boolean
+    extent: number
 }
 
 type ToolPathElement = {
@@ -23,7 +24,8 @@ type ToolPathForKinematicsConfiguration = {
 
 function load_settings(): ToolPathSettingsType {
     const DEFAULT_SETTINGS = {
-        overrideWorkspace: false
+        overrideWorkspace: false,
+        extent: 100
     }
     try {
         return JSON.parse(localStorage.getItem("toolpath.settings")) || DEFAULT_SETTINGS
@@ -101,12 +103,8 @@ export const useToolPath = (kc: number) => {
 }
 
 export const useToolPathSettings = () => {
-    const settings = useSelector((state: RootState) => {
-        console.log("TOOLPATH STATE", state.toolPath)
-        return state.toolPath.settings
-    }, shallowEqual)
+    const settings = useSelector((state: RootState) => state.toolPath.settings, shallowEqual)
 
-    console.log("RETURNING SETTINGS", settings)
     return {
         settings,
         setSettings(settings: ToolPathSettingsType) {

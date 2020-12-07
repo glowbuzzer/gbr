@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { Tile, TileSettings } from "@glowbuzzer/layout"
-import { Button, Checkbox, Col } from "antd"
+import { Button, Checkbox, Col, Form, Input } from "antd"
 import { ToolPathSettingsType, useConfig, usePreview, useToolPath, useToolPathSettings } from "@glowbuzzer/store"
 import { PreviewPath, ToolPath, ToolPathAutoSize } from "./ToolPathFiber"
 import { Canvas } from "react-three-fiber"
@@ -22,32 +22,46 @@ const ToolPathSettings = () => {
 
     return (
         <TileSettings title="Tool Path Settings" onConfirm={save} onReset={() => saveSettings(initialSettings)}>
-            <Checkbox
-                checked={settings.overrideWorkspace}
-                onChange={event => {
-                    onChange({ overrideWorkspace: event.target.checked })
-                }}
-            >
-                Override Configuration
-            </Checkbox>
+            <Form>
+                <Form.Item label="Override Configuration">
+                    <Checkbox
+                        checked={settings.overrideWorkspace}
+                        onChange={event => {
+                            onChange({ overrideWorkspace: event.target.checked })
+                        }}
+                    />
+                </Form.Item>
+                <Form.Item label="Extent">
+                    <Input
+                        value={settings.extent}
+                        onChange={event => {
+                            onChange({ extent: Number(event.target.value) || 100 })
+                        }}
+                    />
+                </Form.Item>
+            </Form>
         </TileSettings>
     )
 }
 
 export const ToolPathTile = () => {
     const { path, reset } = useToolPath(0)
+    const { settings } = useToolPathSettings()
     const { segments } = usePreview()
     const config = useConfig()
 
     const parameters = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
     const { xExtents, yExtents, zExtents } = parameters
     const extent = useMemo(() => {
+        if (settings.overrideWorkspace) {
+            return settings.extent
+        }
         // just return the max of the abs of any of our cartesian limits
         return Math.max.apply(
             Math.max,
             [xExtents, yExtents, zExtents].flat().map(v => Math.abs(v))
         )
-    }, [xExtents, yExtents, zExtents])
+    }, [xExtents, yExtents, zExtents, settings])
 
     // noinspection RequiredAttributes
     return (
