@@ -69,8 +69,6 @@ class GCodeInterpreter {
     interpret(data) {
         const groups = partitionWordsByGroup(data.words)
 
-        console.log("DATA", data, "GROUPS", groups)
-
         for (let i = 0; i < groups.length; ++i) {
             const words = groups[i]
             const word = words[0] || []

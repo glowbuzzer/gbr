@@ -11,6 +11,8 @@ import { kinematicsSlice } from "./kinematics"
 import { devToolsSlice } from "./devtools"
 import { previewSlice } from "./preview"
 import { jogSlice } from "./jogging"
+import { digitalInputsSlice } from "./din"
+import { digitalOutputsSlice } from "./dout"
 
 export const rootReducer = combineReducers({
     config: configSlice.reducer,
@@ -19,6 +21,8 @@ export const rootReducer = combineReducers({
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,
     joints: jointsSlice.reducer,
+    din: digitalInputsSlice.reducer,
+    dout: digitalOutputsSlice.reducer,
     jog: jogSlice.reducer,
     gcode: gcodeSlice.reducer,
     preview: previewSlice.reducer,

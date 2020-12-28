@@ -75,6 +75,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
+    M8() {
+        this.buffer.push({
+            activityType: 18 // ENDPROGRAM
+        })
+    }
+
     G0(params, line: GCodeLine) {
         this.updateModals(params)
 
@@ -142,6 +148,16 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             moveArc: {
                 moveParams,
                 ...arcParams(params, true, start, end)
+            }
+        })
+    }
+
+    G4(params, line: GCodeLine) {
+        this.buffer.push({
+            activityType: 13, // dwell
+            ...args(line),
+            dwell: {
+                ticksToDwell: params.P || 0
             }
         })
     }

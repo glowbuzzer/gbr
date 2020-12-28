@@ -3,11 +3,18 @@ import { useMemo, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
 import { Tile, TileSettings } from "@glowbuzzer/layout"
 import styled from "styled-components"
-import { Checkbox, Col, Row } from "antd"
+import { Button, Checkbox, Col, InputNumber, Row } from "antd"
 import { CheckboxChangeEvent } from "antd/es/checkbox"
-import { TelemetrySettingsType, telemetrySlice, useConfig, useTelemetryData, useTelemetrySettings } from "@glowbuzzer/store"
+import {
+    CaptureState,
+    TelemetrySettingsType,
+    telemetrySlice,
+    useConfig,
+    useTelemetryCapture,
+    useTelemetryData,
+    useTelemetrySettings
+} from "@glowbuzzer/store"
 import { useDispatch } from "react-redux"
-import { usePageVisibility } from "../util/visibility"
 
 const StyledSettings = styled.div``
 const Selection = styled.div`
@@ -23,7 +30,7 @@ type TelemetrySettingsDialogProps = {
 }
 
 export const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialogProps) => {
-    const { cartesianAxes, joints, cartesianEnabled } = settings
+    const { cartesianAxes, joints, cartesianEnabled, queueEnabled } = settings
 
     function update_cartesian(event: CheckboxChangeEvent) {
         const { name, checked } = event.target
@@ -54,7 +61,7 @@ export const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySetting
     return (
         <StyledSettings>
             <Row>
-                <Col span={12}>
+                <Col span={8}>
                     <Checkbox
                         checked={cartesianEnabled}
                         onChange={event => {
@@ -75,7 +82,7 @@ export const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySetting
                         </Checkbox>
                     </Selection>
                 </Col>
-                <Col span={12}>
+                <Col span={8}>
                     <Checkbox
                         checked={settings.jointsEnabled}
                         onChange={event => {
@@ -104,6 +111,16 @@ export const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySetting
                             Joint 6
                         </Checkbox>
                     </Selection>
+                </Col>
+                <Col span={8}>
+                    <Checkbox
+                        checked={queueEnabled}
+                        onChange={event => {
+                            onChange({ queueEnabled: event.target.checked })
+                        }}
+                    >
+                        Queue Info
+                    </Checkbox>
                 </Col>
             </Row>
             <div>
@@ -150,7 +167,6 @@ const axis_keys = ["x", "y", "z"]
 const SparklineCartesian = () => {
     const telemetry = useTelemetryData()
     const settings = useTelemetrySettings()
-    const visible = usePageVisibility()
     const config = useConfig()
 
     const pos_domain = useMemo(() => {
@@ -163,10 +179,6 @@ const SparklineCartesian = () => {
         config
     ])
     const options = useMemo(() => settings.cartesianAxes.map((a, index) => a && { color: axis_colors[index] }).filter(o => o), [settings])
-
-    if (!visible) {
-        return null
-    }
 
     if (!settings.cartesianEnabled) {
         return null
@@ -199,10 +211,100 @@ const SparklineCartesian = () => {
     )
 }
 
-export const TelemetryTile = () => {
-    // const data = useTelemetryData()
+const SparklineQueue = () => {
+    const telemetry = useTelemetryData()
+    const settings = useTelemetrySettings()
+
+    const cap_options = useMemo(() => [{ color: axis_colors[0] }, { color: axis_colors[1] }], [])
+    const wait_options = useMemo(() => [{ color: axis_colors[0] }], [])
+
+    if (!settings.queueEnabled) {
+        return null
+    }
+
+    const cap = telemetry.map(d => ({
+        t: d.t,
+        values: [d.m7cap, d.m4cap]
+    }))
+
+    const wait = telemetry.map(d => ({
+        t: d.t,
+        values: [d.m7wait || 0]
+    }))
+
     return (
-        <Tile title="Telemetry" settings={<TelemetrySettings />}>
+        <>
+            <SparklineScrolling domain={[0, 150]} options={cap_options} data={cap} />
+            <SparklineScrolling domain={[0, 10]} options={wait_options} data={wait} />
+        </>
+    )
+}
+
+const StyledCaptureState = styled.span`
+    display: inline-block;
+    margin-right: 20px;
+    color: grey;
+    user-select: none;
+`
+
+const TelemetryControls = () => {
+    const capture = useTelemetryCapture()
+    const data = useTelemetryData()
+
+    function download() {
+        const dl =
+            "data:application/octet-stream;charset=utf-16le;base64," +
+            btoa(
+                [["t", "x", "y", "z"]]
+                    .concat(data.map(d => [d.t, d.x, d.y, d.z]))
+                    .map(line => line.join(","))
+                    .join("\n")
+            )
+
+        const a = document.createElement("a")
+        document.body.appendChild(a)
+        a.download = "telemetry.csv"
+        a.href = dl
+        a.click()
+    }
+
+    return (
+        <>
+            {
+                {
+                    [CaptureState.NONE]: <Button onClick={() => capture.startCapture()}>Start Capture</Button>,
+                    [CaptureState.WAITING]: (
+                        <>
+                            <StyledCaptureState>WAITING</StyledCaptureState>
+                            <Button onClick={() => capture.cancelCapture()}>Cancel Capture</Button>
+                        </>
+                    ),
+                    [CaptureState.COMPLETE]: (
+                        <>
+                            <StyledCaptureState>COMPLETE</StyledCaptureState>
+                            <Button onClick={download}>Download</Button>
+                            <Button onClick={() => capture.cancelCapture()}>Reset</Button>
+                        </>
+                    ),
+                    [CaptureState.TRIGGERED]: <StyledCaptureState>CAPTURING</StyledCaptureState>
+                }[capture.captureState]
+            }
+            &nbsp;
+            <InputNumber
+                value={capture.captureDuration}
+                min={10}
+                max={5000}
+                step={10}
+                onChange={captureDuration => capture.setDuration(Number(captureDuration))}
+            />
+        </>
+    )
+}
+
+export const TelemetryTile = () => {
+    return (
+        <Tile title="Telemetry" settings={<TelemetrySettings />} footer={<TelemetryControls />}>
+            <SparklineQueue />
             <SparklineCartesian />
         </Tile>
     )

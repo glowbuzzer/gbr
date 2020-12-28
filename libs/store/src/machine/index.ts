@@ -41,7 +41,7 @@ type MachineStateHandling = {
     nextControlWord: number | void
 }
 
-function updateMachineCommandMsg(command) {
+export function updateMachineCommandMsg(command) {
     return JSON.stringify({
         command: {
             machine: {

@@ -9,6 +9,7 @@ import { Button, Checkbox } from "antd"
 import { useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import { IMarker } from "react-ace"
 import styled, { css } from "styled-components"
+import { useEffect } from "react"
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -25,15 +26,16 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
         props.readOnly &&
         css`
             pointer-events: none;
+
             .ace_content,
             .ace-github .ace_marker-layer .ace_active-line {
                 background: #f0f0f0;
             }
+
             .ace_cursor-layer {
                 display: none;
             }
         `}
-
     .gb-ace-highlight {
         background: #d3e5ff;
         position: relative;
@@ -47,15 +49,19 @@ export const GCodeTile = () => {
     const prefs = usePrefs()
     const preview = usePreview()
 
+    useEffect(() => {
+        preview.setGCode(gcode)
+        // eslint-disable-next-line
+    }, [])
+
     function send_gcode() {
         setGCodeLS(gcode)
         stream.send(gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
 
     function update_gcode(gcode: string) {
-        console.log("SET GCODE!")
-        preview.setGCode(gcode)
         setGCode(gcode)
+        preview.setGCode(gcode)
     }
 
     function update_m2_pref(v) {

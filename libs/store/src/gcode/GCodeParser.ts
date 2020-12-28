@@ -39,14 +39,8 @@ const parseLine = (() => {
         // result.words = []
 
         let ln // Line number
-        // let cs // Checksum
-        let match
-        while ((match = re.exec(line)) != null) {
-            console.log("MATCH FOUND", match)
-        }
         // const regex = re.exec(line)
         const words = stripComments(line).match(re) || []
-        console.log("WORDS", words)
 
         for (let i = 0; i < words.length; ++i) {
             const word = words[i]

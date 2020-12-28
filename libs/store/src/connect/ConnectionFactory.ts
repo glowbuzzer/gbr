@@ -1,6 +1,6 @@
 import { AppThunk, Connection } from "./Connection"
 import { telemetrySlice } from "../telemetry"
-import { machineSlice, updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine"
+import { machineSlice, updateMachineCommandMsg, updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
@@ -10,8 +10,9 @@ import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
 import { processJogStateChanges, RootState } from "@glowbuzzer/store"
 import { jogSlice } from "../jogging"
-import { DevWebSocket } from "./DevWebSocket"
 import { configSlice } from "../config"
+import { digitalInputsSlice } from "../din"
+import { digitalOutputsSlice } from "../dout"
 
 abstract class ProcessorBase {
     protected first = true
@@ -24,14 +25,19 @@ abstract class ProcessorBase {
     }
 }
 
+// noinspection DuplicatedCode
 class StatusProcessor extends ProcessorBase {
+    private tick: number
+
     process_internal(msg, dispatch, ws, getState, first) {
-        const { actualTarget, requestedTarget, nextControlWord } = getState().machine
+        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
         const previousJogState = [...getState().jog]
 
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
+        msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
+        msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
         msg.status.jog && dispatch(jogSlice.actions.status(msg.status.jog))
@@ -40,6 +46,8 @@ class StatusProcessor extends ProcessorBase {
         processJogStateChanges(previousJogState, getState().jog, msg => ws.send(msg))
 
         if (first) {
+            this.tick = 0
+
             if (actualTarget !== requestedTarget) {
                 ws.send(updateMachineTargetMsg(requestedTarget))
             }
@@ -48,12 +56,24 @@ class StatusProcessor extends ProcessorBase {
             } else {
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
             }
+            dispatch(telemetrySlice.actions.init())
+        }
+
+        if (this.tick % 50 === 0) {
+            // about every 5 seconds assuming status message is 10hz
+            ws.send(
+                updateMachineCommandMsg({
+                    heartbeat // echo the machine status heartbeat
+                })
+            )
         }
 
         if (nextControlWord) {
             console.log("Setting machine control word")
             ws.send(updateMachineControlWordMsg(nextControlWord))
         }
+
+        this.tick++
     }
 }
 

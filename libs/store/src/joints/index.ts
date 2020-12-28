@@ -29,17 +29,19 @@ export function useJoints() {
         ...j,
         setControlWord(value) {
             console.log("Setting joint control word: ", value)
-            connection.send({
-                command: {
-                    joint: {
-                        [index]: {
-                            command: {
-                                controlWord: value
+            connection.send(
+                JSON.stringify({
+                    command: {
+                        joint: {
+                            [index]: {
+                                command: {
+                                    controlWord: value
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
+            )
         }
     }))
 }

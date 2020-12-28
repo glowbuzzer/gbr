@@ -12,6 +12,7 @@ import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
 import { PreferencesDialog } from "@glowbuzzer/controls"
+import { DigitalIoTile } from "./tiles/DigitalIoTile"
 
 const StyledApp = styled.div``
 
@@ -82,12 +83,20 @@ export const App = () => {
             render: <JogTile />
         },
         simpledro: {
-            x: 0,
+            x: 6,
             y: 0,
             width: 2,
             height: 2,
             title: "Digital Readout",
             render: tile => <SimpleDroTile />
+        },
+        digitalio: {
+            x: 6,
+            y: 0,
+            width: 2,
+            height: 6,
+            title: "Digital In/Out",
+            render: <DigitalIoTile />
         },
         gcode: {
             x: 0,
@@ -98,7 +107,7 @@ export const App = () => {
             render: tile => <GCodeTile />
         },
         devtools: {
-            x: 0,
+            x: 6,
             y: 0,
             width: 2,
             height: 4,

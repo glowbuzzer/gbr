@@ -3,13 +3,14 @@ import { useEffect, useMemo, useRef } from "react"
 import { extend, useThree } from "react-three-fiber"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import * as THREE from "three"
-import { Euler, Float32BufferAttribute, Vector3 } from "three"
+import { DoubleSide, Euler, Float32BufferAttribute, Vector3 } from "three"
 import simplify from "./simplify"
 import { DynamicLine } from "./DynamicLine"
 import { Line, Text } from "@react-three/drei"
+import { GCodeSegment } from "@glowbuzzer/store"
 
 // TODO: hack alert - cannot export from lib project??
-declare type GCodeSegment = any
+// declare type GCodeSegment = any
 
 extend({ OrbitControls })
 
@@ -51,43 +52,28 @@ export const ToolPathAutoSize = ({ extent, children }) => {
     )
 }
 
-const DrawingExtent = ({ label, position, distance, rotation }: { label: string; position: Vector3; distance: number; rotation: Euler }) => {
-    const OFFSET = 10
+type DrawingExtentProps = {
+    preview: GCodeSegment[]
+    scale: number
+}
 
-    if (Math.abs(distance) < 0.00001) {
-        return null
-    }
+const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
+    const dashSize = scale / 40
+
     const points = [
         position,
-        position.clone().add(new Vector3(0, -OFFSET, 0)),
-        position.clone().add(new Vector3(distance, -OFFSET, 0)),
-        position.clone().add(new Vector3(distance, 0, 0))
+        position.clone().add(new Vector3(0, distanceY, 0)),
+        position.clone().add(new Vector3(distanceX, distanceY, 0)),
+        position.clone().add(new Vector3(distanceX, 0, 0))
     ].map(v => [v.x, v.y, v.z] as [number, number, number])
 
     // noinspection RequiredAttributes
-    return (
-        <group position={position} rotation={rotation}>
-            <Line color="#909090" points={points} dashed={true} dashSize={5} />
-            <Text
-                position={new Vector3(0, -OFFSET, 0)}
-                color={"#909090"}
-                fontSize={10}
-                maxWidth={100}
-                lineHeight={1}
-                letterSpacing={0}
-                textAlign={"left"}
-                font="arial"
-                anchorX="left"
-                anchorY="top"
-            >
-                {label} {distance.toFixed(2)} mm
-            </Text>
-        </group>
-    )
+    return <Line color="#909090" points={points} dashed={true} dashSize={dashSize} gapSize={dashSize / 2} />
 }
 
-export const PreviewPath = ({ preview }) => {
-    const previewPoints = useMemo(() => preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat(), [preview])
+const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
+    const OFFSET = scale / 10
+    const fontSize = scale / 15
 
     // calculate lower and upper limits of all points
     const boundingBox = useMemo(
@@ -107,6 +93,59 @@ export const PreviewPath = ({ preview }) => {
         [preview]
     )
 
+    const extentX = boundingBox[3] - boundingBox[0]
+    const extentY = boundingBox[4] - boundingBox[1]
+    const extentZ = boundingBox[5] - boundingBox[2]
+
+    const lineHeight = 1.5
+
+    function LabelText({ position, label, distance }) {
+        // noinspection RequiredAttributes
+        return (
+            <Text
+                position={position}
+                color={"#909090"}
+                fontSize={fontSize}
+                maxWidth={fontSize * 10}
+                lineHeight={lineHeight}
+                letterSpacing={0}
+                textAlign={"left"}
+                font="arial"
+                anchorX="left"
+                anchorY="top"
+            >
+                {label} {distance.toFixed(2)} mm
+            </Text>
+        )
+    }
+
+    // noinspection RequiredAttributes
+    return (
+        <group position={new Vector3(boundingBox[0], boundingBox[2], 0)}>
+            <DashedExtent position={new Vector3(0, -fontSize, 0)} distanceX={extentX} distanceY={-OFFSET} scale={scale} />
+            <group rotation={new Euler(0, 0, -Math.PI / 2)}>
+                <DashedExtent position={new Vector3(-extentY, 0, 0)} distanceX={extentY} distanceY={-OFFSET} scale={scale} />
+            </group>
+            <group position={new Vector3(extentX, 0, extentZ)} rotation={new Euler(Math.PI / 2, 0, -Math.PI / 2)}>
+                <DashedExtent position={new Vector3()} distanceX={extentZ} distanceY={OFFSET} scale={scale} />
+            </group>
+            <LabelText position={new Vector3(0, -OFFSET - fontSize, 0)} label=" X" distance={extentX} />
+            <LabelText position={new Vector3(-OFFSET, 0, 0)} label="Y" distance={extentY} />
+            <group position={new Vector3(extentX + OFFSET, 0, fontSize * lineHeight)} rotation={new Euler(Math.PI / 2, 0, 0)}>
+                <LabelText position={new Vector3()} label=" Z" distance={extentZ} />
+            </group>
+        </group>
+    )
+}
+
+type PreviewPathProps = {
+    preview: GCodeSegment[]
+    scale: number
+}
+
+export const PreviewPath = ({ preview, scale }: PreviewPathProps) => {
+    const previewPoints = useMemo(() => preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat(), [preview])
+
     const colors = useMemo(() => {
         const floats = preview.flatMap(s => [s.color, s.color].flat())
         return new Float32BufferAttribute(floats, 3)
@@ -125,21 +164,32 @@ export const PreviewPath = ({ preview }) => {
                     />
                     <lineBasicMaterial vertexColors={true} linewidth={1} />
                 </lineSegments>
-                <DrawingExtent label="X" position={new Vector3(0, 0, 0)} distance={boundingBox[3] - boundingBox[0]} rotation={new Euler()} />
+                <DrawingExtent preview={preview} scale={scale} />
             </>
         ),
-        [previewPoints, colors, boundingBox]
+        [previewPoints, colors, scale, preview]
     )
 }
 
-export const ToolPath = ({ path }) => {
+export const ToolPath = ({ path, scale }) => {
     const pathPoints = simplify(path, 0.01).flatMap(p => [p.x, p.y, p.z])
+    const lastPoint: Vector3 = path[path.length - 1]
+
+    const fulcrumHeight = 0.4 * scale
+    const fulcrum = new Vector3(lastPoint?.x || 0, lastPoint?.y || 0, (lastPoint?.z || 0) + fulcrumHeight / 2)
+
     // noinspection RequiredAttributes
     return (
-        <DynamicLine
-            points={pathPoints} // Array of points
-            color={"red"}
-            lineWidth={2} // In pixels (default)
-        />
+        <>
+            <DynamicLine
+                points={pathPoints} // Array of points
+                color={"red"}
+                lineWidth={2} // In pixels (default)
+            />
+            <mesh position={fulcrum} rotation={new Euler(-Math.PI / 2, 0, 0)}>
+                <coneBufferGeometry args={[0.05 * scale, fulcrumHeight, 3]} />
+                <meshPhongMaterial color="#000099" opacity={0.1} transparent={true} side={DoubleSide} flatShading={true} />
+            </mesh>
+        </>
     )
 }

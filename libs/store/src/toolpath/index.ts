@@ -2,6 +2,9 @@ import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "@glowbuzzer/store"
 import deepEqual from "fast-deep-equal"
+import { settings } from "../util/settings"
+
+const { load, save } = settings("toolpath")
 
 export type ToolPathSettingsType = {
     overrideWorkspace: boolean
@@ -22,27 +25,14 @@ type ToolPathForKinematicsConfiguration = {
     last: any // record last status
 }
 
-function load_settings(): ToolPathSettingsType {
-    const DEFAULT_SETTINGS = {
-        overrideWorkspace: false,
-        extent: 100
-    }
-    try {
-        return JSON.parse(localStorage.getItem("toolpath.settings")) || DEFAULT_SETTINGS
-    } catch {
-        console.log("Failed to load toolpath settings, returning defaults")
-    }
-    return DEFAULT_SETTINGS
-}
-
-function save_settings(value) {
-    localStorage.setItem("toolpath.settings", JSON.stringify(value))
-}
-
 export const toolPathSlice = createSlice({
     name: "toolPath",
     initialState: {
-        settings: load_settings() as ToolPathSettingsType,
+        settings: {
+            overrideWorkspace: false,
+            extent: 100,
+            ...load()
+        } as ToolPathSettingsType,
         paths: [] as ToolPathForKinematicsConfiguration[]
     },
     reducers: {
@@ -73,8 +63,9 @@ export const toolPathSlice = createSlice({
             }
         },
         settings(state, action) {
+            console.log("TOOLPATH SETTINGS CHANGED", action.payload)
             state.settings = action.payload
-            save_settings(action.payload)
+            save(action.payload)
         }
     }
 })
@@ -104,11 +95,13 @@ export const useToolPath = (kc: number) => {
 
 export const useToolPathSettings = () => {
     const settings = useSelector((state: RootState) => state.toolPath.settings, shallowEqual)
+    const dispatch = useDispatch()
 
     return {
         settings,
         setSettings(settings: ToolPathSettingsType) {
-            toolPathSlice.actions.settings(settings)
+            console.log("SAVE SETTINGS", settings)
+            dispatch(toolPathSlice.actions.settings(settings))
         }
     }
 }

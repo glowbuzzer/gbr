@@ -5,8 +5,9 @@ import { Button, Checkbox, Col, Form, Input } from "antd"
 import { ToolPathSettingsType, useConfig, usePreview, useToolPath, useToolPathSettings } from "@glowbuzzer/store"
 import { PreviewPath, ToolPath, ToolPathAutoSize } from "./ToolPathFiber"
 import { Canvas } from "react-three-fiber"
-import { Euler, Vector3 } from "three"
+import { DoubleSide, Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
+import { Cone } from "@react-three/drei"
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -53,6 +54,7 @@ export const ToolPathTile = () => {
     const parameters = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
     const { xExtents, yExtents, zExtents } = parameters
     const extent = useMemo(() => {
+        console.log("Recalc extent")
         if (settings.overrideWorkspace) {
             return settings.extent
         }
@@ -70,12 +72,12 @@ export const ToolPathTile = () => {
                 <ToolPathAutoSize extent={extent}>
                     <ambientLight />
                     <pointLight position={[10, 10, 10]} />
-                    <gridHelper args={[2 * extent, 20, undefined, 0xc0c0c0]} rotation={new Euler(Math.PI / 2)} />
-                    <axesHelper args={[30]} position={new Vector3(-180, -20, 0)} />
+                    <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
+                    <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
 
-                    <WorkspaceDimensions xExtent={xExtents} yExtent={yExtents} zExtent={zExtents} />
-                    <ToolPath path={path} />
-                    <PreviewPath preview={segments} />
+                    <WorkspaceDimensions extent={extent} />
+                    <ToolPath path={path} scale={extent} />
+                    <PreviewPath preview={segments} scale={extent} />
                 </ToolPathAutoSize>
             </Canvas>
 

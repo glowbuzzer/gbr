@@ -3,25 +3,20 @@ import { Text } from "@react-three/drei"
 import { Euler, Vector3 } from "three"
 
 type WorkspaceDimensionProps = {
-    xExtent: number[]
-    yExtent: number[]
-    zExtent: number[]
+    extent: number
 }
 
-export const WorkspaceDimensions = (props: WorkspaceDimensionProps) => {
-    const { xExtent, yExtent, zExtent } = props
-    const xDim = xExtent[1] - xExtent[0]
-    const yDim = yExtent[1] - yExtent[0]
-    const zDim = zExtent[1] - zExtent[0]
-
+export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
+    const fontSize = extent / 10
+    const maxWidth = extent
     // noinspection RequiredAttributes
     return (
         <>
             <Text
-                position={new Vector3(xExtent[0], yExtent[0])}
+                position={new Vector3(-extent, -extent)}
                 color={"#f0f0f0"}
-                fontSize={10}
-                maxWidth={100}
+                fontSize={fontSize}
+                maxWidth={maxWidth}
                 lineHeight={1}
                 letterSpacing={0}
                 textAlign={"left"}
@@ -29,14 +24,14 @@ export const WorkspaceDimensions = (props: WorkspaceDimensionProps) => {
                 anchorX="left"
                 anchorY="top"
             >
-                X {xDim.toFixed(2)} mm
+                X {(extent * 2).toFixed(2)} mm
             </Text>
             <Text
-                position={new Vector3(xExtent[0], yExtent[0])}
+                position={new Vector3(-extent, -extent)}
                 rotation={new Euler(0, 0, Math.PI / 2)}
                 color={"#f0f0f0"}
-                fontSize={10}
-                maxWidth={100}
+                fontSize={fontSize}
+                maxWidth={maxWidth}
                 lineHeight={1}
                 letterSpacing={0}
                 textAlign={"left"}
@@ -44,7 +39,7 @@ export const WorkspaceDimensions = (props: WorkspaceDimensionProps) => {
                 anchorX="left"
                 anchorY="bottom"
             >
-                Y {xDim.toFixed(2)} mm
+                Y {(extent * 2).toFixed(2)} mm
             </Text>
         </>
     )

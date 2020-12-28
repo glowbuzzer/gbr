@@ -2,8 +2,8 @@ import { createSlice } from "@reduxjs/toolkit"
 import { GCodePreviewAdapter } from "./GCodePreviewAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
+import { useMemo } from "react"
 
-// TODO: snowpack doesn't recognise types for export??
 export type GCodeSegment = {
     from: number[]
     to: number[]
