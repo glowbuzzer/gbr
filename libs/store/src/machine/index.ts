@@ -8,6 +8,7 @@ export enum MachineTarget {
     NONE,
     FIELDBUS,
     SIMULATION
+
 }
 
 export enum FaultCode {
@@ -20,7 +21,8 @@ export enum FaultCode {
     FAULT_CAUSE_DRIVE_FOLLOW_ERROR = 1 << 6,
     FAULT_CAUSE_DRIVE_NO_REMOTE = 1 << 7,
     FAULT_CAUSE_ECAT = 1 << 8,
-    FAULT_CAUSE_DRIVE_ALARM = 1 << 9
+    FAULT_CAUSE_DRIVE_ALARM = 1 << 9,
+    FAULT_CAUSE_GBC_TO_PLC_CON_ERROR = 1 << 10
 }
 
 // this is the data coming back from board in status.machine
