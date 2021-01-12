@@ -1,10 +1,10 @@
 import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import { JogDirection, JogMode, useGCode, useJog, useJoints } from "@glowbuzzer/store"
+import { JogDirection, JogMode, useGCode, useJog } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Form, Input, Radio, Space } from "antd"
 import { StyledControls } from "../util/styled"
-import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined, MinusCircleOutlined } from "@ant-design/icons"
+import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined } from "@ant-design/icons"
 
 const TileInner = styled.div`
     width: 100%;
@@ -112,11 +112,31 @@ export const JogTile = () => {
     const stepMode = jogMode === JogMode.JOGMODE_JOINT_STEP || jogMode === JogMode.JOGMODE_CARTESIAN_STEP
 
     function goto() {
-        const gcodeString = `
+        gcode.send(`
             G0 X${x} Y${y} Z${z}
             M2
-        `
-        gcode.send(gcodeString)
+        `)
+    }
+
+    function gotoX() {
+        gcode.send(`
+            G0 X${x}
+            M2
+        `)
+    }
+
+    function gotoY() {
+        gcode.send(`
+            G0 Y${y}
+            M2
+        `)
+    }
+
+    function gotoZ() {
+        gcode.send(`
+            G0 Z${z}
+            M2
+        `)
     }
 
     return (
@@ -212,27 +232,26 @@ export const JogTile = () => {
                 <div>
                     <Form layout="inline" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                         <Space align="baseline">
-                            <Form.Item label="X">
-                                <Input type="number" value={x} onChange={e => setX(Number(e.target.value) || 0)} />
-                            </Form.Item>
+                            <Input type="number" value={x} onChange={e => setX(Number(e.target.value) || 0)} />
+                            <Button onClick={gotoX}>Go to X</Button>
                             <Button onClick={() => setX(0)}>Reset</Button>
                         </Space>
                         <Space align="baseline">
-                            <Form.Item label="Y">
-                                <Input type="number" value={y} onChange={e => setY(Number(e.target.value) || 0)} />
-                            </Form.Item>
+                            <Input type="number" value={y} onChange={e => setY(Number(e.target.value) || 0)} />
+                            <Button onClick={gotoY}>Go to Y</Button>
                             <Button onClick={() => setY(0)}>Reset</Button>
                         </Space>
                         <Space align="baseline">
-                            <Form.Item label="Z">
-                                <Input type="number" value={z} onChange={e => setZ(Number(e.target.value) || 0)} />
-                            </Form.Item>
+                            <Input type="number" value={z} onChange={e => setZ(Number(e.target.value) || 0)} />
+                            <Button onClick={gotoZ}>Go to Z</Button>
                             <Button onClick={() => setZ(0)}>Reset</Button>
                         </Space>
                     </Form>
-                    <Button type="primary" onClick={goto}>
-                        Go to position
-                    </Button>
+                    <p>
+                        <Button block={true} onClick={goto}>
+                            Go to XYZ
+                        </Button>
+                    </p>
                 </div>
             </TileInner>
         </Tile>
