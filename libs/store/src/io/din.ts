@@ -7,7 +7,6 @@ export const digitalInputsSlice = createSlice({
     initialState: [] as boolean[],
     reducers: {
         status: (state, action) => {
-            // called with status.joints from the json every time board sends status message
             return [...action.payload]
         }
     }

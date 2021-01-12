@@ -11,8 +11,12 @@ import { connectionSlice } from "./index"
 import { processJogStateChanges, RootState } from "@glowbuzzer/store"
 import { jogSlice } from "../jogging"
 import { configSlice } from "../config"
-import { digitalInputsSlice } from "../din"
-import { digitalOutputsSlice } from "../dout"
+import { digitalInputsSlice } from "../io/din"
+import { digitalOutputsSlice } from "../io/dout"
+import { analogOutputsSlice } from "../io/aout"
+import { integerOutputsSlice } from "../io/iout"
+import { analogInputsSlice } from "../io/ain"
+import { integerInputsSlice } from "../io/iin"
 
 abstract class ProcessorBase {
     protected first = true
@@ -38,6 +42,10 @@ class StatusProcessor extends ProcessorBase {
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
         msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
         msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
+        msg.status.ain && dispatch(analogInputsSlice.actions.status(msg.status.ain))
+        msg.status.aout && dispatch(analogOutputsSlice.actions.status(msg.status.aout))
+        msg.status.iin && dispatch(integerInputsSlice.actions.status(msg.status.iin))
+        msg.status.iout && dispatch(integerOutputsSlice.actions.status(msg.status.iout))
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
         msg.status.jog && dispatch(jogSlice.actions.status(msg.status.jog))

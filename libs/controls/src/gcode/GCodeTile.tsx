@@ -1,15 +1,16 @@
 import * as React from "react"
-import AceEditor from "react-ace"
+import { useEffect } from "react"
+import AceEditor, { IMarker } from "react-ace"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Button, Checkbox } from "antd"
+import { Button, Space } from "antd"
 import { useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
-import { IMarker } from "react-ace"
 import styled, { css } from "styled-components"
-import { useEffect } from "react"
+import { GCodeSettings } from "./GCodeSettings"
+import { CaretRightOutlined, CheckSquareOutlined, PauseOutlined } from "@ant-design/icons"
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -84,12 +85,19 @@ export const GCodeTile = () => {
     return (
         <Tile
             title="GCode Sender"
-            footer={
+            settings={<GCodeSettings />}
+            controls={
                 <>
-                    <Button onClick={send_gcode}>Send</Button>&nbsp;&nbsp;
-                    <Checkbox checked={!!prefs.current.send_m2} onChange={update_m2_pref}>
-                        Send End Program
-                    </Checkbox>
+                    <Space>
+                        {/*
+                        <Button>Stop</Button>
+*/}
+                        <Button onClick={send_gcode} icon={<CaretRightOutlined />} />
+                        {/*
+                        <Button icon={<PauseOutlined />} />
+*/}
+                    </Space>
+                    &nbsp;&nbsp;
                 </>
             }
         >

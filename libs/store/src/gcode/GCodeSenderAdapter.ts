@@ -81,6 +81,42 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
+    M200(params, line) {
+        const { U, V } = params
+        this.buffer.push({
+            activityType: 11, // SET DOUT
+            ...args(line),
+            setDout: {
+                doutToSet: U || 0,
+                valueToSet: Boolean(V).valueOf() || false
+            }
+        })
+    }
+
+    M201(params, line) {
+        const { U, V } = params
+        this.buffer.push({
+            activityType: 12, // SET AOUT
+            ...args(line),
+            setDout: {
+                doutToSet: U || 0,
+                valueToSet: Number(V).valueOf() || 0
+            }
+        })
+    }
+
+    M202(params, line) {
+        const { U, V } = params
+        this.buffer.push({
+            activityType: 19, // SET IOUT
+            ...args(line),
+            setDout: {
+                doutToSet: U || 0,
+                valueToSet: Number(V).valueOf() || 0
+            }
+        })
+    }
+
     G0(params, line: GCodeLine) {
         this.updateModals(params)
 

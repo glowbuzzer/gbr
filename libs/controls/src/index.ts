@@ -5,6 +5,13 @@ export * from "./dro/JointDro"
 export * from "./dro/RobotConfigurationDro"
 export * from "./dro/SegmentDisplay"
 
+export * from "./io/DigitalInputsTile"
+export * from "./io/DigitalOutputsTile"
+export * from "./io/AnalogInputsTile"
+export * from "./io/AnalogOutputsTile"
+export * from "./io/IntegerInputsTile"
+export * from "./io/IntegerOutputsTile"
+
 export * from "./tasks/TaskDisplay"
 
 export * from "./misc/FrameSelector"

@@ -20,14 +20,13 @@ export const TileLayout = () => {
         w: width,
         h: height,
         minH: 2,
-        minW: x === 0 ? 2 : 4
+        minW: x === 1 ? 4 : 1
     }))
 
     const containers = Object.entries(tiles)
         .filter(([, tile]) => tile.visible)
         .map(([, { render, ...tile }]) => <TileContainer key={tile.id}>{typeof render === "function" ? render(tile) : render}</TileContainer>)
 
-    console.log("LAYOUT IN RENDER", layout)
     return (
         <ReactGridLayout cols={8} rowHeight={50} layout={layout} draggableHandle=".draggable" onLayoutChange={onLayoutChange}>
             {containers}

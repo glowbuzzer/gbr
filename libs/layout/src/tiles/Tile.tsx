@@ -28,7 +28,7 @@ export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset,
     return (
         <>
             <Button onClick={() => setShowSettings(!showSettings)} icon={<EditOutlined />} />
-            <Modal title={title} visible={showSettings} onCancel={cancel} onOk={ok}>
+            <Modal destroyOnClose={true} title={title} visible={showSettings} onCancel={cancel} onOk={ok}>
                 {children}
             </Modal>
         </>

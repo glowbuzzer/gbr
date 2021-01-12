@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FC, useContext } from "react"
+import { FC, useContext, useEffect } from "react"
 import { useLocalStorage } from "./LocalStorageHook"
 import { tileLayoutContext, TileLayoutContextType } from "./TileContext"
 
@@ -26,12 +26,15 @@ type TileProviderProps = {
 }
 
 export const TileProvider: FC<TileProviderProps> = ({ tiles, children }) => {
-    const tilesAsArray = Object.entries(tiles).map(([id, tile]) => ({ id, ...tile }))
-    const defaultVisibility = fromEntries(tilesAsArray.map(t => [t.id, true]))
+    const defaultTilesAsArray = Object.entries(tiles).map(([id, tile]) => ({ id, ...tile }))
+    const defaultVisibility = fromEntries(defaultTilesAsArray.map(t => [t.id, true]))
     const [visibility, setVisibility] = useLocalStorage("tiles.visible", defaultVisibility)
+    const [layout, setLayout] = useLocalStorage("tiles.layout", defaultTilesAsArray)
+
+    const final_layout = defaultTilesAsArray.map(t => ({ ...t, ...layout.find(l => l.id === t.id) }))
 
     const context: TileLayoutContextType = {
-        tiles: tilesAsArray.map(t => ({ ...t, visible: visibility[t.id] })),
+        tiles: final_layout.map(t => ({ ...t, visible: visibility[t.id] })),
         setVisible(id: string, value: boolean) {
             setVisibility(visibility => ({
                 ...visibility,
@@ -39,7 +42,16 @@ export const TileProvider: FC<TileProviderProps> = ({ tiles, children }) => {
             }))
         },
         onLayoutChange(layout) {
-            console.log("LAYOUT CHANGE", layout)
+            // convert from lib type to our type
+            setLayout(
+                layout.map(l => ({
+                    id: l.i,
+                    x: l.x,
+                    y: l.y,
+                    width: l.w,
+                    height: l.h
+                }))
+            )
         }
     }
     return <tileLayoutContext.Provider value={context}>{children}</tileLayoutContext.Provider>

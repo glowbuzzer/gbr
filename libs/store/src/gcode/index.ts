@@ -3,6 +3,13 @@ import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
+import { settings } from "../util/settings"
+
+const { load, save } = settings("gcode")
+
+export type GCodeSettingsType = {
+    sendEndProgram: boolean
+}
 
 export const gcodeSlice = createSlice({
     name: "gcode",
@@ -14,9 +21,20 @@ export const gcodeSlice = createSlice({
         capacity: 0,
         buffer: [],
         active: false,
-        tag: 0
+        tag: 0,
+        settings: {
+            sendEndProgram: true,
+            ...load()
+        }
     },
     reducers: {
+        settings(state, action) {
+            state.settings = {
+                ...state.settings,
+                ...action.payload
+            }
+            save(state.settings)
+        },
         init(state, action) {
             // called when connection established and we get the first status update with act pos
             // TODO: for now we only deal with kc 0
@@ -72,4 +90,8 @@ export function useGCode() {
             dispatch(gcodeSlice.actions.append(gcodeString))
         }
     }
+}
+
+export function useGCodeSettings() {
+    return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual).settings
 }

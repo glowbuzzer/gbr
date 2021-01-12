@@ -3,36 +3,35 @@ import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "@glowbuzzer/store"
 
-type DigitalOutputCommand = {
-    state: number
+type IntegerOutputCommand = {
+    value: number
     override: boolean
 }
 
-type DigitalOutputStatus = {
-    actState: number
-} & DigitalOutputCommand
+type IntegerOutputStatus = {
+    actValue: number
+} & IntegerOutputCommand
 
-export const digitalOutputsSlice = createSlice({
-    name: "dout",
-    initialState: [] as DigitalOutputStatus[],
+export const integerOutputsSlice = createSlice({
+    name: "iout",
+    initialState: [] as IntegerOutputStatus[],
     reducers: {
         status: (state, action) => {
-            // called with status.dout from the json every time board sends status message
             return [...action.payload]
         }
     }
 })
 
-export function useDigitalOutputs() {
+export function useIntegerOutputs() {
     const connection = useConnect()
-    const values = useSelector(({ dout }: RootState) => dout, shallowEqual)
+    const values = useSelector(({ iout }: RootState) => iout, shallowEqual)
     return {
         values,
-        update(index: number, command: DigitalOutputCommand) {
+        update(index: number, command: IntegerOutputCommand) {
             connection.send(
                 JSON.stringify({
                     command: {
-                        dout: {
+                        iout: {
                             [index]: {
                                 command
                             }
