@@ -48,7 +48,7 @@ const ToolPathSettings = () => {
 export const ToolPathTile = () => {
     const { path, reset } = useToolPath(0)
     const { settings } = useToolPathSettings()
-    const { segments } = usePreview()
+    const { segments, highlightLine } = usePreview()
     const config = useConfig()
 
     const parameters = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
@@ -77,7 +77,7 @@ export const ToolPathTile = () => {
 
                     <WorkspaceDimensions extent={extent} />
                     <ToolPath path={path} scale={extent} />
-                    <PreviewPath preview={segments} scale={extent} />
+                    <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
                 </ToolPathAutoSize>
             </Canvas>
 

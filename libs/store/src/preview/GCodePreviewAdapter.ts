@@ -13,9 +13,7 @@ function fromHexString(s: string) {
     const g = (num & 0xff00) >> 8
     const b = num & 0xff
 
-    const numbers = [r / 255, g / 255, b / 255]
-    console.log("COL", numbers)
-    return numbers
+    return [r / 255, g / 255, b / 255]
 }
 
 const RAPID_COLOR = fromHexString("#a94d4d")
@@ -24,13 +22,14 @@ const MOVE_COLOR = fromHexString("#a7c0fd")
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
 
-    toSegments(points: Vector3[], color: number[]): GCodeSegment[] {
+    toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
         const result: GCodeSegment[] = []
         points.slice(1).forEach((p, index) =>
             result.push({
                 from: fromVector3(points[index]),
                 to: fromVector3(p),
-                color
+                color,
+                lineNum
             })
         )
         return result
@@ -56,34 +55,36 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return new EllipseCurve(cx, cy, r, r, startAngle, endAngle, !ccw /* not sure why? */, 0)
     }
 
-    G0(params) {
+    G0(params, { lineNum }) {
         const [from, to] = this.updateModals(params)
         this.segments.push({
             from,
             to,
-            color: RAPID_COLOR
+            color: RAPID_COLOR,
+            lineNum
         })
     }
 
-    G1(params) {
+    G1(params, { lineNum }) {
         const [from, to] = this.updateModals(params)
         this.segments.push({
             from,
             to,
-            color: MOVE_COLOR
+            color: MOVE_COLOR,
+            lineNum
         })
     }
 
-    G2(params) {
+    G2(params, { lineNum }) {
         const arc = this.toArc(params, false)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
-        this.segments.push(...this.toSegments(points, MOVE_COLOR))
+        this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }
 
-    G3(params) {
+    G3(params, { lineNum }) {
         const arc = this.toArc(params, true)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
-        this.segments.push(...this.toSegments(points, MOVE_COLOR))
+        this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }
 
     // G61() {}

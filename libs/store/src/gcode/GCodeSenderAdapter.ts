@@ -4,15 +4,6 @@ import { GCodeLine } from "./lineParser"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
-// default move params
-const moveParams = {
-    vmaxPercentage: 100,
-    amaxPercentage: 100,
-    jmaxPercentage: 100,
-    blendType: 0,
-    blendTimePercentage: 100
-}
-
 function arcParams(params, ccw, start, end) {
     params.I = params.I || 0
     params.J = params.J || 0
@@ -61,6 +52,15 @@ function args(line: GCodeLine) {
 
 // noinspection JSUnusedGlobalSymbols
 export class GCodeSenderAdapter extends GCodeInterpreter {
+    // default move params
+    moveParams = {
+        vmaxPercentage: 100,
+        amaxPercentage: 100,
+        jmaxPercentage: 100,
+        blendType: 0,
+        blendTimePercentage: 100
+    }
+
     private readonly buffer: any[]
 
     constructor(buffer, current_positions) {
@@ -124,7 +124,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: 5, // move to position
             ...args(line),
             moveToPosition: {
-                moveParams,
+                moveParams: this.moveParams,
                 cartesianPosition: {
                     configuration: 0, // not needed for cartesian machine
                     position: {
@@ -146,7 +146,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: 1, // move line
             ...args(line),
             moveLine: {
-                moveParams,
+                moveParams: this.moveParams,
                 line: {
                     position: {
                         x: this.current_positions[0],
@@ -167,7 +167,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: 2, // move arc cw
             ...args(line),
             moveArc: {
-                moveParams,
+                moveParams: this.moveParams,
                 ...arcParams(params, false, start, end)
             }
         })
@@ -182,7 +182,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: 2, // move arc ccw
             ...args(line),
             moveArc: {
-                moveParams,
+                moveParams: this.moveParams,
                 ...arcParams(params, true, start, end)
             }
         })
@@ -200,11 +200,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G61() {
         // exact stop mode (the default)
-        moveParams.blendType = 0 // NOBLEND
+        this.moveParams.blendType = 0 // NOBLEND
     }
 
     G64() {
-        moveParams.blendType = 1 // OVERLAPPED
+        this.moveParams.blendType = 1 // OVERLAPPED
         // TODO: this should be tolerance in overlapped scheme
         // moveParams.radius = params.P || 1e99; // big number meaning go as fast as possible!
     }

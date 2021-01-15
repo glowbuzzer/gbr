@@ -6,11 +6,11 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Button, Space } from "antd"
-import { useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import { Button, Radio, Space, Tag } from "antd"
+import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
-import { CaretRightOutlined, CheckSquareOutlined, PauseOutlined } from "@ant-design/icons"
+import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -19,6 +19,12 @@ function getGCodeLS() {
 function setGCodeLS(gcode) {
     return localStorage.setItem("ui.web-drives.gcode", gcode)
 }
+
+const StopIcon = () => (
+    <svg width={16} height={16}>
+        <rect x={3} y={6} width={10} height={10} fill="currentColor" />
+    </svg>
+)
 
 const StyledDiv = styled.div<{ readOnly: boolean }>`
     height: 100%;
@@ -65,8 +71,9 @@ export const GCodeTile = () => {
         preview.setGCode(gcode)
     }
 
-    function update_m2_pref(v) {
-        prefs.set("send_m2", v.target.checked)
+    function update_cursor(e) {
+        // console.log(e.cursor.row)
+        preview.setHighlightLine(e.cursor.row)
     }
 
     const highlight: IMarker[] = stream.active
@@ -82,6 +89,32 @@ export const GCodeTile = () => {
           ]
         : []
 
+    const inferredCommand = (() => {
+        switch (stream.state) {
+            case StreamState.IDLE:
+                return undefined
+            case StreamState.ACTIVE:
+                return StreamCommand.RUN
+            case StreamState.PAUSED:
+                return StreamCommand.PAUSE
+            case StreamState.STOPPING:
+            case StreamState.STOPPED:
+                return StreamCommand.STOP
+        }
+    })()
+
+    const needs_reset = stream.state === StreamState.STOPPING || stream.state === StreamState.STOPPED
+    const can_stop = !needs_reset && stream.state !== StreamState.IDLE
+    const can_pause = stream.state === StreamState.ACTIVE
+
+    function send_command(v) {
+        stream.setState(v.target.value)
+        if (stream.state === StreamState.IDLE && v.target.value === StreamCommand.RUN) {
+            console.log("send gcode")
+            send_gcode()
+        }
+    }
+
     return (
         <Tile
             title="GCode Sender"
@@ -89,10 +122,26 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
+                        <Tag>{StreamState[stream.state]}</Tag>
+
+                        <Radio.Group optionType="button" onChange={send_command} value={inferredCommand}>
+                            <Radio.Button disabled={can_pause} value={StreamCommand.RUN}>
+                                {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
+                            </Radio.Button>
+                            <Radio.Button disabled={!can_pause} value={StreamCommand.PAUSE}>
+                                <PauseOutlined />
+                            </Radio.Button>
+                            <Radio.Button disabled={!can_stop} value={StreamCommand.STOP}>
+                                <StopIcon />
+                            </Radio.Button>
+                        </Radio.Group>
+
                         {/*
                         <Button>Stop</Button>
 */}
+                        {/*
                         <Button onClick={send_gcode} icon={<CaretRightOutlined />} />
+*/}
                         {/*
                         <Button icon={<PauseOutlined />} />
 */}
@@ -101,15 +150,16 @@ export const GCodeTile = () => {
                 </>
             }
         >
-            <StyledDiv readOnly={stream.active}>
+            <StyledDiv readOnly={stream.state !== StreamState.IDLE}>
                 <AceEditor
-                    readOnly={stream.active || false}
+                    readOnly={stream.state !== StreamState.IDLE}
                     mode="gcode"
                     theme="github"
                     width={"100%"}
                     height={"100%"}
                     value={gcode}
                     onChange={update_gcode}
+                    onCursorChange={update_cursor}
                     markers={highlight}
                 />
             </StyledDiv>

@@ -140,16 +140,23 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
 
 type PreviewPathProps = {
     preview: GCodeSegment[]
+    highlightLine: number | undefined
     scale: number
 }
 
-export const PreviewPath = ({ preview, scale }: PreviewPathProps) => {
+export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps) => {
     const previewPoints = useMemo(() => preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat(), [preview])
 
     const colors = useMemo(() => {
-        const floats = preview.flatMap(s => [s.color, s.color].flat())
+        function get_color(segment: GCodeSegment) {
+            const color = segment.lineNum === highlightLine ? [0, 0, 0] : segment.color
+            return [color, color].flat()
+        }
+
+        const floats = preview.flatMap(s => get_color(s))
+
         return new Float32BufferAttribute(floats, 3)
-    }, [preview])
+    }, [preview, highlightLine])
 
     // noinspection RequiredAttributes
     return useMemo(

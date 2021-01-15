@@ -4,11 +4,27 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
+import { useConnect } from "../connect"
+import * as stream from "stream"
 
 const { load, save } = settings("gcode")
 
 export type GCodeSettingsType = {
     sendEndProgram: boolean
+}
+
+export enum StreamState {
+    IDLE,
+    ACTIVE,
+    PAUSED,
+    STOPPING,
+    STOPPED
+}
+
+export enum StreamCommand {
+    RUN,
+    PAUSE,
+    STOP
 }
 
 export const gcodeSlice = createSlice({
@@ -21,6 +37,7 @@ export const gcodeSlice = createSlice({
         capacity: 0,
         buffer: [],
         active: false,
+        state: StreamState.IDLE,
         tag: 0,
         settings: {
             sendEndProgram: true,
@@ -58,11 +75,12 @@ export const gcodeSlice = createSlice({
             state.capacity -= count
         },
         status: (state, action) => {
-            const { capacity, id, tag, active } = action.payload
+            const { capacity, id, tag, active, state: stream_state } = action.payload
 
             // tag is udf for current item, active is whether any item is currently executing
             state.tag = tag
             state.active = active
+            state.state = stream_state
 
             if (state.updateId !== id) {
                 // new capacity status update
@@ -79,15 +97,34 @@ export const gcodeSlice = createSlice({
     }
 })
 
+function updateStreamStateMsg(streamCommand: StreamCommand) {
+    return JSON.stringify({
+        command: {
+            stream: {
+                0: {
+                    command: {
+                        streamCommand
+                    }
+                }
+            }
+        }
+    })
+}
+
 export function useGCode() {
-    const { active, tag } = useSelector(({ gcode: { active, tag } }: RootState) => ({ active, tag }), shallowEqual)
+    const { state, active, tag } = useSelector(({ gcode: { state, active, tag } }: RootState) => ({ state, active, tag }), shallowEqual)
     const dispatch = useDispatch()
+    const connection = useConnect()
 
     return {
         active,
+        state,
         lineNum: tag,
         send(gcodeString) {
             dispatch(gcodeSlice.actions.append(gcodeString))
+        },
+        setState(streamCommand: StreamCommand) {
+            dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
         }
     }
 }
