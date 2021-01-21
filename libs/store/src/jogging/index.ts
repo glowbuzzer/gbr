@@ -75,15 +75,15 @@ export function useJog(jogIndex: number) {
     }
 
     return {
-        setJog(joint: number, direction: JogDirection, speedPercentage: number) {
-            updateJog(joint, direction, {
-                mode: JogMode.JOGMODE_JOINT,
+        setJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number) {
+            updateJog(index, direction, {
+                mode,
                 speedPercentage
             })
         },
-        stepJog(joint: number, direction: JogDirection, stepSize: number) {
-            updateJog(joint, direction, {
-                mode: JogMode.JOGMODE_JOINT_STEP,
+        stepJog(mode: JogMode, index: number, direction: JogDirection, stepSize: number) {
+            updateJog(index, direction, {
+                mode,
                 stepSize
             })
         }

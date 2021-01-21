@@ -6,7 +6,7 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Button, Radio, Space, Tag } from "antd"
+import { Radio, Space, Tag } from "antd"
 import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
@@ -56,6 +56,8 @@ export const GCodeTile = () => {
     const prefs = usePrefs()
     const preview = usePreview()
 
+    const active = stream.state !== StreamState.IDLE
+
     useEffect(() => {
         preview.setGCode(gcode)
         // eslint-disable-next-line
@@ -76,7 +78,7 @@ export const GCodeTile = () => {
         preview.setHighlightLine(e.cursor.row)
     }
 
-    const highlight: IMarker[] = stream.active
+    const highlight: IMarker[] = active
         ? [
               {
                   startRow: stream.lineNum,
@@ -150,9 +152,9 @@ export const GCodeTile = () => {
                 </>
             }
         >
-            <StyledDiv readOnly={stream.state !== StreamState.IDLE}>
+            <StyledDiv readOnly={active}>
                 <AceEditor
-                    readOnly={stream.state !== StreamState.IDLE}
+                    readOnly={active}
                     mode="gcode"
                     theme="github"
                     width={"100%"}

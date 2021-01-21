@@ -2,7 +2,7 @@ import { AppThunk, Connection } from "./Connection"
 import { telemetrySlice } from "../telemetry"
 import { machineSlice, updateMachineCommandMsg, updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine"
 import { jointsSlice } from "../joints"
-import { kinematicsSlice } from "../kinematics"
+import { kinematicsSlice, updateFroPercentageMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
 import { gcodeSlice } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
@@ -35,6 +35,7 @@ class StatusProcessor extends ProcessorBase {
 
     process_internal(msg, dispatch, ws, getState, first) {
         const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
+
         const previousJogState = [...getState().jog]
 
         // reducer runs synchronously, so after dispatch the state is updated already
@@ -63,6 +64,12 @@ class StatusProcessor extends ProcessorBase {
                 console.error("First status message did not contain 'kc' info!")
             } else {
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
+
+                const { froTarget } = getState().kinematics[0]
+                if (froTarget === 0) {
+                    // set fro to 100% if not already set on connect
+                    ws.send(updateFroPercentageMsg(0, 100))
+                }
             }
             dispatch(telemetrySlice.actions.init())
         }

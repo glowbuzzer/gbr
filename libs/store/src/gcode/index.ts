@@ -5,7 +5,6 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
-import * as stream from "stream"
 
 const { load, save } = settings("gcode")
 
@@ -30,14 +29,14 @@ export enum StreamCommand {
 export const gcodeSlice = createSlice({
     name: "gcode",
     initialState: {
-        updateId: -1, // update id of empty buffer in m4 will be zero (read_head << 16 + write_head)
         ready: false,
         current_positions: [],
         paused: false,
         capacity: 0,
         buffer: [],
-        active: false,
         state: StreamState.IDLE,
+        readCount: -1,
+        writeCount: -1,
         tag: 0,
         settings: {
             sendEndProgram: true,
@@ -75,23 +74,23 @@ export const gcodeSlice = createSlice({
             state.capacity -= count
         },
         status: (state, action) => {
-            const { capacity, id, tag, active, state: stream_state } = action.payload
+            const { capacity, tag, state: stream_state, readCount, writeCount } = action.payload
 
-            // tag is udf for current item, active is whether any item is currently executing
+            // tag is UDF for current item, active is whether any item is currently executing
             state.tag = tag
-            state.active = active
             state.state = stream_state
 
-            if (state.updateId !== id) {
-                // new capacity status update
+            if (state.readCount !== readCount && state.writeCount !== writeCount) {
+                // safe to record new capacity
                 state.capacity = capacity
-                state.updateId = id
+                state.readCount = readCount
+                state.writeCount = writeCount
             }
         },
-        pause: (state, action) => {
+        pause: state => {
             state.paused = true
         },
-        resume: (state, action) => {
+        resume: state => {
             state.paused = false
         }
     }
@@ -112,12 +111,11 @@ function updateStreamStateMsg(streamCommand: StreamCommand) {
 }
 
 export function useGCode() {
-    const { state, active, tag } = useSelector(({ gcode: { state, active, tag } }: RootState) => ({ state, active, tag }), shallowEqual)
+    const { state, tag } = useSelector(({ gcode: { state, tag } }: RootState) => ({ state, tag }), shallowEqual)
     const dispatch = useDispatch()
     const connection = useConnect()
 
     return {
-        active,
         state,
         lineNum: tag,
         send(gcodeString) {

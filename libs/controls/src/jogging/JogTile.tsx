@@ -90,21 +90,21 @@ export const JogTile = () => {
         setJogStep(e.target.value)
     }
 
-    function startJog(joint, direction: JogDirection) {
-        if (jogMode === JogMode.JOGMODE_JOINT) {
-            jogger.setJog(joint, direction, jogSpeed)
+    function startJog(index, direction: JogDirection) {
+        if (jogMode === JogMode.JOGMODE_JOINT || jogMode === JogMode.JOGMODE_CARTESIAN) {
+            jogger.setJog(jogMode, index, direction, jogSpeed)
         }
     }
 
-    function stopJog(joint) {
-        if (jogMode === JogMode.JOGMODE_JOINT) {
-            jogger.setJog(joint, JogDirection.NONE, jogSpeed)
+    function stopJog(index) {
+        if (jogMode === JogMode.JOGMODE_JOINT || jogMode === JogMode.JOGMODE_CARTESIAN) {
+            jogger.setJog(jogMode, index, JogDirection.NONE, jogSpeed)
         }
     }
 
-    function stepJog(joint, direction: JogDirection) {
-        if (jogMode === JogMode.JOGMODE_JOINT_STEP) {
-            jogger.stepJog(joint, direction, jogStep)
+    function stepJog(index, direction: JogDirection) {
+        if (jogMode === JogMode.JOGMODE_JOINT_STEP || jogMode === JogMode.JOGMODE_CARTESIAN_STEP) {
+            jogger.stepJog(jogMode, index, direction, jogStep)
         }
     }
 
