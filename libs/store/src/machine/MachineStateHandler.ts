@@ -45,28 +45,18 @@ export const possible_transitions = {
     FaultSet: () => 0b01000000,
     FaultClear: c => c & 0b10111111,
     FaultReset: () => 0b10000000,
-    Shutdown: c => (c & 0b01111000) | 0b0110,
-    DisableVoltage: c => c & ~0b0010,
-    SwitchOn: c => (c & 0b01110000) | 0b0111,
-    EnableOperation: c => (c & 0b01100000) | 0b1111,
-    QuickStop: c => (c & 0b01101011) | 0b1011 // do we need to force any bits here?
+    Shutdown: () => 0b00000110,
+    DisableVoltage: () => 0b00000000,
+    SwitchOn: () => 0b00000111,
+    EnableOperation: () => 0b00001111,
+    QuickStop: () => 0b00000010
 }
 
 export function handleMachineState(currentState: MachineState, controlWord: number, desiredState: DesiredState): number | void {
     const state = currentState
 
-    if (
-        desiredState === DesiredState.NONE ||
-        (desiredState === DesiredState.OPERATIONAL && state === MachineState.OPERATION_ENABLED) ||
-        (desiredState === DesiredState.STANDBY && state === MachineState.SWITCH_ON_DISABLED)
-    ) {
-        // console.log("ALREADY IN DESIRED STATE - CURRENT", state, "DESIRED", desiredState)
-        return
-    }
-
     if (desiredState === DesiredState.OPERATIONAL) {
         // console.log("HANDLE MACHINE STATE - OPERATION ENABLED - CURRENT", state)
-
         switch (state) {
             case MachineState.UNKNOWN:
             case MachineState.FAULT_REACTION_ACTIVE:
@@ -77,28 +67,33 @@ export function handleMachineState(currentState: MachineState, controlWord: numb
                 break
             case MachineState.SWITCH_ON_DISABLED:
                 // console.log("TRANSITION SHUTDOWN")
-                return possible_transitions.Shutdown(controlWord)
+                return possible_transitions.Shutdown()
             case MachineState.READY_TO_SWITCH_ON:
                 // console.log("TRANSITION SWITCH ON")
-                return possible_transitions.SwitchOn(controlWord)
+                return possible_transitions.SwitchOn()
             case MachineState.SWITCHED_ON:
                 // console.log("TRANSITION ENABLE")
-                return possible_transitions.EnableOperation(controlWord)
+                return possible_transitions.EnableOperation()
         }
-    } else {
+    } else if (desiredState === DesiredState.STANDBY) {
         // console.log("HANDLE MACHINE STATE - STANDBY - CURRENT", state, "DESIRED", desiredState)
         switch (state) {
+            case MachineState.SWITCH_ON_DISABLED:
+                if (controlWord === possible_transitions.FaultReset()) {
+                    // clear the fault reset command
+                    return possible_transitions.DisableVoltage()
+                }
+                break
             case MachineState.UNKNOWN:
             case MachineState.FAULT_REACTION_ACTIVE:
             case MachineState.FAULT:
             case MachineState.NOT_READY_TO_SWITCH_ON:
-            case MachineState.SWITCH_ON_DISABLED:
                 break
             case MachineState.OPERATION_ENABLED:
             case MachineState.QUICK_STOP:
             case MachineState.SWITCHED_ON:
             case MachineState.READY_TO_SWITCH_ON:
-                return possible_transitions.DisableVoltage(controlWord)
+                return possible_transitions.DisableVoltage()
         }
     }
 }
