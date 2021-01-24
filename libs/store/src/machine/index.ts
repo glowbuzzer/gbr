@@ -22,7 +22,8 @@ export enum FaultCode {
     FAULT_CAUSE_DRIVE_NO_REMOTE = 1 << 7,
     FAULT_CAUSE_ECAT = 1 << 8,
     FAULT_CAUSE_DRIVE_ALARM = 1 << 9,
-    FAULT_CAUSE_GBC_TO_PLC_CON_ERROR = 1 << 10
+    FAULT_CAUSE_GBC_TO_PLC_CON_ERROR = 1 << 10,
+    FAULT_CAUSE_DRIVE_MOOERROR = 1 << 11
 }
 
 // this is the data coming back from board in status.machine
@@ -85,10 +86,13 @@ export const machineSlice = createSlice({
             state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
             state.heartbeat = action.payload.heartbeat
 
+
             // set the next machine state to be sent (handled in connect/index.ts)
             state.currentState = determine_machine_state(state.statusWord)
+            console.log("state:" + state.currentState)
             state.nextControlWord = handleMachineState(state.currentState, state.controlWord, state.desiredState)
-            if (!state.nextControlWord) {
+            console.log("word:" + state.nextControlWord)
+            if (state.nextControlWord !== undefined){
                 state.desiredState = DesiredState.NONE
             }
         },
