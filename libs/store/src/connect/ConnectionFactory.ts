@@ -83,7 +83,7 @@ class StatusProcessor extends ProcessorBase {
             )
         }
 
-        if (nextControlWord) {
+        if (nextControlWord !== undefined){
             console.log("Setting machine control word")
             ws.send(updateMachineControlWordMsg(nextControlWord))
         }
