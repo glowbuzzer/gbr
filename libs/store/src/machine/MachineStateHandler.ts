@@ -54,10 +54,9 @@ export const possible_transitions = {
 
 export function handleMachineState(currentState: MachineState, controlWord: number, desiredState: DesiredState): number | void {
     const state = currentState
-
     if (desiredState === DesiredState.OPERATIONAL) {
         // console.log("HANDLE MACHINE STATE - OPERATION ENABLED - CURRENT", state)
-        switch (state) {
+            switch (state) {
             case MachineState.UNKNOWN:
             case MachineState.FAULT_REACTION_ACTIVE:
             case MachineState.FAULT:
@@ -76,7 +75,7 @@ export function handleMachineState(currentState: MachineState, controlWord: numb
                 return possible_transitions.EnableOperation()
         }
     } else if (desiredState === DesiredState.STANDBY) {
-        // console.log("HANDLE MACHINE STATE - STANDBY - CURRENT", state, "DESIRED", desiredState)
+        // console.log("HANDLE MACHINE STATEd - STANDBY - CURRENT", state, "DESIRED", desiredState)
         switch (state) {
             case MachineState.SWITCH_ON_DISABLED:
                 if (controlWord === possible_transitions.FaultReset()) {
@@ -85,15 +84,23 @@ export function handleMachineState(currentState: MachineState, controlWord: numb
                 }
                 break
             case MachineState.UNKNOWN:
+                break
             case MachineState.FAULT_REACTION_ACTIVE:
+                break
             case MachineState.FAULT:
+                break
             case MachineState.NOT_READY_TO_SWITCH_ON:
                 break
-            case MachineState.OPERATION_ENABLED:
+            case "OPERATION_ENABLED":
+                return possible_transitions.DisableVoltage()
             case MachineState.QUICK_STOP:
+                break
             case MachineState.SWITCHED_ON:
+                break
             case MachineState.READY_TO_SWITCH_ON:
                 return possible_transitions.DisableVoltage()
+            default:
+                break
         }
     }
 }
