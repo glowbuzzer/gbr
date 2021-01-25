@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
+import { useConfig } from "../config"
 
 type JointsState = {
     statusWord: number
@@ -21,6 +22,19 @@ export const jointsSlice = createSlice({
         }
     }
 })
+
+export function useJointConfig() {
+    const config = useConfig()
+    // convert keyed object to array
+    return Object.entries(config.joint).map(([name, value]) => ({
+        name,
+        ...value
+    }))
+}
+
+export function useJointCount() {
+    return useSelector(({ joints }: RootState) => joints.length)
+}
 
 export function useJoints() {
     const connection = useConnect()

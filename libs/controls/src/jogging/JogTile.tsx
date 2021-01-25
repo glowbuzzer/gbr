@@ -1,10 +1,21 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import { JogDirection, JogMode, useGCode, useJog } from "@glowbuzzer/store"
+import { JogDirection, JogMode, useGCode, useJog, useJointConfig, useJointCount, useJoints } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { Button, Form, Input, Radio, Space } from "antd"
+import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
 import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined } from "@ant-design/icons"
+
+enum JogMoveMode {
+    CARTESIAN,
+    JOINT,
+    GOTO
+}
+
+enum JogStepMode {
+    CONTINOUS,
+    STEP
+}
 
 const TileInner = styled.div`
     width: 100%;
@@ -30,56 +41,41 @@ const ButtonLayoutDiv = styled.div`
     }
 `
 
+const JointSliderDiv = styled.div`
+    display: flex;
+    gap: 10px;
+
+    .ant-slider {
+        flex-grow: 1;
+    }
+`
+
+const JointSliderReadonly = ({ jc, index }) => {
+    // this is separate component so that updates to act pos don't re-render the entire tile
+    const joints = useJoints()
+    return <Slider min={jc.pmin} max={jc.pmax} disabled value={joints[index]?.actPos} tooltipVisible={false} />
+}
+
 export const JogTile = () => {
     const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogStep, setJogStep] = useLocalStorage("jog.step", 45)
-    const [jogMode, setJogMode] = useLocalStorage<JogMode>("jog.mode", JogMode.JOGMODE_JOINT)
+    const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>("jog.mode", JogMoveMode.CARTESIAN)
+    const [jogStepMode, setJogStepMode] = useLocalStorage<JogStepMode>("jog.step", JogStepMode.CONTINOUS)
 
     const [x, setX] = useLocalStorage("jog.x", 0)
     const [y, setY] = useLocalStorage("jog.y", 0)
     const [z, setZ] = useLocalStorage("jog.z", 0)
 
     const jogger = useJog(0)
+    const joint_config = useJointConfig()
     const gcode = useGCode()
 
     function updateJogStepMode(e) {
-        switch (jogMode) {
-            case JogMode.JOGMODE_NONE:
-                break
-            case JogMode.JOGMODE_JOINT:
-                setJogMode(JogMode.JOGMODE_JOINT_STEP)
-                break
-            case JogMode.JOGMODE_CARTESIAN:
-                setJogMode(JogMode.JOGMODE_CARTESIAN_STEP)
-                break
-            case JogMode.JOGMODE_JOINT_STEP:
-                setJogMode(JogMode.JOGMODE_JOINT)
-                break
-            case JogMode.JOGMODE_CARTESIAN_STEP:
-                setJogMode(JogMode.JOGMODE_CARTESIAN)
-                break
-            default:
-        }
+        setJogStepMode(e.target.value)
     }
 
     function updateJogMoveMode(e) {
-        switch (jogMode) {
-            case JogMode.JOGMODE_NONE:
-                break
-            case JogMode.JOGMODE_JOINT:
-                setJogMode(JogMode.JOGMODE_CARTESIAN)
-                break
-            case JogMode.JOGMODE_CARTESIAN:
-                setJogMode(JogMode.JOGMODE_JOINT)
-                break
-            case JogMode.JOGMODE_JOINT_STEP:
-                setJogMode(JogMode.JOGMODE_CARTESIAN_STEP)
-                break
-            case JogMode.JOGMODE_CARTESIAN_STEP:
-                setJogMode(JogMode.JOGMODE_JOINT_STEP)
-                break
-            default:
-        }
+        setJogMoveMode(e.target.value)
     }
 
     function updateJogSpeed(e) {
@@ -91,25 +87,33 @@ export const JogTile = () => {
     }
 
     function startJog(index, direction: JogDirection) {
-        if (jogMode === JogMode.JOGMODE_JOINT || jogMode === JogMode.JOGMODE_CARTESIAN) {
-            jogger.setJog(jogMode, index, direction, jogSpeed)
+        if (jogStepMode === JogStepMode.CONTINOUS) {
+            jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
         }
     }
 
     function stopJog(index) {
-        if (jogMode === JogMode.JOGMODE_JOINT || jogMode === JogMode.JOGMODE_CARTESIAN) {
-            jogger.setJog(jogMode, index, JogDirection.NONE, jogSpeed)
+        if (jogStepMode === JogStepMode.CONTINOUS) {
+            jogger.setJog(
+                jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT,
+                index,
+                JogDirection.NONE,
+                jogSpeed
+            )
         }
     }
 
     function stepJog(index, direction: JogDirection) {
-        if (jogMode === JogMode.JOGMODE_JOINT_STEP || jogMode === JogMode.JOGMODE_CARTESIAN_STEP) {
-            jogger.stepJog(jogMode, index, direction, jogStep)
+        if (jogStepMode === JogStepMode.STEP) {
+            jogger.stepJog(
+                jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN_STEP : JogMode.JOGMODE_JOINT_STEP,
+                index,
+                direction,
+                jogSpeed,
+                jogStep
+            )
         }
     }
-
-    const jointMode = jogMode === JogMode.JOGMODE_JOINT_STEP || jogMode === JogMode.JOGMODE_JOINT
-    const stepMode = jogMode === JogMode.JOGMODE_JOINT_STEP || jogMode === JogMode.JOGMODE_CARTESIAN_STEP
 
     function goto() {
         gcode.send(`
@@ -139,120 +143,121 @@ export const JogTile = () => {
         `)
     }
 
+    function JogButton({ index, direction, children }) {
+        return (
+            <Button onClick={() => stepJog(index, direction)} onMouseDown={() => startJog(index, direction)} onMouseUp={() => stopJog(index)}>
+                {children}
+            </Button>
+        )
+    }
+
     return (
         <Tile
             title={"Jogging"}
             controls={
                 <StyledControls>
-                    <Radio.Group size={"small"} value={jointMode} onChange={updateJogMoveMode}>
-                        <Radio.Button value={true}>Joint</Radio.Button>
-                        <Radio.Button value={false}>Cartesian</Radio.Button>
+                    <Radio.Group size={"small"} value={jogMoveMode} onChange={updateJogMoveMode}>
+                        <Radio.Button value={JogMoveMode.JOINT}>Joint</Radio.Button>
+                        <Radio.Button value={JogMoveMode.CARTESIAN}>Cartesian</Radio.Button>
+                        <Radio.Button value={JogMoveMode.GOTO}>Go To</Radio.Button>
                     </Radio.Group>
                     &nbsp;
-                    <Radio.Group size={"small"} value={stepMode} onChange={updateJogStepMode}>
-                        <Radio.Button value={true}>Step</Radio.Button>
-                        <Radio.Button value={false}>Cont</Radio.Button>
+                    <Radio.Group size={"small"} value={jogStepMode} onChange={updateJogStepMode} disabled={jogMoveMode === JogMoveMode.GOTO}>
+                        <Radio.Button value={JogStepMode.STEP}>Step</Radio.Button>
+                        <Radio.Button value={JogStepMode.CONTINOUS}>Cont</Radio.Button>
                     </Radio.Group>
                 </StyledControls>
             }
         >
             <TileInner>
-                <div>
-                    <ButtonLayoutDiv>
-                        <div>
-                            <Button
-                                onClick={() => stepJog(1, JogDirection.POSITIVE)}
-                                onMouseDown={() => startJog(1, JogDirection.POSITIVE)}
-                                onMouseUp={() => stopJog(1)}
-                            >
-                                <ArrowUpOutlined />
+                {jogMoveMode === JogMoveMode.GOTO ? (
+                    <div>
+                        <Form layout="inline" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
+                            <Space align="baseline">
+                                <Input type="number" value={x} onChange={e => setX(Number(e.target.value) || 0)} />
+                                <Button onClick={gotoX}>Go to X</Button>
+                                <Button onClick={() => setX(0)}>Reset</Button>
+                            </Space>
+                            <Space align="baseline">
+                                <Input type="number" value={y} onChange={e => setY(Number(e.target.value) || 0)} />
+                                <Button onClick={gotoY}>Go to Y</Button>
+                                <Button onClick={() => setY(0)}>Reset</Button>
+                            </Space>
+                            <Space align="baseline">
+                                <Input type="number" value={z} onChange={e => setZ(Number(e.target.value) || 0)} />
+                                <Button onClick={gotoZ}>Go to Z</Button>
+                                <Button onClick={() => setZ(0)}>Reset</Button>
+                            </Space>
+                        </Form>
+                        <p>
+                            <Button block={true} onClick={goto}>
+                                Go to XYZ
                             </Button>
-                        </div>
-                        <div>
-                            <Button
-                                onClick={() => stepJog(0, JogDirection.NEGATIVE)}
-                                onMouseDown={() => startJog(0, JogDirection.NEGATIVE)}
-                                onMouseUp={() => stopJog(0)}
-                            >
-                                <ArrowLeftOutlined />
-                            </Button>
-                            <Button
-                                onClick={() => stepJog(0, JogDirection.POSITIVE)}
-                                onMouseDown={() => startJog(0, JogDirection.POSITIVE)}
-                                onMouseUp={() => stopJog(0)}
-                            >
-                                <ArrowRightOutlined />
-                            </Button>
-                        </div>
-                        <div>
-                            <Button
-                                onClick={() => stepJog(1, JogDirection.NEGATIVE)}
-                                onMouseDown={() => startJog(1, JogDirection.NEGATIVE)}
-                                onMouseUp={() => stopJog(1)}
-                            >
-                                <ArrowDownOutlined />
-                            </Button>
-                        </div>
-                    </ButtonLayoutDiv>
-                    <ButtonLayoutDiv>
-                        <div>
-                            <Button
-                                onClick={() => stepJog(2, JogDirection.POSITIVE)}
-                                onMouseDown={() => startJog(2, JogDirection.POSITIVE)}
-                                onMouseUp={() => stopJog(2)}
-                            >
-                                <ArrowUpOutlined />
-                            </Button>
-                        </div>
-                        <div>
-                            <Button
-                                onClick={() => stepJog(2, JogDirection.NEGATIVE)}
-                                onMouseDown={() => startJog(2, JogDirection.NEGATIVE)}
-                                onMouseUp={() => stopJog(2)}
-                            >
-                                <ArrowDownOutlined />
-                            </Button>
-                        </div>
-                    </ButtonLayoutDiv>
+                        </p>
+                    </div>
+                ) : (
+                    <div>
+                        {jogMoveMode === JogMoveMode.CARTESIAN ? (
+                            <>
+                                <ButtonLayoutDiv>
+                                    <div>
+                                        <JogButton index={1} direction={JogDirection.POSITIVE}>
+                                            <ArrowUpOutlined />
+                                        </JogButton>
+                                    </div>
+                                    <div>
+                                        <JogButton index={0} direction={JogDirection.NEGATIVE}>
+                                            <ArrowLeftOutlined />
+                                        </JogButton>
+                                        <JogButton index={0} direction={JogDirection.POSITIVE}>
+                                            <ArrowRightOutlined />
+                                        </JogButton>
+                                    </div>
+                                    <div>
+                                        <JogButton index={1} direction={JogDirection.NEGATIVE}>
+                                            <ArrowDownOutlined />
+                                        </JogButton>
+                                    </div>
+                                </ButtonLayoutDiv>
+                                <ButtonLayoutDiv>
+                                    <div>
+                                        <JogButton index={2} direction={JogDirection.POSITIVE}>
+                                            <ArrowUpOutlined />
+                                        </JogButton>
+                                    </div>
+                                    <div>
+                                        <JogButton index={2} direction={JogDirection.NEGATIVE}>
+                                            <ArrowDownOutlined />
+                                        </JogButton>
+                                    </div>
+                                </ButtonLayoutDiv>
+                            </>
+                        ) : (
+                            <>
+                                {joint_config.map((jc, index) => (
+                                    <JointSliderDiv key={index}>
+                                        <JogButton index={index} direction={JogDirection.NEGATIVE}>
+                                            <ArrowLeftOutlined />
+                                        </JogButton>
+                                        <JointSliderReadonly jc={jc} index={index} />
+                                        <JogButton index={index} direction={JogDirection.POSITIVE}>
+                                            <ArrowRightOutlined />
+                                        </JogButton>
+                                    </JointSliderDiv>
+                                ))}
+                            </>
+                        )}
 
-                    <Form layout="horizontal" labelCol={{ span: 10 }} wrapperCol={{ span: 8 }}>
-                        <Form.Item label="Jog Speed %">
-                            <Input type="number" value={jogSpeed} onChange={updateJogSpeed} />
-                        </Form.Item>
-                        <Form.Item label="Step Distance">
-                            <Input
-                                type="number"
-                                value={jogStep}
-                                onChange={updateJogStep}
-                                disabled={jogMode !== JogMode.JOGMODE_JOINT_STEP && jogMode !== JogMode.JOGMODE_CARTESIAN_STEP}
-                            />
-                        </Form.Item>
-                    </Form>
-                </div>
-                <div>
-                    <Form layout="inline" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-                        <Space align="baseline">
-                            <Input type="number" value={x} onChange={e => setX(Number(e.target.value) || 0)} />
-                            <Button onClick={gotoX}>Go to X</Button>
-                            <Button onClick={() => setX(0)}>Reset</Button>
-                        </Space>
-                        <Space align="baseline">
-                            <Input type="number" value={y} onChange={e => setY(Number(e.target.value) || 0)} />
-                            <Button onClick={gotoY}>Go to Y</Button>
-                            <Button onClick={() => setY(0)}>Reset</Button>
-                        </Space>
-                        <Space align="baseline">
-                            <Input type="number" value={z} onChange={e => setZ(Number(e.target.value) || 0)} />
-                            <Button onClick={gotoZ}>Go to Z</Button>
-                            <Button onClick={() => setZ(0)}>Reset</Button>
-                        </Space>
-                    </Form>
-                    <p>
-                        <Button block={true} onClick={goto}>
-                            Go to XYZ
-                        </Button>
-                    </p>
-                </div>
+                        <Form layout="horizontal" labelCol={{ span: 10 }} wrapperCol={{ span: 8 }}>
+                            <Form.Item label="Jog Speed %">
+                                <Input type="number" value={jogSpeed} onChange={updateJogSpeed} />
+                            </Form.Item>
+                            <Form.Item label="Step Distance">
+                                <Input type="number" value={jogStep} onChange={updateJogStep} disabled={jogStepMode !== JogStepMode.STEP} />
+                            </Form.Item>
+                        </Form>
+                    </div>
+                )}
             </TileInner>
         </Tile>
     )

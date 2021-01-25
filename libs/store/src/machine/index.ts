@@ -8,7 +8,6 @@ export enum MachineTarget {
     NONE,
     FIELDBUS,
     SIMULATION
-
 }
 
 export enum FaultCode {
@@ -86,18 +85,17 @@ export const machineSlice = createSlice({
             state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
             state.heartbeat = action.payload.heartbeat
 
-
             // set the next machine state to be sent (handled in connect/index.ts)
             state.currentState = determine_machine_state(state.statusWord)
-            console.log("state:" + state.currentState)
+            // console.log("state:" + state.currentState)
             state.nextControlWord = handleMachineState(state.currentState, state.controlWord, state.desiredState)
-            console.log("word:" + state.nextControlWord)
-            if (state.nextControlWord !== undefined){
+            // console.log("word:" + state.nextControlWord)
+            if (state.nextControlWord !== undefined) {
                 state.desiredState = DesiredState.NONE
             }
         },
         setDesiredState: (state, action) => {
-            console.log("SET DESIRED STATE", action.payload)
+            // console.log("SET DESIRED STATE", action.payload)
             state.desiredState = action.payload
         }
     }
