@@ -17,7 +17,6 @@
         "baseUrl": ".",
         "paths": {
             "@glowbuzzer/layout": ["libs/layout/src/index.ts"],
-            "@glowbuzzer/hooks": ["libs/hooks/src/index.ts"],
             "@glowbuzzer/controls": ["libs/controls/src/index.ts"],
             "@glowbuzzer/store": ["libs/store/src/index.ts"]
         }

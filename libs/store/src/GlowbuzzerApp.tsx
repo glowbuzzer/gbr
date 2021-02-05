@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useEffect, useRef, useState } from "react"
+import { FC, useEffect, useRef, useState } from "react"
 import { Provider } from "react-redux"
 import { configureStore } from "@reduxjs/toolkit"
 import { useConnect } from "./connect"
@@ -8,12 +8,7 @@ import styled, { css, ThemeProvider } from "styled-components"
 import { rootReducer } from "./root"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
-import { useConfigReceived } from "./config"
-
-const store = configureStore({
-    reducer: rootReducer,
-    middleware: getDefault => getDefault({ immutableCheck: false, serializableCheck: false })
-})
+import { ConfigState, useConfigState } from "./config"
 
 const Startup = () => {
     const connection = useConnect()
@@ -42,6 +37,7 @@ declare module "styled-components" {
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     display: none;
+
     ${props =>
         props.visible &&
         css`
@@ -54,7 +50,6 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
             height: 100vh;
             width: 100vw;
         `}
-
     .reconnect-panel {
         position: fixed;
         text-align: center;
@@ -68,9 +63,13 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     }
 `
 
-const GlowbuzzerContainer = props => {
+type GlowbuzzerContainerProps = {
+    init?(connection)
+}
+
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) => {
     const connection = useConnect()
-    const configReceived = useConfigReceived()
+    const [configState, setConfigState] = useConfigState()
 
     const [countdown, setCountdown] = useState(2)
     const [showRetry, setShowRetry] = useState(true)
@@ -97,8 +96,15 @@ const GlowbuzzerContainer = props => {
         }
     }, [connection, connection.autoConnect, connection.connected])
 
+    useEffect(() => {
+        if (configState === ConfigState.AWAITING_HLC_INIT) {
+            // eslint-disable-next-line @typescript-eslint/no-empty-function
+            Promise.all([init ? init : () => {}]).then(() => setConfigState(ConfigState.READY))
+        }
+    }, [init, configState, setConfigState])
+
     function retry_now() {
-        setCountdown(countdown => 2)
+        setCountdown(2)
     }
 
     function cancel() {
@@ -107,9 +113,20 @@ const GlowbuzzerContainer = props => {
         connection.setAutoConnect(false)
     }
 
+    function ConfigStateMessage() {
+        switch (configState) {
+            case ConfigState.AWAITING_CONFIG:
+                return <>Waiting for config</>
+            case ConfigState.AWAITING_HLC_INIT:
+                return <>Initializing</>
+            default:
+                return null
+        }
+    }
+
     return (
         <div>
-            <GlowbuzzerDimmerStyle visible={!(connection.connected && configReceived) && connection.autoConnect}>
+            <GlowbuzzerDimmerStyle visible={!(connection.connected && configState === ConfigState.READY) && connection.autoConnect}>
                 <div className="reconnect-panel">
                     <div>
                         {showRetry && countdown > 2 ? (
@@ -125,20 +142,27 @@ const GlowbuzzerContainer = props => {
                                     </Button>
                                 </p>
                             </>
-                        ) : connection.connected ? (
-                            "Waiting for config..."
                         ) : (
-                            "Connecting..."
+                            <ConfigStateMessage />
                         )}
                     </div>
                 </div>
             </GlowbuzzerDimmerStyle>
-            {props.children}
+            {children}
         </div>
     )
 }
 
 export const GlowbuzzerApp = props => {
+    const middleware = getDefault => {
+        return getDefault({ immutableCheck: false, serializableCheck: false })
+    }
+
+    const store = configureStore({
+        reducer: rootReducer,
+        middleware
+    })
+
     return (
         <ThemeProvider theme={theme}>
             <Provider store={store}>

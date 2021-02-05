@@ -5,14 +5,14 @@ export * from "./dro/JointDro"
 export * from "./dro/RobotConfigurationDro"
 export * from "./dro/SegmentDisplay"
 
+export * from "./tasks/TasksTile"
+
 export * from "./io/DigitalInputsTile"
 export * from "./io/DigitalOutputsTile"
 export * from "./io/AnalogInputsTile"
 export * from "./io/AnalogOutputsTile"
 export * from "./io/IntegerInputsTile"
 export * from "./io/IntegerOutputsTile"
-
-export * from "./tasks/TaskDisplay"
 
 export * from "./misc/FrameSelector"
 export * from "./misc/FrameView"
@@ -32,3 +32,4 @@ export * from "./gcode/GCodeTile"
 export * from "./dev/DevToolsTile"
 export * from "./feedrate/FeedRateTile"
 export * from "./jogging/JogTile"
+export { StopIcon } from "./util/StopIcon"

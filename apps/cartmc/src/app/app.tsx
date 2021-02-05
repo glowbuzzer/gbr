@@ -27,6 +27,10 @@ import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
 import { CheckOutlined } from "@ant-design/icons"
+import { TasksTile } from "@glowbuzzer/controls"
+import { GlowbuzzerApp, useConnect } from "@glowbuzzer/store"
+import { connectionSlice } from "@glowbuzzer/store"
+import { CartesianApp } from "./CartesianApp"
 
 const StyledApp = styled.div``
 
@@ -66,7 +70,7 @@ const AppInner = () => {
                     <Menu.Item key="file:prefs">Preferences...</Menu.Item>
                 </Menu.SubMenu>
                 <Menu.SubMenu title="View">
-                    {tile_items(["connection", "gcode", "toolpath", "feedrate", "jogging"])}
+                    {tile_items(["connection", "tasks", "gcode", "toolpath", "feedrate", "jogging"])}
                     <Menu.SubMenu title="Input/Output" children={tile_items(["dins", "douts", "ains", "aouts", "iins", "iouts"])} />
                     <Menu.SubMenu title="Advanced" children={tile_items(["drives", "telemetry", "devtools"])} />
                 </Menu.SubMenu>
@@ -93,6 +97,14 @@ export const App = () => {
             height: 2,
             title: "Connection",
             render: <ConnectTile />
+        },
+        tasks: {
+            x: 0,
+            y: 0,
+            width: 2,
+            height: 4,
+            title: "Tasks",
+            render: <TasksTile />
         },
         feedrate: {
             x: 0,
@@ -208,14 +220,14 @@ export const App = () => {
         }
     }
 
-    if (window.location.search === "?debug") {
-        return <TelemetryTile />
-    }
-
     return (
-        <TileProvider tiles={tiles}>
-            <AppInner />
-        </TileProvider>
+        <GlowbuzzerApp>
+            <CartesianApp>
+                <TileProvider tiles={tiles}>
+                    <AppInner />
+                </TileProvider>
+            </CartesianApp>
+        </GlowbuzzerApp>
     )
 }
 

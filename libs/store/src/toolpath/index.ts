@@ -57,9 +57,10 @@ export const toolPathSlice = createSlice({
         },
         reset(state, action) {
             const kc = action.payload
-            if (state[kc]) {
+            const path_info = state.paths[kc]
+            if (path_info) {
                 // remove all but the last location
-                state[kc].path.splice(0, state[kc].path.length - 1)
+                path_info.path.splice(0, path_info.path.length - 1)
             }
         },
         settings(state, action) {

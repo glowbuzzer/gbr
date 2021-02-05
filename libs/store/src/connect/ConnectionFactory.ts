@@ -17,6 +17,7 @@ import { analogOutputsSlice } from "../io/aout"
 import { integerOutputsSlice } from "../io/iout"
 import { analogInputsSlice } from "../io/ain"
 import { integerInputsSlice } from "../io/iin"
+import { tasksSlice } from "../tasks"
 
 abstract class ProcessorBase {
     protected first = true
@@ -40,6 +41,7 @@ class StatusProcessor extends ProcessorBase {
 
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
+        msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
         msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
         msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
@@ -83,7 +85,7 @@ class StatusProcessor extends ProcessorBase {
             )
         }
 
-        if (nextControlWord !== undefined){
+        if (nextControlWord !== undefined) {
             console.log("Setting machine control word")
             ws.send(updateMachineControlWordMsg(nextControlWord))
         }
@@ -95,7 +97,7 @@ class StatusProcessor extends ProcessorBase {
 class ResponseProcessor extends ProcessorBase {
     process_internal(msg, dispatch, ws, getState, first) {
         if (msg.response.get_config_response) {
-            dispatch(configSlice.actions.set(msg.response.get_config_response))
+            dispatch(configSlice.actions.setConfig(msg.response.get_config_response))
         }
     }
 }

@@ -3,7 +3,6 @@ module.exports = {
     mount: {
         "apps/cartmc/src": "/",
         "libs/controls/src": "/controls",
-        "libs/hooks/src": "/hooks",
         "libs/layout/src": "/layout",
         "libs/store/src": "/store"
     },
@@ -25,7 +24,6 @@ module.exports = {
     },
     alias: {
         "@glowbuzzer/layout": "./libs/layout/src/index.ts",
-        "@glowbuzzer/hooks": "./libs/hooks/src/index.ts",
         "@glowbuzzer/controls": "./libs/controls/src/index.ts",
         "@glowbuzzer/store": "./libs/store/src/index.ts"
     }

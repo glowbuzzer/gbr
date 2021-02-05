@@ -5,6 +5,7 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
+import * as timers from "timers"
 
 const { load, save } = settings("gcode")
 
@@ -35,6 +36,7 @@ export const gcodeSlice = createSlice({
         capacity: 0,
         buffer: [],
         state: StreamState.IDLE,
+        time: 0,
         readCount: -1,
         writeCount: -1,
         tag: 0,
@@ -74,11 +76,12 @@ export const gcodeSlice = createSlice({
             state.capacity -= count
         },
         status: (state, action) => {
-            const { capacity, tag, state: stream_state, readCount, writeCount } = action.payload
+            const { capacity, tag, state: stream_state, time, readCount, writeCount } = action.payload
 
             // tag is UDF for current item, active is whether any item is currently executing
             state.tag = tag
             state.state = stream_state
+            state.time = time
 
             if (state.readCount !== readCount && state.writeCount !== writeCount) {
                 // safe to record new capacity
@@ -111,12 +114,13 @@ function updateStreamStateMsg(streamCommand: StreamCommand) {
 }
 
 export function useGCode() {
-    const { state, tag } = useSelector(({ gcode: { state, tag } }: RootState) => ({ state, tag }), shallowEqual)
+    const { state, tag, time } = useSelector(({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }), shallowEqual)
     const dispatch = useDispatch()
     const connection = useConnect()
 
     return {
         state,
+        time,
         lineNum: tag,
         send(gcodeString) {
             dispatch(gcodeSlice.actions.append(gcodeString))

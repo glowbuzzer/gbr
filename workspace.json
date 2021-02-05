@@ -41,27 +41,6 @@
                 }
             }
         },
-        "hooks": {
-            "root": "libs/hooks",
-            "sourceRoot": "libs/hooks/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/hooks/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/hooks/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
         "controls": {
             "root": "libs/controls",
             "sourceRoot": "libs/controls/src",

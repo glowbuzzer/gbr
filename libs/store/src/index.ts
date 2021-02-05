@@ -1,10 +1,11 @@
 import "./connect/ConnectionFactory"
 
 export { GlowbuzzerApp } from "./GlowbuzzerApp"
-export { ConnectionState, useConnect } from "./connect"
+export { ConnectionState, useConnect, connectionSlice } from "./connect"
 export { DesiredState, MachineTarget, useMachine, MachineState, determine_machine_state, possible_transitions, FaultCode } from "./machine"
 export { useConfig } from "./config"
 export { usePrefs } from "./prefs"
+export * from "./tasks"
 export * from "./gcode"
 export * from "./preview"
 export * from "./telemetry"

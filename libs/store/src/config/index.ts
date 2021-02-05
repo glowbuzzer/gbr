@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { KINEMATICSCONFIGURATIONTYPE } from "../types"
-import { shallowEqual, useSelector } from "react-redux"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "@glowbuzzer/store"
 
 const DEFAULT_JOINT_CONFIG = { pmin: -100, pmax: 100, vmax: 2000, amax: 40000, jmax: 800000, scale: 1000.0 }
@@ -49,29 +49,51 @@ export const DEFAULT_CONFIG = {
         0: {
             translation: { x: 0, y: 0, z: 0 }
         }
+    },
+    task: {
+        // only here for a bit of code completion
+        // (replaced by actual config from GBC)
+        "task 0": {
+            "activity 0": {
+                activityType: 4
+            }
+        }
     }
+}
+
+export enum ConfigState {
+    AWAITING_CONFIG = "AWAITING CONFIG",
+    AWAITING_HLC_INIT = "AWAITING INIT",
+    READY = "READY"
 }
 
 export const configSlice = createSlice({
     name: "config",
     initialState: {
-        configReceived: false,
+        state: ConfigState.AWAITING_CONFIG,
         version: 1,
         // basic default value to avoid errors from components on startup
         value: DEFAULT_CONFIG
     },
     reducers: {
-        set(state, action) {
-            state.configReceived = true
+        setConfig(state, action) {
             state.version++
-            console.log("SETTING CONFIG", action.payload)
+            state.state = ConfigState.AWAITING_HLC_INIT // GlowbuzzerApp will handle this state
             state.value = action.payload
+        },
+        setConfigState(state, action) {
+            state.state = action.payload
         }
     }
 })
 
-export function useConfigReceived() {
-    return useSelector((state: RootState) => state.config.configReceived, shallowEqual)
+export function useConfigState() {
+    const dispatch = useDispatch()
+    // return value and setter
+    return [useSelector((state: RootState) => state.config.state, shallowEqual), state => dispatch(configSlice.actions.setConfigState(state))] as [
+        ConfigState,
+        (state: ConfigState) => void
+    ]
 }
 
 export function useConfig() {

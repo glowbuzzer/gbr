@@ -11,6 +11,7 @@ import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glo
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
+import { StopIcon } from "../util/StopIcon"
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -19,12 +20,6 @@ function getGCodeLS() {
 function setGCodeLS(gcode) {
     return localStorage.setItem("ui.web-drives.gcode", gcode)
 }
-
-const StopIcon = () => (
-    <svg width={16} height={16}>
-        <rect x={3} y={6} width={10} height={10} fill="currentColor" />
-    </svg>
-)
 
 const StyledDiv = styled.div<{ readOnly: boolean }>`
     height: 100%;
@@ -124,6 +119,7 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
+                        <span>{(stream.time / 1000).toFixed(1)}s</span>
                         <Tag>{StreamState[stream.state]}</Tag>
 
                         <Radio.Group optionType="button" onChange={send_command} value={inferredCommand}>
@@ -137,16 +133,6 @@ export const GCodeTile = () => {
                                 <StopIcon />
                             </Radio.Button>
                         </Radio.Group>
-
-                        {/*
-                        <Button>Stop</Button>
-*/}
-                        {/*
-                        <Button onClick={send_gcode} icon={<CaretRightOutlined />} />
-*/}
-                        {/*
-                        <Button icon={<PauseOutlined />} />
-*/}
                     </Space>
                     &nbsp;&nbsp;
                 </>

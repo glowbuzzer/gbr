@@ -17,10 +17,12 @@ import { analogInputsSlice } from "./io/ain"
 import { analogOutputsSlice } from "./io/aout"
 import { integerInputsSlice } from "./io/iin"
 import { integerOutputsSlice } from "./io/iout"
+import { tasksSlice } from "./tasks"
 
 export const rootReducer = combineReducers({
     config: configSlice.reducer,
     connection: connectionSlice.reducer,
+    tasks: tasksSlice.reducer,
     telemetry: telemetrySlice.reducer,
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,
