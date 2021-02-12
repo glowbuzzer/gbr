@@ -22,7 +22,8 @@ export enum FaultCode {
     FAULT_CAUSE_ECAT = 1 << 8,
     FAULT_CAUSE_DRIVE_ALARM = 1 << 9,
     FAULT_CAUSE_GBC_TO_PLC_CON_ERROR = 1 << 10,
-    FAULT_CAUSE_DRIVE_MOOERROR = 1 << 11
+    FAULT_CAUSE_DRIVE_MOOERROR = 1 << 11,
+    FAULT_CAUSE_ECAT_SLAVE_ERROR = 1 << 12
 }
 
 // this is the data coming back from board in status.machine
