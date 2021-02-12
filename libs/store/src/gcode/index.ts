@@ -5,7 +5,6 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
-import * as timers from "timers"
 
 const { load, save } = settings("gcode")
 

@@ -7,6 +7,7 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { useFrames } from "../util/useFrames"
 import { useConnect } from "../connect"
 import { updateStatusFrequencyMsg } from "../devtools"
+import { useConfig } from "../config"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -26,10 +27,10 @@ type Pose = {
 }
 
 export type KinematicsState = {
-    type: KINEMATICSCONFIGURATIONTYPE
+    type: KINEMATICSCONFIGURATIONTYPE // TODO: should come from config
     pose: Pose
     currentConfiguration: number
-    frameIndex: number
+    // frameIndex: number
     froTarget: number
     froActual: number
 }
@@ -39,7 +40,7 @@ export const status_to_redux_state = (k: KinematicsConfigurationMcStatus) => {
     return {
         type: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
         currentConfiguration: 0,
-        frameIndex: 0,
+        // frameIndex: 0,
         froTarget: k.froTarget,
         froActual: k.froActual,
         pose: {
@@ -68,7 +69,7 @@ function unmarshall(state): KinematicsState {
         return {
             type: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
             currentConfiguration: 0,
-            frameIndex: 0,
+            // frameIndex: 0,
             froTarget: 0,
             froActual: 0,
             pose: {
@@ -106,13 +107,16 @@ export function updateFroPercentageMsg(kc: number, value: number) {
 export const useKinematics = (kc: number, frameIndex: number) => {
     // select the given kc
     const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
+    const config = useConfig()
     const frames = useFrames()
     const dispatch = useDispatch()
     const connection = useConnect()
 
+    const fromIndex = Object.values(config.kinematicsConfiguration)[kc].frameIndex
+
     return {
         ...state,
-        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, state.frameIndex, frameIndex),
+        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, fromIndex, frameIndex),
         setFroPercentage(value: number) {
             window.localStorage.setItem(`kinematics.${kc}.statusFrequency`, JSON.stringify(value))
             dispatch(dispatch => {

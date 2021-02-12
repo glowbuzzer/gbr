@@ -4,7 +4,7 @@ module.exports = {
         "<rootDir>/libs/layout",
         "<rootDir>/libs/controls",
         "<rootDir>/apps/cartmc",
-        "<rootDir>/apps/testapp",
-        "<rootDir>/libs/store"
+        "<rootDir>/libs/store",
+        "<rootDir>/apps/emstat"
     ]
 }

@@ -4,7 +4,7 @@ import { GCodeLine } from "./lineParser"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
-function arcParams(params, ccw, start, end) {
+function arcParams(params, ccw, start, end, frameIndex) {
     params.I = params.I || 0
     params.J = params.J || 0
 
@@ -27,6 +27,7 @@ function arcParams(params, ccw, start, end) {
     return {
         arc: {
             destination: {
+                frameIndex,
                 position: {
                     x: end.x,
                     y: end.y,
@@ -34,6 +35,7 @@ function arcParams(params, ccw, start, end) {
                 }
             },
             waypoint: {
+                frameIndex,
                 position: {
                     x: midpoint.x,
                     y: midpoint.y,
@@ -53,13 +55,14 @@ function args(line: GCodeLine) {
 // noinspection JSUnusedGlobalSymbols
 export class GCodeSenderAdapter extends GCodeInterpreter {
     // default move params
-    moveParams = {
+    private moveParams = {
         vmaxPercentage: 100,
         amaxPercentage: 100,
         jmaxPercentage: 100,
         blendType: 0,
         blendTimePercentage: 100
     }
+    private frameIndex = 0
 
     private readonly buffer: any[]
 
@@ -132,7 +135,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                             x: this.current_positions[0],
                             y: this.current_positions[1],
                             z: this.current_positions[2]
-                        }
+                        },
+                        frameIndex: this.frameIndex
                     }
                 }
             }
@@ -152,7 +156,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                         x: this.current_positions[0],
                         y: this.current_positions[1],
                         z: this.current_positions[2]
-                    }
+                    },
+                    frameIndex: this.frameIndex
                 }
             }
         })
@@ -168,7 +173,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             ...args(line),
             moveArc: {
                 moveParams: this.moveParams,
-                ...arcParams(params, false, start, end)
+                ...arcParams(params, false, start, end, this.frameIndex)
             }
         })
     }
@@ -183,7 +188,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             ...args(line),
             moveArc: {
                 moveParams: this.moveParams,
-                ...arcParams(params, true, start, end)
+                ...arcParams(params, true, start, end, this.frameIndex)
             }
         })
     }
@@ -196,6 +201,34 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                 ticksToDwell: params.P || 0
             }
         })
+    }
+
+    G53() {
+        this.frameIndex = 0
+    }
+
+    G54() {
+        this.frameIndex = 1
+    }
+
+    G55() {
+        this.frameIndex = 2
+    }
+
+    G56() {
+        this.frameIndex = 3
+    }
+
+    G57() {
+        this.frameIndex = 4
+    }
+
+    G58() {
+        this.frameIndex = 5
+    }
+
+    G59() {
+        this.frameIndex = 6
     }
 
     G61() {

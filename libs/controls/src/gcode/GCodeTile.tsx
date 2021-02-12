@@ -6,12 +6,14 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Radio, Space, Tag } from "antd"
+import { Dropdown, Radio, Select, Space, Tag } from "antd"
 import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
+
+const { Option } = Select
 
 function getGCodeLS() {
     return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
@@ -46,6 +48,7 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 
 export const GCodeTile = () => {
     const [gcode, setGCode] = React.useState(getGCodeLS())
+    const [workOffset, setWorkOffset] = React.useState()
 
     const stream = useGCode()
     const prefs = usePrefs()
@@ -54,13 +57,14 @@ export const GCodeTile = () => {
     const active = stream.state !== StreamState.IDLE
 
     useEffect(() => {
-        preview.setGCode(gcode)
+        preview.setGCode("G" + (53 + (workOffset || 0)) + "\n" + gcode)
         // eslint-disable-next-line
-    }, [])
+    }, [workOffset])
 
     function send_gcode() {
         setGCodeLS(gcode)
-        stream.send(gcode + (prefs.current.send_m2 ? " M2" : ""))
+        const offset = "G" + (53 + (workOffset || 0))
+        stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
 
     function update_gcode(gcode: string) {
@@ -119,6 +123,13 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
+                        <Select size="small" value={workOffset} onChange={v => setWorkOffset(v)} allowClear placeholder="Machine Coords">
+                            <Option value={1}>G54</Option>
+                            <Option value={2}>G55</Option>
+                            <Option value={3}>G56</Option>
+                            <Option value={4}>G57</Option>
+                            <Option value={5}>G58</Option>
+                        </Select>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
                         <Tag>{StreamState[stream.state]}</Tag>
 

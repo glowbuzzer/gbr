@@ -1,9 +1,8 @@
-import React, { useState } from "react"
+import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
-import { useDigitalOutputs } from "@glowbuzzer/store"
-import { DigitalOutputStatus } from "../../../store/src/io/dout"
+import { DigitalOutputStatus, useDigitalOutputs } from "@glowbuzzer/store"
 
 const { Option } = Select
 

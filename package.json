@@ -5,6 +5,7 @@
     "scripts": {
         "nx": "nx",
         "start": "nx serve",
+        "emstat:start": "snowpack dev --config snowpack-emstat.config.js",
         "build": "nx build",
         "test": "nx test",
         "lint": "nx workspace-lint && nx lint",

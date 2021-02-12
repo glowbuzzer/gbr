@@ -15,7 +15,7 @@
                 "serve": {
                     "builder": "@nx-plus/docusaurus:dev-server",
                     "options": {
-                        "port": 3000
+                        "port": 300000
                     }
                 }
             }
@@ -148,6 +148,76 @@
                     "builder": "@nrwl/jest:jest",
                     "options": {
                         "jestConfig": "libs/store/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "emstat": {
+            "root": "apps/emstat",
+            "sourceRoot": "apps/emstat/src",
+            "projectType": "application",
+            "schematics": {},
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "options": {
+                        "outputPath": "dist/apps/emstat",
+                        "index": "apps/emstat/src/index.html",
+                        "main": "apps/emstat/src/main.tsx",
+                        "polyfills": "apps/emstat/src/polyfills.ts",
+                        "tsConfig": "apps/emstat/tsconfig.app.json",
+                        "assets": ["apps/emstat/src/favicon.ico", "apps/emstat/src/assets"],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/emstat/src/environments/environment.ts",
+                                    "with": "apps/emstat/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "5mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "emstat:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "emstat:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/emstat/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "apps/emstat/jest.config.js",
                         "passWithNoTests": true
                     }
                 }

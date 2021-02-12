@@ -14,6 +14,7 @@ export const DEFAULT_CONFIG = {
     },
     kinematicsConfiguration: {
         default: {
+            frameIndex: 0,
             participatingJoints: [0, 1, 2],
             participatingJointsCount: 3,
             kinematicsParameters: {

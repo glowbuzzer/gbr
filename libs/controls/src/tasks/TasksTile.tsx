@@ -48,12 +48,11 @@ const TaskItem = ({ status, index }) => {
                         <StopIcon />
                     </Button>
                 )}
-                {status.state === TaskState.FINISHED ||
-                    (status.state === TaskState.CANCELLED && (
-                        <Button onClick={() => task.reset()}>
-                            <ReloadOutlined />
-                        </Button>
-                    ))}
+                {(status.state === TaskState.FINISHED || status.state === TaskState.CANCELLED) && (
+                    <Button onClick={() => task.reset()}>
+                        <ReloadOutlined />
+                    </Button>
+                )}
             </div>
         </StyledTaskItem>
     )

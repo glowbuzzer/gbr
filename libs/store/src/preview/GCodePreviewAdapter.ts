@@ -1,6 +1,6 @@
 import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
-import { EllipseCurve, Vector3 } from "three"
+import { EllipseCurve, Quaternion, Vector3 } from "three"
 
 function fromVector3(p: Vector3): number[] {
     return [p.x, p.y, p.z]
@@ -21,6 +21,24 @@ const MOVE_COLOR = fromHexString("#a7c0fd")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
+    private frameIndex = 0
+    private kcFrame: number
+    private convertToFrame
+
+    constructor(current_positions: number[], kcFrame: number, convertToFrame) {
+        super(current_positions)
+        this.kcFrame = kcFrame
+        this.convertToFrame = convertToFrame
+        this.frame_conversion = this.frame_conversion.bind(this)
+    }
+
+    private frame_conversion(point) {
+        const [x, y, z] = point
+        const pos = new Vector3(x, y, z)
+        const rot = new Quaternion(0, 0, 0, 1)
+        const new_pos = this.convertToFrame(pos, rot, this.frameIndex, this.kcFrame).position
+        return [new_pos.x, new_pos.y, new_pos.z]
+    }
 
     toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
         const result: GCodeSegment[] = []
@@ -36,7 +54,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     toArc(params, ccw: boolean): EllipseCurve {
-        const [[x1, y1], [x2, y2]] = this.updateModals(params)
+        const [[x1, y1], [x2, y2]] = this.updateModals(params).map(this.frame_conversion)
         const I = params.I || 0
         const J = params.J || 0
 
@@ -56,7 +74,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G0(params, { lineNum }) {
-        const [from, to] = this.updateModals(params)
+        const [from, to] = this.updateModals(params).map(this.frame_conversion)
         this.segments.push({
             from,
             to,
@@ -66,7 +84,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G1(params, { lineNum }) {
-        const [from, to] = this.updateModals(params)
+        const [from, to] = this.updateModals(params).map(this.frame_conversion)
         this.segments.push({
             from,
             to,
@@ -87,7 +105,31 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }
 
-    // G61() {}
-    //
-    // G64() {}
+    G53() {
+        this.frameIndex = 0
+    }
+
+    G54() {
+        this.frameIndex = 1
+    }
+
+    G55() {
+        this.frameIndex = 2
+    }
+
+    G56() {
+        this.frameIndex = 3
+    }
+
+    G57() {
+        this.frameIndex = 4
+    }
+
+    G58() {
+        this.frameIndex = 5
+    }
+
+    G59() {
+        this.frameIndex = 6
+    }
 }

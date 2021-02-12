@@ -131,6 +131,8 @@ function change_reference_frame(
     // we can apply the transformation matrix to the input position directly
     const transformed_pose = position.clone().applyMatrix4(transformation)
 
+    // console.log("Transform", position, "to", transformed_pose)
+
     return {
         position: transformed_pose,
         // sum the rotation due to the transformation and the 'mobile' orientation of the input position
@@ -148,6 +150,8 @@ export const useFrames = () => {
         asTree,
         asList,
         convertToFrame(position: THREE.Vector3, orientation: THREE.Quaternion, fromIndex: number, toIndex: number) {
+            console.log("CONVERT FROM FRAME INDEX", fromIndex, "TO", toIndex)
+
             return change_reference_frame(asList, position, orientation, fromIndex, toIndex)
         }
     }
