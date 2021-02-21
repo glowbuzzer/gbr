@@ -52,6 +52,7 @@
         "react-grid-layout": "^1.1.1",
         "react-is": "16.13.1",
         "react-redux": "^7.2.1",
+        "react-spinners": "^0.10.6",
         "react-three-fiber": "^5.2.1",
         "redux": "^4.0.5",
         "redux-thunk": "^2.3.0",
