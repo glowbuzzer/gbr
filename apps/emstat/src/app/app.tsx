@@ -44,7 +44,6 @@ const StyledApp = styled.div`
     }
 `
 
-
 const StatusFreqTable = styled.div`
     // display: flex;
     width: 500px;
@@ -59,7 +58,7 @@ const StatusFreqTable = styled.div`
     }
 `
 
-
+//AK - This is the interface for antd tree data node - should i reuse the one from node_modules/rc-tree/lib/interface.d.ts? if so i can't work out the import syntax
 interface DataNode {
     title: string;
     key: string;
@@ -73,28 +72,14 @@ const ShowTree = ({dataObject}: { dataObject: any }) => {
     return <Tree showIcon treeData={dataObject}/>;
 };
 
+
+//AK this is a bit odd - i use for the arrays of int ins etc.
 interface numVal {
     num: number,
     val: number
 }
 
-
-// const ShowList = ({dataObject}: { dataObject: any }) => {
-//     if (dataObject != null) {
-//         const listItems = dataObject.map((numVal) =>
-//             <li key={numVal.num}>
-//                 <ul>{numVal.num}: <Text code>{numVal.val}</Text></ul>
-//             </li>
-//         );
-//         return (
-//             <ul >{listItems}</ul>
-//         );
-//     }
-//     return null;
-// };
-
-
-
+//AK It is a shame these end up with quite a bit of format stuff in them
 const ShowListNoNums = ({dataObject}: { dataObject: any }) => {
     console.log("is this empty (no num)?" + dataObject);
     if (dataObject.length !=0) {
@@ -129,16 +114,13 @@ const ShowListNums = ({dataObject}: { dataObject: any }) => {
 };
 
 
-
-function HasPickedUpEmstatFiles(props) {
-    const hasFiles = props.hasFiles;
-    if (hasFiles) {
-        return <h1>Has picked up files</h1>;
-        // return true
-    }
-    return <h1>Waiting to connect to GBC to pick up status...</h1>;
-    // return false
-}
+// function HasPickedUpEmstatFiles(props) {
+//     const hasFiles = props.hasFiles;
+//     if (hasFiles) {
+//         return <h1>Has picked up files</h1>;
+//     }
+//     return <h1>Waiting to connect to GBC to pick up status...</h1>;
+// }
 
 
 function ConnectionStatus() {
@@ -159,11 +141,6 @@ function ConnectionStatus() {
     }
 }
 
-const success = () => {
-    const hide = message.loading('Action in progress..', 0);
-    // Dismiss manually and asynchronously
-    setTimeout(hide, 2500);
-};
 
 enum conState {
     noError,
@@ -172,25 +149,17 @@ enum conState {
     unknownConnectionError,
 }
 
+
 let connectionState = conState.noError;
 
-const name = "david"
-
-function element() {
-
-    return <span>Hello: <Text code>{name}</Text></span>;
-}
-
-
+//AK shame i have these warnings 'Element' is not assignable to type 'string' in here
 function makeDriveTree(statusJSON: any, constJSON:any) {
-
     const driveTree: DataNode[] = [];
-
     let keyCount = 0;
 
     // console.log("statusJSON:" + JSON.stringify(statusJSON));
 
-    for (var i = 0; i < constJSON?.number_of_drives; i++) {
+    for (let i = 0; i < constJSON?.number_of_drives; i++) {
         driveTree.push({title: constJSON?.drives[i].name, key: '' + keyCount++});
 
         driveTree[i].children = new Array();
@@ -285,19 +254,10 @@ function makeSlaveTree(statusJSON: any, constJSON:any) {
 
 export const App = () => {
 
-    // const connectionState: conState = 0;
-
-    // const [loading, setLoading] = useState(true);
-
-
     const statusFrequency = 50;
     const [frequency, setFrequency] = useState(statusFrequency);
-// take const out of the use state - no re-render when const changes??
     const [emstat_const_result, emstat_const_setResult] = useState(null)
     const [emstat_status_result, emstat_status_setResult] = useState(null)
-
-
-    console.log("freq:" + (11000 - (frequency * 100)));
 
     let slaveTreeData: DataNode[] = [];
     let driveTreeData: DataNode[] = [];
@@ -310,74 +270,41 @@ export const App = () => {
 
     let hascon = false;
     if (emstat_const_result != null && emstat_status_result != null) {
-
         hascon = true;
 
-        console.log("hascon:" + hascon);
-
-        for (var i = 0; i < (emstat_const_result.number_of_integer_ins); i++) {
-
+        for (let i = 0; i < (emstat_const_result.number_of_integer_ins); i++) {
             int_ins.push({num: i, val: emstat_status_result?.int_in[i]});
         }
 
-        for (var i = 0; i < (emstat_const_result.number_of_integer_outs); i++) {
-
+        for (let i = 0; i < (emstat_const_result.number_of_integer_outs); i++) {
             int_outs.push({num: i, val: emstat_status_result?.int_out[i]});
         }
 
-        for (var i = 0; i < (emstat_const_result.number_of_float_ins); i++) {
-
+        for (let i = 0; i < (emstat_const_result.number_of_float_ins); i++) {
             float_ins.push({num: i, val: emstat_status_result?.float_in[i]});
         }
 
-        for (var i = 0; i < (emstat_const_result.number_of_float_outs); i++) {
-
+        for (let i = 0; i < (emstat_const_result.number_of_float_outs); i++) {
             float_outs.push({num: i, val: emstat_status_result?.float_out[i]});
         }
 
-
-        for (var i = 0; i < (Object.keys(emstat_status_result?.slave_errors).length); i++) {
+        for (let i = 0; i < (Object.keys(emstat_status_result?.slave_errors).length); i++) {
             slaveErrors.push({num: i, val: emstat_status_result?.slave_errors[i]});
         }
-
 
         slaveTreeData = makeSlaveTree(emstat_status_result, emstat_const_result);
         driveTreeData = makeDriveTree(emstat_status_result, emstat_const_result);
 
     }
 
-    // const items = emstat_status_result?.int_in.map((d) => {
-    //     if (emstat_status_result?.int_in !=null){
-    //     const val= Object.values(d)[0];
-    //     return (<li>{val.name}</li>)
-    //         }
-    //     return null;
-    // });
-
-
     const [isLoading, setIsLoading] = useState(false);
-    // useEffect(
-    //     () => {
-    //         const interval = setInterval(() => {
-    //             setIsLoading(true);
-    //             fetch("http://rpi-dghome:9001/emstat/emstat_const.json")
-    //                 .then(emstat_const_result => emstat_const_result.json())
-    //                 .then(json => emstat_const_setResult(json))
-    //         }, (10000 - (frequency * 90)));
-    //         setIsLoading(false);
-    //         return () => clearInterval(interval);
-    //     },
-    //     [
-    //         /**
-    //          * When this dependency list is empty, effect is run once on page load
-    //          **/
-    //     ]
-    // )
 
     useEffect(() => {
         setFrequency(statusFrequency)
     }, [statusFrequency])
 
+
+    //Need to decide where the connection url comes from. emstat isnt really any use without some sort of gb front end running so be a shame to enter it twice
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -419,27 +346,8 @@ export const App = () => {
 
     }, []);
 
-    // useEffect(
-    //     () => {
-    //         const interval = setInterval(() => {
-    //             fetch("http://rpi-dghome:9001/emstat/emstat_status.json")
-    //                 .then(emstat_status_result => emstat_status_result.json())
-    //                 .then(json => emstat_status_setResult(json))
-    //         }, (10000 - (frequency * 90)));
-    //         return () => clearInterval(interval);
-    //     },
-    //     //
-    //     // [
-    //     //     /**
-    //     //      * When this dependency list is empty, effect is run once on page load
-    //     //      **/
-    //     // ]
-    //
-    // )
-
 
     return (
-
         <StyledApp>
             <main>
                 <PageHeader
@@ -449,7 +357,6 @@ export const App = () => {
                     extra={[<ClipLoader color='#000000' loading={!hascon} size={30}/>]}
                 />,
                 <ConnectionStatus/>
-                {/*<HasPickedUpEmstatFiles hasFiles="true"/>*/}
                 <Card title="Machine status">
 
                     <Row gutter={16}>
