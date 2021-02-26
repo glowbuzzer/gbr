@@ -12,8 +12,8 @@ export function settings(key: string) {
             return {}
         },
         save(value) {
-            console.log("STORE IN LS, key=", key, "value=", value)
             localStorage.setItem(key, JSON.stringify(value))
+            return value
         }
     }
 }

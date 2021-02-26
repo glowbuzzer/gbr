@@ -6,8 +6,8 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Dropdown, Radio, Select, Space, Tag } from "antd"
-import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import { Radio, Select, Space, Tag } from "antd"
+import { StreamCommand, StreamState, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
@@ -48,28 +48,28 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 
 export const GCodeTile = () => {
     const [gcode, setGCode] = React.useState(getGCodeLS())
-    const [workOffset, setWorkOffset] = React.useState()
 
     const stream = useGCode()
     const prefs = usePrefs()
     const preview = usePreview()
-
+    const frames = useFrames()
     const active = stream.state !== StreamState.IDLE
+    const workOffset = frames.active
+    const config = useConfig()
 
     useEffect(() => {
-        preview.setGCode("G" + (53 + (workOffset || 0)) + "\n" + gcode)
+        preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
         // eslint-disable-next-line
-    }, [workOffset])
+    }, [workOffset, gcode, config /* extra dep because config can cause frames to change */])
 
     function send_gcode() {
         setGCodeLS(gcode)
-        const offset = "G" + (53 + (workOffset || 0))
+        const offset = "G" + (54 + workOffset)
         stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
 
     function update_gcode(gcode: string) {
         setGCode(gcode)
-        preview.setGCode(gcode)
     }
 
     function update_cursor(e) {
@@ -123,12 +123,12 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
-                        <Select size="small" value={workOffset} onChange={v => setWorkOffset(v)} allowClear placeholder="Machine Coords">
-                            <Option value={1}>G54</Option>
-                            <Option value={2}>G55</Option>
-                            <Option value={3}>G56</Option>
-                            <Option value={4}>G57</Option>
-                            <Option value={5}>G58</Option>
+                        <Select size="small" value={workOffset} onChange={v => frames.setActiveFrame(v)}>
+                            <Option value={0}>G54</Option>
+                            <Option value={1}>G55</Option>
+                            <Option value={2}>G56</Option>
+                            <Option value={3}>G57</Option>
+                            <Option value={4}>G58</Option>
                         </Select>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
                         <Tag>{StreamState[stream.state]}</Tag>

@@ -15,6 +15,7 @@ import {
     IntegerOutputsTile,
     JogTile,
     PreferencesDialog,
+    TasksTile,
     TelemetryTile,
     ToolPathTile
 } from "@glowbuzzer/controls"
@@ -27,21 +28,24 @@ import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
 import { CheckOutlined } from "@ant-design/icons"
-import { TasksTile } from "@glowbuzzer/controls"
-import { GlowbuzzerApp, useConnect } from "@glowbuzzer/store"
-import { connectionSlice } from "@glowbuzzer/store"
+import { GlowbuzzerApp } from "@glowbuzzer/store"
 import { CartesianApp } from "./CartesianApp"
+import { FrameOverrideDialog } from "../../../../libs/controls/src/frames/FrameOverrideDialog"
 
 const StyledApp = styled.div``
 
 const AppInner = () => {
     const { tiles, setVisible } = useTiles()
     const [showPreferences, setShowPreferences] = useState(false)
+    const [showFrameOverrides, setShowFrameOverrides] = useState(false)
 
     function handleClick(e) {
         switch (e.key) {
             case "file:prefs":
                 setShowPreferences(true)
+                break
+            case "file:workoffsets":
+                setShowFrameOverrides(true)
                 break
         }
     }
@@ -65,9 +69,11 @@ const AppInner = () => {
     return (
         <StyledApp>
             <PreferencesDialog visible={showPreferences} onClose={() => setShowPreferences(false)} />
+            <FrameOverrideDialog visible={showFrameOverrides} onClose={() => setShowFrameOverrides(false)} />
             <Menu mode="horizontal" onClick={handleClick}>
                 <Menu.SubMenu title="File">
                     <Menu.Item key="file:prefs">Preferences...</Menu.Item>
+                    <Menu.Item key="file:workoffsets">Work Offsets...</Menu.Item>
                 </Menu.SubMenu>
                 <Menu.SubMenu title="View">
                     {tile_items(["connection", "tasks", "gcode", "toolpath", "feedrate", "jogging"])}

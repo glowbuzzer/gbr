@@ -8,7 +8,7 @@ import { gcodeSlice } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { processJogStateChanges, RootState } from "@glowbuzzer/store"
+import { framesSlice, previewSlice, processJogStateChanges, RootState } from "@glowbuzzer/store"
 import { jogSlice } from "../jogging"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
@@ -35,9 +35,7 @@ class StatusProcessor extends ProcessorBase {
     private tick: number
 
     process_internal(msg, dispatch, ws, getState, first) {
-        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
-
-        const previousJogState = [...getState().jog]
+        const previousJogState = [...getState().jog] // this happens before the status update
 
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
@@ -56,8 +54,14 @@ class StatusProcessor extends ProcessorBase {
         // compare previous jog states with latest
         processJogStateChanges(previousJogState, getState().jog, msg => ws.send(msg))
 
+        // this is after the status update on slices, so state now has latest from GBC
+        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
+
         if (first) {
             this.tick = 0
+
+            dispatch(toolPathSlice.actions.reset(0)) // clear tool path on connect
+            dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
 
             if (actualTarget !== requestedTarget) {
                 ws.send(updateMachineTargetMsg(requestedTarget))
@@ -74,10 +78,13 @@ class StatusProcessor extends ProcessorBase {
                 }
             }
             dispatch(telemetrySlice.actions.init())
+
+            // push any override frames on connect (from local storage)
+            // ws.send(updateFrameOverridesMsg(getState().frames.overrides))
         }
 
         if (this.tick % 50 === 0) {
-            // about every 5 seconds assuming status message is 10hz
+            // send heartbeat about every 5 seconds assuming status message is 10hz
             ws.send(
                 updateMachineCommandMsg({
                     heartbeat // echo the machine status heartbeat

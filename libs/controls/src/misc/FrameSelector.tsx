@@ -1,5 +1,5 @@
 import * as React from "react"
-import { build_tree, Frame, useConfig } from "@glowbuzzer/store"
+import { build_tree, Frame, useConfig, useFrames } from "@glowbuzzer/store"
 import { Select } from "antd"
 
 const Option = Select.Option as any
@@ -36,6 +36,7 @@ export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameS
             World
         </Option>
     ] as any[]
+
     render_items(props.items, items, 0, props.defaultFrame)
 
     return (
@@ -46,8 +47,7 @@ export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameS
 }
 
 export const FrameSelector = (props: FrameSelectorProps) => {
-    const config = useConfig()
-    const items = build_tree(config.frames)
+    const { asTree: items } = useFrames()
 
     return <FrameSelectorDropdown items={items} {...props} />
 }

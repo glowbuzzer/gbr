@@ -4,10 +4,9 @@ import { RootState } from "../root"
 import * as THREE from "three"
 import deepEqual from "fast-deep-equal"
 import { KinematicsConfigurationMcStatus } from "../types"
-import { useFrames } from "../util/useFrames"
 import { useConnect } from "../connect"
-import { updateStatusFrequencyMsg } from "../devtools"
 import { useConfig } from "../config"
+import { useFrames } from "../frames"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -104,7 +103,7 @@ export function updateFroPercentageMsg(kc: number, value: number) {
     })
 }
 
-export const useKinematics = (kc: number, frameIndex: number) => {
+export const useKinematics = (kc: number, frameIndex: number | "world") => {
     // select the given kc
     const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
     const config = useConfig()
@@ -116,10 +115,11 @@ export const useKinematics = (kc: number, frameIndex: number) => {
 
     return {
         ...state,
-        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, fromIndex, frameIndex),
+        frameIndex: fromIndex,
+        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, "world", frameIndex),
         setFroPercentage(value: number) {
             window.localStorage.setItem(`kinematics.${kc}.statusFrequency`, JSON.stringify(value))
-            dispatch(dispatch => {
+            dispatch(() => {
                 connection.send(updateFroPercentageMsg(kc, value))
             })
         }

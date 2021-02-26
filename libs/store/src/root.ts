@@ -18,6 +18,7 @@ import { analogOutputsSlice } from "./io/aout"
 import { integerInputsSlice } from "./io/iin"
 import { integerOutputsSlice } from "./io/iout"
 import { tasksSlice } from "./tasks"
+import { framesSlice } from "./frames"
 
 export const rootReducer = combineReducers({
     config: configSlice.reducer,
@@ -27,6 +28,7 @@ export const rootReducer = combineReducers({
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,
     joints: jointsSlice.reducer,
+    frames: framesSlice.reducer,
     din: digitalInputsSlice.reducer,
     dout: digitalOutputsSlice.reducer,
     ain: analogInputsSlice.reducer,

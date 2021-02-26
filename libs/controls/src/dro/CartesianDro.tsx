@@ -75,7 +75,7 @@ export const DroItem = ({ label, value, type }: DroItemProps) => {
 }
 
 export const CartesianDro = (props: CartesianDisplayProps) => {
-    const [frameIndex, setFrameIndex] = React.useState<number>()
+    const [frameIndex, setFrameIndex] = React.useState<number>(0)
     const kinematics = useKinematics(0, frameIndex)
 
     const { position, orientation } = kinematics.pose

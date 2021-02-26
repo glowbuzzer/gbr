@@ -22,12 +22,12 @@ const MOVE_COLOR = fromHexString("#a7c0fd")
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
     private frameIndex = 0
-    private kcFrame: number
+    // private kcFrame: number
     private convertToFrame
 
-    constructor(current_positions: number[], kcFrame: number, convertToFrame) {
+    constructor(current_positions: number[], convertToFrame) {
         super(current_positions)
-        this.kcFrame = kcFrame
+        // this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
     }
@@ -36,7 +36,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const [x, y, z] = point
         const pos = new Vector3(x, y, z)
         const rot = new Quaternion(0, 0, 0, 1)
-        const new_pos = this.convertToFrame(pos, rot, this.frameIndex, this.kcFrame).position
+        const new_pos = this.convertToFrame(pos, rot, this.frameIndex, "world").position
         return [new_pos.x, new_pos.y, new_pos.z]
     }
 
@@ -105,31 +105,27 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }
 
-    G53() {
+    G54() {
         this.frameIndex = 0
     }
 
-    G54() {
+    G55() {
         this.frameIndex = 1
     }
 
-    G55() {
+    G56() {
         this.frameIndex = 2
     }
 
-    G56() {
+    G57() {
         this.frameIndex = 3
     }
 
-    G57() {
+    G58() {
         this.frameIndex = 4
     }
 
-    G58() {
-        this.frameIndex = 5
-    }
-
     G59() {
-        this.frameIndex = 6
+        this.frameIndex = 5
     }
 }

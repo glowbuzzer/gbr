@@ -145,7 +145,12 @@ type PreviewPathProps = {
 }
 
 export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps) => {
-    const previewPoints = useMemo(() => preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat(), [preview])
+    console.log("PREVIEW", preview)
+
+    const previewPoints = useMemo(() => {
+        console.log("GENERATE PREVIEW POINTS", preview)
+        return preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat()
+    }, [preview])
 
     const colors = useMemo(() => {
         function get_color(segment: GCodeSegment) {
