@@ -30,7 +30,7 @@ import "./app.css"
 import { CheckOutlined } from "@ant-design/icons"
 import { GlowbuzzerApp } from "@glowbuzzer/store"
 import { CartesianApp } from "./CartesianApp"
-import { FrameOverrideDialog } from "../../../../libs/controls/src/frames/FrameOverrideDialog"
+import { FrameOverrideDialog } from "@glowbuzzer/controls"
 
 const StyledApp = styled.div``
 

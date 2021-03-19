@@ -26,3 +26,5 @@ export * from "./jogging"
 export { ACTIVITYTYPE, KINEMATICSCONFIGURATIONTYPE } from "./types"
 
 export * from "./root"
+
+export * from "./util/settings"

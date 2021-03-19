@@ -1,0 +1,5 @@
+---
+slug: foo
+---
+
+# Another test

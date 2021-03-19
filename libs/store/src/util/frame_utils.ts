@@ -187,7 +187,7 @@ export function change_reference_frame(
     const toMatrix = toIndex === "world" || toIndex === undefined ? IDENTITY_MATRIX : matrixOf(toIndex)
     // log_translation(toMatrix, "TO TRANSLATION")
 
-    const transformation = new THREE.Matrix4().getInverse(toMatrix).multiply(fromMatrix)
+    const transformation = toMatrix.clone().invert().multiply(fromMatrix)
 
     // log_translation(transformation, "RESULT")
 

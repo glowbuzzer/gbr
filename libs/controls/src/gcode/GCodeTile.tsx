@@ -1,27 +1,33 @@
 import * as React from "react"
 import { useEffect } from "react"
-import AceEditor, { IMarker } from "react-ace"
-
-import "ace-builds/src-noconflict/theme-github"
-import "ace-builds/src-noconflict/mode-gcode"
-import "ace-builds/src-noconflict/mode-text"
+// import AceEditor, { IMarker } from "react-ace"
+//
+// import "ace-builds/src-noconflict/theme-github"
+// import "ace-builds/src-noconflict/mode-gcode"
+// import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
-import { StreamCommand, StreamState, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import { settings, StreamCommand, StreamState, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
+import loadable from "@loadable/component"
+
+const AceEditor = loadable(async () => {
+    if (typeof window !== "undefined") {
+        const editor = await import("react-ace")
+        // import("ace-builds/src-noconflict/theme-github")
+        // import("ace-builds/src-noconflict/mode-gcode")
+        // import("ace-builds/src-noconflict/mode-text")
+        return editor
+    }
+    return null
+})
 
 const { Option } = Select
 
-function getGCodeLS() {
-    return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
-}
-
-function setGCodeLS(gcode) {
-    return localStorage.setItem("ui.web-drives.gcode", gcode)
-}
+const { load, save } = settings("tiles.gcode")
 
 const StyledDiv = styled.div<{ readOnly: boolean }>`
     height: 100%;
@@ -47,7 +53,7 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 `
 
 export const GCodeTile = () => {
-    const [gcode, setGCode] = React.useState(getGCodeLS())
+    const [gcode, setGCode] = React.useState(load("G1 X10 Y5 Z2"))
 
     const stream = useGCode()
     const prefs = usePrefs()
@@ -63,7 +69,7 @@ export const GCodeTile = () => {
     }, [workOffset, gcode, config /* extra dep because config can cause frames to change */])
 
     function send_gcode() {
-        setGCodeLS(gcode)
+        save(gcode)
         const offset = "G" + (54 + workOffset)
         stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
@@ -77,7 +83,7 @@ export const GCodeTile = () => {
         preview.setHighlightLine(e.cursor.row)
     }
 
-    const highlight: IMarker[] = active
+    const highlight = active
         ? [
               {
                   startRow: stream.lineNum,
@@ -115,6 +121,8 @@ export const GCodeTile = () => {
             send_gcode()
         }
     }
+
+    console.log("GCODE", gcode)
 
     return (
         <Tile

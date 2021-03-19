@@ -1,5 +1,30 @@
 {
     "version": 1,
+    "cli": {
+        "defaultCollection": "@nrwl/react"
+    },
+    "defaultProject": "cartmc",
+    "schematics": {
+        "@nrwl/react": {
+            "application": {
+                "style": "styled-components",
+                "linter": "eslint",
+                "babel": true
+            },
+            "component": {
+                "style": "styled-components"
+            },
+            "library": {
+                "style": "styled-components",
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/gatsby": {
+            "application": {
+                "style": "styled-components"
+            }
+        }
+    },
     "projects": {
         "glowsaurus": {
             "projectType": "application",
@@ -222,26 +247,50 @@
                     }
                 }
             }
-        }
-    },
-    "cli": {
-        "defaultCollection": "@nrwl/react"
-    },
-    "schematics": {
-        "@nrwl/react": {
-            "application": {
-                "style": "styled-components",
-                "linter": "eslint",
-                "babel": true
-            },
-            "component": {
-                "style": "styled-components"
-            },
-            "library": {
-                "style": "styled-components",
-                "linter": "eslint"
+        },
+        "glowsite": {
+            "root": "apps/glowsite",
+            "sourceRoot": "apps/glowsite/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/gatsby:build",
+                    "options": {
+                        "outputPath": "apps/glowsite/public",
+                        "uglify": true,
+                        "color": true,
+                        "profile": false
+                    },
+                    "configurations": {
+                        "production": {}
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/gatsby:server",
+                    "options": {
+                        "buildTarget": "glowsite:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "glowsite:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/glowsite/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/glowsite"],
+                    "options": {
+                        "jestConfig": "apps/glowsite/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
             }
         }
-    },
-    "defaultProject": "cartmc"
+    }
 }

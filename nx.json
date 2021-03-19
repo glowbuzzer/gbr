@@ -1,8 +1,4 @@
 {
-    "npmScope": "glowbuzzer",
-    "affected": {
-        "defaultBase": "master"
-    },
     "implicitDependencies": {
         "workspace.json": "*",
         "package.json": {
@@ -14,6 +10,10 @@
         ".eslintrc.json": "*",
         "nx.json": "*"
     },
+    "affected": {
+        "defaultBase": "master"
+    },
+    "npmScope": "glowbuzzer",
     "tasksRunnerOptions": {
         "default": {
             "runner": "@nrwl/workspace/tasks-runners/default",
@@ -39,6 +39,9 @@
             "tags": []
         },
         "emstat": {
+            "tags": []
+        },
+        "glowsite": {
             "tags": []
         }
     }

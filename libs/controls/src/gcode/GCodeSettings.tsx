@@ -14,7 +14,6 @@ export const GCodeSettings = () => {
     }, [])
 
     function save() {
-        console.log("SAVE")
         dispatch(gcodeSlice.actions.settings(settings))
     }
 

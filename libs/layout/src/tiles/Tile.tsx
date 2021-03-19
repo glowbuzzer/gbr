@@ -46,16 +46,13 @@ const StyledTile = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
-    border: 1px solid ${props => props.theme.colors.border};
+    border: 1px solid #cccccc;
     border-radius: 5px;
     > .title {
         display: flex;
         align-items: center;
         padding: 4px 8px;
-        border-bottom: 1px solid
-            ${props => {
-                return props.theme.colors.border
-            }};
+        border-bottom: 1px solid #cccccc;
         .text {
             flex-grow: 1;
             color: grey;
@@ -89,7 +86,7 @@ const StyledTile = styled.div`
     }
     > .footer {
         padding: 4px 8px;
-        border-top: 1px solid ${props => props.theme.colors.border};
+        border-top: 1px solid #cccccc;
     }
     .controls {
         button {

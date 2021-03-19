@@ -29,7 +29,7 @@ type TelemetrySettingsDialogProps = {
     onChange(settings: Partial<TelemetrySettingsType>): void
 }
 
-export const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialogProps) => {
+const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialogProps) => {
     const { cartesianAxes, joints, cartesianEnabled, queueEnabled } = settings
 
     function update_cartesian(event: CheckboxChangeEvent) {

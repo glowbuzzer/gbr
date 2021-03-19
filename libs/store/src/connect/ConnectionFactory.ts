@@ -8,8 +8,7 @@ import { gcodeSlice } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { framesSlice, previewSlice, processJogStateChanges, RootState } from "@glowbuzzer/store"
-import { jogSlice } from "../jogging"
+import { jogSlice, processJogStateChanges } from "../jogging"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
@@ -18,6 +17,8 @@ import { integerOutputsSlice } from "../io/iout"
 import { analogInputsSlice } from "../io/ain"
 import { integerInputsSlice } from "../io/iin"
 import { tasksSlice } from "../tasks"
+import { settings } from "../util/settings"
+import { framesSlice, RootState } from "@glowbuzzer/store"
 
 abstract class ProcessorBase {
     protected first = true
@@ -109,12 +110,14 @@ class ResponseProcessor extends ProcessorBase {
     }
 }
 
+const { load, save } = settings("devtools.statusFrequency")
+
 class DevToolsProcessor extends ProcessorBase {
     protected process_internal(msg, dispatch, ws: WebSocket, getState: () => RootState, first: boolean) {
         if (first) {
             // load and send the desired frequency on startup
             try {
-                const value = JSON.parse(window.localStorage.getItem("devtools.statusFrequency"))
+                const value = load()
                 console.log("DISPATCH DESIRED REFRESH FREQUENCY", value)
                 dispatch(() => {
                     ws.send(updateStatusFrequencyMsg(value))
@@ -130,101 +133,99 @@ class DevToolsProcessor extends ProcessorBase {
 /**
  * This needs to be global on window, otherwise there is a circular dependency: connection -> actions -> useConnect -> connection
  */
-window.connection = ((): Connection => {
-    let ws: WebSocket = null
-    let statusTimeout = null
+if (typeof window !== "undefined") {
+    window.connection = ((): Connection => {
+        let ws: WebSocket = null
+        let statusTimeout = null
 
-    return {
-        connect(url): AppThunk {
-            return async (dispatch, getState) => {
-                const statusProcessor = new StatusProcessor()
-                const responseProcessor = new ResponseProcessor()
-                const devToolsProcessor = new DevToolsProcessor()
+        return {
+            connect(url): AppThunk {
+                return async (dispatch, getState) => {
+                    const statusProcessor = new StatusProcessor()
+                    const responseProcessor = new ResponseProcessor()
+                    const devToolsProcessor = new DevToolsProcessor()
 
-                function no_status_handler() {
-                    dispatch(connectionSlice.actions.statusReceived(false))
-                }
-
-                function start_status_timeout() {
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.statusReceived(true))
-                    statusTimeout = setTimeout(no_status_handler, 5000) // 5 second timeout on status
-                }
-
-                function clear_status_timeout() {
-                    clearTimeout(statusTimeout)
-                }
-
-                dispatch(connectionSlice.actions.connecting())
-                ws = new WebSocket(url)
-                ws.onopen = () => {
-                    start_status_timeout()
-                    ws.send(
-                        JSON.stringify({
-                            request: {
-                                get_config: true
-                            }
-                        })
-                    )
-                    dispatch(connectionSlice.actions.connected())
-                }
-                ws.onclose = () => {
-                    ws = null
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.disconnected())
-                }
-                ws.onerror = () => {
-                    if (ws) {
-                        ws.close()
-                        ws = null
+                    function no_status_handler() {
+                        dispatch(connectionSlice.actions.statusReceived(false))
                     }
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.disconnected())
-                }
-                ws.onmessage = event => {
-                    try {
-                        const msg = JSON.parse(event.data)
-                        msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
-                        if (msg.status) {
-                            start_status_timeout()
-                            statusProcessor.process(msg, dispatch, ws, getState)
-                        }
-                        if (msg.stream) {
-                            dispatch(gcodeSlice.actions.status(msg.stream))
-                            GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
-                                console.log("sending gcode")
-                                ws.send(
-                                    JSON.stringify({
-                                        stream: streamItems
-                                    })
-                                )
+
+                    function start_status_timeout() {
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.statusReceived(true))
+                        statusTimeout = setTimeout(no_status_handler, 5000) // 5 second timeout on status
+                    }
+
+                    function clear_status_timeout() {
+                        clearTimeout(statusTimeout)
+                    }
+
+                    dispatch(connectionSlice.actions.connecting())
+                    ws = new WebSocket(url)
+                    ws.onopen = () => {
+                        start_status_timeout()
+                        ws.send(
+                            JSON.stringify({
+                                request: {
+                                    get_config: true
+                                }
                             })
-                        }
-                        if (msg.response) {
-                            // responses to request we have sent
-                            responseProcessor.process(msg, dispatch, ws, getState)
-                        }
-                        if (msg.devtools) {
-                            devToolsProcessor.process(msg, dispatch, ws, getState)
-                        }
-                    } catch (e) {
-                        console.error(e)
+                        )
+                        dispatch(connectionSlice.actions.connected())
                     }
+                    ws.onclose = () => {
+                        ws = null
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.disconnected())
+                    }
+                    ws.onerror = () => {
+                        if (ws) {
+                            ws.close()
+                            ws = null
+                        }
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.disconnected())
+                    }
+                    ws.onmessage = event => {
+                        try {
+                            const msg = JSON.parse(event.data)
+                            msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
+                            if (msg.status) {
+                                start_status_timeout()
+                                statusProcessor.process(msg, dispatch, ws, getState)
+                            }
+                            if (msg.stream) {
+                                dispatch(gcodeSlice.actions.status(msg.stream))
+                                GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
+                                    console.log("sending gcode")
+                                    ws.send(
+                                        JSON.stringify({
+                                            stream: streamItems
+                                        })
+                                    )
+                                })
+                            }
+                            if (msg.response) {
+                                // responses to request we have sent
+                                responseProcessor.process(msg, dispatch, ws, getState)
+                            }
+                            if (msg.devtools) {
+                                devToolsProcessor.process(msg, dispatch, ws, getState)
+                            }
+                        } catch (e) {
+                            console.error(e)
+                        }
+                    }
+                }
+            },
+            send(msg): AppThunk {
+                return () => ws?.send(msg)
+            },
+            disconnect(): AppThunk {
+                return () => {
+                    ws?.close()
+                    ws = null
                 }
             }
-        },
-        send(msg): AppThunk {
-            return _dispatch => ws.send(msg)
-        },
-        disconnect(): AppThunk {
-            return () =>
-                /*dispatch*/
-                /*, getState*/ {
-                    if (ws) {
-                        ws.close()
-                    }
-                    ws = null
-                }
         }
-    }
-})()
+    })()
+}

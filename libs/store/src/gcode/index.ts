@@ -6,7 +6,7 @@ import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
 
-const { load, save } = settings("gcode")
+const { load, save } = settings("store.gcode")
 
 export type GCodeSettingsType = {
     sendEndProgram: boolean

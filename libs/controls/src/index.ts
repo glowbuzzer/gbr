@@ -28,8 +28,18 @@ export * from "./telemetry/TelemetryTile"
 export * from "./telemetry/SparklineDynamic"
 
 export * from "./connect/ConnectTile"
+
 export * from "./gcode/GCodeTile"
+
 export * from "./dev/DevToolsTile"
 export * from "./feedrate/FeedRateTile"
 export * from "./jogging/JogTile"
+export * from "./frames/FrameOverrideDialog"
+
 export { StopIcon } from "./util/StopIcon"
+export { DroItem } from "./dro/DroItem"
+export { FrameSelectorDropdown } from "./misc/FrameSelectorDropdown"
+export { render_items } from "./misc/FrameSelectorDropdown"
+export { FrameSelectorProps } from "./misc/FrameSelectorDropdown"
+export { FrameSelectorDropdownProps } from "./misc/FrameSelectorDropdown"
+export { Option } from "./misc/FrameSelectorDropdown"
