@@ -9,5 +9,5 @@ EOF
 
 export AWS_PROFILE=gb-deploy
 
-aws s3 sync --quiet ./apps/glowsite/public "s3://$1/site" && \
+aws s3 sync --quiet --delete ./apps/glowsite/public "s3://$1/site" && \
 aws cloudfront create-invalidation --paths "/site/*" --distribution-id $2
