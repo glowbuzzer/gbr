@@ -22,22 +22,22 @@ exports.createPages = async ({ graphql, actions }) => {
 
     allMarkdown.data.allMdx.edges.forEach(({ node }) => {
         const { slug, frontmatter } = node
-        const name =
-            (frontmatter && frontmatter.slug) ||
-            slug
-                .split("/")
-                .filter(s => s.length)
-                .pop() // get last part of the auto-generated slug
+        const breadcrumb = slug.split("/").filter(s => s.length)
+        const name = (frontmatter && frontmatter.slug) || breadcrumb.pop() // get last part of the auto-generated slug
 
-        createPage({
-            path: slug,
-            component: path.resolve(`./src/components/page/MdxContentPage.tsx`),
-            context: {
-                // Data passed to context is available in page queries as GraphQL variables.
-                slug,
-                layout: "docs",
-                name
-            }
-        })
+        // we only want to create nodes for mdx files that are in "known" locations where we want pages
+        switch (breadcrumb[0]) {
+            case "docs":
+                createPage({
+                    path: slug,
+                    component: path.resolve(`./src/components/page/MdxContentPage.tsx`),
+                    context: {
+                        // Data passed to context is available in page queries as GraphQL variables.
+                        slug,
+                        layout: breadcrumb[0],
+                        name
+                    }
+                })
+        }
     })
 }

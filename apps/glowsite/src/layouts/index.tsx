@@ -22,10 +22,5 @@ export default ({ children, pageContext }) => {
             </DefaultLayoutWithMdxSupport>
         )
     }
-    return (
-        <DefaultLayoutWithMdxSupport>
-            <div>YIPPEE THIS IS LAYOUT</div>
-            {children}
-        </DefaultLayoutWithMdxSupport>
-    )
+    return <DefaultLayoutWithMdxSupport>{children}</DefaultLayoutWithMdxSupport>
 }

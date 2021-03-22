@@ -4,12 +4,14 @@ import { Row, Col } from "antd"
 import OverPack from "rc-scroll-anim/lib/ScrollOverPack"
 import { getChildrenToRender } from "./utils"
 
+// TODO: remove
 class Content extends React.PureComponent {
     render() {
         const { dataSource, isMobile, ...props } = this.props
         const { wrapper, titleWrapper, page, OverPack: overPackData, childWrapper } = dataSource
         return (
             <div {...props} {...wrapper}>
+                NOT USED - see HomeFeatures.tsx
                 <div {...page}>
                     <div {...titleWrapper}>{titleWrapper.children.map(getChildrenToRender)}</div>
                     <OverPack {...overPackData}>

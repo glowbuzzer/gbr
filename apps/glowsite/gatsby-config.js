@@ -59,17 +59,21 @@ module.exports = {
             options: {
                 loaderOptions: {
                     lessOptions: {
+                        modifyVars: {
+                            "menu-dark-bg": "#1d0d45"
+                        },
                         javascriptEnabled: true
                     }
                 }
             }
         },
         {
+            // this replaces the gatsby-transformer-remark plugin, see: https://www.gatsbyjs.com/docs/how-to/routing/migrate-remark-to-mdx
             resolve: "gatsby-plugin-mdx",
             options: {
                 extensions: [".md", ".mdx"],
                 gatsbyRemarkPlugins: [
-                    "gatsby-plugin-mdx-code-demo",
+                    "gatsby-plugin-mdx-code-demo", // not sure this is used?
                     {
                         resolve: "gatsby-remark-responsive-iframe",
                         options: {

@@ -1,5 +1,7 @@
 import React from "react"
 
+import { ReactComponent as StackIcon } from "../images/icons/stack-icon.svg"
+
 export const Nav00DataSource = {
     wrapper: { className: "header0 glow-page-wrapper" },
     page: { className: "glow-page" },
@@ -189,7 +191,7 @@ export const Banner01DataSource = {
     },
     content: {
         className: "banner0-content",
-        children: "Making Things Move"
+        children: "Web Stack Machine Motion"
     },
     button: { className: "banner0-button", children: "Learn More" }
 }
@@ -215,14 +217,14 @@ export const Content00DataSource = {
                         {
                             name: "image",
                             className: "content0-block-icon",
-                            children: "https://zos.alipayobjects.com/rmsportal/WBnVOjtIlGWbzyQivuyq.png"
+                            children: <StackIcon />
                         },
                         {
                             name: "title",
                             className: "content0-block-title",
-                            children: "Advanced Motion Control"
+                            children: "Web stack"
                         },
-                        { name: "content", children: "Kick start your machine development with simple but sophisticated motion primitives" }
+                        { name: "content", children: "Build complex machine control applications in a web stack - no proprietary languages or IDEs" }
                     ]
                 }
             },

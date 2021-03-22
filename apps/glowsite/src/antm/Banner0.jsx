@@ -5,6 +5,14 @@ import QueueAnim from "rc-queue-anim"
 import TweenOne from "rc-tween-one"
 import { isImg } from "./utils"
 
+import loadable from "@loadable/component"
+const HomeAnimation = loadable(async () => {
+    if (typeof window !== "undefined") {
+        return await import("../components/HomeAnimation")
+    }
+    return null
+})
+
 class Banner extends React.PureComponent {
     render() {
         const { ...currentProps } = this.props
@@ -13,6 +21,7 @@ class Banner extends React.PureComponent {
         delete currentProps.isMobile
         return (
             <div {...currentProps} {...dataSource.wrapper}>
+                <HomeAnimation />
                 <QueueAnim key="QueueAnim" type={["bottom", "top"]} delay={200} {...dataSource.textWrapper}>
                     <div key="title" {...dataSource.title}>
                         {typeof dataSource.title.children === "string" && dataSource.title.children.match(isImg) ? (

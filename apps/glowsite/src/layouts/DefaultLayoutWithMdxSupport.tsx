@@ -6,6 +6,7 @@ import { enquireScreen } from "enquire-js"
 
 import { Footer10DataSource, Nav00DataSource } from "../data/antmotion.data"
 import { CodeDemo, CodeDemoStoreProvider } from "../components/CodeDemo"
+import { MdxFragmentProvider } from "../providers/MdxFragmentProvider"
 
 let isMobile
 enquireScreen(b => {
@@ -31,11 +32,15 @@ export const DefaultLayoutWithMdxSupport = ({ children }) => {
 
     return show ? (
         <CodeDemoStoreProvider>
-            <MDXProvider components={mdxComponents}>
-                <SiteTopNav dataSource={Nav00DataSource} isMobile={mobile} />
-                {children}
-                <SiteFooter id="Footer1_0" key="Footer1_0" dataSource={Footer10DataSource} isMobile={mobile} />
-            </MDXProvider>
+            {/* MdxFragmentProvider is ours - it enables useFragment hook to get MDX fragments in a page */}
+            <MdxFragmentProvider>
+                {/* MdxFragmentProvider is NOT ours - it is required for MDXRenderer */}
+                <MDXProvider components={mdxComponents}>
+                    <SiteTopNav dataSource={Nav00DataSource} isMobile={mobile} />
+                    {children}
+                    <SiteFooter id="Footer1_0" key="Footer1_0" dataSource={Footer10DataSource} isMobile={mobile} />
+                </MDXProvider>
+            </MdxFragmentProvider>
         </CodeDemoStoreProvider>
     ) : null
 }
