@@ -1,4 +1,4 @@
-requestAnimFrame = (function () {
+const requestAnimFrame = (function () {
     return (
         window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
@@ -11,7 +11,7 @@ requestAnimFrame = (function () {
     )
 })()
 
-cancelRequestAnimFrame = (function () {
+const cancelRequestAnimFrame = (function () {
     return (
         window.cancelAnimationFrame ||
         window.webkitCancelRequestAnimationFrame ||
