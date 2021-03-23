@@ -22,12 +22,12 @@ const cancelRequestAnimFrame = (function () {
     )
 })()
 
-const deepExtend = function (destination, source) {
+function deepExtend(destination, source) {
     for (const property in source) {
         if (source[property] && source[property].constructor && source[property].constructor === Object) {
             destination[property] = destination[property] || {}
             // noinspection JSAnnotator
-            arguments.callee(destination[property], source[property])
+            deepExtend(destination[property], source[property])
         } else {
             destination[property] = source[property]
         }

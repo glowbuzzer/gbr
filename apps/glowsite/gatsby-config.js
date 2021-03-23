@@ -120,7 +120,7 @@ module.exports = {
         {
             resolve: `gatsby-source-filesystem`,
             options: {
-                name: `images`,
+                name: `content`,
                 path: `${__dirname}/src/content`
             }
         },
@@ -147,17 +147,22 @@ module.exports = {
                 path: __dirname
             }
         },
-        `gatsby-plugin-sharp`,
+        {
+            resolve: `gatsby-plugin-sharp`,
+            options: {
+                icon: "src/images/micro-logo.svg"
+            }
+        },
         {
             resolve: `gatsby-plugin-manifest`,
             options: {
-                name: `glowsite`,
-                short_name: `starter`,
+                name: `Glowbuzzer`,
+                short_name: `Glowbuzzer`,
                 start_url: `/`,
-                background_color: `#663399`,
-                theme_color: `#663399`,
+                // background_color: `#663399`,
+                // theme_color: `#663399`,
                 display: `minimal-ui`,
-                icon: "src/images/gatsby-icon.png"
+                icon: "src/images/micro-logo.svg"
             }
         }
     ]

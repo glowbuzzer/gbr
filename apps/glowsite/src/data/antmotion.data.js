@@ -1,13 +1,14 @@
 import React from "react"
 
 import { ReactComponent as StackIcon } from "../images/icons/stack-icon.svg"
+import { SmallLogo, StandardLogo } from "../components/logos"
 
 export const Nav00DataSource = {
     wrapper: { className: "header0 glow-page-wrapper" },
     page: { className: "glow-page" },
     logo: {
         className: "header0-logo",
-        children: "https://os.alipayobjects.com/rmsportal/mlcYmsRilwraoAe.svg"
+        children: <SmallLogo />
     },
     Menu: {
         className: "header0-menu",
@@ -187,7 +188,7 @@ export const Banner01DataSource = {
     textWrapper: { className: "banner0-text-wrapper" },
     title: {
         className: "banner0-title",
-        children: "https://zos.alipayobjects.com/rmsportal/HqnZZjBjWRbjyMr.png"
+        children: <StandardLogo />
     },
     content: {
         className: "banner0-content",
