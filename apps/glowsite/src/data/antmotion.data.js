@@ -1,185 +1,132 @@
 import React from "react"
 
-import { ReactComponent as StackIcon } from "../images/icons/stack-icon.svg"
 import { SmallLogo, StandardLogo } from "../components/logos"
+import { GithubOutlined } from "@ant-design/icons"
+
+function sub_item(title, description, to = "/") {
+    return {
+        className: "item-sub",
+        children: {
+            to,
+            className: "item-sub-item",
+            children: [
+                {
+                    name: "title",
+                    className: "item-title",
+                    children: title
+                },
+                {
+                    name: "content",
+                    className: "item-content",
+                    children: description
+                }
+            ]
+        }
+    }
+}
 
 export const Nav00DataSource = {
     wrapper: { className: "header0 glow-page-wrapper" },
     page: { className: "glow-page" },
     logo: {
         className: "header0-logo",
-        children: <SmallLogo />
+        children: (
+            <a href="/">
+                <SmallLogo />
+            </a>
+        )
     },
     Menu: {
         className: "header0-menu",
         children: [
             {
-                name: "item0",
                 className: "header0-item",
                 children: {
                     href: "#",
-                    children: [{ children: "Features", name: "text" }]
+                    children: [{ children: "How it works", name: "text" }]
                 },
                 subItem: [
-                    {
-                        name: "sub0",
-                        className: "item-sub",
-                        children: {
-                            className: "item-sub-item",
-                            children: [
-                                {
-                                    name: "image0",
-                                    className: "item-image",
-                                    children: "https://gw.alipayobjects.com/zos/rmsportal/ruHbkzzMKShUpDYMEmHM.svg"
-                                },
-                                {
-                                    name: "title",
-                                    className: "item-title",
-                                    children: "Ant Design"
-                                },
-                                {
-                                    name: "content",
-                                    className: "item-content",
-                                    children: "Something else"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: "sub1",
-                        className: "item-sub",
-                        children: {
-                            className: "item-sub-item",
-                            children: [
-                                {
-                                    name: "image0",
-                                    className: "item-image",
-                                    children: "https://gw.alipayobjects.com/zos/rmsportal/ruHbkzzMKShUpDYMEmHM.svg"
-                                },
-                                {
-                                    name: "title",
-                                    className: "item-title",
-                                    children: "Ant Design"
-                                },
-                                {
-                                    name: "content",
-                                    className: "item-content",
-                                    children: "企业级 UI 设计体系"
-                                }
-                            ]
-                        }
-                    }
-                ]
+                    sub_item("Basics", "How it all fits together", "/how-it-works/basics"),
+                    sub_item("Detail", "More technical details on the toolkit", "/how-it-works/detail"),
+                    sub_item("Fieldbus", "How does the fieldbus interface work", "/how-it-works/fieldbus"),
+                    sub_item("Drives", "How does it integrate with drives", "/how-it-works/drives"),
+                    sub_item("Linux", "How to run on a Linux platform", "/how-it-works/linux"),
+                    sub_item("Embedded", "How to run on a microcontroller", "/how-it-works/embedded")
+                ].map((item, index) => ({
+                    ...item,
+                    name: `how${index}`
+                }))
             },
             {
-                name: "item1",
+                className: "header0-item",
+                children: {
+                    href: "#",
+                    children: [{ children: "Get started", name: "text" }]
+                },
+                subItem: [
+                    sub_item("Hardware", "Starter kits and recommended hardware", "/get-started/hardware"),
+                    sub_item("Motion", "Get a drive moving", "/get-started/motion"),
+                    sub_item("Front-end", "Clone and modify a front-end template", "/get-started/front-end"),
+                    sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat")
+                ].map((item, index) => ({
+                    ...item,
+                    name: `get-started${index}`
+                }))
+            },
+            {
                 className: "header0-item",
                 children: {
                     href: "#",
                     children: [{ children: "Documentation", name: "text" }]
                 },
                 subItem: [
-                    {
-                        name: "sub0",
-                        className: "item-sub",
-                        children: {
-                            className: "item-sub-item",
-                            to: "/docs/ui",
-                            children: [
-                                {
-                                    name: "image0",
-                                    className: "item-image",
-                                    children: "https://gw.alipayobjects.com/zos/rmsportal/ruHbkzzMKShUpDYMEmHM.svg"
-                                },
-                                {
-                                    name: "title",
-                                    className: "item-title",
-                                    children: "UI"
-                                },
-                                {
-                                    name: "content",
-                                    className: "item-content",
-                                    children: "User interface controls and React hooks"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: "sub1",
-                        className: "item-sub",
-                        children: {
-                            className: "item-sub-item",
-                            to: "/docs/gbc",
-                            children: [
-                                {
-                                    name: "image0",
-                                    className: "item-image",
-                                    children: "https://gw.alipayobjects.com/zos/rmsportal/ruHbkzzMKShUpDYMEmHM.svg"
-                                },
-                                {
-                                    name: "title",
-                                    className: "item-title",
-                                    children: "GBC"
-                                },
-                                {
-                                    name: "content",
-                                    className: "item-content",
-                                    children: "Glowbuzzer Control configuration and reference"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        name: "sub2",
-                        className: "item-sub",
-                        children: {
-                            className: "item-sub-item",
-                            children: [
-                                {
-                                    name: "image0",
-                                    className: "item-image",
-                                    children: "https://gw.alipayobjects.com/zos/rmsportal/ruHbkzzMKShUpDYMEmHM.svg"
-                                },
-                                {
-                                    name: "title",
-                                    className: "item-title",
-                                    children: "GB-EM"
-                                },
-                                {
-                                    name: "content",
-                                    className: "item-content",
-                                    children: "Glowbuzzer Ethercat Master configuration and reference"
-                                }
-                            ]
-                        }
-                    }
-                ]
+                    sub_item("Tutorials", "Step-by-step guidance", "/docs/tutorials/"),
+                    sub_item("Core Control (GBC)", "Core control documentation", "/docs/gbc/"),
+                    sub_item("EtherCAT Master (GBEM)", "EtherCAT master documentation", "/docs/gbem/"),
+                    sub_item("Front-end", "React component documentation", "/docs/ui/")
+                ].map((item, index) => ({
+                    ...item,
+                    name: `docs${index}`
+                }))
             },
             {
-                name: "item2",
+                className: "header0-item",
+                children: {
+                    href: "#",
+                    children: [{ children: "Blogs", name: "text" }]
+                },
+                subItem: [
+                    sub_item("Embedded", "All about embedded"),
+                    sub_item("Drives", "All about drives"),
+                    sub_item("Webdev", "Web development in automation")
+                ].map((item, index) => ({
+                    ...item,
+                    name: `about${index}`
+                }))
+            },
+            {
                 className: "header0-item",
                 children: {
                     href: "#",
                     children: [{ children: "About", name: "text" }]
-                }
+                },
+                subItem: [
+                    sub_item("Vision", "What we want to achieve"),
+                    sub_item("Values", "What we stand for"),
+                    sub_item("Contact", "Contact form, location information")
+                ].map((item, index) => ({
+                    ...item,
+                    name: `about${index}`
+                }))
             },
             {
-                name: "item3",
-                className: "header0-item",
-                children: {
-                    href: "#",
-                    children: [{ children: "Contact", name: "text" }]
-                }
-            },
-            {
-                name: "item4",
                 className: "header0-item",
                 children: {
                     href: "https://www.github.com/glowbuzzer",
-                    children: [{ children: "Github", name: "text" }]
+                    children: [{ children: <GithubOutlined width={32} />, name: "text" }]
                 }
             }
-        ]
+        ].map((item, index) => ({ ...item, name: `item${index}` }))
     },
     mobileMenu: { className: "header0-mobile-menu" }
 }
@@ -196,6 +143,7 @@ export const Banner01DataSource = {
     },
     button: { className: "banner0-button", children: "Learn More" }
 }
+/* NOT USED - see HomeFeatures.tsx
 export const Content00DataSource = {
     wrapper: { className: "glow-page-wrapper content0-wrapper" },
     page: { className: "glow-page content0" },
@@ -282,6 +230,7 @@ export const Content00DataSource = {
         ]
     }
 }
+*/
 export const Content50DataSource = {
     wrapper: { className: "glow-page-wrapper content5-wrapper" },
     page: { className: "glow-page content5" },

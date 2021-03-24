@@ -71,9 +71,11 @@ class Header extends React.Component {
         return (
             <TweenOne component="header" animation={{ opacity: 0, type: "from" }} {...dataSource.wrapper} {...props}>
                 <div {...dataSource.page} className={`${dataSource.page.className}${phoneOpen ? " open" : ""}`}>
-                    <TweenOne animation={{ x: -30, type: "from", ease: "easeOutQuad" }} {...dataSource.logo}>
-                        {dataSource.logo.children}
-                    </TweenOne>
+                    <Link to="/">
+                        <TweenOne animation={{ x: -30, type: "from", ease: "easeOutQuad" }} {...dataSource.logo}>
+                            {dataSource.logo.children}
+                        </TweenOne>
+                    </Link>
                     {isMobile && (
                         <div
                             {...dataSource.mobileMenu}
@@ -105,7 +107,13 @@ class Header extends React.Component {
                         moment={moment}
                         reverse={!!phoneOpen}
                     >
-                        <Menu mode={isMobile ? "inline" : "horizontal"} defaultSelectedKeys={["sub0"]} theme="dark">
+                        <Menu
+                            mode={isMobile ? "inline" : "horizontal"}
+                            defaultSelectedKeys={["xxx"]}
+                            theme="dark"
+                            selectedKeys={[]}
+                            selectable={false}
+                        >
                             <Item title="Test" />
                             {navChildren}
                         </Menu>

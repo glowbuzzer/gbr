@@ -44,7 +44,7 @@ function node_sort(kva, kvb) {
         if (sa === sb) {
             return $a.slug.localeCompare($b.slug)
         }
-        return sb - sa
+        return sa - sb
     }
     // one has children
     return $ca ? 1 : -1

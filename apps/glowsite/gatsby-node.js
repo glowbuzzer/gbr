@@ -28,6 +28,10 @@ exports.createPages = async ({ graphql, actions }) => {
         // we only want to create nodes for mdx files that are in "known" locations where we want pages
         switch (breadcrumb[0]) {
             case "docs":
+            case "how-it-works":
+            case "get-started":
+            case "blogs":
+            case "about":
                 createPage({
                     path: slug,
                     component: path.resolve(`./src/components/page/MdxContentPage.tsx`),

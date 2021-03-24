@@ -1,5 +1,0 @@
----
-slug: foo
----
-
-# Another test

@@ -14,11 +14,24 @@ import styled from "styled-components"
 const StyledMdxPage = styled.div`
     padding: 0 20px;
 
+    h2 {
+        margin-top: 20px;
+    }
+
+    p {
+        margin: 0.5em 0;
+        font-size: 1.1em !important;
+    }
+
+    .gatsby-highlight {
+        margin-bottom: 1em;
+    }
+
     code.language-text {
         border: inherit;
         background: inherit;
         font-weight: bold;
-        color: #474747;
+        color: #797979;
         padding: inherit;
     }
 `
