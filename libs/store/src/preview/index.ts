@@ -25,6 +25,14 @@ export const previewSlice = createSlice({
         set(store, action) {
             store.segments = action.payload
         },
+        setSimple(store, action) {
+            const path = action.payload
+            store.segments = path.slice(1).map((p, index) => ({
+                from: path[index],
+                to: p,
+                color: [0.5, 0.5, 0.5] // neutral grey
+            }))
+        },
         setHighlightLine(store, action) {
             store.highlightLine = action.payload
         }

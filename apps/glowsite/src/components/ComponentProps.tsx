@@ -21,6 +21,10 @@ const StyledDiv = styled.div`
                 border-radius: 4px;
             }
         }
+
+        .prop-type {
+            white-space: nowrap;
+        }
     }
 `
 

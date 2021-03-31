@@ -19,16 +19,16 @@ export const DEFAULT_CONFIG = {
             participatingJointsCount: 3,
             kinematicsParameters: {
                 kinematicsConfigurationType: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
+                xExtents: [-10, 10],
+                yExtents: [-10, 10],
+                zExtents: [-10, 10],
                 cartesianParameters: {
                     linearVmax: 10000,
                     linearAmax: 100000,
                     linearJmax: 1000000,
                     tcpRotationalVmax: 100,
                     tcpRotationalAmax: 1000,
-                    tcpRotationalJmax: 10000,
-                    xExtents: [-10, 10],
-                    yExtents: [-10, 10],
-                    zExtents: [-10, 10]
+                    tcpRotationalJmax: 10000
                 }
             }
         }

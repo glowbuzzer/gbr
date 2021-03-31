@@ -111,7 +111,9 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
     const dispatch = useDispatch()
     const connection = useConnect()
 
-    const fromIndex = Object.values(config.kinematicsConfiguration)[kc].frameIndex
+    // TODO: seeing 'world' passed here which cannot be found in configs
+    const configs = Object.values(config.kinematicsConfiguration)
+    const fromIndex = (configs[kc] || configs[0]).frameIndex
 
     return {
         ...state,

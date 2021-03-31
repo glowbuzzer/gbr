@@ -41,7 +41,7 @@ export function useTaskStatus() {
 
     return Object.keys(config.task).map((k, index) => ({
         name: k,
-        status: status[index] || {}
+        status: status[index] || { state: 0, currentActivityIndex: 0 }
     }))
 }
 

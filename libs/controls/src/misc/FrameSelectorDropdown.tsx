@@ -1,14 +1,11 @@
 import { Frame } from "@glowbuzzer/store"
 import * as React from "react"
 import { Select } from "antd"
+import { FrameSelectorProps } from "./FrameSelector"
 
 const Option = Select.Option as any
 type FrameSelectorDropdownProps = {
     items: Frame[]
-}
-export type FrameSelectorProps = {
-    defaultFrame?: number
-    onChange(frameIndex: number): void
 }
 
 function render_items(items: Frame[], result: any[], level: number, defaultFrame?: number) {

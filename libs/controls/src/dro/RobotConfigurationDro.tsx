@@ -6,10 +6,10 @@ import { useKinematics } from "@glowbuzzer/store"
 export const RobotConfigurationDro = () => {
     const kinematics = useKinematics(0, 0)
 
-    if (kinematics.type !== 0) {
-        // TX40 only
-        throw new Error("Unsupported kinematics type: " + kinematics.type)
-    }
+    // if (kinematics.type !== 0) {
+    //     TX40 only
+    // throw new Error("Unsupported kinematics type: " + kinematics.type)
+    // }
 
     const waist = kinematics.currentConfiguration & 0b100
     const elbow = kinematics.currentConfiguration & 0b100

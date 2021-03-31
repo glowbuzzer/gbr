@@ -1,0 +1,30 @@
+# JointDro
+
+Displays values of joints. By default will display all configured joints. If joints specify minimum and maximum values,
+a gauge will be displayed showing the range of motion.
+
+## Simple example
+
+```jsx codeDemo
+import * as React from "react";
+import {JointDro} from "@glowbuzzer/controls";
+
+export default () => <JointDro/>
+```
+
+## Selection of joints example
+
+Use the `joints` parameter to specify which joints should be displayed.
+
+```jsx codeDemo
+import * as React from "react";
+import {JointDro} from "@glowbuzzer/controls";
+
+const joints_to_display={
+    0: "A",
+    4: "B",
+    5: "C",
+};
+
+export default () => <JointDro joints={joints_to_display}/>
+```

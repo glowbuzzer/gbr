@@ -15,7 +15,7 @@ const StyledMdxPage = styled.div`
     padding: 0 20px;
 
     h2 {
-        margin-top: 20px;
+        margin-top: 40px;
     }
 
     p {
@@ -29,10 +29,11 @@ const StyledMdxPage = styled.div`
 
     code.language-text {
         border: inherit;
-        background: inherit;
-        font-weight: bold;
-        color: #797979;
-        padding: inherit;
+        background: rgba(27, 31, 35, 0.05);
+        font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+        //font-weight: bold;
+        color: #333333;
+        padding: 0 2px;
     }
 `
 /**

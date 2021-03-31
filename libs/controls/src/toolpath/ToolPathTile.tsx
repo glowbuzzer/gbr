@@ -9,6 +9,7 @@ import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { ToolPathAutoSize } from "./ToolPathAutoSize"
 import { PreviewPath } from "./PreviewPath"
+import styled from "styled-components"
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -46,16 +47,21 @@ const ToolPathSettings = () => {
     )
 }
 
+const ToolPathArea = styled.div`
+    > div {
+        min-height: 400px;
+    }
+`
+
 export const ToolPathTile = () => {
     const { path, reset } = useToolPath(0)
     const { settings } = useToolPathSettings()
     const { segments, highlightLine } = usePreview()
     const config = useConfig()
 
-    const parameters = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
+    const parameters = config.kinematicsConfiguration.default.kinematicsParameters
     const { xExtents, yExtents, zExtents } = parameters
     const extent = useMemo(() => {
-        console.log("Recalc extent")
         if (settings.overrideWorkspace) {
             return settings.extent
         }
@@ -69,18 +75,20 @@ export const ToolPathTile = () => {
     // noinspection RequiredAttributes
     return (
         <Tile title={"Toolpath"} footer={<Button onClick={reset}>Reset</Button>} settings={<ToolPathSettings />}>
-            <Canvas>
-                <ToolPathAutoSize extent={extent}>
-                    <ambientLight />
-                    <pointLight position={[10, 10, 10]} />
-                    <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
-                    <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
+            <ToolPathArea>
+                <Canvas>
+                    <ToolPathAutoSize extent={extent}>
+                        <ambientLight />
+                        <pointLight position={[10, 10, 10]} />
+                        <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
+                        <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
 
-                    <WorkspaceDimensions extent={extent} />
-                    <ToolPath path={path} scale={extent} />
-                    <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
-                </ToolPathAutoSize>
-            </Canvas>
+                        <WorkspaceDimensions extent={extent} />
+                        <ToolPath path={path} scale={extent} />
+                        <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
+                    </ToolPathAutoSize>
+                </Canvas>
+            </ToolPathArea>
 
             {/*
             <ToolPathDisplay width={1000} height={800} extent={200} path={path} segments={segments} />

@@ -100,7 +100,6 @@ module.exports = {
                 siteUrl: "https://www.glowbuzzer.com"
             }
         },
-        // original (added by NX)
         "gatsby-plugin-styled-components",
         {
             resolve: "gatsby-plugin-svgr",
@@ -124,20 +123,13 @@ module.exports = {
                 path: `${__dirname}/src/content`
             }
         },
-        // `gatsby-transformer-json`,
-        // {
-        //     resolve: `gatsby-source-filesystem`,
-        //     options: {
-        //         name: `data`,
-        //         path: `${__dirname}/src/data`
-        //     }
-        // },
         `gatsby-transformer-json`,
         {
             resolve: `gatsby-source-filesystem`,
             options: {
                 name: `docgen`,
-                path: `${__dirname}/../../libs/controls`
+                path: `${__dirname}/../../libs/controls`,
+                ignore: [`**/*\.json`]
             }
         },
         `gatsby-transformer-sharp`,
