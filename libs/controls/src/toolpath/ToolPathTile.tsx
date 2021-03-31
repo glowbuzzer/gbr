@@ -9,7 +9,6 @@ import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { ToolPathAutoSize } from "./ToolPathAutoSize"
 import { PreviewPath } from "./PreviewPath"
-import styled from "styled-components"
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -47,11 +46,13 @@ const ToolPathSettings = () => {
     )
 }
 
-const ToolPathArea = styled.div`
-    > div {
-        min-height: 400px;
-    }
-`
+// TODO: give tile a min height (so it appears better in glowsite docs)
+// const ToolPathArea = styled.div`
+//     > div {
+//         min-height: 400px;
+//         height: 100%;
+//     }
+// `
 
 export const ToolPathTile = () => {
     const { path, reset } = useToolPath(0)
@@ -75,20 +76,18 @@ export const ToolPathTile = () => {
     // noinspection RequiredAttributes
     return (
         <Tile title={"Toolpath"} footer={<Button onClick={reset}>Reset</Button>} settings={<ToolPathSettings />}>
-            <ToolPathArea>
-                <Canvas>
-                    <ToolPathAutoSize extent={extent}>
-                        <ambientLight />
-                        <pointLight position={[10, 10, 10]} />
-                        <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
-                        <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
+            <Canvas>
+                <ToolPathAutoSize extent={extent}>
+                    <ambientLight />
+                    <pointLight position={[10, 10, 10]} />
+                    <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
+                    <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
 
-                        <WorkspaceDimensions extent={extent} />
-                        <ToolPath path={path} scale={extent} />
-                        <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
-                    </ToolPathAutoSize>
-                </Canvas>
-            </ToolPathArea>
+                    <WorkspaceDimensions extent={extent} />
+                    <ToolPath path={path} scale={extent} />
+                    <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
+                </ToolPathAutoSize>
+            </Canvas>
 
             {/*
             <ToolPathDisplay width={1000} height={800} extent={200} path={path} segments={segments} />
