@@ -216,9 +216,11 @@ const DevelopmentUiTile = () => {
                         {extended ? "Extended" : extending ? "Extending..." : retracted ? "Retracted" : retracting ? "Retracting..." : "Unknown"}
                     </Tag>
                 </Space>
+                {/*
                 <h2>Conveyor control using jogging API</h2>
                 <ConveyorControl index={0} step={200} magicEyeTrigger={2} />
                 <ConveyorControl index={1} step={100} />
+*/}
 
                 <h2>Conveyor control using motion API</h2>
                 <ConveyorControlMotion index={0} step={200} magicEyeTrigger={2} />
