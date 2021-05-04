@@ -1,13 +1,14 @@
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { Tile, TileSettings } from "@glowbuzzer/layout"
-import { Button, Checkbox, Col, Form, Input } from "antd"
+import { Button, Checkbox, Form, Input } from "antd"
 import { ToolPathSettingsType, useConfig, usePreview, useToolPath, useToolPathSettings } from "@glowbuzzer/store"
-import { PreviewPath, ToolPath, ToolPathAutoSize } from "./ToolPathFiber"
+import { ToolPath } from "./ToolPathFiber"
 import { Canvas } from "react-three-fiber"
-import { DoubleSide, Euler, Vector3 } from "three"
+import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
-import { Cone } from "@react-three/drei"
+import { ToolPathAutoSize } from "./ToolPathAutoSize"
+import { PreviewPath } from "./PreviewPath"
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -45,16 +46,23 @@ const ToolPathSettings = () => {
     )
 }
 
+// TODO: give tile a min height (so it appears better in glowsite docs)
+// const ToolPathArea = styled.div`
+//     > div {
+//         min-height: 400px;
+//         height: 100%;
+//     }
+// `
+
 export const ToolPathTile = () => {
     const { path, reset } = useToolPath(0)
     const { settings } = useToolPathSettings()
     const { segments, highlightLine } = usePreview()
     const config = useConfig()
 
-    const parameters = config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters
+    const parameters = config.kinematicsConfiguration.default.kinematicsParameters
     const { xExtents, yExtents, zExtents } = parameters
     const extent = useMemo(() => {
-        console.log("Recalc extent")
         if (settings.overrideWorkspace) {
             return settings.extent
         }

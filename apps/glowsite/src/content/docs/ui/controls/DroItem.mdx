@@ -1,0 +1,49 @@
+# DroItem
+
+## Simple example
+
+Displays a single line of a digital readout.
+
+```jsx codeDemo
+import * as React from "react";
+import {DroItem} from "@glowbuzzer/controls";
+
+export default () => <DroItem label={"A"} value={100.001} type="scalar"/>
+```
+
+## Custom digital readout example
+
+You can use `DroItem` to compose a custom readout.
+
+```jsx codeDemo
+import * as React from "react";
+import {useKinematics} from "@glowbuzzer/store";
+import {FrameSelector, DroItem} from "@glowbuzzer/controls";
+
+export default () => {
+    const [frameIndex, setFrameIndex] = React.useState(0);
+    const kinematics = useKinematics(frameIndex);
+
+    const {position} = kinematics.pose;
+
+    React.useEffect(() => {
+        setFrameIndex(kinematics.frameIndex);
+    }, []);
+
+    const pos = {
+        x: position.x,
+        y: position.y,
+        z: position.z,
+        a: 100,
+    };
+
+    return <div>
+        <FrameSelector defaultFrame={kinematics.frameIndex} onChange={setFrameIndex}/>
+        {
+            Object.keys(pos).map(k => <DroItem key={k} label={k} value={pos[k]} type="scalar"/>)
+        }
+    </div>
+}
+```
+
+

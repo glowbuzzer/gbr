@@ -1,8 +1,14 @@
 import * as React from "react"
 import styled from "styled-components"
 
-export const TrafficLight = styled(({ ...props }) => (
-    <svg {...props} viewBox="0 0 64 64">
+const StyledSvg = styled.svg.attrs<{ width: number; color: string }>(props => ({ ...props, width: props.width || 32 }))`
+    circle {
+        fill: ${props => props.color};
+    }
+`
+
+export const TrafficLight = ({ ...props }) => (
+    <StyledSvg {...props} viewBox="0 0 64 64">
         <filter id="counter" filterUnits="objectBoundingBox">
             <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
             <feSpecularLighting in="blur" surfaceScale="2" specularConstant="0.3" specularExponent="10" result="lightingOut">
@@ -13,9 +19,5 @@ export const TrafficLight = styled(({ ...props }) => (
         </filter>
 
         <circle cx={32} cy={32} r={32} filter="url(#counter)" />
-    </svg>
-)).attrs<{ width: number; color: string }>(props => ({ ...props, width: props.width || 32 }))`
-    circle {
-        fill: ${props => props.color};
-    }
-`
+    </StyledSvg>
+)

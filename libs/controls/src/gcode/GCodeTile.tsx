@@ -1,27 +1,33 @@
 import * as React from "react"
 import { useEffect } from "react"
-import AceEditor, { IMarker } from "react-ace"
-
-import "ace-builds/src-noconflict/theme-github"
-import "ace-builds/src-noconflict/mode-gcode"
-import "ace-builds/src-noconflict/mode-text"
+// import AceEditor, { IMarker } from "react-ace"
+//
+// import "ace-builds/src-noconflict/theme-github"
+// import "ace-builds/src-noconflict/mode-gcode"
+// import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
-import { Dropdown, Radio, Select, Space, Tag } from "antd"
-import { StreamCommand, StreamState, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import { Radio, Select, Space, Tag } from "antd"
+import { settings, STREAMCOMMAND, STREAMSTATE, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
+import loadable from "@loadable/component"
+
+const AceEditor = loadable(async () => {
+    if (typeof window !== "undefined") {
+        const editor = await import("react-ace")
+        // import("ace-builds/src-noconflict/theme-github")
+        // import("ace-builds/src-noconflict/mode-gcode")
+        // import("ace-builds/src-noconflict/mode-text")
+        return editor
+    }
+    return null
+})
 
 const { Option } = Select
 
-function getGCodeLS() {
-    return localStorage.getItem("ui.web-drives.gcode") || "G0 X100 Y100"
-}
-
-function setGCodeLS(gcode) {
-    return localStorage.setItem("ui.web-drives.gcode", gcode)
-}
+const { load, save } = settings("tiles.gcode")
 
 const StyledDiv = styled.div<{ readOnly: boolean }>`
     height: 100%;
@@ -47,29 +53,29 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 `
 
 export const GCodeTile = () => {
-    const [gcode, setGCode] = React.useState(getGCodeLS())
-    const [workOffset, setWorkOffset] = React.useState()
+    const [gcode, setGCode] = React.useState(load("G1 X10 Y5 Z2"))
 
     const stream = useGCode()
     const prefs = usePrefs()
     const preview = usePreview()
-
-    const active = stream.state !== StreamState.IDLE
+    const frames = useFrames()
+    const active = stream.state !== STREAMSTATE.STREAMSTATE_IDLE
+    const workOffset = frames.active
+    const config = useConfig()
 
     useEffect(() => {
-        preview.setGCode("G" + (53 + (workOffset || 0)) + "\n" + gcode)
+        preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
         // eslint-disable-next-line
-    }, [workOffset])
+    }, [workOffset, gcode, config /* extra dep because config can cause frames to change */])
 
     function send_gcode() {
-        setGCodeLS(gcode)
-        const offset = "G" + (53 + (workOffset || 0))
+        save(gcode)
+        const offset = "G" + (54 + workOffset)
         stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""))
     }
 
     function update_gcode(gcode: string) {
         setGCode(gcode)
-        preview.setGCode(gcode)
     }
 
     function update_cursor(e) {
@@ -77,7 +83,7 @@ export const GCodeTile = () => {
         preview.setHighlightLine(e.cursor.row)
     }
 
-    const highlight: IMarker[] = active
+    const highlight = active
         ? [
               {
                   startRow: stream.lineNum,
@@ -92,29 +98,31 @@ export const GCodeTile = () => {
 
     const inferredCommand = (() => {
         switch (stream.state) {
-            case StreamState.IDLE:
+            case STREAMSTATE.STREAMSTATE_IDLE:
                 return undefined
-            case StreamState.ACTIVE:
-                return StreamCommand.RUN
-            case StreamState.PAUSED:
-                return StreamCommand.PAUSE
-            case StreamState.STOPPING:
-            case StreamState.STOPPED:
-                return StreamCommand.STOP
+            case STREAMSTATE.STREAMSTATE_ACTIVE:
+                return STREAMCOMMAND.STREAMCOMMAND_RUN
+            case STREAMSTATE.STREAMSTATE_PAUSED:
+                return STREAMCOMMAND.STREAMCOMMAND_PAUSE
+            case STREAMSTATE.STREAMSTATE_STOPPING:
+            case STREAMSTATE.STREAMSTATE_STOPPED:
+                return STREAMCOMMAND.STREAMCOMMAND_STOP
         }
     })()
 
-    const needs_reset = stream.state === StreamState.STOPPING || stream.state === StreamState.STOPPED
-    const can_stop = !needs_reset && stream.state !== StreamState.IDLE
-    const can_pause = stream.state === StreamState.ACTIVE
+    const needs_reset = stream.state === STREAMSTATE.STREAMSTATE_STOPPING || stream.state === STREAMSTATE.STREAMSTATE_STOPPED
+    const can_stop = !needs_reset && stream.state !== STREAMSTATE.STREAMSTATE_IDLE
+    const can_pause = stream.state === STREAMSTATE.STREAMSTATE_ACTIVE
 
     function send_command(v) {
         stream.setState(v.target.value)
-        if (stream.state === StreamState.IDLE && v.target.value === StreamCommand.RUN) {
+        if (stream.state === STREAMSTATE.STREAMSTATE_IDLE && v.target.value === STREAMCOMMAND.STREAMCOMMAND_RUN) {
             console.log("send gcode")
             send_gcode()
         }
     }
+
+    console.log("GCODE", gcode)
 
     return (
         <Tile
@@ -123,24 +131,24 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
-                        <Select size="small" value={workOffset} onChange={v => setWorkOffset(v)} allowClear placeholder="Machine Coords">
-                            <Option value={1}>G54</Option>
-                            <Option value={2}>G55</Option>
-                            <Option value={3}>G56</Option>
-                            <Option value={4}>G57</Option>
-                            <Option value={5}>G58</Option>
+                        <Select size="small" value={workOffset} onChange={v => frames.setActiveFrame(v)}>
+                            <Option value={0}>G54</Option>
+                            <Option value={1}>G55</Option>
+                            <Option value={2}>G56</Option>
+                            <Option value={3}>G57</Option>
+                            <Option value={4}>G58</Option>
                         </Select>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
-                        <Tag>{StreamState[stream.state]}</Tag>
+                        <Tag>{STREAMSTATE[stream.state]}</Tag>
 
                         <Radio.Group optionType="button" onChange={send_command} value={inferredCommand}>
-                            <Radio.Button disabled={can_pause} value={StreamCommand.RUN}>
+                            <Radio.Button disabled={can_pause} value={STREAMCOMMAND.STREAMCOMMAND_RUN}>
                                 {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
                             </Radio.Button>
-                            <Radio.Button disabled={!can_pause} value={StreamCommand.PAUSE}>
+                            <Radio.Button disabled={!can_pause} value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}>
                                 <PauseOutlined />
                             </Radio.Button>
-                            <Radio.Button disabled={!can_stop} value={StreamCommand.STOP}>
+                            <Radio.Button disabled={!can_stop} value={STREAMCOMMAND.STREAMCOMMAND_STOP}>
                                 <StopIcon />
                             </Radio.Button>
                         </Radio.Group>

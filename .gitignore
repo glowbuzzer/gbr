@@ -41,4 +41,7 @@ Thumbs.db
 # Generated Docusaurus files
 .docusaurus/
 .cache-loader/
-/debug.log
+
+/apps/glowsite/node_modules
+/apps/glowsite/public
+/apps/glowsite/.cache

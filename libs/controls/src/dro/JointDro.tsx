@@ -3,7 +3,7 @@ import { Col, Row } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
 import { GlobalStyles } from "../misc/GlobalStyles"
 import { ConversionFactors } from "../util/unit_conversion"
-import { usePrefs } from "@glowbuzzer/store"
+import { useJointConfig, usePrefs } from "@glowbuzzer/store"
 import { useJoints } from "@glowbuzzer/store"
 import { CSSProperties } from "react"
 
@@ -26,7 +26,11 @@ type JointDroProps = {
 export const JointDro = ({ joints: jointMapping }: JointDroProps) => {
     const prefs = usePrefs()
 
-    const joints = useJoints()
+    const joint_config = useJointConfig()
+    const joints = useJoints().map((j, i) => ({
+        ...j,
+        ...joint_config[i]
+    }))
 
     const minmaxStyle: CSSProperties = {
         display: "inline-block",
@@ -83,14 +87,14 @@ export const JointDro = ({ joints: jointMapping }: JointDroProps) => {
     const joints_to_display = jointMapping
         ? Object.keys(jointMapping).map(k => ({
               ...joints[k],
-              id: jointMapping[k]
+              name: jointMapping[k]
           }))
         : joints
 
     return (
         <div>
             {joints_to_display.map((j, index) => {
-                const { id, jointType, finiteContinuous, negLimit, posLimit, actPos } = j
+                const { name, jointType, finiteContinuous, negLimit, posLimit, actPos } = j
                 const showSlider = !finiteContinuous
                 const type = jointType ? "units_scalar" : "units_angular"
 
@@ -102,7 +106,7 @@ export const JointDro = ({ joints: jointMapping }: JointDroProps) => {
 
                 return (
                     <Row key={index}>
-                        <Col style={styles.label}>{id}</Col>
+                        <Col style={styles.label}>{name}</Col>
                         <Col style={styles.middle}>
                             {showSlider && (
                                 <>

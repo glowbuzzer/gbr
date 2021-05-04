@@ -1,0 +1,38 @@
+# BitFieldDisplay
+
+Displays a numeric values as bits, either read-only or editable. Bits are displayed most significant bit first.
+
+## Simple example
+
+```jsx codeDemo
+import * as React from "react";
+import {BitFieldDisplay} from "@glowbuzzer/controls";
+
+export default () => <BitFieldDisplay value={111} bitCount={16}/>
+```
+
+## Editable example
+
+Set `editable` to true and provide `onChange` handler.
+
+```jsx codeDemo
+import * as React from "react";
+import {BitFieldDisplay} from "@glowbuzzer/controls";
+
+export default () => {
+    const [value, setValue]=React.useState(0);
+
+    return <BitFieldDisplay value={value} bitCount={8} editable={true} onChange={setValue} />
+}
+```
+
+## Labels example
+
+You can add vertical labels to the display by providing an array of strings, least significant bit first.
+
+```jsx codeDemo
+import * as React from "react";
+import {BitFieldDisplay} from "@glowbuzzer/controls";
+
+export default () => <BitFieldDisplay value={111} bitCount={8} labels={['ENABLE', , 'POWER', , , , , 'FAULT']}/>
+```

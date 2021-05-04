@@ -203,32 +203,28 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
-    G53() {
+    G54() {
         this.frameIndex = 0
     }
 
-    G54() {
+    G55() {
         this.frameIndex = 1
     }
 
-    G55() {
+    G56() {
         this.frameIndex = 2
     }
 
-    G56() {
+    G57() {
         this.frameIndex = 3
     }
 
-    G57() {
+    G58() {
         this.frameIndex = 4
     }
 
-    G58() {
-        this.frameIndex = 5
-    }
-
     G59() {
-        this.frameIndex = 6
+        this.frameIndex = 5
     }
 
     G61() {

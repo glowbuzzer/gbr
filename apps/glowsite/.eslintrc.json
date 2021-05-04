@@ -1,0 +1,13 @@
+{
+    "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
+    "ignorePatterns": ["!**/*", "public", ".cache"],
+    "rules": {},
+    "overrides": [
+        {
+            "files": ["*.tsx", "*.ts"],
+            "rules": {
+                "@typescript-eslint/camelcase": "off"
+            }
+        }
+    ]
+}

@@ -1,19 +1,24 @@
+const windowGlobal = typeof window !== "undefined" && window
+const localStorage = windowGlobal?.localStorage
+
 export function settings(key: string) {
     return {
-        load() {
-            const valueString = localStorage.getItem(key)
-            if (valueString) {
-                try {
-                    return JSON.parse(valueString) || {}
-                } catch (_e) {
-                    return {}
+        load(defaultValue = {}) {
+            try {
+                const valueString = localStorage.getItem(key)
+                if (valueString) {
+                    return JSON.parse(valueString) || defaultValue
                 }
+            } catch (_e) {
+                return defaultValue
             }
-            return {}
+            return defaultValue
         },
         save(value) {
-            console.log("STORE IN LS, key=", key, "value=", value)
-            localStorage.setItem(key, JSON.stringify(value))
+            if (localStorage) {
+                localStorage.setItem(key, JSON.stringify(value))
+            }
+            return value
         }
     }
 }

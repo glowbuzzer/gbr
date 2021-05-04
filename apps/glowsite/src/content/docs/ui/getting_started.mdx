@@ -1,0 +1,34 @@
+---
+title: Getting Started
+sort: 0
+---
+
+# Getting Started
+
+THIS IS OUT OF DATE
+
+Import `@glowbuzzer/controls` using npm (or your preferred package manager).
+
+```bash
+npm install --save @glowbuzzer/controls
+```
+
+## Add stylesheets
+
+Add the following to your base stylesheet:
+
+```css
+@import '~antd/dist/antd.css';
+```
+
+You can now add Glowbuzzer components to your project, for example:
+
+```jsx codeDemo
+import * as React from "react";
+import {BitFieldDisplay, MotorDro} from "@glowbuzzer/controls";
+
+export default () => <div>
+    <BitFieldDisplay value={111} bitCount={16}/>
+    <MotorDro value={0} width={200}/>
+</div>;
+```

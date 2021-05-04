@@ -2,6 +2,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { createSlice } from "@reduxjs/toolkit"
 import { RootState } from "../root"
 import { usePrefs } from "../prefs"
+import { useMemo } from "react"
 
 export enum ConnectionState {
     DISCONNECTED = "DISCONNECTED",
@@ -40,27 +41,29 @@ export const useConnect = () => {
 
     // window.connection is created in ConnectionFactory.ts
 
-    return {
-        state,
-        error,
-        autoConnect,
-        statusReceived,
-        connected: state === ConnectionState.CONNECTED,
-        connect(url) {
-            dispatch(window.connection.connect(url))
-            dispatch(connectionSlice.actions.autoConnect(true))
-        },
-        reconnect() {
-            dispatch(window.connection.connect(prefs.current.url))
-        },
-        disconnect() {
-            dispatch(window.connection.disconnect())
-        },
-        send(msg) {
-            dispatch(window.connection.send(msg))
-        },
-        setAutoConnect(value: boolean) {
-            dispatch(connectionSlice.actions.autoConnect(value))
+    return useMemo(() => {
+        return {
+            state,
+            error,
+            autoConnect,
+            statusReceived,
+            connected: state === ConnectionState.CONNECTED,
+            connect(url) {
+                dispatch(window.connection.connect(url))
+                dispatch(connectionSlice.actions.autoConnect(true))
+            },
+            reconnect() {
+                dispatch(window.connection.connect(prefs.current.url))
+            },
+            disconnect() {
+                dispatch(window.connection.disconnect())
+            },
+            send(msg) {
+                dispatch(window.connection.send(msg))
+            },
+            setAutoConnect(value: boolean) {
+                dispatch(connectionSlice.actions.autoConnect(value))
+            }
         }
-    }
+    }, [state, error, autoConnect, dispatch, prefs, statusReceived])
 }

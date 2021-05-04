@@ -1,0 +1,29 @@
+name: Deployment
+on:
+    push:
+        branches:
+            - site
+jobs:
+    deploy:
+        runs-on: ubuntu-18.04
+        steps:
+            -   uses: actions/checkout@v1
+
+            -   uses: actions/setup-node@v1
+                with:
+                    node-version: "12.x"
+
+            -   name: Install packages
+                run: npm ci --no-optional
+
+            -   name: Build site
+                run: npm run build:glowsite
+#                env:
+#                    SNOWPACK_PUBLIC_BUILD_NUM: 1.${{ github.run_number }}
+
+            -   name: Deploy site
+                run: ./deploy-site.sh glowbuzzer-www-internal E37J47Y7NXA5BD
+                env:
+                    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                    BUILD_NUM: 1.${{ github.run_number }}

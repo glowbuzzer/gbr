@@ -4,9 +4,10 @@
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+      "downlevelIteration": true
   },
-  "files": [],
+    "files": [],
   "include": [],
   "references": [
     {

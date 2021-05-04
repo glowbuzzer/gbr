@@ -1,5 +1,30 @@
 {
     "version": 1,
+    "cli": {
+        "defaultCollection": "@nrwl/react"
+    },
+    "defaultProject": "cartmc",
+    "schematics": {
+        "@nrwl/react": {
+            "application": {
+                "style": "styled-components",
+                "linter": "eslint",
+                "babel": true
+            },
+            "component": {
+                "style": "styled-components"
+            },
+            "library": {
+                "style": "styled-components",
+                "linter": "eslint"
+            }
+        },
+        "@nrwl/gatsby": {
+            "application": {
+                "style": "styled-components"
+            }
+        }
+    },
     "projects": {
         "glowsaurus": {
             "projectType": "application",
@@ -15,7 +40,7 @@
                 "serve": {
                     "builder": "@nx-plus/docusaurus:dev-server",
                     "options": {
-                        "port": 300000
+                        "port": 3000
                     }
                 }
             }
@@ -222,26 +247,121 @@
                     }
                 }
             }
-        }
-    },
-    "cli": {
-        "defaultCollection": "@nrwl/react"
-    },
-    "schematics": {
-        "@nrwl/react": {
-            "application": {
-                "style": "styled-components",
-                "linter": "eslint",
-                "babel": true
-            },
-            "component": {
-                "style": "styled-components"
-            },
-            "library": {
-                "style": "styled-components",
-                "linter": "eslint"
+        },
+        "glowsite": {
+            "root": "apps/glowsite",
+            "sourceRoot": "apps/glowsite/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/gatsby:build",
+                    "options": {
+                        "outputPath": "apps/glowsite/public",
+                        "uglify": true,
+                        "color": true,
+                        "profile": false
+                    },
+                    "configurations": {
+                        "production": {}
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/gatsby:server",
+                    "options": {
+                        "buildTarget": "glowsite:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "glowsite:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/glowsite/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/glowsite"],
+                    "options": {
+                        "jestConfig": "apps/glowsite/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "convmc": {
+            "root": "apps/convmc",
+            "sourceRoot": "apps/convmc/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/apps/convmc",
+                        "index": "apps/convmc/src/index.html",
+                        "main": "apps/convmc/src/main.tsx",
+                        "polyfills": "apps/convmc/src/polyfills.ts",
+                        "tsConfig": "apps/convmc/tsconfig.app.json",
+                        "assets": ["apps/convmc/src/favicon.ico", "apps/convmc/src/assets"],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/convmc/src/environments/environment.ts",
+                                    "with": "apps/convmc/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "5mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "convmc:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "convmc:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/convmc/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/convmc"],
+                    "options": {
+                        "jestConfig": "apps/convmc/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
             }
         }
-    },
-    "defaultProject": "cartmc"
+    }
 }

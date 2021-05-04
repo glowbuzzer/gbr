@@ -91,7 +91,7 @@ export const machineSlice = createSlice({
             // console.log("state:" + state.currentState)
             state.nextControlWord = handleMachineState(state.currentState, state.controlWord, state.desiredState)
             // console.log("word:" + state.nextControlWord)
-            if (state.nextControlWord !== undefined) {
+            if (state.nextControlWord === undefined) {
                 state.desiredState = DesiredState.NONE
             }
         },

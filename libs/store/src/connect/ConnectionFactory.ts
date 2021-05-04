@@ -8,8 +8,7 @@ import { gcodeSlice } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { processJogStateChanges, RootState } from "@glowbuzzer/store"
-import { jogSlice } from "../jogging"
+import { jogSlice, processJogStateChanges } from "../jogging"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
@@ -18,6 +17,9 @@ import { integerOutputsSlice } from "../io/iout"
 import { analogInputsSlice } from "../io/ain"
 import { integerInputsSlice } from "../io/iin"
 import { tasksSlice } from "../tasks"
+import { settings } from "../util/settings"
+import { framesSlice, RootState } from "@glowbuzzer/store"
+import { activitySlice } from "../activity"
 
 abstract class ProcessorBase {
     protected first = true
@@ -35,13 +37,12 @@ class StatusProcessor extends ProcessorBase {
     private tick: number
 
     process_internal(msg, dispatch, ws, getState, first) {
-        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
-
-        const previousJogState = [...getState().jog]
+        const previousJogState = [...getState().jog] // this happens before the status update
 
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
+        msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
         msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
         msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
@@ -56,8 +57,14 @@ class StatusProcessor extends ProcessorBase {
         // compare previous jog states with latest
         processJogStateChanges(previousJogState, getState().jog, msg => ws.send(msg))
 
+        // this is after the status update on slices, so state now has latest from GBC
+        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
+
         if (first) {
             this.tick = 0
+
+            dispatch(toolPathSlice.actions.reset(0)) // clear tool path on connect
+            dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
 
             if (actualTarget !== requestedTarget) {
                 ws.send(updateMachineTargetMsg(requestedTarget))
@@ -67,17 +74,22 @@ class StatusProcessor extends ProcessorBase {
             } else {
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
 
-                const { froTarget } = getState().kinematics[0]
-                if (froTarget === 0) {
-                    // set fro to 100% if not already set on connect
-                    ws.send(updateFroPercentageMsg(0, 100))
+                for (let n = 0; n < getState().kinematics.length; n++) {
+                    const { froTarget } = getState().kinematics[n]
+                    if (froTarget === 0) {
+                        // set fro to 100% if not already set on connect
+                        ws.send(updateFroPercentageMsg(n, 100))
+                    }
                 }
             }
             dispatch(telemetrySlice.actions.init())
+
+            // push any override frames on connect (from local storage)
+            // ws.send(updateFrameOverridesMsg(getState().frames.overrides))
         }
 
         if (this.tick % 50 === 0) {
-            // about every 5 seconds assuming status message is 10hz
+            // send heartbeat about every 5 seconds assuming status message is 10hz
             ws.send(
                 updateMachineCommandMsg({
                     heartbeat // echo the machine status heartbeat
@@ -102,12 +114,14 @@ class ResponseProcessor extends ProcessorBase {
     }
 }
 
+const { load, save } = settings("devtools.statusFrequency")
+
 class DevToolsProcessor extends ProcessorBase {
     protected process_internal(msg, dispatch, ws: WebSocket, getState: () => RootState, first: boolean) {
         if (first) {
             // load and send the desired frequency on startup
             try {
-                const value = JSON.parse(window.localStorage.getItem("devtools.statusFrequency"))
+                const value = load()
                 console.log("DISPATCH DESIRED REFRESH FREQUENCY", value)
                 dispatch(() => {
                     ws.send(updateStatusFrequencyMsg(value))
@@ -123,101 +137,99 @@ class DevToolsProcessor extends ProcessorBase {
 /**
  * This needs to be global on window, otherwise there is a circular dependency: connection -> actions -> useConnect -> connection
  */
-window.connection = ((): Connection => {
-    let ws: WebSocket = null
-    let statusTimeout = null
+if (typeof window !== "undefined") {
+    window.connection = ((): Connection => {
+        let ws: WebSocket = null
+        let statusTimeout = null
 
-    return {
-        connect(url): AppThunk {
-            return async (dispatch, getState) => {
-                const statusProcessor = new StatusProcessor()
-                const responseProcessor = new ResponseProcessor()
-                const devToolsProcessor = new DevToolsProcessor()
+        return {
+            connect(url): AppThunk {
+                return async (dispatch, getState) => {
+                    const statusProcessor = new StatusProcessor()
+                    const responseProcessor = new ResponseProcessor()
+                    const devToolsProcessor = new DevToolsProcessor()
 
-                function no_status_handler() {
-                    dispatch(connectionSlice.actions.statusReceived(false))
-                }
-
-                function start_status_timeout() {
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.statusReceived(true))
-                    statusTimeout = setTimeout(no_status_handler, 5000) // 5 second timeout on status
-                }
-
-                function clear_status_timeout() {
-                    clearTimeout(statusTimeout)
-                }
-
-                dispatch(connectionSlice.actions.connecting())
-                ws = new WebSocket(url)
-                ws.onopen = () => {
-                    start_status_timeout()
-                    ws.send(
-                        JSON.stringify({
-                            request: {
-                                get_config: true
-                            }
-                        })
-                    )
-                    dispatch(connectionSlice.actions.connected())
-                }
-                ws.onclose = () => {
-                    ws = null
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.disconnected())
-                }
-                ws.onerror = () => {
-                    if (ws) {
-                        ws.close()
-                        ws = null
+                    function no_status_handler() {
+                        dispatch(connectionSlice.actions.statusReceived(false))
                     }
-                    clear_status_timeout()
-                    dispatch(connectionSlice.actions.disconnected())
-                }
-                ws.onmessage = event => {
-                    try {
-                        const msg = JSON.parse(event.data)
-                        msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
-                        if (msg.status) {
-                            start_status_timeout()
-                            statusProcessor.process(msg, dispatch, ws, getState)
-                        }
-                        if (msg.stream) {
-                            dispatch(gcodeSlice.actions.status(msg.stream))
-                            GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
-                                console.log("sending gcode")
-                                ws.send(
-                                    JSON.stringify({
-                                        stream: streamItems
-                                    })
-                                )
+
+                    function start_status_timeout() {
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.statusReceived(true))
+                        statusTimeout = setTimeout(no_status_handler, 5000) // 5 second timeout on status
+                    }
+
+                    function clear_status_timeout() {
+                        clearTimeout(statusTimeout)
+                    }
+
+                    dispatch(connectionSlice.actions.connecting())
+                    ws = new WebSocket(url)
+                    ws.onopen = () => {
+                        start_status_timeout()
+                        ws.send(
+                            JSON.stringify({
+                                request: {
+                                    get_config: true
+                                }
                             })
-                        }
-                        if (msg.response) {
-                            // responses to request we have sent
-                            responseProcessor.process(msg, dispatch, ws, getState)
-                        }
-                        if (msg.devtools) {
-                            devToolsProcessor.process(msg, dispatch, ws, getState)
-                        }
-                    } catch (e) {
-                        console.error(e)
+                        )
+                        dispatch(connectionSlice.actions.connected())
                     }
+                    ws.onclose = () => {
+                        ws = null
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.disconnected())
+                    }
+                    ws.onerror = () => {
+                        if (ws) {
+                            ws.close()
+                            ws = null
+                        }
+                        clear_status_timeout()
+                        dispatch(connectionSlice.actions.disconnected())
+                    }
+                    ws.onmessage = event => {
+                        try {
+                            const msg = JSON.parse(event.data)
+                            msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
+                            if (msg.status) {
+                                start_status_timeout()
+                                statusProcessor.process(msg, dispatch, ws, getState)
+                            }
+                            if (msg.stream) {
+                                dispatch(gcodeSlice.actions.status(msg.stream))
+                                GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
+                                    console.log("sending gcode")
+                                    ws.send(
+                                        JSON.stringify({
+                                            stream: streamItems
+                                        })
+                                    )
+                                })
+                            }
+                            if (msg.response) {
+                                // responses to request we have sent
+                                responseProcessor.process(msg, dispatch, ws, getState)
+                            }
+                            if (msg.devtools) {
+                                devToolsProcessor.process(msg, dispatch, ws, getState)
+                            }
+                        } catch (e) {
+                            console.error(e)
+                        }
+                    }
+                }
+            },
+            send(msg): AppThunk {
+                return () => ws?.send(msg)
+            },
+            disconnect(): AppThunk {
+                return () => {
+                    ws?.close()
+                    ws = null
                 }
             }
-        },
-        send(msg): AppThunk {
-            return _dispatch => ws.send(msg)
-        },
-        disconnect(): AppThunk {
-            return () =>
-                /*dispatch*/
-                /*, getState*/ {
-                    if (ws) {
-                        ws.close()
-                    }
-                    ws = null
-                }
         }
-    }
-})()
+    })()
+}

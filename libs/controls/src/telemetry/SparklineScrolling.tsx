@@ -23,7 +23,11 @@ type SparklineScrollingLineInfo = {
     selection: d3.Selection<d3.BaseType, unknown, HTMLDivElement, unknown>
 }
 
-export const SparklineScrolling = styled(({ options, data, domain }: SparklineScrollingProps) => {
+const StyledDiv = styled.div`
+    width: 100%;
+`
+
+export const SparklineScrolling = ({ options, data, domain }: SparklineScrollingProps) => {
     const height = 200
     const xmargin = 20
     const ymargin = 20
@@ -159,7 +163,5 @@ export const SparklineScrolling = styled(({ options, data, domain }: SparklineSc
         // .remove()
     }, [data, width])
 
-    return <div ref={elemRef} />
-})`
-    width: 100%;
-`
+    return <StyledDiv ref={elemRef} />
+}
