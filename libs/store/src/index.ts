@@ -1,5 +1,7 @@
 import "./connect/ConnectionFactory"
 
+export * from "./gbc"
+
 export { GlowbuzzerApp } from "./GlowbuzzerApp"
 export { ConnectionState, useConnect, connectionSlice } from "./connect"
 export { DesiredState, MachineTarget, useMachine, MachineState, determine_machine_state, possible_transitions, FaultCode } from "./machine"
@@ -7,6 +9,7 @@ export { useConfig, configSlice } from "./config"
 export { usePrefs } from "./prefs"
 export * from "./frames"
 export * from "./tasks"
+export * from "./activity"
 export * from "./gcode"
 export * from "./preview"
 export * from "./telemetry"

@@ -1,7 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Button, Tag } from "antd"
-import { TaskState, useTask, useTaskStatus } from "@glowbuzzer/store"
+import { TASK_STATE, useTask, useTaskStatus } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
@@ -35,20 +35,20 @@ const TaskItem = ({ status, index }) => {
         <StyledTaskItem>
             <div>{task.name}</div>
             <div>
-                <Tag>{TaskState[status.state]}</Tag>
+                <Tag>{TASK_STATE[status.state]}</Tag>
             </div>
             <div>
-                {status.state === TaskState.NOTSTARTED && (
+                {status.state === TASK_STATE.TASK_NOTSTARTED && (
                     <Button onClick={() => task.run()}>
                         <CaretRightOutlined />
                     </Button>
                 )}
-                {status.state === TaskState.RUNNING && (
+                {status.state === TASK_STATE.TASK_RUNNING && (
                     <Button onClick={() => task.cancel()}>
                         <StopIcon />
                     </Button>
                 )}
-                {(status.state === TaskState.FINISHED || status.state === TaskState.CANCELLED) && (
+                {(status.state === TASK_STATE.TASK_FINISHED || status.state === TASK_STATE.TASK_CANCELLED) && (
                     <Button onClick={() => task.reset()}>
                         <ReloadOutlined />
                     </Button>

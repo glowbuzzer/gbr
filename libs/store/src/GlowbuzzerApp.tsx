@@ -1,8 +1,8 @@
 import * as React from "react"
 import { FC, useEffect, useRef, useState } from "react"
 import { Provider } from "react-redux"
-import { configureStore } from "@reduxjs/toolkit"
-import { useConnect } from "./connect"
+import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
+import { connectionSlice, useConnect } from "./connect"
 import { usePrefs } from "./prefs"
 import styled, { css, ThemeProvider } from "styled-components"
 import { rootReducer } from "./root"
@@ -10,14 +10,17 @@ import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { ConfigState, useConfigState } from "./config"
 
-const Startup = () => {
+const Startup = ({ autoConnect }) => {
     const connection = useConnect()
     const prefs = usePrefs()
 
     useEffect(() => {
-        connection.connect(prefs.current.url)
+        if (autoConnect) {
+            console.log("AUTO CONNECT")
+            connection.connect(prefs.current.url)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [autoConnect])
 
     return null
 }
@@ -34,6 +37,10 @@ declare module "styled-components" {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     export interface DefaultTheme extends Theme {}
 }
+
+const GlowbuzzerAppStyle = styled.div<{ minWidth: string }>`
+    min-width: ${props => props.minWidth};
+`
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     display: none;
@@ -64,10 +71,11 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
 `
 
 type GlowbuzzerContainerProps = {
+    minWidth?: string
     init?(connection)
 }
 
-const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) => {
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, minWidth }) => {
     const connection = useConnect()
     const [configState, setConfigState] = useConfigState()
 
@@ -125,7 +133,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
     }
 
     return (
-        <div>
+        <GlowbuzzerAppStyle minWidth={minWidth || "3160px"}>
             <GlowbuzzerDimmerStyle visible={!(connection.connected && configState === ConfigState.READY) && connection.autoConnect}>
                 <div className="reconnect-panel">
                     <div>
@@ -149,25 +157,35 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
                 </div>
             </GlowbuzzerDimmerStyle>
             {children}
-        </div>
+        </GlowbuzzerAppStyle>
     )
 }
 
-export const GlowbuzzerApp = props => {
+type GlowbuzzerAppProps = {
+    autoConnect?: boolean
+    minWidth?: string
+    storeEnhancers?: StoreEnhancer[]
+}
+
+export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({ autoConnect, minWidth, storeEnhancers, children }) => {
     const middleware = getDefault => {
         return getDefault({ immutableCheck: false, serializableCheck: false })
     }
 
     const store = configureStore({
         reducer: rootReducer,
-        middleware
+        middleware,
+        enhancers: storeEnhancers
     })
+
+    // pass autoConnect setting to the store on startup
+    store.dispatch(connectionSlice.actions.autoConnect(autoConnect))
 
     return (
         <ThemeProvider theme={theme}>
             <Provider store={store}>
-                <Startup />
-                <GlowbuzzerContainer>{props.children}</GlowbuzzerContainer>
+                <Startup autoConnect={autoConnect} />
+                <GlowbuzzerContainer minWidth={minWidth}>{children}</GlowbuzzerContainer>
             </Provider>
         </ThemeProvider>
     )

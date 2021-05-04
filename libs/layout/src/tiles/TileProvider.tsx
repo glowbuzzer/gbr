@@ -22,14 +22,15 @@ export type TileDefinition = {
 export type TileConfiguration = { [index: string]: TileDefinition }
 
 type TileProviderProps = {
+    prefix?: string
     tiles: TileConfiguration
 }
 
-export const TileProvider: FC<TileProviderProps> = ({ tiles, children }) => {
+export const TileProvider: FC<TileProviderProps> = ({ prefix, tiles, children }) => {
     const defaultTilesAsArray = Object.entries(tiles).map(([id, tile]) => ({ id, ...tile }))
     const defaultVisibility = fromEntries(defaultTilesAsArray.map(t => [t.id, true]))
     const [visibility, setVisibility] = useLocalStorage("tiles.visible", defaultVisibility)
-    const [layout, setLayout] = useLocalStorage("tiles.layout", defaultTilesAsArray)
+    const [layout, setLayout] = useLocalStorage("tiles.layout" + (prefix ? "." + prefix : ""), defaultTilesAsArray)
 
     const final_layout = defaultTilesAsArray.map(t => ({ ...t, ...layout.find(l => l.id === t.id) }))
 

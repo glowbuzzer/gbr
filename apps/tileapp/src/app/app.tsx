@@ -1,9 +1,23 @@
-import React from "react"
+import React, { useState } from "react"
 
-import "./app2.less"
+import { PreferencesDialog } from "@glowbuzzer/controls"
+import styled from "styled-components"
+
+import "antd/dist/antd.css"
+import "./app.css"
+import { useTiles } from "@glowbuzzer/layout"
+
+const StyledApp = styled.div``
 
 export const App = () => {
-    return <div>HELLO AK</div>
+    const { tiles, setVisible } = useTiles()
+    const [showPreferences, setShowPreferences] = useState(false)
+
+    return (
+        <StyledApp>
+            <PreferencesDialog visible={showPreferences} onClose={() => setShowPreferences(false)} />
+        </StyledApp>
+    )
 }
 
 export default App

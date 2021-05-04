@@ -19,6 +19,7 @@ import { integerInputsSlice } from "../io/iin"
 import { tasksSlice } from "../tasks"
 import { settings } from "../util/settings"
 import { framesSlice, RootState } from "@glowbuzzer/store"
+import { activitySlice } from "../activity"
 
 abstract class ProcessorBase {
     protected first = true
@@ -41,6 +42,7 @@ class StatusProcessor extends ProcessorBase {
         // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
+        msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
         msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
         msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
         msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
@@ -72,10 +74,12 @@ class StatusProcessor extends ProcessorBase {
             } else {
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
 
-                const { froTarget } = getState().kinematics[0]
-                if (froTarget === 0) {
-                    // set fro to 100% if not already set on connect
-                    ws.send(updateFroPercentageMsg(0, 100))
+                for (let n = 0; n < getState().kinematics.length; n++) {
+                    const { froTarget } = getState().kinematics[n]
+                    if (froTarget === 0) {
+                        // set fro to 100% if not already set on connect
+                        ws.send(updateFroPercentageMsg(n, 100))
+                    }
                 }
             }
             dispatch(telemetrySlice.actions.init())

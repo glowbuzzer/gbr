@@ -2,6 +2,8 @@ import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "@glowbuzzer/store"
+import { useMemo } from "react"
+import deepEqual from "fast-deep-equal"
 
 type DigitalOutputCommand = {
     state: number
@@ -25,21 +27,23 @@ export const digitalOutputsSlice = createSlice({
 
 export function useDigitalOutputs() {
     const connection = useConnect()
-    const values = useSelector(({ dout }: RootState) => dout, shallowEqual)
-    return {
-        values,
-        update(index: number, command: DigitalOutputCommand) {
-            connection.send(
-                JSON.stringify({
-                    command: {
-                        dout: {
-                            [index]: {
-                                command
+    const values = useSelector(({ dout }: RootState) => dout, deepEqual)
+    return useMemo(() => {
+        return {
+            values,
+            update(index: number, command: DigitalOutputCommand) {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            dout: {
+                                [index]: {
+                                    command
+                                }
                             }
                         }
-                    }
-                })
-            )
+                    })
+                )
+            }
         }
-    }
+    }, [values, connection])
 }

@@ -7,7 +7,7 @@ import { useEffect } from "react"
 // import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
-import { settings, StreamCommand, StreamState, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import { settings, STREAMCOMMAND, STREAMSTATE, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
@@ -59,7 +59,7 @@ export const GCodeTile = () => {
     const prefs = usePrefs()
     const preview = usePreview()
     const frames = useFrames()
-    const active = stream.state !== StreamState.IDLE
+    const active = stream.state !== STREAMSTATE.STREAMSTATE_IDLE
     const workOffset = frames.active
     const config = useConfig()
 
@@ -98,25 +98,25 @@ export const GCodeTile = () => {
 
     const inferredCommand = (() => {
         switch (stream.state) {
-            case StreamState.IDLE:
+            case STREAMSTATE.STREAMSTATE_IDLE:
                 return undefined
-            case StreamState.ACTIVE:
-                return StreamCommand.RUN
-            case StreamState.PAUSED:
-                return StreamCommand.PAUSE
-            case StreamState.STOPPING:
-            case StreamState.STOPPED:
-                return StreamCommand.STOP
+            case STREAMSTATE.STREAMSTATE_ACTIVE:
+                return STREAMCOMMAND.STREAMCOMMAND_RUN
+            case STREAMSTATE.STREAMSTATE_PAUSED:
+                return STREAMCOMMAND.STREAMCOMMAND_PAUSE
+            case STREAMSTATE.STREAMSTATE_STOPPING:
+            case STREAMSTATE.STREAMSTATE_STOPPED:
+                return STREAMCOMMAND.STREAMCOMMAND_STOP
         }
     })()
 
-    const needs_reset = stream.state === StreamState.STOPPING || stream.state === StreamState.STOPPED
-    const can_stop = !needs_reset && stream.state !== StreamState.IDLE
-    const can_pause = stream.state === StreamState.ACTIVE
+    const needs_reset = stream.state === STREAMSTATE.STREAMSTATE_STOPPING || stream.state === STREAMSTATE.STREAMSTATE_STOPPED
+    const can_stop = !needs_reset && stream.state !== STREAMSTATE.STREAMSTATE_IDLE
+    const can_pause = stream.state === STREAMSTATE.STREAMSTATE_ACTIVE
 
     function send_command(v) {
         stream.setState(v.target.value)
-        if (stream.state === StreamState.IDLE && v.target.value === StreamCommand.RUN) {
+        if (stream.state === STREAMSTATE.STREAMSTATE_IDLE && v.target.value === STREAMCOMMAND.STREAMCOMMAND_RUN) {
             console.log("send gcode")
             send_gcode()
         }
@@ -139,16 +139,16 @@ export const GCodeTile = () => {
                             <Option value={4}>G58</Option>
                         </Select>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
-                        <Tag>{StreamState[stream.state]}</Tag>
+                        <Tag>{STREAMSTATE[stream.state]}</Tag>
 
                         <Radio.Group optionType="button" onChange={send_command} value={inferredCommand}>
-                            <Radio.Button disabled={can_pause} value={StreamCommand.RUN}>
+                            <Radio.Button disabled={can_pause} value={STREAMCOMMAND.STREAMCOMMAND_RUN}>
                                 {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
                             </Radio.Button>
-                            <Radio.Button disabled={!can_pause} value={StreamCommand.PAUSE}>
+                            <Radio.Button disabled={!can_pause} value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}>
                                 <PauseOutlined />
                             </Radio.Button>
-                            <Radio.Button disabled={!can_stop} value={StreamCommand.STOP}>
+                            <Radio.Button disabled={!can_stop} value={STREAMCOMMAND.STREAMCOMMAND_STOP}>
                                 <StopIcon />
                             </Radio.Button>
                         </Radio.Group>

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "@glowbuzzer/store"
 import { settings } from "../util/settings"
+import { useMemo } from "react"
 
 const default_prefs = {
     units_scalar: "mm",
@@ -35,10 +36,13 @@ export const prefsSlice = createSlice({
 export const usePrefs = () => {
     const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
     const dispatch = useDispatch()
-    return {
-        current: prefs,
-        set(name, value) {
-            dispatch(prefsSlice.actions.set({ name, value }))
-        }
-    }
+    return useMemo(
+        () => ({
+            current: prefs,
+            set(name, value) {
+                dispatch(prefsSlice.actions.set({ name, value }))
+            }
+        }),
+        [dispatch, prefs]
+    )
 }

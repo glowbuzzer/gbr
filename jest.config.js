@@ -6,6 +6,7 @@ module.exports = {
         "<rootDir>/apps/cartmc",
         "<rootDir>/libs/store",
         "<rootDir>/apps/emstat",
-        "<rootDir>/apps/glowsite"
+        "<rootDir>/apps/glowsite",
+        "<rootDir>/apps/convmc"
     ]
 }

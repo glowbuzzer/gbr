@@ -3,6 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
 import { isArray } from "util"
+import { useMemo } from "react"
 
 export enum JogDirection {
     NONE,
@@ -54,41 +55,45 @@ export function useJog(jogIndex: number) {
     const dispatch = useDispatch()
     const connection = useConnect()
 
-    function updateJog(joint, direction, command) {
-        const current = jogStatus.state || 0
-        const value = direction << (joint * 2)
-        const mask = 0b11 << (joint * 2)
-        const jogFlags = (current & ~mask) | value
-        dispatch(() => {
-            connection.send(
-                JSON.stringify({
-                    command: {
-                        jog: {
-                            [jogIndex]: {
-                                command: { ...command, jogFlags }
+    const state = jogStatus?.state
+
+    return useMemo(() => {
+        function updateJog(joint, direction, command) {
+            const current = state || 0
+            const value = direction << (joint * 2)
+            const mask = 0b11 << (joint * 2)
+            const jogFlags = (current & ~mask) | value
+            dispatch(() => {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            jog: {
+                                [jogIndex]: {
+                                    command: { ...command, jogFlags }
+                                }
                             }
                         }
-                    }
-                })
-            )
-        })
-    }
-
-    return {
-        setJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number) {
-            updateJog(index, direction, {
-                mode,
-                speedPercentage
-            })
-        },
-        stepJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number, stepSize: number) {
-            updateJog(index, direction, {
-                mode,
-                speedPercentage,
-                stepSize
+                    })
+                )
             })
         }
-    }
+
+        return {
+            setJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number) {
+                updateJog(index, direction, {
+                    mode,
+                    speedPercentage
+                })
+            },
+            stepJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number, stepSize: number) {
+                updateJog(index, direction, {
+                    mode,
+                    speedPercentage,
+                    stepSize
+                })
+            }
+        }
+    }, [connection, dispatch, jogIndex, state])
 }
 
 export function processJogStateChanges(prev: JogStoreState[], current: JogStoreState[], send) {

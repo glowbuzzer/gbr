@@ -1,29 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
-import { RootState, useConfig, useConnect } from "@glowbuzzer/store"
+import { RootState, TASK_COMMAND, TaskStatus, useConfig, useConnect } from "@glowbuzzer/store"
 
-export enum TaskState {
-    NOTSTARTED,
-    RUNNING,
-    FINISHED,
-    PAUSED,
-    STOPPING,
-    CANCELLED,
-    ERROR
-}
-
-export enum TaskCommand {
-    NONE,
-    RUN,
-    CANCEL,
-    PAUSE,
-    RESUME
-}
-
-type TaskStatus = {
-    state: TaskState
-    currentActivityIndex: number
-}
+// export enum TaskState {
+//     NOTSTARTED,
+//     RUNNING,
+//     FINISHED,
+//     PAUSED,
+//     STOPPING,
+//     CANCELLED,
+//     ERROR
+// }
+//
+// export enum TaskCommand {
+//     NONE,
+//     RUN,
+//     CANCEL,
+//     PAUSE,
+//     RESUME
+// }
+//
+// type TaskStatus = {
+//     state: TaskState
+//     currentActivityIndex: number
+// }
 
 export const tasksSlice = createSlice({
     name: "tasks",
@@ -41,7 +41,7 @@ export function useTaskStatus() {
 
     return Object.keys(config.task).map((k, index) => ({
         name: k,
-        status: status[index] || { state: 0, currentActivityIndex: 0 }
+        status: status[index] || { taskState: 0, currentActivityIndex: 0 }
     }))
 }
 
@@ -49,7 +49,7 @@ export function useTask(taskIndex: number) {
     const connection = useConnect()
     const config = useConfig()
 
-    function sendTaskCommand(index: number, command: TaskCommand) {
+    function sendTaskCommand(index: number, command: TASK_COMMAND) {
         connection.send(
             JSON.stringify({
                 command: {
@@ -101,13 +101,13 @@ export function useTask(taskIndex: number) {
     return tasks.map((task, index) => ({
         ...task,
         run() {
-            sendTaskCommand(index, TaskCommand.RUN)
+            sendTaskCommand(index, TASK_COMMAND.TASK_RUN)
         },
         cancel() {
-            sendTaskCommand(index, TaskCommand.CANCEL)
+            sendTaskCommand(index, TASK_COMMAND.TASK_CANCEL)
         },
         reset() {
-            sendTaskCommand(index, TaskCommand.NONE)
+            sendTaskCommand(index, TASK_COMMAND.TASK_IDLE)
         }
     }))[taskIndex]
 }

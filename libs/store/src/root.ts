@@ -19,11 +19,13 @@ import { integerInputsSlice } from "./io/iin"
 import { integerOutputsSlice } from "./io/iout"
 import { tasksSlice } from "./tasks"
 import { framesSlice } from "./frames"
+import { activitySlice } from "./activity"
 
 export const rootReducer = combineReducers({
     config: configSlice.reducer,
     connection: connectionSlice.reducer,
     tasks: tasksSlice.reducer,
+    activity: activitySlice.reducer,
     telemetry: telemetrySlice.reducer,
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,

@@ -5,6 +5,7 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
+import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
 
 const { load, save } = settings("store.gcode")
 
@@ -12,19 +13,19 @@ export type GCodeSettingsType = {
     sendEndProgram: boolean
 }
 
-export enum StreamState {
-    IDLE,
-    ACTIVE,
-    PAUSED,
-    STOPPING,
-    STOPPED
-}
-
-export enum StreamCommand {
-    RUN,
-    PAUSE,
-    STOP
-}
+// export enum StreamState {
+//     IDLE,
+//     ACTIVE,
+//     PAUSED,
+//     STOPPING,
+//     STOPPED
+// }
+//
+// export enum StreamCommand {
+//     RUN,
+//     PAUSE,
+//     STOP
+// }
 
 export const gcodeSlice = createSlice({
     name: "gcode",
@@ -34,7 +35,7 @@ export const gcodeSlice = createSlice({
         paused: false,
         capacity: 0,
         buffer: [],
-        state: StreamState.IDLE,
+        state: STREAMSTATE.STREAMSTATE_IDLE,
         time: 0,
         readCount: -1,
         writeCount: -1,
@@ -98,7 +99,7 @@ export const gcodeSlice = createSlice({
     }
 })
 
-function updateStreamStateMsg(streamCommand: StreamCommand) {
+function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
     return JSON.stringify({
         command: {
             stream: {
@@ -124,7 +125,7 @@ export function useGCode() {
         send(gcodeString) {
             dispatch(gcodeSlice.actions.append(gcodeString))
         },
-        setState(streamCommand: StreamCommand) {
+        setState(streamCommand: STREAMCOMMAND) {
             dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
         }
     }
