@@ -1,6 +1,6 @@
-import React, { useMemo } from "react"
+import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import { JogDirection, JogMode, useGCode, useJog, useJointConfig, useJointCount, useJoints } from "@glowbuzzer/store"
+import { JogDirection, JogMode, useGCode, useJog, useJointConfig, useJoints, useSoloActivity } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
@@ -69,6 +69,7 @@ export const JogTile = () => {
     const jogger = useJog(0)
     const joint_config = useJointConfig()
     const gcode = useGCode()
+    const motion = useSoloActivity(0)
 
     function updateJogStepMode(e) {
         setJogStepMode(e.target.value)
@@ -88,18 +89,23 @@ export const JogTile = () => {
 
     function startJog(index, direction: JogDirection) {
         if (jogStepMode === JogStepMode.CONTINOUS) {
-            jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
+            const velos = joint_config.map((conf, joint_index) =>
+                joint_index === index ? (direction === JogDirection.POSITIVE ? conf.vmax : -conf.vmax) : 0
+            )
+            return motion.moveAtVelocity(velos)
+            // jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
         }
     }
 
     function stopJog(index) {
         if (jogStepMode === JogStepMode.CONTINOUS) {
-            jogger.setJog(
-                jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT,
-                index,
-                JogDirection.NONE,
-                jogSpeed
-            )
+            return motion.cancel()
+            // jogger.setJog(
+            //     jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT,
+            //     index,
+            //     JogDirection.NONE,
+            //     jogSpeed
+            // )
         }
     }
 
@@ -116,10 +122,11 @@ export const JogTile = () => {
     }
 
     function goto() {
-        gcode.send(`
-            G0 X${x} Y${y} Z${z}
-            M2
-        `)
+        return motion.moveToPosition(x, y, z)
+        // gcode.send(`
+        //     G0 X${x} Y${y} Z${z}
+        //     M2
+        // `)
     }
 
     function gotoX() {

@@ -122,7 +122,7 @@ export const GCodeTile = () => {
         }
     }
 
-    console.log("GCODE", gcode)
+    // console.log("GCODE", gcode)
 
     return (
         <Tile

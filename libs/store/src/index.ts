@@ -26,8 +26,8 @@ export * from "./toolpath"
 export * from "./devtools"
 export * from "./jogging"
 
-export { ACTIVITYTYPE, KINEMATICSCONFIGURATIONTYPE } from "./types"
-
 export * from "./root"
 
 export * from "./util/settings"
+
+export * from "./types"

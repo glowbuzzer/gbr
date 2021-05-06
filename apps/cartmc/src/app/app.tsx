@@ -88,14 +88,14 @@ const AppInner = () => {
 
 export const App = () => {
     const tiles: TileConfiguration = {
-        test: {
-            x: 2,
-            y: 0,
-            width: 4,
-            height: 4,
-            title: "Test",
-            render: <TestTile />
-        },
+        // test: {
+        //     x: 2,
+        //     y: 0,
+        //     width: 4,
+        //     height: 4,
+        //     title: "Test",
+        //     render: <TestTile />
+        // },
         connection: {
             x: 0,
             y: 0,
@@ -142,7 +142,9 @@ export const App = () => {
             width: 1,
             height: 6,
             title: "Digital Inputs",
-            render: <DigitalInputsTile labels={["BLINKY"]} />
+            render: (
+                <DigitalInputsTile labels={["PNU Extended (3)", "PNU Retracted (4)", "Magic Eye Input (5)", "UKN", "EStop", "UKN", "Estop", "UKN"]} />
+            )
         },
         douts: {
             x: 6,
@@ -150,7 +152,22 @@ export const App = () => {
             width: 1,
             height: 6,
             title: "Digital Outputs",
-            render: <DigitalOutputsTile labels={["DOUT1"]} />
+            render: (
+                <DigitalOutputsTile
+                    labels={[
+                        "DOUT0",
+                        "DOUT1",
+                        "DOUT2",
+                        "Camera Trigger 1",
+                        "Camera Trigger 2",
+                        "Red Tower LED",
+                        "Orange Tower LED",
+                        "Green Tower LED",
+                        "PNU Extend (2)",
+                        "PNU Retract (1)"
+                    ]}
+                />
+            )
         },
         ains: {
             x: 6,

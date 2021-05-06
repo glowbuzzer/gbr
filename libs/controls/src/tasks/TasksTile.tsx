@@ -60,7 +60,7 @@ const TaskItem = ({ status, index }) => {
 
 export const TasksTile = () => {
     const status = useTaskStatus()
-    console.log("STATUS", status)
+    // console.log("STATUS", status)
     return (
         <Tile title="Tasks">
             {/*

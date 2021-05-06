@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { RootState, useConnect } from "@glowbuzzer/store"
+import { ACTIVITYTYPE, CartesianPosition, CartesianPositionsConfig, RootState, useConnect } from "@glowbuzzer/store"
 import deepEqual from "fast-deep-equal"
 import { useEffect, useMemo, useRef } from "react"
 import { Vector3 } from "three"
@@ -27,14 +27,30 @@ export const activitySlice = createSlice({
     }
 })
 
-enum MotionCommand {
-    CANCEL = ":0",
-    MOVE_AT_VELOCITY = "moveAtVelocity:1",
-    MOVE_LINE = "moveLine:2"
-}
-
-function make_motion_activity(index: number, type: MotionCommand, tag: number, params) {
-    const [typeName, typeIndex] = type.split(":")
+function make_motion_activity(index: number, type: ACTIVITYTYPE, tag: number, params) {
+    const typeName = [
+        "",
+        "moveAtVelocity",
+        "moveLine",
+        "moveArc",
+        "moveSpline",
+        "moveJoints",
+        "moveToPosition",
+        "moveLineWithForce",
+        "moveToPositionWithForce",
+        "gearInPos",
+        "gearInVelo",
+        "gearInDyn",
+        "setDout",
+        "setAout",
+        "dwell",
+        "waitOn",
+        "switchPose",
+        "latch",
+        "stressTest",
+        "endProgram",
+        "setIout"
+    ][type]
 
     const command_detail = typeName.length
         ? {
@@ -50,7 +66,7 @@ function make_motion_activity(index: number, type: MotionCommand, tag: number, p
             soloActivity: {
                 [index]: {
                     command: {
-                        activityType: typeIndex,
+                        activityType: type,
                         tag,
                         ...command_detail
                     }
@@ -88,7 +104,7 @@ export function useSoloActivity(index = 0) {
     }, [status])
 
     return useMemo(() => {
-        function exec(type: MotionCommand, params) {
+        function exec(type: ACTIVITYTYPE, params) {
             const tag = currentTag.current++
             console.log("EXEC", type, "ON TAG", tag)
             return new Promise<void>((resolve, reject) => {
@@ -99,13 +115,25 @@ export function useSoloActivity(index = 0) {
         }
 
         return {
-            cancel: () => exec(MotionCommand.CANCEL, {}),
+            cancel: () => exec(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}),
             moveAtVelocity: (jointVelocityArray: number[]) =>
-                exec(MotionCommand.MOVE_AT_VELOCITY, {
+                exec(ACTIVITYTYPE.ACTIVITYTYPE_MOVEATVELOCITY, {
                     jointVelocityArray
                 }),
+            moveToPosition: (x: number, y: number, z: number) => {
+                const cartesianPosition: CartesianPositionsConfig = {
+                    // TODO: can we come up with another name for position to avoid duplication in hierarchy
+                    position: {
+                        position: { x, y, z }
+                    }
+                }
+
+                return exec(ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION, {
+                    cartesianPosition
+                })
+            },
             moveLine: (pos: Vector3, relative = false) =>
-                exec(MotionCommand.MOVE_LINE, {
+                exec(ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE, {
                     line: {
                         positionReference: relative ? 1 : 0, // TODO: put in enum
                         position: pos

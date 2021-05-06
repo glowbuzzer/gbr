@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { KINEMATICSCONFIGURATIONTYPE } from "../types"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { RootState } from "@glowbuzzer/store"
+import { KC_KINEMATICSCONFIGURATIONTYPE } from "../gbc"
+import { RootState } from "../root"
 
 const DEFAULT_JOINT_CONFIG = { pmin: -100, pmax: 100, vmax: 2000, amax: 40000, jmax: 800000, scale: 1000.0 }
 
@@ -18,7 +18,7 @@ export const DEFAULT_CONFIG = {
             participatingJoints: [0, 1, 2],
             participatingJointsCount: 3,
             kinematicsParameters: {
-                kinematicsConfigurationType: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
+                kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
                 xExtents: [-10, 10],
                 yExtents: [-10, 10],
                 zExtents: [-10, 10],
