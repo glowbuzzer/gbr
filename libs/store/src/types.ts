@@ -1,7 +1,7 @@
 import { Connection } from "./connect/Connection"
 
 // export enum ACTIVITYTYPE {
-//     MOVEATVELOCITY,
+//     MOVEJOINTSATVELOCITY,
 //     MOVELINE,
 //     MOVEARC,
 //     MOVESPLINE,

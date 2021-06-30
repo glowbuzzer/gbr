@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
+import deepEqual from "fast-deep-equal"
 
 export const digitalInputsSlice = createSlice({
     name: "din",
@@ -13,5 +14,5 @@ export const digitalInputsSlice = createSlice({
 })
 
 export function useDigitalInputs() {
-    return useSelector(({ din }: RootState) => din, shallowEqual)
+    return useSelector(({ din }: RootState) => din, deepEqual)
 }

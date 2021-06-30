@@ -1,10 +1,23 @@
 import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import { JogDirection, JogMode, useGCode, useJog, useJointConfig, useJoints, useSoloActivity } from "@glowbuzzer/store"
+import {
+    JogDirection,
+    POSITIONREFERENCE,
+    useGCode,
+    useJointConfig,
+    useJoints,
+    useSoloActivity
+} from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
-import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined } from "@ant-design/icons"
+import {
+    ArrowDownOutlined,
+    ArrowLeftOutlined,
+    ArrowRightOutlined,
+    ArrowUpOutlined
+} from "@ant-design/icons"
+import { Vector3 } from "three"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -13,7 +26,7 @@ enum JogMoveMode {
 }
 
 enum JogStepMode {
-    CONTINOUS,
+    CONTINUOUS,
     STEP
 }
 
@@ -53,23 +66,44 @@ const JointSliderDiv = styled.div`
 const JointSliderReadonly = ({ jc, index }) => {
     // this is separate component so that updates to act pos don't re-render the entire tile
     const joints = useJoints()
-    return <Slider min={jc.pmin} max={jc.pmax} disabled value={joints[index]?.actPos} tooltipVisible={false} />
+    return (
+        <Slider
+            min={jc.pmin}
+            max={jc.pmax}
+            disabled
+            value={joints[index]?.actPos}
+            tooltipVisible={false}
+        />
+    )
 }
 
 export const JogTile = () => {
     const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogStep, setJogStep] = useLocalStorage("jog.step", 45)
-    const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>("jog.mode", JogMoveMode.CARTESIAN)
-    const [jogStepMode, setJogStepMode] = useLocalStorage<JogStepMode>("jog.step", JogStepMode.CONTINOUS)
+    const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>(
+        "jog.mode",
+        JogMoveMode.CARTESIAN
+    )
+    const [jogStepMode, setJogStepMode] = useLocalStorage<JogStepMode>(
+        "jog.step",
+        JogStepMode.CONTINUOUS
+    )
 
     const [x, setX] = useLocalStorage("jog.x", 0)
     const [y, setY] = useLocalStorage("jog.y", 0)
     const [z, setZ] = useLocalStorage("jog.z", 0)
 
-    const jogger = useJog(0)
+    // const jogger = useJog(0)
     const joint_config = useJointConfig()
     const gcode = useGCode()
     const motion = useSoloActivity(0)
+
+    // we scale all limits by the jog speed percent
+    const move_params = {
+        vmaxPercentage: jogSpeed,
+        amaxPercentage: jogSpeed,
+        jmaxPercentage: jogSpeed
+    }
 
     function updateJogStepMode(e) {
         setJogStepMode(e.target.value)
@@ -88,18 +122,47 @@ export const JogTile = () => {
     }
 
     function startJog(index, direction: JogDirection) {
-        if (jogStepMode === JogStepMode.CONTINOUS) {
-            const velos = joint_config.map((conf, joint_index) =>
-                joint_index === index ? (direction === JogDirection.POSITIVE ? conf.vmax : -conf.vmax) : 0
-            )
-            return motion.moveAtVelocity(velos)
+        function ortho_vector(axis: number, direction: JogDirection) {
+            return axis === index
+                ? direction === JogDirection.POSITIVE
+                    ? 1
+                    : direction === JogDirection.NEGATIVE
+                    ? -1
+                    : 0
+                : 0
+        }
+
+        if (jogStepMode === JogStepMode.CONTINUOUS) {
+            if (jogMoveMode === JogMoveMode.JOINT) {
+                const velos = joint_config.map((conf, joint_index) =>
+                    joint_index === index
+                        ? direction === JogDirection.POSITIVE
+                            ? conf.vmax
+                            : -conf.vmax
+                        : 0
+                )
+                return motion.moveJointsAtVelocity(velos, move_params).promise()
+            } else {
+                return motion
+                    .moveLineAtVelocity(
+                        {
+                            vector: {
+                                x: ortho_vector(0, direction),
+                                y: ortho_vector(1, direction),
+                                z: ortho_vector(2, direction)
+                            }
+                        },
+                        move_params
+                    )
+                    .promise()
+            }
             // jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
         }
     }
 
     function stopJog(index) {
-        if (jogStepMode === JogStepMode.CONTINOUS) {
-            return motion.cancel()
+        if (jogStepMode === JogStepMode.CONTINUOUS) {
+            return motion.cancel().promise()
             // jogger.setJog(
             //     jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT,
             //     index,
@@ -111,18 +174,28 @@ export const JogTile = () => {
 
     function stepJog(index, direction: JogDirection) {
         if (jogStepMode === JogStepMode.STEP) {
-            jogger.stepJog(
-                jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN_STEP : JogMode.JOGMODE_JOINT_STEP,
-                index,
-                direction,
-                jogSpeed,
-                jogStep
-            )
+            if (jogMoveMode === JogMoveMode.JOINT) {
+                const steps = joint_config.map((conf, joint_index) =>
+                    joint_index === index
+                        ? direction === JogDirection.POSITIVE
+                            ? jogStep
+                            : -jogStep
+                        : 0
+                )
+                return motion.moveJoints(steps, POSITIONREFERENCE.RELATIVE, move_params).promise()
+            }
+            // jogger.stepJog(
+            //     jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN_STEP : JogMode.JOGMODE_JOINT_STEP,
+            //     index,
+            //     direction,
+            //     jogSpeed,
+            //     jogStep
+            // )
         }
     }
 
     function goto() {
-        return motion.moveToPosition(x, y, z)
+        return motion.moveToPosition(new Vector3(x, y, z), move_params).promise()
         // gcode.send(`
         //     G0 X${x} Y${y} Z${z}
         //     M2
@@ -152,7 +225,11 @@ export const JogTile = () => {
 
     function JogButton({ index, direction, children }) {
         return (
-            <Button onClick={() => stepJog(index, direction)} onMouseDown={() => startJog(index, direction)} onMouseUp={() => stopJog(index)}>
+            <Button
+                onClick={() => stepJog(index, direction)}
+                onMouseDown={() => startJog(index, direction)}
+                onMouseUp={() => stopJog(index)}
+            >
                 {children}
             </Button>
         )
@@ -169,9 +246,14 @@ export const JogTile = () => {
                         <Radio.Button value={JogMoveMode.GOTO}>Go To</Radio.Button>
                     </Radio.Group>
                     &nbsp;
-                    <Radio.Group size={"small"} value={jogStepMode} onChange={updateJogStepMode} disabled={jogMoveMode === JogMoveMode.GOTO}>
+                    <Radio.Group
+                        size={"small"}
+                        value={jogStepMode}
+                        onChange={updateJogStepMode}
+                        disabled={jogMoveMode === JogMoveMode.GOTO}
+                    >
                         <Radio.Button value={JogStepMode.STEP}>Step</Radio.Button>
-                        <Radio.Button value={JogStepMode.CONTINOUS}>Cont</Radio.Button>
+                        <Radio.Button value={JogStepMode.CONTINUOUS}>Cont</Radio.Button>
                     </Radio.Group>
                 </StyledControls>
             }
@@ -181,17 +263,29 @@ export const JogTile = () => {
                     <div>
                         <Form layout="inline" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
                             <Space align="baseline">
-                                <Input type="number" value={x} onChange={e => setX(Number(e.target.value) || 0)} />
+                                <Input
+                                    type="number"
+                                    value={x}
+                                    onChange={e => setX(Number(e.target.value) || 0)}
+                                />
                                 <Button onClick={gotoX}>Go to X</Button>
                                 <Button onClick={() => setX(0)}>Reset</Button>
                             </Space>
                             <Space align="baseline">
-                                <Input type="number" value={y} onChange={e => setY(Number(e.target.value) || 0)} />
+                                <Input
+                                    type="number"
+                                    value={y}
+                                    onChange={e => setY(Number(e.target.value) || 0)}
+                                />
                                 <Button onClick={gotoY}>Go to Y</Button>
                                 <Button onClick={() => setY(0)}>Reset</Button>
                             </Space>
                             <Space align="baseline">
-                                <Input type="number" value={z} onChange={e => setZ(Number(e.target.value) || 0)} />
+                                <Input
+                                    type="number"
+                                    value={z}
+                                    onChange={e => setZ(Number(e.target.value) || 0)}
+                                />
                                 <Button onClick={gotoZ}>Go to Z</Button>
                                 <Button onClick={() => setZ(0)}>Reset</Button>
                             </Space>
@@ -260,7 +354,12 @@ export const JogTile = () => {
                                 <Input type="number" value={jogSpeed} onChange={updateJogSpeed} />
                             </Form.Item>
                             <Form.Item label="Step Distance">
-                                <Input type="number" value={jogStep} onChange={updateJogStep} disabled={jogStepMode !== JogStepMode.STEP} />
+                                <Input
+                                    type="number"
+                                    value={jogStep}
+                                    onChange={updateJogStep}
+                                    disabled={jogStepMode !== JogStepMode.STEP}
+                                />
                             </Form.Item>
                         </Form>
                     </div>

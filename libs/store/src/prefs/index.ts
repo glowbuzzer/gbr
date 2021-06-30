@@ -39,7 +39,7 @@ export const usePrefs = () => {
     return useMemo(
         () => ({
             current: prefs,
-            set(name, value) {
+            update(name, value) {
                 dispatch(prefsSlice.actions.set({ name, value }))
             }
         }),

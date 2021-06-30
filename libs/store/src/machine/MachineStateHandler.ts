@@ -52,11 +52,11 @@ export const possible_transitions = {
     QuickStop: () => 0b00000010
 }
 
-export function handleMachineState(currentState: MachineState, controlWord: number, desiredState: DesiredState): number | void {
+export function handleMachineState(currentState: MachineState, controlWord: number, desiredState: DesiredState): number | undefined {
     const state = currentState
     if (desiredState === DesiredState.OPERATIONAL) {
         // console.log("HANDLE MACHINE STATE - OPERATION ENABLED - CURRENT", state)
-            switch (state) {
+        switch (state) {
             case MachineState.UNKNOWN:
             case MachineState.FAULT_REACTION_ACTIVE:
             case MachineState.FAULT:
@@ -103,4 +103,5 @@ export function handleMachineState(currentState: MachineState, controlWord: numb
                 break
         }
     }
+    return undefined
 }

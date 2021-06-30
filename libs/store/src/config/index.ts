@@ -59,6 +59,14 @@ export const DEFAULT_CONFIG = {
                 activityType: 4
             }
         }
+    },
+    dout: {
+        0: {},
+        1: {}
+    },
+    din: {
+        0: {},
+        1: {}
     }
 }
 

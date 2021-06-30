@@ -2,12 +2,21 @@ import React, { useCallback, useEffect, useState } from "react"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import { ConnectTile, DevToolsTile } from "@glowbuzzer/controls"
 import { Button, Space, Tag } from "antd"
-import { JogDirection, JogMode, useDigitalInputs, useDigitalOutputs, useJog, useJoints, useSoloActivity } from "@glowbuzzer/store"
+import {
+    JogDirection,
+    JogMode,
+    useDigitalInputs,
+    useDigitalOutput,
+    useJog,
+    useJoints,
+    useSoloActivity
+} from "@glowbuzzer/store"
 import { DigitalInputOverrideTile } from "../components/DigitalInputOverrides"
 import { dinLabels } from "./labels"
 import { ConveyorsTile } from "../components/ConveyorsTile"
 import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
 import { Vector3 } from "three"
+import { TriggersTile } from "./TriggersTile"
 
 /**
  * Simple button that will correctly handle mouse events to ensure jogging is stopped
@@ -61,7 +70,13 @@ const ConveyorControl = ({ index, step, magicEyeTrigger = undefined }) => {
     }
 
     function move_relative_amount(distance: number) {
-        jogger.stepJog(JogMode.JOGMODE_JOINT_STEP, 0, distance < 0 ? JogDirection.NEGATIVE : JogDirection.POSITIVE, 100, Math.abs(distance))
+        jogger.stepJog(
+            JogMode.JOGMODE_JOINT_STEP,
+            0,
+            distance < 0 ? JogDirection.NEGATIVE : JogDirection.POSITIVE,
+            100,
+            Math.abs(distance)
+        )
     }
 
     function move_relative() {
@@ -95,7 +110,9 @@ const ConveyorControl = ({ index, step, magicEyeTrigger = undefined }) => {
                     <ArrowRightOutlined />
                 </JogButton>
                 <Button onClick={move_relative}>Move {step}</Button>
-                {magicEyeTrigger !== undefined && <Button onClick={start_jog_right}>Run Until Magic Eye</Button>}
+                {magicEyeTrigger !== undefined && (
+                    <Button onClick={start_jog_right}>Run Until Magic Eye</Button>
+                )}
                 <Button onClick={stop_jog}>Stop</Button>
                 <Button onClick={home}>Home</Button>
             </Space>
@@ -113,19 +130,18 @@ const ConveyorControl = ({ index, step, magicEyeTrigger = undefined }) => {
  */
 const ConveyorControlMotion = ({ index, step, magicEyeTrigger = undefined }) => {
     const motion = useSoloActivity(index)
-    const joints = useJoints()
     const dins = useDigitalInputs()
 
     function start_jog_left() {
-        return motion.moveAtVelocity([-100])
+        return motion.moveJointsAtVelocity([-100]).promise()
     }
 
     function start_jog_right() {
-        return motion.moveAtVelocity([100])
+        return motion.moveJointsAtVelocity([100]).promise()
     }
 
     function move_relative_amount(distance: number) {
-        return motion.moveLine(new Vector3(distance, 0, 0), true)
+        return motion.moveLine(new Vector3(distance, 0, 0), true).promise()
     }
 
     function move_relative() {
@@ -133,34 +149,36 @@ const ConveyorControlMotion = ({ index, step, magicEyeTrigger = undefined }) => 
     }
 
     function home() {
-        return motion.moveLine(new Vector3(0, 0, 0))
+        return motion.moveLine(new Vector3(0, 0, 0)).promise()
     }
 
     // this needs to be a callback (memoised function) to avoid triggering the useEffect hook on every render
-    const stop_jog = useCallback(() => {
-        return motion.cancel()
+    const stop_conveyor_motion = useCallback(() => {
+        return motion.cancel().promise()
     }, [motion])
 
     const magic_eye = dins[magicEyeTrigger]
     useEffect(() => {
         if (magic_eye) {
-            stop_jog()
+            stop_conveyor_motion().catch(e => console.log("Error stopping motion: ", e))
         }
-    }, [stop_jog, magic_eye])
+    }, [stop_conveyor_motion, magic_eye])
 
     return (
         <div>
             <Space>
                 Conveyor {index + 1}
-                <JogButton onStart={start_jog_left} onStop={stop_jog}>
+                <JogButton onStart={start_jog_left} onStop={stop_conveyor_motion}>
                     <ArrowLeftOutlined />
                 </JogButton>
-                <JogButton onStart={start_jog_right} onStop={stop_jog}>
+                <JogButton onStart={start_jog_right} onStop={stop_conveyor_motion}>
                     <ArrowRightOutlined />
                 </JogButton>
                 <Button onClick={move_relative}>Move {step}</Button>
-                {magicEyeTrigger !== undefined && <Button onClick={start_jog_right}>Run Until Magic Eye</Button>}
-                <Button onClick={stop_jog}>Stop</Button>
+                {magicEyeTrigger !== undefined && (
+                    <Button onClick={start_jog_right}>Run Until Magic Eye</Button>
+                )}
+                <Button onClick={stop_conveyor_motion}>Stop</Button>
                 <Button onClick={home}>Home</Button>
             </Space>
         </div>
@@ -168,57 +186,57 @@ const ConveyorControlMotion = ({ index, step, magicEyeTrigger = undefined }) => 
 }
 
 const DevelopmentUiTile = () => {
-    const douts = useDigitalOutputs()
     const dins = useDigitalInputs()
+    const doutExtend = useDigitalOutput(0)
+    const doutRetract = useDigitalOutput(1)
 
-    const extending = douts.values[0]?.actState > 0
-    const retracting = douts.values[1]?.actState > 0
-    const extended = dins[0]
-    const retracted = dins[1]
-
-    const set_dout = useCallback(
-        (index, override, state) =>
-            douts.update(index, {
-                override,
-                state
-            }),
-        [douts]
-    )
-
-    function extend() {
-        set_dout(0, true, 1)
-    }
-
-    function retract() {
-        set_dout(1, true, 1)
-    }
+    const extending = doutExtend.actState > 0
+    const retracting = doutRetract.actState > 0
+    const [extended, retracted] = dins // simple booleans
 
     useEffect(() => {
         if (extended) {
-            set_dout(0, true, 0)
+            doutExtend.set(0)
         }
         if (retracted) {
-            set_dout(1, true, 0)
+            doutRetract.set(0)
         }
-    }, [extended, retracted, set_dout])
+    }, [extended, retracted, doutExtend, doutRetract])
 
     return (
         <Tile title="Development UI">
             <Space direction="vertical">
                 <Space>
-                    <Button onClick={extend} disabled={extending || extended || retracting}>
+                    <Button
+                        onClick={() => doutExtend.set(1)}
+                        disabled={extending || extended || retracting}
+                    >
                         Extend
                     </Button>
-                    <Button onClick={retract} disabled={retracting || retracted || extending}>
+                    <Button
+                        onClick={() => doutRetract.set(1)}
+                        disabled={retracting || retracted || extending}
+                    >
                         Retract
                     </Button>
                     <Tag>
-                        {extended ? "Extended" : extending ? "Extending..." : retracted ? "Retracted" : retracting ? "Retracting..." : "Unknown"}
+                        {extending
+                            ? "Extending..."
+                            : retracting
+                            ? "Retracting..."
+                            : extended
+                            ? "Extended"
+                            : retracted
+                            ? "Retracted"
+                            : "Unknown"}
                     </Tag>
                 </Space>
+
+                {/*
                 <h2>Conveyor control using jogging API</h2>
                 <ConveyorControl index={0} step={200} magicEyeTrigger={2} />
                 <ConveyorControl index={1} step={100} />
+*/}
 
                 <h2>Conveyor control using motion API</h2>
                 <ConveyorControlMotion index={0} step={200} magicEyeTrigger={2} />
@@ -233,10 +251,15 @@ export const DevelopmentUi = () => {
         [
             { render: <ConnectTile />, height: 4, title: "Connection" },
             { render: <DevToolsTile />, height: 4, title: "Dev Tools" },
-            { render: <DigitalInputOverrideTile labels={dinLabels} />, height: 4, title: "Dev Tools" }
+            {
+                render: <DigitalInputOverrideTile labels={dinLabels} />,
+                height: 4,
+                title: "Dev Tools"
+            }
         ],
         [
             { render: <DevelopmentUiTile />, height: 4, title: "Development UI" },
+            { render: <TriggersTile />, height: 4, title: "Triggers" },
             { render: <ConveyorsTile />, height: 4, title: "Conveyors" }
         ]
     ]

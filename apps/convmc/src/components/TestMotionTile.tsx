@@ -1,7 +1,7 @@
 import { Tile } from "@glowbuzzer/layout"
-import React, { createContext, FC, useContext, useEffect, useRef, useState } from "react"
+import React, { createContext, FC, useContext, useRef, useState } from "react"
 import { Button } from "antd"
-import { ActivityState, useConnect, useSoloActivity } from "@glowbuzzer/store"
+import { useConnect, useSoloActivity } from "@glowbuzzer/store"
 import { Vector3 } from "three"
 
 type SoloActivityContextType = {
