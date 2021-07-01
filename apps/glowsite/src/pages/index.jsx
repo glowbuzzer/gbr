@@ -7,7 +7,12 @@ import Banner0 from "../antm/Banner0"
 import Content5 from "../antm/Content5"
 import Content3 from "../antm/Content3"
 
-import { Banner01DataSource, Content00DataSource, Content30DataSource, Content50DataSource } from "../data/antmotion.data"
+import {
+    Banner01DataSource,
+    Content00DataSource,
+    Content30DataSource,
+    Content50DataSource
+} from "../data/antmotion.data"
 
 import "../less/antMotionStyle.less"
 import { MdxFragment } from "../providers/MdxFragmentProvider"
@@ -43,7 +48,12 @@ const Home = props => {
             {/* 如果不是 dva 2.0 替换成 {children} start */}
             {show && (
                 <>
-                    <Banner0 id="Banner0_1" key="Banner0_1" dataSource={Banner01DataSource} isMobile={mobile} />
+                    <Banner0
+                        id="Banner0_1"
+                        key="Banner0_1"
+                        dataSource={Banner01DataSource}
+                        isMobile={mobile}
+                    />
                     <div className="glow-page-wrapper content0-wrapper">
                         <MdxFragment className="glow-page content0" name="frag1" />
                     </div>
@@ -51,8 +61,18 @@ const Home = props => {
                     {/*
                     <Content0 id="Content0_0" key="Content0_0" dataSource={Content00DataSource} isMobile={mobile} />
 */}
-                    <Content5 id="Content5_0" key="Content5_0" dataSource={Content50DataSource} isMobile={mobile} />
-                    <Content3 id="Content3_0" key="Content3_0" dataSource={Content30DataSource} isMobile={mobile} />
+                    <Content5
+                        id="Content5_0"
+                        key="Content5_0"
+                        dataSource={Content50DataSource}
+                        isMobile={mobile}
+                    />
+                    <Content3
+                        id="Content3_0"
+                        key="Content3_0"
+                        dataSource={Content30DataSource}
+                        isMobile={mobile}
+                    />
                 </>
             )}
             {/* 如果不是 dva 2.0 替换成 {children} end */}
