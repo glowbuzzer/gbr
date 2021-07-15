@@ -49,7 +49,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
 
     const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)
 
-    console.log("FRAME INDEX", frameIndex)
+    // console.log("FRAME INDEX", frameIndex)
 
     return (
         <div>

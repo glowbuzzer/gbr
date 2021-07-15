@@ -1,6 +1,6 @@
 import { AppThunk, Connection } from "./Connection"
 import { telemetrySlice } from "../telemetry"
-import { machineSlice, updateMachineCommandMsg, updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine"
+import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroPercentageMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
@@ -20,11 +20,18 @@ import { tasksSlice } from "../tasks"
 import { settings } from "../util/settings"
 import { framesSlice, RootState } from "@glowbuzzer/store"
 import { activitySlice } from "../activity"
+import { updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine/machine_api"
 
 abstract class ProcessorBase {
     protected first = true
 
-    protected abstract process_internal(msg, dispatch, ws: WebSocket, getState: () => RootState, first: boolean)
+    protected abstract process_internal(
+        msg,
+        dispatch,
+        ws: WebSocket,
+        getState: () => RootState,
+        first: boolean
+    )
 
     process(msg, dispatch, ws: WebSocket, getState: () => RootState) {
         this.process_internal(msg, dispatch, ws, getState, this.first)
@@ -90,11 +97,11 @@ class StatusProcessor extends ProcessorBase {
 
         if (this.tick % 50 === 0) {
             // send heartbeat about every 5 seconds assuming status message is 10hz
-            ws.send(
-                updateMachineCommandMsg({
-                    heartbeat // echo the machine status heartbeat
-                })
-            )
+            // ws.send(
+            //     updateMachineCommandMsg({
+            //         heartbeat // echo the machine status heartbeat
+            //     })
+            // )
         }
 
         if (nextControlWord !== undefined) {
@@ -117,7 +124,13 @@ class ResponseProcessor extends ProcessorBase {
 const { load, save } = settings("devtools.statusFrequency")
 
 class DevToolsProcessor extends ProcessorBase {
-    protected process_internal(msg, dispatch, ws: WebSocket, getState: () => RootState, first: boolean) {
+    protected process_internal(
+        msg,
+        dispatch,
+        ws: WebSocket,
+        getState: () => RootState,
+        first: boolean
+    ) {
         if (first) {
             // load and send the desired frequency on startup
             try {

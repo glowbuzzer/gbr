@@ -4,7 +4,14 @@ export * from "./gbc"
 
 export { GlowbuzzerApp } from "./GlowbuzzerApp"
 export { ConnectionState, useConnect, connectionSlice } from "./connect"
-export { DesiredState, MachineTarget, useMachine, MachineState, determine_machine_state, possible_transitions, FaultCode } from "./machine"
+export {
+    DesiredState,
+    useMachine,
+    MachineState,
+    determine_machine_state,
+    possible_transitions,
+    FaultCode
+} from "./machine"
 export { useConfig, configSlice } from "./config"
 export { usePrefs } from "./prefs"
 export * from "./frames"
@@ -26,8 +33,8 @@ export * from "./toolpath"
 export * from "./devtools"
 export * from "./jogging"
 
-export { ACTIVITYTYPE, KINEMATICSCONFIGURATIONTYPE } from "./types"
-
 export * from "./root"
 
 export * from "./util/settings"
+
+export * from "./types"

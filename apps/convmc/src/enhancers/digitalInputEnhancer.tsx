@@ -16,7 +16,7 @@ export const DigitalInputMockProvider: FC = ({ children }) => {
     const [state, setState] = useState([])
     const context = useMemo(
         () => ({
-            set(index: number, override: boolean, value: boolean) {
+            update(index: number, override: boolean, value: boolean) {
                 setState(current => {
                     const next = [...current]
                     next[index] = override ? value : undefined
@@ -33,7 +33,11 @@ export const DigitalInputMockProvider: FC = ({ children }) => {
         }),
         [state]
     )
-    return <digitalInputMockContext.Provider value={context}>{children}</digitalInputMockContext.Provider>
+    return (
+        <digitalInputMockContext.Provider value={context}>
+            {children}
+        </digitalInputMockContext.Provider>
+    )
 }
 
 export function useDigitalInputOverrides() {
@@ -51,11 +55,14 @@ export const digitalInputEnhancer: StoreEnhancer<any> = createStore => {
             ...store,
             getState() {
                 const state = store.getState()
-                // return state
-                return {
-                    ...state,
-                    din: state.din.map((v, index) => (values[index] === undefined ? v : values[index]))
-                }
+                state.din = state.din.map((v, index) =>
+                    values[index] === undefined ? v : values[index]
+                )
+                return state
+                // return {
+                //     ...state,
+                //     din: state.din.map((v, index) => (values[index] === undefined ? v : values[index]))
+                // }
             }
         }
     }

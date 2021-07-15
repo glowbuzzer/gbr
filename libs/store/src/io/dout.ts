@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "@glowbuzzer/store"
-import { useMemo } from "react"
+import { useConfig, useConnect } from "@glowbuzzer/store"
+import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
 
 type DigitalOutputCommand = {
@@ -25,19 +25,39 @@ export const digitalOutputsSlice = createSlice({
     }
 })
 
-export function useDigitalOutputs() {
+export function useDigitalOutputList() {
+    const config = useConfig()
+    return Object.keys(config.dout)
+}
+
+export function useDigitalOutput(index: number) {
     const connection = useConnect()
-    const values = useSelector(({ dout }: RootState) => dout, deepEqual)
+    const ref = useRef<DigitalOutputStatus>(null)
+    const dout = useSelector(({ dout }: RootState) => dout[index]) || {
+        state: 0,
+        actState: 0,
+        override: false
+    }
+
+    // compare ref value of dout with latest from store
+    if (!deepEqual(ref.current, dout)) {
+        ref.current = dout
+    }
+
+    const value = ref.current
     return useMemo(() => {
         return {
-            values,
-            update(index: number, command: DigitalOutputCommand) {
+            ...value,
+            update(state: number, override = true) {
                 connection.send(
                     JSON.stringify({
                         command: {
                             dout: {
                                 [index]: {
-                                    command
+                                    command: {
+                                        state,
+                                        override
+                                    }
                                 }
                             }
                         }
@@ -45,5 +65,5 @@ export function useDigitalOutputs() {
                 )
             }
         }
-    }, [values, connection])
+    }, [index, value, connection])
 }

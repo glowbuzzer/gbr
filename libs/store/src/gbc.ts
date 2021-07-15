@@ -24,10 +24,10 @@ export enum GTLT {
 GREATERTHAN,LESSTHAN
 }
 export enum ACTIVITYTYPE {
-ACTIVITYTYPE_NONE,ACTIVITYTYPE_MOVEATVELOCITY,ACTIVITYTYPE_MOVELINE,ACTIVITYTYPE_MOVEARC,ACTIVITYTYPE_MOVESPLINE,ACTIVITYTYPE_MOVEJOINTS,ACTIVITYTYPE_MOVETOPOSITION,ACTIVITYTYPE_MOVELINEWITHFORCE,ACTIVITYTYPE_MOVETOPOSITIONWITHFORCE,ACTIVITYTYPE_GEARINPOS,ACTIVITYTYPE_GEARINVELO,ACTIVITYTYPE_GEARINDYN,ACTIVITYTYPE_SETDOUT,ACTIVITYTYPE_SETAOUT,ACTIVITYTYPE_DWELL,ACTIVITYTYPE_WAITON,ACTIVITYTYPE_SWITCHPOSE,ACTIVITYTYPE_LATCH,ACTIVITYTYPE_STRESSTEST,ACTIVITYTYPE_ENDPROGRAM,ACTIVITYTYPE_SETIOUT
+ACTIVITYTYPE_NONE,ACTIVITYTYPE_MOVEJOINTS,ACTIVITYTYPE_MOVEJOINTSATVELOCITY,ACTIVITYTYPE_MOVELINE,ACTIVITYTYPE_MOVELINEATVELOCITY,ACTIVITYTYPE_MOVEARC,ACTIVITYTYPE_MOVESPLINE,ACTIVITYTYPE_MOVETOPOSITION,ACTIVITYTYPE_MOVELINEWITHFORCE,ACTIVITYTYPE_MOVETOPOSITIONWITHFORCE,ACTIVITYTYPE_GEARINPOS,ACTIVITYTYPE_GEARINVELO,ACTIVITYTYPE_GEARINDYN,ACTIVITYTYPE_SETDOUT,ACTIVITYTYPE_SETAOUT,ACTIVITYTYPE_DWELL,ACTIVITYTYPE_WAITON,ACTIVITYTYPE_SWITCHPOSE,ACTIVITYTYPE_LATCH,ACTIVITYTYPE_STRESSTEST,ACTIVITYTYPE_ENDPROGRAM,ACTIVITYTYPE_SETIOUT
 }
 export enum ACTIVITYSTATE {
-ACTIVITY_INACTIVE,ACTIVITY_ACTIVE,ACTIVITY_COMPLETED,ACTIVITY_BLEND_ACTIVE
+ACTIVITY_INACTIVE,ACTIVITY_ACTIVE,ACTIVITY_COMPLETED,ACTIVITY_BLEND_ACTIVE,ACTIVITY_CANCELLED
 }
 export enum STRATEGYGEARINPOS {
 PHASESHIFT,EARLY,LATE,SLOW
@@ -181,6 +181,11 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 positionReference?:POSITIONREFERENCE;
                 position?:Vector3;
                 orientation?:Quat;
+                frameIndex?:number;
+        }
+
+        export type CartesianVector = {
+                vector?:Vector3;
                 frameIndex?:number;
         }
 
@@ -471,21 +476,43 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 value?:number;
         }
 
-        export type MoveAtVelocityConfig = {
+        export type MoveJointsConfig = {
                 kinematicsConfigurationIndex?:number;
         }
 
-        export type MoveAtVelocityStatus = {
+        export type MoveJointsStatus = {
+                percentageComplete?:number;
+        }
+
+        export type MoveJointsCommand = {
+                jointPositionArray?:number[];
+                positionReference?:POSITIONREFERENCE;
+                moveParamsIndex?:number;
+                skipToNext?:boolean;
+        }
+
+        export type MoveJointsStream = {
+                kinematicsConfigurationIndex?:number;
+                positionReference?:POSITIONREFERENCE;
+                jointPositionArray?:number[];
+                moveParams?:MoveParametersConfig;
+        }
+
+        export type MoveJointsAtVelocityConfig = {
+                kinematicsConfigurationIndex?:number;
+        }
+
+        export type MoveJointsAtVelocityStatus = {
                 atSpeed?:boolean;
         }
 
-        export type MoveAtVelocityCommand = {
+        export type MoveJointsAtVelocityCommand = {
                 moveParamsIndex?:number;
                 jointVelocityArray?:number[];
                 skipToNext?:boolean;
         }
 
-        export type MoveAtVelocityStream = {
+        export type MoveJointsAtVelocityStream = {
                 kinematicsConfigurationIndex?:number;
                 moveParams?:MoveParametersConfig;
                 jointVelocityArray?:number[];
@@ -511,6 +538,26 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 moveParams?:MoveParametersConfig;
                 line?:CartesianPosition;
                 superimposedIndex?:number;
+        }
+
+        export type MoveLineAtVelocityConfig = {
+                kinematicsConfigurationIndex?:number;
+        }
+
+        export type MoveLineAtVelocityStatus = {
+                atSpeed?:boolean;
+        }
+
+        export type MoveLineAtVelocityCommand = {
+                moveParamsIndex?:number;
+                line?:CartesianVector;
+                skipToNext?:boolean;
+        }
+
+        export type MoveLineAtVelocityStream = {
+                kinematicsConfigurationIndex?:number;
+                moveParams?:MoveParametersConfig;
+                line?:CartesianVector;
         }
 
         export type MoveArcConfig = {
@@ -547,26 +594,6 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 moveParamsIndex?:number;
                 splineIndex?:number;
                 skipToNext?:boolean;
-        }
-
-        export type MoveJointsConfig = {
-                kinematicsConfigurationIndex?:number;
-        }
-
-        export type MoveJointsStatus = {
-                percentageComplete?:number;
-        }
-
-        export type MoveJointsCommand = {
-                jointPositionArray?:number[];
-                moveParamsIndex?:number;
-                skipToNext?:boolean;
-        }
-
-        export type MoveJointsStream = {
-                kinematicsConfigurationIndex?:number;
-                jointPositionArray?:number[];
-                moveParams?:MoveParametersConfig;
         }
 
         export type MoveToPositionConfig = {
@@ -618,7 +645,7 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
         }
 
         export type SetIoutCommand = {
-                ioutToSet?:boolean;
+                ioutToSet?:number;
                 valueToSet?:number;
         }
 
@@ -761,11 +788,12 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 skipToNextTriggerIndex?:number;
                 skipToNextTriggerType?:TRIGGERTYPE;
 //              Start of Union
-                    moveAtVelocity?: MoveAtVelocityConfig,
+                    moveJoints?: MoveJointsConfig,
+                    moveJointsAtVelocity?: MoveJointsAtVelocityConfig,
                     moveLine?: MoveLineConfig,
+                    moveLineAtVelocity?: MoveLineAtVelocityConfig,
                     moveArc?: MoveArcConfig,
                     moveSpline?: MoveSplineConfig,
-                    moveJoints?: MoveJointsConfig,
                     moveToPosition?: MoveToPositionConfig,
                     gearInPos?: GearInPosConfig,
                     gearInVelo?: GearInVeloConfig,
@@ -783,12 +811,14 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
 
         export type ActivityStatus = {
                 state?:ACTIVITYSTATE;
+                tag?:number;
 //              Start of Union
-                    moveAtVelocity?: MoveAtVelocityStatus,
+                    moveJoints?: MoveJointsStatus,
+                    moveJointsAtVelocity?: MoveJointsAtVelocityStatus,
                     moveLine?: MoveLineStatus,
+                    moveLineAtVelocity?: MoveLineAtVelocityStatus,
                     moveArc?: MoveArcStatus,
                     moveSpline?: MoveSplineStatus,
-                    moveJoints?: MoveJointsStatus,
                     moveToPosition?: MoveToPositionStatus,
                     gearInPos?: GearInPosStatus,
                     gearInVelo?: GearInVeloStatus,
@@ -806,11 +836,12 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
 
         export type ActivityCommand = {
 //              Start of Union
-                    moveAtVelocity?: MoveAtVelocityCommand,
+                    moveJoints?: MoveJointsCommand,
+                    moveJointsAtVelocity?: MoveJointsAtVelocityCommand,
                     moveLine?: MoveLineCommand,
+                    moveLineAtVelocity?: MoveLineAtVelocityCommand,
                     moveArc?: MoveArcCommand,
                     moveSpline?: MoveSplineCommand,
-                    moveJoints?: MoveJointsCommand,
                     moveToPosition?: MoveToPositionCommand,
                     gearInPos?: GearInPosCommand,
                     gearInVelo?: GearInVeloCommand,
@@ -831,10 +862,11 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 activityType?:ACTIVITYTYPE;
                 tag?:number;
 //              Start of Union
-                    moveAtVelocity?: MoveAtVelocityStream,
-                    moveLine?: MoveLineStream,
-                    moveArc?: MoveArcStream,
                     moveJoints?: MoveJointsStream,
+                    moveJointsAtVelocity?: MoveJointsAtVelocityStream,
+                    moveLine?: MoveLineStream,
+                    moveLineAtVelocity?: MoveLineAtVelocityStream,
+                    moveArc?: MoveArcStream,
                     moveToPosition?: MoveToPositionStream,
                     setDout?: SetDoutCommand,
                     setAout?: SetAoutCommand,

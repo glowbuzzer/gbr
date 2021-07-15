@@ -76,7 +76,11 @@ export const OrbitControls = function (object, domElement) {
     this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 }
 
     // Mouse buttons
-    this.mouseButtons = { LEFT: THREE.MOUSE.LEFT, MIDDLE: THREE.MOUSE.MIDDLE, RIGHT: THREE.MOUSE.RIGHT }
+    this.mouseButtons = {
+        LEFT: THREE.MOUSE.LEFT,
+        MIDDLE: THREE.MOUSE.MIDDLE,
+        RIGHT: THREE.MOUSE.RIGHT
+    }
 
     // for reset
     this.target0 = this.target.clone()
@@ -113,7 +117,7 @@ export const OrbitControls = function (object, domElement) {
         scope.object.updateProjectionMatrix()
         scope.dispatchEvent(changeEvent)
 
-        scope.update()
+        scope.set()
 
         state = STATE.NONE
     }
@@ -125,7 +129,7 @@ export const OrbitControls = function (object, domElement) {
         scope.object.updateProjectionMatrix()
         scope.dispatchEvent(changeEvent)
 
-        scope.update()
+        scope.set()
 
         state = STATE.NONE
     }
@@ -160,17 +164,26 @@ export const OrbitControls = function (object, domElement) {
             spherical.phi += sphericalDelta.phi
 
             // restrict theta to be between desired limits
-            spherical.theta = Math.max(scope.minAzimuthAngle, Math.min(scope.maxAzimuthAngle, spherical.theta))
+            spherical.theta = Math.max(
+                scope.minAzimuthAngle,
+                Math.min(scope.maxAzimuthAngle, spherical.theta)
+            )
 
             // restrict phi to be between desired limits
-            spherical.phi = Math.max(scope.minPolarAngle, Math.min(scope.maxPolarAngle, spherical.phi))
+            spherical.phi = Math.max(
+                scope.minPolarAngle,
+                Math.min(scope.maxPolarAngle, spherical.phi)
+            )
 
             spherical.makeSafe()
 
             spherical.radius *= scale
 
             // restrict radius to be between desired limits
-            spherical.radius = Math.max(scope.minDistance, Math.min(scope.maxDistance, spherical.radius))
+            spherical.radius = Math.max(
+                scope.minDistance,
+                Math.min(scope.maxDistance, spherical.radius)
+            )
 
             // move target to panned location
             scope.target.add(panOffset)
@@ -337,11 +350,23 @@ export const OrbitControls = function (object, domElement) {
                 panUp((2 * deltaY * targetDistance) / element.clientHeight, scope.object.matrix)
             } else if (scope.object.isOrthographicCamera) {
                 // orthographic
-                panLeft((deltaX * (scope.object.right - scope.object.left)) / scope.object.zoom / element.clientWidth, scope.object.matrix)
-                panUp((deltaY * (scope.object.top - scope.object.bottom)) / scope.object.zoom / element.clientHeight, scope.object.matrix)
+                panLeft(
+                    (deltaX * (scope.object.right - scope.object.left)) /
+                        scope.object.zoom /
+                        element.clientWidth,
+                    scope.object.matrix
+                )
+                panUp(
+                    (deltaY * (scope.object.top - scope.object.bottom)) /
+                        scope.object.zoom /
+                        element.clientHeight,
+                    scope.object.matrix
+                )
             } else {
                 // camera neither orthographic nor perspective
-                console.warn("WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.")
+                console.warn(
+                    "WARNING: OrbitControls.js encountered an unknown camera type - pan disabled."
+                )
                 scope.enablePan = false
             }
         }
@@ -351,11 +376,16 @@ export const OrbitControls = function (object, domElement) {
         if (scope.object.isPerspectiveCamera) {
             scale /= dollyScale
         } else if (scope.object.isOrthographicCamera) {
-            scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom * dollyScale))
+            scope.object.zoom = Math.max(
+                scope.minZoom,
+                Math.min(scope.maxZoom, scope.object.zoom * dollyScale)
+            )
             scope.object.updateProjectionMatrix()
             zoomChanged = true
         } else {
-            console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.")
+            console.warn(
+                "WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled."
+            )
             scope.enableZoom = false
         }
     }
@@ -364,11 +394,16 @@ export const OrbitControls = function (object, domElement) {
         if (scope.object.isPerspectiveCamera) {
             scale *= dollyScale
         } else if (scope.object.isOrthographicCamera) {
-            scope.object.zoom = Math.max(scope.minZoom, Math.min(scope.maxZoom, scope.object.zoom / dollyScale))
+            scope.object.zoom = Math.max(
+                scope.minZoom,
+                Math.min(scope.maxZoom, scope.object.zoom / dollyScale)
+            )
             scope.object.updateProjectionMatrix()
             zoomChanged = true
         } else {
-            console.warn("WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.")
+            console.warn(
+                "WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled."
+            )
             scope.enableZoom = false
         }
     }
@@ -410,7 +445,7 @@ export const OrbitControls = function (object, domElement) {
 
         rotateStart.copy(rotateEnd)
 
-        scope.update()
+        scope.set()
     }
 
     function handleMouseMoveDolly(event) {
@@ -428,7 +463,7 @@ export const OrbitControls = function (object, domElement) {
 
         dollyStart.copy(dollyEnd)
 
-        scope.update()
+        scope.set()
     }
 
     function handleMouseMovePan(event) {
@@ -442,7 +477,7 @@ export const OrbitControls = function (object, domElement) {
 
         panStart.copy(panEnd)
 
-        scope.update()
+        scope.set()
     }
 
     function handleMouseUp(event) {
@@ -458,7 +493,7 @@ export const OrbitControls = function (object, domElement) {
             dollyIn(getZoomScale())
         }
 
-        scope.update()
+        scope.set()
     }
 
     function handleKeyDown(event) {
@@ -467,22 +502,22 @@ export const OrbitControls = function (object, domElement) {
         switch (event.keyCode) {
             case scope.keys.UP:
                 pan(0, scope.keyPanSpeed)
-                scope.update()
+                scope.set()
                 break
 
             case scope.keys.BOTTOM:
                 pan(0, -scope.keyPanSpeed)
-                scope.update()
+                scope.set()
                 break
 
             case scope.keys.LEFT:
                 pan(scope.keyPanSpeed, 0)
-                scope.update()
+                scope.set()
                 break
 
             case scope.keys.RIGHT:
                 pan(-scope.keyPanSpeed, 0)
-                scope.update()
+                scope.set()
                 break
 
             default:
@@ -531,7 +566,7 @@ export const OrbitControls = function (object, domElement) {
 
         rotateStart.copy(rotateEnd)
 
-        scope.update()
+        scope.set()
     }
 
     function handleTouchMoveDollyPan(event) {
@@ -565,7 +600,7 @@ export const OrbitControls = function (object, domElement) {
             panStart.copy(panEnd)
         }
 
-        scope.update()
+        scope.set()
     }
 
     function handleTouchEnd(event) {
@@ -675,7 +710,12 @@ export const OrbitControls = function (object, domElement) {
     }
 
     function onMouseWheel(event) {
-        if (scope.enabled === false || scope.enableZoom === false || (state !== STATE.NONE && state !== STATE.ROTATE)) return
+        if (
+            scope.enabled === false ||
+            scope.enableZoom === false ||
+            (state !== STATE.NONE && state !== STATE.ROTATE)
+        )
+            return
 
         event.preventDefault()
         event.stopPropagation()
@@ -688,7 +728,8 @@ export const OrbitControls = function (object, domElement) {
     }
 
     function onKeyDown(event) {
-        if (scope.enabled === false || scope.enableKeys === false || scope.enablePan === false) return
+        if (scope.enabled === false || scope.enableKeys === false || scope.enablePan === false)
+            return
 
         handleKeyDown(event)
     }
@@ -785,7 +826,7 @@ export const OrbitControls = function (object, domElement) {
 
     // force an update at start
 
-    this.update()
+    this.set()
 }
 
 OrbitControls.prototype = Object.create(THREE.EventDispatcher.prototype)
@@ -803,24 +844,32 @@ Object.defineProperties(OrbitControls.prototype, {
 
     noZoom: {
         get: function () {
-            console.warn("THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.")
+            console.warn(
+                "THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead."
+            )
             return !this.enableZoom
         },
 
-        set: function (value) {
-            console.warn("THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.")
+        update: function (value) {
+            console.warn(
+                "THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead."
+            )
             this.enableZoom = !value
         }
     },
 
     noRotate: {
         get: function () {
-            console.warn("THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.")
+            console.warn(
+                "THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead."
+            )
             return !this.enableRotate
         },
 
-        set: function (value) {
-            console.warn("THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.")
+        update: function (value) {
+            console.warn(
+                "THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead."
+            )
             this.enableRotate = !value
         }
     },
@@ -831,7 +880,7 @@ Object.defineProperties(OrbitControls.prototype, {
             return !this.enablePan
         },
 
-        set: function (value) {
+        update: function (value) {
             console.warn("THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.")
             this.enablePan = !value
         }
@@ -839,36 +888,48 @@ Object.defineProperties(OrbitControls.prototype, {
 
     noKeys: {
         get: function () {
-            console.warn("THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.")
+            console.warn(
+                "THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead."
+            )
             return !this.enableKeys
         },
 
-        set: function (value) {
-            console.warn("THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.")
+        update: function (value) {
+            console.warn(
+                "THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead."
+            )
             this.enableKeys = !value
         }
     },
 
     staticMoving: {
         get: function () {
-            console.warn("THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.")
+            console.warn(
+                "THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead."
+            )
             return !this.enableDamping
         },
 
-        set: function (value) {
-            console.warn("THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.")
+        update: function (value) {
+            console.warn(
+                "THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead."
+            )
             this.enableDamping = !value
         }
     },
 
     dynamicDampingFactor: {
         get: function () {
-            console.warn("THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.")
+            console.warn(
+                "THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead."
+            )
             return this.dampingFactor
         },
 
-        set: function (value) {
-            console.warn("THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.")
+        update: function (value) {
+            console.warn(
+                "THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead."
+            )
             this.dampingFactor = value
         }
     }

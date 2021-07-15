@@ -170,6 +170,7 @@ const SparklineCartesian = () => {
     const config = useConfig()
 
     const pos_domain = useMemo(() => {
+        console.log("XX", config.kinematicsConfiguration)
         const { xExtents, yExtents, zExtents } = config.kinematicsConfiguration.default.kinematicsParameters
         // produce overall [min, max] from individual x, y, z [min, max]
         return [xExtents, yExtents, zExtents].reduce(([min, max], xyz) => [Math.min(min, xyz[0]), Math.max(max, xyz[1])], [0, 0])

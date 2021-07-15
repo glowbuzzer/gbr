@@ -2,7 +2,7 @@ import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
-import { DigitalOutputStatus, useDigitalOutputs } from "@glowbuzzer/store"
+import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
 
 const { Option } = Select
 
@@ -19,49 +19,43 @@ const StyledDiv = styled.div`
     }
 `
 
-const DigitalOutputItem = ({ index, item, label }: { index: number; item: DigitalOutputStatus; label?: string }) => {
-    const dout = useDigitalOutputs()
+const DigitalOutputItem = ({ index, name, label }: { index: number; name: string; label?: string }) => {
+    const dout = useDigitalOutput(index)
 
     function handle_override_change(value) {
-        dout.update(index, {
-            override: value === 1,
-            state: item.state
-        })
+        dout.set(dout.state, value)
     }
 
     function handle_state_change() {
-        const new_state = 1 - item.state
-        dout.update(index, {
-            override: true,
-            state: new_state
-        })
+        const new_state = 1 - dout.state
+        dout.set(new_state, dout.override)
     }
 
     return (
         <div>
             <div className="dout-label">{label || "Unknown"}</div>
             <div>
-                <Select size="small" value={item.override ? 1 : 0} style={{ width: "90px" }} onChange={handle_override_change}>
+                <Select size="small" value={dout.override ? 1 : 0} style={{ width: "90px" }} onChange={handle_override_change}>
                     <Option value={0}>Auto</Option>
                     <Option value={1}>Override</Option>
                 </Select>
             </div>
-            <Switch disabled={!item.override} checked={item.state && true} onChange={handle_state_change} />
+            <Switch disabled={!dout.override} checked={dout.state && true} onChange={handle_state_change} />
             <div>
-                <Tag>{item.actState ? "ON" : "OFF"}</Tag>
+                <Tag>{dout.actState ? "ON" : "OFF"}</Tag>
             </div>
         </div>
     )
 }
 
 export const DigitalOutputsTile = ({ labels }) => {
-    const dout = useDigitalOutputs()
+    const douts = useDigitalOutputList()
 
     return (
         <Tile title="Digital Outputs">
             <StyledDiv>
-                {dout.values.map((v, index) => (
-                    <DigitalOutputItem key={index} index={index} item={v} label={labels[index]} />
+                {douts.map((name, index) => (
+                    <DigitalOutputItem key={index} index={index} name={name} label={labels[index]} />
                 ))}
             </StyledDiv>
         </Tile>

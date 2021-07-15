@@ -3,12 +3,14 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { DesiredState, determine_machine_state, handleMachineState, MachineState } from "./MachineStateHandler"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
+import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
+import { MACHINETARGET } from "../gbc"
 
-export enum MachineTarget {
-    NONE,
-    FIELDBUS,
-    SIMULATION
-}
+// export enum MachineTarget {
+//     NONE,
+//     FIELDBUS,
+//     SIMULATION
+// }
 
 export enum FaultCode {
     FAULT_CAUSE_ESTOP = 1 << 0,
@@ -31,8 +33,8 @@ type MachineStatus = {
     statusWord: number
     controlWord: number
     activeFault: number
-    requestedTarget: MachineTarget
-    actualTarget: MachineTarget
+    requestedTarget: MACHINETARGET
+    actualTarget: MACHINETARGET
     heartbeat?: number
     heartbeatReceived: boolean
 }
@@ -44,31 +46,11 @@ type MachineStateHandling = {
     nextControlWord: number | void
 }
 
-export function updateMachineCommandMsg(command) {
-    return JSON.stringify({
-        command: {
-            machine: {
-                0: {
-                    command
-                }
-            }
-        }
-    })
-}
-
-export function updateMachineTargetMsg(target: MachineTarget) {
-    return updateMachineCommandMsg({ target })
-}
-
-export function updateMachineControlWordMsg(controlWord: number) {
-    return updateMachineCommandMsg({ controlWord })
-}
-
 // createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
 export const machineSlice = createSlice({
     name: "machine",
     initialState: {
-        requestedTarget: MachineTarget.SIMULATION,
+        requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
         actualTarget: undefined,
         desiredState: DesiredState.OPERATIONAL,
         heartbeatReceived: true
@@ -114,7 +96,7 @@ export const useMachine = () => {
 
     return {
         ...machine,
-        setDesiredMachineTarget(target: MachineTarget) {
+        setDesiredMachineTarget(target: MACHINETARGET) {
             dispatch(dispatch => {
                 connection.send(updateMachineTargetMsg(target))
             })

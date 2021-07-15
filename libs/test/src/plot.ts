@@ -1,0 +1,105 @@
+import { mkdirSync, writeFileSync } from "fs"
+
+const head = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>chart-csv</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.css" rel="stylesheet" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
+</head>
+<body onload="run()">
+
+<div id="pos"></div>
+<div id="vel"></div>
+<div id="acc"></div>
+
+<script>
+
+function parseCSV (csv) {
+  return csv.split('\\n')
+    .filter(function (row) {
+      return !!row.trim()
+    })
+    .map(function (row) {
+      return row.split(',')
+    })
+}
+
+function haveHead (csv) {
+  return !/^\\d+$/.test(csv[0][0])
+}
+
+function chart (id, csv) {
+  csv = parseCSV(csv)
+
+  var columns = []
+  var showLegend = haveHead(csv)
+
+  if (showLegend) {
+    csv.shift().forEach(function (head) {
+      columns.push([head])
+    })
+  } else {
+    for (var n = 0; n < csv[0].length; n++) {
+      columns.push([n])
+    }
+  }
+
+  csv.forEach(function (r) {
+    r.forEach(function (c, i) {
+      columns[i].push(Number(c))
+    })
+  })
+
+  var opts = {
+    bindto: '#' + id,
+    data: {
+      columns: columns,
+      type: 'line'
+    },
+    point: { show: false },
+    axis: { x: { show: true } },
+    legend: { show: showLegend }
+  }
+
+  c3.generate(opts)
+}
+
+function run () {
+  chart('pos', pos_csv)
+  chart('vel', vel_csv)
+  chart('acc', acc_csv)
+}`
+
+const tail = `
+</script>
+</body>
+</html>`
+
+export function make_plot(filename: string, pos: number[][], labels: string[]) {
+    const first_row = labels.join(",")
+
+    const vel = pos.map((joints, index) =>
+        joints.map((j, joint_index) => j - pos[index - 1]?.[joint_index] || 0)
+    )
+    const acc = vel.map((joints, index) =>
+        joints.map((j, joint_index) => j - vel[index - 1]?.[joint_index] || 0)
+    )
+
+    const pos_csv = pos.map(r => r.join(",")).join("\n")
+    const vel_csv = vel.map(r => r.join(",")).join("\n")
+    const acc_csv = acc.map(r => r.join(",")).join("\n")
+
+    console.log("Writing plot file:", filename)
+    mkdirSync("plot", { recursive: true })
+    const html = `
+    ${head}
+    const pos_csv=\`${first_row}\n${pos_csv}\`
+    const vel_csv=\`${first_row}\n${vel_csv}\`
+    const acc_csv=\`${first_row}\n${acc_csv}\`
+    ${tail}
+    `
+    writeFileSync("plot/" + filename + ".html", html)
+}

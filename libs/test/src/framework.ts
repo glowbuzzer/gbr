@@ -1,0 +1,272 @@
+import {
+    DesiredState,
+    determine_machine_state,
+    handleMachineState,
+    MachineState
+} from "../../store/src/machine/MachineStateHandler"
+import * as assert from "uvu/assert"
+import {
+    ActivityApi,
+    ACTIVITYSTATE,
+    MACHINETARGET,
+    updateMachineControlWordMsg,
+    updateMachineTargetMsg
+} from "../../store/src/api"
+import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
+import { activitySlice, jointsSlice } from "../../store/src"
+import { updateFroPercentageMsg } from "../../store/src/kinematics"
+import { make_plot } from "./plot"
+
+function nextTick() {
+    return new Promise(resolve => process.nextTick(resolve))
+}
+
+function near(v1, v2) {
+    // are the values close
+    return Math.abs(v1 - v2) < 0.0001
+}
+
+const rootReducer = combineReducers({
+    activity: activitySlice.reducer,
+    joint: jointsSlice.reducer
+})
+
+type State = ReturnType<typeof rootReducer>
+
+export class GbcTest {
+    private capture_state: number[][] | undefined
+    private check_limits = true
+    private readonly gbc: any
+    private store: EnhancedStore<State>
+    private activity_api: ActivityApi
+
+    constructor(gbc) {
+        this.gbc = gbc
+    }
+
+    capture(enabled = true) {
+        this.capture_state = enabled ? [] : undefined
+        return this
+    }
+
+    disable_limit_check() {
+        this.check_limits = false
+        return this
+    }
+
+    plot(filename) {
+        if (this.capture_state) {
+            make_plot(filename, this.capture_state, ["J1", "J2", "J3"])
+        }
+        return this
+    }
+
+    reset() {
+        console.log("---------- GBC RESET")
+        this.gbc.reset()
+
+        this.store = configureStore({
+            reducer: rootReducer
+        })
+
+        this.activity_api = new ActivityApi(0, this.gbc.send)
+        this.capture_state = undefined
+        this.check_limits = true
+
+        this.gbc.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
+        this.gbc.send(updateFroPercentageMsg(0, 100))
+        this.exec_double_cycle()
+    }
+
+    verify() {
+        // this performs some post-test checks
+        this.gbc.verify()
+        return this
+    }
+
+    private get status_msg() {
+        return JSON.parse(this.gbc.status())
+    }
+
+    get status() {
+        return this.status_msg.status
+    }
+
+    set_fro(kc: number, fro: number) {
+        // set fro on KC 0
+        this.gbc.send(updateFroPercentageMsg(kc, fro))
+        this.exec_double_cycle()
+    }
+
+    stream(stream) {
+        // console.log("message", message)
+        this.gbc.send(JSON.stringify({ stream }))
+        return this
+    }
+
+    get assert() {
+        return {
+            doutPdo: (index, value) => {
+                assert.equal(this.gbc.get_fb_dout(index), value)
+                return this
+            },
+            aoutPdo: (index, value) => {
+                assert.is(near(this.gbc.get_fb_aout(index), value), true)
+                return this
+            },
+            ioutPdo: (index, value) => {
+                assert.equal(this.gbc.get_fb_iout(index), value)
+                return this
+            },
+            streamActivityState: value => {
+                assert.equal(
+                    ACTIVITYSTATE[this.gbc.get_streamed_activity_state()],
+                    ACTIVITYSTATE[value]
+                )
+                return this
+            },
+            selector: (selector, value) => {
+                const statusMsg = this.status_msg
+                assert.equal(selector(statusMsg), value)
+                return this
+            },
+            streamSequence: (
+                selector,
+                seq: [count: number, tag: number, state: ACTIVITYSTATE][],
+                verify = true
+            ) => {
+                for (const [count, tag, state] of seq) {
+                    this.exec(count)
+                    if (verify) {
+                        this.assert
+                            .selector(selector, tag) //
+                            .assert.streamActivityState(state)
+                    }
+                }
+                return this
+            }
+        }
+    }
+
+    exec(count = 1, single_cycle = false) {
+        if (this.capture_state) {
+            for (let n = 0; n < count; n++) {
+                this.gbc.run(1, single_cycle, this.check_limits)
+                // get the joint status
+                this.status_msg.status.joint &&
+                    this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
+                const joints_act_pos = this.store.getState().joint.map(j => j.actPos)
+                this.capture_state.push(joints_act_pos)
+            }
+        } else {
+            this.gbc.run(count, single_cycle, this.check_limits)
+        }
+        const { activity } = this.status_msg.status
+        activity && this.store.dispatch(activitySlice.actions.status(activity))
+        const { tag, state } = this.store.getState().activity[0]
+        this.activity_api.update(tag, state)
+        return this
+    }
+
+    exec_double_cycle() {
+        this.exec(2)
+    }
+
+    get activity() {
+        return this.activity_api
+    }
+
+    wrap(factory: () => Promise<any>) {
+        const self = this
+        return new (class {
+            private state
+
+            constructor() {
+                this.resolve = this.resolve.bind(this)
+                this.reject = this.reject.bind(this)
+            }
+
+            resolve(tag) {
+                console.log("RESOLVE!!!", tag)
+                this.state = true
+            }
+
+            reject(tag) {
+                console.log("REJECT!!!", tag)
+                this.state = false
+            }
+
+            start() {
+                factory().then(this.resolve).catch(this.reject)
+                return this
+            }
+
+            iterations(count: number, single_cycle = false) {
+                self.exec(count, single_cycle)
+                return this
+            }
+
+            async assertResolved() {
+                // we need to allow node to process the event loop at this point to flush through async promise(s)
+                await nextTick()
+                assert.equal(this.state, true)
+                return this
+            }
+
+            async assertNotResolved() {
+                await nextTick()
+                assert.equal(this.state, undefined)
+                return this
+            }
+
+            async assertRejected() {
+                await nextTick()
+                assert.equal(this.state, false)
+                return this
+            }
+        })()
+    }
+
+    enable_operation() {
+        return this.transition_to(DesiredState.OPERATIONAL)
+    }
+
+    get pdo() {
+        return {
+            set_din: (index, value) => {
+                this.gbc.set_fb_din(index, value)
+                return this
+            },
+            set_ain: (index, value) => {
+                this.gbc.set_fb_ain(index, value)
+                return this
+            },
+            set_iin: (index, value) => {
+                this.gbc.set_fb_iin(index, value)
+                return this
+            }
+        }
+    }
+
+    transition_to(desired: DesiredState) {
+        for (let n = 0; n < 5; n++) {
+            const { statusWord, controlWord } = this.status_msg.status.machine
+            const currentState = determine_machine_state(statusWord)
+            const nextControlWord = handleMachineState(currentState, controlWord, desired)
+            console.log("CURRENT STATE", currentState, "NEXT", nextControlWord)
+            if (nextControlWord >= 0) {
+                this.gbc.send(updateMachineControlWordMsg(nextControlWord))
+                this.exec_double_cycle()
+            }
+        }
+        const { statusWord } = this.status_msg.status.machine
+        const currentState = determine_machine_state(statusWord)
+        assert.equal(
+            currentState,
+            desired === DesiredState.OPERATIONAL
+                ? MachineState.OPERATION_ENABLED
+                : MachineState.SWITCH_ON_DISABLED
+        )
+        return this
+    }
+}

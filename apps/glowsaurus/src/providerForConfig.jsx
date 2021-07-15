@@ -1,8 +1,8 @@
-import * as React from "react";
-import {configContext, FRAME_ABSREL} from "@glowbuzzer/hooks";
+import * as React from "react"
+import { configContext, FRAME_ABSREL } from "@glowbuzzer/hooks"
 
 const ACTIVITYTYPE = {
-    MOVEATVELOCITY: 0,
+    MOVEJOINTSATVELOCITY: 0,
     MOVELINE: 1,
     MOVEARC: 2,
     MOVESPLINE: 3,
@@ -19,38 +19,40 @@ const ACTIVITYTYPE = {
     WAITON: 14,
     SWITCHPOSE: 15,
     LATCH: 16
-};
+}
 
 const Axis = {
     X: 0,
     Y: 1,
     Z: 2
-};
+}
 
 function rad(angle) {
-    return angle / 180 * Math.PI;
+    return (angle / 180) * Math.PI
 }
 
 function make_quat(angle, axis) {
-    const angle_in_rads = rad(angle) / 2; // final div 2 for quat (https://eater.net/quaternions/video/rotation)
-    const xyz = [0, 1, 2].map(a => a === axis ? Math.sin(angle_in_rads) : 0); // pick the axis of rotation
-    const [x, y, z] = xyz;
+    const angle_in_rads = rad(angle) / 2 // final div 2 for quat (https://eater.net/quaternions/video/rotation)
+    const xyz = [0, 1, 2].map(a => (a === axis ? Math.sin(angle_in_rads) : 0)) // pick the axis of rotation
+    const [x, y, z] = xyz
     return {
         w: Math.cos(angle_in_rads),
-        x, y, z
+        x,
+        y,
+        z
     }
 }
 
 const config = {
     frames: {
-        "Table": {
+        Table: {
             translation: {
                 x: 100,
                 y: 0,
                 z: 0
             }
         },
-        "Robot": {
+        Robot: {
             translation: {
                 x: 50,
                 y: 100,
@@ -60,14 +62,14 @@ const config = {
             absRel: FRAME_ABSREL.FRAME_RELATIVE,
             parent: 0
         },
-        "Other": {
+        Other: {
             translation: {
                 x: 100,
                 y: 100,
                 z: 0
             }
         },
-        "Conveyor": {
+        Conveyor: {
             translation: {
                 x: 100,
                 y: 100,
@@ -111,7 +113,7 @@ const config = {
         },
         5: {
             finiteContinuous: 1 // continuous
-        },
+        }
     },
     kinematicsConfiguration: {
         default: {
@@ -132,58 +134,58 @@ const config = {
     },
     task: {
         "move fwd - linear": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.MOVELINE,
+            activity1: {
+                activityType: ACTIVITYTYPE.MOVELINE
             }
         },
         "move back - linear": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.MOVELINE,
+            activity1: {
+                activityType: ACTIVITYTYPE.MOVELINE
             }
         },
         "move fwd - joint": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.MOVETOPOSITION,
+            activity1: {
+                activityType: ACTIVITYTYPE.MOVETOPOSITION
             }
         },
         "move back - joint": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.MOVETOPOSITION,
+            activity1: {
+                activityType: ACTIVITYTYPE.MOVETOPOSITION
             }
         },
         "arc - linear": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.MOVEARC,
+            activity1: {
+                activityType: ACTIVITYTYPE.MOVEARC
             }
         },
         "box move": {
-            "activity1": {
+            activity1: {
                 activityType: ACTIVITYTYPE.MOVELINE,
                 moveLine: {
-                    kinematicsConfigurationIndex: 1,
+                    kinematicsConfigurationIndex: 1
                 }
             },
-            "activity2": {
+            activity2: {
                 activityType: ACTIVITYTYPE.MOVELINE,
                 moveLine: {
-                    kinematicsConfigurationIndex: 1,
+                    kinematicsConfigurationIndex: 1
                 }
             }
         },
-        "superimp": {
-            "dwell": {
+        superimp: {
+            dwell: {
                 activityType: ACTIVITYTYPE.DWELL,
                 dwell: {
                     ticksToDwell: 10
                 }
             },
-            "down": {
+            down: {
                 activityType: ACTIVITYTYPE.MOVELINE,
                 moveLine: {
                     superimposedIndex: 1
                 }
             },
-            "up": {
+            up: {
                 activityType: ACTIVITYTYPE.MOVELINE,
                 moveLine: {
                     superimposedIndex: 1
@@ -191,15 +193,13 @@ const config = {
             }
         },
         "gear in": {
-            "activity1": {
-                activityType: ACTIVITYTYPE.GEARINDYN,
+            activity1: {
+                activityType: ACTIVITYTYPE.GEARINDYN
             }
-        },
+        }
     }
-};
+}
 
-export const Provider = ({children}) => {
-    return <configContext.Provider value={config}>
-        {children}
-    </configContext.Provider>
-};
+export const Provider = ({ children }) => {
+    return <configContext.Provider value={config}>{children}</configContext.Provider>
+}

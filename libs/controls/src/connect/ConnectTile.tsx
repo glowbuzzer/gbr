@@ -5,10 +5,10 @@ import {
     DesiredState,
     determine_machine_state,
     MachineState,
-    MachineTarget,
     useConnect,
     useMachine,
-    FaultCode
+    FaultCode,
+    MACHINETARGET
 } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
@@ -67,8 +67,8 @@ export const ConnectTile = () => {
                             value={machine.actualTarget}
                             onChange={change_target}
                         >
-                            <Radio.Button value={MachineTarget.SIMULATION}>Simulate</Radio.Button>
-                            <Radio.Button className="danger" value={MachineTarget.FIELDBUS}>
+                            <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>Simulate</Radio.Button>
+                            <Radio.Button className="danger" value={MACHINETARGET.MACHINETARGET_FIELDBUS}>
                                 Live
                             </Radio.Button>
                         </Radio.Group>

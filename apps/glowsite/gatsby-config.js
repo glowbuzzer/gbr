@@ -73,7 +73,12 @@ module.exports = {
             options: {
                 extensions: [".md", ".mdx"],
                 gatsbyRemarkPlugins: [
-                    "gatsby-plugin-mdx-code-demo", // not sure this is used?
+                    {
+                        // our local plugin for definition list
+                        resolve: require.resolve("./plugins/gatsby-remark-dl")
+                    },
+                    "gatsby-remark-mermaid",
+                    "gatsby-plugin-mdx-code-demo",
                     {
                         resolve: "gatsby-remark-responsive-iframe",
                         options: {
