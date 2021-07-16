@@ -81,11 +81,15 @@ class StatusProcessor extends ProcessorBase {
             } else {
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
 
-                for (let n = 0; n < getState().kinematics.length; n++) {
-                    const { froTarget } = getState().kinematics[n]
+                const kinematics = getState().kinematics
+                for (let n = 0; n < kinematics.length; n++) {
+                    const { froTarget } = kinematics[n]
                     if (froTarget === 0) {
                         // set fro to 100% if not already set on connect
-                        ws.send(updateFroPercentageMsg(n, 100))
+                        setTimeout(() => {
+                            console.log("SETTING FRO TO 100 ON KC", n)
+                            ws.send(updateFroPercentageMsg(n, 100))
+                        }, 1000)
                     }
                 }
             }

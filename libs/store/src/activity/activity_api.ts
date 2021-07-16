@@ -61,7 +61,7 @@ function make_activity(index: number, type: ACTIVITYTYPE, tag: number, params?) 
 export class ActivityApi {
     private readonly index: number
     private readonly send: (msg: string) => void
-    private currentTag = 1
+    private currentTag = 0
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     constructor(index: number, send: (msg: string) => void) {
@@ -109,6 +109,9 @@ export class ActivityApi {
     }
 
     update(tag: number, state: ACTIVITYSTATE) {
+        if (!this.currentTag) {
+            this.currentTag = tag + 1
+        }
         const { promiseFifo } = this
         while (promiseFifo.length && promiseFifo[0].tag < tag) {
             // reject any old activities that have been superceded by a later tag

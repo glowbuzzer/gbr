@@ -15,11 +15,16 @@ export const PreferencesDialog = ({ visible, onClose }: PreferencesDialogProps) 
     const wrapperCol = { span: 6 }
 
     function update_url(e) {
-        prefs.set("url", e.target.value)
+        prefs.update("url", e.target.value)
     }
 
     return (
-        <Modal title="Preferences" visible={visible} onCancel={onClose} footer={[<Button onClick={onClose}>Close</Button>]}>
+        <Modal
+            title="Preferences"
+            visible={visible}
+            onCancel={onClose}
+            footer={[<Button onClick={onClose}>Close</Button>]}
+        >
             <Form>
                 <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 16 }}>
                     <Input defaultValue={prefs.current.url} onChange={update_url} />
