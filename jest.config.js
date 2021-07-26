@@ -1,5 +1,6 @@
 module.exports = {
     projects: [
+        // "<rootDir>/libs/dummy"
         // "<rootDir>/libs/tiles",
         // "<rootDir>/libs/layout",
         // "<rootDir>/libs/controls",
