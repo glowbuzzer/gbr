@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-import "antd/dist/antd.css"
 import { PreferencesDialog } from "@glowbuzzer/controls"
 import { GlowbuzzerApp } from "@glowbuzzer/store"
 import { Button, Menu } from "antd"
@@ -7,9 +6,11 @@ import { BrowserRouter, Link } from "react-router-dom"
 import { Route } from "react-router"
 import { CommissioningUi } from "./CommissioningUi"
 import { DevelopmentUi } from "./DevelopmentUi"
-import { digitalInputEnhancer, DigitalInputMockProvider } from "../enhancers/digitalInputEnhancer"
+import { digitalInputEnhancer, DigitalInputMockProvider } from "@glowbuzzer/store"
 import { SoloActivityProvider } from "../components/TestMotionTile"
 import { AppContextProvider } from "./AppContext"
+
+import "antd/dist/antd.css"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
