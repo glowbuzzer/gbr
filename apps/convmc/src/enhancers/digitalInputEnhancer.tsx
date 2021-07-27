@@ -16,7 +16,7 @@ export const DigitalInputMockProvider: FC = ({ children }) => {
     const [state, setState] = useState([])
     const context = useMemo(
         () => ({
-            update(index: number, override: boolean, value: boolean) {
+            set(index: number, override: boolean, value: boolean) {
                 setState(current => {
                     const next = [...current]
                     next[index] = override ? value : undefined

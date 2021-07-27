@@ -48,7 +48,7 @@ export function useDigitalOutput(index: number) {
     return useMemo(() => {
         return {
             ...value,
-            update(state: number, override = true) {
+            set(state: number, override = true) {
                 connection.send(
                     JSON.stringify({
                         command: {
