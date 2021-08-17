@@ -10,7 +10,7 @@ import {
     TelemetrySettingsType,
     telemetrySlice,
     useConfig,
-    useTelemetryCapture,
+    useTelemetryControls,
     useTelemetryData,
     useTelemetrySettings
 } from "@glowbuzzer/store"
@@ -71,13 +71,28 @@ const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialog
                         Cartesian
                     </Checkbox>
                     <Selection>
-                        <Checkbox name="x" checked={cartesianAxes[0]} onChange={update_cartesian} disabled={!settings.cartesianEnabled}>
+                        <Checkbox
+                            name="x"
+                            checked={cartesianAxes[0]}
+                            onChange={update_cartesian}
+                            disabled={!settings.cartesianEnabled}
+                        >
                             X
                         </Checkbox>
-                        <Checkbox name="y" checked={cartesianAxes[1]} onChange={update_cartesian} disabled={!settings.cartesianEnabled}>
+                        <Checkbox
+                            name="y"
+                            checked={cartesianAxes[1]}
+                            onChange={update_cartesian}
+                            disabled={!settings.cartesianEnabled}
+                        >
                             Y
                         </Checkbox>
-                        <Checkbox name="z" checked={cartesianAxes[2]} onChange={update_cartesian} disabled={!settings.cartesianEnabled}>
+                        <Checkbox
+                            name="z"
+                            checked={cartesianAxes[2]}
+                            onChange={update_cartesian}
+                            disabled={!settings.cartesianEnabled}
+                        >
                             Z
                         </Checkbox>
                     </Selection>
@@ -92,22 +107,52 @@ const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialog
                         Joint
                     </Checkbox>
                     <Selection>
-                        <Checkbox name="0" checked={joints[0]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="0"
+                            checked={joints[0]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 1
                         </Checkbox>
-                        <Checkbox name="1" checked={joints[1]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="1"
+                            checked={joints[1]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 2
                         </Checkbox>
-                        <Checkbox name="2" checked={joints[2]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="2"
+                            checked={joints[2]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 3
                         </Checkbox>
-                        <Checkbox name="3" checked={joints[3]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="3"
+                            checked={joints[3]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 4
                         </Checkbox>
-                        <Checkbox name="4" checked={joints[4]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="4"
+                            checked={joints[4]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 5
                         </Checkbox>
-                        <Checkbox name="5" checked={joints[5]} onChange={update_joint} disabled={!settings.jointsEnabled}>
+                        <Checkbox
+                            name="5"
+                            checked={joints[5]}
+                            onChange={update_joint}
+                            disabled={!settings.jointsEnabled}
+                        >
                             Joint 6
                         </Checkbox>
                     </Selection>
@@ -126,13 +171,25 @@ const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialog
             <div>
                 Show
                 <p>
-                    <Checkbox name="posEnabled" checked={settings.posEnabled} onChange={update_display}>
+                    <Checkbox
+                        name="posEnabled"
+                        checked={settings.posEnabled}
+                        onChange={update_display}
+                    >
                         Position
                     </Checkbox>
-                    <Checkbox name="velEnabled" checked={settings.velEnabled} onChange={update_display}>
+                    <Checkbox
+                        name="velEnabled"
+                        checked={settings.velEnabled}
+                        onChange={update_display}
+                    >
                         Velocity
                     </Checkbox>
-                    <Checkbox name="accEnabled" checked={settings.accEnabled} onChange={update_display}>
+                    <Checkbox
+                        name="accEnabled"
+                        checked={settings.accEnabled}
+                        onChange={update_display}
+                    >
                         Acceleration
                     </Checkbox>
                 </p>
@@ -169,17 +226,31 @@ const SparklineCartesian = () => {
     const settings = useTelemetrySettings()
     const config = useConfig()
 
-    const pos_domain = useMemo(() => {
-        console.log("XX", config.kinematicsConfiguration)
-        const { xExtents, yExtents, zExtents } = config.kinematicsConfiguration.default.kinematicsParameters
-        // produce overall [min, max] from individual x, y, z [min, max]
-        return [xExtents, yExtents, zExtents].reduce(([min, max], xyz) => [Math.min(min, xyz[0]), Math.max(max, xyz[1])], [0, 0])
-    }, [config])
+    const kparams =
+        config.kinematicsConfiguration[Object.keys(config.kinematicsConfiguration)[0]]
+            .kinematicsParameters
 
-    const { linearVmax: vmax, linearAmax: amax } = useMemo(() => config.kinematicsConfiguration.default.kinematicsParameters.cartesianParameters, [
-        config
-    ])
-    const options = useMemo(() => settings.cartesianAxes.map((a, index) => a && { color: axis_colors[index] }).filter(o => o), [settings])
+    const pos_domain = useMemo(() => {
+        // pick the first kinematics parameters
+        const { xExtents, yExtents, zExtents } = kparams
+        // produce overall [min, max] from individual x, y, z [min, max]
+        return [xExtents, yExtents, zExtents].reduce(
+            ([min, max], xyz) => [Math.min(min, xyz?.[0]), Math.max(max, xyz?.[1])],
+            [0, 0]
+        )
+    }, [kparams])
+
+    const { linearVmax: vmax, linearAmax: amax } = useMemo(
+        () => kparams.cartesianParameters,
+        [kparams]
+    )
+    const options = useMemo(
+        () =>
+            settings.cartesianAxes
+                .map((a, index) => a && { color: axis_colors[index] })
+                .filter(o => o),
+        [settings]
+    )
 
     if (!settings.cartesianEnabled) {
         return null
@@ -187,7 +258,9 @@ const SparklineCartesian = () => {
 
     const data = telemetry.map(d => ({
         t: d.t,
-        values: settings.cartesianAxes.map((a, index) => a && d[axis_keys[index]]).filter(o => o !== undefined)
+        values: settings.cartesianAxes
+            .map((a, index) => a && d[axis_keys[index]])
+            .filter(o => o !== undefined)
     }))
     const vel =
         settings.velEnabled &&
@@ -208,6 +281,85 @@ const SparklineCartesian = () => {
             <SparklineScrolling domain={pos_domain} options={options} data={data} />
             {vel && <SparklineScrolling domain={[-vmax, vmax]} options={options} data={vel} />}
             {acc && <SparklineScrolling domain={[-amax, amax]} options={options} data={acc} />}
+        </>
+    )
+}
+
+const SparklineJoints = () => {
+    const telemetry = useTelemetryData()
+    const settings = useTelemetrySettings()
+    const config = useConfig()
+
+    const pos_domain = useMemo(() => {
+        // produce overall [min, max] from joint min and max settings
+        return Object.keys(config.joint).reduce(
+            ([min, max], key, index) => {
+                if (!settings.joints[index]) {
+                    return [min, max]
+                }
+                const joint_values = telemetry.map(t => t.joints[index])
+                return [
+                    Math.min(min, Math.min(...joint_values)),
+                    Math.max(max, Math.max(...joint_values))
+                ]
+            },
+            [0, 0]
+        )
+    }, [config.joint, settings.joints, telemetry])
+
+    const vel_domain = Object.keys(config.joint).reduce(
+        ([min, max], key, index) => {
+            if (!settings.joints[index]) {
+                return [min, max]
+            }
+            return [Math.min(min, -config.joint[key].vmax), Math.max(max, config.joint[key].vmax)]
+        },
+        [0, 0]
+    )
+
+    const acc_domain = Object.keys(config.joint).reduce(
+        ([min, max], key, index) => {
+            if (!settings.joints[index]) {
+                return [min, max]
+            }
+            return [Math.min(min, -config.joint[key].amax), Math.max(max, config.joint[key].amax)]
+        },
+        [0, 0]
+    )
+
+    const options = useMemo(
+        () => settings.joints.filter(j => j).map((a, index) => ({ color: axis_colors[index] })),
+        [settings]
+    )
+
+    if (!settings.jointsEnabled) {
+        return null
+    }
+
+    const data = telemetry.map(d => ({
+        t: d.t,
+        values: settings.joints.filter(j => j).map((a, index) => d.joints[index])
+    }))
+    const vel =
+        settings.velEnabled &&
+        data.slice(1).map((d, index) => ({
+            t: d.t,
+            values: d.values.map((v, axis) => (d.values[axis] - data[index].values[axis]) * 1000)
+        }))
+    const acc =
+        settings.velEnabled &&
+        settings.accEnabled &&
+        vel.slice(1).map((d, index) => ({
+            t: d.t,
+            values: d.values.map((v, axis) => (d.values[axis] - vel[index].values[axis]) * 1000)
+        }))
+
+    // console.log(telemetry.map(t => `${t.t}, ${t.m7wait}, ${t.joints[0]}`))
+    return (
+        <>
+            <SparklineScrolling domain={pos_domain} options={options} data={data} />
+            {vel && <SparklineScrolling domain={vel_domain} options={options} data={vel} />}
+            {acc && <SparklineScrolling domain={acc_domain} options={options} data={acc} />}
         </>
     )
 }
@@ -249,7 +401,7 @@ const StyledCaptureState = styled.span`
 `
 
 const TelemetryControls = () => {
-    const capture = useTelemetryCapture()
+    const capture = useTelemetryControls()
     const data = useTelemetryData()
 
     function download() {
@@ -257,7 +409,7 @@ const TelemetryControls = () => {
             "data:application/octet-stream;charset=utf-16le;base64," +
             btoa(
                 [["t", "x", "y", "z"]]
-                    .concat(data.map(d => [d.t, d.x, d.y, d.z]))
+                    .concat(data.map(d => [d.t, d.x, d.y, d.z].map(v => v.toString())))
                     .map(line => line.join(","))
                     .join("\n")
             )
@@ -273,7 +425,19 @@ const TelemetryControls = () => {
         <>
             {
                 {
-                    [CaptureState.NONE]: <Button onClick={() => capture.startCapture()}>Start Capture</Button>,
+                    [CaptureState.CONTINUOUS]: (
+                        <>
+                            <Button onClick={() => capture.pause()}>Pause</Button>
+                            <Button onClick={() => capture.startCapture()}>Start Capture</Button>
+                        </>
+                    ),
+                    [CaptureState.PAUSED]: (
+                        <>
+                            <StyledCaptureState>PAUSED</StyledCaptureState>
+                            <Button onClick={() => capture.resume()}>Resume</Button>
+                            <Button onClick={() => capture.startCapture()}>Start Capture</Button>
+                        </>
+                    ),
                     [CaptureState.WAITING]: (
                         <>
                             <StyledCaptureState>WAITING</StyledCaptureState>
@@ -307,6 +471,7 @@ export const TelemetryTile = () => {
         <Tile title="Telemetry" settings={<TelemetrySettings />} footer={<TelemetryControls />}>
             <SparklineQueue />
             <SparklineCartesian />
+            <SparklineJoints />
         </Tile>
     )
 }

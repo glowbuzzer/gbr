@@ -10,11 +10,11 @@ enum ImageType {
     TYPE2
 }
 
-const CONVEYOR_VELOCITY = 100
-const MAGIC_EYE_TO_CAMERA_MS = 2000
-export const CAMERA_TO_CYLINDER_DISTANCE = 240
-const EJECT_TYPE1_DISTANCE = 760
-const EJECT_TYPE2_DISTANCE = 760
+const CONVEYOR_VELOCITY = 50
+const MAGIC_EYE_TO_CAMERA_MS = 500
+export const CAMERA_TO_CYLINDER_DISTANCE = 70
+const EJECT_TYPE1_DISTANCE = 200
+const EJECT_TYPE2_DISTANCE = 200
 
 function toHue(r, g, b) {
     // convert rgb values to the range of 0-1
@@ -66,8 +66,9 @@ export const AppContextProvider = ({ children }) => {
     const conveyor1 = useSoloActivity(0)
     const conveyor2 = useSoloActivity(1)
     const dins = useDigitalInputs()
-    const doutExtend = useDigitalOutput(0)
-    const doutRetract = useDigitalOutput(1)
+    const doutCamera = useDigitalOutput(3)
+    const doutExtend = useDigitalOutput(8)
+    const doutRetract = useDigitalOutput(9)
     const [extended, retracted, magic_eye] = dins // simple booleans
 
     const [running, setRunning] = useState(false)
@@ -88,8 +89,11 @@ export const AppContextProvider = ({ children }) => {
                 }
             },
             advance_to_camera: {
-                enter: () => delay("detect_image", MAGIC_EYE_TO_CAMERA_MS),
-                exit: () => ignored(conveyor1.cancel().promise()),
+                enter: async () => {
+                    await delay(null, MAGIC_EYE_TO_CAMERA_MS)
+                    await ignored(conveyor1.cancel().promise())
+                    return "detect_image"
+                },
                 transitions: {
                     idle: !running
                 }
@@ -97,6 +101,11 @@ export const AppContextProvider = ({ children }) => {
             detect_image: {
                 enter: async () => {
                     // insert image fetch and detection here
+                    doutCamera.set(1, true)
+                    await delay(null, 100)
+                    doutCamera.set(0, true)
+                    await delay(null, 3000)
+
                     const { image_type, base64 } = await new Promise(resolve => {
                         function randomise() {
                             console.log("IMAGE LOAD ERROR - REVERTING TO RANDOM SELECTION")
@@ -125,7 +134,7 @@ export const AppContextProvider = ({ children }) => {
 
                                 resolve({
                                     image_type:
-                                        hue > 200 && hue <= 265 /* BLUE */
+                                        hue > 100 && hue <= 265 /* ??? */
                                             ? ImageType.TYPE1
                                             : ImageType.TYPE2,
                                     base64
@@ -139,7 +148,7 @@ export const AppContextProvider = ({ children }) => {
                             randomise()
                         }
                         image.crossOrigin = "Anonymous"
-                        image.src = "http://rpi-camera/camera_image.png"
+                        image.src = "http://rpi-camera/camera_image.png?" + Math.random()
                     })
                     return {
                         state: image_type === ImageType.TYPE1 ? "eject_type1" : "advance_type2",
@@ -197,7 +206,7 @@ export const AppContextProvider = ({ children }) => {
             eject_type2: {
                 enter: () =>
                     ignored(
-                        conveyor2.moveLine(new Vector3(EJECT_TYPE2_DISTANCE, 0, 0), true).promise()
+                        conveyor2.moveLine(new Vector3(-EJECT_TYPE2_DISTANCE, 0, 0), true).promise()
                     ).then(() => "run_until_magic_eye"),
                 exit: () => conveyor2.cancel().promise(),
                 transitions: {
