@@ -11,8 +11,8 @@ enum ImageType {
 }
 
 const CONVEYOR_VELOCITY = 50
-const MAGIC_EYE_TO_CAMERA_MS = 500
-export const CAMERA_TO_CYLINDER_DISTANCE = 70
+const MAGIC_EYE_TO_CAMERA_MS = 300
+export const CAMERA_TO_CYLINDER_DISTANCE = 80
 const EJECT_TYPE1_DISTANCE = 200
 const EJECT_TYPE2_DISTANCE = 200
 
@@ -27,15 +27,17 @@ function toHue(r, g, b) {
     const min = Math.min(r, g, b)
 
     let h
+    const delta = max - min
+    console.log("DELTA", delta)
     if (max === r) {
         // if red is the predominent color
-        h = (g - b) / (max - min)
+        h = (g - b) / delta
     } else if (max === g) {
         // if green is the predominent color
-        h = 2 + (b - r) / (max - min)
+        h = 2 + (b - r) / delta
     } else if (max === b) {
         // if blue is the predominent color
-        h = 4 + (r - g) / (max - min)
+        h = 4 + (r - g) / delta
     }
 
     h = h * 60 // find the sector of 60 degrees to which the color belongs
@@ -133,10 +135,7 @@ export const AppContextProvider = ({ children }) => {
                                 const base64 = c.toDataURL()
 
                                 resolve({
-                                    image_type:
-                                        hue > 100 && hue <= 265 /* ??? */
-                                            ? ImageType.TYPE1
-                                            : ImageType.TYPE2,
+                                    image_type: hue < 220 ? ImageType.TYPE1 : ImageType.TYPE2,
                                     base64
                                 })
                             } catch (e) {

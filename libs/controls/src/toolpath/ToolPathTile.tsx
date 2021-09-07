@@ -2,7 +2,13 @@ import * as React from "react"
 import { useMemo, useState } from "react"
 import { Tile, TileSettings } from "@glowbuzzer/layout"
 import { Button, Checkbox, Form, Input } from "antd"
-import { ToolPathSettingsType, useConfig, usePreview, useToolPath, useToolPathSettings } from "@glowbuzzer/store"
+import {
+    ToolPathSettingsType,
+    useConfig,
+    usePreview,
+    useToolPath,
+    useToolPathSettings
+} from "@glowbuzzer/store"
 import { ToolPath } from "./ToolPathFiber"
 import { Canvas } from "react-three-fiber"
 import { Euler, Vector3 } from "three"
@@ -23,7 +29,11 @@ const ToolPathSettings = () => {
     }
 
     return (
-        <TileSettings title="Tool Path Settings" onConfirm={save} onReset={() => saveSettings(initialSettings)}>
+        <TileSettings
+            title="Tool Path Settings"
+            onConfirm={save}
+            onReset={() => saveSettings(initialSettings)}
+        >
             <Form>
                 <Form.Item label="Override Configuration">
                     <Checkbox
@@ -60,7 +70,7 @@ export const ToolPathTile = () => {
     const { segments, highlightLine } = usePreview()
     const config = useConfig()
 
-    const parameters = config.kinematicsConfiguration.default.kinematicsParameters
+    const parameters = Object.values(config.kinematicsConfiguration)[0].kinematicsParameters
     const { xExtents, yExtents, zExtents } = parameters
     const extent = useMemo(() => {
         if (settings.overrideWorkspace) {
@@ -75,13 +85,23 @@ export const ToolPathTile = () => {
 
     // noinspection RequiredAttributes
     return (
-        <Tile title={"Toolpath"} footer={<Button onClick={reset}>Reset</Button>} settings={<ToolPathSettings />}>
+        <Tile
+            title={"Toolpath"}
+            footer={<Button onClick={reset}>Reset</Button>}
+            settings={<ToolPathSettings />}
+        >
             <Canvas>
                 <ToolPathAutoSize extent={extent}>
                     <ambientLight />
                     <pointLight position={[10, 10, 10]} />
-                    <gridHelper args={[2 * extent, 20, undefined, 0xd0d0d0]} rotation={new Euler(Math.PI / 2)} />
-                    <axesHelper args={[extent / 4]} position={new Vector3((-extent * 11) / 10, -extent / 10, 0)} />
+                    <gridHelper
+                        args={[2 * extent, 20, undefined, 0xd0d0d0]}
+                        rotation={new Euler(Math.PI / 2)}
+                    />
+                    <axesHelper
+                        args={[extent / 4]}
+                        position={new Vector3((-extent * 11) / 10, -extent / 10, 0)}
+                    />
 
                     <WorkspaceDimensions extent={extent} />
                     <ToolPath path={path} scale={extent} />
