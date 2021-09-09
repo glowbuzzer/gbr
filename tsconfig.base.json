@@ -14,12 +14,15 @@
         "lib": ["es2019", "dom"],
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
+        "downlevelIteration": true,
+        "noImplicitAny": false,
+        "noImplicitReturns": false,
         "baseUrl": ".",
         "paths": {
-            "@glowbuzzer/layout": ["libs/layout/src/index.ts"],
             "@glowbuzzer/controls": ["libs/controls/src/index.ts"],
-            "@glowbuzzer/store": ["libs/store/src/index.ts"],
-            "@glowbuzzer/dummy": ["libs/dummy/src/index.ts"]
+            "@glowbuzzer/dummy": ["libs/dummy/src/index.ts"],
+            "@glowbuzzer/layout": ["libs/layout/src/index.ts"],
+            "@glowbuzzer/store": ["libs/store/src/index.ts"]
         }
     },
     "exclude": ["node_modules", "tmp"]

@@ -1,6 +1,14 @@
 import GCodeInterpreter from "./GCodeInterpreter"
 import { EllipseCurve, Vector3 } from "three"
 import { GCodeLine } from "./lineParser"
+import {
+    ActivityStreamItem,
+    ACTIVITYTYPE,
+    BLENDTYPE,
+    SetAoutCommand,
+    SetDoutCommand,
+    SetIoutCommand
+} from "../gbc"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
@@ -64,59 +72,62 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
     private frameIndex = 0
 
-    private readonly buffer: any[]
+    private readonly buffer: ActivityStreamItem[]
 
     constructor(buffer, current_positions) {
         super(current_positions)
-
         this.buffer = buffer
+    }
+
+    post() {
+        // here we want to simplify straight line segments
     }
 
     M2() {
         this.buffer.push({
-            activityType: 18 // ENDPROGRAM
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
         })
     }
 
     M8() {
         this.buffer.push({
-            activityType: 18 // ENDPROGRAM
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
         })
     }
 
     M200(params, line) {
         const { U, V } = params
         this.buffer.push({
-            activityType: 11, // SET DOUT
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT,
             ...args(line),
             setDout: {
                 doutToSet: U || 0,
                 valueToSet: Boolean(V).valueOf() || false
-            }
+            } as SetDoutCommand
         })
     }
 
     M201(params, line) {
         const { U, V } = params
         this.buffer.push({
-            activityType: 12, // SET AOUT
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT,
             ...args(line),
-            setDout: {
-                doutToSet: U || 0,
+            setAout: {
+                aoutToSet: U || 0,
                 valueToSet: Number(V).valueOf() || 0
-            }
+            } as SetAoutCommand
         })
     }
 
     M202(params, line) {
         const { U, V } = params
         this.buffer.push({
-            activityType: 19, // SET IOUT
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT,
             ...args(line),
-            setDout: {
-                doutToSet: U || 0,
+            setIout: {
+                ioutToSet: U || 0,
                 valueToSet: Number(V).valueOf() || 0
-            }
+            } as SetIoutCommand
         })
     }
 
@@ -124,10 +135,10 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.updateModals(params)
 
         this.buffer.push({
-            activityType: 5, // move to position
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
             ...args(line),
             moveToPosition: {
-                moveParams: this.moveParams,
+                moveParams: { ...this.moveParams, blendType: BLENDTYPE.BLENDTYPE_NONE },
                 cartesianPosition: {
                     configuration: 0, // not needed for cartesian machine
                     position: {
@@ -147,7 +158,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.updateModals(params)
 
         this.buffer.push({
-            activityType: 1, // move line
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
             ...args(line),
             moveLine: {
                 moveParams: this.moveParams,
@@ -169,7 +180,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
 
         this.buffer.push({
-            activityType: 2, // move arc cw
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
             ...args(line),
             moveArc: {
                 moveParams: this.moveParams,
@@ -184,7 +195,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
 
         this.buffer.push({
-            activityType: 2, // move arc ccw
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
             ...args(line),
             moveArc: {
                 moveParams: this.moveParams,
@@ -195,7 +206,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G4(params, line: GCodeLine) {
         this.buffer.push({
-            activityType: 13, // dwell
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
             ...args(line),
             dwell: {
                 ticksToDwell: params.P || 0
@@ -229,11 +240,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G61() {
         // exact stop mode (the default)
-        this.moveParams.blendType = 0 // NOBLEND
+        this.moveParams.blendType = BLENDTYPE.BLENDTYPE_NONE
     }
 
     G64() {
-        this.moveParams.blendType = 1 // OVERLAPPED
+        this.moveParams.blendType = BLENDTYPE.BLENDTYPE_OVERLAPPED
         // TODO: this should be tolerance in overlapped scheme
         // moveParams.radius = params.P || 1e99; // big number meaning go as fast as possible!
     }

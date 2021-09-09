@@ -80,7 +80,7 @@ export const GCodeTile = () => {
 
     function update_cursor(e) {
         // console.log(e.cursor.row)
-        preview.setHighlightLine(e.cursor.row)
+        preview.setHighlightLine(e.cursor.row+1)
     }
 
     const highlight = active

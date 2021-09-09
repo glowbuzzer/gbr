@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
-import { isArray } from "util"
 import { useMemo } from "react"
 
 export enum JogDirection {
@@ -37,7 +36,7 @@ export const jogSlice = createSlice({
     reducers: {
         status: (state, action) => {
             // called with status.jog from the json every time GBC sends status message
-            if (isArray(action.payload)) {
+            if ( action?.payload.length ) {
                 for (let n = 0; n < action.payload.length; n++) {
                     state[n] = {
                         state: action.payload[n].state,

@@ -1,0 +1,31 @@
+{
+    "presets": [
+        [
+            "@nrwl/react/babel",
+            {
+                "runtime": "automatic"
+            }
+        ]
+    ],
+    "plugins": [
+        [
+            "styled-components",
+            {
+                "pure": true,
+                "ssr": true
+            }
+        ],
+        [
+            "@babel/plugin-proposal-private-methods",
+            {
+                "loose": true
+            }
+        ],
+        [
+            "@babel/plugin-proposal-private-property-in-object",
+            {
+                "loose": true
+            }
+        ]
+    ]
+}

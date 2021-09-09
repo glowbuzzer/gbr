@@ -17,7 +17,7 @@ const StyledDiv = styled.div`
     }
 `
 
-export const AnalogOutputsTile = ({ labels }) => {
+export const AnalogOutputsTile = ({ labels=[] }) => {
     const aout = useAnalogOutputs()
 
     return (

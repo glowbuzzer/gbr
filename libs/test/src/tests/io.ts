@@ -19,7 +19,7 @@ test("can get digital input from fieldbus", async () => {
 test("can set digital output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.doutPdo(0, false)
-    await gbc.wrap(gbc.activity.setDout(0, true).promise).start().iterations(1).assertResolved()
+    await gbc.wrap(gbc.activity.setDout(0, true).promise).start().iterations(1).assertCompleted()
     gbc.assert.doutPdo(0, true)
 })
 
@@ -36,7 +36,7 @@ test("can get analog input from fieldbus", async () => {
 test("can set analog output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.aoutPdo(0, 0.0)
-    await gbc.wrap(gbc.activity.setAout(0, 1.234).promise).start().iterations(1).assertResolved()
+    await gbc.wrap(gbc.activity.setAout(0, 1.234).promise).start().iterations(1).assertCompleted()
     gbc.assert.aoutPdo(0, 1.234)
 })
 
@@ -53,7 +53,7 @@ test("can get integer input from fieldbus", async () => {
 test("can set integer output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.ioutPdo(0, 0)
-    await gbc.wrap(gbc.activity.setIout(0, 42).promise).start().iterations(1).assertResolved()
+    await gbc.wrap(gbc.activity.setIout(0, 42).promise).start().iterations(1).assertCompleted()
     gbc.assert.ioutPdo(0, 42)
 })
 

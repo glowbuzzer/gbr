@@ -48,7 +48,7 @@ const DigitalOutputItem = ({ index, name, label }: { index: number; name: string
     )
 }
 
-export const DigitalOutputsTile = ({ labels }) => {
+export const DigitalOutputsTile = ({ labels=[] }) => {
     const douts = useDigitalOutputList()
 
     return (

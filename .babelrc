@@ -1,13 +1,29 @@
 {
-    "presets": [
-        "@nrwl/react/babel"
-    ],
     "plugins": [
         [
             "import",
             {
                 "libraryName": "antd",
                 "style": true
+            }
+        ],
+        [
+            "styled-components",
+            {
+                "pure": true,
+                "ssr": true
+            }
+        ],
+        [
+            "@babel/plugin-proposal-private-methods",
+            {
+                "loose": true
+            }
+        ],
+        [
+            "@babel/plugin-proposal-private-property-in-object",
+            {
+                "loose": true
             }
         ]
     ]

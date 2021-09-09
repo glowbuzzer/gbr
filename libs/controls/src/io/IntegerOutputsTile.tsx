@@ -17,7 +17,7 @@ const StyledDiv = styled.div`
     }
 `
 
-export const IntegerOutputsTile = ({ labels }) => {
+export const IntegerOutputsTile = ({ labels=[] }) => {
     const iout = useIntegerOutputs()
 
     return (

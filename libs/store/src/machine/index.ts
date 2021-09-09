@@ -54,7 +54,7 @@ export const machineSlice = createSlice({
         actualTarget: undefined,
         desiredState: DesiredState.OPERATIONAL,
         heartbeatReceived: true
-    } as MachineStatus & MachineStateHandling,
+    } as Partial<MachineStatus> & Partial<MachineStateHandling>,
     reducers: {
         status: (state, action) => {
             // called with status.machine from the json every time board sends status message

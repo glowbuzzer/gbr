@@ -19,7 +19,7 @@ export const UnitSelector = ({ type }: { type: "scalar" | "angular" }) => {
     const key = "units_" + type
 
     function change(newValue) {
-        prefs.set(key, newValue)
+        prefs.update(key, newValue)
     }
 
     const pref = prefs.current[key]

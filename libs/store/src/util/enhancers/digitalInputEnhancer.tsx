@@ -14,10 +14,10 @@ type DigitalInputMockContextType = {
     isOverridden(index): boolean
 }
 
-const digitalInputMockContext = createContext<DigitalInputMockContextType>(null)
+const digitalInputMockContext = createContext<DigitalInputMockContextType|null>(null)
 
 export const DigitalInputMockProvider: FC = ({ children }) => {
-    const [state, setState] = useState([])
+    const [state, setState] = useState([] as boolean[])
     const context = useMemo(
         () => ({
             set(index: number, override: boolean, value: boolean) {

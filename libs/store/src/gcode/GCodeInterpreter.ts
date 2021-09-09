@@ -20,7 +20,7 @@ const fromPairs = pairs => {
 }
 
 const partitionWordsByGroup = (words = []) => {
-    const groups = []
+    const groups: any[] = []
 
     for (let i = 0; i < words.length; ++i) {
         const word = words[i]
@@ -43,17 +43,22 @@ const partitionWordsByGroup = (words = []) => {
 
 const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
-function update_axis(axis, value, current_positions) {
+function update_axis(axis, value, current_positions, relative) {
     const index = gcode_axes.indexOf(axis)
     if (index < 0) {
         return
     }
-    current_positions[index] = value
+    if (relative) {
+        current_positions[index] += value
+    } else {
+        current_positions[index] = value
+    }
 }
 
 class GCodeInterpreter {
     private motionMode = "G0"
     protected readonly current_positions: number[]
+    private relative: boolean
 
     constructor(current_positions: number[]) {
         this.current_positions = current_positions
@@ -61,7 +66,7 @@ class GCodeInterpreter {
 
     protected updateModals(params) {
         const prev = [...this.current_positions]
-        Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions))
+        Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions, this.relative))
         // console.log("FROM", prev, "TO", this.current_positions)
         return [prev, [...this.current_positions]]
     }
@@ -78,17 +83,19 @@ class GCodeInterpreter {
             let args = {}
 
             if (letter === "G") {
-                cmd = letter + code
+                cmd = "" + letter + code
                 args = fromPairs(words.slice(1))
 
                 // Motion Mode
                 if (code === 0 || code === 1 || code === 2 || code === 3 || code === 38.2 || code === 38.3 || code === 38.4 || code === 38.5) {
                     this.motionMode = cmd
+                } else if (code === 91 /* relative */) {
+                    this.relative = true
                 } else if (code === 80) {
                     this.motionMode = ""
                 }
             } else if (letter === "M") {
-                cmd = letter + code
+                cmd = "" + letter + code
                 args = fromPairs(words.slice(1))
             } else if (letter === "T") {
                 // T1 ; w/o M6
@@ -137,12 +144,18 @@ class GCodeInterpreter {
         }
     }
 
+    post() {
+        // override to provide postprocessing logic
+    }
+
     execute(str) {
         const list = parseStringSync(str)
         for (let i = 0; i < list.length; ++i) {
             this.interpret(list[i])
         }
+        this.post()
     }
 }
+
 
 export default GCodeInterpreter

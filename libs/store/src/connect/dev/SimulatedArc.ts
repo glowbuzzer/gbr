@@ -79,7 +79,7 @@ export class SimulatedArc extends AbstractSimulatedActivity {
             ])
             .transpose() // three uses row major order
 
-        const m_inverse = new Matrix4().getInverse(this.matrix)
+        const m_inverse = this.matrix.clone().invert()
 
         const up2 = waypoint.clone().applyMatrix4(m_inverse)
         const up3 = end.clone().applyMatrix4(m_inverse)

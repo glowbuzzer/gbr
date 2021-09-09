@@ -1,22 +1,10 @@
 import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import {
-    JogDirection,
-    POSITIONREFERENCE,
-    useGCode,
-    useJointConfig,
-    useJoints,
-    useSoloActivity
-} from "@glowbuzzer/store"
+import { JogDirection, POSITIONREFERENCE, useJointConfig, useJoints, useKinematics, useSoloActivity } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
-import {
-    ArrowDownOutlined,
-    ArrowLeftOutlined,
-    ArrowRightOutlined,
-    ArrowUpOutlined
-} from "@ant-design/icons"
+import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined } from "@ant-design/icons"
 import { Vector3 } from "three"
 
 enum JogMoveMode {
@@ -77,6 +65,7 @@ const JointSliderReadonly = ({ jc, index }) => {
     )
 }
 
+// TODO: H: remove use of gcode and use solo activity capability instead
 export const JogTile = () => {
     const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogStep, setJogStep] = useLocalStorage("jog.step", 45)
@@ -95,8 +84,8 @@ export const JogTile = () => {
 
     // const jogger = useJog(0)
     const joint_config = useJointConfig()
-    const gcode = useGCode()
     const motion = useSoloActivity(0)
+    const kc=useKinematics(0, 0)
 
     // we scale all limits by the jog speed percent
     const move_params = {
@@ -127,8 +116,8 @@ export const JogTile = () => {
                 ? direction === JogDirection.POSITIVE
                     ? 1
                     : direction === JogDirection.NEGATIVE
-                    ? -1
-                    : 0
+                        ? -1
+                        : 0
                 : 0
         }
 
@@ -203,24 +192,27 @@ export const JogTile = () => {
     }
 
     function gotoX() {
-        gcode.send(`
-            G0 X${x}
-            M2
-        `)
+        motion.moveToPosition(new Vector3(x, kc.pose.position.y, kc.pose.position.z), move_params)
+        // gcode.send(`
+        //     G0 X${x}
+        //     M2
+        // `)
     }
 
     function gotoY() {
-        gcode.send(`
-            G0 Y${y}
-            M2
-        `)
+        motion.moveToPosition(new Vector3(kc.pose.position.x, y, kc.pose.position.z), move_params)
+        // gcode.send(`
+        //     G0 Y${y}
+        //     M2
+        // `)
     }
 
     function gotoZ() {
-        gcode.send(`
-            G0 Z${z}
-            M2
-        `)
+        motion.moveToPosition(new Vector3(kc.pose.position.x, kc.pose.position.y, z), move_params)
+        // gcode.send(`
+        //     G0 Z${z}
+        //     M2
+        // `)
     }
 
     function JogButton({ index, direction, children }) {

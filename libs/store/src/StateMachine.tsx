@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef } from "react"
 
 export class StateMachine {
-    current_state: string
-    previous_state: string
+    current_state: string|undefined
+    previous_state: string|undefined
     initial_state: string
-    user_data: string
+    user_data: string|undefined
 
-    constructor(initial_state) {
+    constructor(initial_state:string) {
         this.initial_state = initial_state
     }
 
