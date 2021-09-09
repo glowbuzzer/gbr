@@ -4,10 +4,10 @@ import styled from "styled-components"
 import "antd/dist/antd.css"
 
 import { Button } from "antd"
-import { SimpleTileDefinition, SimpleTileLayout } from "@glowbuzzer/layout"
+import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import {
     AnalogInputsTile,
-    AnalogOutputsTile,
+    AnalogOutputsTile, CartesianDro,
     ConnectTile,
     DevToolsTile,
     DigitalInputsTile,
@@ -37,6 +37,11 @@ export function App() {
     const tiles: SimpleTileDefinition[][] = [
         [
             { render: <ConnectTile />, height: 2, title: "Connection" },
+            {
+                render: <Tile title="Cartesian DRO">
+                    <CartesianDro kinematicsConfigurationIndex={0} />
+                </Tile>, height: 2, title: "Cartesian DRO"
+            },
             { render: <FeedRateTile />, height: 2, title: "Feedrate" },
             { render: <JogTile />, height: 4, title: "Jogging" },
             { render: <DevToolsTile />, height: 3, title: "Dev Tools" }
@@ -44,7 +49,7 @@ export function App() {
         [
             { render: <JointSpinnersTile />, height: 8, title: "Joints" },
             { render: <ToolPathTile />, height: 8, title: "Toolpath" },
-            { render: <GCodeTile />, height: 4, title: "GCode" },
+            { render: <GCodeTile />, height: 4, title: "GCode" }
         ],
         [
             { render: <DigitalOutputsTile />, height: 4, title: "Digital Outputs" },
@@ -59,7 +64,7 @@ export function App() {
     return (
         <StyledApp>
             <GlowbuzzerApp>
-                <PrefsButton/>
+                <PrefsButton />
                 <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
             </GlowbuzzerApp>
         </StyledApp>
