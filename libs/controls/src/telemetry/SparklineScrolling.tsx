@@ -82,7 +82,12 @@ export const SparklineScrolling = ({ options, data, domain }: SparklineScrolling
         }
 
         d3.select(elemRef.current).selectAll("svg").remove()
-        const svg = d3.select(elemRef.current).append("svg").attr("width", "100%").attr("height", height).append("g")
+        const svg = d3
+            .select(elemRef.current)
+            .append("svg")
+            .attr("width", "100%")
+            .attr("height", height)
+            .append("g")
 
         svg.append("g")
             .attr("transform", "translate(" + (width - xmargin * 2) + "," + ymargin + ")")
@@ -128,7 +133,13 @@ export const SparklineScrolling = ({ options, data, domain }: SparklineScrolling
                 .selectAll(".line_" + index)
                 .select("path")
         }))
-    }, [width, options])
+
+        // TODO: not sure why we have to draw the lines here (performance)
+        linesRef.current.forEach(({ line, selection }) => {
+            selection.attr("d", line).attr("transform", "translate(0," + ymargin + ")")
+            selection.datum(data)
+        })
+    }, [domain, data, width, options])
 
     useEffect(() => {
         const { xScale } = scaleRef.current
@@ -136,31 +147,17 @@ export const SparklineScrolling = ({ options, data, domain }: SparklineScrolling
 
         const t2 = data[data.length - 1]?.t
 
-        // const shift = (width - xmargin * 2) / 20 // xScale.range()[1] / (duration / 50 - 2)
-        // console.log("RANGE", xScale.range(), "SHIFT", shift)
+        // adjust the x domain and range (before doing the line!!)
+        const domain_x = [t2 - duration, t2]
+        xScale.domain(domain_x).range([0, width - xmargin * 2])
 
         linesRef.current.forEach(({ line, selection }) => {
-            selection
-                // TODO: figure out how to make it scroll smoothly!
-                // .interrupt()
-                // .transition()
-                // .duration(duration * 2)
-                // .ease(d3.easeLinear)
-                .attr("d", line)
-                .attr("transform", "translate(0," + ymargin + ")")
-
+            selection.attr("d", line).attr("transform", "translate(0," + ymargin + ")")
             selection.datum(data)
         })
 
-        xScale.domain([t2 - duration, t2]).range([0, width - xmargin * 2])
-
         const selection = d3.select(elemRef.current).select("g").selectAll(".x.axis")
-        selection
-            // .transition()
-            // .duration(duration * 2)
-            // .ease(d3.easeLinear)
-            .call(xAxis)
-        // .remove()
+        selection.call(xAxis)
     }, [data, width])
 
     return <StyledDiv ref={elemRef} />

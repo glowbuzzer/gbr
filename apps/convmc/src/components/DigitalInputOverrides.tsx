@@ -1,8 +1,13 @@
+/**
+ * This component provides an example of how to use the digital inputs override hook.
+ * This hook is useful if you want to simulate digital inputs during development.
+ * See `useDigitalInputOverrides` in @glowbuzzer/store for more information.
+ */
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { useDigitalInputs } from "@glowbuzzer/store"
 import { Select, Switch, Tag } from "antd"
-import { useDigitalInputOverrides } from "../enhancers/digitalInputEnhancer"
+import { useDigitalInputOverrides } from "@glowbuzzer/store"
 import styled from "styled-components"
 
 const { Option } = Select

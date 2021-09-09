@@ -2,7 +2,10 @@ import styled from "styled-components"
 import React, { useEffect, useRef, useState } from "react"
 import { CounterCow, CounterPig, CounterUnknown } from "./animation/counters"
 import anime from "animejs"
-import { useApp } from "./AppContext"
+import { CAMERA_TO_CYLINDER_DISTANCE, useApp } from "./AppContext"
+import { CameraEye } from "./animation/CameraEye"
+
+const WORLD_TO_PIXELS = 0.5
 
 const StyledJobAnimation = styled.svg`
     .curb {
@@ -91,6 +94,7 @@ const Conveyor = ({ pos, y }) => (
 export const JobAnimation = ({ c1, c2 }) => {
     const animalRef = useRef<SVGRectElement>(null) // reference to the counter
     const cylinderRef = useRef<SVGPolygonElement>(null) // reference to the cylinder/piston
+    const imageRef = useRef(null)
 
     const [animalCssClass, setAnimalCssClass] = useState("unknown") // what type of counter to display
     const [conveyorLatch, setConveyorLatch] = useState(0) // latched position of conveyor (on detect)
@@ -98,9 +102,9 @@ export const JobAnimation = ({ c1, c2 }) => {
 
     const cylinderAnimation = useRef(null) // used to play/reverse the cylinder/piston animation
 
-    const { state, previousState } = useApp()
+    const { state, previousState, data } = useApp()
 
-    const EXT = 160 // full extent of the cylinder
+    const EXT = 160 // full extent of the cylinder (in pixels)
     const retracted_points = "0 30  20 30  20 10  30 10  30 60  20 60  20 40  0 40"
     // prettier-ignore
     const extended_points = `0 30  ${EXT} 30  ${EXT} 10  ${EXT + 10} 10  ${EXT + 10} 60  ${EXT} 60  ${EXT} 40  0 40`;
@@ -116,16 +120,25 @@ export const JobAnimation = ({ c1, c2 }) => {
         })
     }, [extended_points])
 
+    useEffect(() => {
+        if (data) {
+            imageRef.current = data
+        }
+    }, [data])
+
     // determine offset of counter based on the latched conveyor position (if we are ejecting an animal)
     const offset =
-        state === "eject_type2"
-            ? (c2 || 0) - conveyorLatch + 100
-            : state === "eject_type1" ||
+        WORLD_TO_PIXELS *
+        (state === "eject_type2"
+            ? (c2 || 0) - conveyorLatch + CAMERA_TO_CYLINDER_DISTANCE + 100
+            : state === "advance_to_camera" ||
+              state === "detect_image" ||
+              state === "eject_type1" ||
               state === "advance_type2" ||
               state === "extend_cylinder" ||
               state === "retract_cylinder"
             ? (c1 || 0) - conveyorLatch
-            : 0
+            : 0)
 
     useEffect(() => {
         switch (state) {
@@ -165,9 +178,10 @@ export const JobAnimation = ({ c1, c2 }) => {
                     }
                 }
                 break
-            case "detect_image":
+            case "advance_to_camera":
                 // show the unknown/question counter
                 setAnimalCssClass("unknown")
+                setConveyorLatch(c1)
                 anime
                     .timeline({
                         targets: animalRef.current
@@ -185,7 +199,6 @@ export const JobAnimation = ({ c1, c2 }) => {
             case "advance_type2":
                 // show the pig counter
                 setAnimalCssClass("pig")
-                setConveyorLatch(c1)
                 break
             case "extend_cylinder":
                 // move the cylinder
@@ -205,7 +218,7 @@ export const JobAnimation = ({ c1, c2 }) => {
                 break
             case "eject_type1":
                 // show cow counter
-                setConveyorLatch(c1)
+                // setConveyorLatch(c1)
                 setAnimalCssClass("cow")
                 break
             case "eject_type2":
@@ -216,46 +229,50 @@ export const JobAnimation = ({ c1, c2 }) => {
     }, [state /* c1, c2 deliberately excluded as we only want to latch once */])
 
     return (
-        <StyledJobAnimation width={850} height={300}>
-            <g transform="translate(100,0)">
-                <Conveyor pos={-c2} y={10} />
+        <>
+            <StyledJobAnimation width={850} height={300}>
+                <g transform="translate(100,0)">
+                    <Conveyor pos={-c2} y={10} />
+                    <g transform="translate(590,0)">
+                        <g className="pig">
+                            <CounterPig />
+                            <text x={100} y={70}>
+                                {counts[1]}
+                            </text>
+                        </g>
+                    </g>
+                </g>
+                <Conveyor pos={-c1} y={150} />
+                <g transform={`scale(0.8), translate(${75 + offset},195)`}>
+                    <g ref={animalRef} className={animalCssClass}>
+                        <circle className="st0" cx="56.2" cy="56.2" r="56.2" />
+                        <circle className="st1" cx="56.2" cy="56.2" r="50" />
+                        <g>
+                            <CounterUnknown />
+                            <CounterPig />
+                            <CounterCow />
+                        </g>
+                    </g>
+                </g>
+                <polygon
+                    ref={cylinderRef}
+                    points={retracted_points}
+                    fill="#333399"
+                    transform="translate(250,280), rotate(-90)"
+                />
                 <g transform="translate(590,0)">
-                    <g className="pig">
-                        <CounterPig />
+                    <g className="cow" transform="translate(0,150)">
+                        <g transform="translate(15,20), scale(0.7)">
+                            <CounterCow />
+                        </g>
                         <text x={100} y={70}>
-                            {counts[1]}
+                            {counts[0]}
                         </text>
                     </g>
                 </g>
-            </g>
-            <Conveyor pos={-c1} y={150} />
-            <g transform={`scale(0.8), translate(${75 + offset},195)`}>
-                <g ref={animalRef} className={animalCssClass}>
-                    <circle className="st0" cx="56.2" cy="56.2" r="56.2" />
-                    <circle className="st1" cx="56.2" cy="56.2" r="50" />
-                    <g>
-                        <CounterUnknown />
-                        <CounterPig />
-                        <CounterCow />
-                    </g>
-                </g>
-            </g>
-            <polygon
-                ref={cylinderRef}
-                points={retracted_points}
-                fill="#333399"
-                transform="translate(150,280), rotate(-90)"
-            />
-            <g transform="translate(590,0)">
-                <g className="cow" transform="translate(0,150)">
-                    <g transform="translate(15,20), scale(0.7)">
-                        <CounterCow />
-                    </g>
-                    <text x={100} y={70}>
-                        {counts[0]}
-                    </text>
-                </g>
-            </g>
-        </StyledJobAnimation>
+                <CameraEye />
+            </StyledJobAnimation>
+            {imageRef.current && <img width={200} src={imageRef.current} />}
+        </>
     )
 }

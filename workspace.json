@@ -163,6 +163,26 @@
             "projectType": "library",
             "schematics": {},
             "architect": {
+                "build": {
+                    "builder": "@nrwl/web:package",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/libs/store",
+                        "tsConfig": "libs/store/tsconfig.lib.json",
+                        "project": "libs/store/package.json",
+                        "entryFile": "libs/store/src/index.ts",
+                        "external": ["react", "react-dom", "react-is", "styled-components"],
+                        "babelConfig": "@nrwl/react/plugins/bundle-babel",
+                        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+                        "assets": [
+                            {
+                                "glob": "libs/store/README.md",
+                                "input": ".",
+                                "output": "."
+                            }
+                        ]
+                    }
+                },
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
@@ -358,6 +378,47 @@
                     "outputs": ["coverage/apps/convmc"],
                     "options": {
                         "jestConfig": "apps/convmc/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "dummy": {
+            "root": "libs/dummy",
+            "sourceRoot": "libs/dummy/src",
+            "projectType": "library",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:package",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/libs/dummy",
+                        "tsConfig": "libs/dummy/tsconfig.lib.json",
+                        "project": "libs/dummy/package.json",
+                        "entryFile": "libs/dummy/src/index.ts",
+                        "external": ["react", "react-dom", "react-is", "styled-components"],
+                        "babelConfig": "@nrwl/react/plugins/bundle-babel",
+                        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+                        "assets": [
+                            {
+                                "glob": "libs/dummy/README.md",
+                                "input": ".",
+                                "output": "."
+                            }
+                        ]
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["libs/dummy/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/libs/dummy"],
+                    "options": {
+                        "jestConfig": "libs/dummy/jest.config.js",
                         "passWithNoTests": true
                     }
                 }

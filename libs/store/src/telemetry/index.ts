@@ -18,15 +18,27 @@ export type TelemetrySettingsType = {
 }
 
 export enum CaptureState {
-    NONE,
+    CONTINUOUS,
+    PAUSED,
     WAITING,
     TRIGGERED,
     COMPLETE
 }
 
+type TelemetryEntry = {
+    t: number
+    m4cap: number
+    m7cap: number
+    m7wait: number
+    joints: number[]
+    x: number
+    y: number
+    z: number
+}
+
 type TelemetrySlice = {
     settings: TelemetrySettingsType
-    data: any[]
+    data: TelemetryEntry[]
     lastCapture
     captureState: CaptureState
     t: number
@@ -48,7 +60,7 @@ export const telemetrySlice = createSlice({
     initialState: {
         data: [],
         lastCapture: null,
-        captureState: CaptureState.NONE,
+        captureState: CaptureState.PAUSED,
         t: 0,
         settings: {
             cartesianEnabled: true,
@@ -75,7 +87,10 @@ export const telemetrySlice = createSlice({
             state.lastCapture = null
         },
         data(state, action) {
-            if (state.captureState === CaptureState.NONE || state.captureState === CaptureState.TRIGGERED) {
+            if (
+                state.captureState === CaptureState.CONTINUOUS ||
+                state.captureState === CaptureState.TRIGGERED
+            ) {
                 state.data.push(
                     ...action.payload.map((d, index) => ({
                         t: state.t + index,
@@ -99,11 +114,22 @@ export const telemetrySlice = createSlice({
                 }
             }
 
-            if (state.captureState === CaptureState.TRIGGERED && state.data.length > state.settings.captureDuration) {
+            if (
+                state.captureState === CaptureState.TRIGGERED &&
+                state.data.length >= state.settings.captureDuration
+            ) {
                 state.captureState = CaptureState.COMPLETE
             }
 
             state.lastCapture = action.payload[action.payload.length - 1]
+        },
+        pause(state) {
+            state.captureState = CaptureState.PAUSED
+        },
+        resume(state) {
+            state.captureState = CaptureState.CONTINUOUS
+            state.lastCapture = null
+            state.data.splice(0)
         },
         startCapture(state) {
             state.captureState = CaptureState.WAITING
@@ -111,20 +137,32 @@ export const telemetrySlice = createSlice({
             state.data.splice(0)
         },
         cancelCapture(state) {
-            state.captureState = CaptureState.NONE
+            state.captureState = CaptureState.CONTINUOUS
             state.lastCapture = null
             state.data.splice(0)
         }
     }
 })
 
-export const useTelemetryCapture = () => {
-    const captureState = useSelector((state: RootState) => state.telemetry.captureState, shallowEqual)
-    const captureDuration = useSelector((state: RootState) => state.telemetry.settings.captureDuration, shallowEqual)
+export const useTelemetryControls = () => {
+    const captureState = useSelector(
+        (state: RootState) => state.telemetry.captureState,
+        shallowEqual
+    )
+    const captureDuration = useSelector(
+        (state: RootState) => state.telemetry.settings.captureDuration,
+        shallowEqual
+    )
     const dispatch = useDispatch()
     return {
         captureState,
         captureDuration,
+        pause() {
+            dispatch(telemetrySlice.actions.pause())
+        },
+        resume() {
+            dispatch(telemetrySlice.actions.resume())
+        },
         startCapture() {
             dispatch(telemetrySlice.actions.startCapture())
         },
@@ -146,5 +184,6 @@ export const useTelemetryData = () => {
 }
 
 export const useTelemetrySettings = (): TelemetrySettingsType => {
-    return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual).settings
+    return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual)
+        .settings
 }

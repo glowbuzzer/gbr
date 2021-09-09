@@ -42,6 +42,11 @@ export const ConnectTile = () => {
         connection.setAutoConnect(true)
     }
 
+    function disconnect() {
+        connection.setAutoConnect(false)
+        connection.disconnect()
+    }
+
     function determine_traffic_light_color() {
         if (!(connection.connected && connection.statusReceived)) {
             return "red"
@@ -67,8 +72,13 @@ export const ConnectTile = () => {
                             value={machine.actualTarget}
                             onChange={change_target}
                         >
-                            <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>Simulate</Radio.Button>
-                            <Radio.Button className="danger" value={MACHINETARGET.MACHINETARGET_FIELDBUS}>
+                            <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>
+                                Simulate
+                            </Radio.Button>
+                            <Radio.Button
+                                className="danger"
+                                value={MACHINETARGET.MACHINETARGET_FIELDBUS}
+                            >
                                 Live
                             </Radio.Button>
                         </Radio.Group>
@@ -76,7 +86,11 @@ export const ConnectTile = () => {
                         <Radio.Group
                             disabled={connection.state !== ConnectionState.CONNECTED}
                             size={"small"}
-                            value={state === MachineState.OPERATION_ENABLED ? DesiredState.OPERATIONAL : DesiredState.STANDBY}
+                            value={
+                                state === MachineState.OPERATION_ENABLED
+                                    ? DesiredState.OPERATIONAL
+                                    : DesiredState.STANDBY
+                            }
                             onChange={change_desired_state}
                         >
                             <Radio.Button value={DesiredState.STANDBY}>Standby</Radio.Button>
@@ -89,11 +103,21 @@ export const ConnectTile = () => {
             }
         >
             <div>
-                {connection.connected || <h3>Not connected</h3>}
+                {connection.connected ? (
+                    <div>
+                        <Button onClick={disconnect}>Disconnect</Button>
+                    </div>
+                ) : (
+                    <h3>Not connected</h3>
+                )}
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
-                {!connection.connected && !connection.autoConnect && <Button onClick={connect}>Connect</Button>}
-                {connection.connected && connection.statusReceived && <PaddedTag>{MachineState[machine.currentState]}</PaddedTag>}
+                {!connection.connected && !connection.autoConnect && (
+                    <Button onClick={connect}>Connect</Button>
+                )}
+                {connection.connected && connection.statusReceived && (
+                    <PaddedTag>{MachineState[machine.currentState]}</PaddedTag>
+                )}
                 {Object.values(FaultCode)
                     .filter(k => typeof k === "number")
                     .filter((k: number) => machine.activeFault & k)

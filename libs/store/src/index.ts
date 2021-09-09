@@ -36,5 +36,8 @@ export * from "./jogging"
 export * from "./root"
 
 export * from "./util/settings"
+export * from "./util/enhancers/digitalInputEnhancer"
+
+export * from "./StateMachine"
 
 export * from "./types"

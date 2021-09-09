@@ -10,7 +10,10 @@
     "affected": { "defaultBase": "master" },
     "npmScope": "glowbuzzer",
     "tasksRunnerOptions": {
-        "default": { "runner": "@nrwl/workspace/tasks-runners/default", "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] } }
+        "default": {
+            "runner": "@nrwl/workspace/tasks-runners/default",
+            "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+        }
     },
     "projects": {
         "glowsaurus": { "tags": [] },
@@ -20,6 +23,7 @@
         "store": { "tags": [] },
         "emstat": { "tags": [] },
         "glowsite": { "tags": [] },
-        "convmc": { "tags": [] }
+        "convmc": { "tags": [] },
+        "dummy": { "tags": [] }
     }
 }

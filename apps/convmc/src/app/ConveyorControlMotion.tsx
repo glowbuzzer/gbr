@@ -44,11 +44,11 @@ export const ConveyorControlMotion = ({ index, step }) => {
     const motion = useSoloActivity(index)
 
     function start_jog_left() {
-        return motion.moveJointsAtVelocity([-100]).promise()
+        return motion.moveJointsAtVelocity([-50]).promise()
     }
 
     function start_jog_right() {
-        return motion.moveJointsAtVelocity([100]).promise()
+        return motion.moveJointsAtVelocity([50]).promise()
     }
 
     function move_relative_amount(distance: number) {

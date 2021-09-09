@@ -20,7 +20,11 @@ import { tasksSlice } from "../tasks"
 import { settings } from "../util/settings"
 import { framesSlice, RootState } from "@glowbuzzer/store"
 import { activitySlice } from "../activity"
-import { updateMachineControlWordMsg, updateMachineTargetMsg } from "../machine/machine_api"
+import {
+    updateMachineCommandMsg,
+    updateMachineControlWordMsg,
+    updateMachineTargetMsg
+} from "../machine/machine_api"
 
 abstract class ProcessorBase {
     protected first = true
@@ -101,11 +105,11 @@ class StatusProcessor extends ProcessorBase {
 
         if (this.tick % 50 === 0) {
             // send heartbeat about every 5 seconds assuming status message is 10hz
-            // ws.send(
-            //     updateMachineCommandMsg({
-            //         heartbeat // echo the machine status heartbeat
-            //     })
-            // )
+            ws.send(
+                updateMachineCommandMsg({
+                    heartbeat // echo the machine status heartbeat
+                })
+            )
         }
 
         if (nextControlWord !== undefined) {
