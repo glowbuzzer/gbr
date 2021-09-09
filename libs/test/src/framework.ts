@@ -16,6 +16,7 @@ import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit
 import { activitySlice, jointsSlice } from "../../store/src"
 import { updateFroPercentageMsg } from "../../store/src/kinematics"
 import { make_plot } from "./plot"
+import { GCodeSenderAdapter } from "../../store/src/gcode/GCodeSenderAdapter"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -104,6 +105,13 @@ export class GbcTest {
         return this
     }
 
+    send_gcode(gcode) {
+        const buffer=[] as any[]
+        const adapter=new GCodeSenderAdapter(buffer, [])
+        adapter.execute(gcode)
+        return this.stream(buffer)
+    }
+
     get assert() {
         return {
             doutPdo: (index, value) => {
@@ -127,6 +135,7 @@ export class GbcTest {
             },
             selector: (selector, value) => {
                 const statusMsg = this.status_msg
+                console.log(statusMsg.status.joint)
                 assert.equal(selector(statusMsg), value)
                 return this
             },
@@ -179,21 +188,23 @@ export class GbcTest {
     wrap(factory: () => Promise<any>) {
         const self = this
         return new (class {
-            private state
+            private resolution
 
             constructor() {
                 this.resolve = this.resolve.bind(this)
                 this.reject = this.reject.bind(this)
             }
 
-            resolve(tag) {
-                console.log("RESOLVE!!!", tag)
-                this.state = true
+            resolve(value) {
+                this.resolution=value
+                // console.log("RESOLVE!!!", tag)
+                // this.state = true
             }
 
-            reject(tag) {
-                console.log("REJECT!!!", tag)
-                this.state = false
+            reject(value) {
+                this.resolution=value
+                // console.log("REJECT!!!", tag)
+                // this.state = false
             }
 
             start() {
@@ -206,22 +217,22 @@ export class GbcTest {
                 return this
             }
 
-            async assertResolved() {
+            async assertCompleted() {
                 // we need to allow node to process the event loop at this point to flush through async promise(s)
                 await nextTick()
-                assert.equal(this.state, true)
+                assert.equal(this.resolution?.completed, true)
                 return this
             }
 
             async assertNotResolved() {
                 await nextTick()
-                assert.equal(this.state, undefined)
+                assert.equal(this.resolution, undefined)
                 return this
             }
 
-            async assertRejected() {
+            async assertCancelled() {
                 await nextTick()
-                assert.equal(this.state, false)
+                assert.equal(this.resolution?.completed, false)
                 return this
             }
         })()
@@ -253,7 +264,6 @@ export class GbcTest {
             const { statusWord, controlWord } = this.status_msg.status.machine
             const currentState = determine_machine_state(statusWord)
             const nextControlWord = handleMachineState(currentState, controlWord, desired)
-            console.log("CURRENT STATE", currentState, "NEXT", nextControlWord)
             if (nextControlWord >= 0) {
                 this.gbc.send(updateMachineControlWordMsg(nextControlWord))
                 this.exec_double_cycle()

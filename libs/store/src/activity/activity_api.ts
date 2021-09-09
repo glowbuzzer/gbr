@@ -45,10 +45,10 @@ function make_activity(index: number, type: ACTIVITYTYPE, tag: number, params?) 
     const command_detail =
         typeName.length && params
             ? {
-                  [typeName]: {
-                      ...params
-                  }
-              }
+                [typeName]: {
+                    ...params
+                }
+            }
             : {}
 
     return {
@@ -116,8 +116,8 @@ export class ActivityApi {
         while (promiseFifo.length && promiseFifo[0].tag < tag) {
             // reject any old activities that have been superceded by a later tag
             console.log("REJECT OLD TAG", promiseFifo[0].tag)
-            const last = promiseFifo.shift()
-            last.reject(last.tag)
+            promiseFifo.shift()?.resolve({ tag, completed: false })
+            // last.reject(last.tag)
         }
         if (!promiseFifo.length) {
             // nothing to update
@@ -127,15 +127,16 @@ export class ActivityApi {
         console.log("UPDATE ACTIVITY", tag, ACTIVITYSTATE[state], "LAST TAG", lastTag)
 
         if (state === ACTIVITYSTATE.ACTIVITY_COMPLETED) {
-            console.log("EXEC COMPLETE FOR TAG", tag)
+            // console.log("EXEC COMPLETE FOR TAG", tag)
             const current = promiseFifo.shift()
-            current.resolve(current.tag)
+            current?.resolve({ tag: current.tag, completed: true })
         } else if (state === ACTIVITYSTATE.ACTIVITY_CANCELLED) {
-            console.log("EXEC CANCELLED FOR TAG", tag)
+            // console.log("EXEC CANCELLED FOR TAG", tag)
             const current = promiseFifo.shift()
-            current.reject(current.tag)
+            current?.resolve({ tag: current.tag, completed: false })
+            // current?.reject(current.tag)
         } else {
-            console.log("TAG RUNNING BUT NOT COMPLETED", tag)
+            // console.log("TAG RUNNING BUT NOT COMPLETED", tag)
         }
     }
 
@@ -224,11 +225,12 @@ export class ActivityApi {
         )
     }
 
-    moveToPosition(pos: Vector3, moveParams: MoveParametersConfig = {}) {
+    moveToPosition(pos: Vector3, moveParams: MoveParametersConfig = {}, positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE) {
         const cartesianPosition: CartesianPositionsConfig = {
             // TODO: can we come up with another name for position to avoid duplication in hierarchy
             position: {
-                position: pos
+                position: pos,
+                positionReference
             }
         }
 

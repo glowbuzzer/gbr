@@ -26,67 +26,6 @@
         }
     },
     "projects": {
-        "glowsaurus": {
-            "projectType": "application",
-            "root": "apps/glowsaurus",
-            "sourceRoot": "apps/glowsaurus/src",
-            "architect": {
-                "build": {
-                    "builder": "@nx-plus/docusaurus:browser",
-                    "options": {
-                        "outputPath": "dist/apps/glowsaurus"
-                    }
-                },
-                "serve": {
-                    "builder": "@nx-plus/docusaurus:dev-server",
-                    "options": {
-                        "port": 3000
-                    }
-                }
-            }
-        },
-        "layout": {
-            "root": "libs/layout",
-            "sourceRoot": "libs/layout/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/layout/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/layout/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
-        "controls": {
-            "root": "libs/controls",
-            "sourceRoot": "libs/controls/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["libs/controls/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/controls/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
         "cartmc": {
             "root": "apps/cartmc",
             "sourceRoot": "apps/cartmc/src",
@@ -157,156 +96,22 @@
                 }
             }
         },
-        "store": {
-            "root": "libs/store",
-            "sourceRoot": "libs/store/src",
+        "controls": {
+            "root": "libs/controls",
+            "sourceRoot": "libs/controls/src",
             "projectType": "library",
             "schematics": {},
             "architect": {
-                "build": {
-                    "builder": "@nrwl/web:package",
-                    "outputs": ["{options.outputPath}"],
-                    "options": {
-                        "outputPath": "dist/libs/store",
-                        "tsConfig": "libs/store/tsconfig.lib.json",
-                        "project": "libs/store/package.json",
-                        "entryFile": "libs/store/src/index.ts",
-                        "external": ["react", "react-dom", "react-is", "styled-components"],
-                        "babelConfig": "@nrwl/react/plugins/bundle-babel",
-                        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
-                        "assets": [
-                            {
-                                "glob": "libs/store/README.md",
-                                "input": ".",
-                                "output": "."
-                            }
-                        ]
-                    }
-                },
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["libs/store/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": ["libs/controls/**/*.{ts,tsx,js,jsx}"]
                     }
                 },
                 "test": {
                     "builder": "@nrwl/jest:jest",
                     "options": {
-                        "jestConfig": "libs/store/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
-        "emstat": {
-            "root": "apps/emstat",
-            "sourceRoot": "apps/emstat/src",
-            "projectType": "application",
-            "schematics": {},
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/web:build",
-                    "options": {
-                        "outputPath": "dist/apps/emstat",
-                        "index": "apps/emstat/src/index.html",
-                        "main": "apps/emstat/src/main.tsx",
-                        "polyfills": "apps/emstat/src/polyfills.ts",
-                        "tsConfig": "apps/emstat/tsconfig.app.json",
-                        "assets": ["apps/emstat/src/favicon.ico", "apps/emstat/src/assets"],
-                        "styles": [],
-                        "scripts": [],
-                        "webpackConfig": "@nrwl/react/plugins/webpack"
-                    },
-                    "configurations": {
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "apps/emstat/src/environments/environment.ts",
-                                    "with": "apps/emstat/src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "2mb",
-                                    "maximumError": "5mb"
-                                }
-                            ]
-                        }
-                    }
-                },
-                "serve": {
-                    "builder": "@nrwl/web:dev-server",
-                    "options": {
-                        "buildTarget": "emstat:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "buildTarget": "emstat:build:production"
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["apps/emstat/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "apps/emstat/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
-        "glowsite": {
-            "root": "apps/glowsite",
-            "sourceRoot": "apps/glowsite/src",
-            "projectType": "application",
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/gatsby:build",
-                    "options": {
-                        "outputPath": "apps/glowsite/public",
-                        "uglify": true,
-                        "color": true,
-                        "profile": false
-                    },
-                    "configurations": {
-                        "production": {}
-                    }
-                },
-                "serve": {
-                    "builder": "@nrwl/gatsby:server",
-                    "options": {
-                        "buildTarget": "glowsite:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "buildTarget": "glowsite:build:production"
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["apps/glowsite/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/apps/glowsite"],
-                    "options": {
-                        "jestConfig": "apps/glowsite/jest.config.js",
+                        "jestConfig": "libs/controls/jest.config.js",
                         "passWithNoTests": true
                     }
                 }
@@ -419,6 +224,274 @@
                     "outputs": ["coverage/libs/dummy"],
                     "options": {
                         "jestConfig": "libs/dummy/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "emstat": {
+            "root": "apps/emstat",
+            "sourceRoot": "apps/emstat/src",
+            "projectType": "application",
+            "schematics": {},
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "options": {
+                        "outputPath": "dist/apps/emstat",
+                        "index": "apps/emstat/src/index.html",
+                        "main": "apps/emstat/src/main.tsx",
+                        "polyfills": "apps/emstat/src/polyfills.ts",
+                        "tsConfig": "apps/emstat/tsconfig.app.json",
+                        "assets": ["apps/emstat/src/favicon.ico", "apps/emstat/src/assets"],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/emstat/src/environments/environment.ts",
+                                    "with": "apps/emstat/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "5mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "emstat:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "emstat:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/emstat/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "apps/emstat/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "generic": {
+            "root": "apps/generic",
+            "sourceRoot": "apps/generic/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/apps/generic",
+                        "index": "apps/generic/src/index.html",
+                        "main": "apps/generic/src/main.tsx",
+                        "polyfills": "apps/generic/src/polyfills.ts",
+                        "tsConfig": "apps/generic/tsconfig.app.json",
+                        "assets": ["apps/generic/src/favicon.ico", "apps/generic/src/assets"],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "apps/generic/src/environments/environment.ts",
+                                    "with": "apps/generic/src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "generic:build",
+                        "hmr": true
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "generic:build:production",
+                            "hmr": false
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/generic/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/generic"],
+                    "options": {
+                        "jestConfig": "apps/generic/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "glowsaurus": {
+            "projectType": "application",
+            "root": "apps/glowsaurus",
+            "sourceRoot": "apps/glowsaurus/src",
+            "architect": {
+                "build": {
+                    "builder": "@nx-plus/docusaurus:browser",
+                    "options": {
+                        "outputPath": "dist/apps/glowsaurus"
+                    }
+                },
+                "serve": {
+                    "builder": "@nx-plus/docusaurus:dev-server",
+                    "options": {
+                        "port": 3000
+                    }
+                }
+            }
+        },
+        "glowsite": {
+            "root": "apps/glowsite",
+            "sourceRoot": "apps/glowsite/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/gatsby:build",
+                    "options": {
+                        "outputPath": "apps/glowsite/public",
+                        "uglify": true,
+                        "color": true,
+                        "profile": false
+                    },
+                    "configurations": {
+                        "production": {}
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/gatsby:server",
+                    "options": {
+                        "buildTarget": "glowsite:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "glowsite:build:production"
+                        }
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["apps/glowsite/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "outputs": ["coverage/apps/glowsite"],
+                    "options": {
+                        "jestConfig": "apps/glowsite/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "layout": {
+            "root": "libs/layout",
+            "sourceRoot": "libs/layout/src",
+            "projectType": "library",
+            "schematics": {},
+            "architect": {
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["libs/layout/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "libs/layout/jest.config.js",
+                        "passWithNoTests": true
+                    }
+                }
+            }
+        },
+        "store": {
+            "root": "libs/store",
+            "sourceRoot": "libs/store/src",
+            "projectType": "library",
+            "schematics": {},
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:package",
+                    "outputs": ["{options.outputPath}"],
+                    "options": {
+                        "outputPath": "dist/libs/store",
+                        "tsConfig": "libs/store/tsconfig.lib.json",
+                        "project": "libs/store/package.json",
+                        "entryFile": "libs/store/src/index.ts",
+                        "external": ["react", "react-dom", "react-is", "styled-components"],
+                        "babelConfig": "@nrwl/react/plugins/bundle-babel",
+                        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+                        "assets": [
+                            {
+                                "glob": "libs/store/README.md",
+                                "input": ".",
+                                "output": "."
+                            }
+                        ]
+                    }
+                },
+                "lint": {
+                    "builder": "@nrwl/linter:eslint",
+                    "options": {
+                        "lintFilePatterns": ["libs/store/**/*.{ts,tsx,js,jsx}"]
+                    }
+                },
+                "test": {
+                    "builder": "@nrwl/jest:jest",
+                    "options": {
+                        "jestConfig": "libs/store/jest.config.js",
                         "passWithNoTests": true
                     }
                 }

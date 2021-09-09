@@ -5,7 +5,7 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnect } from "../connect"
-import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
 
 const { load, save } = settings("store.gcode")
 
@@ -31,10 +31,10 @@ export const gcodeSlice = createSlice({
     name: "gcode",
     initialState: {
         ready: false,
-        current_positions: [],
+        current_positions: [] as number[],
         paused: false,
         capacity: 0,
-        buffer: [],
+        buffer: [] as ActivityStreamItem[],
         state: STREAMSTATE.STREAMSTATE_IDLE,
         time: 0,
         readCount: -1,
@@ -59,6 +59,7 @@ export const gcodeSlice = createSlice({
             const status = action.payload[0] as KinematicsConfigurationMcStatus
             const { x, y, z } = status.cartesianActPos
             state.current_positions = [x, y, z]
+            console.log("SET CURRENT POS", state.current_positions)
             state.ready = true
         },
         append(state, action) {

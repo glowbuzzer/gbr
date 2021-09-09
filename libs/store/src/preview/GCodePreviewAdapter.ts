@@ -85,6 +85,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
 
     G1(params, { lineNum }) {
         const [from, to] = this.updateModals(params).map(this.frame_conversion)
+        // console.log("LINE FROM", from, "TO", to)
         this.segments.push({
             from,
             to,

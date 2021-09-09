@@ -10,7 +10,7 @@ const StyledDiv = styled.div`
     justify-content: space-between;
 `
 
-export const AnalogInputsTile = ({ labels }) => {
+export const AnalogInputsTile = ({ labels = [] }) => {
     const ain = useAnalogInputs()
 
     return (

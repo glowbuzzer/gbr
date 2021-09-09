@@ -32,7 +32,7 @@ const parseLine = (() => {
     return line => {
         const result = {
             line: line,
-            words: [],
+            words: [] as any[],
             ln: null
         }
 
@@ -104,7 +104,7 @@ const parseLine = (() => {
 })()
 
 const parseStringSync = str => {
-    const results = []
+    const results:any[] = []
     const lines = Array.from(lineParser(str)) // str.split("\n")
 
     for (let i = 0; i < lines.length; ++i) {

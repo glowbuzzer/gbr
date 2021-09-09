@@ -18,13 +18,14 @@ import { analogInputsSlice } from "../io/ain"
 import { integerInputsSlice } from "../io/iin"
 import { tasksSlice } from "../tasks"
 import { settings } from "../util/settings"
-import { framesSlice, RootState } from "@glowbuzzer/store"
 import { activitySlice } from "../activity"
 import {
     updateMachineCommandMsg,
     updateMachineControlWordMsg,
     updateMachineTargetMsg
 } from "../machine/machine_api"
+import { RootState } from "../root"
+import { framesSlice } from "../frames"
 
 abstract class ProcessorBase {
     protected first = true
@@ -129,7 +130,7 @@ class ResponseProcessor extends ProcessorBase {
     }
 }
 
-const { load, save } = settings("devtools.statusFrequency")
+const { load } = settings("devtools.statusFrequency")
 
 class DevToolsProcessor extends ProcessorBase {
     protected process_internal(
@@ -185,9 +186,11 @@ if (typeof window !== "undefined") {
                     }
 
                     dispatch(connectionSlice.actions.connecting())
+                    console.log("CONNECTING!!!", new Error().stack)
                     ws = new WebSocket(url)
                     ws.onopen = () => {
                         start_status_timeout()
+                        console.log("CONNECTED!!")
                         ws.send(
                             JSON.stringify({
                                 request: {

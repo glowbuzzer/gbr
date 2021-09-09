@@ -10,7 +10,7 @@ const StyledDiv = styled.div`
     justify-content: space-between;
 `
 
-export const IntegerInputsTile = ({ labels }) => {
+export const IntegerInputsTile = ({ labels=[] }) => {
     const ain = useIntegerInputs()
 
     return (

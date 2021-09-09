@@ -33,7 +33,7 @@ let exampleOnResolvePlugin = {
 require("esbuild")
     .build({
         define: {
-            "process.env.NODE_ENV": '"production"'
+            "process.env.NODE_ENV": "\"production\""
         },
         // external: ["canvas"],
         watch: true,
@@ -45,4 +45,5 @@ require("esbuild")
         outfile: "../../../monorepo/libs/gbc-node/build/index.js",
         plugins: [exampleOnResolvePlugin]
     })
+    .then(() => console.log("Build complete"))
     .catch(() => process.exit(1))

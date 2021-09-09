@@ -1,13 +1,15 @@
 const windowGlobal = typeof window !== "undefined" && window
-const localStorage = windowGlobal?.localStorage
+const localStorage = windowGlobal ? windowGlobal.localStorage : null
 
 export function settings(key: string) {
     return {
         load(defaultValue = {}) {
             try {
-                const valueString = localStorage.getItem(key)
-                if (valueString) {
-                    return JSON.parse(valueString) || defaultValue
+                if ( localStorage ) {
+                    const valueString = localStorage.getItem(key)
+                    if (valueString) {
+                        return JSON.parse(valueString) || defaultValue
+                    }
                 }
             } catch (_e) {
                 return defaultValue
@@ -22,3 +24,4 @@ export function settings(key: string) {
         }
     }
 }
+

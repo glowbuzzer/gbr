@@ -1,29 +1,65 @@
 {
     "implicitDependencies": {
         "workspace.json": "*",
-        "package.json": { "dependencies": "*", "devDependencies": "*" },
+        "package.json": {
+            "dependencies": "*",
+            "devDependencies": "*"
+        },
         "tsconfig.base.json": "*",
         "tslint.json": "*",
         ".eslintrc.json": "*",
         "nx.json": "*"
     },
-    "affected": { "defaultBase": "master" },
+    "affected": {
+        "defaultBase": "master"
+    },
     "npmScope": "glowbuzzer",
     "tasksRunnerOptions": {
         "default": {
             "runner": "@nrwl/workspace/tasks-runners/default",
-            "options": { "cacheableOperations": ["build", "lint", "test", "e2e"] }
+            "options": {
+                "cacheableOperations": ["build", "lint", "test", "e2e"]
+            }
         }
     },
     "projects": {
-        "glowsaurus": { "tags": [] },
-        "layout": { "tags": [] },
-        "controls": { "tags": [] },
-        "cartmc": { "tags": [] },
-        "store": { "tags": [] },
-        "emstat": { "tags": [] },
-        "glowsite": { "tags": [] },
-        "convmc": { "tags": [] },
-        "dummy": { "tags": [] }
+        "cartmc": {
+            "tags": []
+        },
+        "controls": {
+            "tags": []
+        },
+        "convmc": {
+            "tags": []
+        },
+        "dummy": {
+            "tags": []
+        },
+        "emstat": {
+            "tags": []
+        },
+        "generic": {
+            "tags": []
+        },
+        "glowsaurus": {
+            "tags": []
+        },
+        "glowsite": {
+            "tags": []
+        },
+        "layout": {
+            "tags": []
+        },
+        "store": {
+            "tags": []
+        }
+    },
+    "targetDependencies": {
+        "build": [
+            {
+                "target": "build",
+                "projects": "dependencies"
+            }
+        ]
     }
 }

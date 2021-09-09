@@ -1,0 +1,69 @@
+import { GlowbuzzerApp } from "@glowbuzzer/store"
+import styled from "styled-components"
+
+import "antd/dist/antd.css"
+
+import { Button } from "antd"
+import { SimpleTileDefinition, SimpleTileLayout } from "@glowbuzzer/layout"
+import {
+    AnalogInputsTile,
+    AnalogOutputsTile,
+    ConnectTile,
+    DevToolsTile,
+    DigitalInputsTile,
+    DigitalOutputsTile, FeedRateTile, GCodeTile,
+    IntegerInputsTile,
+    IntegerOutputsTile,
+    JogTile, PreferencesDialog, ToolPathTile
+} from "@glowbuzzer/controls"
+import React, { useState } from "react"
+import { JointSpinnersTile } from "./JointSpinnersTile"
+
+const StyledApp = styled.div`
+`
+
+const PrefsButton = () => {
+    const [visible, setVisible] = useState(false)
+
+    return (
+        <div>
+            <Button onClick={() => setVisible(true)}>Preferences</Button>
+            <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
+        </div>
+    )
+}
+
+export function App() {
+    const tiles: SimpleTileDefinition[][] = [
+        [
+            { render: <ConnectTile />, height: 2, title: "Connection" },
+            { render: <FeedRateTile />, height: 2, title: "Feedrate" },
+            { render: <JogTile />, height: 4, title: "Jogging" },
+            { render: <DevToolsTile />, height: 3, title: "Dev Tools" }
+        ],
+        [
+            { render: <JointSpinnersTile />, height: 8, title: "Joints" },
+            { render: <ToolPathTile />, height: 8, title: "Toolpath" },
+            { render: <GCodeTile />, height: 4, title: "GCode" },
+        ],
+        [
+            { render: <DigitalOutputsTile />, height: 4, title: "Digital Outputs" },
+            { render: <DigitalInputsTile />, height: 4, title: "Digital Inputs" },
+            { render: <AnalogOutputsTile />, height: 4, title: "Analog Outputs" },
+            { render: <AnalogInputsTile />, height: 4, title: "Analog Inputs" },
+            { render: <IntegerOutputsTile />, height: 4, title: "Integer Outputs" },
+            { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" }
+        ]
+    ]
+
+    return (
+        <StyledApp>
+            <GlowbuzzerApp>
+                <PrefsButton/>
+                <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
+            </GlowbuzzerApp>
+        </StyledApp>
+    )
+}
+
+export default App

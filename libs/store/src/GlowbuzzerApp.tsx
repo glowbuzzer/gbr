@@ -2,7 +2,7 @@ import * as React from "react"
 import { FC, useEffect, useRef, useState } from "react"
 import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
-import { connectionSlice, useConnect } from "./connect"
+import { connectionSlice, ConnectionState, useConnect } from "./connect"
 import { usePrefs } from "./prefs"
 import styled, { css, ThemeProvider } from "styled-components"
 import { rootReducer } from "./root"
@@ -35,7 +35,8 @@ declare module "styled-components" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    export interface DefaultTheme extends Theme {}
+    export interface DefaultTheme extends Theme {
+    }
 }
 
 const GlowbuzzerAppStyle = styled.div<{ minWidth: string }>`
@@ -79,35 +80,70 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
     const connection = useConnect()
     const [configState, setConfigState] = useConfigState()
 
-    const [countdown, setCountdown] = useState(2)
-    const [showRetry, setShowRetry] = useState(true)
-    const timer = useRef(null)
-    const interval = useRef(3)
+    const [countdown, setCountdown] = useState(-1)
+    const [showRetry, setShowRetry] = useState(false)
+    // const timer = useRef(null)
+    const interval = useRef(0)
+
+    const { autoConnect, state, reconnect } = connection
+    useEffect(() => {
+        console.log("EFFECT", autoConnect, state)
+        if (autoConnect && state === ConnectionState.DISCONNECTED) {
+            // trigger immediate attempt to connect
+            interval.current = Math.max(3, Math.min(30, interval.current * 2))
+            setCountdown(c => c < 0 ? 0 : c)
+            // timer.current = setInterval(() => {
+            //     console.log("TIMER FIRED")
+            //     setCountdown(countdown => {
+            //         countdown--
+            //         console.log("COUNTDOWN", countdown)
+            //         if (countdown === 0) {
+            //             console.log("COUNTDOWN AT ZERO")
+            //             interval.current = Math.min(30, interval.current * 2)
+            //             countdown = interval.current
+            //             setShowRetry(false)
+            //
+            //             if ( connection.state === ConnectionState.DISCONNECTED ) {
+            //                 setTimeout(() => {
+            //                     console.log("CALLING RECONNECT")
+            //                     connection.reconnect()
+            //                 }, 0)
+            //             }
+            //         } else {
+            //             setShowRetry(true)
+            //         }
+            //         return countdown
+            //     })
+            // }, 1000)
+            // return () => clearInterval(timer.current)
+        }
+    }, [autoConnect, state])
 
     useEffect(() => {
-        if (connection.autoConnect && !connection.connected) {
-            timer.current = setInterval(() => {
-                setCountdown(countdown => {
-                    countdown--
-                    if (countdown === 0) {
-                        interval.current = Math.min(30, interval.current * 2)
-                        countdown = interval.current
-                        setShowRetry(false)
-                        setTimeout(() => connection.reconnect(), 0)
-                    } else {
-                        setShowRetry(true)
-                    }
-                    return countdown
-                })
-            }, 1000)
-            return () => clearInterval(timer.current)
+        console.log("COUNTDOWN EFFECT", countdown)
+        if (countdown === 0) {
+            setCountdown(-1)
+            // if ( state === ConnectionState.DISCONNECTED ) {
+            //     setCountdown(interval.current)
+            // }
+            setTimeout(() => {
+                console.log("RECONNECT IN COUNTDOWN EFFECT")
+                reconnect()
+            }, 0)
+        } else if (countdown > 0 && autoConnect) {
+            if ( countdown > 3 ) {
+                setShowRetry(true)
+            }
+            const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
+            return () => clearTimeout(timer)
         }
-    }, [connection, connection.autoConnect, connection.connected])
+    }, [autoConnect, countdown, reconnect])
 
     useEffect(() => {
         if (configState === ConfigState.AWAITING_HLC_INIT) {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            Promise.all([init ? init : () => {}]).then(() => setConfigState(ConfigState.READY))
+            Promise.all([init ? init : () => {
+            }]).then(() => setConfigState(ConfigState.READY))
         }
     }, [init, configState, setConfigState])
 

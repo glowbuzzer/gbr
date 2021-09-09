@@ -15,10 +15,10 @@ async function do_cancel(activity, cancel_cycles = 5, rejection_cycles = 50) {
     await cancel.start().iterations(cancel_cycles).assertNotResolved()
 
     // we expect the move/activity to terminate (with rejection) after the given number of cycles
-    await activity.iterations(rejection_cycles).assertRejected()
+    await activity.iterations(rejection_cycles).assertCancelled()
 
     // and we expect the cancel to be complete too
-    await cancel.assertResolved()
+    await cancel.assertCompleted()
 }
 
 test.before.each(ctx => {
@@ -30,7 +30,7 @@ test.before.each(ctx => {
 
 test("can cancel activity even if none started", async () => {
     // we expect issuing a cancel to have no effect and resolve more or less immediately
-    await gbc.wrap(gbc.activity.cancel().promise).start().iterations(1).assertResolved()
+    await gbc.wrap(gbc.activity.cancel().promise).start().iterations(1).assertCompleted()
 })
 
 test("can run move arc to completion", async () => {
@@ -38,7 +38,15 @@ test("can run move arc to completion", async () => {
     await move
         .start() //
         .iterations(100)
-        .assertResolved()
+        .assertCompleted()
+})
+
+test("can run zero length arc", async () => {
+    const move = gbc.wrap(gbc.activity.moveArc(new Vector3(0, 0, 0), new Vector3(0, 0, 0)).promise)
+    await move
+        .start() //
+        .iterations(5)
+        .assertCompleted()
 })
 
 test("can cancel move arc", async () => {
@@ -48,7 +56,7 @@ test("can cancel move arc", async () => {
 
 test("can run move joints to completion", async () => {
     const move = gbc.wrap(gbc.activity.moveJoints([10]).promise)
-    await move.start().iterations(100).assertResolved()
+    await move.start().iterations(100).assertCompleted()
 })
 
 test("can cancel move joints", async () => {
@@ -58,7 +66,7 @@ test("can cancel move joints", async () => {
 
 test("can run short cartesian move to completion", async () => {
     const move = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
-    await move.start().iterations(100).assertResolved()
+    await move.start().iterations(100).assertCompleted()
 })
 
 test("can cancel cartesian move", async () => {
@@ -76,12 +84,12 @@ test("can cancel cartesian move after short time", async () => {
     gbc.wrap(gbc.activity.cancel().promise).start()
 
     // we expect move to be completed
-    await move.iterations(30, true).assertRejected()
+    await move.iterations(30, true).assertCancelled()
 })
 
 test("can run short move to position to completion", async () => {
     const move = gbc.wrap(gbc.activity.moveToPosition(new Vector3(1, 0, 0)).promise)
-    await move.start().iterations(100).assertResolved()
+    await move.start().iterations(100).assertCompleted()
 })
 
 test("can cancel move to position", async () => {
@@ -91,15 +99,15 @@ test("can cancel move to position", async () => {
 
 test("can run cartesian move followed by move to position", async () => {
     const move1 = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
-    await move1.start().iterations(100).assertResolved()
+    await move1.start().iterations(100).assertCompleted()
     const move2 = gbc.wrap(gbc.activity.moveToPosition(new Vector3(1, 1, 0)).promise)
-    await move2.start().iterations(100).assertResolved()
+    await move2.start().iterations(100).assertCompleted()
 })
 
 test("can run dwell", async () => {
     const dwell = gbc.wrap(gbc.activity.dwell(100).promise)
     await dwell.start().iterations(50).assertNotResolved()
-    await dwell.iterations(60).assertResolved()
+    await dwell.iterations(60).assertCompleted()
 })
 
 test("can cancel dwell", async () => {
