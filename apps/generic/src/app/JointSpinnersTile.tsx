@@ -17,13 +17,13 @@ export const JointSpinnersTile = () => {
     return (
         <Tile title="Joints">
             <StyledDiv>
-                {[0, 1].map(j => (
-                    <div key={j} className="motor" style={{ display: "inline-block" }}>
+                {joints.map((j, index) => (
+                    <div key={index} className="motor" style={{ display: "inline-block" }}>
                         <div>
-                            <MotorDro width={200} value={joints[j]?.actPos || 0} />
+                            <MotorDro width={200} value={j.actPos || 0} />
                         </div>
                         <div className="dro">
-                            <SegmentDisplay value={joints[j]?.actPos || 0} toFixed={3}/>
+                            <SegmentDisplay value={j.actPos || 0} toFixed={3}/>
                         </div>
                     </div>
                 ))}
