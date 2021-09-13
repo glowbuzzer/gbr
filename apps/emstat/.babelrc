@@ -1,12 +1,12 @@
 {
-    "presets": ["@nrwl/react/babel"],
-    "plugins": [
+    "presets": [
         [
-            "styled-components",
+            "@nrwl/react/babel",
             {
-                "pure": true,
-                "ssr": true
+                "runtime": "automatic"
             }
         ]
+    ],
+    "plugins": [
     ]
 }
