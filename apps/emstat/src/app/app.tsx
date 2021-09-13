@@ -44,12 +44,13 @@ const StatusFreqTable = styled.div`
 
 //AK - This is the interface for antd tree data node - should i reuse the one from node_modules/rc-tree/lib/interface.d.ts? if so i can't work out the import syntax
 interface DataNode {
-    title: string
+    title: any
     key: string
     isLeaf?: boolean
     className?: string
     icon?: IconType
     children?: DataNode[]
+
 }
 
 const ShowTree = ({ dataObject }: { dataObject: any }) => {
