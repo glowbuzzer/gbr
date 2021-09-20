@@ -41,35 +41,34 @@ const partitionWordsByGroup = (words = []) => {
     return groups
 }
 
-const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+// const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
-function update_axis(axis, value, current_positions, relative) {
-    const index = gcode_axes.indexOf(axis)
-    if (index < 0) {
-        return
-    }
-    if (relative) {
-        current_positions[index] += value
-    } else {
-        current_positions[index] = value
-    }
-}
+// function update_axis(axis, value, current_positions, relative) {
+//     const index = gcode_axes.indexOf(axis)
+//     if (index < 0) {
+//         return
+//     }
+//     // if (relative) {
+//     //     current_positions[index] += value
+//     // } else {
+//     //     current_positions[index] = value
+//     // }
+// }
 
 class GCodeInterpreter {
     private motionMode = "G0"
-    protected readonly current_positions: number[]
-    private relative: boolean
+    // protected readonly current_positions: number[]
+    protected relative: boolean
 
-    constructor(current_positions: number[]) {
-        this.current_positions = current_positions
-    }
+    // constructor() {
+    //     // this.current_positions = current_positions
+    // }
 
-    protected updateModals(params) {
-        const prev = [...this.current_positions]
-        Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions, this.relative))
-        // console.log("FROM", prev, "TO", this.current_positions)
-        return [prev, [...this.current_positions]]
-    }
+    // protected updateModals(params) {
+    //     // const prev = [...this.current_positions]
+    //     // Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions, this.relative))
+    //     // return [prev, [...this.current_positions]]
+    // }
 
     interpret(data) {
         const groups = partitionWordsByGroup(data.words)
@@ -89,6 +88,8 @@ class GCodeInterpreter {
                 // Motion Mode
                 if (code === 0 || code === 1 || code === 2 || code === 3 || code === 38.2 || code === 38.3 || code === 38.4 || code === 38.5) {
                     this.motionMode = cmd
+                } else if (code === 90 /* absolute */) {
+                    this.relative = false
                 } else if (code === 91 /* relative */) {
                     this.relative = true
                 } else if (code === 80) {

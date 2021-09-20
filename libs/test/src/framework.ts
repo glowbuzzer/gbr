@@ -50,6 +50,14 @@ export class GbcTest {
         return this
     }
 
+    get m4_stream_total_cap() {
+        return this.gbc.get_m4_stream_total_cap()
+    }
+
+    get m7_stream_total_cap() {
+        return this.gbc.get_m7_stream_total_cap()
+    }
+
     disable_limit_check() {
         this.check_limits = false
         return this
@@ -63,7 +71,6 @@ export class GbcTest {
     }
 
     reset() {
-        console.log("---------- GBC RESET")
         this.gbc.reset()
 
         this.store = configureStore({
@@ -100,14 +107,14 @@ export class GbcTest {
     }
 
     stream(stream) {
-        // console.log("message", message)
+        // console.log("message", JSON.stringify(stream, null, 2))
         this.gbc.send(JSON.stringify({ stream }))
         return this
     }
 
     send_gcode(gcode) {
-        const buffer=[] as any[]
-        const adapter=new GCodeSenderAdapter(buffer, [])
+        const buffer = [] as any[]
+        const adapter = new GCodeSenderAdapter(buffer)
         adapter.execute(gcode)
         return this.stream(buffer)
     }
@@ -126,30 +133,45 @@ export class GbcTest {
                 assert.equal(this.gbc.get_fb_iout(index), value)
                 return this
             },
-            streamActivityState: value => {
-                assert.equal(
-                    ACTIVITYSTATE[this.gbc.get_streamed_activity_state()],
-                    ACTIVITYSTATE[value]
-                )
+            streamActivityState: (value, msg?) => {
+                const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state()]
+                const expected = ACTIVITYSTATE[value]
+                if ( msg && actual !== expected ) {
+                    console.log(msg)
+                }
+                assert.equal(actual, expected)
                 return this
             },
-            selector: (selector, value) => {
+            selector: (selector, expected, msg?) => {
                 const statusMsg = this.status_msg
-                console.log(statusMsg.status.joint)
-                assert.equal(selector(statusMsg), value)
+                const actual = selector(statusMsg)
+                if (msg && actual !== expected) {
+                    console.log("Selector mismatch: ", msg)
+                }
+                assert.equal(actual, expected)
+                return this
+            },
+            near: (selector, value) => {
+                const test = Math.abs(selector(this.status_msg) - value) < 0.001
+                if (!test) {
+                    console.log("Numeric value test failed: expected=", value, "actual=", selector(this.status_msg))
+                }
+                assert.equal(test, true)
                 return this
             },
             streamSequence: (
                 selector,
-                seq: [count: number, tag: number, state: ACTIVITYSTATE][],
+                seq: [number, number, ACTIVITYSTATE][],
                 verify = true
             ) => {
+                let n = 0
                 for (const [count, tag, state] of seq) {
+                    n++
                     this.exec(count)
                     if (verify) {
                         this.assert
-                            .selector(selector, tag) //
-                            .assert.streamActivityState(state)
+                            .selector(selector, tag, "incorrect stream item tag at step " + n) //
+                            .assert.streamActivityState(state, "incorrect stream item state at step " + n)
                     }
                 }
                 return this
@@ -163,7 +185,7 @@ export class GbcTest {
                 this.gbc.run(1, single_cycle, this.check_limits)
                 // get the joint status
                 this.status_msg.status.joint &&
-                    this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
+                this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
                 const joints_act_pos = this.store.getState().joint.map(j => j.actPos)
                 this.capture_state.push(joints_act_pos)
             }
@@ -196,13 +218,13 @@ export class GbcTest {
             }
 
             resolve(value) {
-                this.resolution=value
+                this.resolution = value
                 // console.log("RESOLVE!!!", tag)
                 // this.state = true
             }
 
             reject(value) {
-                this.resolution=value
+                this.resolution = value
                 // console.log("REJECT!!!", tag)
                 // this.state = false
             }

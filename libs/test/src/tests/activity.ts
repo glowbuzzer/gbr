@@ -1,6 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { Vector3 } from "three"
+import { ARCDIRECTION } from "../../../store/src"
 
 const test = uvu.suite("activity")
 
@@ -26,6 +27,7 @@ test.before.each(ctx => {
     gbc.reset()
     gbc.enable_operation()
     gbc.set_fro(0, 100)
+    gbc.capture(true)
 })
 
 test("can cancel activity even if none started", async () => {
@@ -34,15 +36,96 @@ test("can cancel activity even if none started", async () => {
 })
 
 test("can run move arc to completion", async () => {
-    const move = gbc.wrap(gbc.activity.moveArc(new Vector3(1, 1, 0), new Vector3(0, 1, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(1, 1, 0), new Vector3(0, 1, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
     await move
         .start() //
-        .iterations(100)
+        .iterations(35)
         .assertCompleted()
+
+    gbc.plot("arc-primitive-quad-1")
 })
 
-test("can run zero length arc", async () => {
-    const move = gbc.wrap(gbc.activity.moveArc(new Vector3(0, 0, 0), new Vector3(0, 0, 0)).promise)
+test("can run move arc in radius mode", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithRadius(new Vector3(1, 1, 0), 1, ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    try {
+        await move
+            .start() //
+            .iterations(35)
+            .assertCompleted()
+    } finally {
+        gbc.plot("arc-primitive-radius-mode")
+    }
+})
+
+test("can run move arc in radius mode with negative radius", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithRadius(new Vector3(1, 1, 0), -1, ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    try {
+        await move
+            .start() //
+            .iterations(50)
+            .assertCompleted()
+    } finally {
+        gbc.plot("arc-primitive-radius-mode-negative")
+    }
+})
+
+test("can run move arc to completion (quadrant 2)", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(-1, 1, 0), new Vector3(-1, 0, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    await move
+        .start() //
+        .iterations(35)
+        .assertCompleted()
+
+    gbc.plot("arc-primitive-quad-2")
+})
+
+test("can run move arc to completion (quadrant 3)", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(-1, -1, 0), new Vector3(0, -1, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    await move
+        .start() //
+        .iterations(35)
+        .assertCompleted()
+
+    gbc.plot("arc-primitive-quad-3")
+})
+
+test("can run move arc to completion (quadrant 4)", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(1, -1, 0), new Vector3(1, 0, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    await move
+        .start() //
+        .iterations(35)
+        .assertCompleted()
+
+    gbc.plot("arc-primitive-quad-4")
+})
+
+test("can run arc with same start and end point (full circle)", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(0, 0, 0), new Vector3(15, 0, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    try {
+        await move
+            .start() //
+            .iterations(160)
+            .assertCompleted()
+    } finally {
+        gbc.plot("arc-primitive-full-circle")
+    }
+})
+
+test("can run tiny arc (large jmax) full circle", async () => {
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(0, 0, 0), new Vector3(1, 0, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
+    try {
+        await move
+            .start() //
+            .iterations(65)
+            .assertCompleted()
+    } finally {
+        gbc.plot("arc-primitive-full-circle-small")
+    }
+})
+
+test.skip("can run zero length arc", async () => {
+    // zero length arc is not possible because this will be run as a full circle
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(0, 0, 0), new Vector3(0, 0, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
     await move
         .start() //
         .iterations(5)
@@ -50,7 +133,7 @@ test("can run zero length arc", async () => {
 })
 
 test("can cancel move arc", async () => {
-    const move = gbc.wrap(gbc.activity.moveArc(new Vector3(1, 1, 0), new Vector3(1, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveArcWithCentre(new Vector3(1, 1, 0), new Vector3(0, 1, 0), ARCDIRECTION.ARCDIRECTION_CCW).promise)
     await do_cancel(move)
 })
 
@@ -67,6 +150,15 @@ test("can cancel move joints", async () => {
 test("can run short cartesian move to completion", async () => {
     const move = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
     await move.start().iterations(100).assertCompleted()
+})
+
+test("can run long cartesian move to completion", async () => {
+    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(30, 0, 0)).promise)
+    try {
+        await move.start().iterations(70).assertCompleted()
+    } finally {
+        gbc.plot("moveline-primitive-long")
+    }
 })
 
 test("can cancel cartesian move", async () => {

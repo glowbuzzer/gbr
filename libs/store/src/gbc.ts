@@ -35,6 +35,12 @@ PHASESHIFT,EARLY,LATE,SLOW
 export enum TRIGGERTYPE {
 TRIGGERTYPE_RISING,TRIGGERTYPE_FALLING,TRIGGERTYPE_NONE
 }
+export enum ARCTYPE {
+ARCTYPE_CENTRE,ARCTYPE_RADIUS
+}
+export enum ARCDIRECTION {
+ARCDIRECTION_CW,ARCDIRECTION_CCW
+}
 export enum JOINT_TYPE {
 JOINT_REVOLUTE,JOINT_PRISMATIC,JOINT_SPHERICAL,JOINT_SCREW
 }
@@ -155,6 +161,7 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
         }
 
         export type MoveParametersConfig = {
+                vmax?:number;
                 vmaxPercentage?:number;
                 amaxPercentage?:number;
                 jmaxPercentage?:number;
@@ -184,9 +191,18 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
                 frameIndex?:number;
         }
 
+        export type PositionAbsRel = {
+                positionReference?:POSITIONREFERENCE;
+                position?:Vector3;
+        }
+
         export type CartesianVector = {
                 vector?:Vector3;
                 frameIndex?:number;
+        }
+
+        export type DoubleValue = {
+                value?:number;
         }
 
         export type JointPosition = {
@@ -239,8 +255,13 @@ STREAMSTATE_IDLE,STREAMSTATE_ACTIVE,STREAMSTATE_PAUSED,STREAMSTATE_STOPPING,STRE
         }
 
         export type ArcsConfig = {
+                arcType?:ARCTYPE;
+                arcDirection?:ARCDIRECTION;
                 destination?:CartesianPosition;
-                waypoint?:CartesianPosition;
+//              Start of Union
+                    centre?: PositionAbsRel,
+                    radius?: DoubleValue,
+//              End of Union
         }
 
         export type CartesianPositionsConfig = {
