@@ -64,7 +64,7 @@ export const gcodeSlice = createSlice({
         },
         append(state, action) {
             console.log("Starting interpreter")
-            const interpreter = new GCodeSenderAdapter(state.buffer, state.current_positions)
+            const interpreter = new GCodeSenderAdapter(state.buffer)
             interpreter.execute(action.payload)
             console.log("Interpreter done")
         },
@@ -77,7 +77,14 @@ export const gcodeSlice = createSlice({
             state.capacity -= count
         },
         status: (state, action) => {
-            const { capacity, tag, state: stream_state, time, readCount, writeCount } = action.payload
+            const {
+                capacity,
+                tag,
+                state: stream_state,
+                time,
+                readCount,
+                writeCount
+            } = action.payload
 
             // tag is UDF for current item, active is whether any item is currently executing
             state.tag = tag
@@ -115,7 +122,10 @@ function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
 }
 
 export function useGCode() {
-    const { state, tag, time } = useSelector(({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }), shallowEqual)
+    const { state, tag, time } = useSelector(
+        ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
+        shallowEqual
+    )
     const dispatch = useDispatch()
     const connection = useConnect()
 
@@ -133,5 +143,6 @@ export function useGCode() {
 }
 
 export function useGCodeSettings() {
-    return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual).settings
+    return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual)
+        .settings
 }

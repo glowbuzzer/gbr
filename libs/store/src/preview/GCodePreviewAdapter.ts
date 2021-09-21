@@ -16,20 +16,44 @@ function fromHexString(s: string) {
     return [r / 255, g / 255, b / 255]
 }
 
+const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+
+function update_axis(axis, value, current_positions, relative) {
+    const index = gcode_axes.indexOf(axis)
+    if (index < 0) {
+        return
+    }
+    if (relative) {
+        current_positions[index] += value
+    } else {
+        current_positions[index] = value
+    }
+}
+
 const RAPID_COLOR = fromHexString("#a94d4d")
 const MOVE_COLOR = fromHexString("#a7c0fd")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
+    private readonly current_positions: number[]
     private frameIndex = 0
     // private kcFrame: number
     private convertToFrame
 
     constructor(current_positions: number[], convertToFrame) {
-        super(current_positions)
+        super()
+        this.current_positions = current_positions
         // this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
+    }
+
+    private updateModals(params) {
+        const prev = [...this.current_positions]
+        Object.keys(params).forEach(k =>
+            update_axis(k, params[k], this.current_positions, this.relative)
+        )
+        return [prev, [...this.current_positions]]
     }
 
     private frame_conversion(point) {
