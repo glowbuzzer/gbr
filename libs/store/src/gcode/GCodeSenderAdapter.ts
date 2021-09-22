@@ -145,30 +145,47 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G0(params, line: GCodeLine) {
         // this.updateModals(params)
-        const vmaxPercentage = params.F ? Math.ceil((params.F / this.vmax) * 100) : undefined // only used if non-zero
-        this.buffer.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
-            ...args(line),
-            moveToPosition: {
-                moveParams: {
-                    ...this.moveParams,
-                    vmaxPercentage,
-                    blendType: BLENDTYPE.BLENDTYPE_NONE
-                },
-                cartesianPosition: {
-                    configuration: 0, // not needed for cartesian machine
-                    position: {
-                        position: {
-                            x: number_or_null(params.X),
-                            y: number_or_null(params.Y),
-                            z: number_or_null(params.Z)
-                        },
-                        positionReference: this.positionReference,
-                        frameIndex: this.frameIndex
+        const position = {
+            position: {
+                x: number_or_null(params.X),
+                y: number_or_null(params.Y),
+                z: number_or_null(params.Z)
+            },
+            positionReference: this.positionReference,
+            frameIndex: this.frameIndex
+        }
+        if (params.F) {
+            // turn this into a linear move_line
+            const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
+            this.buffer.push({
+                activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
+                ...args(line),
+                moveLine: {
+                    moveParams: {
+                        ...this.moveParams,
+                        vmaxPercentage,
+                        blendType: BLENDTYPE.BLENDTYPE_NONE
+                    },
+                    line: position
+                }
+            })
+        } else {
+            // use basic move_to_position using full joint limits
+            this.buffer.push({
+                activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
+                ...args(line),
+                moveToPosition: {
+                    moveParams: {
+                        ...this.moveParams,
+                        blendType: BLENDTYPE.BLENDTYPE_NONE
+                    },
+                    cartesianPosition: {
+                        configuration: 0, // TODO: think about how to specify in robot land
+                        position: position
                     }
                 }
-            }
-        })
+            })
+        }
     }
 
     G1(params, line: GCodeLine) {
