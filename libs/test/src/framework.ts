@@ -114,12 +114,35 @@ export class GbcTest {
 
     send_gcode(gcode) {
         const buffer = [] as any[]
-        const adapter = new GCodeSenderAdapter(buffer)
+        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
         adapter.execute(gcode)
         return this.stream(buffer)
     }
 
     get assert() {
+        function test_near(actual, expected, tolerance = 0.001 /* absolute tolerance */) {
+            const diff = Math.abs(actual - expected)
+            if (tolerance < 0) {
+                // percentage tolerance
+                const perc = Math.abs(diff / expected)
+                if (perc > Math.abs(tolerance)) {
+                    assert.not.ok(
+                        diff,
+                        `Numeric value test failed: expected=${expected}, actual=${actual}, tolerance=${
+                            Math.abs(tolerance) * 100
+                        }% (${diff * 100})`
+                    )
+                }
+            } else {
+                if (diff > tolerance) {
+                    assert.not.ok(
+                        diff,
+                        `Numeric value test failed: expected=${expected}, actual=${actual}, tolerance=${tolerance} (${diff})`
+                    )
+                }
+            }
+        }
+
         return {
             doutPdo: (index, value) => {
                 assert.equal(this.gbc.get_fb_dout(index), value)
@@ -136,7 +159,7 @@ export class GbcTest {
             streamActivityState: (value, msg?) => {
                 const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state()]
                 const expected = ACTIVITYSTATE[value]
-                if ( msg && actual !== expected ) {
+                if (msg && actual !== expected) {
                     console.log(msg)
                 }
                 assert.equal(actual, expected)
@@ -151,19 +174,17 @@ export class GbcTest {
                 assert.equal(actual, expected)
                 return this
             },
-            near: (selector, value) => {
-                const test = Math.abs(selector(this.status_msg) - value) < 0.001
-                if (!test) {
-                    console.log("Numeric value test failed: expected=", value, "actual=", selector(this.status_msg))
-                }
-                assert.equal(test, true)
+            near: (selector, expected) => {
+                const actual = selector(this.status_msg)
+                test_near(actual, expected)
                 return this
             },
-            streamSequence: (
-                selector,
-                seq: [number, number, ACTIVITYSTATE][],
-                verify = true
-            ) => {
+            vel: (joint, expected) => {
+                const actual = this.gbc.get_joint_vel(joint)
+                test_near(actual, expected, -0.1 /* within 10% */)
+                return this
+            },
+            streamSequence: (selector, seq: [number, number, ACTIVITYSTATE][], verify = true) => {
                 let n = 0
                 for (const [count, tag, state] of seq) {
                     n++
@@ -171,7 +192,10 @@ export class GbcTest {
                     if (verify) {
                         this.assert
                             .selector(selector, tag, "incorrect stream item tag at step " + n) //
-                            .assert.streamActivityState(state, "incorrect stream item state at step " + n)
+                            .assert.streamActivityState(
+                                state,
+                                "incorrect stream item state at step " + n
+                            )
                     }
                 }
                 return this
@@ -185,7 +209,7 @@ export class GbcTest {
                 this.gbc.run(1, single_cycle, this.check_limits)
                 // get the joint status
                 this.status_msg.status.joint &&
-                this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
+                    this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
                 const joints_act_pos = this.store.getState().joint.map(j => j.actPos)
                 this.capture_state.push(joints_act_pos)
             }

@@ -64,8 +64,9 @@ export const gcodeSlice = createSlice({
         },
         append(state, action) {
             console.log("Starting interpreter")
-            const interpreter = new GCodeSenderAdapter(state.buffer)
-            interpreter.execute(action.payload)
+            const { gcode, vmax } = action.payload
+            const interpreter = new GCodeSenderAdapter(state.buffer, vmax)
+            interpreter.execute(gcode)
             console.log("Interpreter done")
         },
         consume(state, action) {
@@ -133,8 +134,8 @@ export function useGCode() {
         state,
         time,
         lineNum: tag,
-        send(gcodeString) {
-            dispatch(gcodeSlice.actions.append(gcodeString))
+        send(gcode, vmax: number) {
+            dispatch(gcodeSlice.actions.append({ gcode, vmax }))
         },
         setState(streamCommand: STREAMCOMMAND) {
             dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))

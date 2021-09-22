@@ -1,6 +1,17 @@
 import GCodeInterpreter from "./GCodeInterpreter"
 import { GCodeLine } from "./lineParser"
-import { ActivityStreamItem, ACTIVITYTYPE, ARCDIRECTION, ARCTYPE, BLENDTYPE, MoveArcStream, POSITIONREFERENCE, SetAoutCommand, SetDoutCommand, SetIoutCommand } from "../gbc"
+import {
+    ActivityStreamItem,
+    ACTIVITYTYPE,
+    ARCDIRECTION,
+    ARCTYPE,
+    BLENDTYPE,
+    MoveArcStream,
+    POSITIONREFERENCE,
+    SetAoutCommand,
+    SetDoutCommand,
+    SetIoutCommand
+} from "../gbc"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
@@ -17,20 +28,20 @@ function arcParams(params, ccw, frameIndex, positionReference): MoveArcStream {
     const y = number_or_null(params.Y)
     const z = number_or_null(params.Z)
 
-    const destination={
+    const destination = {
         frameIndex,
         position: { x, y, z },
         positionReference
     }
 
-    const arcDirection=ccw ? ARCDIRECTION.ARCDIRECTION_CCW : ARCDIRECTION.ARCDIRECTION_CW
+    const arcDirection = ccw ? ARCDIRECTION.ARCDIRECTION_CCW : ARCDIRECTION.ARCDIRECTION_CW
 
-    if ( Math.abs(R) > 0 ) {
+    if (Math.abs(R) > 0) {
         return {
             arc: {
                 destination,
                 arcType: ARCTYPE.ARCTYPE_RADIUS,
-                radius: {value: R},
+                radius: { value: R },
                 arcDirection
             }
         }
@@ -41,7 +52,7 @@ function arcParams(params, ccw, frameIndex, positionReference): MoveArcStream {
             destination,
             arcType: ARCTYPE.ARCTYPE_CENTRE,
             centre: {
-                position: {x: I, y: J},
+                position: { x: I, y: J },
                 positionReference: POSITIONREFERENCE.RELATIVE // we don't support G91.1 right now
             }
         }
@@ -58,7 +69,7 @@ function args(line: GCodeLine) {
 export class GCodeSenderAdapter extends GCodeInterpreter {
     // default move params
     private moveParams = {
-        vmaxPercentage: 100,
+        vmaxPercentage: 100, // this is the default, eg. for G0 without F param
         amaxPercentage: 100,
         jmaxPercentage: 100,
         blendType: 0,
@@ -67,10 +78,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private frameIndex = 0
 
     private readonly buffer: ActivityStreamItem[]
+    private readonly vmax: number
+    private vmaxPercentage = 100 // this will override moveParams above
 
-    constructor(buffer) {
+    constructor(buffer, vmax: number) {
         super()
         this.buffer = buffer
+        this.vmax = vmax
     }
 
     post() {
@@ -131,12 +145,16 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G0(params, line: GCodeLine) {
         // this.updateModals(params)
-
+        const vmaxPercentage = params.F ? Math.ceil((params.F / this.vmax) * 100) : undefined // only used if non-zero
         this.buffer.push({
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
             ...args(line),
             moveToPosition: {
-                moveParams: { ...this.moveParams, blendType: BLENDTYPE.BLENDTYPE_NONE },
+                moveParams: {
+                    ...this.moveParams,
+                    vmaxPercentage,
+                    blendType: BLENDTYPE.BLENDTYPE_NONE
+                },
                 cartesianPosition: {
                     configuration: 0, // not needed for cartesian machine
                     position: {
@@ -154,13 +172,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     G1(params, line: GCodeLine) {
-        // this.updateModals(params)
+        this.updateVmax(params)
 
         this.buffer.push({
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
             ...args(line),
             moveLine: {
-                moveParams: this.moveParams,
+                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
                 line: {
                     position: {
                         x: number_or_null(params.X),
@@ -183,7 +201,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
             ...args(line),
             moveArc: {
-                moveParams: this.moveParams,
+                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
                 ...arcParams(params, false, this.frameIndex, this.positionReference)
             }
         })
@@ -198,7 +216,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
             ...args(line),
             moveArc: {
-                moveParams: this.moveParams,
+                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
                 ...arcParams(params, true, this.frameIndex, this.positionReference)
             }
         })
@@ -247,5 +265,19 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.moveParams.blendType = BLENDTYPE.BLENDTYPE_OVERLAPPED
         // TODO: this should be tolerance in overlapped scheme
         // moveParams.radius = params.P || 1e99; // big number meaning go as fast as possible!
+    }
+
+    private setVmaxPercentage(value) {
+        this.vmaxPercentage = Math.ceil((value / this.vmax) * 100)
+    }
+
+    F(value) {
+        this.setVmaxPercentage(value)
+    }
+
+    private updateVmax(params) {
+        if (params.F) {
+            this.setVmaxPercentage(params.F)
+        }
     }
 }

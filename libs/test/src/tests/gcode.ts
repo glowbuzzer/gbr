@@ -6,7 +6,7 @@ const test = uvu.suite("gcode")
 
 const state = state => state.stream.state
 const tag = state => state.stream.tag
-const pos = (joint) => state => state.status.joint[joint].actPos
+const pos = joint => state => state.status.joint[joint].actPos
 
 test.before.each(ctx => {
     console.log(ctx.__test__)
@@ -20,7 +20,8 @@ test("can execute basic gcode", async () => {
     gbc.exec(3)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
     gbc.exec(20)
-    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+    gbc.assert
+        .selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.near(pos(0), 1)
         .assert.near(pos(1), 1)
 })
@@ -30,7 +31,8 @@ test("can execute arc with centre gcode", async () => {
     gbc.exec(3)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
     gbc.exec(25)
-    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
+    gbc.assert
+        .selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
         .assert.near(pos(0), 1)
         .assert.near(pos(1), 1)
 })
@@ -40,7 +42,8 @@ test("can execute arc with radius gcode", async () => {
     gbc.exec(3)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
     gbc.exec(25)
-    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
+    gbc.assert
+        .selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
         .assert.near(pos(0), 1)
         .assert.near(pos(1), 1)
 })
@@ -96,17 +99,24 @@ test("can execute relative move to position", async () => {
 
 test("doesn't blend rapid to line", async () => {
     try {
-        gbc.send_gcode(`
+        gbc.send_gcode(
+            `
                 G64
                 G0 X10 Y0
                 G1 X10 Y10
-                M2`)
-            .assert.streamSequence(tag, [
-            [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
-            [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
-        ], true /* set to false to skip verify */).verify()
+                M2`
+        )
+            .assert.streamSequence(
+                tag,
+                [
+                    [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
+                    [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                ],
+                true /* set to false to skip verify */
+            )
+            .verify()
     } finally {
         gbc.plot("gcode-g0-to-g1")
     }
@@ -114,19 +124,95 @@ test("doesn't blend rapid to line", async () => {
 
 test("doesn't blend line to rapid", async () => {
     try {
-        gbc.send_gcode(`
+        gbc.send_gcode(
+            `
                 G64
                 G1 X10 Y0
                 G0 X10 Y10
-                M2`)
-            .assert.streamSequence(tag, [
-            [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
-            [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
-        ], true /* set to false to skip verify */).verify()
+                M2`
+        )
+            .assert.streamSequence(
+                tag,
+                [
+                    [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
+                    [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                ],
+                true /* set to false to skip verify */
+            )
+            .verify()
     } finally {
         gbc.plot("gcode-g1-to-g0")
+    }
+})
+
+test("can handle F code on G1 move", async () => {
+    try {
+        gbc.send_gcode(`
+            G1 X30 Y0 F150
+            M2`)
+        gbc.exec(30)
+        gbc.assert.vel(0, 150)
+        gbc.exec(45)
+        gbc.verify()
+    } finally {
+        gbc.plot("gcode-g1-with-feedrate")
+    }
+})
+
+test("can handle F code as modal", async () => {
+    try {
+        gbc.send_gcode(`
+            F150
+            G1 X30
+            G1 X60
+            M2`)
+        gbc.exec(30)
+        gbc.assert.vel(0, 150)
+        gbc.exec(45)
+        gbc.exec(30)
+        gbc.assert.vel(0, 150)
+        gbc.exec(45)
+        gbc.verify()
+    } finally {
+        // gbc.plot("gcode-g1-with-feedrate")
+    }
+})
+
+test("F code modal doesn't affect G0", async () => {
+    try {
+        gbc.send_gcode(`
+            G1 X30 F150
+            G0 X60
+            M2`)
+        gbc.exec(30)
+        gbc.assert.vel(0, 150)
+        gbc.exec(45)
+        gbc.exec(30)
+        gbc.assert.vel(0, 200)
+        gbc.exec(30)
+        gbc.verify()
+    } finally {
+        // gbc.plot("gcode-g1-with-feedrate")
+    }
+})
+
+test("F code on G0 doesn't affect G1", async () => {
+    try {
+        gbc.send_gcode(`
+            G0 X30 F150
+            G1 X60 ; reverts to vmax
+            M2`)
+        gbc.exec(30)
+        gbc.assert.vel(0, 150)
+        gbc.exec(45)
+        gbc.exec(30)
+        gbc.assert.vel(0, 200)
+        gbc.exec(30)
+        gbc.verify()
+    } finally {
+        // gbc.plot("gcode-g1-with-feedrate")
     }
 })
 

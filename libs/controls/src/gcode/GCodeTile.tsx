@@ -7,7 +7,16 @@ import { useEffect } from "react"
 // import "ace-builds/src-noconflict/mode-text"
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
-import { settings, STREAMCOMMAND, STREAMSTATE, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import {
+    settings,
+    STREAMCOMMAND,
+    STREAMSTATE,
+    useConfig,
+    useFrames,
+    useGCode,
+    usePrefs,
+    usePreview
+} from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
@@ -63,6 +72,10 @@ export const GCodeTile = () => {
     const workOffset = frames.active
     const config = useConfig()
 
+    // we need to pass linear vmax to gcode interpreter to support F code calcs
+    const vmax = Object.values(config.kinematicsConfiguration)[0]?.kinematicsParameters
+        .cartesianParameters.linearVmax
+
     useEffect(() => {
         preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
         // eslint-disable-next-line
@@ -71,7 +84,7 @@ export const GCodeTile = () => {
     function send_gcode() {
         save(gcode)
         const offset = "G" + (54 + workOffset)
-        stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""))
+        stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""), vmax)
     }
 
     function update_gcode(gcode: string) {
@@ -80,7 +93,7 @@ export const GCodeTile = () => {
 
     function update_cursor(e) {
         // console.log(e.cursor.row)
-        preview.setHighlightLine(e.cursor.row+1)
+        preview.setHighlightLine(e.cursor.row + 1)
     }
 
     const highlight = active
@@ -110,13 +123,18 @@ export const GCodeTile = () => {
         }
     })()
 
-    const needs_reset = stream.state === STREAMSTATE.STREAMSTATE_STOPPING || stream.state === STREAMSTATE.STREAMSTATE_STOPPED
+    const needs_reset =
+        stream.state === STREAMSTATE.STREAMSTATE_STOPPING ||
+        stream.state === STREAMSTATE.STREAMSTATE_STOPPED
     const can_stop = !needs_reset && stream.state !== STREAMSTATE.STREAMSTATE_IDLE
     const can_pause = stream.state === STREAMSTATE.STREAMSTATE_ACTIVE
 
     function send_command(v) {
         stream.setState(v.target.value)
-        if (stream.state === STREAMSTATE.STREAMSTATE_IDLE && v.target.value === STREAMCOMMAND.STREAMCOMMAND_RUN) {
+        if (
+            stream.state === STREAMSTATE.STREAMSTATE_IDLE &&
+            v.target.value === STREAMCOMMAND.STREAMCOMMAND_RUN
+        ) {
             console.log("send gcode")
             send_gcode()
         }
@@ -131,7 +149,11 @@ export const GCodeTile = () => {
             controls={
                 <>
                     <Space>
-                        <Select size="small" value={workOffset} onChange={v => frames.setActiveFrame(v)}>
+                        <Select
+                            size="small"
+                            value={workOffset}
+                            onChange={v => frames.setActiveFrame(v)}
+                        >
                             <Option value={0}>G54</Option>
                             <Option value={1}>G55</Option>
                             <Option value={2}>G56</Option>
@@ -141,14 +163,27 @@ export const GCodeTile = () => {
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
                         <Tag>{STREAMSTATE[stream.state]}</Tag>
 
-                        <Radio.Group optionType="button" onChange={send_command} value={inferredCommand}>
-                            <Radio.Button disabled={can_pause} value={STREAMCOMMAND.STREAMCOMMAND_RUN}>
+                        <Radio.Group
+                            optionType="button"
+                            onChange={send_command}
+                            value={inferredCommand}
+                        >
+                            <Radio.Button
+                                disabled={can_pause}
+                                value={STREAMCOMMAND.STREAMCOMMAND_RUN}
+                            >
                                 {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
                             </Radio.Button>
-                            <Radio.Button disabled={!can_pause} value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}>
+                            <Radio.Button
+                                disabled={!can_pause}
+                                value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}
+                            >
                                 <PauseOutlined />
                             </Radio.Button>
-                            <Radio.Button disabled={!can_stop} value={STREAMCOMMAND.STREAMCOMMAND_STOP}>
+                            <Radio.Button
+                                disabled={!can_stop}
+                                value={STREAMCOMMAND.STREAMCOMMAND_STOP}
+                            >
                                 <StopIcon />
                             </Radio.Button>
                         </Radio.Group>
