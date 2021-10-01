@@ -14,10 +14,10 @@ jobs:
                     node-version: "12.x"
 
             -   name: Install packages
-                run: npm ci --no-optional
+                run: pnpm ci --no-optional
 
             -   name: Build site
-                run: npm run build:glowsite
+                run: pnpm run build:glowsite
 #                env:
 #                    SNOWPACK_PUBLIC_BUILD_NUM: 1.${{ github.run_number }}
 
