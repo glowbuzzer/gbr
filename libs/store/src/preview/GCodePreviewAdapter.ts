@@ -2,9 +2,9 @@ import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"
 
-function fromVector3(p: Vector3): number[] {
-    return [p.x, p.y, p.z]
-}
+// function fromVector3(p: Vector3): number[] {
+//     return [p.x, p.y, p.z]
+// }
 
 function fromHexString(s: string) {
     // convert web color code, eg '#c0c0c0' into THREE rgb floats in range [0,1]
@@ -44,8 +44,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const result: GCodeSegment[] = []
         points.slice(1).forEach((p, index) =>
             result.push({
-                from: fromVector3(points[index]),
-                to: fromVector3(p),
+                from: points[index],
+                to: p,
                 color,
                 lineNum
             })
@@ -54,7 +54,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     toArc(params, ccw: boolean, from, to): EllipseCurve {
-        const [[x1, y1], [x2, y2]] = [from, to]
+        const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from, to]
         const I = params.I || 0
         const J = params.J || 0
 
@@ -95,6 +95,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G2(params, { lineNum }, from, to) {
+        console.log("FROM", from, "TO", to)
         const arc = this.toArc(params, false, from, to)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))

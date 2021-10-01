@@ -6,8 +6,8 @@ import { useFrames } from "../frames"
 import { useKinematics } from "../kinematics"
 
 export type GCodeSegment = {
-    from: number[]
-    to: number[]
+    from: { x: number; y: number; z: number }
+    to: { x: number; y: number; z: number }
     color: number[]
     lineNum?: number
 }
