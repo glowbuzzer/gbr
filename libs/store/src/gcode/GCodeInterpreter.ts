@@ -55,20 +55,31 @@ const partitionWordsByGroup = (words = []) => {
 //     // }
 // }
 
+const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+
 class GCodeInterpreter {
     private motionMode = "G0"
-    // protected readonly current_positions: number[]
+    private readonly current_positions
     protected relative: boolean
 
-    // constructor() {
-    //     // this.current_positions = current_positions
-    // }
+    constructor(current_positions = { x: null, y: null, z: null }) {
+        this.current_positions = current_positions
+    }
 
-    // protected updateModals(params) {
-    //     // const prev = [...this.current_positions]
-    //     // Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions, this.relative))
-    //     // return [prev, [...this.current_positions]]
-    // }
+    private updatePositions(params) {
+        if (this.relative) {
+            this.current_positions.x = 0
+            this.current_positions.y = 0
+            this.current_positions.z = 0
+        }
+        const prev = { ...this.current_positions }
+        Object.keys(params).forEach(k => {
+            if (gcode_axes.includes(k)) {
+                this.current_positions[k.toLowerCase()] = params[k]
+            }
+        })
+        return [prev, { ...this.current_positions }]
+    }
 
     interpret(data) {
         const groups = partitionWordsByGroup(data.words)
@@ -86,7 +97,16 @@ class GCodeInterpreter {
                 args = fromPairs(words.slice(1))
 
                 // Motion Mode
-                if (code === 0 || code === 1 || code === 2 || code === 3 || code === 38.2 || code === 38.3 || code === 38.4 || code === 38.5) {
+                if (
+                    code === 0 ||
+                    code === 1 ||
+                    code === 2 ||
+                    code === 3 ||
+                    code === 38.2 ||
+                    code === 38.3 ||
+                    code === 38.4 ||
+                    code === 38.5
+                ) {
                     this.motionMode = cmd
                 } else if (code === 90 /* absolute */) {
                     this.relative = false
@@ -138,15 +158,27 @@ class GCodeInterpreter {
             //     this.defaultHandler(cmd, args)
             // }
 
+            const [current_position, target_position] = this.updatePositions(args)
             if (typeof this[cmd] === "function") {
                 const func = this[cmd].bind(this)
-                func(args, data)
+                func(args, data, current_position, target_position)
+                this.command(true, cmd, args, data, current_position, target_position)
+            } else {
+                this.command(false, cmd, args, data, current_position, target_position)
             }
         }
     }
 
+    command(handled, cmd, args, data, current_position, target_position) {
+        // override to inspect all commands
+    }
+
     post() {
         // override to provide postprocessing logic
+    }
+
+    get position() {
+        return { ...this.current_positions }
     }
 
     execute(str) {
@@ -157,6 +189,5 @@ class GCodeInterpreter {
         this.post()
     }
 }
-
 
 export default GCodeInterpreter

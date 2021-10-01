@@ -7,6 +7,7 @@ import { enquireScreen } from "enquire-js"
 import { Footer10DataSource, Nav00DataSource } from "../data/antmotion.data"
 import { CodeDemo, CodeDemoStoreProvider } from "../components/CodeDemo"
 import { MdxFragmentProvider } from "../providers/MdxFragmentProvider"
+import { Link } from "gatsby"
 
 let isMobile
 enquireScreen(b => {
@@ -18,9 +19,17 @@ export const DefaultLayoutWithMdxSupport = ({ children }) => {
     const [mobile, setMobile] = useState(isMobile)
 
     const mdxComponents = {
-        h1: props => <h1 {...props} />,
+        // h1: props => <h1 {...props} />,
         // this is our custom code with demo component
-        CodeDemo: props => <CodeDemo {...props} />
+        CodeDemo: props => <CodeDemo {...props} />,
+        // rewrite links using Link component
+        a: ({ children, href, title }) => {
+            return (
+                <Link to={href} title={title}>
+                    {children}
+                </Link>
+            )
+        }
     }
 
     useEffect(() => {
@@ -34,11 +43,16 @@ export const DefaultLayoutWithMdxSupport = ({ children }) => {
         <CodeDemoStoreProvider>
             {/* MdxFragmentProvider is ours - it enables useFragment hook to get MDX fragments in a page */}
             <MdxFragmentProvider>
-                {/* MdxFragmentProvider is NOT ours - it is required for MDXRenderer */}
+                {/* MDXProvider is NOT ours - it is required for MDXRenderer */}
                 <MDXProvider components={mdxComponents}>
                     <SiteTopNav dataSource={Nav00DataSource} isMobile={mobile} />
                     {children}
-                    <SiteFooter id="Footer1_0" key="Footer1_0" dataSource={Footer10DataSource} isMobile={mobile} />
+                    <SiteFooter
+                        id="Footer1_0"
+                        key="Footer1_0"
+                        dataSource={Footer10DataSource}
+                        isMobile={mobile}
+                    />
                 </MDXProvider>
             </MdxFragmentProvider>
         </CodeDemoStoreProvider>

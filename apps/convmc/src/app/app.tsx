@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { PreferencesDialog } from "@glowbuzzer/controls"
-import { GlowbuzzerApp } from "@glowbuzzer/store"
+import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { Button, Menu } from "antd"
 import { BrowserRouter, Link } from "react-router-dom"
 import { Route } from "react-router"

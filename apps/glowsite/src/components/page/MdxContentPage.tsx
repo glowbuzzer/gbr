@@ -40,10 +40,26 @@ const StyledMdxPage = styled.div`
  * Query for node by slug and render using MDXRenderer (custom MDXProvider in DefaultLayoutWithMdxSupport.tsx)
  */
 const MdxContentPage = ({ data }) => {
+    const componentMetadata = data.componentMetadata
+    const componentProps = componentMetadata?.childrenComponentProp?.map(p => ({
+        key: p.name,
+        name: { name: p.name, required: p.required },
+        type: p.type?.name,
+        description: p.description?.text,
+        default: p.defaultValue?.value
+    }))
+
+    console.log("MDX", data.mdx.body)
     return (
         <StyledMdxPage>
             <MDXRenderer>{data.mdx.body}</MDXRenderer>
-            <ComponentProps data={data.componentMetadata} />
+            {componentProps && (
+                <ComponentProps
+                    displayName={componentMetadata.displayName}
+                    properties={componentProps}
+                    showDefaults={true}
+                />
+            )}
         </StyledMdxPage>
     )
 }

@@ -16,44 +16,20 @@ function fromHexString(s: string) {
     return [r / 255, g / 255, b / 255]
 }
 
-const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
-
-function update_axis(axis, value, current_positions, relative) {
-    const index = gcode_axes.indexOf(axis)
-    if (index < 0) {
-        return
-    }
-    if (relative) {
-        current_positions[index] += value
-    } else {
-        current_positions[index] = value
-    }
-}
-
 const RAPID_COLOR = fromHexString("#a94d4d")
 const MOVE_COLOR = fromHexString("#a7c0fd")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
-    private readonly current_positions: number[]
     private frameIndex = 0
     // private kcFrame: number
     private convertToFrame
 
-    constructor(current_positions: number[], convertToFrame) {
-        super()
-        this.current_positions = current_positions
+    constructor(current_positions: { x: number; y: number; z: number }, convertToFrame) {
+        super(current_positions)
         // this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
-    }
-
-    private updateModals(params) {
-        const prev = [...this.current_positions]
-        Object.keys(params).forEach(k =>
-            update_axis(k, params[k], this.current_positions, this.relative)
-        )
-        return [prev, [...this.current_positions]]
     }
 
     private frame_conversion(point) {
@@ -77,8 +53,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return result
     }
 
-    toArc(params, ccw: boolean): EllipseCurve {
-        const [[x1, y1], [x2, y2]] = this.updateModals(params).map(this.frame_conversion)
+    toArc(params, ccw: boolean, from, to): EllipseCurve {
+        const [[x1, y1], [x2, y2]] = [from, to]
         const I = params.I || 0
         const J = params.J || 0
 
@@ -97,8 +73,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return new EllipseCurve(cx, cy, r, r, startAngle, endAngle, !ccw /* not sure why? */, 0)
     }
 
-    G0(params, { lineNum }) {
-        const [from, to] = this.updateModals(params).map(this.frame_conversion)
+    G0(params, { lineNum }, from, to) {
+        // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
         this.segments.push({
             from,
             to,
@@ -107,8 +83,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         })
     }
 
-    G1(params, { lineNum }) {
-        const [from, to] = this.updateModals(params).map(this.frame_conversion)
+    G1(params, { lineNum }, from, to) {
+        // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
         // console.log("LINE FROM", from, "TO", to)
         this.segments.push({
             from,
@@ -118,14 +94,14 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         })
     }
 
-    G2(params, { lineNum }) {
-        const arc = this.toArc(params, false)
+    G2(params, { lineNum }, from, to) {
+        const arc = this.toArc(params, false, from, to)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }
 
-    G3(params, { lineNum }) {
-        const arc = this.toArc(params, true)
+    G3(params, { lineNum }, from, to) {
+        const arc = this.toArc(params, true, from, to)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
     }

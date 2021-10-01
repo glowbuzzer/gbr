@@ -1,5 +1,6 @@
 {
     "presets": ["@nrwl/react/babel"],
+    "extends": "../../.babelrc",
     "plugins": [
         [
             "styled-components",

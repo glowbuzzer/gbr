@@ -1,4 +1,5 @@
 {
+    "extends": "../../.babelrc",
     "presets": ["@nrwl/react/babel"],
     "plugins": [
         [

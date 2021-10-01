@@ -2,13 +2,13 @@ import * as React from "react"
 import { FC, useEffect, useRef, useState } from "react"
 import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
-import { connectionSlice, ConnectionState, useConnect } from "./connect"
-import { usePrefs } from "./prefs"
+import { connectionSlice, ConnectionState, useConnect } from "../../store/src/connect"
+import { usePrefs } from "../../store/src/prefs"
 import styled, { css, ThemeProvider } from "styled-components"
-import { rootReducer } from "./root"
+import { rootReducer } from "../../store/src/root"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
-import { ConfigState, useConfigState } from "./config"
+import { ConfigState, useConfigState } from "../../store/src/config"
 
 const Startup = ({ autoConnect }) => {
     const connection = useConnect()
@@ -35,8 +35,7 @@ declare module "styled-components" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    export interface DefaultTheme extends Theme {
-    }
+    export interface DefaultTheme extends Theme {}
 }
 
 const GlowbuzzerAppStyle = styled.div<{ minWidth: string }>`
@@ -91,7 +90,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
         if (autoConnect && state === ConnectionState.DISCONNECTED) {
             // trigger immediate attempt to connect
             interval.current = Math.max(3, Math.min(30, interval.current * 2))
-            setCountdown(c => c < 0 ? 0 : c)
+            setCountdown(c => (c < 0 ? 0 : c))
             // timer.current = setInterval(() => {
             //     console.log("TIMER FIRED")
             //     setCountdown(countdown => {
@@ -131,7 +130,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
                 reconnect()
             }, 0)
         } else if (countdown > 0 && autoConnect) {
-            if ( countdown > 3 ) {
+            if (countdown > 3) {
                 setShowRetry(true)
             }
             const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
@@ -142,8 +141,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
     useEffect(() => {
         if (configState === ConfigState.AWAITING_HLC_INIT) {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            Promise.all([init ? init : () => {
-            }]).then(() => setConfigState(ConfigState.READY))
+            Promise.all([init ? init : () => {}]).then(() => setConfigState(ConfigState.READY))
         }
     }, [init, configState, setConfigState])
 
@@ -170,7 +168,12 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
 
     return (
         <GlowbuzzerAppStyle minWidth={minWidth || "3160px"}>
-            <GlowbuzzerDimmerStyle visible={!(connection.connected && configState === ConfigState.READY) && connection.autoConnect}>
+            <GlowbuzzerDimmerStyle
+                visible={
+                    !(connection.connected && configState === ConfigState.READY) &&
+                    connection.autoConnect
+                }
+            >
                 <div className="reconnect-panel">
                     <div>
                         {showRetry && countdown > 2 ? (
@@ -203,7 +206,12 @@ type GlowbuzzerAppProps = {
     storeEnhancers?: StoreEnhancer[]
 }
 
-export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({ autoConnect, minWidth, storeEnhancers, children }) => {
+export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({
+    autoConnect,
+    minWidth,
+    storeEnhancers,
+    children
+}) => {
     const middleware = getDefault => {
         return getDefault({ immutableCheck: false, serializableCheck: false })
     }

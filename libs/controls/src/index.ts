@@ -40,3 +40,5 @@ export { StopIcon } from "./util/StopIcon"
 export { DroItem } from "./dro/DroItem"
 export { FrameSelectorDropdown } from "./misc/FrameSelectorDropdown"
 export { FrameSelector } from "./misc/FrameSelector"
+
+export { GlowbuzzerApp } from "./GlowbuzzerApp"

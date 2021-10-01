@@ -1,4 +1,4 @@
-import { GlowbuzzerApp } from "@glowbuzzer/store"
+import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import styled from "styled-components"
 
 import "antd/dist/antd.css"
@@ -7,20 +7,24 @@ import { Button } from "antd"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import {
     AnalogInputsTile,
-    AnalogOutputsTile, CartesianDro,
+    AnalogOutputsTile,
+    CartesianDro,
     ConnectTile,
     DevToolsTile,
     DigitalInputsTile,
-    DigitalOutputsTile, FeedRateTile, GCodeTile,
+    DigitalOutputsTile,
+    FeedRateTile,
+    GCodeTile,
     IntegerInputsTile,
     IntegerOutputsTile,
-    JogTile, PreferencesDialog, ToolPathTile
+    JogTile,
+    PreferencesDialog,
+    ToolPathTile
 } from "@glowbuzzer/controls"
 import React, { useState } from "react"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
-const StyledApp = styled.div`
-`
+const StyledApp = styled.div``
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -38,9 +42,13 @@ export function App() {
         [
             { render: <ConnectTile />, height: 2, title: "Connection" },
             {
-                render: <Tile title="Cartesian DRO">
-                    <CartesianDro kinematicsConfigurationIndex={0} />
-                </Tile>, height: 2, title: "Cartesian DRO"
+                render: (
+                    <Tile title="Cartesian DRO">
+                        <CartesianDro kinematicsConfigurationIndex={0} />
+                    </Tile>
+                ),
+                height: 2,
+                title: "Cartesian DRO"
             },
             { render: <FeedRateTile />, height: 2, title: "Feedrate" },
             { render: <JogTile />, height: 4, title: "Jogging" },

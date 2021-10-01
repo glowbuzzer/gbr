@@ -1,7 +1,7 @@
 import React from "react"
 import { graphql, Link, useStaticQuery } from "gatsby"
-import styled from "styled-components"
 import { Menu } from "antd"
+import { StyledLeftNav } from "./nav/StyledLeftNav"
 
 function slug_path(slug) {
     return slug.split("/").filter(p => p.trim().length)
@@ -50,20 +50,6 @@ function node_sort(kva, kvb) {
     return $ca ? 1 : -1
 }
 
-const StyledLeftNav = styled.div`
-    width: 300px !important;
-
-    .title {
-        padding: 12px;
-        font-size: 1.2em;
-        font-weight: bold;
-    }
-
-    .capitalize {
-        text-transform: capitalize;
-    }
-`
-
 export const DynamicLeftNav = ({ current }) => {
     const qr = useStaticQuery(graphql`
         query MyQuery {
@@ -83,18 +69,20 @@ export const DynamicLeftNav = ({ current }) => {
     `)
 
     console.log("QUERY", qr)
-    const root = qr.allMdx.nodes.find(({ slug, frontmatter }) => frontmatter.section && current.startsWith(slug))
+    const root = qr.allMdx.nodes.find(
+        ({ slug, frontmatter }) => frontmatter.section && current.startsWith(slug)
+    )
     console.log("FOUND ROOT", root)
 
     const subnav = qr.allMdx.nodes
-        .filter(({ slug }) => slug.startsWith(root.slug) && slug !== root.slug)
+        .filter(({ slug, frontmatter }) => slug.startsWith(root.slug) && slug !== root.slug)
         .map(i => ({
             ...i,
             relative: i.slug.substr(root.slug.length)
         }))
         .sort(slug_sort)
 
-    const tree = {} as Object
+    const tree = {} as unknown
     for (const item of subnav) {
         add_nav(item, tree)
     }
@@ -115,12 +103,19 @@ export const DynamicLeftNav = ({ current }) => {
                         const title = $node?.frontmatter?.title
                         if (Object.keys(children).length) {
                             return (
-                                <Menu.SubMenu key={$node.slug} className={title || "capitalize"} title={title || k}>
+                                <Menu.SubMenu
+                                    key={$node.id}
+                                    className={title || "capitalize"}
+                                    title={title || k}
+                                >
                                     {Object.keys(children)
+                                        .filter(c => !c.startsWith("_")) // filter _meta
                                         .sort()
                                         .map(c => (
                                             <Menu.Item key={children[c].$node.slug}>
-                                                <Link to={"/" + children[c].$node.slug}>{children[c].$node?.frontmatter?.title || c}</Link>
+                                                <Link to={"/" + children[c].$node.slug}>
+                                                    {children[c].$node?.frontmatter?.title || c}
+                                                </Link>
                                             </Menu.Item>
                                         ))}
                                 </Menu.SubMenu>

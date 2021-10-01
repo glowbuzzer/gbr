@@ -4,9 +4,6 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useFrames } from "../frames"
 import { useKinematics } from "../kinematics"
-import * as React from "react"
-import { useMemo } from "react"
-import { gcodeSlice } from "../gcode"
 
 export type GCodeSegment = {
     from: number[]
@@ -41,7 +38,10 @@ export const previewSlice = createSlice({
 
 export function usePreview() {
     const segments = useSelector(({ preview: { segments } }: RootState) => segments, shallowEqual)
-    const highlightLine = useSelector(({ preview: { highlightLine } }: RootState) => highlightLine, shallowEqual)
+    const highlightLine = useSelector(
+        ({ preview: { highlightLine } }: RootState) => highlightLine,
+        shallowEqual
+    )
     const frames = useFrames()
     const kc = useKinematics(0, frames.active)
 
@@ -49,8 +49,7 @@ export function usePreview() {
 
     return {
         setGCode(gcode: string) {
-            const { x, y, z } = kc.pose.position
-            const interpreter = new GCodePreviewAdapter([x, y, z], frames.convertToFrame)
+            const interpreter = new GCodePreviewAdapter(kc.pose.position, frames.convertToFrame)
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
         },

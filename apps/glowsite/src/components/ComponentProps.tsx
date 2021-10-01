@@ -29,16 +29,10 @@ const StyledDiv = styled.div`
 `
 
 function render_cell_inner(value) {
-    return value?.trim().length ? <span className="prop-cell-inner">{value}</span> : null
+    return <span className="prop-cell-inner">{value}</span>
 }
 
-export const ComponentProps = ({ data }) => {
-    console.log("DATA", data)
-    const props = data?.childrenComponentProp
-    if (!props) {
-        return null
-    }
-
+export const ComponentProps = ({ displayName, properties, showDefaults }) => {
     const columns = [
         {
             title: "Property",
@@ -66,54 +60,28 @@ export const ComponentProps = ({ data }) => {
             key: "description",
             className: "prop-description",
             render: render_cell_inner
-        },
-        {
+        }
+    ]
+    if (showDefaults) {
+        columns.push({
             title: "Default",
             dataIndex: "default",
             key: "default",
             className: "prop-default",
             render: render_cell_inner
-        }
-    ]
-
-    const dataSource = props.map(p => ({
-        key: p.name,
-        name: { name: p.name, required: p.required },
-        type: p.type?.name,
-        description: p.description?.text,
-        default: p.defaultValue?.value
-    }))
+        })
+    }
 
     return (
         <StyledDiv>
-            <h2>Properties of {data.displayName}</h2>
-            <Table className="props-table" columns={columns} dataSource={dataSource} pagination={false} size="small" />
-            {/*
-            <table className="prop-table">
-                <thead>
-                    <tr>
-                        <th>Property</th>
-                        <th>Type</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {props.map(p => (
-                        <tr key={p.name}>
-                            <td>
-                                {p.name}
-                                {p.required && <>*</>}
-                            </td>
-                            <td>{p.type?.name}</td>
-                            <td>{p.description?.text}</td>
-                            <td>{p.defaultValue?.value}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            <pre>{JSON.stringify(data, null, 2)}</pre>
-*/}
+            <h2>Properties of {displayName}</h2>
+            <Table
+                className="props-table"
+                columns={columns}
+                dataSource={properties}
+                pagination={false}
+                size="small"
+            />
         </StyledDiv>
     )
 }

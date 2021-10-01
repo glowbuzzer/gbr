@@ -10,6 +10,16 @@ module.exports = {
         description: `Develop machines using web technologies combined with real-time motion control`
     },
     plugins: [
+        // "gatsby-source-gbc-api",
+        {
+            resolve: "gatsby-source-gbc-api",
+            options: {
+                typedoc: {
+                    entryPoints: [`${__dirname}/../../libs/store/src/gbc.ts`],
+                    tsconfig: `${__dirname}/../../tsconfig.doc.json`
+                }
+            }
+        },
         {
             resolve: "gatsby-transformer-react-docgen",
             options: {
