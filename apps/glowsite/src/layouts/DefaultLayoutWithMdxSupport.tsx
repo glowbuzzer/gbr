@@ -22,10 +22,17 @@ export const DefaultLayoutWithMdxSupport = ({ children }) => {
         // h1: props => <h1 {...props} />,
         // this is our custom code with demo component
         CodeDemo: props => <CodeDemo {...props} />,
-        // rewrite links using Link component
+        // rewrite links using Link component, making sure to handle relative href
         a: ({ children, href, title }) => {
+            if (href.startsWith("http") || href.startsWith("#")) {
+                return (
+                    <a href={href} title={title}>
+                        {children}
+                    </a>
+                )
+            }
             return (
-                <Link to={href} title={title}>
+                <Link to={href.startsWith("/") ? href : "../" + href} title={title}>
                     {children}
                 </Link>
             )
