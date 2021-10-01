@@ -28,7 +28,7 @@ import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
 import "./app.css"
 import { CheckOutlined } from "@ant-design/icons"
-import { GlowbuzzerApp } from "@glowbuzzer/store"
+import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { CartesianApp } from "./CartesianApp"
 import { FrameOverrideDialog } from "@glowbuzzer/controls"
 
@@ -68,17 +68,36 @@ const AppInner = () => {
 
     return (
         <StyledApp>
-            <PreferencesDialog visible={showPreferences} onClose={() => setShowPreferences(false)} />
-            <FrameOverrideDialog visible={showFrameOverrides} onClose={() => setShowFrameOverrides(false)} />
+            <PreferencesDialog
+                visible={showPreferences}
+                onClose={() => setShowPreferences(false)}
+            />
+            <FrameOverrideDialog
+                visible={showFrameOverrides}
+                onClose={() => setShowFrameOverrides(false)}
+            />
             <Menu mode="horizontal" onClick={handleClick}>
                 <Menu.SubMenu title="File">
                     <Menu.Item key="file:prefs">Preferences...</Menu.Item>
                     <Menu.Item key="file:workoffsets">Work Offsets...</Menu.Item>
                 </Menu.SubMenu>
                 <Menu.SubMenu title="View">
-                    {tile_items(["connection", "tasks", "gcode", "toolpath", "feedrate", "jogging"])}
-                    <Menu.SubMenu title="Input/Output" children={tile_items(["dins", "douts", "ains", "aouts", "iins", "iouts"])} />
-                    <Menu.SubMenu title="Advanced" children={tile_items(["drives", "telemetry", "devtools"])} />
+                    {tile_items([
+                        "connection",
+                        "tasks",
+                        "gcode",
+                        "toolpath",
+                        "feedrate",
+                        "jogging"
+                    ])}
+                    <Menu.SubMenu
+                        title="Input/Output"
+                        children={tile_items(["dins", "douts", "ains", "aouts", "iins", "iouts"])}
+                    />
+                    <Menu.SubMenu
+                        title="Advanced"
+                        children={tile_items(["drives", "telemetry", "devtools"])}
+                    />
                 </Menu.SubMenu>
             </Menu>
             <TileLayout />
@@ -143,7 +162,18 @@ export const App = () => {
             height: 6,
             title: "Digital Inputs",
             render: (
-                <DigitalInputsTile labels={["PNU Extended (3)", "PNU Retracted (4)", "Magic Eye Input (5)", "UKN", "EStop", "UKN", "Estop", "UKN"]} />
+                <DigitalInputsTile
+                    labels={[
+                        "PNU Extended (3)",
+                        "PNU Retracted (4)",
+                        "Magic Eye Input (5)",
+                        "UKN",
+                        "EStop",
+                        "UKN",
+                        "Estop",
+                        "UKN"
+                    ]}
+                />
             )
         },
         douts: {

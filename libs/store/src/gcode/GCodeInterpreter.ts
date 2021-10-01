@@ -41,34 +41,44 @@ const partitionWordsByGroup = (words = []) => {
     return groups
 }
 
-const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+// const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
-function update_axis(axis, value, current_positions, relative) {
-    const index = gcode_axes.indexOf(axis)
-    if (index < 0) {
-        return
-    }
-    if (relative) {
-        current_positions[index] += value
-    } else {
-        current_positions[index] = value
-    }
-}
+// function update_axis(axis, value, current_positions, relative) {
+//     const index = gcode_axes.indexOf(axis)
+//     if (index < 0) {
+//         return
+//     }
+//     // if (relative) {
+//     //     current_positions[index] += value
+//     // } else {
+//     //     current_positions[index] = value
+//     // }
+// }
+
+const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
 class GCodeInterpreter {
     private motionMode = "G0"
-    protected readonly current_positions: number[]
-    private relative: boolean
+    private readonly current_positions
+    protected relative: boolean
 
-    constructor(current_positions: number[]) {
+    constructor(current_positions = { x: null, y: null, z: null }) {
         this.current_positions = current_positions
     }
 
-    protected updateModals(params) {
-        const prev = [...this.current_positions]
-        Object.keys(params).forEach(k => update_axis(k, params[k], this.current_positions, this.relative))
-        // console.log("FROM", prev, "TO", this.current_positions)
-        return [prev, [...this.current_positions]]
+    private updatePositions(params) {
+        if (this.relative) {
+            this.current_positions.x = 0
+            this.current_positions.y = 0
+            this.current_positions.z = 0
+        }
+        const prev = { ...this.current_positions }
+        Object.keys(params).forEach(k => {
+            if (gcode_axes.includes(k)) {
+                this.current_positions[k.toLowerCase()] = params[k]
+            }
+        })
+        return [prev, { ...this.current_positions }]
     }
 
     interpret(data) {
@@ -87,8 +97,19 @@ class GCodeInterpreter {
                 args = fromPairs(words.slice(1))
 
                 // Motion Mode
-                if (code === 0 || code === 1 || code === 2 || code === 3 || code === 38.2 || code === 38.3 || code === 38.4 || code === 38.5) {
+                if (
+                    code === 0 ||
+                    code === 1 ||
+                    code === 2 ||
+                    code === 3 ||
+                    code === 38.2 ||
+                    code === 38.3 ||
+                    code === 38.4 ||
+                    code === 38.5
+                ) {
                     this.motionMode = cmd
+                } else if (code === 90 /* absolute */) {
+                    this.relative = false
                 } else if (code === 91 /* relative */) {
                     this.relative = true
                 } else if (code === 80) {
@@ -137,15 +158,27 @@ class GCodeInterpreter {
             //     this.defaultHandler(cmd, args)
             // }
 
+            const [current_position, target_position] = this.updatePositions(args)
             if (typeof this[cmd] === "function") {
                 const func = this[cmd].bind(this)
-                func(args, data)
+                func(args, data, current_position, target_position)
+                this.command(true, cmd, args, data, current_position, target_position)
+            } else {
+                this.command(false, cmd, args, data, current_position, target_position)
             }
         }
     }
 
+    command(handled, cmd, args, data, current_position, target_position) {
+        // override to inspect all commands
+    }
+
     post() {
         // override to provide postprocessing logic
+    }
+
+    get position() {
+        return { ...this.current_positions }
     }
 
     execute(str) {
@@ -156,6 +189,5 @@ class GCodeInterpreter {
         this.post()
     }
 }
-
 
 export default GCodeInterpreter

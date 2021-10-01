@@ -2,7 +2,6 @@ import "./connect/ConnectionFactory"
 
 export * from "./gbc"
 
-export { GlowbuzzerApp } from "./GlowbuzzerApp"
 export { ConnectionState, useConnect, connectionSlice } from "./connect"
 export {
     DesiredState,

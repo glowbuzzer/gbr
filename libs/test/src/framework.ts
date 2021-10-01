@@ -50,6 +50,14 @@ export class GbcTest {
         return this
     }
 
+    get m4_stream_total_cap() {
+        return this.gbc.get_m4_stream_total_cap()
+    }
+
+    get m7_stream_total_cap() {
+        return this.gbc.get_m7_stream_total_cap()
+    }
+
     disable_limit_check() {
         this.check_limits = false
         return this
@@ -63,7 +71,6 @@ export class GbcTest {
     }
 
     reset() {
-        console.log("---------- GBC RESET")
         this.gbc.reset()
 
         this.store = configureStore({
@@ -100,19 +107,42 @@ export class GbcTest {
     }
 
     stream(stream) {
-        // console.log("message", message)
+        // console.log("message", JSON.stringify(stream, null, 2))
         this.gbc.send(JSON.stringify({ stream }))
         return this
     }
 
     send_gcode(gcode) {
-        const buffer=[] as any[]
-        const adapter=new GCodeSenderAdapter(buffer, [])
+        const buffer = [] as any[]
+        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
         adapter.execute(gcode)
         return this.stream(buffer)
     }
 
     get assert() {
+        function test_near(actual, expected, tolerance = 0.001 /* absolute tolerance */) {
+            const diff = Math.abs(actual - expected)
+            if (tolerance < 0) {
+                // percentage tolerance
+                const perc = Math.abs(diff / expected)
+                if (perc > Math.abs(tolerance)) {
+                    assert.not.ok(
+                        diff,
+                        `Numeric value test failed: expected=${expected}, actual=${actual}, tolerance=${
+                            Math.abs(tolerance) * 100
+                        }% (${diff * 100})`
+                    )
+                }
+            } else {
+                if (diff > tolerance) {
+                    assert.not.ok(
+                        diff,
+                        `Numeric value test failed: expected=${expected}, actual=${actual}, tolerance=${tolerance} (${diff})`
+                    )
+                }
+            }
+        }
+
         return {
             doutPdo: (index, value) => {
                 assert.equal(this.gbc.get_fb_dout(index), value)
@@ -126,30 +156,46 @@ export class GbcTest {
                 assert.equal(this.gbc.get_fb_iout(index), value)
                 return this
             },
-            streamActivityState: value => {
-                assert.equal(
-                    ACTIVITYSTATE[this.gbc.get_streamed_activity_state()],
-                    ACTIVITYSTATE[value]
-                )
+            streamActivityState: (value, msg?) => {
+                const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state()]
+                const expected = ACTIVITYSTATE[value]
+                if (msg && actual !== expected) {
+                    console.log(msg)
+                }
+                assert.equal(actual, expected)
                 return this
             },
-            selector: (selector, value) => {
+            selector: (selector, expected, msg?) => {
                 const statusMsg = this.status_msg
-                console.log(statusMsg.status.joint)
-                assert.equal(selector(statusMsg), value)
+                const actual = selector(statusMsg)
+                if (msg && actual !== expected) {
+                    console.log("Selector mismatch: ", msg)
+                }
+                assert.equal(actual, expected)
                 return this
             },
-            streamSequence: (
-                selector,
-                seq: [count: number, tag: number, state: ACTIVITYSTATE][],
-                verify = true
-            ) => {
+            near: (selector, expected) => {
+                const actual = selector(this.status_msg)
+                test_near(actual, expected)
+                return this
+            },
+            vel: (joint, expected) => {
+                const actual = this.gbc.get_joint_vel(joint)
+                test_near(actual, expected, -0.1 /* within 10% */)
+                return this
+            },
+            streamSequence: (selector, seq: [number, number, ACTIVITYSTATE][], verify = true) => {
+                let n = 0
                 for (const [count, tag, state] of seq) {
+                    n++
                     this.exec(count)
                     if (verify) {
                         this.assert
-                            .selector(selector, tag) //
-                            .assert.streamActivityState(state)
+                            .selector(selector, tag, "incorrect stream item tag at step " + n) //
+                            .assert.streamActivityState(
+                                state,
+                                "incorrect stream item state at step " + n
+                            )
                     }
                 }
                 return this
@@ -196,13 +242,13 @@ export class GbcTest {
             }
 
             resolve(value) {
-                this.resolution=value
+                this.resolution = value
                 // console.log("RESOLVE!!!", tag)
                 // this.state = true
             }
 
             reject(value) {
-                this.resolution=value
+                this.resolution = value
                 // console.log("REJECT!!!", tag)
                 // this.state = false
             }

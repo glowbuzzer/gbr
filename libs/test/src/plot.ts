@@ -14,6 +14,7 @@ const head = `<!DOCTYPE html>
 <div id="pos"></div>
 <div id="vel"></div>
 <div id="acc"></div>
+<div id="jerk"></div>
 
 <script>
 
@@ -71,6 +72,7 @@ function run () {
   chart('pos', pos_csv)
   chart('vel', vel_csv)
   chart('acc', acc_csv)
+  chart('jerk', jerk_csv)
 }`
 
 const tail = `
@@ -82,15 +84,19 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
     const first_row = labels.join(",")
 
     const vel = pos.map((joints, index) =>
-        joints.map((j, joint_index) => j - pos[index - 1]?.[joint_index] || 0)
+        joints.map((j, joint_index) => 250 * (j - pos[index - 1]?.[joint_index] || 0))
     )
     const acc = vel.map((joints, index) =>
-        joints.map((j, joint_index) => j - vel[index - 1]?.[joint_index] || 0)
+        joints.map((j, joint_index) => 250 * (j - vel[index - 1]?.[joint_index] || 0))
+    )
+    const jerk = acc.map((joints, index) =>
+        joints.map((j, joint_index) => 250 * (j - acc[index - 1]?.[joint_index] || 0))
     )
 
     const pos_csv = pos.map(r => r.join(",")).join("\n")
     const vel_csv = vel.map(r => r.join(",")).join("\n")
     const acc_csv = acc.map(r => r.join(",")).join("\n")
+    const jerk_csv = jerk.map(r => r.join(",")).join("\n")
 
     console.log("Writing plot file:", filename)
     mkdirSync("plot", { recursive: true })
@@ -99,6 +105,7 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
     const pos_csv=\`${first_row}\n${pos_csv}\`
     const vel_csv=\`${first_row}\n${vel_csv}\`
     const acc_csv=\`${first_row}\n${acc_csv}\`
+    const jerk_csv=\`${first_row}\n${jerk_csv}\`
     ${tail}
     `
     writeFileSync("plot/" + filename + ".html", html)

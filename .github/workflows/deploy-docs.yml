@@ -9,17 +9,27 @@ jobs:
         steps:
             -   uses: actions/checkout@v1
 
+            -   name: Cache pnpm modules
+                uses: actions/cache@v2
+                with:
+                    path: ~/.pnpm-store
+                    key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                    restore-keys: |
+                        ${{ runner.os }}-
+
             -   uses: actions/setup-node@v1
                 with:
-                    node-version: "12.x"
+                    node-version: "14.x"
+
+            -   uses: pnpm/action-setup@v2.0.1
+                with:
+                    version: 6.13.0
 
             -   name: Install packages
-                run: npm ci --no-optional
+                run: pnpm install --no-optional
 
             -   name: Build site
-                run: npm run build:glowsite
-#                env:
-#                    SNOWPACK_PUBLIC_BUILD_NUM: 1.${{ github.run_number }}
+                run: pnpm run build:glowsite
 
             -   name: Deploy site
                 run: ./deploy-site.sh glowbuzzer-www-internal E37J47Y7NXA5BD

@@ -1,8 +1,7 @@
 import * as uvu from "uvu"
-import * as assert from "uvu/assert"
 import { gbc } from "../../gbc"
 import { Vector3 } from "three"
-import { ACTIVITYSTATE, BLENDTYPE, POSITIONREFERENCE } from "../../../store/src"
+import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE, POSITIONREFERENCE } from "../../../store/src"
 
 const test = uvu.suite("blending")
 
@@ -14,6 +13,7 @@ test.before.each(ctx => {
 })
 
 const tag = state => state.stream.tag
+const pos = (joint) => state => state.status.joint[joint].actPos
 
 /**
  * NOTES on further blending tests (when required)
@@ -78,17 +78,16 @@ test("can blend move line / move line at 50pc", () => {
     }
 })
 
-const sqrt2 = Math.sqrt(2)
-
 test("can blend move line / move arc at 100pc", () => {
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 5, 0), false, moveParams).command
-    const line2 = gbc.activity.moveArc(
+    const line1 = gbc.activity.moveLine(new Vector3(25, 0, 0), false, moveParams).command
+    const line2 = gbc.activity.moveArcWithCentre(
         new Vector3(0, 25, 0),
-        new Vector3(25 / sqrt2, 25 / sqrt2, 0),
+        new Vector3(0, 0, 0),
+        ARCDIRECTION.ARCDIRECTION_CCW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
@@ -115,10 +114,11 @@ test("can blend move to / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(new Vector3(25, 5, 0), moveParams).command
-    const line2 = gbc.activity.moveArc(
+    const line1 = gbc.activity.moveToPosition(new Vector3(25, 0, 0), moveParams).command
+    const line2 = gbc.activity.moveArcWithCentre(
         new Vector3(0, 25, 0),
-        new Vector3(25 / sqrt2, 25 / sqrt2, 0),
+        new Vector3(0, 0, 0),
+        ARCDIRECTION.ARCDIRECTION_CCW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
@@ -145,9 +145,10 @@ test("can blend move arc / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArc(
+    const line1 = gbc.activity.moveArcWithCentre(
         new Vector3(25, 25, 0),
-        new Vector3(25 / sqrt2, 25 - 25 / sqrt2, 0),
+        new Vector3(25, 0, 0),
+        ARCDIRECTION.ARCDIRECTION_CW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
@@ -157,11 +158,10 @@ test("can blend move arc / move line at 100pc", () => {
     try {
         gbc.stream([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
-            [40, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+            [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
             [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
             [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-            [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+            [50, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
         ])
             .verify()
     } finally {
@@ -174,9 +174,10 @@ test("can blend move arc / move to position at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArc(
+    const line1 = gbc.activity.moveArcWithCentre(
         new Vector3(25, 25, 0),
-        new Vector3(25 / sqrt2, 25 - 25 / sqrt2, 0),
+        new Vector3(25, 0, 0),
+        ARCDIRECTION.ARCDIRECTION_CW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
@@ -203,15 +204,17 @@ test("can blend move arc / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const arc1 = gbc.activity.moveArc(
+    const arc1 = gbc.activity.moveArcWithCentre(
         new Vector3(25, 25, 0),
-        new Vector3(25 / sqrt2, 25 - 25 / sqrt2, 0),
+        new Vector3(25, 0, 0),
+        ARCDIRECTION.ARCDIRECTION_CW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
-    const arc2 = gbc.activity.moveArc(
+    const arc2 = gbc.activity.moveArcWithCentre(
         new Vector3(0, 0, 0),
-        new Vector3(25 - 25 / sqrt2, 25 / sqrt2, 0),
+        new Vector3(0, 25, 0),
+        ARCDIRECTION.ARCDIRECTION_CW,
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
@@ -375,8 +378,28 @@ test("can handle very short move in blend sequence", async () => {
             [5, 4, ACTIVITYSTATE.ACTIVITY_ACTIVE],
             [25, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
         ], true /* set to false to skip verify */).verify()
+            .assert.near(pos(0), 2)
+            .assert.near(pos(1), 0.1)
     } finally {
         gbc.plot("blend-short-move-issue")
+    }
+})
+
+test("handles incomplete gcode during blend", async () => {
+    try {
+        gbc.send_gcode(`
+                G64
+                G91
+                G1 X1 Y1
+                G1 Y-1 ; doesn't specify X so has to determine X from machine state (prior to reaching target)
+                M2`)
+            .assert.streamSequence(tag, [
+            [35, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+        ], true /* set to false to skip verify */).verify()
+            .assert.near(pos(0), 1)
+            .assert.near(pos(1), 0)
+    } finally {
+        gbc.plot("blend-handle-partial-gcode")
     }
 })
 
@@ -394,6 +417,8 @@ test("can handle very short arc in blend sequence", async () => {
             [10, 4, ACTIVITYSTATE.ACTIVITY_ACTIVE],
             [20, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
         ], true /* set to false to skip verify */).verify()
+            .assert.near(pos(0), 1)
+            .assert.near(pos(1), 1)
     } finally {
         gbc.plot("blend-short-move-arc")
     }

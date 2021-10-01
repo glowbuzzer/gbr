@@ -3,6 +3,7 @@ import { DefaultLayoutWithMdxSupport } from "./DefaultLayoutWithMdxSupport"
 import { Container } from "../components/Container"
 import { DynamicLeftNav } from "../components/DynamicLeftNav"
 import styled from "styled-components"
+import { GbcSchemaLeftNav } from "../components/nav/GbcSchemaLeftNav"
 
 const StyledBodyArea = styled.div`
     display: flex;
@@ -17,6 +18,15 @@ export default ({ children, pageContext }) => {
             <DefaultLayoutWithMdxSupport>
                 <StyledBodyArea>
                     <DynamicLeftNav current={pageContext.slug} />
+                    <Container>{children}</Container>
+                </StyledBodyArea>
+            </DefaultLayoutWithMdxSupport>
+        )
+    } else if (pageContext.layout === "gbc-schema") {
+        return (
+            <DefaultLayoutWithMdxSupport>
+                <StyledBodyArea>
+                    <GbcSchemaLeftNav current={pageContext.slug} />
                     <Container>{children}</Container>
                 </StyledBodyArea>
             </DefaultLayoutWithMdxSupport>

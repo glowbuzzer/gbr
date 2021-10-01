@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "noResolve": true,
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "apps/**/**",
+        "public/static/**/**",
+        "./node_modules/**"
+    ],
+    "files": [
+        "./libs/store/src/gbc.ts"
+    ],
+    "include": [
+        "./libs/store/src/gbc.ts",
+    ]
+}

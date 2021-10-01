@@ -47,11 +47,23 @@ export const Nav00DataSource = {
                 },
                 subItem: [
                     sub_item("Basics", "How it all fits together", "/how-it-works/basics"),
-                    sub_item("Detail", "More technical details on the toolkit", "/how-it-works/detail"),
-                    sub_item("Fieldbus", "How does the fieldbus interface work", "/how-it-works/fieldbus"),
+                    sub_item(
+                        "Detail",
+                        "More technical details on the toolkit",
+                        "/how-it-works/detail"
+                    ),
+                    sub_item(
+                        "Fieldbus",
+                        "How does the fieldbus interface work",
+                        "/how-it-works/fieldbus"
+                    ),
                     sub_item("Drives", "How does it integrate with drives", "/how-it-works/drives"),
                     sub_item("Linux", "How to run on a Linux platform", "/how-it-works/linux"),
-                    sub_item("Embedded", "How to run on a microcontroller", "/how-it-works/embedded")
+                    sub_item(
+                        "Embedded",
+                        "How to run on a microcontroller",
+                        "/how-it-works/embedded"
+                    )
                 ].map((item, index) => ({
                     ...item,
                     name: `how${index}`
@@ -64,9 +76,17 @@ export const Nav00DataSource = {
                     children: [{ children: "Get started", name: "text" }]
                 },
                 subItem: [
-                    sub_item("Hardware", "Starter kits and recommended hardware", "/get-started/hardware"),
+                    sub_item(
+                        "Hardware",
+                        "Starter kits and recommended hardware",
+                        "/get-started/hardware"
+                    ),
                     sub_item("Motion", "Get a drive moving", "/get-started/motion"),
-                    sub_item("Front-end", "Clone and modify a front-end template", "/get-started/front-end"),
+                    sub_item(
+                        "Front-end",
+                        "Clone and modify a front-end template",
+                        "/get-started/front-end"
+                    ),
                     sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat")
                 ].map((item, index) => ({
                     ...item,
@@ -82,7 +102,11 @@ export const Nav00DataSource = {
                 subItem: [
                     sub_item("Tutorials", "Step-by-step guidance", "/docs/tutorials/"),
                     sub_item("Core Control (GBC)", "Core control documentation", "/docs/gbc/"),
-                    sub_item("EtherCAT Master (GBEM)", "EtherCAT master documentation", "/docs/gbem/"),
+                    sub_item(
+                        "EtherCAT Master (GBEM)",
+                        "EtherCAT master documentation",
+                        "/docs/gbem/"
+                    ),
                     sub_item("Front-end", "React component documentation", "/docs/ui/")
                 ].map((item, index) => ({
                     ...item,
@@ -101,7 +125,7 @@ export const Nav00DataSource = {
                     sub_item("Webdev", "Web development in automation")
                 ].map((item, index) => ({
                     ...item,
-                    name: `about${index}`
+                    name: `blogs${index}`
                 }))
             },
             {
@@ -411,7 +435,8 @@ export const Content30DataSource = {
                     title: { className: "content3-title", children: "Lorum Ipsum" },
                     content: {
                         className: "content3-content",
-                        children: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+                        children:
+                            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                     }
                 }
             },
@@ -429,7 +454,8 @@ export const Content30DataSource = {
                     title: { className: "content3-title", children: "Lorum Ipsum" },
                     content: {
                         className: "content3-content",
-                        children: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+                        children:
+                            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                     }
                 }
             },
@@ -447,7 +473,8 @@ export const Content30DataSource = {
                     title: { className: "content3-title", children: "Lorum Ipsum" },
                     content: {
                         className: "content3-content",
-                        children: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+                        children:
+                            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                     }
                 }
             },
@@ -465,7 +492,8 @@ export const Content30DataSource = {
                     title: { className: "content3-title", children: "Lorum Ipsum" },
                     content: {
                         className: "content3-content",
-                        children: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+                        children:
+                            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                     }
                 }
             },
@@ -483,7 +511,8 @@ export const Content30DataSource = {
                     title: { className: "content3-title", children: "Lorum Ipsum" },
                     content: {
                         className: "content3-content",
-                        children: "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+                        children:
+                            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
                     }
                 }
             }

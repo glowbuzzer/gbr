@@ -4,8 +4,8 @@ import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import { Line, Text } from "@react-three/drei"
 import { GCodeSegment } from "@glowbuzzer/store"
 
-function toVector3(vals: number[]) {
-    const [x, y, z] = vals
+function toVector3(vals: { x: number; y: number; z: number }) {
+    const { x, y, z } = vals
     return new Vector3(x, y, z)
 }
 
@@ -25,7 +25,15 @@ const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
     ].map(v => [v.x, v.y, v.z] as [number, number, number])
 
     // noinspection RequiredAttributes
-    return <Line color="#909090" points={points} dashed={true} dashSize={dashSize} gapSize={dashSize / 2} />
+    return (
+        <Line
+            color="#909090"
+            points={points}
+            dashed={true}
+            dashSize={dashSize}
+            gapSize={dashSize / 2}
+        />
+    )
 }
 
 const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
@@ -79,16 +87,41 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     // noinspection RequiredAttributes
     return (
         <group position={new Vector3(boundingBox[0], boundingBox[2], 0)}>
-            <DashedExtent position={new Vector3(0, -fontSize, 0)} distanceX={extentX} distanceY={-OFFSET} scale={scale} />
+            <DashedExtent
+                position={new Vector3(0, -fontSize, 0)}
+                distanceX={extentX}
+                distanceY={-OFFSET}
+                scale={scale}
+            />
             <group rotation={new Euler(0, 0, -Math.PI / 2)}>
-                <DashedExtent position={new Vector3(-extentY, 0, 0)} distanceX={extentY} distanceY={-OFFSET} scale={scale} />
+                <DashedExtent
+                    position={new Vector3(-extentY, 0, 0)}
+                    distanceX={extentY}
+                    distanceY={-OFFSET}
+                    scale={scale}
+                />
             </group>
-            <group position={new Vector3(extentX, 0, extentZ)} rotation={new Euler(Math.PI / 2, 0, -Math.PI / 2)}>
-                <DashedExtent position={new Vector3()} distanceX={extentZ} distanceY={OFFSET} scale={scale} />
+            <group
+                position={new Vector3(extentX, 0, extentZ)}
+                rotation={new Euler(Math.PI / 2, 0, -Math.PI / 2)}
+            >
+                <DashedExtent
+                    position={new Vector3()}
+                    distanceX={extentZ}
+                    distanceY={OFFSET}
+                    scale={scale}
+                />
             </group>
-            <LabelText position={new Vector3(0, -OFFSET - fontSize, 0)} label=" X" distance={extentX} />
+            <LabelText
+                position={new Vector3(0, -OFFSET - fontSize, 0)}
+                label=" X"
+                distance={extentX}
+            />
             <LabelText position={new Vector3(-OFFSET, 0, 0)} label="Y" distance={extentY} />
-            <group position={new Vector3(extentX + OFFSET, 0, fontSize * lineHeight)} rotation={new Euler(Math.PI / 2, 0, 0)}>
+            <group
+                position={new Vector3(extentX + OFFSET, 0, fontSize * lineHeight)}
+                rotation={new Euler(Math.PI / 2, 0, 0)}
+            >
                 <LabelText position={new Vector3()} label=" Z" distance={extentZ} />
             </group>
         </group>

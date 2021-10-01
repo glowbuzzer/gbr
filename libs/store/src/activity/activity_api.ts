@@ -1,6 +1,8 @@
 import {
     ACTIVITYSTATE,
     ACTIVITYTYPE,
+    ARCDIRECTION,
+    ARCTYPE,
     CartesianPositionsConfig,
     CartesianVector,
     DwellConfig,
@@ -115,7 +117,7 @@ export class ActivityApi {
         const { promiseFifo } = this
         while (promiseFifo.length && promiseFifo[0].tag < tag) {
             // reject any old activities that have been superceded by a later tag
-            console.log("REJECT OLD TAG", promiseFifo[0].tag)
+            // console.log("REJECT OLD TAG", promiseFifo[0].tag)
             promiseFifo.shift()?.resolve({ tag, completed: false })
             // last.reject(last.tag)
         }
@@ -124,7 +126,7 @@ export class ActivityApi {
             return
         }
         const lastTag = this.promiseFifo[0].tag
-        console.log("UPDATE ACTIVITY", tag, ACTIVITYSTATE[state], "LAST TAG", lastTag)
+        // console.log("UPDATE ACTIVITY", tag, ACTIVITYSTATE[state], "LAST TAG", lastTag)
 
         if (state === ACTIVITYSTATE.ACTIVITY_COMPLETED) {
             // console.log("EXEC COMPLETE FOR TAG", tag)
@@ -150,13 +152,14 @@ export class ActivityApi {
         } as DwellConfig)
     }
 
-    moveArc(
+    moveArcWithCentre(
         target: Vector3,
-        waypoint: Vector3,
+        centre: Vector3,
+        arcDirection: ARCDIRECTION,
         positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
         moveParams: MoveParametersConfig = {}
     ) {
-        // at the moment target and waypoint must share position reference (relative or absolute)
+        // at the moment target and centre must share position reference (relative or absolute)
         return this.buildMotion(
             ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
             {
@@ -165,10 +168,36 @@ export class ActivityApi {
                         position: target,
                         positionReference
                     },
-                    waypoint: {
-                        position: waypoint,
+                    arcDirection,
+                    arcType: ARCTYPE.ARCTYPE_CENTRE,
+                    centre: {
+                        position: centre,
                         positionReference
                     }
+                }
+            } as MoveArcStream,
+            moveParams
+        )
+    }
+
+    moveArcWithRadius(
+        target: Vector3,
+        radius: number,
+        arcDirection: ARCDIRECTION,
+        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
+        moveParams: MoveParametersConfig = {}
+    ) {
+        return this.buildMotion(
+            ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
+            {
+                arc: {
+                    destination: {
+                        position: target,
+                        positionReference
+                    },
+                    arcDirection,
+                    arcType: ARCTYPE.ARCTYPE_RADIUS,
+                    radius: { value: radius }
                 }
             } as MoveArcStream,
             moveParams

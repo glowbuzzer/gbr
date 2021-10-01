@@ -1,5 +1,5 @@
 import * as THREE from "three"
-import { DoubleSide, LineBasicMaterial, PointLight, Vector3 } from "three"
+import { DoubleSide, PointLight, Vector3 } from "three"
 import { OrbitControls } from "./OrbitControls"
 import { GCodeSegment } from "@glowbuzzer/store"
 
@@ -8,8 +8,8 @@ if (typeof window !== "undefined") {
     wnd.THREE = THREE
 }
 
-function toVector3(vals: number[]) {
-    const [x, y, z] = vals
+function toVector3(vals: { x: number; y: number; z: number }) {
+    const { x, y, z } = vals
     return new Vector3(x, y, z)
 }
 
@@ -19,7 +19,12 @@ export type ToolPathScene = {
     setPreview(segments: GCodeSegment[]): void
 }
 
-export const ToolPathSceneFactory = (container: any, width: number, height: number, extent: number): ToolPathScene => {
+export const ToolPathSceneFactory = (
+    container: any,
+    width: number,
+    height: number,
+    extent: number
+): ToolPathScene => {
     const [w, h] = [width, height]
     const camera = new THREE.PerspectiveCamera(70, w / h, 0.01, 10000)
     // camera.position.y = -.75;
@@ -72,7 +77,15 @@ export const ToolPathSceneFactory = (container: any, width: number, height: numb
     //     return (new THREE.Color()).setHSL(h, s, l);
     // }
 
-    const fulcrumGeometry = new THREE.ConeGeometry(0.1 * extent, 0.3 * extent, 3, 1, false, 0, Math.PI * 2)
+    const fulcrumGeometry = new THREE.ConeGeometry(
+        0.1 * extent,
+        0.3 * extent,
+        3,
+        1,
+        false,
+        0,
+        Math.PI * 2
+    )
     const fulcrumMaterial = new THREE.MeshPhongMaterial({
         color: "#000099",
         opacity: 0.2,
@@ -127,7 +140,9 @@ export const ToolPathSceneFactory = (container: any, width: number, height: numb
             renderer.render(scene, camera)
         },
         setPreview(segments: GCodeSegment[]) {
-            previewGeometry.setFromPoints(segments.flatMap(s => [toVector3(s.from), toVector3(s.to)]))
+            previewGeometry.setFromPoints(
+                segments.flatMap(s => [toVector3(s.from), toVector3(s.to)])
+            )
             previewMaterial.setValues({ color: 0x0, vertexColors: true })
             ;(preview.geometry as any).attributes.position.needsUpdate = true
             renderer.render(scene, camera)

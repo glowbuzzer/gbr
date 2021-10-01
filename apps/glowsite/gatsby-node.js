@@ -44,4 +44,34 @@ exports.createPages = async ({ graphql, actions }) => {
                 })
         }
     })
+
+    const allTypedoc = await graphql(`
+        {
+            allTypedoc {
+                edges {
+                    node {
+                        source {
+                            kindString
+                            id
+                            name
+                        }
+                    }
+                }
+            }
+        }
+    `)
+
+    allTypedoc.data.allTypedoc.edges.forEach(({ node }) => {
+        const { kindString, name } = node.source
+
+        createPage({
+            path: "docs/gbc/schema/" + name,
+            component: path.resolve(`./src/components/page/GbcSchemaPage.tsx`),
+            context: {
+                // Data passed to context is available in page queries as GraphQL variables.
+                layout: "gbc-schema", // handled in src/layouts/index.tsx (may use default fallback layout)
+                name
+            }
+        })
+    })
 }

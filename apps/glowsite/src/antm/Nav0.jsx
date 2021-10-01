@@ -25,7 +25,7 @@ class Header extends React.Component {
         const { dataSource, isMobile, ...props } = this.props
         const { phoneOpen } = this.state
         const navData = dataSource.Menu.children
-        const navChildren = navData.map(item => {
+        const navChildren = navData.map((item, index) => {
             const { children: a, subItem, ...itemProps } = item
             if (subItem) {
                 return (
@@ -48,7 +48,9 @@ class Header extends React.Component {
                                     {childItem.children.map(getChildrenToRender)}
                                 </Link>
                             ) : (
-                                <div {...childItem}>{childItem.children.map(getChildrenToRender)}</div>
+                                <div {...childItem}>
+                                    {childItem.children.map(getChildrenToRender)}
+                                </div>
                             )
                             return (
                                 <Item key={$item.name || ii.toString()} {...$item}>
@@ -60,7 +62,7 @@ class Header extends React.Component {
                 )
             }
             return (
-                <Item key={item.name} {...itemProps}>
+                <Item key={item.name || index} {...itemProps}>
                     <a {...a} className={`header0-item-block ${a.className}`.trim()}>
                         {a.children.map(getChildrenToRender)}
                     </a>
@@ -69,13 +71,28 @@ class Header extends React.Component {
         })
         const moment = phoneOpen === undefined ? 300 : null
         return (
-            <TweenOne component="header" animation={{ opacity: 0, type: "from" }} {...dataSource.wrapper} {...props}>
-                <div {...dataSource.page} className={`${dataSource.page.className}${phoneOpen ? " open" : ""}`}>
+            <TweenOne
+                component="header"
+                animation={{ opacity: 0, type: "from" }}
+                {...dataSource.wrapper}
+                {...props}
+            >
+                <div
+                    {...dataSource.page}
+                    className={`${dataSource.page.className}${phoneOpen ? " open" : ""}`}
+                >
+                    {/*
                     <Link to="/">
-                        <TweenOne animation={{ x: -30, type: "from", ease: "easeOutQuad" }} {...dataSource.logo}>
-                            {dataSource.logo.children}
-                        </TweenOne>
+*/}
+                    <TweenOne
+                        animation={{ x: -30, type: "from", ease: "easeOutQuad" }}
+                        {...dataSource.logo}
+                    >
+                        {dataSource.logo.children}
+                    </TweenOne>
+                    {/*
                     </Link>
+*/}
                     {isMobile && (
                         <div
                             {...dataSource.mobileMenu}
@@ -114,7 +131,9 @@ class Header extends React.Component {
                             selectedKeys={[]}
                             selectable={false}
                         >
+                            {/*
                             <Item title="Test" />
+*/}
                             {navChildren}
                         </Menu>
                     </TweenOne>

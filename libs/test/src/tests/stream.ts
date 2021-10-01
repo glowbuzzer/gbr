@@ -19,7 +19,7 @@ const writeCount = state => state.stream.writeCount
 
 test("can see state of stream queue", async () => {
     gbc.assert
-        .selector(capacity, 11)
+        .selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         .assert.selector(readCount, 0)
@@ -32,7 +32,7 @@ test("can execute empty program", async () => {
     gbc.stream([end_program]).exec(1)
 
     gbc.assert
-        .selector(capacity, 11)
+        .selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         // should have taken item from stream
@@ -47,7 +47,7 @@ test("can execute a dwell", async () => {
     gbc.stream([dwell, end_program]).exec(1)
 
     gbc.assert
-        .selector(capacity, 11)
+        .selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         // should have taken all items from stream (capacity not reached)
@@ -64,7 +64,8 @@ test("can execute a dwell", async () => {
 })
 
 test("can fill the m4 buffer", async () => {
-    const dwells = Array.from({ length: 10 }).map(() => gbc.activity.dwell(1).command)
+    const number_to_stream = gbc.m4_stream_total_cap - 1
+    const dwells = Array.from({ length: number_to_stream }).map(() => gbc.activity.dwell(1).command)
 
     gbc.stream(dwells)
 
@@ -74,28 +75,28 @@ test("can fill the m4 buffer", async () => {
         .assert.selector(tag, 0)
         // should have taken all items from stream (capacity not reached)
         .assert.selector(readCount, 0)
-        .assert.selector(writeCount, 10)
+        .assert.selector(writeCount, number_to_stream)
 
     gbc.exec(1) // give m7 opportunity to read from shared buffer
-        .assert.selector(capacity, 11)
+        .assert.selector(capacity, gbc.m7_stream_total_cap + 1)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         // should have taken all items from stream (capacity not reached)
-        .assert.selector(readCount, 10) // all items read
-        .assert.selector(writeCount, 10)
+        .assert.selector(readCount, gbc.m7_stream_total_cap) // items read to m7 capacity
+        .assert.selector(writeCount, number_to_stream)
 
     const end_program = gbc.activity.endProgram().command
     gbc.stream([end_program]) // send end program
         .exec(5) // kick off
-        .assert.selector(capacity, 11)
+        .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .assert.selector(tag, 5)
         // should have taken all items from stream (capacity not reached)
-        .assert.selector(readCount, 11)
-        .assert.selector(writeCount, 11)
+        .assert.selector(readCount, number_to_stream + 1)
+        .assert.selector(writeCount, number_to_stream + 1)
 
-    gbc.exec(6) // finish off
-        .assert.selector(capacity, 11)
+    gbc.exec(10) // finish off
+        .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
 })
@@ -105,7 +106,7 @@ test("will start executing when m7 buffer is full", () => {
     const dwells2 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(2).command)
 
     gbc.assert // was issue with reset, so let's do some extra checking at start
-        .selector(capacity, 11)
+        .selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(readCount, 0)
         .assert.selector(writeCount, 0)
 
@@ -115,15 +116,15 @@ test("will start executing when m7 buffer is full", () => {
 
     // note that we never send end program
     gbc.assert
-        .selector(capacity, 1) // at this point we have pretty much max'd out the internal m7 queue and the m4 queue
+        .selector(capacity, gbc.m4_stream_total_cap - 10) // at this point we have pretty much max'd out the internal m7 queue and the m4 queue
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
 
     gbc.exec(10)
-        .assert.selector(capacity, 6) // we have now managed to clear some of the backlog so m4 queue is opening up again
+        .assert.selector(capacity, gbc.m4_stream_total_cap - 5) // we have now managed to clear some of the backlog so m4 queue is opening up again
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
 
     gbc.exec(30)
-        .assert.selector(capacity, 11) // all items processed, so back to full queue
+        .assert.selector(capacity, gbc.m4_stream_total_cap) // all items processed, so back to full queue
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
 })
 

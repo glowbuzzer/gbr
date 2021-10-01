@@ -64,8 +64,9 @@ export const gcodeSlice = createSlice({
         },
         append(state, action) {
             console.log("Starting interpreter")
-            const interpreter = new GCodeSenderAdapter(state.buffer, state.current_positions)
-            interpreter.execute(action.payload)
+            const { gcode, vmax } = action.payload
+            const interpreter = new GCodeSenderAdapter(state.buffer, vmax)
+            interpreter.execute(gcode)
             console.log("Interpreter done")
         },
         consume(state, action) {
@@ -77,7 +78,14 @@ export const gcodeSlice = createSlice({
             state.capacity -= count
         },
         status: (state, action) => {
-            const { capacity, tag, state: stream_state, time, readCount, writeCount } = action.payload
+            const {
+                capacity,
+                tag,
+                state: stream_state,
+                time,
+                readCount,
+                writeCount
+            } = action.payload
 
             // tag is UDF for current item, active is whether any item is currently executing
             state.tag = tag
@@ -115,7 +123,10 @@ function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
 }
 
 export function useGCode() {
-    const { state, tag, time } = useSelector(({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }), shallowEqual)
+    const { state, tag, time } = useSelector(
+        ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
+        shallowEqual
+    )
     const dispatch = useDispatch()
     const connection = useConnect()
 
@@ -123,8 +134,8 @@ export function useGCode() {
         state,
         time,
         lineNum: tag,
-        send(gcodeString) {
-            dispatch(gcodeSlice.actions.append(gcodeString))
+        send(gcode, vmax: number) {
+            dispatch(gcodeSlice.actions.append({ gcode, vmax }))
         },
         setState(streamCommand: STREAMCOMMAND) {
             dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
@@ -133,5 +144,6 @@ export function useGCode() {
 }
 
 export function useGCodeSettings() {
-    return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual).settings
+    return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual)
+        .settings
 }
