@@ -26,15 +26,19 @@ const StyledMdxPage = styled.div`
     .gatsby-highlight {
         margin-bottom: 1em;
     }
+   
 
     code.language-text {
         border: inherit;
-        background: rgba(27, 31, 35, 0.05);
+        // background: rgba(27, 31, 35, 0.05);
+background: rgba(0, 0, 0, 0.5);
         font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
         //font-weight: bold;
-        color: #333333;
-        padding: 0 2px;
+        color: #ffffff;
+        padding: 0 12px;
     }
+
+  }
 `
 /**
  * Query for node by slug and render using MDXRenderer (custom MDXProvider in DefaultLayoutWithMdxSupport.tsx)

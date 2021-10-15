@@ -1,8 +1,7 @@
 ---
-title: Glowbuzzer EtherCAT Master (GBEM) Documentation
-section: true
+title: Introduction to GBEM
+sort: 1
 ---
-
 
 # Introduction to the glowbuzzer EtherCAT Masters (GBEM)
 
@@ -18,7 +17,7 @@ GBEM is free software; you can redistribute it and/or modify it under the terms 
 
 GBEM provides a **framework to control EtherCAT slaves**. It allows you to easily configure a *machine* (a combination of EtherCAT IO devices and servo and stepper drives) and provides a simple interface through which you can interact with that machine without worrying about the nitty gritty details of how EtherCAT drives and IO devices work.
 
-It is designed to be used by programmers who want to build applications to control machines.
+It is designed to be used by programmers who want to build applications to control machines. 
 
 ### Main features
 
@@ -48,7 +47,7 @@ The EtherCAT master communication layers within GBEM are based on the SOEM (Simp
 
 ## How GBEM fits into the GB Control chain
 
-GBEM allows you to interface GBC with EtherCAT devices (slaves) like servo and stepper drives and different types of IO
+GBEM allows you to interface GBC with EtherCAT devices (slaves) like servo and stepper drives and different types of IO 
 such as digital and analog in/outs, encoder interfaces etc.
 
 
@@ -78,11 +77,11 @@ The documentation is structured around the main tasks that users undertake:
 1. Adding PLC functions to GBEM - [PLC](plc.md)
 1. Understanding which files to edit - [WHICH FILES DO I EDIT](which_files_do_i_edit.md)
 1. Deeper understanding of how GBEM works - [INTERNALS](internals.md)
-1. Troubleshooting issues in the different layers - [TROUBLESHOOTING](troubleshooting.md)
+1. Troubleshooting issues in the different layers - [TROUBLESHOOTING](troubleshooting.md) 
 1. A guide to which files to edit inside GBEM - [WHICH FILES DO I EDIT](which_files_do_i_edit.md)
 1. The status web interface to GBEM - [EMSTAT](emstat.md)
 1. The PLC functionality in GBEM - [PLC](plc.md)
-1. Troubleshooting GBEM -  [TROUBLESHOOTING](troubleshooting.md)
+1. Troubleshooting GBEM -  [TROUBLESHOOTING](troubleshooting.md) 
 1. The main GBEM configuration parameters - [gbem_config.h](gbem_config.h)
 
 There is also a [FAQ](faq.md) and [TERMINOLOGY GUIDE](terminology_guide.md)
@@ -97,13 +96,13 @@ There is also a [FAQ](faq.md) and [TERMINOLOGY GUIDE](terminology_guide.md)
 
 **Basic understanding of Drives** - we are going to be interacting with fieldbus interfaced drives. They can be quite intimidating with instruction manuals weighing in at 100s or 1000s of pages. If you don't feel confident integrating you own drives then simply use one of the many types we have already integrated. We provide pointers to how to get them set-up in our range of drive guides.
 
-**Understanding of machine safety** - if you are using GBEM to control machines you need to understand how to implement the safety features machines require.
+**Understanding of machine safety** - if you are using GBEM to control machines you need to understand how to implement the safety features machines require. 
 
 ## Why not just use a conventional PLC?
 
-You absolutely can use a conventional PLC as part of the Glowbuzzer control chain instead of GBEM. GBEM and PLCs are functionally equivalent - functions you can implement on a PLC can equally be implemented in GBEM and vice-versa.
+You absolutely can use a conventional PLC as part of the Glowbuzzer control chain instead of GBEM. GBEM and PLCs are functionally equivalent - functions you can implement on a PLC can equally be implemented in GBEM and vice-versa.  
 
-However, as we are specifically seeking to support software developers write machine control, GBEM provides a way for them to do that without knowing anything about PLCs.
+However, as we are specifically seeking to support software developers write machine control, GBEM provides a way for them to do that without knowing anything about PLCs. 
 
 Also, GBEM does offer some advantages over conventional PLCs in some circumstances:
 
@@ -112,8 +111,7 @@ Also, GBEM does offer some advantages over conventional PLCs in some circumstanc
 * It works with Version Control Systems properly (e.g. github)
 * You can use a "normal" programming language rather than  IEC 61131-3 languages
 * It is Open Source, not proprietary
-* You can easily bring in other Open Source code
+* You can easily bring in other Open Source code 
 * It runs on any Linux hardware and has been ported to STM32 if you want to run on your own custom hardware
 * It is much more suitable to embed into a "product" where the user doesn't want to know anything about a PLC
 * PLCs feel old fashioned and awkward to use to a (relatively) modern software developer
-

@@ -314,11 +314,11 @@ export const App = () => {
     if (emstat_const_result != null && emstat_status_result != null) {
         hascon = true
 
-        for (let i = 0; i < emstat_const_result.number_of_integer_ins; i++) {
+        for (let i = 0; i < emstat_const_result.number_of_int32_ins; i++) {
             int_ins.push({ num: i, val: emstat_status_result?.int_in[i] })
         }
 
-        for (let i = 0; i < emstat_const_result.number_of_integer_outs; i++) {
+        for (let i = 0; i < emstat_const_result.number_of_int32_outs; i++) {
             int_outs.push({ num: i, val: emstat_status_result?.int_out[i] })
         }
 
@@ -545,8 +545,9 @@ export const App = () => {
                                 Number of Digital Ins defined in GBEM <Text underline>MAP_NUM_DIGITAL_IN</Text> is:{" "}
                                 {emstat_const_result?.number_of_digital_ins}
                             </div>
-                            <BitFieldDisplay bitCount={32} value={emstat_status_result?.din_lower32} />
-                            <BitFieldDisplay bitCount={32} value={emstat_status_result?.din_upper32} />
+                            <BitFieldDisplay bitCount={64} value={emstat_status_result?.din} />
+
+                            {/*<BitFieldDisplay bitCount={32} value={emstat_status_result?.din_upper32} />*/}
                             <div>
                                 <h4>Digital OUT</h4>
                             </div>
@@ -554,8 +555,8 @@ export const App = () => {
                                 Number of Digital Outs defined in GBEM <Text underline>MAP_NUM_DIGITAL_OUT</Text> is:{" "}
                                 {emstat_const_result?.number_of_digital_outs}
                             </div>
-                            <BitFieldDisplay bitCount={32} value={emstat_status_result?.dout_lower32} />
-                            <BitFieldDisplay bitCount={32} value={emstat_status_result?.out_upper32} />
+                            <BitFieldDisplay bitCount={64} value={emstat_status_result?.dout} />
+                            {/*<BitFieldDisplay bitCount={32} value={emstat_status_result?.out_upper32} />*/}
                         </Col>
                         <Col className="gutter-row" span={11}>
                             <div>

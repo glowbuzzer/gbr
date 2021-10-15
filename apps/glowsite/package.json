@@ -5,6 +5,8 @@
     "version": "0.0.0",
     "license": "MIT",
     "dependencies": {
-        "gatsby": "*"
+        "gatsby": "*",
+        "react": "^17.0.2",
+        "typescript": "2.7"
     }
 }

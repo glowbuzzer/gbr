@@ -83,11 +83,28 @@ module.exports = {
             options: {
                 extensions: [".md", ".mdx"],
                 gatsbyRemarkPlugins: [
+
                     {
                         // our local plugin for definition list
                         resolve: require.resolve("./plugins/gatsby-remark-dl")
                     },
-                    "gatsby-remark-mermaid",
+                    // "gatsby-remark-mermaid",
+
+                    {
+                        resolve: "gatsby-remark-mermaid",
+                        options: {
+                            language: 'mermaid',
+                            // viewport: {
+                            //     width: 1800,
+                            //     height: 1800
+                            // },
+                            // mermaidOptions: {
+                            //     flowchart: {
+                            //         useMaxWidth:false,
+                            //     }
+                            // }
+                        }
+                    },
                     "gatsby-plugin-mdx-code-demo",
                     {
                         resolve: "gatsby-remark-responsive-iframe",
@@ -101,6 +118,7 @@ module.exports = {
                     {
                         resolve: "gatsby-remark-images",
                         options: {
+                            minWidth: 400,
                             maxWidth: 1140,
                             quality: 90,
                             linkImagesToOriginal: false
@@ -120,7 +138,8 @@ module.exports = {
             resolve: "gatsby-plugin-svgr",
             options: {
                 svgo: false,
-                ref: true
+                ref: true,
+                exclude: "/docs/gbem/",
             }
         },
         `gatsby-plugin-react-helmet`,
@@ -157,7 +176,8 @@ module.exports = {
         {
             resolve: `gatsby-plugin-sharp`,
             options: {
-                icon: "src/images/micro-logo.svg"
+                defaults: {},
+                // icon: "src/images/micro-logo.svg"
             }
         },
         {
