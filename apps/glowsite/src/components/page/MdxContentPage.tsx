@@ -12,21 +12,31 @@ import styled from "styled-components"
  */
 
 const StyledMdxPage = styled.div`
+ 
+    h1 {
+        margin-bottom: 20px;
+    }
+
+
+ 
     padding: 0 20px;
 
     h2 {
-        margin-top: 40px;
+        margin-bottom: 10px;
     }
 
     p {
         margin: 0.5em 0;
         font-size: 1.1em !important;
+
     }
 
     .gatsby-highlight {
         margin-bottom: 1em;
     }
    
+ 
+
 
     code.language-text {
         border: inherit;

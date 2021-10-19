@@ -88,23 +88,29 @@ module.exports = {
                         // our local plugin for definition list
                         resolve: require.resolve("./plugins/gatsby-remark-dl")
                     },
-                    // "gatsby-remark-mermaid",
+                    // "gatsby-remark-graph",
+                    "gatsby-remark-mermaid",
 
-                    {
-                        resolve: "gatsby-remark-mermaid",
-                        options: {
-                            language: 'mermaid',
-                            // viewport: {
-                            //     width: 1800,
-                            //     height: 1800
-                            // },
-                            // mermaidOptions: {
-                            //     flowchart: {
-                            //         useMaxWidth:false,
-                            //     }
-                            // }
-                        }
-                    },
+                    // {
+                    //     resolve: "gatsby-remark-mermaid",
+                    //     options: {
+                    //         language: 'mermaid',
+                    //         // viewport: {
+                    //         //     width: 1800,
+                    //         //     height: 1800
+                    //         // },
+                    //         mermaidOptions: {
+                    //             flowchart:{
+                    //                 width:1800,
+                    //                 height:1400,
+                    //                 useMaxWidth:true,
+                    //             },
+                    //             sequence:{
+                    //                 useMaxWidth:true,
+                    //             },
+                    //         }
+                    //     }
+                    // },
                     "gatsby-plugin-mdx-code-demo",
                     {
                         resolve: "gatsby-remark-responsive-iframe",
@@ -118,9 +124,9 @@ module.exports = {
                     {
                         resolve: "gatsby-remark-images",
                         options: {
-                            minWidth: 400,
-                            maxWidth: 1140,
-                            quality: 90,
+                            // minWidth: 400,
+                            // maxWidth: 1140,
+                            // quality: 90,
                             linkImagesToOriginal: false
                         }
                     }
@@ -139,7 +145,13 @@ module.exports = {
             options: {
                 svgo: false,
                 ref: true,
-                exclude: "/docs/gbem/",
+                // svgoConfig: {
+                //     plugins: [
+                //         { removeViewBox: false }, // remove viewBox when possible (default)
+                //         { cleanupIDs: true },    // remove unused IDs and minify remaining IDs (default)
+                //         {convertTransform: false },
+                //     ],
+                // },
             }
         },
         `gatsby-plugin-react-helmet`,

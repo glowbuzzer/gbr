@@ -3,5 +3,58 @@ title: Embedded
 sort: 50
 ---
 
-# PLACEHOLDER
+
+
+# embedded development
+## Introduction
+**“embedded”** is a tag that gets attached to all sorts of things these days. What do we mean by an embedded motion/machine control?
+
+If you are building your own custom electronics which incorporates motion and machine control functions then you are building an embedded motion control.
+
+The glowbuzzer toolkit will run on either a microcontroller or embedded Linux allowing you to embed a sophisticated motion/machine control into your product.
+
+## How does the glowbuzzer toolkit help with embedded machine control development?
+First you develop your machine control application using a web stack and our toolkit of component and your customers run the application in a browser (or as a desktop application or mobile / tablets)
+
+…Then your application talks over websockets to GBC which performs the real time control functions. This is running on a microcontroller or embedded Linux baked into your product.
+
+…GBC is either integrated with embedded drives in your electronics or connects to packaged EtherCAT drives in your machine
+
+And this gives you the ability to build complex co-ordinated motion control applications (robot, cartersian, delta etc.) built using web stack and running on a fully embedded platform with no PLC in the loop!
+
+
+If you want to base your motion control on the glowbuzzer toolkit, there are two options to choose from for embedded solutions from a hardware perspective:
+
+\1.    Use embedded Linux, likely running on an ARM processor
+
+\2.    Use a microcontroller-based platform
+
+There are pros and cons to each approach. Anyone, who has worked in this area knows these trade-offs intimately but to summarise:
+
+| **Microcontroller**                                          |                                                              |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Pros                                                         | Cons                                                         |
+| Low power  consumption                                       | Lower raw  computational horsepower                          |
+| Easy of  integration (plethora of gpios, SPI, DACs, ADCs)    | More  challenging software development environment           |
+| Real time,  hardware timers                                  | Field updates  less straight forward                         |
+| Reliability -  simple bullet proof chips                     | License fee  for libs - can end up paying for basic libs e.g. network stack, filesystem |
+| Cost a STM32  H7 is a $10 chip a Core i7-10700 is a $300 chip | Lack of  support - not like stack overflow is full of uC related questions &  answers… |
+| Boot time  (though people are doing ludicrously fast Linux boots these days) | Dev tools -  often tied to a IDE provided by the manufacturer with a dev experience far  behind the likes of JetBrains… |
+| Easier  hardware design                                      |                                                              |
+
+
+
+
+
+| **Embedded Linux**                                           |                                                              |
+| :------------------------------------------------------------ | :------------------------------------------------------------ |
+| Pros                                                         | Cons                                                         |
+| Performance                                                  | Missing useful features e.g. hardware timers, proper interrupts are  harder to use inside Linux - usually kernel module development which is  always a chew |
+| Ease of s/w development and testing                          | Real-time is harder to achieve and will never match a microcontroller |
+| Agreat many programmers are very familiar with both the API and the  kernel itself. | Integration with low level peripherals (gpios, SPI etc.) is not  straight forward. E.g. building an SPI slave on Linux is a mission and on  embedded it is a breeze. |
+| Ease e.g. spin up a websockets server on Linux = five minute job where  as on a microntroller it is a bit of mission, filesystem | Hardware design if you are using a SoC is hard though the design  challenge whenusing SoM is really SoC performance with uC h/w design  simplicity. If you can design a microcontroller board then you can design a  SoM carrier board. |
+| Scalability. High-end ARM SoCs are always going to outperform  microcontrollers in terms of raw computational performance and core count by  a substantial margin. Though arm SocS outperformed by Intel/AMD currently and  these are just about accessible to embedded engineers in the for of com  express modules and carrier boards | More moving parts. The BoM count for an embedded linux board is going  to be way higher than a microcontroller board. |
+|                                                              | Cost. Linux SoMs are not that expensive but still 100 euros  |
+|                                                              |                                                              |
+
 

@@ -1,7 +1,59 @@
 ---
 title: Fieldbus
-sort: 20
+sort: 7
 ---
 
-# PLACEHOLDER
+# How does glowbuzzer woks with different fieldbusses?
+## Introduction
+Interoperability with the major fieldbus protocols is at the heart of the glowbuzzer toolkit.
+
+We think that you should be able to choose whatever drives & IO you like and have it work with your control software.
+
+This is a radical departure from the usual world of automation where there is an extremely tight coupling between manufacturers software and their hardware. For example, there are not many Allen Bradley servo drives out there not connected to an Allen Bradley PLC.
+
+EtherCAT is the primary fieldbus we support. Mainly because of the wide range of drives and IO available for it. We also support:
+
+1. Profinet
+1. Ethernet/IP
+1. Sercos
+1. CANbus
+1. Powerlink
+
+We are taking a keen interest in the development of OPC/UA TSN and have examples working in the lab.
+
+Our fieldbus support is achieved through three mechanisms:
+
+1.	Fieldbus master stacks ported to different platforms (Linux plus embedded) (E.g. GBEM)
+1.	Slave chips (E.g. Microchip LAN9252 etc.)
+1.	PCi cards (E.g. Hilscher CIFX)
+1.	Multi-protocol chips (E.g. Hilscher NetX)
+
+Where we can use open-source stacks:
+* EtherCAT master:  SOEM - https://github.com/OpenEtherCATsociety/SOEM
+* EtheCAT slave: SOES - https://github.com/OpenEtherCATsociety/SOES
+* CANopen master/slave: CANopenNode - https://github.com/CANopenNode/CANopenNode
+* Sercos III master: https://sourceforge.net/projects/sercos-softmaster-core/files/Sercos%20SoftMaster%20Package/
+* Ethernet/IP: - https://github.com/liftoff-sr/CIPster
+* ProfiNET master
+* CC-Link IE TSN: https://github.com/KunYi/cc-link-ie
+* OPC UA TSN - https://github.com/node-opcua/node-opcua & https://open62541.org/
+* Powerlink - https://github.com/OpenAutomationTechnologies/openPOWERLINK_V2
+
+## How exactly does glowbuzzer work with EtherCAT for example?
+
+### As a master
+As part of the glowbuzzer toolkit we supply an EtherCAT master (GBEM) which can run either on Linux or a microcontroller. On Linux this talks to the core control (GBC) via a shared memory instance using Linux signals to synchronise the cycle of GBC to the distributed clock on the EtherCAT network.
+
+On embedded platforms the communication with GBC is over SPI with a GPIO used to achieve synchronisation to the fieldbus distributed clock.
+
+On top of the basics expected of an EtherCAT master, GBEM performs a number of key functions:
+* Maps the glowbuzzer process image to the EtherCAT slaves process images (in and out)
+* Controls the CiA-402 state machines of the drives
+* Runs the state machine for the machine as a whole
+* Handles estop and emergencies received from the slaves and loss of communication with the different tiers
+* Handles the reporting of slave and drive errors and warnings
+
+On Linux, a web interface (emstat) is provided to enabled developers to get a view the status of the EtherCAT network.
+
+GBEM is based on the open-source SOEM project https://github.com/OpenEtherCATsociety/SOEM and our extensions are offering under an open-source license agreement.
 
