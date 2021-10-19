@@ -8,4 +8,10 @@ export const Container = styled.div`
     flex-basis: 0;
     padding: 20px 0;
 
+    blockquote {
+        background: #f9f9f9;
+        border-left: 10px solid #ccc;
+        margin: 1.5em 10px;
+        padding: 1em 10px 0.1em 10px;
+    }
 `
