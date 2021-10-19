@@ -3,6 +3,8 @@ title: Introduction to GBEM
 sort: 1
 ---
 
+[WHICH FILES DO I EDIT](/docs/gbem/which_files_do_i_edit)
+
 # Introduction to the glowbuzzer EtherCAT Masters (GBEM)
 
 ## Version
@@ -53,7 +55,7 @@ such as digital and analog in/outs, encoder interfaces etc.
 
 # hellohelellelelelelelelelelelelelelelelelelelelelelelelelelelelelelelelelee
 ```mermaid
-flowchart LR
+graph LR
     id1["Front-end"]<-->|websockets|id2[GBC];
     id2 <--> |shared mem| id3[GBEM];
     id3<-->|EtherCAT|id4[Slaves];

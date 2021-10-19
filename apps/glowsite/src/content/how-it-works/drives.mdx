@@ -1,7 +1,34 @@
 ---
-title: Drives
-sort: 30
+title: What drives does it work with?
+sort: 4
 ---
 
-# PLACEHOLDER
+# What drives does it work with?
+
+## EtherCAT
+If you are using glowbuzzer toolkit with an EtherCAT fieldbus, we can support any stepper or BLDC or servo drive that offers a CiA-402 drive profile and cyclic-synchronous-position mode (CSP) – this is almost every EtherCAT drive on the market.
+
+This means you can control motors ranging from tiny 4mm diameter 50,000 rpm BLDC devices through to multi-megawatt motors the size of trucks.
+
+Drives that have been pre-integrated and tested include:
+
+* Oriental Motor - AZD series
+* Omron - G5 series
+* Beckhoff - EL7031, EL7041, EL7037, EL7046, EL7211, EL2522, AX500
+* Kollmorgen - AKD series
+* Delta - ASDA series
+* JVL - MIS series
+* Cannon automata - SMC3
+* Nanotec - N5
+* Trinamic - ?
+
+See [EtherCAT pre-configured drive overview](/docs/gbem/drive_support_overview) for a full list of the pre-configured drives.
+
+
+## Embedded stepper / servo / BLDC
+
+If you are embedding a machine control, fieldbus based drives may not be suitable. For example, if your application is a control for a machine containing 3 or 4 stepper motors and a small set of digital and analog IO, you may well want to embed the drives into yoru control electronics.
+
+Part of the glowbuzzer toolkit is GBSM which is a software application for use on Linux (usually embedded Linux) or microcontoller platforms. This works with motor drive ICs to control stepper / BDLC or servo motors in an embedded environment.
+
 

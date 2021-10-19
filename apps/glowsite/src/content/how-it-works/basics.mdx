@@ -1,6 +1,31 @@
 ---
 title: Basics
-sort: 0
+sort: 1
 ---
 
-# PLACEHOLDER
+# Basically, how does it work?
+
+The glowbuzzer toolkit allows you to build machine control applications using a web stack.
+
+A *machine* is a collection of motors controlled via drives together with IO for interacting with the sensors and actuators that make up a machine.
+
+At a high level, you take the glowbuzzer toolkit’s React components and use them either unchanged, extended or added to with your own custom components to build the visual front-end and control logic for your machine control.
+
+This user interface and control logic code runs either in the browser or as a desktop application or on a mobile device.
+
+Where a front-end component needs to make the machine perform an action (move or turn something on or off) it issues commands over a WebSocket interface. When a front-end component needs to interact with the state of the machine it reads from a WebSocket interface.
+
+The WebSockets interface the fron-end reads and writes to is provided by the glowbuzzer toolkit’s real-time control software that runs either on Linux or on an embedded microcontroller.
+
+It is this software’s responsibility to translate the high-level instructions received over the WebSockets interface into the low-level commands that can issued over the fieldbus to control io and drives to make the machine move and perform actions. This is where the “heavy lifting” takes place: synchronised multi-axis trajectories are planned, kinematics functions are run, tasks and activities are executed and the state of the machine is calculated. These functions run in real-time.
+
+At is simplest, a browser running your React machine control application is talking WebSockets over the network to the real-time control and EtherCAT master running on a Linux platform which is connected to a fieldbus (containing drives and IO) or to embedded drives and IO.
+
+This gives you the ability to build a sophisticated control for complex machines and robots using a modern web and open software stack with *absolutely no proprietary hardware required*.
+
+Insert great video showing:
+* Someone typing “npm I glowbuzzer” and the toolkit installing
+* Then show them plugging in a linux board to some drives
+* Then show them writing some code to move a motor in IDE in web stack land
+* Show the front-end browser say clicking a button to start the motor moving
+* Then show a video of a motor moving - oscillating move

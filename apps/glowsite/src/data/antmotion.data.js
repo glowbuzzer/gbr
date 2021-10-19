@@ -87,7 +87,8 @@ export const Nav00DataSource = {
                         "Clone and modify a front-end template",
                         "/get-started/front-end"
                     ),
-                    sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat")
+                    sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat"),
+                    sub_item("How to buy", "How to buy the glowbuzzer toolkit ", "/get-started/how_to_buy"),
                 ].map((item, index) => ({
                     ...item,
                     name: `get-started${index}`
@@ -135,9 +136,9 @@ export const Nav00DataSource = {
                     children: [{ children: "About", name: "text" }]
                 },
                 subItem: [
-                    sub_item("Vision", "What we want to achieve"),
-                    sub_item("Values", "What we stand for"),
-                    sub_item("Contact", "Contact form, location information")
+                    sub_item("Vision", "What we want to achieve", "/about/vision"),
+                    sub_item("Values", "What we stand for", "/about/values"),
+                    sub_item("Contact", "Contact form, location information", "about/contact")
                 ].map((item, index) => ({
                     ...item,
                     name: `about${index}`

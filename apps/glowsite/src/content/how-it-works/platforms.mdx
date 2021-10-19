@@ -1,0 +1,26 @@
+---
+title: What platforms does it run on?
+sort: 3
+---
+
+# What platforms does the glowbuzzer toolkit run on?
+
+## Core control (GBC)
+The core control is written in vanilla c code and is written to be highly portable.
+
+The core supported platforms are real-time Linux & embedded STM32 but not issues are likely to be found deploying on platforms such as VxWorks, QNX, Xenomai or different high-end dual core (cortex M4/M7) microcontrollers running FreeRTOS.
+
+The core control is designed to be highly performant. For example, the Raspberry 4 single board computer supports 6 axis robots at a 1msec cycle time to the drives.
+
+If you are using the glowbuzzer toolkit with Linux (rather than running on an embedded microcontroller) you will need either an industrial PC or an embedded Linux platform.
+
+Industrial PCs come in two flavours:
+
+* Traditional PC with for example a Mini ATX mother board and an Intel/AMD processor in an industrial enclosure
+* (usually) an ARM based SoC delivered in either in a SBC (single board computer) format or SoM/CoM on a modules plugged or soldered onto a carrier board
+
+Embedded Linux are usually ARM SoC based platforms. In this area we work with Toradex (www.toradex.com) but there are many vendors or
+
+To use either option will require multiple Ethernet ports or Ethernet+WiFi.
+
+GBC runs on low end hardware  but needs multiple cores. The lowest specification we would recommend would be a quad core running at 1+ GHz and having 1GB of ram.
