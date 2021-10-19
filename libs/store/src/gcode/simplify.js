@@ -85,8 +85,8 @@ function simplifyDouglasPeucker(points_with_nulls, sqTolerance) {
         Object.assign(tracker, {
             x: p.x === null ? tracker.x : p.x,
             y: p.y === null ? tracker.y : p.y,
-            z: p.z == null ? tracker.z : p.z,
-            orig: p
+            z: p.z == null ? tracker.z : p.z
+            // orig: p
         })
         return { ...tracker }
     })

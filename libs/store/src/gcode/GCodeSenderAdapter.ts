@@ -219,6 +219,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                 n += merge
             }
         }
+        this.buffer.forEach(item => {
+            // remove properties that are not part of stream item
+            delete item.canMergePrevious
+            delete item.simplifyTolerance
+        })
     }
 
     M2() {

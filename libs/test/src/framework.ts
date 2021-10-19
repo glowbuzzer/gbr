@@ -70,8 +70,8 @@ export class GbcTest {
         return this
     }
 
-    reset() {
-        this.gbc.reset()
+    reset(configFile?) {
+        this.gbc.reset(configFile)
 
         this.store = configureStore({
             reducer: rootReducer
@@ -84,6 +84,8 @@ export class GbcTest {
         this.gbc.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
         this.gbc.send(updateFroPercentageMsg(0, 100))
         this.exec_double_cycle()
+
+        return this
     }
 
     verify() {
@@ -120,7 +122,7 @@ export class GbcTest {
     }
 
     get assert() {
-        function test_near(actual, expected, tolerance = 0.001 /* absolute tolerance */) {
+        function test_near(actual, expected, tolerance) {
             const diff = Math.abs(actual - expected)
             if (tolerance < 0) {
                 // percentage tolerance
@@ -156,6 +158,10 @@ export class GbcTest {
                 assert.equal(this.gbc.get_fb_iout(index), value)
                 return this
             },
+            jointPosPdo: (index, value, tolerance) => {
+                test_near(this.gbc.get_fb_joint_pos(index), value, tolerance)
+                return this
+            },
             streamActivityState: (value, msg?) => {
                 const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state()]
                 const expected = ACTIVITYSTATE[value]
@@ -174,9 +180,9 @@ export class GbcTest {
                 assert.equal(actual, expected)
                 return this
             },
-            near: (selector, expected) => {
+            near: (selector, expected, tolerance = 0.001) => {
                 const actual = selector(this.status_msg)
-                test_near(actual, expected)
+                test_near(actual, expected, tolerance)
                 return this
             },
             vel: (joint, expected) => {

@@ -98,7 +98,6 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
     const acc_csv = acc.map(r => r.join(",")).join("\n")
     const jerk_csv = jerk.map(r => r.join(",")).join("\n")
 
-    console.log("Writing plot file:", filename)
     mkdirSync("plot", { recursive: true })
     const html = `
     ${head}
@@ -108,5 +107,6 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
     const jerk_csv=\`${first_row}\n${jerk_csv}\`
     ${tail}
     `
+    console.log("Writing plot file:", filename)
     writeFileSync("plot/" + filename + ".html", html)
 }
