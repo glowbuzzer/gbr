@@ -65,6 +65,7 @@ specifiers:
   css.escape: ^1.5.1
   cypress: ^6.9.1
   d3: ^6.7.0
+  deepmerge: ^4.2.2
   dotenv: 10.0.0
   dseg: ^0.46.0
   enquire-js: ^0.2.1
@@ -281,6 +282,7 @@ devDependencies:
   copy-webpack-plugin: 9.0.1_webpack@5.58.2
   css.escape: 1.5.1
   cypress: 6.9.1
+  deepmerge: 4.2.2
   dotenv: 10.0.0
   dseg: 0.46.0
   enquire-js: 0.2.1
