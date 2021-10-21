@@ -1,0 +1,23 @@
+---
+title: Working with OPC/UA
+sort: 1
+---
+
+# Working with OPC
+
+## Introduction
+
+OPC/UA’s origins lie with the original OPC Specification which back in 1996 laid out a framework for using the proprietary Microsoft OLE, COM, and DCOM component interfaces to bridge between Windows-based software applications and process control hardware. OPC UA was developed in 2006 to eliminate the need to use a Microsoft-Windows-based platform of earlier OPC versions - i.e., it moved away from COM/DCOM. In addition, DCOM, whilst a good idea in theory, was painful even when both operating systems were exactly the same version but became nearly impossible if the versions were different. Many technicians still bear scars from working with DCOM.
+At its simplest, an OPC UA server runs on your PLC and you expose a set of your PLC code’s symbols (variables) and then you can read/write to the symbols from an OPC UA client over a network connection. This is very handy: a non-proprietary way to interact with your PLC including ease of integration with a web stack.
+As we are focussed on using web technology, we look to projects like https://github.com/node-opcua/node-opcua for the basis of our solutions. Node-opcua, provides both a OPC UA client and server for use in also https://github.com/open62541/open62541 provides C based back-end.
+
+## Limitations of OPC UA
+Hard-real time - OPC UA has, for a while, supported the publish-subscribe model (pub/sub). Recently, OPC UA has been expanded to combine it with the Time-Sensitive Networking (TSN) Ethernet standard to create OPC UA over TSN. This will provide a basis on which to build real-time OPC/UA applications but it is not “here and now” but offers exciting future opportunities especially for using web tech in automation it is something we are activity working on.
+So you can’t simply run up the Node-opcua client and write real-time trajectories to your PLC and onto your drives
+Not light weight - OPC UA not light weight. Heavy lifting of the server and uses at lot of resources. Not suitable for small PLCs. Can have a server that aggregaryes and serves.
+Compatinility - The OPC UA protocol specification consists of 14 documents for a total of 1250 pages. Due to this complexity, existing implementations are usually incomplete. In addition, the existence of several serialization formats, as well as the possibility of selectively implementing certain services such as PubSub, eventually lead to a great heterogeneity of the OPC UA connection points.
+
+## How is OPC UA relevant to the type of controls we build?
+* When you are using a PLC and have lots of variables that you want to access in your control program
+
+

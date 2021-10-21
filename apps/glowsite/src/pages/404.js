@@ -1,5 +1,8 @@
 import React from "react"
+import {Link} from "gatsby"
 
-const NotFoundPage = () => <h1>NOT FOUND</h1>
+const NotFoundPage = () => {
+    <Link to="/">Head home</Link>
+}
 
 export default NotFoundPage

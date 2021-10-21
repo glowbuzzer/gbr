@@ -33,7 +33,7 @@ The machine mapping allows you to easily recompile your GBEM code to target diff
 
 **create the new .c and .h files**
 
-<hr>
+
 Inside the `libs/machine_mapping` directory, inside `inc/machines` and `src/machines` you need to create a pair of new machine
 config .c and .h files using the templates `empty_machine_map.h` and `empty_machine_map.h` also located in these directories. The name of this pair of files should reflect your machine - e.g. `mymachine_map.c`.
 Update your CMakeLists.txt if necessary.
@@ -66,7 +66,7 @@ The entire `mymachine_map.c` file's contents needs to be enclosed in a `#if MACH
 
 **Edit  the `map_config.h` & `map_config.c` files**
 
-<hr> 
+ 
 
 Add #define in `map_config.h` for your new machine alongside the other machine #defines. This is where (by flipping the 1 to a 0) you will enable and disable this machine config.
 
@@ -127,7 +127,7 @@ Finally in `main.c`, add a new entry as follows:
 
 **Fill out the slave configuration section of the machine map .c file**
 
-<hr>
+
 
 In this section of the `mymachine_map.c` file, for each slave on the network we detail the functions we want to be called during the start-up process. It is laid out as an array with the slaves (in order they appear on the network) set out as columns.
 
@@ -135,9 +135,9 @@ Here is an example for an EtherCAT network having an EK1110 coupler, EL2008 8 ch
 
 ````mermaid
 graph LR
-id1[GBEM <br> Linux]--EtherCAT-->id2[EK1000 <br> Coupler]--E-bus-->id3[EL2008 <br> 8 digital in]--E-bus-->id4[EL2008 <br> 8 digital out];
+id1[GBEM  Linux]--EtherCAT-->id2[EK1000  Coupler]--E-bus-->id3[EL2008  8 digital in]--E-bus-->id4[EL2008  8 digital out];
 
-id2--EtherCAT-->id5[AZD <br> 2 x stepper drive];
+id2--EtherCAT-->id5[AZD  2 x stepper drive];
 ````
 
 This is the slave configuration section of the `mymachine_map.c` you would create for the example EtherCAT network of the drive and digital in and digital out modules.
@@ -197,7 +197,7 @@ This is an array of ints that detail the Distributed Clock cycle time for each s
 
 **Fill out the drive configuration section of the machine map .c file**
 
-<hr>
+
 
 The drive configuration section of the `mymachine_map.c` file follows the same pattern as was used for slaves. It is an array of functions that are called in particular circumstances by GBEM. Our job in creating the machine map is to add links to the right functions. We will use the example EtherCAT network we introduced in Step 3 as an example.
 
@@ -318,7 +318,7 @@ This the function that is called at boot time to print (to console or log) any c
 
 **Fill out the io mapping section of the machine map .c file**
 
-<hr>
+
 
 ### Introduction to iomapping in GBEM
 
@@ -472,7 +472,6 @@ Somethings though you do want to map together different types. For example, an a
 
 **Populate the slave info section of the machine map .c file**
 
-<hr>
 
 The next step is the final bit of config needed in the `mymachine_map.c`. We need to tell GBEM, the names of the slaves as they appear in the network. We use a macro for this `MAP_SLAVE_EEP` which just creates an array `const map_slave_map_t ecm_slave_map[MAP_NUM_SLAVES]`. For each slave, in the order they appear on the network, we must record the EEP (slave eeprom) names and, optionally the manufacturer, id and revision of the slaves. The manufacturer, id and revision are used for *slave checking* where at start-up we check that the slaves that appear on the network are the ones we are expecting. The #defines like `EL2008_EEP_NAME` are the ones we defined when adding a new slave and can be found in the `el2008.h` file in the Beckhoff library. Here is the `MAP_SLAVE_EEP` for the example machine.
 
@@ -486,7 +485,7 @@ MAP_SLAVE_EEP ({EK1100_EEP_NAME},{EL2008_EEP_NAME}, {EL1008_EEP_NAME},{EL2022_EE
 
 **Populate the parameters in the machine map .h file**
 
-<hr>
+
 
 The machine map header file (`mymachine_map.h` file contents is shown below:
 
@@ -530,7 +529,7 @@ Finally, `#define CTRL_ESTOP_DIN` defines the GBC io number (digital in) we are 
 
 **Check the config**
 
-<hr>
+
 
 The first step in checking the config is to try and compile GBEM. Of course in an IDE your "linter" (e.g. clang-tidy) will have helpfully highlighted anything nasty. Once you have it compiling the next step is to run the GBEM config checker.  
 
@@ -542,7 +541,7 @@ The config checking process examines the config arrays and defines that you have
 
  **Run the configuration**
 
-<hr>
+
 
 Once it all looks good, it is time to run GBEM in cyclic mode and see if it all works.
 

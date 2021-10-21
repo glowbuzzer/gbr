@@ -37,7 +37,6 @@ GBEM uses the CiA 402 state machine extensively in its operation.
 
 ![alt text][cia402_diagram]
 
-[cia402_diagram]: cia402.svg "CiA 402 state machine diagram"
 
 GBEM has the concept of the **machine state**. This is a CiA 402 state machine and is commanded by GBC and reports back its status to GBC over shared memory (DPM) in the status word. These words are accessed through:
 `dpm_in->machine_word` & `dpm_out->machine_word`.

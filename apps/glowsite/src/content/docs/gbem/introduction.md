@@ -2,9 +2,6 @@
 title: Introduction to GBEM
 sort: 1
 ---
-
-[WHICH FILES DO I EDIT](/docs/gbem/which_files_do_i_edit)
-
 # Introduction to the glowbuzzer EtherCAT Masters (GBEM)
 
 ## Version
@@ -41,7 +38,7 @@ A simple view of how GBEM operates is encapsulated in the following diagram.
 > add slave check & plc threads
 > remove white border
 
-![GBEM Big Block Diagram](/gbem_bbd.svg)
+![GBEM Big Block Diagram](gbem_bbd.svg)
 
 GBEM is written exclusively in the C (C99) programming language and designed to be highly portable across different platforms. For example, we offer a version running on the STM32 microcontroller chipset.
 

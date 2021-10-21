@@ -3,18 +3,116 @@ title: Hardware
 sort: 1
 ---
 
+import {Row, Col, Divider} from 'antd';
+import {Table, Tag, Space} from 'antd';
+
+export const dataSource = [
+    {
+        key: '1',
+        part_number: 'gb_pi_4b_4gb',
+        qty: 1,
+        item_description: 'Raspberry Pi 4 GB',
+        manufacturer: 'Raspberry Pi Foundation'
+    },
+    {
+        key: '2',
+        part_number: 'gb_32gb_sdcard',
+        qty: 1,
+        item_description: 'SanDisk Ultra 32 GB microSDHC Memory Card',
+        manufacturer: 'SanDisk',
+    },
+    {
+        key: '3',
+        part_number: 'gb_akd_ked',
+        qty: 1,
+        item_description: 'Oriental motor EtherCAT drive AKD-KED',
+        manufacturer: 'Oriental motor',
+    },
+    {
+        key: '4',
+        part_number: 'gb_azm48k',
+        qty: 1,
+        item_description: 'Oriental motor closed loop absolute encoder motor AZM48AK',
+        manufacturer: 'Oriental motor',
+    },
+    {
+        key: '5',
+        part_number: 'gb_cc02d010-3',
+        qty: 1,
+        item_description: 'Oriental motor AZD-KED motor cable CC02D010-3',
+        manufacturer: 'Oriental motor',
+    },
+    {
+        key: '6',
+        part_number: 'gb_cc025vzr2',
+        qty: 1,
+        item_description: 'Oriental motor AZD-KED motor cable CC025VZR2',
+        manufacturer: 'Oriental motor',
+    },
+    {
+        key: '7',
+        part_number: 'gb_24v_psu_dr_3a',
+        qty: 2,
+        item_description: 'Din rail 24v 3A PSU',
+        manufacturer: 'Meanwell',
+    },
+    {
+        key: '8',
+        part_number: 'gb_din_rail_300mm',
+        qty: 1,
+        item_description: 'Din rail 300mm',
+        manufacturer: 'Generic',
+    },
+    {
+        key: '9',
+        part_number: 'gb_rj45_cable_2m',
+        qty: 1,
+        item_description: '2m Ethernet cable RJ45',
+        manufacturer: 'Generic',
+    },
+];
+
+
+export const columns = [
+    {
+        title: 'Part number',
+        dataIndex: 'part_number',
+        key: 'part_number',
+    },
+    {
+        title: 'Quantity',
+        dataIndex: 'qty',
+        key: 'qty',
+    },
+    {
+        title: 'Item description',
+        dataIndex: 'item_description',
+        key: 'item_description',
+    },
+    {
+        title: 'Manufacturer',
+        dataIndex: 'manufacturer',
+        key: 'manufacturer',
+    }
+];
+
+
 # What hardware do I need to get started?
 
 ## Introduction
-To get started with the glowbuzzer toolkit, you need some hardware.
+You don't need any hardware to test the glowbuzzer toolkit in *simulation mode*. Everything can be run under WSL on a Windows PC or on Linux and no drives or IO is needed.
 
-The easiest route to getting started is using a Linux single board computer on which the core control and EtherCAT master run. This board is connected to EtherCAT drive(s) and IO.
+This will allow you to test out the front-end React components and see how GBC behaves and test out writing your own React components to control machines.
+
+But really, the the glowbuzzer toolkit is all about making things move and for that you need some hardware. Something to run the toolkit on and some motors and IO to test your control program with.
+
+In terms of the platform to run the toolkit on, the easiest route to getting started is using a Linux single board computer on which the core control and EtherCAT master run. This board is then connected to EtherCAT drive(s) and IO.
 
 You will then develop the control application using react on your PC (Windows, Mac, Linux) and the front-end will be accessed through a browser.
 
 Finally, you will need an EtherCAT servo or stepper drive and some EtherCAT IO - you need something to move and some IO to test.
 
-You can provide your own hardware to get started or we have packages available to order of all the items, cables, power supplier etc. you need.
+You can provide your own hardware to get started or we have packages available to order of all the items, cables, power supplier etc. you need. All the components are common off the shelf.
 
 If you use identical hardware to our suggestion then following the tutorials is straight forward, if you use your own hardware then there will be additional configuration steps.
 
@@ -27,70 +125,11 @@ We offer 3 starter packages:
 1. **embedded Linux starter** - Toradex imx8plus
 
 
+
+
 ## Bill-of-materials for single axis starter package
 
-<table align="left" border="1px solid black">
-    <tr style="background-color: #87e8de" align="left" >
-        <th>Description</th>
-        <th>Line item & qty</th>
-        <th>Item code</th>
-    </tr>
-    <tr>
-        <td>Raspberry Pi for core control and EtherCAT master</td>
-        <td>Raspberry Pi 4 B 4GB (qty=1)</td>
-        <td>RASPBERRY PI 4B/4GB</td>
-    </tr>
-    <tr>
-        <td>SD card for Pi flashed with pre-empt os and core control</td>
-        <td>SanDisk Ultra 32 GB microSDHC Memory Card (qty=1)</td>
-        <td>SDSQUA4-032G-GN6M</td>
-    </tr>
-    <tr>
-        <td>Oriental motor EtherCAT drive</td>
-        <td>OM single axis multiturn, closed loop stepper drive (qty=1)</td>
-        <td>AZD-KED</td>
-    </tr>
-    <tr>
-        <td>Oriental motor closed loop absolute encoder motor	Motor (qty=1)</td>
-        <td>AZM48AK</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Oriental motor cable</td>
-        <td>AZD-KED power cable(qty=1)</td>
-        <td>CC02D010-3</td>
-    </tr>
-    <tr>
-        <td>Oriental motor cable</td>
-        <td>AZ connector cable set, AZD-KED (qty=1)</td>
-        <td>CC025VZR2</td>
-    </tr>
-    <tr>
-        <td>Oriental motor cable</td>
-        <td>AZD-KED I/O cable</td>
-        <td>CC06D010B-1</td>
-    </tr>
-    <tr>
-        <td>DIN rail PSU</td>
-        <td>24V PSU (qty=1)</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>DIN rail (mechanical)</td>
-        <td>Din rail</td>
-        <td></td>
-        </tr>
-    <tr>
-        <td>Drive power cables</td>
-        <td>OM</td>
-        <td></td>
-    </tr>
-    <tr>
-        <td>Ethernet Cable for Pi->Drive</td>
-        <td></td>
-        <td></td>
-    </tr>
-</table>
+<Table dataSource={dataSource} columns={columns} bordered={true}/>
 
 
 

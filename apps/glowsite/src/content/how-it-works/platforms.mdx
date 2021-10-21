@@ -3,7 +3,29 @@ title: What platforms does it run on?
 sort: 3
 ---
 
+import { Carousel} from 'antd';
+import ImgCarousel from "../../components/caro";
+
+export const carouselContentStyle = {
+    height: '450px',
+    color: '#fff',
+    textAlign: 'center',
+    background: '#364d79',
+};
+
+export const myclass = {
+    height: '450px'
+}
+
 # What platforms does the glowbuzzer toolkit run on?
+
+
+
+## Front-end (FE)
+
+The front-end is a set of react components. React components can run in web browsers or with React Native on Android/IoS or Windows/MacOs (or Electron).
+
+This means the front-end components can be deployed on a range of devices either in the browser or natively - Windows PCs, Macs, Tablets, Phones, different HMIs.
 
 ## Core control (GBC)
 The core control is written in vanilla c code and is written to be highly portable.
@@ -19,8 +41,34 @@ Industrial PCs come in two flavours:
 * Traditional PC with for example a Mini ATX mother board and an Intel/AMD processor in an industrial enclosure
 * (usually) an ARM based SoC delivered in either in a SBC (single board computer) format or SoM/CoM on a modules plugged or soldered onto a carrier board
 
-Embedded Linux are usually ARM SoC based platforms. In this area we work with Toradex (www.toradex.com) but there are many vendors or
+Embedded Linux are usually ARM SoC based platforms. In this area, we work with Toradex (www.toradex.com) but there are many vendors or
 
-To use either option will require multiple Ethernet ports or Ethernet+WiFi.
+To use either option will require multiple Ethernet ports or Ethernet+WiFi. One Ethernet port will be devoted to EtherCAT traffic and the other to communicating over websockets to the React front-end software.
 
-GBC runs on low end hardware  but needs multiple cores. The lowest specification we would recommend would be a quad core running at 1+ GHz and having 1GB of ram.
+GBC runs on low-end hardware but needs multiple cores. The lowest specification we would recommend would be a quad-core running at 1+ GHz and having 1+ GB of RAM.
+
+export const settings = {
+    focusOnSelect: true,
+    infinite: true,
+    slidesToShow: 3,
+    slidesToScroll: 1,
+    speed: 500
+};
+
+
+export const myimages = [
+    "platform_800_400_ipc.svg",
+    "platform_800_400_som.svg",
+    "platform_800_400_sbc.svg",
+    "platform_800_400_ipc.stm32",
+];
+
+<ImgCarousel settings={settings} images={myimages}/>
+
+## Drive and IO interfacing (GBEM/GBSM)
+
+GBEM and GBSM run on Linux or on a microcontoller.
+
+Interfaces with GBC over shared memory on Linux or through SPI on embedded platforms.
+
+
