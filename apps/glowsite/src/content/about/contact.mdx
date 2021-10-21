@@ -1,13 +1,34 @@
 ---
 title: Contact
-sort: 0
+sort: 3
 ---
+
+
+import { Card,  Button } from 'antd';
+
 
 # How to contact glowbuzzer
 
-email
 
-post
-glowbuzzer
-31 Hercules Way
-Farn
+
+
+
+<Card title="By email:" bordered={false} style={{ width: 300 }}>
+    <p>hello@glowbuzzer.com</p>
+</Card>
+
+
+<Card title="By post:" bordered={false} style={{ width: 300 }}>
+    <p>glowbuzzer Ltd.</p>
+    <p>31 Hercules Way</p>
+    <p>Farnborough Aerospace Centre</p>
+    <p>GU14 6UU</p>
+    <p>UK</p>
+</Card>
+
+
+<Card title="Chat with us:" bordered={false} style={{ width: 300 }}>
+    <Button type="primary">Question? Chat with us</Button>
+
+</Card>
+

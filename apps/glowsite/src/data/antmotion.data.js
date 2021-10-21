@@ -1,7 +1,7 @@
 import React from "react"
 
 import { SmallLogo, StandardLogo } from "../components/logos"
-import { GithubOutlined } from "@ant-design/icons"
+import { GithubOutlined, YoutubeOutlined } from "@ant-design/icons"
 
 function sub_item(title, description, to = "/") {
     return {
@@ -63,7 +63,12 @@ export const Nav00DataSource = {
                         "Embedded",
                         "How to run on a microcontroller",
                         "/how-it-works/embedded"
-                    )
+                    ),
+                    sub_item(
+                        "Front-end components",
+                        "Building a machine control in React",
+                        "/how-it-works/front_end_components"
+                    ),
                 ].map((item, index) => ({
                     ...item,
                     name: `how${index}`
@@ -81,13 +86,14 @@ export const Nav00DataSource = {
                         "Starter kits and recommended hardware",
                         "/get-started/hardware"
                     ),
+                    sub_item("Simulation mode", "No hardware route to get going", "/get-started/simulation"),
                     sub_item("Motion", "Get a drive moving", "/get-started/motion"),
+                    sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat"),
                     sub_item(
                         "Front-end",
                         "Clone and modify a front-end template",
                         "/get-started/front-end"
                     ),
-                    sub_item("EtherCAT", "Commission an EtherCAT master", "/get-started/ethercat"),
                     sub_item("How to buy", "How to buy the glowbuzzer toolkit ", "/get-started/how_to_buy"),
                 ].map((item, index) => ({
                     ...item,
@@ -121,9 +127,9 @@ export const Nav00DataSource = {
                     children: [{ children: "Blogs", name: "text" }]
                 },
                 subItem: [
-                    sub_item("Embedded", "All about embedded"),
-                    sub_item("Drives", "All about drives"),
-                    sub_item("Webdev", "Web development in automation")
+                    sub_item("Embedded", "All about embedded", "/blogs/embedded/"),
+                    sub_item("Drives", "All about drives", "/blogs/drives"),
+                    sub_item("Webdev", "Web development in automation", "/blogs/webdev")
                 ].map((item, index) => ({
                     ...item,
                     name: `blogs${index}`
@@ -138,7 +144,7 @@ export const Nav00DataSource = {
                 subItem: [
                     sub_item("Vision", "What we want to achieve", "/about/vision"),
                     sub_item("Values", "What we stand for", "/about/values"),
-                    sub_item("Contact", "Contact form, location information", "about/contact")
+                    sub_item("Contact", "Contact form, location information", "/about/contact")
                 ].map((item, index) => ({
                     ...item,
                     name: `about${index}`
@@ -150,7 +156,14 @@ export const Nav00DataSource = {
                     href: "https://www.github.com/glowbuzzer",
                     children: [{ children: <GithubOutlined width={32} />, name: "text" }]
                 }
-            }
+            },
+            {
+                className: "header0-item",
+                children: {
+                    href: "https://www.youtube.com/glowbuzzer",
+                    children: [{ children: <YoutubeOutlined width={32} />, name: "text" }]
+                }
+            },
         ].map((item, index) => ({ ...item, name: `item${index}` }))
     },
     mobileMenu: { className: "header0-mobile-menu" }
@@ -528,25 +541,6 @@ export const Footer10DataSource = {
         gutter: 0,
         children: [
             {
-                name: "block0",
-                xs: 24,
-                md: 6,
-                className: "block",
-                title: {
-                    className: "logo",
-                    children: "https://zos.alipayobjects.com/rmsportal/qqaimmXZVSwAhpL.svg"
-                },
-                childWrapper: {
-                    className: "slogan",
-                    children: [
-                        {
-                            name: "content0",
-                            children: "Animation specification and components of Ant Design."
-                        }
-                    ]
-                }
-            },
-            {
                 name: "block1",
                 xs: 24,
                 md: 6,
@@ -595,7 +589,7 @@ export const Footer10DataSource = {
         className: "copyright",
         children: (
             <span>
-                ©2018 by <a href="https://motion.ant.design">Ant Motion</a> All Rights Reserved
+                ©2022 by glowbuzzer All Rights Reserved
             </span>
         )
     }

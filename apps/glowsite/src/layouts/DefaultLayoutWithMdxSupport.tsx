@@ -9,6 +9,9 @@ import { CodeDemo, CodeDemoStoreProvider } from "../components/CodeDemo"
 import { MdxFragmentProvider } from "../providers/MdxFragmentProvider"
 import { Link } from "gatsby"
 
+import ImgCarousel from "../components/caro"
+
+
 let isMobile
 enquireScreen(b => {
     isMobile = b
@@ -51,7 +54,7 @@ export const DefaultLayoutWithMdxSupport = ({ children }) => {
             {/* MdxFragmentProvider is ours - it enables useFragment hook to get MDX fragments in a page */}
             <MdxFragmentProvider>
                 {/* MDXProvider is NOT ours - it is required for MDXRenderer */}
-                <MDXProvider components={mdxComponents}>
+                <MDXProvider components={[mdxComponents, ImgCarousel]}>
                     <SiteTopNav dataSource={Nav00DataSource} isMobile={mobile} />
                     {children}
                     <SiteFooter
