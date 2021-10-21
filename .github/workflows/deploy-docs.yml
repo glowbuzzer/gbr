@@ -2,7 +2,10 @@ name: Deployment
 on:
     push:
         branches:
-            - site
+            - master
+        paths:
+            - apps/glowsite
+
 jobs:
     deploy:
         runs-on: ubuntu-18.04
@@ -26,7 +29,7 @@ jobs:
                     version: 6.13.0
 
             -   name: Install packages
-                run: pnpm install --no-optional
+                run: pnpm install # --no-optional
 
             -   name: Build site
                 run: pnpm run build:glowsite
