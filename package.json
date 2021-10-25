@@ -151,6 +151,7 @@
         "copy-webpack-plugin": "^9.0.1",
         "css.escape": "^1.5.1",
         "cypress": "^6.9.1",
+        "deepmerge": "^4.2.2",
         "dotenv": "10.0.0",
         "dseg": "^0.46.0",
         "enquire-js": "^0.2.1",

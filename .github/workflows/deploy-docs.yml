@@ -5,6 +5,7 @@ on:
             - master
         paths:
             - "apps/glowsite/**"
+            - "package.json"
 
 jobs:
     deploy:
