@@ -3,11 +3,25 @@ title: More technical details
 sort: 2
 ---
 
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider, List } from 'antd';
+import {CheckCircleOutlined} from '@ant-design/icons'
+import {PlainImg} from "../../components/PlainImg";
+import Image2Theme from '../theme_images/theme_2.svg'
 
 
 # A little bit more technical detail...
-The glowbuzzer toolkit is structured as three layers:
+
+
+<Row align={"middle"}>
+    <Col span={12}><p>The glowbuzzer toolkit is structured as three layers.</p>
+        <p>Each layer is a separate software component in the glowbuzzer toolkit.</p>
+        <li>LAYER 1 is the front-end react components used to build the user interface and machine control logic</li>
+        <li>LAYER 2 is the real-time core control</li>
+        <li>LAYER 3 is the interface to drives and IO</li>
+    </Col>
+    <Col span={12}> <PlainImg src={Image2Theme} height={"500px"}/></Col>
+</Row>
+
 
 
 <Row>
@@ -21,19 +35,20 @@ The glowbuzzer toolkit is structured as three layers:
 </Row>
 
 
-Each layer is a separate software component in the glowbuzzer toolkit. LAYER 1 is the front-end react components used to build the user interface and machine control logic. LAYER 2 is the real-time core control and LAYER 3 is the interface to drives and IO.
 
 <Divider orientation="left">LAYER 1 - Front-end React components</Divider>
 
 We supply a comprehensive set of components to perform the fundamental machine control functions:
 
-* connect to a machine
-* manage digital and analogue inputs and outputs
-* managed the machine's state (switched on, faults)
-* make a machine move
-* see the machine’s position
-* send gcode to a machine
-* see the path of a machine etc
+<List bordered>
+    <List.Item>connect to a machine</List.Item>
+    <List.Item>manage digital and analogue inputs and outputs</List.Item>
+    <List.Item>managed the machine's state (switched on, faults)</List.Item>
+        <List.Item>make a machine move</List.Item>
+            <List.Item>see the machine’s position</List.Item>
+                <List.Item>send gcode to a machine</List.Item>
+                    <List.Item>see the path of a machine etc</List.Item>
+</List>
 
 These are all published under an open-source license agreement and are fully customisable. You can also, of course, tap in the vast ecosystem of components & code available in the wider React / JavaScript ecosystem. When FE components need the machine to do something, they send high-level commands to the machine control over a WebSocket interface. They also receive messages containing the state of the machine over this connection.
 

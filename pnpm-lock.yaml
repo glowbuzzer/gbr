@@ -99,6 +99,7 @@ specifiers:
   gatsby-plugin-svgr: 3.0.0-beta.0
   gatsby-plugin-typescript: 3.11.0
   gatsby-react-router-scroll: ^4.14.0
+  gatsby-remark-admonitions: ^0.1.1
   gatsby-remark-copy-linked-files: ^4.11.0
   gatsby-remark-graph: ^0.2.5
   gatsby-remark-images: ^5.11.0
@@ -195,6 +196,7 @@ dependencies:
   gatsby-plugin-sharp: 3.11.0_gatsby@3.14.3
   gatsby-plugin-svgr: 3.0.0-beta.0_53677ceb9f07219d0b9522e4c0628b9d
   gatsby-plugin-typescript: 3.11.0_gatsby@3.14.3
+  gatsby-remark-admonitions: 0.1.1
   gatsby-remark-copy-linked-files: 4.11.0_gatsby@3.14.3
   gatsby-remark-graph: 0.2.5
   gatsby-remark-images: 5.11.0_36538aa3cd19a39686efb509c2931e48
@@ -8192,7 +8194,6 @@ packages:
 
   /comma-separated-tokens/1.0.8:
     resolution: {integrity: sha512-GHuDRO12Sypu2cV70d1dkA2EUmXHgntrzbpvOB+Qy+49ypNfGgFQIC2fhhXbnyrJRynDCAARsT7Ou0M6hirpfw==}
-    dev: true
 
   /comma-separated-tokens/2.0.2:
     resolution: {integrity: sha512-G5yTt3KQN4Yn7Yk4ed73hlZ1evrFKXeUW3086p3PRFNp7m2vIjI6Pg+Kgb+oyzhd9F2qdcoj67+y3SdxL5XWsg==}
@@ -12321,6 +12322,14 @@ packages:
       - supports-color
       - utf-8-validate
 
+  /gatsby-remark-admonitions/0.1.1:
+    resolution: {integrity: sha512-AMSxfKfznuU3gOnv3guOJEUdqzgO5qvfie7Bn5CpjdipGLPg6WWuWnci8fhFT3Yn6hTHPqZK/xpUOnmICVsrzQ==}
+    dependencies:
+      remark-admonitions: 1.2.1
+      unified: 8.4.2
+      unist-util-visit: 2.0.3
+    dev: false
+
   /gatsby-remark-copy-linked-files/4.11.0_gatsby@3.14.3:
     resolution: {integrity: sha512-24VI4ZM7767b+2x/J5Ww7yzeTJhVtGCJOQGjH2NZgEAw4ryBoZLJ2WwHiVwBD03+JSMPKGutQxus95jkLmMD4w==}
     engines: {node: '>=12.13.0'}
@@ -13398,6 +13407,16 @@ packages:
       web-namespaces: 1.1.4
     dev: true
 
+  /hast-util-from-parse5/5.0.3:
+    resolution: {integrity: sha512-gOc8UB99F6eWVWFtM9jUikjN7QkWxB3nY0df5Z0Zq1/Nkwl5V4hAAsl0tmwlgWl/1shlTF8DnNYLO8X6wRV9pA==}
+    dependencies:
+      ccount: 1.1.0
+      hastscript: 5.1.2
+      property-information: 5.6.0
+      web-namespaces: 1.1.4
+      xtend: 4.0.2
+    dev: false
+
   /hast-util-from-parse5/6.0.1:
     resolution: {integrity: sha512-jeJUWiN5pSxW12Rh01smtVkZgZr33wBokLzKLwinYOUfSzm1Nl/c3GUGebDyOKjdsRgMvoVbV0VpAcpjF4NrJA==}
     dependencies:
@@ -13411,7 +13430,6 @@ packages:
 
   /hast-util-parse-selector/2.2.5:
     resolution: {integrity: sha512-7j6mrk/qqkSehsM92wQjdIgWM2/BW61u/53G6xmC8i1OmEdKLHbk419QKQUjz6LglWsfqoiHmyMRkP1BGjecNQ==}
-    dev: true
 
   /hast-util-raw/6.0.1:
     resolution: {integrity: sha512-ZMuiYA+UF7BXBtsTBNcLBF5HzXzkyE6MLzJnL605LKE8GJylNjGc4jjxazAHUtcwT5/CEt6afRKViYB4X66dig==}
@@ -13441,6 +13459,15 @@ packages:
   /hast-util-whitespace/2.0.0:
     resolution: {integrity: sha512-Pkw+xBHuV6xFeJprJe2BBEoDV+AvQySaz3pPDRUs5PNZEMQjpXJJueqrpcHIXxnWTcAGi/UOCgVShlkY6kLoqg==}
     dev: true
+
+  /hastscript/5.1.2:
+    resolution: {integrity: sha512-WlztFuK+Lrvi3EggsqOkQ52rKbxkXL3RwB6t5lwoa8QLMemoWfBuL43eDrwOamJyR7uKQKdmKYaBH1NZBiIRrQ==}
+    dependencies:
+      comma-separated-tokens: 1.0.8
+      hast-util-parse-selector: 2.2.5
+      property-information: 5.6.0
+      space-separated-tokens: 1.1.5
+    dev: false
 
   /hastscript/6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==}
@@ -18064,6 +18091,10 @@ packages:
     resolution: {integrity: sha512-VrZ7eOd3T1Fk4XWNXMgiGBK/z0MG48BWG2uQNU4I72fkQuKUTZpl+u9k+CxEG0twMVzSmXEEz12z5Fnw1jIQFA==}
     dev: true
 
+  /parse5/5.1.1:
+    resolution: {integrity: sha512-ugq4DFI0Ptb+WWjAdOK16+u/nHfiIrcE+sh8kZMaM0WllQKLI9rOUq6c2b7cwPkXdzfQESqvoqK6ug7U/Yyzug==}
+    dev: false
+
   /parse5/6.0.1:
     resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
 
@@ -19349,7 +19380,6 @@ packages:
     resolution: {integrity: sha512-YUHSPk+A30YPv+0Qf8i9Mbfe/C0hdPXk1s1jPVToV8pk8BQtpw10ct89Eo7OWkutrwqvT0eicAxlOg3dOAu8JA==}
     dependencies:
       xtend: 4.0.2
-    dev: true
 
   /property-information/6.0.1:
     resolution: {integrity: sha512-F4WUUAF7fMeF4/JUFHNBWDaKDXi2jbvqBW/y6o5wsf3j19wTZ7S60TmtB5HoBhtgw7NKQRMWuz5vk2PR0CygUg==}
@@ -20628,6 +20658,14 @@ packages:
     dependencies:
       jsesc: 0.5.0
 
+  /rehype-parse/6.0.2:
+    resolution: {integrity: sha512-0S3CpvpTAgGmnz8kiCyFLGuW5yA4OQhyNTm/nwPopZ7+PI11WnGl1TTWTGv/2hPEe/g2jRLlhVVSsoDH8waRug==}
+    dependencies:
+      hast-util-from-parse5: 5.0.3
+      parse5: 5.1.1
+      xtend: 4.0.2
+    dev: false
+
   /rehype-react/7.0.3:
     resolution: {integrity: sha512-nrn2fAYAPv/XD3mFe9Z2cfra1UY0a9TutNYdb5dAHsfz4HAzSVxf1LbyGins/1UtvKBzvNS/0FQJknjp/d+iEg==}
     dependencies:
@@ -20643,6 +20681,14 @@ packages:
     resolution: {integrity: sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=}
     engines: {node: '>= 0.10'}
     dev: true
+
+  /remark-admonitions/1.2.1:
+    resolution: {integrity: sha512-Ji6p68VDvD+H1oS95Fdx9Ar5WA2wcDA4kwrrhVU7fGctC6+d3uiMICu7w7/2Xld+lnU7/gi+432+rRbup5S8ow==}
+    dependencies:
+      rehype-parse: 6.0.2
+      unified: 8.4.2
+      unist-util-visit: 2.0.3
+    dev: false
 
   /remark-deflist/0.3.0:
     resolution: {integrity: sha512-LFHJeK5Yel3TuAACdEo4K3rs23xHJFQ/OLnrouJi2OWvmxHtGluCAsuJDrMpwm2P0QQoiGBut+zRdeeORAhUHg==}
@@ -21956,7 +22002,6 @@ packages:
 
   /space-separated-tokens/1.1.5:
     resolution: {integrity: sha512-q/JSVd1Lptzhf5bkYm4ob4iWPjx0KiRe3sRFBNrVqbJkFaBm5vbbowy1mymoPNLRa52+oadOhJ+K49wsSeSjTA==}
-    dev: true
 
   /space-separated-tokens/2.0.1:
     resolution: {integrity: sha512-ekwEbFp5aqSPKaqeY1PGrlGQxPNaq+Cnx4+bE2D8sciBQrHpbwoBbawqTN2+6jPs9IdWxxiUcN0K2pkczD3zmw==}
@@ -23993,7 +24038,6 @@ packages:
 
   /web-namespaces/1.1.4:
     resolution: {integrity: sha512-wYxSGajtmoP4WxfejAPIr4l0fVh+jeMXZb08wNc0tMg6xsfZXj3cECqIK0G7ZAqUq0PP8WlMDtaOGVBTAWztNw==}
-    dev: true
 
   /web-namespaces/2.0.0:
     resolution: {integrity: sha512-dE7ELZRVWh0ceQsRgkjLgsAvwTuv3kcjSY/hLjqL0llleUlQBDjE9JkB9FCBY5F2mnFEwiyJoowl8+NVGHe8dw==}

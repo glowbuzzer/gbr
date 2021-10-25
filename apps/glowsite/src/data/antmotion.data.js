@@ -58,7 +58,6 @@ export const Nav00DataSource = {
                         "/how-it-works/fieldbus"
                     ),
                     sub_item("Drives", "How does it integrate with drives", "/how-it-works/drives"),
-                    sub_item("Linux", "How to run on a Linux platform", "/how-it-works/linux"),
                     sub_item(
                         "Embedded",
                         "How to run on a microcontroller",

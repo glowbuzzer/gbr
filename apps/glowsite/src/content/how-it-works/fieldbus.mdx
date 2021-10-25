@@ -3,6 +3,23 @@ title: Fieldbus
 sort: 7
 ---
 
+import { Carousel} from 'antd';
+import {PlainImg} from "../../components/PlainImg";
+
+export const carouselContentStyle = {
+    width: "500px",
+    height: '50px',
+    color: '#0',
+};
+
+import Image1Fieldbus from './fieldbus_images/fiedlbus_canopen.svg'
+import Image2Fieldbus from './fieldbus_images/fieldbus_ethercat.svg'
+import Image3Fieldbus from './fieldbus_images/fieldbus_ethernetip.svg'
+import Image4Fieldbus from './fieldbus_images/fieldbus_powerlink.svg'
+import Image5Fieldbus from './fieldbus_images/fieldbus_profinet.svg'
+import Image6Fieldbus from './fieldbus_images/fieldbus_sercos.svg'
+
+
 # How does glowbuzzer woks with different fieldbusses?
 ## Introduction
 Interoperability with the major fieldbus protocols is at the heart of the glowbuzzer toolkit.
@@ -18,6 +35,43 @@ EtherCAT is the primary fieldbus we support. Mainly because of the wide range of
 1. Sercos
 1. CANbus
 1. Powerlink
+
+
+export const settings = {
+    arrows: false,
+    dots: false,
+    pauseOnHover: true,
+    infinite: true,
+    speed: 5000,
+    centerMode: true,
+    autoplay: true,
+    fade: true,
+    variableWidth: false,
+    adaptiveHeight: false,
+}
+
+
+<Carousel {...settings}>
+    <div style={carouselContentStyle}>
+    <PlainImg src={Image1Fieldbus} height="100px"/>
+</div>
+    <div>
+        <PlainImg src={Image2Fieldbus} height="100px" />
+    </div>
+    <div>
+        <PlainImg src={Image3Fieldbus} height="100px"/>
+    </div>
+    <div>
+        <PlainImg src={Image4Fieldbus} height="100px"/>
+    </div>
+    <div>
+        <PlainImg src={Image5Fieldbus} height="100px"/>
+    </div>
+    <div>
+        <PlainImg src={Image6Fieldbus}height="100px" />
+    </div>
+</Carousel>
+
 
 We are taking a keen interest in the development of OPC/UA TSN and have examples working in the lab.
 

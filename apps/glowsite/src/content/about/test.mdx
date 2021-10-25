@@ -1,0 +1,73 @@
+---
+title: Test page
+sort: 10
+---
+
+import { Tabs, Alert} from 'antd';
+
+import {CheckCircleOutlined} from '@ant-design/icons'
+
+export const TabPane = Tabs.TabPane;
+
+import Testsvg from '../how-it-works/platform_images/platform_som.svg'
+
+export const PlainImg=({src}) => {
+    console.log("IMG", src);
+    return <img src={src}/>;
+}
+
+
+export const Highlight = ({children, color}) => (
+    <span
+        style={{
+            backgroundColor: color,
+            borderRadius: '2px',
+            color: '#fff',
+            padding: '0.2rem',
+        }}>
+    {children}
+  </span>
+);
+
+
+# Highlight
+<Highlight color="#25c2a0">Green</Highlight> and <Highlight color="#1877F2">Blue</Highlight> are my favorite colors.
+
+
+# test page
+## Images
+### pling syntax - only bitmaps
+
+<PlainImg src={Testsvg} />
+
+<CheckCircleOutlined/>
+
+<Tabs defaultActiveKey="1" >
+<TabPane tab="Tab 1" key="1">
+Content of Tab Pane 1
+</TabPane>
+<TabPane tab="Tab 2" key="2">
+Content of Tab Pane 2
+</TabPane>
+<TabPane tab="Tab 3" key="3">
+Content of Tab Pane 3
+</TabPane>
+</Tabs>
+
+
+
+# Admonitions
+
+:::Caution
+Cyanide is for enemies not friends
+:::
+
+Note, caution, tip, info, danger
+
+<Alert message="Success Tips" description="hello" type="success" showIcon />
+
+<Alert message="Informational Notes" type="info" showIcon />
+
+<Alert message="Caution" description="Cyanide is for enemies not friends" type="warning" showIcon />
+
+<Alert message="Error" type="error" showIcon />

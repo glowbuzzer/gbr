@@ -7,7 +7,9 @@ module.exports = {
     },
     siteMetadata: {
         title: `Glowbuzzer - Web Stack Machine Motion`,
-        description: `Develop machines using web technologies combined with real-time motion control`
+        description: `Develop machine controls using web technologies`,
+        siteUrl: "https://www.glowbuzzer.com",
+        keywords: "machine, control, trajectory, EtherCAT"
     },
     plugins: [
         // "gatsby-source-gbc-api",
@@ -88,6 +90,15 @@ module.exports = {
                         // our local plugin for definition list
                         resolve: require.resolve("./plugins/gatsby-remark-dl")
                     },
+
+                    {
+                        resolve: `gatsby-remark-admonitions`,
+                        options: {
+                            tag: ":::",
+                            icons: "svg",
+                        }
+                    },
+
                     // "gatsby-remark-graph",
                     "gatsby-remark-mermaid",
 

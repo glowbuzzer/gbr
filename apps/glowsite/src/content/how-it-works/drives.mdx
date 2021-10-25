@@ -3,6 +3,12 @@ title: What drives does it work with?
 sort: 4
 ---
 
+import {Link} from "gatsby"
+
+import {Carousel} from 'antd';
+import {PlainImg} from "../../components/PlainImg";
+
+
 # What drives does it work with?
 
 ## EtherCAT
@@ -22,7 +28,85 @@ Drives that have been pre-integrated and tested include:
 * Nanotec - N5
 * Trinamic - ?
 
-See [EtherCAT pre-configured drive overview](/docs/gbem/drive_support_overview) for a full list of the pre-configured drives.
+
+import Image1Drive from './drive_images/drives_beckhoff.svg'
+import Image2Drive from './drive_images/drives_cannon.svg'
+import Image3Drive from './drive_images/drives_delta.svg'
+import Image4Drive from './drive_images/drives_invertek.svg'
+import Image5Drive from './drive_images/drives_jvl.svg'
+import Image6Drive from './drive_images/drives_kollmorgen.svg'
+import Image7Drive from './drive_images/drives_nanotec.svg'
+import Image8Drive from './drive_images/drives_om.svg'
+import Image9Drive from './drive_images/drives_omron.svg'
+
+import Image1Motor from './motor_images/motors_bldc.svg'
+import Image2Motor from './motor_images/motors_frameless1.svg'
+import Image3Motor from './motor_images/motors_servo.svg'
+import Image4Motor from './motor_images/motors_stepper_encoder.svg'
+import Image5Motor from './motor_images/motors_frameless2.svg'
+import Image6Motor from './motor_images/motors_linear.svg'
+import Image7Motor from './motor_images/motors_pancake.svg'
+import Image8Motor from './motor_images/motors_hollow_shaft.svg'
+import Image9Motor from './motor_images/motors_stepper.svg'
+
+
+
+export const carouselContentStyle = {
+    width: "500px",
+    height: '50px',
+    color: '#0',
+    lineHeight: '50px',
+    textAlign: 'right'
+};
+
+
+export const settings = {
+    arrows: false,
+    dots: false,
+    pauseOnHover: true,
+    infinite: true,
+    speed: 5000,
+    centerMode: true,
+    autoplay: true,
+    fade: true,
+    variableWidth: false,
+    adaptiveHeight: true,
+}
+
+
+<Carousel {...settings}>
+    <div style={carouselContentStyle}>
+        <PlainImg src={Image1Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image2Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image3Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image4Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image5Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image6Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image7Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image8Drive} height={"200px"}/>
+    </div>
+    <div>
+        <PlainImg src={Image9Drive} height={"200px"}/>
+    </div>
+</Carousel>
+
+See <Link to="/docs/gbem/drive_support_overview">EtherCAT pre-configured drive overview</Link> for a full list of the pre-configured drives.
+
+
 
 
 ## Embedded stepper / servo / BLDC
@@ -32,3 +116,32 @@ If you are embedding a machine control, fieldbus based drives may not be suitabl
 Part of the glowbuzzer toolkit is GBSM which is a software application for use on Linux (usually embedded Linux) or microcontoller platforms. This works with motor drive ICs to control stepper / BDLC or servo motors in an embedded environment.
 
 
+<Carousel {...settings}>
+    <div style={carouselContentStyle}>
+    <PlainImg src={Image1Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image2Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image3Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image4Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image5Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image6Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image7Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image8Motor} height={"200px"}/>
+</div>
+    <div>
+    <PlainImg src={Image9Motor} height={"200px"}/>
+</div>
+</Carousel>

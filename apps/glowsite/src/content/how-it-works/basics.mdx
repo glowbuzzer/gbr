@@ -2,29 +2,83 @@
 title: Basics
 sort: 1
 ---
-import {Link} from "gatsby"
+
+import { Row, Col, Divider} from 'antd';
+import {CheckCircleOutlined} from '@ant-design/icons'
+import {PlainImg} from "../../components/PlainImg";
+
+
+import Image1Theme from '../theme_images/theme_1.svg'
+
+
+export const YoutubeEmbed = ({ embedId }) => (
+<div style={{overflow: 'hidden', position: 'relative', padding: '50px'}}>
+    <iframe
+        width="853"
+        height="480"
+        src={`https://www.youtube.com/embed/${embedId}`}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        title="Embedded youtube"
+    />
+</div>
+);
+
+
+
 
 # Basically, how does it work?
 
-<Link to="/">Head home</Link>
+<Row align={"middle"}>
+    <Col span={12}><p>The glowbuzzer toolkit allows you to build machine control applications using a web stack.</p>
+        <p>A machine is a combination of motors and IO. It could be an industrial robot arm, a cutting machine, a piece of laboratory equipment.</p>
+        <p>At a high level, you take the glowbuzzer toolkit’s React components and use them either unchanged, extended or added to with your own custom components to build the visual front-end and control logic for your machine control.</p>
+            <p>This user interface and control logic code runs either in the browser or as a desktop application or on a mobile device.</p>
+                <p>Where a front-end component needs to make the machine perform an action (move or turn something on or off) it issues commands over a WebSocket interface. When a front-end component needs to interact with the state of the machine it reads from a WebSocket interface.</p>
+                    <p>The WebSockets interface the fron-end reads and writes to is provided by the glowbuzzer toolkit’s real-time control software that runs either on Linux or on an embedded microcontroller.</p>
+                        <p>It is this software’s responsibility to translate the high-level instructions received over the WebSockets interface into the low-level commands that can issued over the fieldbus to control io and drives to make the machine move and perform actions. This is where the “heavy lifting” takes place: synchronised multi-axis trajectories are planned, kinematics functions are run, tasks and activities are executed and the state of the machine is calculated. These functions run in real-time.</p>
+                            <p>At is simplest, a browser running your React machine control application is talking WebSockets over the network to the real-time control and EtherCAT master running on a Linux platform which is connected to a fieldbus (containing drives and IO) or to embedded drives and IO.</p>
+        <p>This gives you the ability to build a sophisticated control for complex machines and robots using a modern web and open software stack with <em>absolutely no proprietary hardware required</em>.</p>
+    </Col>
+    <Col span={12}> <PlainImg src={Image1Theme} height={"500px"}/></Col>
+</Row>
 
-The glowbuzzer toolkit allows you to build machine control applications using a web stack.
 
-A *machine* is a collection of motors controlled via drives together with IO for interacting with the sensors and actuators that make up a machine.
 
-At a high level, you take the glowbuzzer toolkit’s React components and use them either unchanged, extended or added to with your own custom components to build the visual front-end and control logic for your machine control.
 
-This user interface and control logic code runs either in the browser or as a desktop application or on a mobile device.
 
-Where a front-end component needs to make the machine perform an action (move or turn something on or off) it issues commands over a WebSocket interface. When a front-end component needs to interact with the state of the machine it reads from a WebSocket interface.
+<YoutubeEmbed embedId="hwCXSckISXM" />
 
-The WebSockets interface the fron-end reads and writes to is provided by the glowbuzzer toolkit’s real-time control software that runs either on Linux or on an embedded microcontroller.
 
-It is this software’s responsibility to translate the high-level instructions received over the WebSockets interface into the low-level commands that can issued over the fieldbus to control io and drives to make the machine move and perform actions. This is where the “heavy lifting” takes place: synchronised multi-axis trajectories are planned, kinematics functions are run, tasks and activities are executed and the state of the machine is calculated. These functions run in real-time.
 
-At is simplest, a browser running your React machine control application is talking WebSockets over the network to the real-time control and EtherCAT master running on a Linux platform which is connected to a fieldbus (containing drives and IO) or to embedded drives and IO.
+<Divider orientation="left" plain><b><em>Summary of features/benefits</em></b></Divider>
+<Row style={{ marginBottom: 12}}>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Control machines and robots with a web stack</b></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Runs on desktop Linux, Embedded Linux or microcontrollers</b></Col>
+</Row>
+<Row style={{ marginBottom: 12}}>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Work with the main industrial fieldbusses e.g. EtherCAT</b></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Deliver rich user interfaces to HMIs, tablets with React Native</b></Col>
+</Row>
+<Row style={{ marginBottom: 12}}>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Not tied to any particular vendor's hardware</b></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Runs in real-time to handle demanding control tasks</b></Col>
+</Row>
+<Row style={{ marginBottom: 12}}>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Built for machine control developers who want to use modern software frameworks</b></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={11}><b>Majority of software components delivered under an open-source license agreement</b></Col>
+</Row>
 
-This gives you the ability to build a sophisticated control for complex machines and robots using a modern web and open software stack with *absolutely no proprietary hardware required*.
+<Divider plain />
 
 Insert great video showing:
 * Someone typing “npm I glowbuzzer” and the toolkit installing
@@ -32,3 +86,22 @@ Insert great video showing:
 * Then show them writing some code to move a motor in IDE in web stack land
 * Show the front-end browser say clicking a button to start the motor moving
 * Then show a video of a motor moving - oscillating move
+
+
+
+# Let’s imagine a scenario...
+You are the manufacturer (OEM) of a pick-and-place machine product.
+
+The current control software you ship with the machines was written a good few years ago and is Windows C++ application that communicates over a serial connection to some custom motor control electronics embedded in the machine.
+
+You want to update the control software & electronics but don’t know what to base your new development on. There are no easy choices. You want to write as little low-level code as possible.
+
+With the glowbuzzer toolkit, you can write the new control software as a React web application, using the glowbuzzer library of components for standard functions (connecting to the machine, io, g-code support, jogging etc.) and write you own new components where needed for your application.
+
+The React application can run in the browser or on a PC / Mac as an electron application or on a mobile device with React native.
+
+The core control can either run on a Linux single board computer or be integrated into the machine running on a microcontroller.
+
+The motor drives and IO can either be updated to new EtherCAT based devices (there is vast number of these available off-the-shelf from different manufacturers) or you can integrate at a lower level with embedded motor drives.
+
+**Writing machine control applications in a web stack is our magic sauce.**

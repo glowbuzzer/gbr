@@ -1,0 +1,54 @@
+---
+title: Motion - trajectory planning
+sort: 20
+---
+
+import { Row, Col } from 'antd';
+import {CheckCircleOutlined} from '@ant-design/icons'
+
+# Motion - trajectory planning
+A motion controller calculates the trajectories that the motors follow in order to meet the desired commands.
+
+The trajectory is often composed as a sequence of positions over time; these tells the motor where to position itself and how fast it must do so.
+
+These trajectories are sent to the drives which powers the motors.
+
+At the heart of the glowbuzzer tool kit is our own innovative trajectory planner that computes time optimal and time synchronised multi-dimensional third-order trajectories complying maximal asymmetric motion limits on velocity, acceleration and jerk. This provides the core of our 3D-axis, synchronized axis and single-axis motion control capabilities.
+
+The planner includes the following features:
+
+<Row>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Basic single joint control</b><p>Move absolute, move relative, move at velocity, stop, superimposed move</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Basic multiple joint control</b><p>Gearing and phasing. Different algorithms for specialist applications</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>On the fly changes to trajectories</b><p>Trajectories can be modified in real-time to respond to events</p></Col>
+</Row>
+<Row>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Blending of moves</b><p>Single joint and co-ordinated moves can be blended together</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Kinematics groups</b><p>Joints can be grouped into kinematics groups to which a Forward and Inverse Kinematics algorithm is applied</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Co-ordinated moves</b><p>Move line and move arc in 3D space</p></Col>
+</Row>
+<Row>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Frames</b><p>Co-ordinate systems translations and rotations can be applied in an arbitrary hierarchy</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>gcode control</b><p>Kinematics groups and single joints can be controlled with gcode through a standard RS-274 G-Code interpreter.Flexibility to adapt the syntax</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Time-optimal trajectories</b><p>All trajectories are guaranteed to be time-optimal</p></Col>
+</Row>
+<Row>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Time-synchronised trajectories</b><p>Multi-joint trajectories can be calculated to time-optimally arrive at a destination at the same time</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Streamed trajectories</b><p>Large sequences of moves can be streamed to the low-level control</p></Col>
+    <Col span={1}> <CheckCircleOutlined/> </Col>
+    <Col span={7}><b>Jogging</b><p>Creation of continuous and step jog trajectories</p></Col>
+</Row>
+
+
+The motion control includes a variety of kinematics modules to support different types of robot and machines (6 industrial robots, 5 axis industrial SCARA robots, delta, cartesian, hexpod etc.)

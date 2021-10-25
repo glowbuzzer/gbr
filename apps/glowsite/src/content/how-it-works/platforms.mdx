@@ -3,67 +3,98 @@ title: What platforms does it run on?
 sort: 3
 ---
 
-import { Carousel} from 'antd';
-import ImgCarousel from "../../components/caro";
+import {Carousel, Row, Col} from 'antd';
+import {PlainImg} from "../../components/PlainImg";
+
 
 export const carouselContentStyle = {
-    height: '450px',
-    color: '#fff',
-    textAlign: 'center',
-    background: '#364d79',
+    width: "500px",
+    height: '50px',
+    color: '#0',
+    lineHeight: '50px',
+    textAlign: 'right'
 };
 
-export const myclass = {
-    height: '450px'
-}
+import Image1Platform from './platform_images/platform_ipc.svg'
+import Image2Platform from './platform_images/platform_sbc.svg'
+import Image3Platform from './platform_images/platform_som.svg'
+import Image4Platform from './platform_images/platform_stm32.svg'
+import Image3Theme from '../theme_images/theme_3.svg'
+
 
 # What platforms does the glowbuzzer toolkit run on?
 
+<Row align={"middle"}>
+    <Col span={12}><h2>Front-end (FE)</h2>
+        <p>The front-end is a set of react components. React components can run in web browsers or with React Native on
+            Android/IoS or Windows/MacOs (or Electron).</p>
+        <p>This means the front-end components can be deployed on a range of devices either in the browser or natively -
+            Windows PCs, Macs, Tablets, Phones, different HMIs.</p>
+        <h2>Core control (GBC)</h2>
+        <p>The core control is written in vanilla c code and is written to be highly portable.</p>
+        <p>The core supported platforms are real-time Linux & embedded STM32 but no issues are likely to be found
+            deploying on platforms such as VxWorks, QNX, Xenomai or different high-end dual core (cortex M4/M7)
+            microcontrollers running FreeRTOS.</p>
+        <p>The core control is designed to be highly performant. For example, the Raspberry 4 single board computer
+            supports 6 axis robots at a 1msec cycle time to the drives.</p>
+        <p>If you are using the glowbuzzer toolkit with Linux (rather than running on an embedded microcontroller) you
+            will need either an industrial PC or an embedded Linux platform.</p>
+        <p>Industrial PCs come in two flavours:</p>
+        <li>Traditional PC with for example a Mini ATX mother board and an Intel/AMD processor in an industrial
+            enclosure
+        </li>
+        <li>(usually) an ARM based SoC delivered in either in a SBC (single board computer) format or SoM/CoM on a
+            modules plugged or soldered onto a carrier board
+        </li>
+        <p>Embedded Linux are usually ARM SoC based platforms. In this area, we work with Toradex (www.toradex.com) but
+            there are many other vendors or ??</p>
+        <p>To use either option will require multiple Ethernet ports or Ethernet+WiFi. One Ethernet port will be devoted
+            to EtherCAT traffic and the other to communicating over websockets to the React front-end software.</p>
+        <p>GBC runs on low-end hardware but needs multiple cores. The lowest specification we would recommend would be a
+            quad-core running at 1+ GHz and having 1+ GB of RAM.</p>
+    </Col>
+    <Col span={12}> <PlainImg src={Image3Theme} height={"500px"}/></Col>
+</Row>
 
 
-## Front-end (FE)
-
-The front-end is a set of react components. React components can run in web browsers or with React Native on Android/IoS or Windows/MacOs (or Electron).
-
-This means the front-end components can be deployed on a range of devices either in the browser or natively - Windows PCs, Macs, Tablets, Phones, different HMIs.
-
-## Core control (GBC)
-The core control is written in vanilla c code and is written to be highly portable.
-
-The core supported platforms are real-time Linux & embedded STM32 but not issues are likely to be found deploying on platforms such as VxWorks, QNX, Xenomai or different high-end dual core (cortex M4/M7) microcontrollers running FreeRTOS.
-
-The core control is designed to be highly performant. For example, the Raspberry 4 single board computer supports 6 axis robots at a 1msec cycle time to the drives.
-
-If you are using the glowbuzzer toolkit with Linux (rather than running on an embedded microcontroller) you will need either an industrial PC or an embedded Linux platform.
-
-Industrial PCs come in two flavours:
-
-* Traditional PC with for example a Mini ATX mother board and an Intel/AMD processor in an industrial enclosure
-* (usually) an ARM based SoC delivered in either in a SBC (single board computer) format or SoM/CoM on a modules plugged or soldered onto a carrier board
-
-Embedded Linux are usually ARM SoC based platforms. In this area, we work with Toradex (www.toradex.com) but there are many vendors or
-
-To use either option will require multiple Ethernet ports or Ethernet+WiFi. One Ethernet port will be devoted to EtherCAT traffic and the other to communicating over websockets to the React front-end software.
-
-GBC runs on low-end hardware but needs multiple cores. The lowest specification we would recommend would be a quad-core running at 1+ GHz and having 1+ GB of RAM.
 
 export const settings = {
-    focusOnSelect: true,
+    arrows: false,
+    dots: false,
+    pauseOnHover: true,
     infinite: true,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    speed: 500
-};
+    speed: 5000,
+    centerMode: true,
+    autoplay: true,
+    fade: true,
+    variableWidth: false,
+    adaptiveHeight: true,
+}
 
 
-export const myimages = [
-    "platform_800_400_ipc.svg",
-    "platform_800_400_som.svg",
-    "platform_800_400_sbc.svg",
-    "platform_800_400_ipc.stm32",
-];
+<Carousel {...settings}>
 
-<ImgCarousel settings={settings} images={myimages}/>
+    <div>
+        <PlainImg src={Image1Platform} height="300px"/>
+        <h3 style={carouselContentStyle}>Linux IPC</h3>
+    </div>
+
+    <div>
+        <PlainImg src={Image2Platform} height="300px"/>
+        <h3 style={carouselContentStyle}>Linux SBC </h3>
+    </div>
+
+    <div>
+        <PlainImg src={Image3Platform} height="300px"/>
+        <h3 style={carouselContentStyle}>Linux SoM </h3>
+    </div>
+
+    <div>
+        <PlainImg src={Image4Platform} height="300px"/>
+        <h3 style={carouselContentStyle}>STM32 Microcontroller</h3>
+    </div>
+</Carousel>
+
 
 ## Drive and IO interfacing (GBEM/GBSM)
 

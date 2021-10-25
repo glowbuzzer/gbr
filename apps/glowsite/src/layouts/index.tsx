@@ -13,6 +13,7 @@ const StyledBodyArea = styled.div`
 `
 
 export default ({ children, pageContext }) => {
+
     if (["docs", "how-it-works", "get-started", "blogs", "about"].includes(pageContext.layout)) {
         return (
             <DefaultLayoutWithMdxSupport>
