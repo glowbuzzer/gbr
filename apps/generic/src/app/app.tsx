@@ -3,6 +3,8 @@ import styled from "styled-components"
 
 import "antd/dist/antd.css"
 
+
+
 import { Button } from "antd"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import {
@@ -23,6 +25,11 @@ import {
 } from "@glowbuzzer/controls"
 import React, { useState } from "react"
 import { JointSpinnersTile } from "./JointSpinnersTile"
+
+//tutorial
+import {TutorialDoToggleTile} from "./tutorial/TutorialDoToggleTile"
+import {TutorialOscillatingMoveTile} from "./tutorial/TutorialOscillatingMoveTile"
+import { SoloActivityProvider } from "./tutorial/TutorialOscillatingMoveTile"
 
 const StyledApp = styled.div``
 
@@ -65,15 +72,19 @@ export function App() {
             { render: <AnalogOutputsTile />, height: 4, title: "Analog Outputs" },
             { render: <AnalogInputsTile />, height: 4, title: "Analog Inputs" },
             { render: <IntegerOutputsTile />, height: 4, title: "Integer Outputs" },
-            { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" }
+            { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" },
+            { render: <TutorialDoToggleTile />, height: 4, title: "Tutorial Digital Output Toggle" },
+            { render: <TutorialOscillatingMoveTile />, height: 4, title: "Tutorial Oscillating Move" }
         ]
     ]
 
     return (
         <StyledApp>
             <GlowbuzzerApp>
+                <SoloActivityProvider>
                 <PrefsButton />
                 <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
+                    </SoloActivityProvider>
             </GlowbuzzerApp>
         </StyledApp>
     )

@@ -2,7 +2,7 @@ import React from "react"
 import {Link} from "gatsby"
 import {PlainImg} from "../components/PlainImg";
 
-import Image404 from './404.png'
+import Image404 from './robot_says_no.png'
 
 const NotFoundPage = () => {
 return (
