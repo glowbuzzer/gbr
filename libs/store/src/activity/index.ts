@@ -1,20 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
-import { ACTIVITYSTATE, ACTIVITYTYPE, RootState, useConnect } from "@glowbuzzer/store"
 import deepEqual from "fast-deep-equal"
 import { useEffect, useMemo } from "react"
 import { ActivityApi } from "./activity_api"
+import { ACTIVITYSTATE } from "../gbc"
+import { RootState } from "../root"
+import { useConnect } from "../connect"
 
 type ActivityStatus = {
     tag: number
     state: ACTIVITYSTATE
 }
 
-export const activitySlice = createSlice({
+export const activitySlice: Slice<
+    ActivityStatus[],
+    { status: (state, action) => ActivityStatus[] },
+    string
+> = createSlice({
     name: "activity",
     initialState: [] as ActivityStatus[],
     reducers: {
-        status: (state, action) => {
+        status: (state, action): ActivityStatus[] => {
             return [...action.payload]
         }
     }

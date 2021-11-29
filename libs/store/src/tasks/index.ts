@@ -1,6 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
-import { RootState, TASK_COMMAND, TaskStatus, useConfig, useConnect } from "@glowbuzzer/store"
+import { TASK_COMMAND, TaskStatus } from "../gbc"
+import { useConfig } from "../config"
+import { RootState } from "../root"
+import { useConnect } from "../connect"
 
 // export enum TaskState {
 //     NOTSTARTED,
@@ -25,7 +28,7 @@ import { RootState, TASK_COMMAND, TaskStatus, useConfig, useConnect } from "@glo
 //     currentActivityIndex: number
 // }
 
-export const tasksSlice = createSlice({
+export const tasksSlice: Slice<TaskStatus[]> = createSlice({
     name: "tasks",
     initialState: [] as TaskStatus[],
     reducers: {
@@ -81,14 +84,17 @@ export function useTask(taskIndex: number) {
 
     // here we need to reconstruct the activityCount and firstActivityIndex for each task
     let abs_activity_index = 0
-    const tasks = Object.keys(config.task).map((k, index) => {
+    const tasks = Object.keys(config.task).map(k => {
         const task = config.task[k]
         const activity_names = Object.keys(task)
 
         const activities = activity_names.map(a => {
             return {
                 name: a,
-                sendCommand: (index => command => sendActivityCommand(index, command))(abs_activity_index++)
+                sendCommand: (
+                    index => command =>
+                        sendActivityCommand(index, command)
+                )(abs_activity_index++)
             }
         })
 

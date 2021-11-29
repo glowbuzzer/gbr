@@ -2,7 +2,7 @@ import { useJoints } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
 import React from "react"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     .dro {
@@ -23,7 +23,7 @@ export const JointSpinnersTile = () => {
                             <MotorDro width={200} value={j.actPos || 0} />
                         </div>
                         <div className="dro">
-                            <SegmentDisplay value={j.actPos || 0} toFixed={3}/>
+                            <SegmentDisplay value={j.actPos || 0} toFixed={3} />
                         </div>
                     </div>
                 ))}

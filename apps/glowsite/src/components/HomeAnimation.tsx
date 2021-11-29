@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react"
 import { particles } from "./particles"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     background: black;

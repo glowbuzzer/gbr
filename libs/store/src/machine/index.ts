@@ -1,6 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { DesiredState, determine_machine_state, handleMachineState, MachineState } from "./MachineStateHandler"
+import {
+    DesiredState,
+    determine_machine_state,
+    handleMachineState,
+    MachineState
+} from "./MachineStateHandler"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
@@ -46,15 +51,17 @@ type MachineStateHandling = {
     nextControlWord: number | void
 }
 
+type MachineSliceType = Partial<MachineStatus> & Partial<MachineStateHandling>
+
 // createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
-export const machineSlice = createSlice({
+export const machineSlice: Slice<MachineSliceType> = createSlice({
     name: "machine",
     initialState: {
         requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
         actualTarget: undefined,
         desiredState: DesiredState.OPERATIONAL,
         heartbeatReceived: true
-    } as Partial<MachineStatus> & Partial<MachineStateHandling>,
+    } as MachineSliceType,
     reducers: {
         status: (state, action) => {
             // called with status.machine from the json every time board sends status message
@@ -71,7 +78,11 @@ export const machineSlice = createSlice({
             // set the next machine state to be sent (handled in connect/index.ts)
             state.currentState = determine_machine_state(state.statusWord)
             // console.log("state:" + state.currentState)
-            state.nextControlWord = handleMachineState(state.currentState, state.controlWord, state.desiredState)
+            state.nextControlWord = handleMachineState(
+                state.currentState,
+                state.controlWord,
+                state.desiredState
+            )
             // console.log("word:" + state.nextControlWord)
             if (state.nextControlWord === undefined) {
                 state.desiredState = DesiredState.NONE
@@ -112,4 +123,9 @@ export const useMachine = () => {
     }
 }
 
-export { MachineState, DesiredState, determine_machine_state, possible_transitions } from "./MachineStateHandler"
+export {
+    MachineState,
+    DesiredState,
+    determine_machine_state,
+    possible_transitions
+} from "./MachineStateHandler"

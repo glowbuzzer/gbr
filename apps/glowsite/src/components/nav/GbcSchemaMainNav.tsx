@@ -1,7 +1,7 @@
 import { Link } from "gatsby"
 import React from "react"
 import { useGbcSchemaNav } from "./hooks"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     .group {

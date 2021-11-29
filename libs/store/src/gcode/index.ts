@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KinematicsConfigurationMcStatus } from "../types"
@@ -27,12 +27,26 @@ export type GCodeSettingsType = {
 //     STOP
 // }
 
-export const gcodeSlice = createSlice({
+type GCodeSliceType = {
+    ready: boolean
+    current_positions: number[]
+    paused: boolean
+    capacity: number
+    buffer: ActivityStreamItem[]
+    state: STREAMSTATE
+    time: number
+    readCount: number
+    writeCount: number
+    tag: number
+    settings: GCodeSettingsType
+}
+
+export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
     name: "gcode",
     initialState: {
-        ready: false,
+        ready: false as boolean,
         current_positions: [] as number[],
-        paused: false,
+        paused: false as boolean,
         capacity: 0,
         buffer: [] as ActivityStreamItem[],
         state: STREAMSTATE.STREAMSTATE_IDLE,

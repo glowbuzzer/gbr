@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react"
-import { Line2 } from "three/examples/jsm/lines/Line2"
-import { LineMaterial } from "three/examples/jsm/lines/LineMaterial"
-import { Vector2, Vector3 } from "three"
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry"
+// import { Line2 } from "three/examples/jsm/lines/Line2"
+// import { LineMaterial } from "three/examples/jsm/lines/LineMaterial"
+import { Vector2 } from "three"
+// import { LineGeometry } from "three/examples/jsm/lines/LineGeometry"
 
 type DynamicLineProps = {
     points: number[] // must be flat pairs of points
@@ -10,7 +10,11 @@ type DynamicLineProps = {
     lineWidth: number
 }
 
-export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Line({ points, color = "black", lineWidth, ...rest }, ref) {
+/*
+export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Line(
+    { points, color = "black", lineWidth, ...rest },
+    ref
+) {
     const [line2] = useState(() => new Line2())
     const [lineMaterial] = useState(() => new LineMaterial())
     const [resolution] = useState(() => new Vector2(512, 512))
@@ -35,3 +39,4 @@ export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Li
         </primitive>
     )
 })
+*/

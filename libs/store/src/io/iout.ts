@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "@glowbuzzer/store"
+import { useConnect } from "../connect"
 
 type IntegerOutputCommand = {
     value: number
@@ -12,7 +12,7 @@ type IntegerOutputStatus = {
     actValue: number
 } & IntegerOutputCommand
 
-export const integerOutputsSlice = createSlice({
+export const integerOutputsSlice: Slice<IntegerOutputStatus[]> = createSlice({
     name: "iout",
     initialState: [] as IntegerOutputStatus[],
     reducers: {

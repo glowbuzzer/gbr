@@ -2,8 +2,14 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Button, Slider, Tag } from "antd"
-import { determine_machine_state, MachineState, possible_transitions, useDevTools, useMachine } from "@glowbuzzer/store"
-import styled from "styled-components"
+import {
+    determine_machine_state,
+    MachineState,
+    possible_transitions,
+    useDevTools,
+    useMachine
+} from "@glowbuzzer/store"
+import styled from "@emotion/styled"
 
 const StatusFreqTable = styled.div`
     display: flex;
@@ -121,7 +127,13 @@ export const DevToolsTile = () => {
             </StatusFreqTable>
             <CurrentMachineState>
                 <div>Current Machine State</div>
-                <Tag color={currentMachineState === MachineState.OPERATION_ENABLED ? "green" : undefined}>{currentMachineState}</Tag>
+                <Tag
+                    color={
+                        currentMachineState === MachineState.OPERATION_ENABLED ? "green" : undefined
+                    }
+                >
+                    {currentMachineState}
+                </Tag>
             </CurrentMachineState>
             <MachineTransitions state={currentMachineState} />
         </Tile>

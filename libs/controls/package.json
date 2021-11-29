@@ -1,0 +1,38 @@
+{
+    "name": "@glowbuzzer/controls",
+    "version": "0.0.24",
+    "dependencies": {
+        "@glowbuzzer/layout": "latest",
+        "@glowbuzzer/store": "latest"
+    },
+    "exports": {
+        ".": {
+        },
+        "./app": {
+        },
+        "./toolpath": {
+        },
+        "./tasks": {
+        },
+        "./io": {
+        },
+        "./misc": {
+        },
+        "./prefs": {
+        },
+        "./telemetry": {
+        },
+        "./dev": {
+        },
+        "./gcode": {
+        },
+        "./feedrate": {
+        },
+        "./jogging": {
+        },
+        "./frames": {
+        },
+        "./dro": {
+        }
+    }
+}

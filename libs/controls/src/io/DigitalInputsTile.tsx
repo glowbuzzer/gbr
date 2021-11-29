@@ -1,7 +1,7 @@
 import React from "react"
 import { useDigitalInputs } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
-import { BitFieldDisplay } from "@glowbuzzer/controls"
+import { BitFieldDisplay } from "../dro"
 
 export const DigitalInputsTile = ({ labels = [] }) => {
     const din = useDigitalInputs()

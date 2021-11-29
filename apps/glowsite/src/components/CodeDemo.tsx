@@ -1,11 +1,17 @@
 import React from "react"
 import { configureStore } from "@reduxjs/toolkit"
-import { jointsSlice, configSlice, rootReducer, toolPathSlice, previewSlice } from "@glowbuzzer/store"
+import {
+    jointsSlice,
+    configSlice,
+    rootReducer,
+    toolPathSlice,
+    previewSlice
+} from "@glowbuzzer/store"
 import { Provider } from "react-redux"
 import { GLOWSITE_GBC_CONFIG } from "./gbc_config"
 
 import Prism from "prismjs"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const HtmlCoding = () => (
     <svg version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 502.664 502.664">
@@ -59,7 +65,8 @@ const StyledCodeDemo = styled.div`
         right: 0;
         top: 0;
         visibility: hidden;
-        transition: opacity 200ms ease-in-out, visibility 200ms ease-in-out, bottom 200ms ease-in-out;
+        transition: opacity 200ms ease-in-out, visibility 200ms ease-in-out,
+            bottom 200ms ease-in-out;
     }
 
     .copy-button:focus {
@@ -142,7 +149,10 @@ export const CodeDemo = ({ code, children }) => {
     return (
         <StyledCodeDemo>
             <div className="example">
-                <div onClick={toggleCode} className={"code-expand" + (showCode ? " code-expand-show" : "")}>
+                <div
+                    onClick={toggleCode}
+                    className={"code-expand" + (showCode ? " code-expand-show" : "")}
+                >
                     <HtmlCoding />
                 </div>
                 {/* the react rendered demo */}
@@ -151,7 +161,12 @@ export const CodeDemo = ({ code, children }) => {
             {showCode && (
                 <div className="gatsby-highlight">
                     <pre className="language-jsx" dangerouslySetInnerHTML={{ __html: html }} />
-                    <div ref={button} aria-label="Copy code to clipboard" className="copy-button" onClick={handleCopyCode}>
+                    <div
+                        ref={button}
+                        aria-label="Copy code to clipboard"
+                        className="copy-button"
+                        onClick={handleCopyCode}
+                    >
                         {showCopied ? "Copied!" : "Copy"}
                     </div>
                 </div>

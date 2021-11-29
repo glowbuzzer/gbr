@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { GCodePreviewAdapter } from "./GCodePreviewAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
@@ -12,7 +12,12 @@ export type GCodeSegment = {
     lineNum?: number
 }
 
-export const previewSlice = createSlice({
+type PreviewSliceState = {
+    highlightLine?: number
+    segments: GCodeSegment[]
+}
+
+export const previewSlice: Slice<PreviewSliceState> = createSlice({
     name: "preview",
     initialState: {
         highlightLine: undefined as number | undefined,

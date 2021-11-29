@@ -2,13 +2,19 @@ import * as React from "react"
 import { FC, useEffect, useRef, useState } from "react"
 import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
-import { connectionSlice, ConnectionState, useConnect } from "../../store/src/connect"
-import { usePrefs } from "../../store/src/prefs"
-import styled, { css, ThemeProvider } from "styled-components"
-import { rootReducer } from "../../store/src/root"
+import {
+    ConfigState,
+    connectionSlice,
+    ConnectionState,
+    rootReducer,
+    useConfigState,
+    useConnect,
+    usePrefs
+} from "@glowbuzzer/store"
+import styled from "@emotion/styled"
+import { css, ThemeProvider } from "@emotion/react"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
-import { ConfigState, useConfigState } from "../../store/src/config"
 
 const Startup = ({ autoConnect }) => {
     const connection = useConnect()
@@ -31,7 +37,7 @@ const theme = {
     }
 }
 
-declare module "styled-components" {
+declare module "@emotion/styled" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface

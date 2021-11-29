@@ -1,7 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "@glowbuzzer/store"
+import { useConnect } from "../connect"
 
 type AnalogOutputCommand = {
     value: number
@@ -12,7 +12,7 @@ export type AnalogOutputStatus = {
     actValue: number
 } & AnalogOutputCommand
 
-export const analogOutputsSlice = createSlice({
+export const analogOutputsSlice: Slice<AnalogOutputStatus[]> = createSlice({
     name: "aout",
     initialState: [] as AnalogOutputStatus[],
     reducers: {

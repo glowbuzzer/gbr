@@ -1,10 +1,13 @@
-import { useThree } from "react-three-fiber"
+import { extend, useThree } from "react-three-fiber"
 import * as React from "react"
 import { useEffect, useRef } from "react"
-import * as THREE from "three"
+import { PerspectiveCamera } from "three"
+import { OrbitControls } from "three-stdlib"
+
+extend({ OrbitControls })
 
 const CameraControls = () => {
-    // Get a reference to the Three.js Camera, and the canvas html element.
+    // Get a reference to the js Camera, and the canvas html element.
     // We need these to setup the OrbitControls component.
     // https://threejs.org/docs/#examples/en/controls/OrbitControls
     const {
@@ -23,7 +26,7 @@ export const ToolPathAutoSize = ({ extent, children }) => {
     const { size, setDefaultCamera } = useThree()
 
     useEffect(() => {
-        const cam = new THREE.PerspectiveCamera(70, size.width / size.height, 0.01, 10000)
+        const cam = new PerspectiveCamera(70, size.width / size.height, 0.01, 10000)
         cam.position.z = 2 * extent
         cam.up.set(0, 0, 1)
         setDefaultCamera(cam)

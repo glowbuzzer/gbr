@@ -40,3 +40,5 @@ export * from "./util/enhancers/digitalInputEnhancer"
 export * from "./StateMachine"
 
 export * from "./types"
+
+export * from "./config"

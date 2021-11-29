@@ -1,8 +1,8 @@
 import * as React from "react"
-import { FrameSelector } from "../misc/FrameSelector"
+import { FrameSelector } from "../misc"
 import { useKinematics } from "@glowbuzzer/store"
-import * as THREE from "three"
 import { DroItem } from "./DroItem"
+import { Euler } from "three"
 
 type CartesianDisplayProps = {
     /**
@@ -36,7 +36,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
 
     const { position, orientation } = kinematics.pose
 
-    const euler = new THREE.Euler().setFromQuaternion(orientation)
+    const euler = new Euler().setFromQuaternion(orientation)
 
     const pos = {
         x: position.x,
@@ -55,7 +55,8 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
         <div>
             {props.hideFrameSelect || (
                 <div>
-                    Frame: <FrameSelector defaultFrame={kinematics.frameIndex} onChange={setFrameIndex} />
+                    Frame:{" "}
+                    <FrameSelector defaultFrame={kinematics.frameIndex} onChange={setFrameIndex} />
                 </div>
             )}
             {display.map(k => (

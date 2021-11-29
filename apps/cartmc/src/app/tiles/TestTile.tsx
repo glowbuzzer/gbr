@@ -2,11 +2,11 @@ import { Tile } from "@glowbuzzer/layout"
 import React, { useRef, useState } from "react"
 import { Canvas, extend, MeshProps, useFrame, useThree } from "react-three-fiber"
 import { Mesh } from "three"
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
-import { TestRendering } from "./TestRendering"
-import { usePreview } from "../../../../../libs/store/src/preview"
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+// import { TestRendering } from "./TestRendering"
+import { usePreview } from "@glowbuzzer/store"
 
-extend({ OrbitControls })
+// extend({ OrbitControls })
 
 const CameraControls = () => {
     // Get a reference to the Three.js Camera, and the canvas html element.
@@ -58,7 +58,9 @@ export const TestTile = () => {
     return (
         <Tile title="react-three-fibre">
             <Canvas>
+                {/*
                 <TestRendering />
+*/}
             </Canvas>
             {/*<CameraControls />*/}
             {/*<ambientLight />*/}

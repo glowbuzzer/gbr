@@ -3,17 +3,23 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-const [, , p] = process.argv;
+const [, , p, version] = process.argv;
 
 if ( !p?.length ) {
     throw new Error("No list of packages given")
 }
 
+if ( !version?.length ) {
+    throw new Error("No version bump given")
+}
+
 const projects = p.split(",")
 
 console.log("Packaging the following projects:", projects.join(","))
+console.log("Bumping all versions to:", version)
 
 for ( const project of projects ) {
+    console.log("Processing", project)
     const pkg = JSON.parse(fs.readFileSync(`./libs/${project}/package.json`).toString());
     if (!pkg.exports) {
         throw new Error('Failed to find \'exports\' property in package.json');
@@ -111,8 +117,16 @@ for ( const project of projects ) {
         execSync(`tsc --build libs/${project}/tsconfig.lib.json`)
         execSync(`mv dist/types/libs/${project}/src dist/${project}/types`)
 
+        // re-write dependencies between included packages so everything uses new version
+        for ( const dep of projects ) {
+            const key = `@glowbuzzer/${dep}`;
+            if ( pkg.dependencies?.[key] ) {
+                pkg.dependencies[key]=version
+            }
+        }
         fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
             ...pkg,
+            version,
             types: "types/index.d.ts",
             exports
         }, null, 2));

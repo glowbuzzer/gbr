@@ -1,16 +1,15 @@
 import React from "react"
-import { useAnalogInputs, useAnalogOutputs, useDigitalInputs, useIntegerInputs } from "@glowbuzzer/store"
+import { useIntegerInputs } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
-import { BitFieldDisplay } from "@glowbuzzer/controls"
 import { Tag } from "antd"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
 `
 
-export const IntegerInputsTile = ({ labels=[] }) => {
+export const IntegerInputsTile = ({ labels = [] }) => {
     const ain = useIntegerInputs()
 
     return (

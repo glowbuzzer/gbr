@@ -1,10 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KC_KINEMATICSCONFIGURATIONTYPE } from "../gbc"
 import { RootState } from "../root"
 
-const DEFAULT_JOINT_CONFIG = { pmin: -100, pmax: 100, vmax: 2000, amax: 40000, jmax: 800000, scale: 1000.0 }
+const DEFAULT_JOINT_CONFIG = {
+    pmin: -100,
+    pmax: 100,
+    vmax: 2000,
+    amax: 40000,
+    jmax: 800000,
+    scale: 1000.0
+}
 
+// TODO: figure out what to do when there is no config yet (before connect)
 export const DEFAULT_CONFIG = {
     machine: {
         default: {
@@ -76,10 +84,14 @@ export enum ConfigState {
     READY = "READY"
 }
 
-export const configSlice = createSlice({
+export const configSlice: Slice<{
+    state: ConfigState
+    version: number
+    value: typeof DEFAULT_CONFIG // TODO: this should be better typed
+}> = createSlice({
     name: "config",
     initialState: {
-        state: ConfigState.AWAITING_CONFIG,
+        state: ConfigState.AWAITING_CONFIG as ConfigState,
         version: 1,
         // basic default value to avoid errors from components on startup
         value: DEFAULT_CONFIG
@@ -99,10 +111,10 @@ export const configSlice = createSlice({
 export function useConfigState() {
     const dispatch = useDispatch()
     // return value and setter
-    return [useSelector((state: RootState) => state.config.state, shallowEqual), state => dispatch(configSlice.actions.setConfigState(state))] as [
-        ConfigState,
-        (state: ConfigState) => void
-    ]
+    return [
+        useSelector((state: RootState) => state.config.state, shallowEqual),
+        state => dispatch(configSlice.actions.setConfigState(state))
+    ] as [ConfigState, (state: ConfigState) => void]
 }
 
 export function useConfig() {

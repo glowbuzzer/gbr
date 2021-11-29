@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
@@ -12,7 +12,7 @@ type JointsState = {
     actAcc: number
 }[]
 
-export const jointsSlice = createSlice({
+export const jointsSlice: Slice<JointsState> = createSlice({
     name: "joints",
     initialState: [] as JointsState,
     reducers: {

@@ -1,7 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
 
 const { Option } = Select
@@ -19,7 +19,15 @@ const StyledDiv = styled.div`
     }
 `
 
-const DigitalOutputItem = ({ index, name, label }: { index: number; name: string; label?: string }) => {
+const DigitalOutputItem = ({
+    index,
+    name,
+    label
+}: {
+    index: number
+    name: string
+    label?: string
+}) => {
     const dout = useDigitalOutput(index)
 
     function handle_override_change(value) {
@@ -35,12 +43,21 @@ const DigitalOutputItem = ({ index, name, label }: { index: number; name: string
         <div>
             <div className="dout-label">{label || "Unknown"}</div>
             <div>
-                <Select size="small" value={dout.override ? 1 : 0} style={{ width: "90px" }} onChange={handle_override_change}>
+                <Select
+                    size="small"
+                    value={dout.override ? 1 : 0}
+                    style={{ width: "90px" }}
+                    onChange={handle_override_change}
+                >
                     <Option value={0}>Auto</Option>
                     <Option value={1}>Override</Option>
                 </Select>
             </div>
-            <Switch disabled={!dout.override} checked={dout.state && true} onChange={handle_state_change} />
+            <Switch
+                disabled={!dout.override}
+                checked={dout.state && true}
+                onChange={handle_state_change}
+            />
             <div>
                 <Tag>{dout.actState ? "ON" : "OFF"}</Tag>
             </div>
@@ -48,14 +65,19 @@ const DigitalOutputItem = ({ index, name, label }: { index: number; name: string
     )
 }
 
-export const DigitalOutputsTile = ({ labels=[] }) => {
+export const DigitalOutputsTile = ({ labels = [] }) => {
     const douts = useDigitalOutputList()
 
     return (
         <Tile title="Digital Outputs">
             <StyledDiv>
                 {douts.map((name, index) => (
-                    <DigitalOutputItem key={index} index={index} name={name} label={labels[index]} />
+                    <DigitalOutputItem
+                        key={index}
+                        index={index}
+                        name={name}
+                        label={labels[index]}
+                    />
                 ))}
             </StyledDiv>
         </Tile>

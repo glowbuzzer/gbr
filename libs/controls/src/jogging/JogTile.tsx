@@ -1,10 +1,22 @@
 import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
-import { JogDirection, POSITIONREFERENCE, useJointConfig, useJoints, useKinematics, useSoloActivity } from "@glowbuzzer/store"
-import styled from "styled-components"
+import {
+    JogDirection,
+    POSITIONREFERENCE,
+    useJointConfig,
+    useJoints,
+    useKinematics,
+    useSoloActivity
+} from "@glowbuzzer/store"
+import styled from "@emotion/styled"
 import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
-import { ArrowDownOutlined, ArrowLeftOutlined, ArrowRightOutlined, ArrowUpOutlined } from "@ant-design/icons"
+import {
+    ArrowDownOutlined,
+    ArrowLeftOutlined,
+    ArrowRightOutlined,
+    ArrowUpOutlined
+} from "@ant-design/icons"
 import { Vector3 } from "three"
 
 enum JogMoveMode {
@@ -85,7 +97,7 @@ export const JogTile = () => {
     // const jogger = useJog(0)
     const joint_config = useJointConfig()
     const motion = useSoloActivity(0)
-    const kc=useKinematics(0, 0)
+    const kc = useKinematics(0, 0)
 
     // we scale all limits by the jog speed percent
     const move_params = {
@@ -116,8 +128,8 @@ export const JogTile = () => {
                 ? direction === JogDirection.POSITIVE
                     ? 1
                     : direction === JogDirection.NEGATIVE
-                        ? -1
-                        : 0
+                    ? -1
+                    : 0
                 : 0
         }
 

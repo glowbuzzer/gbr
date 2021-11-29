@@ -1,9 +1,9 @@
-import {useConnect} from "@glowbuzzer/store"
-import React, {createContext, FC, useContext, useRef, useState} from "react"
-import { ACTIVITYTYPE } from '@glowbuzzer/store';
+import { useConnect, useSoloActivity } from "@glowbuzzer/store"
+import React, { createContext, FC, useContext, useRef, useState } from "react"
+import { ACTIVITYTYPE } from "@glowbuzzer/store"
 
-import {Tile} from "@glowbuzzer/layout";
-import {Button} from "antd";
+import { Tile } from "@glowbuzzer/layout"
+import { Button } from "antd"
 
 type SoloActivityContextType = {
     moveJoints(pos: number[]): Promise<void>
@@ -15,7 +15,6 @@ export const SoloActivityProvider: FC = ({ children }) => {
     const connection = useConnect()
     const tag = useRef(1) // initial value will be zero on m7
     const promisesRef = useRef({})
-
 
     const context = {
         moveJoints(pos: number[]) {
@@ -49,15 +48,15 @@ export const SoloActivityProvider: FC = ({ children }) => {
 
 export const TutorialOscillatingMoveTile = () => {
     const [complete, setComplete] = useState(false)
-    const soloActivity = useContext(soloActivityContext)
+    const soloActivity = useSoloActivity(0)
 
     async function do_promise() {
         setComplete(false)
         console.log("starting1")
-        await soloActivity.moveJoints([10,0,0])
-        await soloActivity.moveJoints([0,0,0])
-        await soloActivity.moveJoints([10,0,0])
-        await soloActivity.moveJoints([0,0,0])
+        await soloActivity.moveJoints([10, 0, 0]).promise()
+        await soloActivity.moveJoints([0, 0, 0]).promise()
+        await soloActivity.moveJoints([10, 0, 0]).promise()
+        await soloActivity.moveJoints([0, 0, 0]).promise()
         setComplete(true)
     }
 

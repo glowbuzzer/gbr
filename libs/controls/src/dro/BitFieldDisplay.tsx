@@ -1,5 +1,5 @@
 import * as React from "react"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     .bit-item {
@@ -125,9 +125,21 @@ export const BitFieldDisplay = (props: BitFieldDisplayProps) => {
             {bits_grouped.map((g, group_num) => (
                 <div key={group_num}>
                     {g.map((b, bit_num) => (
-                        <div key={bit_num} onClick={() => toggle(group_num, bit_num)} className={"bit-item" + (props.editable ? " rw" : "")}>
-                            <div className="bit-label">{desc(absolute_bit(group_num, bit_num))}</div>
-                            <div className={"bit " + (test_bit(group_num, bit_num) ? "bit-set " : "") + (props.editable ? "" : " bit-readonly ")} />
+                        <div
+                            key={bit_num}
+                            onClick={() => toggle(group_num, bit_num)}
+                            className={"bit-item" + (props.editable ? " rw" : "")}
+                        >
+                            <div className="bit-label">
+                                {desc(absolute_bit(group_num, bit_num))}
+                            </div>
+                            <div
+                                className={
+                                    "bit " +
+                                    (test_bit(group_num, bit_num) ? "bit-set " : "") +
+                                    (props.editable ? "" : " bit-readonly ")
+                                }
+                            />
                         </div>
                     ))}
                 </div>
