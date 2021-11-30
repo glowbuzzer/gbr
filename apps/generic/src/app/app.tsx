@@ -1,11 +1,3 @@
-import { GlowbuzzerApp } from "@glowbuzzer/controls"
-import styled from "@emotion/styled"
-
-import "antd/dist/antd.css"
-import "dseg/css/dseg.css"
-
-import { Button } from "antd"
-import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import {
     AnalogInputsTile,
     AnalogOutputsTile,
@@ -16,19 +8,26 @@ import {
     DigitalOutputsTile,
     FeedRateTile,
     GCodeTile,
+    GlowbuzzerApp,
     IntegerInputsTile,
     IntegerOutputsTile,
     JogTile,
     PreferencesDialog,
     ToolPathTile
 } from "@glowbuzzer/controls"
+import styled from "@emotion/styled"
+
+import "antd/dist/antd.css"
+import "dseg/css/dseg.css"
+
+import { Button } from "antd"
+import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import React, { useState } from "react"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 //tutorial
 import { TutorialDoToggleTile } from "./tutorial/TutorialDoToggleTile"
 import { TutorialOscillatingMoveTile } from "./tutorial/TutorialOscillatingMoveTile"
-import { SoloActivityProvider } from "./tutorial/TutorialOscillatingMoveTile"
 
 const StyledApp = styled.div``
 
@@ -88,10 +87,8 @@ export function App() {
     return (
         <StyledApp>
             <GlowbuzzerApp>
-                <SoloActivityProvider>
-                    <PrefsButton />
-                    <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
-                </SoloActivityProvider>
+                <PrefsButton />
+                <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
             </GlowbuzzerApp>
         </StyledApp>
     )

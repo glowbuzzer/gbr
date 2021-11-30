@@ -1,8 +1,8 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
-import { Select, Switch, Tag } from "antd"
+import { Switch } from "antd"
 import styled from "@emotion/styled"
-import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
+import { useDigitalOutput } from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`
     padding-top: 20px;

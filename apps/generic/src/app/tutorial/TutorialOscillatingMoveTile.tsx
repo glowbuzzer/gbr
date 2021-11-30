@@ -1,8 +1,7 @@
-import React, {createContext, FC, useContext, useRef, useState} from "react"
-import { useSoloActivity } from '@glowbuzzer/store';
-import {Tile} from "@glowbuzzer/layout";
-import {Button} from "antd";
-import { ACTIVITYTYPE } from '@glowbuzzer/store';
+import React, { useState } from "react"
+import { useSoloActivity } from "@glowbuzzer/store"
+import { Tile } from "@glowbuzzer/layout"
+import { Button } from "antd"
 
 
 export const TutorialOscillatingMoveTile = () => {
