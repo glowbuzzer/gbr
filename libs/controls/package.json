@@ -1,6 +1,7 @@
 {
     "name": "@glowbuzzer/controls",
-    "version": "0.0.24",
+    "version": "0.0.0",
+    "private": true,
     "dependencies": {
         "@glowbuzzer/layout": "latest",
         "@glowbuzzer/store": "latest"
