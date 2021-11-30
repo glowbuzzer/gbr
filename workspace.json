@@ -372,69 +372,6 @@
                 }
             }
         },
-        "glowsaurus": {
-            "projectType": "application",
-            "root": "apps/glowsaurus",
-            "sourceRoot": "apps/glowsaurus/src",
-            "architect": {
-                "build": {
-                    "builder": "@nx-plus/docusaurus:browser",
-                    "options": {
-                        "outputPath": "dist/apps/glowsaurus"
-                    }
-                },
-                "serve": {
-                    "builder": "@nx-plus/docusaurus:dev-server",
-                    "options": {
-                        "port": 3000
-                    }
-                }
-            }
-        },
-        "glowsite": {
-            "root": "apps/glowsite",
-            "sourceRoot": "apps/glowsite/src",
-            "projectType": "application",
-            "architect": {
-                "build": {
-                    "builder": "@nrwl/gatsby:build",
-                    "options": {
-                        "outputPath": "apps/glowsite/public",
-                        "uglify": true,
-                        "color": true,
-                        "profile": false
-                    },
-                    "configurations": {
-                        "production": {}
-                    }
-                },
-                "serve": {
-                    "builder": "@nrwl/gatsby:server",
-                    "options": {
-                        "buildTarget": "glowsite:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "buildTarget": "glowsite:build:production"
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": ["apps/glowsite/**/*.{ts,tsx,js,jsx}"]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/apps/glowsite"],
-                    "options": {
-                        "jestConfig": "apps/glowsite/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
         "layout": {
             "root": "libs/layout",
             "sourceRoot": "libs/layout/src",
