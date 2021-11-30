@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from "react"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { Button, Modal } from "antd"
 import { EditOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"
@@ -28,7 +28,13 @@ export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset,
     return (
         <>
             <Button onClick={() => setShowSettings(!showSettings)} icon={<EditOutlined />} />
-            <Modal destroyOnClose={true} title={title} visible={showSettings} onCancel={cancel} onOk={ok}>
+            <Modal
+                destroyOnClose={true}
+                title={title}
+                visible={showSettings}
+                onCancel={cancel}
+                onOk={ok}
+            >
                 {children}
             </Modal>
         </>
@@ -95,7 +101,13 @@ const StyledTile = styled.div`
     }
 `
 
-export const Tile: FC<TileProps> = ({ title, controls = undefined, settings = null, footer = undefined, children }) => {
+export const Tile: FC<TileProps> = ({
+    title,
+    controls = undefined,
+    settings = null,
+    footer = undefined,
+    children
+}) => {
     const [showSettings, setShowSettings] = useState(false)
 
     return (

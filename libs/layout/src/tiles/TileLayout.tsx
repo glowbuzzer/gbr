@@ -1,6 +1,6 @@
 import React from "react"
 import RGL, { Layout, WidthProvider } from "react-grid-layout"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useTiles } from "./TileProvider"
 
 const ReactGridLayout = WidthProvider(RGL)
@@ -25,10 +25,20 @@ export const TileLayout = () => {
 
     const containers = Object.entries(tiles)
         .filter(([, tile]) => tile.visible)
-        .map(([, { render, ...tile }]) => <TileContainer key={tile.id}>{typeof render === "function" ? render(tile) : render}</TileContainer>)
+        .map(([, { render, ...tile }]) => (
+            <TileContainer key={tile.id}>
+                {typeof render === "function" ? render(tile) : render}
+            </TileContainer>
+        ))
 
     return (
-        <ReactGridLayout cols={8} rowHeight={50} layout={layout} draggableHandle=".draggable" onLayoutChange={onLayoutChange}>
+        <ReactGridLayout
+            cols={8}
+            rowHeight={50}
+            layout={layout}
+            draggableHandle=".draggable"
+            onLayoutChange={onLayoutChange}
+        >
             {containers}
         </ReactGridLayout>
     )

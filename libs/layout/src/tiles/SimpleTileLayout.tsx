@@ -2,8 +2,6 @@ import React from "react"
 import { TileProvider } from "./TileProvider"
 import { TileLayout } from "./TileLayout"
 
-import "react-grid-layout/css/styles.css"
-
 export type SimpleTileDefinition = {
     title: string
     height: number

@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import * as React from "react"
 import { useFrames, usePrefs } from "@glowbuzzer/store"
 import { Euler, Quaternion } from "three"

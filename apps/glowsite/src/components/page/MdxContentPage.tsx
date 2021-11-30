@@ -2,7 +2,7 @@ import React from "react"
 import { MDXRenderer } from "gatsby-plugin-mdx"
 import { graphql } from "gatsby"
 import { ComponentProps } from "../ComponentProps"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 /**
  * Render an MDX page, plus React component properties if available.
@@ -12,13 +12,13 @@ import styled from "styled-components"
  */
 
 const StyledMdxPage = styled.div`
- 
+
     h1 {
         margin-bottom: 20px;
     }
 
 
- 
+
     padding: 0 20px;
 
     h2 {
@@ -34,8 +34,8 @@ const StyledMdxPage = styled.div`
     .gatsby-highlight {
         margin-bottom: 1em;
     }
-   
- 
+
+
 
 
     code.language-text {

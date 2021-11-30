@@ -1,5 +1,5 @@
 import React from "react"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 export const Container = styled.div`
     max-width: 1400px;
@@ -8,7 +8,7 @@ export const Container = styled.div`
     flex-basis: 0;
     padding: 20px 0;
 
-blockquote {
+    blockquote {
         background: #f9f9f9;
         border-left: 10px solid #ccc;
         margin: 1.5em 10px;
@@ -20,8 +20,4 @@ blockquote {
     // max-width: 500px;
     // height: auto;
     // }
-
-
 `
-
-

@@ -1,15 +1,22 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { build_list, build_tree, change_reference_frame, RootState, useConfig, useConnect } from "@glowbuzzer/store"
-import * as THREE from "three"
+import { createSlice, Slice } from "@reduxjs/toolkit"
+import {
+    build_list,
+    build_tree,
+    change_reference_frame,
+    RootState,
+    useConfig,
+    useConnect
+} from "@glowbuzzer/store"
+import { Quaternion, Vector3 } from "three"
 import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 
 const { load, save } = settings("frames")
 
-export const framesSlice = createSlice({
+export const framesSlice: Slice<{ activeFrame: number; overrides: number[][] }> = createSlice({
     name: "frames",
     initialState: {
-        overrides: [] as number[],
+        overrides: [] as number[][],
         activeFrame: 0,
         ...load()
     },
@@ -70,7 +77,8 @@ export const useFrames = () => {
     const asList = build_list(asTree)
 
     function update(index, value) {
-        const length = value === undefined ? overrides.length : Math.max(index + 1, overrides.length)
+        const length =
+            value === undefined ? overrides.length : Math.max(index + 1, overrides.length)
         return Array.from({ length }).map((_, i) => (i === index ? value : overrides[i]))
     }
 
@@ -80,7 +88,12 @@ export const useFrames = () => {
         asList,
         overrides,
         active: activeFrame,
-        convertToFrame(position: THREE.Vector3, orientation: THREE.Quaternion, fromIndex: number | "world", toIndex: number | "world") {
+        convertToFrame(
+            position: Vector3,
+            orientation: Quaternion,
+            fromIndex: number | "world",
+            toIndex: number | "world"
+        ) {
             // console.log("FROM", fromIndex, "TO", toIndex)
             return change_reference_frame(asList, position, orientation, fromIndex, toIndex)
         },

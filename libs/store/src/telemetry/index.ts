@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
@@ -36,7 +36,7 @@ type TelemetryEntry = {
     z: number
 }
 
-type TelemetrySlice = {
+type TelemetrySliceType = {
     settings: TelemetrySettingsType
     data: TelemetryEntry[]
     lastCapture
@@ -55,7 +55,18 @@ function compare_captures(a, b) {
     return true
 }
 
-export const telemetrySlice = createSlice({
+export const telemetrySlice: Slice<
+    TelemetrySliceType,
+    {
+        init: CaseReducer<TelemetrySliceType>
+        pause: CaseReducer<TelemetrySliceType>
+        resume: CaseReducer<TelemetrySliceType>
+        startCapture: CaseReducer<TelemetrySliceType>
+        cancelCapture: CaseReducer<TelemetrySliceType>
+        data: CaseReducer<TelemetrySliceType, PayloadAction<TelemetryEntry[]>>
+        settings: CaseReducer<TelemetrySliceType, PayloadAction<Partial<TelemetrySettingsType>>>
+    }
+> = createSlice({
     name: "telemetry",
     initialState: {
         data: [],
@@ -73,7 +84,7 @@ export const telemetrySlice = createSlice({
             captureDuration: 1000,
             ...load()
         }
-    } as TelemetrySlice,
+    } as TelemetrySliceType,
     reducers: {
         settings(state, action) {
             state.settings = {

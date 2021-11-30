@@ -15,8 +15,7 @@
 
 import React from "react"
 
-import "dseg/css/dseg.css"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 // enum SegmentCount {
 //     SevenSegment = 7
@@ -58,14 +57,22 @@ export const SegmentDisplay = ({ value, toFixed, width }: SegmentDisplayProps) =
     let text = toFixed ? value.toFixed(toFixed) : value.toString()
     if (width) {
         const length = width - text.length
-        text = Array.from({ length }).map(() => "!").join("") + text
+        text =
+            Array.from({ length })
+                .map(() => "!")
+                .join("") + text
     }
-    const padding = text.split("").map(c => c === "." ? "." : c === "+" ? "+" : "8").join("")
+    const padding = text
+        .split("")
+        .map(c => (c === "." ? "." : c === "+" ? "+" : "8"))
+        .join("")
 
-    return <StyledSegmentDisplay>
-        <span className="background">{padding}</span>
-        <span className="foreground">{text}</span>
-    </StyledSegmentDisplay>
+    return (
+        <StyledSegmentDisplay>
+            <span className="background">{padding}</span>
+            <span className="foreground">{text}</span>
+        </StyledSegmentDisplay>
+    )
 }
 
 // export class SegmentDisplay extends React.Component<SegmentDisplayProps, any> {

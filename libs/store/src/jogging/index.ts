@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
@@ -30,13 +30,13 @@ type JogStoreState = {
     jogFlags: number
 }
 
-export const jogSlice = createSlice({
+export const jogSlice: Slice<JogStoreState[]> = createSlice({
     name: "jog",
     initialState: [] as JogStoreState[],
     reducers: {
         status: (state, action) => {
             // called with status.jog from the json every time GBC sends status message
-            if ( action?.payload.length ) {
+            if (action?.payload.length) {
                 for (let n = 0; n < action.payload.length; n++) {
                     state[n] = {
                         state: action.payload[n].state,
@@ -84,7 +84,13 @@ export function useJog(jogIndex: number) {
                     speedPercentage
                 })
             },
-            stepJog(mode: JogMode, index: number, direction: JogDirection, speedPercentage: number, stepSize: number) {
+            stepJog(
+                mode: JogMode,
+                index: number,
+                direction: JogDirection,
+                speedPercentage: number,
+                stepSize: number
+            ) {
                 updateJog(index, direction, {
                     mode,
                     speedPercentage,
@@ -99,7 +105,10 @@ export function processJogStateChanges(prev: JogStoreState[], current: JogStoreS
     for (let n = 0; n < prev.length; n++) {
         const p = prev[n]
         const c = current[n]
-        if (p.state !== JogState.JOGSTATE_STEP_COMPLETE && c.state === JogState.JOGSTATE_STEP_COMPLETE) {
+        if (
+            p.state !== JogState.JOGSTATE_STEP_COMPLETE &&
+            c.state === JogState.JOGSTATE_STEP_COMPLETE
+        ) {
             // jog step completed, so send command to reset to none, ready for next jog step
             // (we don't hold a queue of jog steps)
             send(

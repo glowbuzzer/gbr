@@ -1,9 +1,8 @@
 import React from "react"
-import { useAnalogInputs, useAnalogOutputs, useDigitalInputs } from "@glowbuzzer/store"
+import { useAnalogInputs } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
-import { BitFieldDisplay } from "@glowbuzzer/controls"
 import { Tag } from "antd"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     display: flex;

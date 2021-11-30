@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Button, Checkbox, Empty, Form, Input, Modal, Tree } from "antd"
 import { useConnect, useFrames, useKinematics } from "@glowbuzzer/store"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 function map_tree(tree) {
     const gcode = tree.index < 8 ? " (G5" + (4 + tree.index) + ")" : ""
@@ -106,7 +106,12 @@ export const FrameOverrideDialog = ({ visible, onClose }) => {
     console.log("TREE SELECTED", selected, tree)
 
     return (
-        <Modal title="Work Offsets" visible={visible} onCancel={onClose} footer={[<Button onClick={onClose}>Close</Button>]}>
+        <Modal
+            title="Work Offsets"
+            visible={visible}
+            onCancel={onClose}
+            footer={[<Button onClick={onClose}>Close</Button>]}
+        >
             {connection.connected ? (
                 <StyledModal>
                     <Tree treeData={tree} showLine onSelect={setSelected} selectedKeys={selected} />

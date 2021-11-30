@@ -1,9 +1,8 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
-
 
 const StyledDiv = styled.div`
     padding-top: 20px;
@@ -12,14 +11,14 @@ const StyledDiv = styled.div`
         display: flex;
         gap: 10px;
     }
-    
-     .ant-switch {
+
+    .ant-switch {
         flex-grow: 1;
         margin: 10px 20px;
     }
 `
 
-export const TutorialDoToggleTile = ({ labels=[] }) => {
+export const TutorialDoToggleTile = ({ labels = [] }) => {
     const dout = useDigitalOutput(1)
 
     function handle_state_change() {
@@ -31,7 +30,7 @@ export const TutorialDoToggleTile = ({ labels=[] }) => {
         <Tile title="Tutorial Digital Output Toggle">
             <StyledDiv>
                 Turn on my digital output
-                <Switch checked={dout.state && true} onChange={handle_state_change}/>
+                <Switch checked={dout.state && true} onChange={handle_state_change} />
             </StyledDiv>
         </Tile>
     )

@@ -1,10 +1,11 @@
-name: Deployment
+name: Publish alpha npm packages
 on:
     push:
         branches:
             - master
         paths:
-            - "apps/glowsite/**"
+            - "libs/**"
+            - ".github/**"
             - "package.json"
 
 jobs:
@@ -32,12 +33,21 @@ jobs:
             -   name: Install packages
                 run: pnpm install # --no-optional
 
-            -   name: Build site
-                run: pnpm run build:glowsite
+            -   name: Package libs
+                run: node build.mjs controls,layout,store 1.0.0-alpha.${{ github.run_number }}
 
-            -   name: Deploy site
-                run: ./deploy-site.sh glowbuzzer-www-internal E37J47Y7NXA5BD
+            -   name: Publish dist/controls
+                run: npm publish dist/controls
                 env:
-                    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-                    BUILD_NUM: 1.${{ github.run_number }}
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            -   name: Publish dist/store
+                run: npm publish dist/store
+                env:
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            -   name: Publish dist/layout
+                run: npm publish dist/layout
+                env:
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+

@@ -1,9 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConfig, useConnect } from "@glowbuzzer/store"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
+import { useConfig } from "../config"
+import { useConnect } from "../connect"
 
 type DigitalOutputCommand = {
     state: number
@@ -14,7 +15,7 @@ export type DigitalOutputStatus = {
     actState: number
 } & DigitalOutputCommand
 
-export const digitalOutputsSlice = createSlice({
+export const digitalOutputsSlice: Slice<DigitalOutputStatus[]> = createSlice({
     name: "dout",
     initialState: [] as DigitalOutputStatus[],
     reducers: {

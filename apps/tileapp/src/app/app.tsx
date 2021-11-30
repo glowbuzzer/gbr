@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 
 import { PreferencesDialog } from "@glowbuzzer/controls"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 import "antd/dist/antd.css"
 import "./app.css"
@@ -15,7 +15,10 @@ export const App = () => {
 
     return (
         <StyledApp>
-            <PreferencesDialog visible={showPreferences} onClose={() => setShowPreferences(false)} />
+            <PreferencesDialog
+                visible={showPreferences}
+                onClose={() => setShowPreferences(false)}
+            />
         </StyledApp>
     )
 }

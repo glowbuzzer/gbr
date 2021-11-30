@@ -1,7 +1,7 @@
 import React from "react"
 import { Button, Form, Input, Modal } from "antd"
-import { UnitSelector } from "@glowbuzzer/controls"
 import { usePrefs } from "@glowbuzzer/store"
+import { UnitSelector } from "./UnitSelector"
 
 type PreferencesDialogProps = {
     visible: boolean

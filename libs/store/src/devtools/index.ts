@@ -1,9 +1,9 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
 
-export const devToolsSlice = createSlice({
+export const devToolsSlice: Slice<{ statusFrequency: number }> = createSlice({
     name: "devtools",
     initialState: {
         statusFrequency: null
@@ -31,7 +31,7 @@ export const useDevTools = () => {
         ...devtools,
         setStatusFrequency(value: number) {
             window.localStorage.setItem("devtools.statusFrequency", JSON.stringify(value))
-            dispatch(dispatch => {
+            dispatch(() => {
                 connection.send(updateStatusFrequencyMsg(value))
             })
         }

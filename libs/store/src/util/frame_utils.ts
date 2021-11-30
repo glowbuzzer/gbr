@@ -1,14 +1,13 @@
-import * as THREE from "three"
 import { Matrix4, Quaternion, Vector3 } from "three"
 
 export type FrameConfig = {
-    translation: THREE.Vector3
-    rotation: THREE.Quaternion
+    translation: Vector3
+    rotation: Quaternion
 }
 
 export const NULL_FRAME_CONFIG = {
-    translation: new THREE.Vector3(0, 0, 0),
-    rotation: new THREE.Quaternion(0, 0, 0, 1)
+    translation: new Vector3(0, 0, 0),
+    rotation: new Quaternion(0, 0, 0, 1)
 }
 
 function makeFrameConfig(): FrameConfig {
@@ -29,7 +28,7 @@ export type Frame = {
 }
 
 function to_m4(f: FrameConfig) {
-    return new THREE.Matrix4().compose(f.translation, f.rotation, new Vector3(1, 1, 1))
+    return new Matrix4().compose(f.translation, f.rotation, new Vector3(1, 1, 1))
 }
 
 function decompose(matrix: Matrix4): FrameConfig {
@@ -131,16 +130,16 @@ export function build_list(asTree: Frame[]) {
     return result
 }
 
-function decompose2(matrix: THREE.Matrix4) {
-    const translation = new THREE.Vector3()
-    const rotation = new THREE.Quaternion()
-    const scale = new THREE.Vector3()
+function decompose2(matrix: Matrix4) {
+    const translation = new Vector3()
+    const rotation = new Quaternion()
+    const scale = new Vector3()
     matrix.decompose(translation, rotation, scale)
     return { translation, rotation, scale }
 }
 
-const UNIT_SCALE = new THREE.Vector3(1, 1, 1)
-const IDENTITY_MATRIX = new THREE.Matrix4()
+const UNIT_SCALE = new Vector3(1, 1, 1)
+const IDENTITY_MATRIX = new Matrix4()
 
 function log_translation(f: Matrix4, ...msg) {
     const translation = new Vector3()
@@ -161,11 +160,11 @@ function log_translation(f: Matrix4, ...msg) {
  */
 export function change_reference_frame(
     frames: Frame[],
-    position: THREE.Vector3,
-    orientation: THREE.Quaternion,
+    position: Vector3,
+    orientation: Quaternion,
     fromIndex: number | "world",
     toIndex?: number | "world"
-): { position: THREE.Vector3; orientation: THREE.Quaternion } {
+): { position: Vector3; orientation: Quaternion } {
     if (toIndex === fromIndex) {
         // console.log("NULL FRAME CONVERSION, SAME FROM AND TO FRAME", toIndex)
         return { position, orientation }
@@ -178,13 +177,14 @@ export function change_reference_frame(
             console.warn("Invalid frame requested", index, frames)
             return IDENTITY_MATRIX
         }
-        return new THREE.Matrix4().compose(f.absolute.translation, f.absolute.rotation, UNIT_SCALE)
+        return new Matrix4().compose(f.absolute.translation, f.absolute.rotation, UNIT_SCALE)
     }
 
     const fromMatrix = fromIndex === "world" ? IDENTITY_MATRIX : matrixOf(fromIndex)
     // log_translation(fromMatrix, "FROM TRANSLATION")
 
-    const toMatrix = toIndex === "world" || toIndex === undefined ? IDENTITY_MATRIX : matrixOf(toIndex)
+    const toMatrix =
+        toIndex === "world" || toIndex === undefined ? IDENTITY_MATRIX : matrixOf(toIndex)
     // log_translation(toMatrix, "TO TRANSLATION")
 
     const transformation = toMatrix.clone().invert().multiply(fromMatrix)

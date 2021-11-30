@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { RootState } from "@glowbuzzer/store"
 import { settings } from "../util/settings"
 import { useMemo } from "react"
+import { RootState } from "../root"
 
 const default_prefs = {
     units_scalar: "mm",
@@ -21,7 +21,7 @@ function getPrefsAsObject(): PrefsState {
     }
 }
 
-export const prefsSlice = createSlice({
+export const prefsSlice: Slice<PrefsState> = createSlice({
     name: "prefs",
     initialState: getPrefsAsObject(),
     reducers: {

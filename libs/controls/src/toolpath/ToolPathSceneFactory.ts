@@ -1,6 +1,21 @@
 import * as THREE from "three"
-import { DoubleSide, PointLight, Vector3 } from "three"
-import { OrbitControls } from "./OrbitControls"
+import {
+    BufferGeometry,
+    ConeGeometry,
+    DoubleSide,
+    GridHelper,
+    Line,
+    LineBasicMaterial,
+    LineSegments,
+    Mesh,
+    MeshPhongMaterial,
+    PerspectiveCamera,
+    PointLight,
+    Scene,
+    Vector3,
+    WebGLRenderer
+} from "three"
+import { OrbitControls } from "three-stdlib"
 import { GCodeSegment } from "@glowbuzzer/store"
 
 if (typeof window !== "undefined") {
@@ -26,27 +41,27 @@ export const ToolPathSceneFactory = (
     extent: number
 ): ToolPathScene => {
     const [w, h] = [width, height]
-    const camera = new THREE.PerspectiveCamera(70, w / h, 0.01, 10000)
+    const camera = new PerspectiveCamera(70, w / h, 0.01, 10000)
     // camera.position.y = -.75;
     camera.position.z = 2 * extent
     // camera.position.x = 0.25;
     camera.up.set(0, 0, 1)
 
-    const scene = new THREE.Scene()
+    const scene = new Scene()
 
-    const gridHelper = new THREE.GridHelper(2 * extent, 20, undefined, 0xc0c0c0)
+    const gridHelper = new GridHelper(2 * extent, 20, undefined, 0xc0c0c0)
     gridHelper.rotateX(Math.PI / 2)
     scene.add(gridHelper)
 
-    const light1 = new THREE.PointLight(0xc0c0c0, 1, 30 * extent)
+    const light1 = new PointLight(0xc0c0c0, 1, 30 * extent)
     light1.position.set(extent, extent, extent)
     scene.add(light1)
 
-    const light2 = new THREE.PointLight(0xc0c0c0, 1, 30 * extent)
+    const light2 = new PointLight(0xc0c0c0, 1, 30 * extent)
     light2.position.set(extent, -extent, extent)
     scene.add(light2)
 
-    const light3 = new THREE.PointLight(0xc0c0c0, 1, 30 * extent)
+    const light3 = new PointLight(0xc0c0c0, 1, 30 * extent)
     light3.position.set(-extent, -extent, extent)
     scene.add(light3)
 
@@ -63,21 +78,21 @@ export const ToolPathSceneFactory = (
     scene.add(lights[1])
     scene.add(lights[2])
 
-    const pathMaterial = new THREE.LineBasicMaterial({ color: 0x0000ff })
+    const pathMaterial = new LineBasicMaterial({ color: 0x0000ff })
     const pathVertices: Vector3[] = []
-    const pathGeometry = new THREE.BufferGeometry().setFromPoints(pathVertices)
-    const line = new THREE.Line(pathGeometry, pathMaterial)
+    const pathGeometry = new BufferGeometry().setFromPoints(pathVertices)
+    const line = new Line(pathGeometry, pathMaterial)
     scene.add(line)
 
-    const previewMaterial = new THREE.LineBasicMaterial({ color: 0x000000 })
-    const previewGeometry = new THREE.BufferGeometry().setFromPoints([])
-    const preview = new THREE.LineSegments(previewGeometry, previewMaterial)
+    const previewMaterial = new LineBasicMaterial({ color: 0x000000 })
+    const previewGeometry = new BufferGeometry().setFromPoints([])
+    const preview = new LineSegments(previewGeometry, previewMaterial)
     scene.add(preview)
     // function hsl(h, s, l) {
-    //     return (new THREE.Color()).setHSL(h, s, l);
+    //     return (new Color()).setHSL(h, s, l);
     // }
 
-    const fulcrumGeometry = new THREE.ConeGeometry(
+    const fulcrumGeometry = new ConeGeometry(
         0.1 * extent,
         0.3 * extent,
         3,
@@ -86,19 +101,19 @@ export const ToolPathSceneFactory = (
         0,
         Math.PI * 2
     )
-    const fulcrumMaterial = new THREE.MeshPhongMaterial({
+    const fulcrumMaterial = new MeshPhongMaterial({
         color: "#000099",
         opacity: 0.2,
         transparent: true,
         side: DoubleSide,
         flatShading: true
     })
-    const fulcrum = new THREE.Mesh(fulcrumGeometry, fulcrumMaterial)
+    const fulcrum = new Mesh(fulcrumGeometry, fulcrumMaterial)
     fulcrum.position.z = extent / 2
     fulcrum.rotation.set(-Math.PI / 2, 0, 0)
     scene.add(fulcrum)
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
+    const renderer = new WebGLRenderer({ alpha: true, antialias: true })
     renderer.setSize(w, h)
 
     while (container.firstChild) {

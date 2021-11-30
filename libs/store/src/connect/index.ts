@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { createSlice } from "@reduxjs/toolkit"
+import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { RootState } from "../root"
 import { usePrefs } from "../prefs"
 import { useMemo } from "react"
@@ -10,14 +10,31 @@ export enum ConnectionState {
     CONNECTED = "CONNECTED"
 }
 
-export const connectionSlice = createSlice({
+type ConnectionSliceType = {
+    state: ConnectionState
+    error: unknown
+    autoConnect: boolean
+    statusReceived: boolean
+}
+
+export const connectionSlice: Slice<
+    ConnectionSliceType,
+    {
+        connected: CaseReducer<ConnectionSliceType>
+        connecting: CaseReducer<ConnectionSliceType>
+        disconnected: CaseReducer<ConnectionSliceType>
+        autoConnect: CaseReducer<ConnectionSliceType, PayloadAction<boolean>>
+        error: CaseReducer<ConnectionSliceType, PayloadAction<unknown>>
+        statusReceived: CaseReducer<ConnectionSliceType, PayloadAction<boolean>>
+    }
+> = createSlice({
     name: "connection",
     initialState: {
-        state: ConnectionState.DISCONNECTED,
+        state: ConnectionState.DISCONNECTED as ConnectionState,
         error: null,
         autoConnect: true,
         statusReceived: true // assume all okay at start
-    },
+    } as ConnectionSliceType,
     reducers: {
         connected: state => ({ ...state, state: ConnectionState.CONNECTED }),
         connecting: state => {
@@ -27,7 +44,11 @@ export const connectionSlice = createSlice({
         },
         disconnected: state => ({ ...state, state: ConnectionState.DISCONNECTED }),
         autoConnect: (state, action) => ({ ...state, autoConnect: action.payload }),
-        error: (state, action) => ({ ...state, state: ConnectionState.DISCONNECTED, error: action.payload }),
+        error: (state, action) => ({
+            ...state,
+            state: ConnectionState.DISCONNECTED,
+            error: action.payload
+        }),
         statusReceived: (state, action) => {
             state.statusReceived = action.payload
         }
@@ -35,7 +56,10 @@ export const connectionSlice = createSlice({
 })
 
 export const useConnect = () => {
-    const { state, error, autoConnect, statusReceived } = useSelector(({ connection }: RootState) => connection, shallowEqual)
+    const { state, error, autoConnect, statusReceived } = useSelector(
+        ({ connection }: RootState) => connection,
+        shallowEqual
+    )
     const dispatch = useDispatch()
     const prefs = usePrefs()
 

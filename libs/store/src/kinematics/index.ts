@@ -1,12 +1,12 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import * as THREE from "three"
 import deepEqual from "fast-deep-equal"
 import { KinematicsConfigurationMcStatus } from "../types"
 import { useConnect } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
+import { Quaternion, Vector3 } from "three"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -21,8 +21,8 @@ enum KINEMATICSCONFIGURATIONTYPE {
 }
 
 type Pose = {
-    position: THREE.Vector3
-    orientation: THREE.Quaternion
+    position: Vector3
+    orientation: Quaternion
 }
 
 export type KinematicsState = {
@@ -49,7 +49,7 @@ export const status_to_redux_state = (k: KinematicsConfigurationMcStatus) => {
     }
 }
 
-export const kinematicsSlice = createSlice({
+export const kinematicsSlice: Slice<KinematicsState[]> = createSlice({
     name: "kinematics",
     initialState: [] as KinematicsState[],
     reducers: {
@@ -72,8 +72,8 @@ function unmarshall(state): KinematicsState {
             froTarget: 0,
             froActual: 0,
             pose: {
-                position: new THREE.Vector3(0, 0, 0),
-                orientation: new THREE.Quaternion(0, 0, 0, 1)
+                position: new Vector3(0, 0, 0),
+                orientation: new Quaternion(0, 0, 0, 1)
             }
         }
     }
@@ -83,8 +83,8 @@ function unmarshall(state): KinematicsState {
     return {
         ...state,
         pose: {
-            position: new THREE.Vector3(x, y, z),
-            orientation: new THREE.Quaternion(qx, qy, qz, qw)
+            position: new Vector3(x, y, z),
+            orientation: new Quaternion(qx, qy, qz, qw)
         }
     }
 }
@@ -118,7 +118,12 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
     return {
         ...state,
         frameIndex: fromIndex,
-        pose: frames.convertToFrame(state.pose.position, state.pose.orientation, "world", frameIndex),
+        pose: frames.convertToFrame(
+            state.pose.position,
+            state.pose.orientation,
+            "world",
+            frameIndex
+        ),
         setFroPercentage(value: number) {
             window.localStorage.setItem(`kinematics.${kc}.statusFrequency`, JSON.stringify(value))
             dispatch(() => {

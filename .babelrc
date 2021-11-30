@@ -8,13 +8,6 @@
             }
         ],
         [
-            "styled-components",
-            {
-                "pure": true,
-                "ssr": true
-            }
-        ],
-        [
             "@babel/plugin-proposal-class-properties",
             {
                 "loose": true

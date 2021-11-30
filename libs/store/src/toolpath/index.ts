@@ -1,8 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { RootState } from "@glowbuzzer/store"
 import deepEqual from "fast-deep-equal"
 import { settings } from "../util/settings"
+import { RootState } from "../root"
 
 const { load, save } = settings("toolpath")
 
@@ -22,10 +22,14 @@ type ToolPathElement = {
 
 type ToolPathForKinematicsConfiguration = {
     path: ToolPathElement[]
-    last: any // record last status
+    last: unknown // record last status
 }
 
-export const toolPathSlice = createSlice({
+type ToolPathSliceType = {
+    settings: ToolPathSettingsType
+    paths: ToolPathForKinematicsConfiguration[]
+}
+export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
     name: "toolPath",
     initialState: {
         settings: {

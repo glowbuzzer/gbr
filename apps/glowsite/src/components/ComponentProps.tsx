@@ -1,6 +1,6 @@
 import React from "react"
 import { Table } from "antd"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 const StyledDiv = styled.div`
     .props-table {

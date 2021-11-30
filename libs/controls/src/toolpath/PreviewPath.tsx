@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"
-import { Line, Text } from "@react-three/drei"
+// import { Line, Text } from "@react-three/drei"
 import { GCodeSegment } from "@glowbuzzer/store"
 
 function toVector3(vals: { x: number; y: number; z: number }) {
@@ -25,15 +25,16 @@ const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
     ].map(v => [v.x, v.y, v.z] as [number, number, number])
 
     // noinspection RequiredAttributes
-    return (
-        <Line
-            color="#909090"
-            points={points}
-            dashed={true}
-            dashSize={dashSize}
-            gapSize={dashSize / 2}
-        />
-    )
+    return null
+    // return (
+    //     <Line
+    //         color="#909090"
+    //         points={points}
+    //         dashed={true}
+    //         dashSize={dashSize}
+    //         gapSize={dashSize / 2}
+    //     />
+    // )
 }
 
 const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
@@ -66,22 +67,23 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
 
     function LabelText({ position, label, distance }) {
         // noinspection RequiredAttributes
-        return (
-            <Text
-                position={position}
-                color={"#909090"}
-                fontSize={fontSize}
-                maxWidth={fontSize * 10}
-                lineHeight={lineHeight}
-                letterSpacing={0}
-                textAlign={"left"}
-                font="arial"
-                anchorX="left"
-                anchorY="top"
-            >
-                {label} {distance.toFixed(2)} mm
-            </Text>
-        )
+        return null
+        // return (
+        //     <Text
+        //         position={position}
+        //         color={"#909090"}
+        //         fontSize={fontSize}
+        //         maxWidth={fontSize * 10}
+        //         lineHeight={lineHeight}
+        //         letterSpacing={0}
+        //         textAlign={"left"}
+        //         font="arial"
+        //         anchorX="left"
+        //         anchorY="top"
+        //     >
+        //         {label} {distance.toFixed(2)} mm
+        //     </Text>
+        // )
     }
 
     // noinspection RequiredAttributes

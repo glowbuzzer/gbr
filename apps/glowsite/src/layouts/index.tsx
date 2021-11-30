@@ -2,7 +2,7 @@ import React from "react"
 import { DefaultLayoutWithMdxSupport } from "./DefaultLayoutWithMdxSupport"
 import { Container } from "../components/Container"
 import { DynamicLeftNav } from "../components/DynamicLeftNav"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 import { GbcSchemaLeftNav } from "../components/nav/GbcSchemaLeftNav"
 
 const StyledBodyArea = styled.div`
@@ -13,7 +13,6 @@ const StyledBodyArea = styled.div`
 `
 
 export default ({ children, pageContext }) => {
-
     if (["docs", "how-it-works", "get-started", "blogs", "about"].includes(pageContext.layout)) {
         return (
             <DefaultLayoutWithMdxSupport>

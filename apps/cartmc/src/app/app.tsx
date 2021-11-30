@@ -22,7 +22,7 @@ import {
 import { DrivesTile } from "./tiles/DrivesTile"
 import { SimpleDroTile } from "./tiles/SimpleDroTile"
 import { TestTile } from "./tiles/TestTile"
-import styled from "styled-components"
+import styled from "@emotion/styled"
 
 import "antd/dist/antd.css"
 import "react-grid-layout/css/styles.css"
