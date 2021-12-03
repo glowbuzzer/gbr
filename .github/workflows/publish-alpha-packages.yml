@@ -6,6 +6,7 @@ on:
         paths:
             - "libs/**"
             - ".github/**"
+            - "build.mjs"
             - "package.json"
 
 jobs:
