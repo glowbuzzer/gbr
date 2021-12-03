@@ -2,7 +2,7 @@ name: Publish alpha npm packages
 on:
     push:
         branches:
-            - master
+            - main
         paths:
             - "libs/**"
             - ".github/**"
@@ -34,7 +34,7 @@ jobs:
                 run: pnpm install # --no-optional
 
             -   name: Package libs
-                run: node build.mjs controls,layout,store 1.0.0-alpha.${{ github.run_number }}
+                run: node build.mjs controls,layout,store 1.0.1-alpha.${{ github.run_number }}
 
             -   name: Publish dist/controls
                 run: npm publish dist/controls
