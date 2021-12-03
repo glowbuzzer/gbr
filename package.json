@@ -53,6 +53,7 @@
         "redux": "^4.1.1",
         "redux-thunk": "^2.3.0",
         "regenerator-runtime": "0.13.7",
+        "styled-components": "^5.3.3",
         "three": "0.125.2",
         "tslib": "^2.3.1"
     },
@@ -66,8 +67,6 @@
         "@babel/preset-react": "^7.14.5",
         "@babel/preset-typescript": "^7.15.0",
         "@cypress/webpack-preprocessor": "^5.9.1",
-        "@emotion/react": "^11.5.0",
-        "@emotion/styled": "^11.3.0",
         "@nrwl/cli": "12.7.1",
         "@nrwl/cypress": "12.7.1",
         "@nrwl/eslint-plugin-nx": "12.7.1",

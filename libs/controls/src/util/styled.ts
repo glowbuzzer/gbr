@@ -1,4 +1,4 @@
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 export const StyledControls = styled.span`
     .ant-radio-button-wrapper:first-child {

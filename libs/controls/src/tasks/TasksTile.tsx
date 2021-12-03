@@ -2,7 +2,7 @@ import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Button, Tag } from "antd"
 import { TASK_STATE, useTask, useTaskStatus } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 

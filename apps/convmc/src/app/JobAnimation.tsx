@@ -1,4 +1,3 @@
-import styled from "@emotion/styled"
 import React, { useEffect, useRef, useState } from "react"
 import { CounterCow, CounterPig, CounterUnknown } from "./animation/counters"
 import anime from "animejs"

@@ -8,7 +8,7 @@ import {
     useKinematics,
     useSoloActivity
 } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { Button, Form, Input, Radio, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
 import {

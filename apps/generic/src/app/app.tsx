@@ -15,7 +15,7 @@ import {
     PreferencesDialog,
     ToolPathTile
 } from "@glowbuzzer/controls"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"

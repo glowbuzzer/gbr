@@ -2,7 +2,7 @@ import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { useIntegerOutputs } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 const StyledDiv = styled.div`
     padding-top: 20px;

@@ -18,8 +18,8 @@ import {
     usePrefs,
     usePreview
 } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
-import { css } from "@emotion/react"
+import styled from "styled-components"
+import { css } from "styled-components"
 
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"

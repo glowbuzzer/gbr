@@ -1,7 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
 
 const { Option } = Select

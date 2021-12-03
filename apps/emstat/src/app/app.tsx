@@ -1,6 +1,5 @@
 import React, { useEffect, useState, createRef } from "react"
 
-import styled from "@emotion/styled"
 import {
     Row,
     Col,
@@ -27,6 +26,7 @@ import axios from "axios"
 import { slaveStateTable, alTable } from "./lookups"
 import { isNull, isNullOrUndefined } from "util"
 import { IconType } from "rc-tree/lib/interface"
+import styled from "styled-components"
 
 const style = { background: "#ffffff", padding: "8px 8px" }
 
@@ -49,7 +49,7 @@ const StatusFreqTable = styled.div`
     // gap: 30px;
     // padding: 20px;
     // align-items: space-around;
-    align-items: centre;
+    align-items: center;
     .ant-slider {
         flex-grow: 2;
         // flex-wrap: no-wrap;

@@ -2,7 +2,7 @@ import React from "react"
 import { useAnalogInputs } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import { Tag } from "antd"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 const StyledDiv = styled.div`
     display: flex;

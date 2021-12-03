@@ -11,8 +11,8 @@ import {
     useConnect,
     usePrefs
 } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
-import { css, ThemeProvider } from "@emotion/react"
+import styled from "styled-components"
+import { css, ThemeProvider } from "styled-components"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
 
@@ -37,7 +37,9 @@ const theme = {
     }
 }
 
-declare module "@emotion/styled" {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+declare module "styled-components" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface

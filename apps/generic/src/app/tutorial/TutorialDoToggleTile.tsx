@@ -1,7 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Switch } from "antd"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { useDigitalOutput } from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`

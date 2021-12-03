@@ -11,7 +11,7 @@ import {
     MACHINETARGET
 } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { StyledControls } from "../util/styled"
 import { TrafficLight } from "./TrafficLight"
 

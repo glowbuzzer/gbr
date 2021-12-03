@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import { Button, Checkbox, Empty, Form, Input, Modal, Tree } from "antd"
 import { useConnect, useFrames, useKinematics } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 function map_tree(tree) {
     const gcode = tree.index < 8 ? " (G5" + (4 + tree.index) + ")" : ""

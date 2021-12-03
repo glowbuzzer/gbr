@@ -8,7 +8,7 @@ import { Tile } from "@glowbuzzer/layout"
 import { useDigitalInputs } from "@glowbuzzer/store"
 import { Select, Switch, Tag } from "antd"
 import { useDigitalInputOverrides } from "@glowbuzzer/store"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 const { Option } = Select
 

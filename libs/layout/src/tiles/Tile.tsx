@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from "react"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { Button, Modal } from "antd"
 import { EditOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"

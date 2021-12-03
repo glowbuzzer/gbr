@@ -22,7 +22,6 @@ import {
 import { DrivesTile } from "./tiles/DrivesTile"
 import { SimpleDroTile } from "./tiles/SimpleDroTile"
 import { TestTile } from "./tiles/TestTile"
-import styled from "@emotion/styled"
 import { CheckOutlined } from "@ant-design/icons"
 import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { CartesianApp } from "./CartesianApp"
@@ -30,7 +29,7 @@ import { FrameOverrideDialog } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.css"
 import "./app.css"
-
+import styled from "styled-components"
 
 const StyledApp = styled.div``
 

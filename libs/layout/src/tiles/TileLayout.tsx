@@ -1,6 +1,6 @@
 import React from "react"
 import RGL, { Layout, WidthProvider } from "react-grid-layout"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { useTiles } from "./TileProvider"
 
 const ReactGridLayout = WidthProvider(RGL)

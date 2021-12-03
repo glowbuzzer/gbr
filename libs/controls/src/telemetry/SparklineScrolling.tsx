@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 
 type Datapoint = {
     t: number

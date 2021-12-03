@@ -2,7 +2,7 @@ import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"
 import { Axis, AxisDomain, ScaleLinear } from "d3"
-import styled from "@emotion/styled"
+import styled from "styled-components"
 import { Selection } from "d3-selection"
 
 export type DataPoint = { t: number; values: number[][] }
