@@ -46,10 +46,10 @@ for ( const project of projects ) {
             external: index ? undefined : [
                 '@glowbuzzer/layout', '@glowbuzzer/store',
                 // core
-                'react', 'react-dom', 'styled-components',
+                'react', 'react-dom', 'react-reconciler',
                 'react-redux', '@reduxjs/toolkit',
-                // pretty core
                 'antd', '@ant-design/icons',
+                'styled-components',
                 // currently core but am not a huge fan
                 'react-grid-layout',
                 // required for robot and toolpath display
