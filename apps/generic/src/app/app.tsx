@@ -29,6 +29,8 @@ import { JointSpinnersTile } from "./JointSpinnersTile"
 import { TutorialDoToggleTile } from "./tutorial/TutorialDoToggleTile"
 import { TutorialOscillatingMoveTile } from "./tutorial/TutorialOscillatingMoveTile"
 
+import "react-grid-layout/css/styles.css"
+
 const StyledApp = styled.div``
 
 const PrefsButton = () => {

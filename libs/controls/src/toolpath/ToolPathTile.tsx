@@ -15,6 +15,7 @@ import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { ToolPathAutoSize } from "./ToolPathAutoSize"
 import { PreviewPath } from "./PreviewPath"
+import { ToolPathDisplay } from "./ToolPathDisplay"
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -109,7 +110,7 @@ export const ToolPathTile = () => {
                 </ToolPathAutoSize>
             </Canvas>
 
-            {/*
+{/*
             <ToolPathDisplay width={1000} height={800} extent={200} path={path} segments={segments} />
 */}
         </Tile>

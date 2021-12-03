@@ -33,7 +33,6 @@
     "dependencies": {
         "@ant-design/icons": "^4.7.0",
         "@babel/plugin-proposal-class-properties": "^7.14.5",
-        "@loadable/component": "^5.15.0",
         "@react-three/drei": "^3.11.2",
         "@reduxjs/toolkit": "^1.6.2",
         "antd": "^4.16.13",
@@ -88,6 +87,7 @@
         "@types/resize-observer-browser": "^0.1.6",
         "@typescript-eslint/eslint-plugin": "^4.33.0",
         "@typescript-eslint/parser": "^4.33.0",
+        "ace-builds": "^1.4.13",
         "animejs": "^3.2.1",
         "axios": "^0.21.4",
         "babel-jest": "^26.6.3",

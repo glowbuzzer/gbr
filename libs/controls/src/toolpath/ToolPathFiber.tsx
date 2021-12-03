@@ -3,7 +3,7 @@ import { extend } from "react-three-fiber"
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { DoubleSide, Euler, Vector3 } from "three"
 import simplify from "./simplify"
-// import { DynamicLine } from "./DynamicLine"
+import { DynamicLine } from "./DynamicLine"
 
 // TODO: hack alert - cannot export from lib project??
 // declare type GCodeSegment = any
@@ -24,13 +24,12 @@ export const ToolPath = ({ path, scale }) => {
     // noinspection RequiredAttributes
     return (
         <>
-            {/*
             <DynamicLine
                 points={pathPoints} // Array of points
                 color={"red"}
                 lineWidth={2} // In pixels (default)
             />
-*/}
+
             <mesh position={fulcrum} rotation={new Euler(-Math.PI / 2, 0, 0)}>
                 <coneBufferGeometry args={[0.05 * scale, fulcrumHeight, 3]} />
                 <meshPhongMaterial

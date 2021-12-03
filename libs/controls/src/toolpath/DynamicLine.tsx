@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 // import { Line2 } from "three/examples/jsm/lines/Line2"
 // import { LineMaterial } from "three/examples/jsm/lines/LineMaterial"
 import { Vector2 } from "three"
+import { Line2, LineGeometry, LineMaterial } from "three-stdlib"
 // import { LineGeometry } from "three/examples/jsm/lines/LineGeometry"
 
 type DynamicLineProps = {
@@ -10,7 +11,6 @@ type DynamicLineProps = {
     lineWidth: number
 }
 
-/*
 export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Line(
     { points, color = "black", lineWidth, ...rest },
     ref
@@ -21,6 +21,8 @@ export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Li
     useEffect(() => {
         const geom = new LineGeometry()
         geom.setPositions(points)
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         line2.geometry = geom
         line2.computeLineDistances()
     }, [points, line2])
@@ -39,4 +41,3 @@ export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Li
         </primitive>
     )
 })
-*/

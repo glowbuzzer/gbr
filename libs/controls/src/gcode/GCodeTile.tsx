@@ -1,10 +1,11 @@
 import * as React from "react"
 import { useEffect } from "react"
-// import AceEditor, { IMarker } from "react-ace"
-//
-// import "ace-builds/src-noconflict/theme-github"
-// import "ace-builds/src-noconflict/mode-gcode"
-// import "ace-builds/src-noconflict/mode-text"
+import AceEditor, { IMarker } from "react-ace"
+
+import "ace-builds/src-noconflict/theme-github"
+import "ace-builds/src-noconflict/mode-gcode"
+import "ace-builds/src-noconflict/mode-text"
+
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
 import {
@@ -23,18 +24,18 @@ import { css } from "@emotion/react"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
-import loadable from "@loadable/component"
+// import loadable from "@loadable/component"
 
-const AceEditor = loadable(async () => {
-    if (typeof window !== "undefined") {
-        const editor = await import("react-ace")
-        // import("ace-builds/src-noconflict/theme-github")
-        // import("ace-builds/src-noconflict/mode-gcode")
-        // import("ace-builds/src-noconflict/mode-text")
-        return editor
-    }
-    return null
-})
+// const AceEditor = loadable(async () => {
+//     if (typeof window !== "undefined") {
+//         const editor = await import("react-ace")
+//         // import("ace-builds/src-noconflict/theme-github")
+//         // import("ace-builds/src-noconflict/mode-gcode")
+//         // import("ace-builds/src-noconflict/mode-text")
+//         return editor
+//     }
+//     return null
+// })
 
 const { Option } = Select
 
@@ -204,6 +205,8 @@ export const GCodeTile = () => {
                     value={gcode}
                     onChange={update_gcode}
                     onCursorChange={update_cursor}
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
                     markers={highlight}
                 />
             </StyledDiv>
