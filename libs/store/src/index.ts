@@ -2,6 +2,7 @@ import "./connect/ConnectionFactory"
 
 export * from "./gbc"
 
+export {Frame} from "./util/frame_utils"
 export { ConnectionState, useConnect, connectionSlice } from "./connect"
 export {
     DesiredState,
