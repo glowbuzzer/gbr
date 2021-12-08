@@ -1,17 +1,20 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "noResolve": true,
-        "skipLibCheck": true
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react"
+        //        "noResolve": true,
+//        "skipLibCheck": true
     },
     "exclude": [
-        "apps/**/**",
-        "public/static/**/**",
-        "./node_modules/**"
+//        "apps/**/**",
+//        "public/static/**/**",
+//        "./node_modules/**"
     ],
     "files": [
-        "./libs/store/src/gbc.ts"
+        "./dist/store/types/index.d.ts"
     ],
-    "include": [
-        "./libs/store/src/gbc.ts",
-    ]
+//    "include": [
+//        "./libs/store/src/**/*.ts"
+//    ]
 }

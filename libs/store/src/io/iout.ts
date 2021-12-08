@@ -3,12 +3,14 @@ import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
 
-type IntegerOutputCommand = {
+export type IntegerOutputCommand = {
     value: number
     override: boolean
 }
 
-type IntegerOutputStatus = {
+/** The current status of a single integer output. This also incorporates the current commanded state for the integer output (override) */
+export type IntegerOutputStatus = {
+    /** testme */
     actValue: number
 } & IntegerOutputCommand
 

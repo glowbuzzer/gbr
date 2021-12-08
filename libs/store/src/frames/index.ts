@@ -1,15 +1,11 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import {
-    build_list,
-    build_tree,
-    change_reference_frame,
-    RootState,
-    useConfig,
-    useConnect
-} from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import { useConnect } from "../connect"
+import { useConfig } from "../config"
+import { RootState } from "../root"
+import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
 
 const { load, save } = settings("frames")
 

@@ -1,4 +1,4 @@
-import { MACHINETARGET } from "@glowbuzzer/store"
+import { MACHINETARGET } from "../gbc"
 
 export function updateMachineCommandMsg(command) {
     return JSON.stringify({

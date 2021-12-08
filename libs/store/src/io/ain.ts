@@ -12,6 +12,17 @@ export const analogInputsSlice = createSlice({
     }
 })
 
+/**
+ * Provides access to the current state of all analog inputs as an array.
+ *
+ * For example:
+ * ```jsx
+ * const ains=useAnalogInputs()
+ * console.log(ains[2])
+ * ```
+ *
+ * The names given to analog inputs can be discovered using {@link useConfig}
+ */
 export function useAnalogInputs() {
     return useSelector(({ ain }: RootState) => ain, shallowEqual)
 }
