@@ -49,6 +49,7 @@ export function useDigitalOutput(index: number) {
     return useMemo(() => {
         return {
             ...value,
+            /** set the new state **/
             set(state: number, override = true) {
                 connection.send(
                     JSON.stringify({

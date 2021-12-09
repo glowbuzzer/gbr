@@ -1,18 +1,23 @@
 {
-    "extends": "./tsconfig.base.json",
+//    "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "allowSyntheticDefaultImports": true,
-        "jsx": "react"
+        "target": "ES5",
+        "esModuleInterop": true,
+        "downlevelIteration": true,
+//        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+//        "target": "ES6",
+//        "downlevelIteration": true
         //        "noResolve": true,
 //        "skipLibCheck": true
     },
     "exclude": [
 //        "apps/**/**",
 //        "public/static/**/**",
-//        "./node_modules/**"
+        "./node_modules/**"
     ],
     "files": [
-        "./dist/store/types/index.d.ts"
+        "./libs/store/src/index.ts"
     ],
 //    "include": [
 //        "./libs/store/src/**/*.ts"
