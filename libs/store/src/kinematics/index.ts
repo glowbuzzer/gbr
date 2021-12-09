@@ -25,12 +25,19 @@ type Pose = {
     orientation: Quaternion
 }
 
+/**
+ * The state of the kinematics configuration
+ */
 export type KinematicsState = {
+    /** The type of kinematics, for example a robot or cartesian machine */
     type: KINEMATICSCONFIGURATIONTYPE // TODO: should come from config
+    /** The position and orientation */
     pose: Pose
+    /** The current configuration for a robot (waist, elbow, wrist) */
     currentConfiguration: number
-    // frameIndex: number
+    /** The feedrate the kinematics configuration is trying to achieve */
     froTarget: number
+    /** The actual feedrate */
     froActual: number
 }
 
@@ -103,6 +110,11 @@ export function updateFroPercentageMsg(kc: number, value: number) {
     })
 }
 
+/**
+ * Read and manipulate a kinematics configuration
+ * @param kc The kinematics configuration index
+ * @param frameIndex The index of the frame into which coordinates will be transformed when read
+ */
 export const useKinematics = (kc: number, frameIndex: number | "world") => {
     // select the given kc
     const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
@@ -124,6 +136,10 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
             "world",
             frameIndex
         ),
+        /**
+         * Set the feed rate override
+         * @param value Percentage from 0-100. If set to zero the machine will pause all motion
+         */
         setFroPercentage(value: number) {
             window.localStorage.setItem(`kinematics.${kc}.statusFrequency`, JSON.stringify(value))
             dispatch(() => {
