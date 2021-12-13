@@ -111,7 +111,13 @@ export function updateFroPercentageMsg(kc: number, value: number) {
 }
 
 /**
- * Read and manipulate a kinematics configuration
+ * Read and manipulate a kinematics configuration. A kinematics configuration (KC) represents a number of
+ * joints joined together in a kinematic relationship. It also has a feedrate (percentage) and a local
+ * frame of reference that can be transformed to other reference frames. The pose of the KC contains
+ * the position of the TCP (all machines) and possibly the orientation of the TCP (robots). The configuration
+ * of the KC, typically used for robots, indicates which of the possible configurations (waist, elbow, wrist)
+ * the machine is currently in.
+ *
  * @param kc The kinematics configuration index
  * @param frameIndex The index of the frame into which coordinates will be transformed when read
  */

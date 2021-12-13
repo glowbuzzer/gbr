@@ -192,7 +192,7 @@ export const ConnectTile = () => {
                             ))}
                     </div>
                 </div>}
-                {connected && machine.faultHistory > 0 && <div className="row padded">
+                {connected && fault && machine.faultHistory > 0 && <div className="row padded">
                     <div className="label">Fault history</div>
                     <div className="controls">
                         {Object.values(FaultCode)
