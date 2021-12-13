@@ -1,11 +1,6 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import {
-    DesiredState,
-    determine_machine_state,
-    handleMachineState,
-    MachineState
-} from "./MachineStateHandler"
+import { DesiredState, determine_machine_state, handleMachineState, MachineState } from "./MachineStateHandler"
 import { RootState } from "../root"
 import { useConnect } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
@@ -38,6 +33,7 @@ type MachineStatus = {
     statusWord: number
     controlWord: number
     activeFault: number
+    faultHistory: number
     requestedTarget: MACHINETARGET
     actualTarget: MACHINETARGET
     heartbeat?: number
@@ -65,10 +61,11 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
     reducers: {
         status: (state, action) => {
             // called with status.machine from the json every time board sends status message
-            const { statusWord, controlWord, activeFault, target } = action.payload
+            const { statusWord, controlWord, activeFault, faultHistory, target } = action.payload
             state.statusWord = statusWord
             state.controlWord = controlWord
             state.activeFault = activeFault
+            state.faultHistory = faultHistory
             state.actualTarget = target
 
             // check if the heartbeat has changed

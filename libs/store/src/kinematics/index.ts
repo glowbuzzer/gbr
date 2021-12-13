@@ -129,7 +129,11 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
 
     return {
         ...state,
+        /** The local frame index for the kinematics configuration */
         frameIndex: fromIndex,
+        /**
+         * The position and orientation
+         */
         pose: frames.convertToFrame(
             state.pose.position,
             state.pose.orientation,

@@ -1,27 +1,68 @@
 import * as React from "react"
 import { Button, Radio, Tag } from "antd"
-import {
-    ConnectionState,
-    DesiredState,
-    determine_machine_state,
-    MachineState,
-    useConnect,
-    useMachine,
-    FaultCode,
-    MACHINETARGET
-} from "@glowbuzzer/store"
+import { ConnectionState, DesiredState, determine_machine_state, FaultCode, MachineState, MACHINETARGET, possible_transitions, useConnect, useMachine } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
-import { StyledControls } from "../util/styled"
 import { TrafficLight } from "./TrafficLight"
-
-const PaddedTag = styled(Tag)`
-    margin-top: 5px;
-`
 
 const FlexCentered = styled.div`
     display: flex;
+    align-items: center;
     gap: 4px;
+`
+
+const StyledDiv = styled.div`
+    .row {
+        &.padded {
+            padding: 12px 0;
+        }
+
+        padding: 2px 0;
+        display: flex;
+        justify-content: stretch;
+        gap: 20px;
+        align-items: center;
+
+        .label {
+            flex-grow: 1;
+        }
+
+        .ant-radio-group {
+            display: flex;
+            justify-content: stretch;
+
+            .ant-radio-button-wrapper {
+                flex-grow: 1;
+                flex-basis: 0;
+                text-align: center;
+            }
+
+            .ant-radio-button-wrapper:first-child {
+                border-radius: 10px 0 0 10px;
+            }
+
+            .ant-radio-button-wrapper:last-child {
+                border-radius: 0 10px 10px 0;
+            }
+        }
+
+        .controls {
+            min-width: 180px;
+            text-align: right;
+
+            .ant-tag {
+                min-width: 180px;
+                text-align: center;
+                margin: 0 0 2px 0;
+            }
+
+            .ant-btn {
+                padding: 0;
+                height: inherit;
+                min-width: 180px;
+            }
+        }
+    }
 `
 
 export const ConnectTile = () => {
@@ -47,14 +88,22 @@ export const ConnectTile = () => {
         connection.disconnect()
     }
 
+    const connected = connection.connected && connection.statusReceived
+    const fault = machine.currentState === MachineState.FAULT
+    const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
+
     function determine_traffic_light_color() {
-        if (!(connection.connected && connection.statusReceived)) {
+        if (!connected) {
             return "red"
         }
         if (!machine.heartbeatReceived || machine.activeFault) {
             return "orange"
         }
         return "green"
+    }
+
+    function issue_reset() {
+        machine.setMachineControlWord(possible_transitions.FaultReset())
     }
 
     const traffic_light_color = determine_traffic_light_color()
@@ -64,8 +113,22 @@ export const ConnectTile = () => {
             title="Connection"
             controls={
                 <FlexCentered>
+                    {connection.connected ? (
+                        <Button onClick={disconnect}>Disconnect</Button>
+                    ) : (
+                        <div>Not connected</div>
+                    )}
+                    {!connection.connected && !connection.autoConnect && (
+                        <Button onClick={connect}>Connect</Button>
+                    )}
                     <TrafficLight width={20} color={traffic_light_color} />
-                    <StyledControls>
+                </FlexCentered>
+            }
+        >
+            <StyledDiv>
+                <div className="row">
+                    <div className="label">Change mode</div>
+                    <div className="controls">
                         <Radio.Group
                             disabled={connection.state !== ConnectionState.CONNECTED}
                             size={"small"}
@@ -82,9 +145,13 @@ export const ConnectTile = () => {
                                 Live
                             </Radio.Button>
                         </Radio.Group>
-                        &nbsp;
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="label">Machine operation</div>
+                    <div className="controls">
                         <Radio.Group
-                            disabled={connection.state !== ConnectionState.CONNECTED}
+                            disabled={!connected || fault || fault_active}
                             size={"small"}
                             value={
                                 state === MachineState.OPERATION_ENABLED
@@ -93,40 +160,55 @@ export const ConnectTile = () => {
                             }
                             onChange={change_desired_state}
                         >
-                            <Radio.Button value={DesiredState.STANDBY}>Standby</Radio.Button>
+                            <Radio.Button value={DesiredState.STANDBY}>Disabled</Radio.Button>
                             <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
-                                Operate
+                                Enabled
                             </Radio.Button>
                         </Radio.Group>
-                    </StyledControls>
-                </FlexCentered>
-            }
-        >
-            <div>
-                {connection.connected ? (
-                    <div>
-                        <Button onClick={disconnect}>Disconnect</Button>
                     </div>
-                ) : (
-                    <h3>Not connected</h3>
-                )}
+                </div>
+                <div className="row">
+                    <div className="label">Current state</div>
+                    <div className="controls">
+                        <Tag>{connected ? MachineState[machine.currentState] : "DISCONNECTED"}</Tag>
+                    </div>
+                </div>
+                {connected && fault && <div className="row">
+                    <div className="label" />
+                    <div className="controls">
+                        <Button onClick={issue_reset}>Reset Fault</Button>
+                    </div>
+                </div>}
+                {fault_active && <div className="row">
+                    <div className="label">Fault cause</div>
+                    <div className="controls">
+                        {Object.values(FaultCode)
+                            .filter(k => typeof k === "number")
+                            .filter((k: number) => machine.activeFault & k)
+                            .map(k => (
+                                <Tag key={k} color="red">
+                                    {FaultCode[k].substr("FAULT_CAUSE_".length)}
+                                </Tag>
+                            ))}
+                    </div>
+                </div>}
+                {connected && machine.faultHistory > 0 && <div className="row padded">
+                    <div className="label">Fault history</div>
+                    <div className="controls">
+                        {Object.values(FaultCode)
+                            .filter(k => typeof k === "number")
+                            .filter((k: number) => machine.faultHistory & k)
+                            .map(k => (
+                                <Tag key={k}>
+                                    {FaultCode[k].substr("FAULT_CAUSE_".length)}
+                                </Tag>
+                            ))}
+                    </div>
+                </div>}
+
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
-                {!connection.connected && !connection.autoConnect && (
-                    <Button onClick={connect}>Connect</Button>
-                )}
-                {connection.connected && connection.statusReceived && (
-                    <PaddedTag>{MachineState[machine.currentState]}</PaddedTag>
-                )}
-                {Object.values(FaultCode)
-                    .filter(k => typeof k === "number")
-                    .filter((k: number) => machine.activeFault & k)
-                    .map(k => (
-                        <PaddedTag key={k} color="red">
-                            {FaultCode[k].substr("FAULT_CAUSE_".length)}
-                        </PaddedTag>
-                    ))}
-            </div>
+            </StyledDiv>
         </Tile>
     )
 }
