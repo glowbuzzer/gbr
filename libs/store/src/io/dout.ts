@@ -1,23 +1,24 @@
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
 import { useConfig } from "../config"
 import { useConnect } from "../connect"
+import { StatusUpdateSlice } from "../util/redux"
 
 export type DigitalOutputCommand = {
-    /** the state, 0 or 1*/
-    state: number
+    /** the desired state */
+    setValue: boolean
     /** whether this state should override state set by an activity */
     override: boolean
 }
 
 export type DigitalOutputStatus = {
-    actState: number
+    effectiveValue: boolean
 } & DigitalOutputCommand
 
-export const digitalOutputsSlice: Slice<DigitalOutputStatus[]> = createSlice({
+export const digitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = createSlice({
     name: "dout",
     initialState: [] as DigitalOutputStatus[],
     reducers: {
@@ -28,22 +29,34 @@ export const digitalOutputsSlice: Slice<DigitalOutputStatus[]> = createSlice({
     }
 })
 
+/**
+ * Returns a list of configured digital output names. The index of names in the list can be used with {@link useDigitalOutputState}.
+ */
 export function useDigitalOutputList() {
     const config = useConfig()
     return Object.keys(config.dout)
 }
 
 /**
- * Read and update a digital output
+ * Returns the state of a digital output, and a function to set the desired state. The effective value
+ * is determined by GBC and is the setValue (if override is true) or the value last set by an activity
+ * (see `setDout` in {@link ActivityCommand} or {@link ActivityStreamItem})
  *
  * @param index The index in the configuration of the digital output
  */
-export function useDigitalOutput(index: number) {
+export function useDigitalOutputState(index: number): [{
+    /** The current effective value */
+    effectiveValue: boolean
+    /** The desired value */
+    setValue: boolean
+    /** Whether the desired value should override the value last set by an activity */
+    override: boolean
+}, (setValue: boolean, override: boolean) => void] {
     const connection = useConnect()
     const ref = useRef<DigitalOutputStatus>(null)
     const dout = useSelector(({ dout }: RootState) => dout[index]) || {
-        state: 0,
-        actState: 0,
+        effectiveValue: false,
+        setValue: false,
         override: false
     }
 
@@ -53,29 +66,21 @@ export function useDigitalOutput(index: number) {
     }
 
     const value = ref.current
-    return useMemo(() => {
-        return {
-            ...value,
-            /** set the new state
-             * @param state new state
-             * @param override override state set by activity
-             **/
-            set(state: number, override = true) {
-                connection.send(
-                    JSON.stringify({
-                        command: {
-                            dout: {
-                                [index]: {
-                                    command: {
-                                        state,
-                                        override
-                                    }
+    return useMemo(() =>
+        [value, (value: boolean, override = true) => {
+            connection.send(
+                JSON.stringify({
+                    command: {
+                        dout: {
+                            [index]: {
+                                command: {
+                                    setValue: value ? 1 : 0,
+                                    override
                                 }
                             }
                         }
-                    })
-                )
-            }
-        }
-    }, [index, value, connection])
+                    }
+                })
+            )
+        }], [index, value, connection])
 }

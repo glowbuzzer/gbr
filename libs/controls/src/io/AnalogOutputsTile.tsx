@@ -1,7 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
-import { useAnalogOutputs } from "@glowbuzzer/store"
+import { useAnalogOutputList, useAnalogOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
 
 const StyledDiv = styled.div`
@@ -17,19 +17,19 @@ const StyledDiv = styled.div`
     }
 `
 
+const AnalogOutputItem = ({ index, label }) => {
+    const [aout, setAout] = useAnalogOutputState(index)
+    return <NumericOutputWidget label={label} {...aout} onChange={setAout} />
+}
+
 export const AnalogOutputsTile = ({ labels = [] }) => {
-    const aout = useAnalogOutputs()
+    const aouts = useAnalogOutputList()
 
     return (
         <Tile title="Analog Outputs">
             <StyledDiv>
-                {aout.values.map((v, index) => (
-                    <NumericOutputWidget
-                        key={index}
-                        hookRef={aout}
-                        index={index}
-                        label={labels[index]}
-                    />
+                {aouts.map((label, index) => (
+                    <AnalogOutputItem index={index} label={labels[index] || label} />
                 ))}
             </StyledDiv>
         </Tile>

@@ -24,7 +24,7 @@ export { useJoints, useJointCount, useJointConfig, jointsSlice } from "./joints/
 export { useDigitalInputs } from "./io/din"
 export * from "./io/dout"
 export { useAnalogInputs } from "./io/ain"
-export { useAnalogOutputs } from "./io/aout"
+export { useAnalogOutputList, useAnalogOutputState } from "./io/aout"
 export { useIntegerInputs } from "./io/iin"
 export * from "./io/iout"
 export { useKinematics } from "./kinematics"

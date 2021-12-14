@@ -2,7 +2,7 @@ import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
-import { useDigitalOutput, useDigitalOutputList } from "@glowbuzzer/store"
+import { useDigitalOutputState, useDigitalOutputList } from "@glowbuzzer/store"
 
 const { Option } = Select
 
@@ -28,15 +28,15 @@ const DigitalOutputItem = ({
     name: string
     label?: string
 }) => {
-    const dout = useDigitalOutput(index)
+    const [dout, setDout] = useDigitalOutputState(index)
 
     function handle_override_change(value) {
-        dout.set(dout.state, value)
+        setDout(dout.override, value)
     }
 
     function handle_state_change() {
-        const new_state = 1 - dout.state
-        dout.set(new_state, dout.override)
+        const new_state = !dout.setValue
+        setDout(new_state, dout.override)
     }
 
     return (
@@ -55,11 +55,11 @@ const DigitalOutputItem = ({
             </div>
             <Switch
                 disabled={!dout.override}
-                checked={dout.state && true}
+                checked={dout.setValue}
                 onChange={handle_state_change}
             />
             <div>
-                <Tag>{dout.actState ? "ON" : "OFF"}</Tag>
+                <Tag>{dout.effectiveValue ? "ON" : "OFF"}</Tag>
             </div>
         </div>
     )

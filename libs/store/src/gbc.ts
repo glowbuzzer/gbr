@@ -290,7 +290,7 @@
         }
 
         /** 
-        Common Pdo Layout
+        Layout of fieldbus RxPdo
          */
         export type FieldbusTxPdoLayout = {
                     /**  Offset (in bytes) in the fieldbus process data to the machine control word (CiA 402) */
@@ -324,7 +324,7 @@
         }
 
         /** 
-        Common Pdo Layout
+        Layout of fieldbus TxPdo
          */
         export type FieldbusRxPdoLayout = {
                     /**  Offset (in bytes) in the fieldbus process data to the machine status word (CiA 402) */
@@ -822,7 +822,7 @@
         }
 
         /** 
-        Configuration parameters for Digital Ins (din)
+        Configuration parameters for Digital In (din)
          */
         export type DinConfig = {
                     /**  Defines if the input signal is inverted */
@@ -833,8 +833,8 @@
         Status of Digital In
          */
         export type DinStatus = {
-                    /**  state of the Digital In */
-                    actState?:ONOFF;
+                    /**  State of the Digital In */
+                    actValue?:ONOFF;
         }
 
         /** 
@@ -850,17 +850,17 @@
          */
         export type DoutStatus = {
                     /**  State of the Digital Out */
-                    actState?:ONOFF;
+                    effectiveValue?:ONOFF;
         }
 
         /** 
-        Commands for Digital Outs (dout)
+        Command for Digital Outs (dout)
          */
         export type DoutCommand = {
                     /**  Defines if the Dout state is to be overridden */
                     override?:boolean;
-                    /**  state of the Digital Out */
-                    state?:ONOFF;
+                    /**  State of the Digital Out */
+                    setValue?:ONOFF;
         }
 
         /** 
@@ -888,21 +888,23 @@
         }
 
         /** 
-        Status of  Analog Outs (aout - floats)
+        Status of an analog output. The status includes the effective value which is 
+        either the value set by {@link AoutCommand} if &#x60;override&#x60; flag is set, 
+        or the last value set by an activity (&#x60;setAout&#x60; in {@link ActivityCommand} or {@link ActivityStreamItem}).
          */
         export type AoutStatus = {
-                    /**  Actual value of analog out */
-                    actValue?:number;
+                    /**  Effective value of analog out */
+                    effectiveValue?:number;
         }
 
         /** 
         Command for Analog Outs (aout - floats)
          */
         export type AoutCommand = {
-                    /**  Override the value of the analog out (set by the front-end) */
+                    /**  Whether to override the value of the analog out that might be set by an activity */
                     override?:boolean;
-                    /**  Value to set the analog out to */
-                    value?:number;
+                    /**  Desired value of the analog out (ignored if override not set) */
+                    setValue?:number;
         }
 
         /** 
@@ -925,8 +927,8 @@
 
         
         export type IoutStatus = {
-                    /**  Actual value of the iout (integer out) */
-                    actValue?:number;
+                    /**  Effective value of the iout (integer out) */
+                    effectiveValue?:number;
         }
 
         
@@ -934,7 +936,7 @@
                     /**  Override the value of the iout (integer out) set by the HLC */
                     override?:boolean;
                     /**  Value to set the iout (integer out) to */
-                    value?:number;
+                    setValue?:number;
         }
 
         /** 

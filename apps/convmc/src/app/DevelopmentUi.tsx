@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import { ConnectTile, DevToolsTile, TelemetryTile } from "@glowbuzzer/controls"
 import { Button, Space, Tag } from "antd"
-import { useDigitalInputs, useDigitalOutput, useJoints } from "@glowbuzzer/store"
+import { useDigitalInputs, useDigitalOutputState, useJoints } from "@glowbuzzer/store"
 import { DigitalInputOverrideTile } from "../components/DigitalInputOverrides"
 import { dinLabels } from "./labels"
 import { ConveyorsTile } from "../components/ConveyorsTile"
@@ -14,8 +14,8 @@ import { TestAnimation } from "./TestAnimation"
 
 const DevelopmentUiTile = () => {
     const dins = useDigitalInputs()
-    const doutExtend = useDigitalOutput(8)
-    const doutRetract = useDigitalOutput(9)
+    const doutExtend = useDigitalOutputState(8)
+    const doutRetract = useDigitalOutputState(9)
     const app = useApp()
     const [j1, j2] = useJoints()
 

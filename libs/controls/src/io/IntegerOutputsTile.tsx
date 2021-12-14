@@ -1,6 +1,6 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
-import { useIntegerOutputs } from "@glowbuzzer/store"
+import { useIntegerOutputList, useIntegerOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"
 
@@ -17,19 +17,20 @@ const StyledDiv = styled.div`
     }
 `
 
+const IntegerOutputItem = ({ index, label }) => {
+    const [iout, setIout] = useIntegerOutputState(index)
+    return <NumericOutputWidget label={label} {...iout} onChange={setIout} />
+}
+
+
 export const IntegerOutputsTile = ({ labels = [] }) => {
-    const iout = useIntegerOutputs()
+    const aouts = useIntegerOutputList()
 
     return (
         <Tile title="Integer Outputs">
             <StyledDiv>
-                {iout.values.map((v, index) => (
-                    <NumericOutputWidget
-                        key={index}
-                        hookRef={iout}
-                        index={index}
-                        label={labels[index]}
-                    />
+                {aouts.map((label, index) => (
+                    <IntegerOutputItem index={index} label={labels[index] || label} />
                 ))}
             </StyledDiv>
         </Tile>

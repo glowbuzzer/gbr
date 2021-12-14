@@ -2,25 +2,15 @@ import React, { useState } from "react"
 import { Button, InputNumber, Switch, Tag } from "antd"
 import { ArrowRightOutlined } from "@ant-design/icons"
 
-export function NumericOutputWidget({ hookRef, index, label }: { hookRef: any; index: number; label?: string }) {
-    const item = hookRef.values[index]
-
-    const [overrideValue, setOverrideValue] = useState(item.actValue)
-
-    const override = !!item.override
+export function NumericOutputWidget({ label, effectiveValue, setValue, override, onChange }: { label: string, effectiveValue: number, setValue: number, override: boolean, onChange(value, override):void }) {
+    const [overrideValue, setOverrideValue] = useState(setValue)
 
     function handle_override_change(value) {
-        hookRef.update(index, {
-            override: value > 0,
-            value: overrideValue
-        })
+        onChange(overrideValue, !override)
     }
 
     function handle_value_change(value) {
-        hookRef.update(index, {
-            override: true,
-            value: overrideValue
-        })
+        onChange(overrideValue, true)
     }
 
     return (
@@ -38,7 +28,7 @@ export function NumericOutputWidget({ hookRef, index, label }: { hookRef: any; i
                 </Button>
             </div>
             <div>
-                <Tag>{item.actValue || 0}</Tag>
+                <Tag>{effectiveValue || 0}</Tag>
             </div>
         </div>
     )

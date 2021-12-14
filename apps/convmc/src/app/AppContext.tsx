@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react"
-import { useDigitalInputs, useDigitalOutput, useSoloActivity } from "@glowbuzzer/store"
+import { useDigitalInputs, useDigitalOutputState, useSoloActivity } from "@glowbuzzer/store"
 import { Vector3 } from "three"
 import { useStateMachine } from "@glowbuzzer/store"
 import { appContext } from "./AppContextType"
@@ -68,9 +68,9 @@ export const AppContextProvider = ({ children }) => {
     const conveyor1 = useSoloActivity(0)
     const conveyor2 = useSoloActivity(1)
     const dins = useDigitalInputs()
-    const doutCamera = useDigitalOutput(3)
-    const doutExtend = useDigitalOutput(8)
-    const doutRetract = useDigitalOutput(9)
+    const doutCamera = useDigitalOutputState(3)
+    const doutExtend = useDigitalOutputState(8)
+    const doutRetract = useDigitalOutputState(9)
     const [extended, retracted, magic_eye] = dins // simple booleans
 
     const [running, setRunning] = useState(false)

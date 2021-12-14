@@ -1,6 +1,29 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { KC_KINEMATICSCONFIGURATIONTYPE } from "../gbc"
+import {
+    ActivityConfig,
+    ACTIVITYTYPE,
+    AinConfig,
+    AoutConfig,
+    ArcsConfig,
+    CartesianPositionsConfig,
+    DinConfig,
+    DoutConfig,
+    FieldbusConfig,
+    FramesConfig,
+    IinConfig,
+    IoutConfig,
+    JogConfig,
+    JointConfig,
+    KC_KINEMATICSCONFIGURATIONTYPE,
+    KinematicsConfigurationConfig,
+    LinesConfig,
+    MachineConfig,
+    MoveParametersConfig,
+    TaskConfig,
+    ToolConfig,
+    TriggerOnConfig
+} from "../gbc"
 import { RootState } from "../root"
 
 const DEFAULT_JOINT_CONFIG = {
@@ -12,11 +35,52 @@ const DEFAULT_JOINT_CONFIG = {
     scale: 1000.0
 }
 
+/**
+ * The configuration uploaded to GBC and which is retrieved by GBR on connection. The keyed properties
+ * allow naming of individual config items, or they can be simple numeric keys, for example:
+ * ```js
+ * const config:ConfigType={
+ *     joint: {
+ *         0: {...},
+ *         1: {...},
+ *         2: {...}
+ *     },
+ *     frames: {
+ *         "robot": {...}
+ *         "pallet": {...}
+ *     }
+ * }
+ *
+ * See the individual types for each configuration item for further details.
+ * ```
+ */
+export type ConfigType = {
+    machine: {[index:string]: MachineConfig}
+    kinematicsConfiguration: {[index:string]: KinematicsConfigurationConfig}
+    moveParameters: {[index:string]: MoveParametersConfig}
+    joint: {[index:string]: JointConfig}
+    jog?: {[index:string]: JogConfig}
+    frames: {[index:string]: FramesConfig}
+    task?: {[index:string]: TaskConfig}
+    activity?: {[index:string]: ActivityConfig}
+    dout?: {[index:string]: DoutConfig}
+    aout?: {[index:string]: AoutConfig}
+    iout?: {[index:string]: IoutConfig}
+    din?: {[index:string]: DinConfig}
+    ain?: {[index:string]: AinConfig}
+    iin?: {[index:string]: IinConfig}
+    fieldbus?: {[index:string]: FieldbusConfig}
+    lines?: {[index:string]: LinesConfig}
+    arcs?: {[index:string]: ArcsConfig}
+    cartesianPositions?: {[index:string]: CartesianPositionsConfig}
+    tool?: {[index:string]: ToolConfig}
+    triggerOn?: {[index:string]: TriggerOnConfig}
+}
+
 // TODO: figure out what to do when there is no config yet (before connect)
-export const DEFAULT_CONFIG = {
+export const DEFAULT_CONFIG: ConfigType = {
     machine: {
         default: {
-            enabled: 1,
             busCycleTime: 1
         }
     },
@@ -63,8 +127,14 @@ export const DEFAULT_CONFIG = {
         // only here for a bit of code completion
         // (replaced by actual config from GBC)
         "task 0": {
-            "activity 0": {
-                activityType: 4
+            firstActivityIndex: 0
+        }
+    },
+    activity: {
+        "activity 0": {
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
+            dwell: {
+                ticksToDwell: 1000
             }
         }
     },
@@ -72,7 +142,23 @@ export const DEFAULT_CONFIG = {
         0: {},
         1: {}
     },
+    aout: {
+        0: {},
+        1: {}
+    },
+    iout: {
+        0: {},
+        1: {}
+    },
     din: {
+        0: {},
+        1: {}
+    },
+    ain: {
+        0: {},
+        1: {}
+    },
+    iin: {
         0: {},
         1: {}
     }
@@ -87,7 +173,7 @@ export enum ConfigState {
 export const configSlice: Slice<{
     state: ConfigState
     version: number
-    value: typeof DEFAULT_CONFIG // TODO: this should be better typed
+    value: ConfigType
 }> = createSlice({
     name: "config",
     initialState: {
