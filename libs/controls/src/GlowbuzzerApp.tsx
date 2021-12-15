@@ -8,16 +8,15 @@ import {
     ConnectionState,
     rootReducer,
     useConfigState,
-    useConnect,
+    useConnection,
     usePrefs
 } from "@glowbuzzer/store"
-import styled from "styled-components"
-import { css, ThemeProvider } from "styled-components"
+import styled, { css, ThemeProvider } from "styled-components"
 import { Button } from "antd"
 import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
 
 const Startup = ({ autoConnect }) => {
-    const connection = useConnect()
+    const connection = useConnection()
     const prefs = usePrefs()
 
     useEffect(() => {
@@ -84,7 +83,7 @@ type GlowbuzzerContainerProps = {
 }
 
 const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, minWidth }) => {
-    const connection = useConnect()
+    const connection = useConnection()
     const [configState, setConfigState] = useConfigState()
 
     const [countdown, setCountdown] = useState(-1)

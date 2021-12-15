@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
 import { useMemo, useRef } from "react"
@@ -36,8 +36,9 @@ export function useIntegerOutputList() {
 }
 
 /**
- * Returns the state of an integer output, and a function to set the desired state. The effective value
- * is determined by GBC and is the setValue (if override is true) or the value last set by an activity
+ * Returns the state of an integer output, and a function to set the desired state.
+ *
+ * The effective value is determined by GBC and is the setValue (if override is true) or the value last set by an activity
  * (see `setIout` in {@link ActivityCommand} or {@link ActivityStreamItem})
  *
  * @param index The index in the configuration of the analog output
@@ -50,7 +51,7 @@ export function useIntegerOutputState(index: number): [{
     /** Whether the desired value should override the value last set by an activity */
     override: boolean
 }, (setValue: number, override: boolean) => void] {
-    const connection = useConnect()
+    const connection = useConnection()
     const ref = useRef<IntegerOutputStatus>(null)
 
     const iout = useSelector(({ iout }: RootState) => iout[index]) || {

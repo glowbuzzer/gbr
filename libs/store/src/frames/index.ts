@@ -2,7 +2,7 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { Quaternion, Vector3 } from "three"
 import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
@@ -62,9 +62,10 @@ export function updateFrameOverridesMsg(overrides: number[][]) {
     })
 }
 
+/** @ignore */
 export const useFrames = () => {
     const dispatch = useDispatch()
-    const connection = useConnect()
+    const connection = useConnection()
     const config = useConfig()
     const overrides = useSelector((state: RootState) => state.frames.overrides, shallowEqual)
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)

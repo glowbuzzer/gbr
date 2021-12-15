@@ -1,10 +1,10 @@
-import { useJoints } from "@glowbuzzer/store"
+import { useJoint } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
 import React from "react"
 
 export const ConveyorsTile = () => {
-    const joints = useJoints()
+    const joints = [useJoint(0), useJoint(1)]
 
     return (
         <Tile title="Conveyors">

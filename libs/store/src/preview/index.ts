@@ -41,6 +41,9 @@ export const previewSlice: Slice<PreviewSliceState> = createSlice({
     }
 })
 
+/**
+ * @ignore - Used internally by the toolpath display
+ */
 export function usePreview() {
     const segments = useSelector(({ preview: { segments } }: RootState) => segments, shallowEqual)
     const highlightLine = useSelector(

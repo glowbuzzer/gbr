@@ -4,7 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
 
 const { load, save } = settings("store.gcode")
@@ -12,20 +12,6 @@ const { load, save } = settings("store.gcode")
 export type GCodeSettingsType = {
     sendEndProgram: boolean
 }
-
-// export enum StreamState {
-//     IDLE,
-//     ACTIVE,
-//     PAUSED,
-//     STOPPING,
-//     STOPPED
-// }
-//
-// export enum StreamCommand {
-//     RUN,
-//     PAUSE,
-//     STOP
-// }
 
 type GCodeSliceType = {
     ready: boolean
@@ -136,13 +122,37 @@ function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
     })
 }
 
-export function useGCode() {
+/**
+ * Returns an object containing the state of, and methods to interact with, the execution of gcode in GBC.
+ *
+ * You can issue gcode using the `send` method, and it will be queued over the current connection. If the
+ * amount of gcode sent exceeds the buffer capacity of GBC, processing will start as soon as the buffer is
+ * full and continue until no more gcode is sent. Otherwise, execution will start when an M2 "end program"
+ * is encountered. It is good practice to append M2 to all of your gcode.
+ *
+ * You can pause, resume and cancel gcode execution using the `setState` method.
+ */
+export function useGCode(): {
+    /** The current state of the gcode execution */
+    state: STREAMSTATE
+    /** @ignore */
+    time: number
+    /** The line number of the gcode currently executing */
+    lineNum: number
+    /** Send gcode to execute
+     * @param gcode The gcode to send
+     * @param vmax The vmax to use for moves. Typically the linear vmax of the kinematics configuration
+     */
+    send(gcode: string, vmax: number)
+    /** Set the state of gcode execution, for example pause, resume and cancel */
+    setState(state: STREAMCOMMAND)
+} {
     const { state, tag, time } = useSelector(
         ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
         shallowEqual
     )
     const dispatch = useDispatch()
-    const connection = useConnect()
+    const connection = useConnection()
 
     return {
         state,
@@ -157,6 +167,7 @@ export function useGCode() {
     }
 }
 
+/** @ignore */
 export function useGCodeSettings() {
     return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings

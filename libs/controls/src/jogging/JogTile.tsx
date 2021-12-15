@@ -3,8 +3,8 @@ import { Tile, useLocalStorage } from "@glowbuzzer/layout"
 import {
     JogDirection,
     POSITIONREFERENCE,
+    useJoint,
     useJointConfig,
-    useJoints,
     useKinematics,
     useSoloActivity
 } from "@glowbuzzer/store"
@@ -17,7 +17,6 @@ import {
     ArrowRightOutlined,
     ArrowUpOutlined
 } from "@ant-design/icons"
-import { Vector3 } from "three"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -65,15 +64,9 @@ const JointSliderDiv = styled.div`
 
 const JointSliderReadonly = ({ jc, index }) => {
     // this is separate component so that updates to act pos don't re-render the entire tile
-    const joints = useJoints()
+    const joint = useJoint(index)
     return (
-        <Slider
-            min={jc.pmin}
-            max={jc.pmax}
-            disabled
-            value={joints[index]?.actPos}
-            tooltipVisible={false}
-        />
+        <Slider min={jc.pmin} max={jc.pmax} disabled value={joint?.actPos} tooltipVisible={false} />
     )
 }
 
@@ -161,15 +154,9 @@ export const JogTile = () => {
         }
     }
 
-    function stopJog(index) {
+    function stopJog() {
         if (jogStepMode === JogStepMode.CONTINUOUS) {
             return motion.cancel().promise()
-            // jogger.setJog(
-            //     jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT,
-            //     index,
-            //     JogDirection.NONE,
-            //     jogSpeed
-            // )
         }
     }
 
@@ -185,46 +172,35 @@ export const JogTile = () => {
                 )
                 return motion.moveJoints(steps, POSITIONREFERENCE.RELATIVE, move_params).promise()
             }
-            // jogger.stepJog(
-            //     jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN_STEP : JogMode.JOGMODE_JOINT_STEP,
-            //     index,
-            //     direction,
-            //     jogSpeed,
-            //     jogStep
-            // )
         }
     }
 
     function goto() {
-        return motion.moveToPosition(new Vector3(x, y, z), move_params).promise()
-        // gcode.send(`
-        //     G0 X${x} Y${y} Z${z}
-        //     M2
-        // `)
+        return motion.moveToPosition({ x, y, z }, POSITIONREFERENCE.ABSOLUTE, move_params).promise()
     }
 
     function gotoX() {
-        motion.moveToPosition(new Vector3(x, kc.pose.position.y, kc.pose.position.z), move_params)
-        // gcode.send(`
-        //     G0 X${x}
-        //     M2
-        // `)
+        motion.moveToPosition(
+            { x, y: kc.pose.position.y, z: kc.pose.position.z },
+            POSITIONREFERENCE.ABSOLUTE,
+            move_params
+        )
     }
 
     function gotoY() {
-        motion.moveToPosition(new Vector3(kc.pose.position.x, y, kc.pose.position.z), move_params)
-        // gcode.send(`
-        //     G0 Y${y}
-        //     M2
-        // `)
+        motion.moveToPosition(
+            { x: kc.pose.position.x, y, z: kc.pose.position.z },
+            POSITIONREFERENCE.ABSOLUTE,
+            move_params
+        )
     }
 
     function gotoZ() {
-        motion.moveToPosition(new Vector3(kc.pose.position.x, kc.pose.position.y, z), move_params)
-        // gcode.send(`
-        //     G0 Z${z}
-        //     M2
-        // `)
+        motion.moveToPosition(
+            { x: kc.pose.position.x, y: kc.pose.position.y, z },
+            POSITIONREFERENCE.ABSOLUTE,
+            move_params
+        )
     }
 
     function JogButton({ index, direction, children }) {
@@ -232,7 +208,7 @@ export const JogTile = () => {
             <Button
                 onClick={() => stepJog(index, direction)}
                 onMouseDown={() => startJog(index, direction)}
-                onMouseUp={() => stopJog(index)}
+                onMouseUp={() => stopJog()}
             >
                 {children}
             </Button>

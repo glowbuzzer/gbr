@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { KinematicsConfigurationMcStatus } from "../types"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
 import { Quaternion, Vector3 } from "three"
@@ -111,7 +111,9 @@ export function updateFroPercentageMsg(kc: number, value: number) {
 }
 
 /**
- * Read and manipulate a kinematics configuration. A kinematics configuration (KC) represents a number of
+ * Read and manipulate a kinematics configuration.
+ *
+ * A kinematics configuration (KC) represents a number of
  * joints joined together in a kinematic relationship. It also has a feedrate (percentage) and a local
  * frame of reference that can be transformed to other reference frames. The pose of the KC contains
  * the position of the TCP (all machines) and possibly the orientation of the TCP (robots). The configuration
@@ -127,7 +129,7 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
     const config = useConfig()
     const frames = useFrames()
     const dispatch = useDispatch()
-    const connection = useConnect()
+    const connection = useConnection()
 
     // TODO: seeing 'world' passed here which cannot be found in configs
     const configs = Object.values(config.kinematicsConfiguration)

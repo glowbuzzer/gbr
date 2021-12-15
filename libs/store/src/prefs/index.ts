@@ -10,7 +10,11 @@ const default_prefs = {
     url: "ws://localhost:9001/ws"
 }
 
-type PrefsState = typeof default_prefs & { [index: string]: string }
+type PrefsState = {
+    units_scalar: "mm" | "in"
+    units_angular: "rad" | "deg"
+    url: string
+} & { [index: string]: string }
 
 const { load, save } = settings("glowbuzzer.prefs")
 
@@ -33,7 +37,27 @@ export const prefsSlice: Slice<PrefsState> = createSlice({
     }
 })
 
-export const usePrefs = () => {
+/**
+ * Returns current preferences and a method for updating preferences.
+ *
+ * There are only a small number of GBR supported preferences, but this hook can be used
+ * to retrieve and update additional preferences as required by your application. Preferences
+ * are stored in browser local storage.
+ */
+export function usePrefs(): {
+    current: {
+        /** Default scalar units */
+        units_scalar: "mm" | "in"
+        /** Default angular units */
+        units_angular: "rad" | "deg"
+        /** Connection url for GBC websocket */
+        url: string
+    } & {
+        /** Application defined preferences */
+        [index: string]: string
+    }
+    update(name, value): void
+} {
     const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
     const dispatch = useDispatch()
     return useMemo(

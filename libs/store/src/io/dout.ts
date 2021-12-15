@@ -4,7 +4,7 @@ import { RootState } from "../root"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
 import { useConfig } from "../config"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { StatusUpdateSlice } from "../util/redux"
 
 export type DigitalOutputCommand = {
@@ -38,8 +38,9 @@ export function useDigitalOutputList() {
 }
 
 /**
- * Returns the state of a digital output, and a function to set the desired state. The effective value
- * is determined by GBC and is the setValue (if override is true) or the value last set by an activity
+ * Returns the state of a digital output, and a function to set the desired state.
+ *
+ * The effective value is determined by GBC and is the setValue (if override is true) or the value last set by an activity
  * (see `setDout` in {@link ActivityCommand} or {@link ActivityStreamItem})
  *
  * @param index The index in the configuration of the digital output
@@ -52,7 +53,7 @@ export function useDigitalOutputState(index: number): [{
     /** Whether the desired value should override the value last set by an activity */
     override: boolean
 }, (setValue: boolean, override: boolean) => void] {
-    const connection = useConnect()
+    const connection = useConnection()
     const ref = useRef<DigitalOutputStatus>(null)
     const dout = useSelector(({ dout }: RootState) => dout[index]) || {
         effectiveValue: false,

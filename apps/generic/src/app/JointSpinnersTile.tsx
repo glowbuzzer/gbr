@@ -1,4 +1,4 @@
-import { useJoints } from "@glowbuzzer/store"
+import { useJoint, useJointCount } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
 import React from "react"
@@ -11,21 +11,29 @@ const StyledDiv = styled.div`
     }
 `
 
+const JointSpinnerItem = ({ index }) => {
+    const j = useJoint(index)
+
+    return (
+        <div key={index} className="motor" style={{ display: "inline-block" }}>
+            <div>
+                <MotorDro width={200} value={j.actPos || 0} />
+            </div>
+            <div className="dro">
+                <SegmentDisplay value={j.actPos || 0} toFixed={3} />
+            </div>
+        </div>
+    )
+}
+
 export const JointSpinnersTile = () => {
-    const joints = useJoints()
+    const count = useJointCount()
 
     return (
         <Tile title="Joints">
             <StyledDiv>
-                {joints.map((j, index) => (
-                    <div key={index} className="motor" style={{ display: "inline-block" }}>
-                        <div>
-                            <MotorDro width={200} value={j.actPos || 0} />
-                        </div>
-                        <div className="dro">
-                            <SegmentDisplay value={j.actPos || 0} toFixed={3} />
-                        </div>
-                    </div>
+                {Array.from({ length: count }).map((_, index) => (
+                    <JointSpinnerItem index={index} />
                 ))}
             </StyledDiv>
         </Tile>

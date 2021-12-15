@@ -1,8 +1,9 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { useConfig } from "../config"
+import { JointConfig } from "../gbc"
 
 type JointsState = {
     statusWord: number
@@ -23,7 +24,10 @@ export const jointsSlice: Slice<JointsState> = createSlice({
     }
 })
 
-export function useJointConfig() {
+/** Returns an array of all configured joints with joint names, retrieved using {@link useConfig} */
+export function useJointConfig(): ({
+    name: string
+} & JointConfig)[] {
     const config = useConfig()
     // convert keyed object to array
     return Object.entries(config.joint).map(([name, value]) => ({
@@ -32,17 +36,39 @@ export function useJointConfig() {
     }))
 }
 
+/** Returns the number of joints configured */
 export function useJointCount() {
     return useSelector(({ joints }: RootState) => joints.length)
 }
 
-export function useJoints() {
-    const connection = useConnect()
-    const joints = useSelector(({ joints }: RootState) => joints, shallowEqual)
-    return joints.map((j, index) => ({
-        ...j,
-        setControlWord(value) {
-            console.log("Setting joint control word: ", value)
+/**
+ * Returns the state of a joints and a method to set the low level CIA 402 control word.
+ *
+ * @param index The joint index in the configuration
+ */
+export function useJoint(index: number): {
+    /** CIA 402 status word */
+    statusWord: number
+    /** CIA 402 control word requested */
+    controlWord: number
+    /** Actual position of the joint */
+    actPos: number
+    /** Actual acceleration of the joint */
+    actVel: number
+    /** Actual acceleration of the joint */
+    actAcc: number
+    /**
+     * Sets the CIA 402 control word.
+     *
+     * @param value Value to set
+     */
+    setControlWord(value: number): void
+} {
+    const connection = useConnection()
+    const joint = useSelector(({ joints }: RootState) => joints[index], shallowEqual)
+    return {
+        ...joint,
+        setControlWord(value: number) {
             connection.send(
                 JSON.stringify({
                     command: {
@@ -57,5 +83,5 @@ export function useJoints() {
                 })
             )
         }
-    }))
+    }
 }

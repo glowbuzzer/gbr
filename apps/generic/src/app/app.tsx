@@ -12,6 +12,7 @@ import {
     IntegerInputsTile,
     IntegerOutputsTile,
     JogTile,
+    JointDroTile,
     PreferencesDialog,
     ToolPathTile
 } from "@glowbuzzer/controls"
@@ -59,6 +60,7 @@ export function App() {
             },
             { render: <FeedRateTile />, height: 2, title: "Feedrate" },
             { render: <JogTile />, height: 4, title: "Jogging" },
+            { render: <JointDroTile />, height: 4, title: "Joint Indicators" },
             { render: <DevToolsTile />, height: 3, title: "Dev Tools" }
         ],
         [

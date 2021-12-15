@@ -2,10 +2,10 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 import deepEqual from "fast-deep-equal"
 import { useEffect, useMemo } from "react"
-import { ActivityApi } from "./activity_api"
+import { ActivityApiImpl, SoloActivityApi } from "./activity_api"
 import { ACTIVITYSTATE } from "../gbc"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 
 type ActivityStatus = {
     tag: number
@@ -26,6 +26,7 @@ export const activitySlice: Slice<
     }
 })
 
+/*
 export function useSoloActivityStatus(index = 0): ActivityStatus {
     const status = useSelector(
         ({ activity }: RootState) => activity[index],
@@ -39,9 +40,10 @@ export function useSoloActivityStatus(index = 0): ActivityStatus {
         }
     )
 }
+*/
 
-export function useSoloActivity(index = 0) {
-    const connection = useConnect()
+export function useSoloActivity(index = 0): SoloActivityApi {
+    const connection = useConnection()
     const status = useSelector(
         ({ activity }: RootState) => activity[index],
         deepEqual
@@ -50,7 +52,7 @@ export function useSoloActivity(index = 0) {
     // const promiseRef = useRef<{ tag: number; resolve; reject }>()
 
     const api = useMemo(() => {
-        return new ActivityApi(index, connection.send)
+        return new ActivityApiImpl(index, connection.send)
     }, [index, connection.send])
 
     useEffect(() => {
@@ -64,3 +66,5 @@ export function useSoloActivity(index = 0) {
 
     return api
 }
+
+export { SoloActivityApi, SoloActivityApiResult } from "./activity_api"

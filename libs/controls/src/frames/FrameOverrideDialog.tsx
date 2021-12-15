@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Button, Checkbox, Empty, Form, Input, Modal, Tree } from "antd"
-import { useConnect, useFrames, useKinematics } from "@glowbuzzer/store"
+import { useConnection, useFrames, useKinematics } from "@glowbuzzer/store"
 import styled from "styled-components"
 
 function map_tree(tree) {
@@ -98,7 +98,7 @@ const StyledModal = styled.div`
 export const FrameOverrideDialog = ({ visible, onClose }) => {
     const [selected, setSelected] = useState([])
     const frames = useFrames()
-    const connection = useConnect()
+    const connection = useConnection()
 
     const tree = frames.asTree.map(t => map_tree(t))
 

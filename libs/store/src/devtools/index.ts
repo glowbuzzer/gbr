@@ -1,7 +1,7 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 
 export const devToolsSlice: Slice<{ statusFrequency: number }> = createSlice({
     name: "devtools",
@@ -23,10 +23,13 @@ export function updateStatusFrequencyMsg(value: number) {
     })
 }
 
+/**
+ * @ignore
+ */
 export const useDevTools = () => {
     const devtools = useSelector(({ devtools }: RootState) => devtools, shallowEqual)
     const dispatch = useDispatch()
-    const connection = useConnect()
+    const connection = useConnection()
     return {
         ...devtools,
         setStatusFrequency(value: number) {

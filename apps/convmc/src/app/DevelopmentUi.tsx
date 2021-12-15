@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
 import { ConnectTile, DevToolsTile, TelemetryTile } from "@glowbuzzer/controls"
 import { Button, Space, Tag } from "antd"
-import { useDigitalInputs, useDigitalOutputState, useJoints } from "@glowbuzzer/store"
+import { useDigitalInputs, useDigitalOutputState, useJoint } from "@glowbuzzer/store"
 import { DigitalInputOverrideTile } from "../components/DigitalInputOverrides"
 import { dinLabels } from "./labels"
 import { ConveyorsTile } from "../components/ConveyorsTile"
@@ -10,17 +10,17 @@ import { TriggersTile } from "./TriggersTile"
 import { useApp } from "./AppContext"
 import { JobAnimation } from "./JobAnimation"
 import { ConveyorControlMotion } from "./ConveyorControlMotion"
-import { TestAnimation } from "./TestAnimation"
 
 const DevelopmentUiTile = () => {
     const dins = useDigitalInputs()
-    const doutExtend = useDigitalOutputState(8)
-    const doutRetract = useDigitalOutputState(9)
+    const [doutExtend, setDoutExtend] = useDigitalOutputState(8)
+    const [doutRetract, setDoutRetract] = useDigitalOutputState(9)
     const app = useApp()
-    const [j1, j2] = useJoints()
+    const j1 = useJoint(0)
+    const j2 = useJoint(1)
 
-    const extending = doutExtend.actState > 0
-    const retracting = doutRetract.actState > 0
+    const extending = doutExtend.effectiveValue
+    const retracting = doutRetract.effectiveValue
     const [extended, retracted] = dins // simple booleans
 
     useEffect(() => {
@@ -29,12 +29,12 @@ const DevelopmentUiTile = () => {
             return
         }
         if (extended) {
-            doutExtend.set(0)
+            setDoutExtend(false, true)
         }
         if (retracted) {
-            doutRetract.set(0)
+            setDoutRetract(false, true)
         }
-    }, [app.running, extended, retracted, doutExtend, doutRetract])
+    }, [app.running, extended, retracted, doutExtend, doutRetract, setDoutExtend, setDoutRetract])
 
     return (
         <Tile title="Development UI">
@@ -53,13 +53,13 @@ const DevelopmentUiTile = () => {
                         <Button onClick={() => app.setRunning(true)}>Run App</Button>
                         <Space>
                             <Button
-                                onClick={() => doutExtend.set(1)}
+                                onClick={() => setDoutExtend(true, true)}
                                 disabled={extending || extended || retracting}
                             >
                                 Extend
                             </Button>
                             <Button
-                                onClick={() => doutRetract.set(1)}
+                                onClick={() => setDoutRetract(true, true)}
                                 disabled={retracting || retracted || extending}
                             >
                                 Retract

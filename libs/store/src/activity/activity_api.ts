@@ -12,9 +12,9 @@ import {
     POSITIONREFERENCE,
     SetAoutCommand,
     SetDoutCommand,
-    SetIoutCommand
+    SetIoutCommand,
+    Vector3
 } from "../gbc"
-import { Vector3 } from "three"
 
 const all_types = [
     "",
@@ -47,10 +47,10 @@ function make_activity(index: number, type: ACTIVITYTYPE, tag: number, params?) 
     const command_detail =
         typeName.length && params
             ? {
-                [typeName]: {
-                    ...params
-                }
-            }
+                  [typeName]: {
+                      ...params
+                  }
+              }
             : {}
 
     return {
@@ -60,7 +60,160 @@ function make_activity(index: number, type: ACTIVITYTYPE, tag: number, params?) 
     }
 }
 
-export class ActivityApi {
+export type SoloActivityApiResult = {
+    promise: () => Promise<void>
+    tag: number
+    command: any
+}
+
+/**
+ * The GBR solo activity API (typically accessed using {@link useSoloActivity}) provides a convenient
+ * way to send individual activities to GBC. The solo activity API is instantiated against a kinematics
+ * configuration and has exclusive access to the motion of that KC. Attempting to execute a solo activity
+ * while jogging or streaming (for example, GCode) will result in an error.
+ *
+ * Each activity runs to completion unless cancelled or another activity is issued. If an activity
+ * is running and another activity is issued, the first activity is cancelled and allowed to finish
+ * gracefully before the new activity is started.
+ *
+ * The result of each method on the API is a {@link SoloActivityApiResult}. This optionally provides
+ * a promise that is resolved when the activity completes or is cancelled. This allows you to sequence
+ * multiple activities together.
+ *
+ * Note that motion using the solo activity API is not blended (that is, absolute stop mode will be used).
+ */
+export interface SoloActivityApi {
+    /** Cancel any currently executing activity */
+    cancel(): SoloActivityApiResult
+
+    /** Dwell for a number of cycles */
+    dwell(ticksToDwell: number): SoloActivityApiResult
+
+    /** Move in an arc specifying a target position and arc center, and arc direction
+     *
+     * @param centre Centre of the arc
+     * @param target Target position
+     * @param arcDirection Arc direction, clockwise or counter-clockwise
+     * @param positionReference Whether the target position and centre are relative to the current cartesian position or absolute (default: absolute)
+     * @param moveParams Move parameters, if required
+     */
+    moveArcWithCentre(
+        target: Vector3,
+        centre: Vector3,
+        arcDirection: ARCDIRECTION,
+        positionReference?: POSITIONREFERENCE,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move in an arc specifying a target position and radius, and arc direction
+     *
+     * @param radius Radius of the arc
+     * @param target Target position
+     * @param arcDirection Arc direction, clockwise or counter-clockwise
+     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
+     * @param moveParams Move parameters, if required
+     */
+    moveArcWithRadius(
+        target: Vector3,
+        radius: number,
+        arcDirection: ARCDIRECTION,
+        positionReference?: POSITIONREFERENCE,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move joints to specified positions. All joints in the kinematic configuration should be specified, or they will default to zero.
+     *
+     * @param jointPositionArray Array of joint positions
+     * @param positionReference Whether the joint positions are relative to the current joint positions or absolute (default: absolute)
+     * @param moveParams Move parameters, if required
+     */
+    moveJoints(
+        jointPositionArray: number[],
+        positionReference?: POSITIONREFERENCE,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move joints at the specified velocities. All joints in the kinematic configuration should be specified, or they will default to zero (no motion).
+     *
+     * Note that this activity does not terminate and unless cancelled (using `cancel` or by executing another activity) the joints will run forever.
+     *
+     * @param jointVelocityArray Array of joint velocities
+     * @param moveParams Move parameters, if required
+     */
+    moveJointsAtVelocity(
+        jointVelocityArray: number[],
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move along a linear path to the target position.
+     *
+     * @param pos Target position
+     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
+     * @param moveParams Move parameters, if required
+     */
+    moveLine(
+        pos: Vector3,
+        positionReference?: POSITIONREFERENCE,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move in a straight line along the given vector. The velocity of the motion can be controlled using `moveParams`.
+     *
+     * Note that this activity does not terminate and unless cancelled (using `cancel` or by executing another activity) it will run forever.
+     *
+     * @param line Vector to move along. Includes a frame index
+     * @param moveParams Move parameters, including desired velocity for the motion
+     */
+    moveLineAtVelocity(
+        line: CartesianVector,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /** Move to the target position in joint space.
+     *
+     * Note that joints are run such that they all start and finish motion at the same time, but the path is not guaranteed to be linear.
+     *
+     * @param pos Target position
+     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
+     * @param moveParams Move parameters, if required
+     */
+    moveToPosition(
+        pos: Vector3,
+        positionReference?: POSITIONREFERENCE,
+        moveParams?: MoveParametersConfig
+    ): SoloActivityApiResult
+
+    /**
+     * Set a digital output. Completes in a single cycle.
+     *
+     * @param index The digital output to set
+     * @param value The value to set
+     */
+    setDout(index: number, value: boolean): SoloActivityApiResult
+
+    /**
+     * Set an analog output. Completes in a single cycle.
+     *
+     * @param index The analog output to set
+     * @param value The value to set
+     */
+    setAout(index: number, value: number): SoloActivityApiResult
+
+    /**
+     * Set an integer output. Completes in a single cycle.
+     *
+     * @param index The integer output to set
+     * @param value The value to set
+     */
+    setIout(index: number, value: number): SoloActivityApiResult
+
+    /**
+     * @ignore Has no effect for solo activities
+     */
+    endProgram(): SoloActivityApiResult
+}
+
+export class ActivityApiImpl implements SoloActivityApi {
     private readonly index: number
     private readonly send: (msg: string) => void
     private currentTag = 0
@@ -229,14 +382,16 @@ export class ActivityApi {
         )
     }
 
-    moveLine(pos: Vector3, relative = false, moveParams: MoveParametersConfig = {}) {
+    moveLine(
+        pos: Vector3,
+        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
+        moveParams: MoveParametersConfig = {}
+    ) {
         return this.buildMotion(
             ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
             {
                 line: {
-                    positionReference: relative
-                        ? POSITIONREFERENCE.RELATIVE
-                        : POSITIONREFERENCE.ABSOLUTE,
+                    positionReference,
                     position: pos
                 }
             } as MoveLineStream,
@@ -254,7 +409,11 @@ export class ActivityApi {
         )
     }
 
-    moveToPosition(pos: Vector3, moveParams: MoveParametersConfig = {}, positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE) {
+    moveToPosition(
+        pos: Vector3,
+        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
+        moveParams: MoveParametersConfig = {}
+    ) {
         const cartesianPosition: CartesianPositionsConfig = {
             // TODO: can we come up with another name for position to avoid duplication in hierarchy
             position: {

@@ -3,7 +3,7 @@ import { shallowEqual, useSelector } from "react-redux"
 import { TASK_COMMAND, TaskStatus } from "../gbc"
 import { useConfig } from "../config"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 
 // export enum TaskState {
 //     NOTSTARTED,
@@ -49,7 +49,7 @@ export function useTaskStatus() {
 }
 
 export function useTask(taskIndex: number) {
-    const connection = useConnect()
+    const connection = useConnection()
     const config = useConfig()
 
     function sendTaskCommand(index: number, command: TASK_COMMAND) {

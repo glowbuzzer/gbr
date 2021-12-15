@@ -1,6 +1,16 @@
 import * as React from "react"
 import { Button, Radio, Tag } from "antd"
-import { ConnectionState, DesiredState, determine_machine_state, FaultCode, MachineState, MACHINETARGET, possible_transitions, useConnect, useMachine } from "@glowbuzzer/store"
+import {
+    ConnectionState,
+    DesiredState,
+    determine_machine_state,
+    FaultCode,
+    MachineState,
+    MACHINETARGET,
+    possible_transitions,
+    useConnection,
+    useMachine
+} from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
 import { TrafficLight } from "./TrafficLight"
@@ -66,7 +76,7 @@ const StyledDiv = styled.div`
 `
 
 export const ConnectTile = () => {
-    const connection = useConnect()
+    const connection = useConnection()
     const machine = useMachine()
 
     function change_target(e) {

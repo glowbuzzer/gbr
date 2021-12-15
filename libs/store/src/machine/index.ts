@@ -2,7 +2,7 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { DesiredState, determine_machine_state, handleMachineState, MachineState } from "./MachineStateHandler"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
 import { MACHINETARGET } from "../gbc"
 
@@ -12,6 +12,7 @@ import { MACHINETARGET } from "../gbc"
 //     SIMULATION
 // }
 
+// noinspection JSUnusedGlobalSymbols
 export enum FaultCode {
     FAULT_CAUSE_ESTOP = 1 << 0,
     FAULT_CAUSE_DRIVE_FAULT = 1 << 1,
@@ -47,7 +48,7 @@ type MachineStateHandling = {
     nextControlWord: number | void
 }
 
-type MachineSliceType = Partial<MachineStatus> & Partial<MachineStateHandling>
+type MachineSliceType = MachineStatus & MachineStateHandling
 
 // createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
 export const machineSlice: Slice<MachineSliceType> = createSlice({
@@ -92,12 +93,47 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
     }
 })
 
-export const useMachine = () => {
+/**
+ * Returns the current status and methods to interact with the machine.
+ *
+ * The machine in GBC implements the CIA 402 state machine. The machine can be running in simulation mode or be connected to the
+ * fieldbus for live operation. You can also request a desired machine state of operational (enabled) or standby (disabled),
+ * and GBR will drive the CIA 402 state machine to `OPERATION_ENABLED` or `SWITCH_ON_DISABLED` accordingly. Faults are captured and exposed.
+ * Finally, GBC increments a heartbeat on the machine so that GBR knows it is running.
+ */
+export function useMachine(): {
+    /** The current CIA 402 status word */
+    statusWord: number
+    /** The CIA 402 control word sent */
+    controlWord: number
+    /** The active fault, a bitwise union of {@link FaultCode}. Populated if machine state is `FAULT_REACTION_ACTIVE` */
+    activeFault: number
+    /** The last registered fault prior to fault reset, a bitwise union of {@link FaultCode} */
+    faultHistory: number
+    /** The requested backend target, simulation of fieldbus */
+    requestedTarget: MACHINETARGET
+    /** The current backend target. Can be different to the requested target if the machine is in the process of switching targets */
+    actualTarget: MACHINETARGET
+    /** Incrementing integer heartbeat */
+    heartbeat?: number
+    /** Indicates if the heartbeat is being received in a timely manner */
+    heartbeatReceived: boolean
+    /** Current CIA 402 machine state */
+    currentState: MachineState
+    /** Whether the desired state of the machine is operational (enabled) or standby (disabled) */
+    desiredState: DesiredState
+    /** Sets the desired backend target */
+    setDesiredMachineTarget(target: MACHINETARGET): void
+    /** Sets the desired machine state, operational (enabled) or standby (disabled) */
+    setDesiredState(state: DesiredState): void
+    /** Sets the low level CIA 402 machine control word */
+    setMachineControlWord(controlWord: number): void
+} {
     // by using a selector, components using this hook will only render when machine state changes (not the whole state)
     const machine = useSelector(({ machine }: RootState) => machine, shallowEqual)
 
     // this is our hook giving access to the underlying websocket connection
-    const connection = useConnect()
+    const connection = useConnection()
 
     // this is redux hook
     const dispatch = useDispatch()
@@ -105,7 +141,7 @@ export const useMachine = () => {
     return {
         ...machine,
         setDesiredMachineTarget(target: MACHINETARGET) {
-            dispatch(dispatch => {
+            dispatch(() => {
                 connection.send(updateMachineTargetMsg(target))
             })
         },
@@ -113,7 +149,7 @@ export const useMachine = () => {
             dispatch(machineSlice.actions.setDesiredState(state))
         },
         setMachineControlWord(controlWord: number) {
-            dispatch(dispatch => {
+            dispatch(() => {
                 connection.send(updateMachineControlWordMsg(controlWord))
             })
         }

@@ -6,7 +6,7 @@ import {
 } from "../../store/src/machine/MachineStateHandler"
 import * as assert from "uvu/assert"
 import {
-    ActivityApi,
+    ActivityApiImpl,
     ACTIVITYSTATE,
     MACHINETARGET,
     updateMachineControlWordMsg,
@@ -39,7 +39,7 @@ export class GbcTest {
     private check_limits = true
     private readonly gbc: any
     private store: EnhancedStore<State>
-    private activity_api: ActivityApi
+    private activity_api: ActivityApiImpl
 
     constructor(gbc) {
         this.gbc = gbc
@@ -77,7 +77,7 @@ export class GbcTest {
             reducer: rootReducer
         })
 
-        this.activity_api = new ActivityApi(0, this.gbc.send)
+        this.activity_api = new ActivityApiImpl(0, this.gbc.send)
         this.capture_state = undefined
         this.check_limits = true
 

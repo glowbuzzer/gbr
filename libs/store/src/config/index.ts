@@ -194,6 +194,9 @@ export const configSlice: Slice<{
     }
 })
 
+/**
+ * @ignore
+ */
 export function useConfigState() {
     const dispatch = useDispatch()
     // return value and setter
@@ -203,6 +206,9 @@ export function useConfigState() {
     ] as [ConfigState, (state: ConfigState) => void]
 }
 
+/**
+ * Returns the current configuration as provided by GBC.
+ */
 export function useConfig() {
     return useSelector(
         (state: RootState) => state.config,

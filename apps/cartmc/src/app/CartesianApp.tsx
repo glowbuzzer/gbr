@@ -1,8 +1,8 @@
 import React, { useEffect } from "react"
-import { useConnect, useTask, useTaskStatus } from "@glowbuzzer/store"
+import { useConnection, useTask } from "@glowbuzzer/store"
 
 export const CartesianApp = props => {
-    const connection = useConnect()
+    const connection = useConnection()
     const task = useTask(2)
 
     useEffect(() => {

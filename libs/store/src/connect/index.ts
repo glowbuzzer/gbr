@@ -55,7 +55,31 @@ export const connectionSlice: Slice<
     }
 })
 
-export const useConnect = () => {
+/**
+ * Returns an object containing the current connection state and methods to interact with GBC.
+ */
+export const useConnection = (): {
+    /** Current state of the connection */
+    state: ConnectionState
+    /** @ignore **/
+    error: unknown
+    /** Indicates connection should be re-established automatically after unexpected disconnect */
+    autoConnect: boolean
+    /** Indicates status is being received in a timely manner (heartbeat) */
+    statusReceived: boolean
+    /** Indicates connection is established */
+    connected: boolean
+    /** Connect to url */
+    connect(url: string): void
+    /** Close connection and reconnect */
+    reconnect(): void
+    /** Disconnect */
+    disconnect(): void
+    /** Send a message over websocket. See GBC schema docs for format */
+    send(message: any): void
+    /** Set whether connection should be re-established automatically after unexpected disconnects */
+    setAutoConnect(value: boolean): void
+} => {
     const { state, error, autoConnect, statusReceived } = useSelector(
         ({ connection }: RootState) => connection,
         shallowEqual
@@ -65,8 +89,8 @@ export const useConnect = () => {
 
     // window.connection is created in ConnectionFactory.ts
 
-    return useMemo(() => {
-        return {
+    return useMemo(
+        () => ({
             state,
             error,
             autoConnect,
@@ -88,6 +112,7 @@ export const useConnect = () => {
             setAutoConnect(value: boolean) {
                 dispatch(connectionSlice.actions.autoConnect(value))
             }
-        }
-    }, [state, error, autoConnect, dispatch, prefs, statusReceived])
+        }),
+        [state, error, autoConnect, dispatch, prefs, statusReceived]
+    )
 }

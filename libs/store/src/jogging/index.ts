@@ -1,7 +1,7 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnect } from "../connect"
+import { useConnection } from "../connect"
 import { useMemo } from "react"
 
 export enum JogDirection {
@@ -48,11 +48,13 @@ export const jogSlice: Slice<JogStoreState[]> = createSlice({
     }
 })
 
-// the jogIndex is the index in config, as each kc can have own jog controller
-export function useJog(jogIndex: number) {
+/**
+ * @ignore - Deprecated (jogging now uses solo activity)
+ */
+export function useJogging(jogIndex: number) {
     const jogStatus = useSelector(({ jog }: RootState) => jog[jogIndex], shallowEqual)
     const dispatch = useDispatch()
-    const connection = useConnect()
+    const connection = useConnection()
 
     const state = jogStatus?.state
 

@@ -2,8 +2,8 @@ import "./connect/ConnectionFactory"
 
 export * from "./gbc"
 
-export {Frame} from "./util/frame_utils"
-export { ConnectionState, useConnect, connectionSlice } from "./connect"
+export { Frame } from "./util/frame_utils"
+export { ConnectionState, useConnection, connectionSlice } from "./connect"
 export {
     DesiredState,
     useMachine,
@@ -20,7 +20,7 @@ export * from "./activity"
 export * from "./gcode"
 export * from "./preview"
 export * from "./telemetry"
-export { useJoints, useJointCount, useJointConfig, jointsSlice } from "./joints/index"
+export { useJoint, useJointCount, useJointConfig, jointsSlice } from "./joints/index"
 export { useDigitalInputs } from "./io/din"
 export * from "./io/dout"
 export { useAnalogInputs } from "./io/ain"
