@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react"
 /**
  * Defines a simple state machine consisting of states, transitions and callbacks when entering and existing states.
  *
- * See {@link useStateMachine} for further information and example.
+ * See also {@link useStateMachine}.
  */
 export type StateMachineDefinition = {
     /** The set of states keyed by state name */
@@ -123,13 +123,14 @@ export class StateMachine {
 }
 
 /**
- * Returns the current and previous state of the state machine given.
+ * Evaluates the state machine given and returns current state, previous state and any user defined data associated with the latest transition.
  *
  * The state machine definition can contain dynamic values that change (for example due to React state changes). The re-evaluation
- * of the state machine (that is, any state transitions) will occur when values in the dependency array changes.
+ * of the state machine (that is, any state transitions) will occur when values in the dependency array changes. You can think of the
+ * return from this function being the memoised state of the state machine based on the provided dependencies.
  *
- * See {@link StateMachineDefinition} for the structure of the state machine definition and refer to the state machine section
- * of the Glowbuzzer React documentation for a full worked example.
+ * See {@link StateMachineDefinition} for the structure of the state machine definition and refer to the [GBR state machine](/docs/gbr/state_machine) section
+ * of the GBR documentation for a full worked example.
  *
  * @param definition The state machine definition
  * @param initialState The initial state to enter on creation

@@ -5,29 +5,6 @@ import { useConfig } from "../config"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 
-// export enum TaskState {
-//     NOTSTARTED,
-//     RUNNING,
-//     FINISHED,
-//     PAUSED,
-//     STOPPING,
-//     CANCELLED,
-//     ERROR
-// }
-//
-// export enum TaskCommand {
-//     NONE,
-//     RUN,
-//     CANCEL,
-//     PAUSE,
-//     RESUME
-// }
-//
-// type TaskStatus = {
-//     state: TaskState
-//     currentActivityIndex: number
-// }
-
 export const tasksSlice: Slice<TaskStatus[]> = createSlice({
     name: "tasks",
     initialState: [] as TaskStatus[],
@@ -38,7 +15,11 @@ export const tasksSlice: Slice<TaskStatus[]> = createSlice({
     }
 })
 
-export function useTaskStatus() {
+/** Returns the status of all tasks as an array along with each task's current activity index */
+export function useTaskStatus(): {
+    name: string
+    status: TaskStatus
+}[] {
     const config = useConfig()
     const status = useSelector(({ tasks }: RootState) => tasks, shallowEqual)
 
@@ -48,7 +29,30 @@ export function useTaskStatus() {
     }))
 }
 
-export function useTask(taskIndex: number) {
+/**
+ * Returns task name plus methods to run, cancel and reset a task.
+ *
+ * After a task is completed or cancelled it must be reset before it can be run again.
+ *
+ * @param taskIndex The index of the task in the configuration
+ */
+export function useTask(taskIndex: number): {
+    /** The name of the task */
+    name: string
+    /** Run the task */
+    run(): void
+    /** Cancel a running task */
+    cancel(): void
+    /** Reset the task, ready to run again */
+    reset(): void
+    /**
+     * @ignore - Not supported
+     */
+    activities: {
+        name: string
+        sendCommand: (command) => void
+    }[]
+} {
     const connection = useConnection()
     const config = useConfig()
 

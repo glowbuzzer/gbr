@@ -155,6 +155,9 @@ export const telemetrySlice: Slice<
     }
 })
 
+/**
+ * @ignore - Internal to TelemetryTile
+ */
 export const useTelemetryControls = () => {
     const captureState = useSelector(
         (state: RootState) => state.telemetry.captureState,
@@ -190,10 +193,16 @@ export const useTelemetryControls = () => {
     }
 }
 
+/**
+ * @ignore - Internal to TelemetryTile
+ */
 export const useTelemetryData = () => {
     return useSelector(({ telemetry: { data } }: RootState) => ({ data }), shallowEqual).data
 }
 
+/**
+ * @ignore - Internal to TelemetryTile
+ */
 export const useTelemetrySettings = (): TelemetrySettingsType => {
     return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings

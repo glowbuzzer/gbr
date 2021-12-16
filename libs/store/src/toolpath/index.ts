@@ -75,6 +75,9 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
     }
 })
 
+/**
+ * @ignore - Internal to the ToolPathTile
+ */
 export const useToolPath = (kc: number) => {
     // select the given kc out of all toolpaths
     const toolPath = useSelector(
@@ -98,6 +101,9 @@ export const useToolPath = (kc: number) => {
     }
 }
 
+/**
+ * @ignore - Internal to the ToolPathTile
+ */
 export const useToolPathSettings = () => {
     const settings = useSelector((state: RootState) => state.toolPath.settings, shallowEqual)
     const dispatch = useDispatch()
@@ -105,7 +111,6 @@ export const useToolPathSettings = () => {
     return {
         settings,
         setSettings(settings: ToolPathSettingsType) {
-            console.log("SAVE SETTINGS", settings)
             dispatch(toolPathSlice.actions.settings(settings))
         }
     }
