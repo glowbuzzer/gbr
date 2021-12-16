@@ -45,14 +45,17 @@ export function useDigitalOutputList() {
  *
  * @param index The index in the configuration of the digital output
  */
-export function useDigitalOutputState(index: number): [{
-    /** The current effective value */
-    effectiveValue: boolean
-    /** The desired value */
-    setValue: boolean
-    /** Whether the desired value should override the value last set by an activity */
-    override: boolean
-}, (setValue: boolean, override: boolean) => void] {
+export function useDigitalOutputState(index: number): [
+    {
+        /** The current effective value */
+        effectiveValue: boolean
+        /** The desired value */
+        setValue: boolean
+        /** Whether the desired value should override the value last set by an activity */
+        override: boolean
+    },
+    (setValue: boolean, override?: boolean) => void
+] {
     const connection = useConnection()
     const ref = useRef<DigitalOutputStatus>(null)
     const dout = useSelector(({ dout }: RootState) => dout[index]) || {
@@ -67,21 +70,26 @@ export function useDigitalOutputState(index: number): [{
     }
 
     const value = ref.current
-    return useMemo(() =>
-        [value, (value: boolean, override = true) => {
-            connection.send(
-                JSON.stringify({
-                    command: {
-                        dout: {
-                            [index]: {
-                                command: {
-                                    setValue: value ? 1 : 0,
-                                    override
+    return useMemo(
+        () => [
+            value,
+            (value: boolean, override = true) => {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            dout: {
+                                [index]: {
+                                    command: {
+                                        setValue: value ? 1 : 0,
+                                        override
+                                    }
                                 }
                             }
                         }
-                    }
-                })
-            )
-        }], [index, value, connection])
+                    })
+                )
+            }
+        ],
+        [index, value, connection]
+    )
 }

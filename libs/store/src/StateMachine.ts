@@ -1,18 +1,69 @@
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
+
+/**
+ * Defines a simple state machine consisting of states, transitions and callbacks when entering and existing states.
+ *
+ * See {@link useStateMachine} for further information and example.
+ */
+export type StateMachineDefinition = {
+    /** The set of states keyed by state name */
+    [index: string]: {
+        /** Called when entering a state. Can optionally return a new state to transition to (by name, or name plus user-defined payload). */
+        enter?():
+            | void
+            | string
+            | { state: string; data: unknown }
+            | Promise<void | string | { state: string; data: unknown }>
+
+        /**
+         * Called when exiting a state
+         */
+        exit?(): void
+
+        /** Possible transitions out of this state. The keys of the object are the target
+         * state names. The values are either a boolean, or a function returning boolean.
+         * A transition is triggered when its value evaluates as true.
+         */
+        transitions?: { [index: string]: (() => boolean) | boolean }
+    }
+}
 
 export class StateMachine {
-    current_state: string|undefined
-    previous_state: string|undefined
-    initial_state: string
-    user_data: string|undefined
+    private currentState: string | undefined
+    private previousState: string | undefined
+    private userData: string | undefined
+    private readonly onChangeHandler: (state: {
+        currentState: string
+        previousState?: string
+        userData: unknown
+    }) => void
 
-    constructor(initial_state:string) {
-        this.initial_state = initial_state
+    /**
+     * Construct a new state machine.
+     *
+     * @param initialState The state to enter when the state machine is first instantiated
+     * @param onChange Function that will be called when state changes. Used to trigger re-render by the {@link useStateMachine} hook.
+     */
+    constructor(
+        initialState: string,
+        onChange?: (state: {
+            currentState: string
+            previousState?: string
+            userData: unknown
+        }) => void
+    ) {
+        this.currentState = initialState
+        this.onChangeHandler = onChange
     }
 
-    private transition(machine, to_state_ext) {
+    private triggerChangeEffect() {
+        const { currentState, previousState, userData } = this
+        this.onChangeHandler?.({ currentState, previousState, userData })
+    }
+
+    private transition(machine: StateMachineDefinition, to_state_ext) {
         // execute the exit function on current state if it exists
-        const current = machine[this.current_state]
+        const current = machine[this.currentState]
         current?.exit?.()
 
         // destructure to_state and user_data (depending on what is supplied)
@@ -21,56 +72,44 @@ export class StateMachine {
 
         const next = machine[to_state]
         if (next === undefined) {
-            // console.log("INVALID TO STATE", to_state)
             throw new Error("Invalid next state: " + to_state)
         }
 
-        // console.log("TRANSITION TO", to_state)
-
-        this.previous_state = this.current_state
-        this.current_state = to_state
-        this.user_data = data
+        this.previousState = this.currentState
+        this.currentState = to_state
+        this.userData = data
+        // trigger state change in hook to cause re-render
+        this.triggerChangeEffect()
 
         const result = next?.enter?.()
         // check if promise
-        if (result && typeof result.then === "function") {
-            // console.log("AWAIT PROMISE OF STATE", to_state)
-            result.then(r => {
+        if (result && typeof result["then"] === "function") {
+            result["then"](r => {
                 if (r) {
                     // only transition if state hasn't changed since entry
-                    if (this.current_state === to_state) {
-                        // console.log(
-                        //     "TRANSITION AT END OF ENTER PROMISE, STATE=",
-                        //     to_state,
-                        //     "NEXT=",
-                        //     r.state || r
-                        // )
+                    if (this.currentState === to_state) {
                         this.transition(machine, r)
-                    } else {
-                        // console.log(
-                        //     "DID NOT TRANSITION TO",
-                        //     r.state || r,
-                        //     "IN STATE",
-                        //     this.current_state,
-                        //     "WAS STATE",
-                        //     to_state
-                        // )
                     }
                 }
             })
         } else if (result) {
-            // console.log("DIRECT TRANSITION FROM STATE", to_state, "TO", result.state || result)
             this.transition(machine, result)
         }
     }
 
-    eval(machine) {
-        if (!this.current_state) {
-            this.transition(machine, this.initial_state)
-        }
-        const state = machine[this.current_state]
+    /**
+     * Perform an eval on the given state machine.
+     *
+     * Checks the transitions of the currently active state and performs the tr
+     * @param machine
+     */
+    eval(machine: StateMachineDefinition) {
+        // if (!this.current_state) {
+        //     this.transition(machine, this.initial_state)
+        // }
+        const state = machine[this.currentState]
         if (state === undefined) {
-            throw new Error("Invalid current state: " + this.current_state)
+            throw new Error("Invalid current state: " + this.currentState)
         }
         if (state?.transitions) {
             for (const [next_state, value] of Object.entries(state.transitions)) {
@@ -83,19 +122,41 @@ export class StateMachine {
     }
 }
 
-export const useStateMachine = (definition, initial_state: string, dependencies) => {
-    const machine = useRef(new StateMachine(initial_state))
+/**
+ * Returns the current and previous state of the state machine given.
+ *
+ * The state machine definition can contain dynamic values that change (for example due to React state changes). The re-evaluation
+ * of the state machine (that is, any state transitions) will occur when values in the dependency array changes.
+ *
+ * See {@link StateMachineDefinition} for the structure of the state machine definition and refer to the state machine section
+ * of the Glowbuzzer React documentation for a full worked example.
+ *
+ * @param definition The state machine definition
+ * @param initialState The initial state to enter on creation
+ * @param dependencies The values that can trigger state changes
+ */
+export const useStateMachine = (
+    definition: StateMachineDefinition,
+    initialState: string,
+    dependencies
+): { currentState: string; previousState?: string; userData: unknown } => {
+    const [stateMachineState, setStateMachineState] = useState<{
+        currentState: string
+        previousState?: string
+        userData: unknown
+    }>({
+        currentState: initialState,
+        previousState: undefined,
+        userData: undefined
+    })
+    const machine = useRef(new StateMachine(initialState, setStateMachineState))
 
     useEffect(() => {
-        // every time the dependencies change we will evaluate the state machine
+        // every time the dependencies change, including the definition itself, we will evaluate the state machine
         machine.current.eval(definition)
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [...dependencies, definition])
 
-    const { current_state, previous_state, user_data } = machine.current
-    return useMemo(
-        () => [current_state, previous_state, user_data],
-        [current_state, previous_state, user_data]
-    )
+    return stateMachineState
 }

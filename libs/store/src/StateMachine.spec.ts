@@ -1,9 +1,9 @@
 import { StateMachine } from "./StateMachine"
 
 class Deferred {
-    public promise: Promise<unknown>
+    public promise: Promise<string>
     public reject: (reason?) => void
-    public resolve: (value) => void
+    public resolve: (value: string) => void
 
     constructor() {
         this.promise = new Promise((resolve, reject) => {

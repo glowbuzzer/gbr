@@ -26,22 +26,13 @@ export const activitySlice: Slice<
     }
 })
 
-/*
-export function useSoloActivityStatus(index = 0): ActivityStatus {
-    const status = useSelector(
-        ({ activity }: RootState) => activity[index],
-        deepEqual
-    ) as ActivityStatus
-
-    return (
-        status || {
-            tag: 0,
-            state: ACTIVITYSTATE.ACTIVITY_INACTIVE
-        }
-    )
-}
-*/
-
+/**
+ * Instantiates and returns a solo activity API on a given kinematics configuration (KC) index.
+ *
+ * Each KC can have at most one solo activity executing againt it at any time. For more information see {@link SoloActivityApi}.
+ *
+ * @param index The kinematics configuration index the solo activity API will execute against
+ */
 export function useSoloActivity(index = 0): SoloActivityApi {
     const connection = useConnection()
     const status = useSelector(

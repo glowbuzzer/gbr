@@ -1,7 +1,12 @@
 import React, { useContext, useState } from "react"
-import { useDigitalInputs, useDigitalOutputState, useSoloActivity } from "@glowbuzzer/store"
+import {
+    POSITIONREFERENCE,
+    useDigitalInputs,
+    useDigitalOutputState,
+    useSoloActivity,
+    useStateMachine
+} from "@glowbuzzer/store"
 import { Vector3 } from "three"
-import { useStateMachine } from "@glowbuzzer/store"
 import { appContext } from "./AppContextType"
 import ColorThief from "colorthief"
 
@@ -68,14 +73,14 @@ export const AppContextProvider = ({ children }) => {
     const conveyor1 = useSoloActivity(0)
     const conveyor2 = useSoloActivity(1)
     const dins = useDigitalInputs()
-    const doutCamera = useDigitalOutputState(3)
-    const doutExtend = useDigitalOutputState(8)
-    const doutRetract = useDigitalOutputState(9)
+    const [, setDoutCamera] = useDigitalOutputState(3)
+    const [, setDoutExtend] = useDigitalOutputState(8)
+    const [doutRetract, setDoutRetract] = useDigitalOutputState(9)
     const [extended, retracted, magic_eye] = dins // simple booleans
 
     const [running, setRunning] = useState(false)
 
-    const [state, prev_state, data] = useStateMachine(
+    const { currentState, previousState, userData } = useStateMachine(
         {
             idle: {
                 enter: () => ignored(conveyor1.cancel().promise()),
@@ -103,9 +108,9 @@ export const AppContextProvider = ({ children }) => {
             detect_image: {
                 enter: async () => {
                     // insert image fetch and detection here
-                    doutCamera.set(1, true)
+                    setDoutCamera(true)
                     await delay(null, 100)
-                    doutCamera.set(0, true)
+                    setDoutCamera(false)
                     await delay(null, 3000)
 
                     const { image_type, base64 } = await new Promise(resolve => {
@@ -162,7 +167,10 @@ export const AppContextProvider = ({ children }) => {
                 enter: () =>
                     ignored(
                         conveyor1
-                            .moveLine(new Vector3(CAMERA_TO_CYLINDER_DISTANCE, 0, 0), true)
+                            .moveLine(
+                                new Vector3(CAMERA_TO_CYLINDER_DISTANCE, 0, 0),
+                                POSITIONREFERENCE.RELATIVE
+                            )
                             .promise()
                     ).then(() => "extend_cylinder"),
                 transitions: {
@@ -170,8 +178,8 @@ export const AppContextProvider = ({ children }) => {
                 }
             },
             extend_cylinder: {
-                enter: () => doutExtend.set(1),
-                exit: () => doutExtend.set(0),
+                enter: () => setDoutExtend(true),
+                exit: () => setDoutExtend(false),
                 transitions: {
                     idle: !running,
                     retract_cylinder: extended
@@ -179,14 +187,14 @@ export const AppContextProvider = ({ children }) => {
             },
             retract_cylinder: {
                 enter: () => {
-                    doutRetract.set(1)
+                    setDoutRetract(true)
                     // wait and then eject (while still retracting)
                     return new Promise(resolve => setTimeout(resolve, 1000)).then(
                         () => "eject_type2"
                     )
                 },
                 exit: () => {
-                    doutRetract.set(0)
+                    setDoutRetract(false)
                 },
                 transitions: {
                     idle: !running
@@ -195,7 +203,12 @@ export const AppContextProvider = ({ children }) => {
             eject_type1: {
                 enter: () =>
                     ignored(
-                        conveyor1.moveLine(new Vector3(EJECT_TYPE1_DISTANCE, 0, 0), true).promise()
+                        conveyor1
+                            .moveLine(
+                                new Vector3(EJECT_TYPE1_DISTANCE, 0, 0),
+                                POSITIONREFERENCE.RELATIVE
+                            )
+                            .promise()
                     ).then(() => "run_until_magic_eye"),
                 exit: () => conveyor1.cancel().promise(),
                 transitions: {
@@ -205,7 +218,12 @@ export const AppContextProvider = ({ children }) => {
             eject_type2: {
                 enter: () =>
                     ignored(
-                        conveyor2.moveLine(new Vector3(-EJECT_TYPE2_DISTANCE, 0, 0), true).promise()
+                        conveyor2
+                            .moveLine(
+                                new Vector3(-EJECT_TYPE2_DISTANCE, 0, 0),
+                                POSITIONREFERENCE.RELATIVE
+                            )
+                            .promise()
                     ).then(() => "run_until_magic_eye"),
                 exit: () => conveyor2.cancel().promise(),
                 transitions: {
@@ -219,9 +237,9 @@ export const AppContextProvider = ({ children }) => {
 
     const context = {
         running,
-        state,
-        previousState: prev_state,
-        data,
+        state: currentState,
+        previousState,
+        data: userData,
         setRunning
     }
     return <appContext.Provider value={context}>{children}</appContext.Provider>

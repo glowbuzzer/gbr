@@ -29,7 +29,7 @@ export const AnalogOutputsTile = ({ labels = [] }) => {
         <Tile title="Analog Outputs">
             <StyledDiv>
                 {aouts.map((label, index) => (
-                    <AnalogOutputItem index={index} label={labels[index] || label} />
+                    <AnalogOutputItem key={index} index={index} label={labels[index] || label} />
                 ))}
             </StyledDiv>
         </Tile>
