@@ -21,7 +21,7 @@ import { tasksSlice } from "./tasks"
 import { framesSlice } from "./frames"
 import { activitySlice } from "./activity"
 
-export const rootReducer = combineReducers({
+export const standardReducers = {
     config: configSlice.reducer,
     connection: connectionSlice.reducer,
     tasks: tasksSlice.reducer,
@@ -43,6 +43,8 @@ export const rootReducer = combineReducers({
     toolPath: toolPathSlice.reducer,
     kinematics: kinematicsSlice.reducer,
     devtools: devToolsSlice.reducer
-})
+}
+
+export const rootReducer = combineReducers(standardReducers)
 
 export type RootState = ReturnType<typeof rootReducer>
