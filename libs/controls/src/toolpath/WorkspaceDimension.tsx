@@ -1,5 +1,5 @@
 import React from "react"
-// import { Text } from "@react-three/drei"
+import { Text } from "@react-three/drei"
 import { Euler, Vector3 } from "three"
 
 type WorkspaceDimensionProps = {
@@ -12,7 +12,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
     // noinspection RequiredAttributes
     return (
         <>
-            {/*
             <Text
                 position={new Vector3(-extent, -extent)}
                 color={"#f0f0f0"}
@@ -42,7 +41,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
             >
                 Y {(extent * 2).toFixed(2)} mm
             </Text>
-*/}
         </>
     )
 }

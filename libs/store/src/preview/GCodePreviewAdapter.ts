@@ -95,7 +95,6 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G2(params, { lineNum }, from, to) {
-        console.log("FROM", from, "TO", to)
         const arc = this.toArc(params, false, from, to)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))

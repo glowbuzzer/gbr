@@ -85,6 +85,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             arc: {
                 destination,
                 arcType: ARCTYPE.ARCTYPE_CENTRE,
+                arcDirection,
                 centre: {
                     position: { x: I, y: J },
                     positionReference: POSITIONREFERENCE.RELATIVE // we don't support G91.1 right now

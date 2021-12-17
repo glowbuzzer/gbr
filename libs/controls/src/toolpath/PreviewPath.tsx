@@ -41,26 +41,28 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     const fontSize = scale / 15
 
     // calculate lower and upper limits of all points
-    const boundingBox = useMemo(
-        () =>
-            preview.reduce(
-                (boundingBox, point) => {
-                    boundingBox[0] = Math.min(boundingBox[0], point.from[0], point.to[0])
-                    boundingBox[1] = Math.min(boundingBox[1], point.from[1], point.to[1])
-                    boundingBox[2] = Math.min(boundingBox[2], point.from[2], point.to[2])
-                    boundingBox[3] = Math.max(boundingBox[3], point.from[0], point.to[0])
-                    boundingBox[4] = Math.max(boundingBox[4], point.from[1], point.to[1])
-                    boundingBox[5] = Math.max(boundingBox[5], point.from[2], point.to[2])
-                    return boundingBox
-                },
-                [0, 0, 0, 0, 0, 0]
-            ),
-        [preview]
-    )
+    const { minPoint, maxPoint } = useMemo(() => {
+        const minPoint = new Vector3(0, 0, 0)
+        const maxPoint = new Vector3(0, 0, 0)
 
-    const extentX = boundingBox[3] - boundingBox[0]
-    const extentY = boundingBox[4] - boundingBox[1]
-    const extentZ = boundingBox[5] - boundingBox[2]
+        for (const point of preview) {
+            minPoint.x = Math.min(minPoint.x, point.from.x, point.to.x)
+            minPoint.y = Math.min(minPoint.y, point.from.y, point.to.y)
+            minPoint.z = Math.min(minPoint.z, point.from.z, point.to.z)
+            maxPoint.x = Math.max(maxPoint.x, point.from.x, point.to.x)
+            maxPoint.y = Math.max(maxPoint.y, point.from.y, point.to.y)
+            maxPoint.z = Math.max(maxPoint.z, point.from.z, point.to.z)
+        }
+
+        return {
+            minPoint,
+            maxPoint
+        }
+    }, [preview])
+
+    const extentX = maxPoint.x - minPoint.x
+    const extentY = maxPoint.y - minPoint.y
+    const extentZ = maxPoint.z - minPoint.z
 
     const lineHeight = 1.5
 
@@ -86,7 +88,7 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
 
     // noinspection RequiredAttributes
     return (
-        <group position={new Vector3(boundingBox[0], boundingBox[2], 0)}>
+        <group position={new Vector3(minPoint.x, minPoint.y, 0)}>
             <DashedExtent
                 position={new Vector3(0, -fontSize, 0)}
                 distanceX={extentX}
@@ -163,9 +165,7 @@ export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps)
                     />
                     <lineBasicMaterial vertexColors={true} linewidth={1} />
                 </lineSegments>
-{/*
                 <DrawingExtent preview={preview} scale={scale} />
-*/}
             </>
         ),
         [previewPoints, colors, scale, preview]
