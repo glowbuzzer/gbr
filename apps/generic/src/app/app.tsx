@@ -27,9 +27,6 @@ import React, { useState } from "react"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 //tutorial
-import { TutorialDoToggleTile } from "./tutorial/TutorialDoToggleTile"
-import { TutorialOscillatingMoveTile } from "./tutorial/TutorialOscillatingMoveTile"
-
 import "react-grid-layout/css/styles.css"
 
 const StyledApp = styled.div``
@@ -75,16 +72,6 @@ export function App() {
             { render: <AnalogInputsTile />, height: 4, title: "Analog Inputs" },
             { render: <IntegerOutputsTile />, height: 4, title: "Integer Outputs" },
             { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" },
-            {
-                render: <TutorialDoToggleTile />,
-                height: 4,
-                title: "Tutorial Digital Output Toggle"
-            },
-            {
-                render: <TutorialOscillatingMoveTile />,
-                height: 4,
-                title: "Tutorial Oscillating Move"
-            }
         ]
     ]
 
