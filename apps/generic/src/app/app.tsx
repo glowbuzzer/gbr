@@ -71,7 +71,7 @@ export function App() {
             { render: <AnalogOutputsTile />, height: 4, title: "Analog Outputs" },
             { render: <AnalogInputsTile />, height: 4, title: "Analog Inputs" },
             { render: <IntegerOutputsTile />, height: 4, title: "Integer Outputs" },
-            { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" },
+            { render: <IntegerInputsTile />, height: 4, title: "Integer Inputs" }
         ]
     ]
 

@@ -30,7 +30,7 @@ export const ToolPathAutoSize = ({ extent, children }) => {
         cam.position.z = 2 * extent
         cam.up.set(0, 0, 1)
         setDefaultCamera(cam)
-    }, [size, extent, setDefaultCamera])
+    }, [size.width, size.height, extent, setDefaultCamera])
 
     return (
         <>
