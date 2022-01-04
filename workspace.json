@@ -393,6 +393,63 @@
                 }
             }
         },
+        "oscillating-move": {
+            "root": "examples/oscillating-move",
+            "sourceRoot": "examples/oscillating-move/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
+                    "options": {
+                        "outputPath": "dist/examples/oscillating-move",
+                        "index": "examples/oscillating-move/src/index.html",
+                        "main": "examples/oscillating-move/src/main.tsx",
+                        "polyfills": "examples/oscillating-move/src/polyfills.ts",
+                        "tsConfig": "examples/oscillating-move/tsconfig.app.json",
+                        "assets": [
+                            "examples/oscillating-move/src/favicon.ico"
+                        ],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    },
+                    "configurations": {
+                        "production": {
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "extractCss": true,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "oscillating-move:build",
+                        "hmr": true
+                    },
+                    "configurations": {
+                        "production": {
+                            "buildTarget": "oscillating-move:build:production",
+                            "hmr": false
+                        }
+                    }
+                }
+            }
+        },
         "store": {
             "root": "libs/store",
             "sourceRoot": "libs/store/src",
@@ -401,7 +458,9 @@
             "architect": {
                 "build": {
                     "builder": "@nrwl/web:package",
-                    "outputs": ["{options.outputPath}"],
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
                     "options": {
                         "outputPath": "dist/libs/store",
                         "tsConfig": "libs/store/tsconfig.lib.json",

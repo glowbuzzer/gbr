@@ -1,5 +1,4 @@
 import * as React from "react"
-import { extend } from "react-three-fiber"
 // import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import { DoubleSide, Euler, Vector3 } from "three"
 import simplify from "./simplify"
