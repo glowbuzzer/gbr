@@ -47,6 +47,9 @@
         "oscillating-move": {
             "tags": []
         },
+        "set-digital-out": {
+            "tags": []
+        },
         "store": {
             "tags": []
         }
