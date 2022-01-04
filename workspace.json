@@ -407,11 +407,7 @@
                         "outputPath": "dist/examples/oscillating-move",
                         "index": "examples/oscillating-move/src/index.html",
                         "main": "examples/oscillating-move/src/main.tsx",
-                        "polyfills": "examples/oscillating-move/src/polyfills.ts",
-                        "tsConfig": "examples/oscillating-move/tsconfig.app.json",
-                        "assets": [
-                            "examples/oscillating-move/src/favicon.ico"
-                        ],
+                        "tsConfig": "examples/oscillating-move/tsconfig.json",
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
