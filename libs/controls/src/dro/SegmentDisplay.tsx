@@ -46,10 +46,13 @@ const StyledSegmentDisplay = styled.span`
 
     .background {
         position: absolute;
+        user-select: none;
         color: rgba(128, 128, 128, 0.2);
+        z-index: -100;
     }
 
     .foreground {
+        z-index: 1000;
     }
 `
 
