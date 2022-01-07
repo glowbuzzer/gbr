@@ -17,10 +17,6 @@ import { simplify } from "./simplify"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
-function number_or_null(v) {
-    return v === undefined ? null : Number(v)
-}
-
 function args(line: GCodeLine) {
     return {
         tag: line.lineNum
@@ -37,7 +33,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         blendType: 0,
         blendTimePercentage: 100
     }
-    private frameIndex = 0
+    // private frameIndex = 0
     private readonly buffer: (ActivityStreamItem & {
         canMergePrevious?: boolean
         simplifyTolerance: number
@@ -49,7 +45,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private canMergePrevious = false // determines if we are allowed to merge with previous
 
     constructor(buffer, vmax: number, simplifyTolerance = 0) {
-        super()
+        super({
+            position: { x: null, y: null, z: null },
+            positionReference: POSITIONREFERENCE.ABSOLUTE,
+            frameIndex: 0
+        })
         this.buffer = buffer
         this.vmax = vmax
         this.simplifyTolerance = simplifyTolerance
@@ -60,7 +60,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         const J = params.J || 0
         const R = params.R || 0
 
-        const { x, y, z } = this.position
+        const { x, y, z } = this.position.position
 
         const destination = {
             frameIndex,
@@ -186,11 +186,9 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
                 // here we map activities to simple target points
                 const tolerance = sub[0].simplifyTolerance
-                const simplify_result = simplify(
-                    sub.map(p => cartesian_position(p).position).map(adapter.in),
-                    tolerance,
-                    false
-                )
+                const points = sub.map(p => cartesian_position(p).position).map(adapter.in)
+                const simplify_result = simplify(points, tolerance, false)
+
                 // we want to discard first point of sequence and leave activity unaltered (could be arc, etc)
                 const lines = simplify_result.slice(1)
                 const template = sub[1] // this is the first line
@@ -275,17 +273,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
-    get positionReference() {
-        return this.relative ? POSITIONREFERENCE.RELATIVE : POSITIONREFERENCE.ABSOLUTE
-    }
+    // get positionReference() {
+    //     return this.position.positionReference
+    // }
 
     G0(params, line: GCodeLine) {
         // this.updateModals(params)
-        const position = {
-            position: this.position,
-            positionReference: this.positionReference,
-            frameIndex: this.frameIndex
-        }
         if (params.F) {
             // turn this into a linear move_line
             const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
@@ -298,7 +291,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                         vmaxPercentage,
                         blendType: BLENDTYPE.BLENDTYPE_NONE
                     },
-                    line: position
+                    line: this.position
                 }
             })
         } else {
@@ -313,7 +306,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                     },
                     cartesianPosition: {
                         configuration: 0, // TODO: think about how to specify in robot land
-                        position: position
+                        position: this.position
                     }
                 }
             })
@@ -328,11 +321,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             ...args(line),
             moveLine: {
                 moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                line: {
-                    position: this.position,
-                    positionReference: this.positionReference,
-                    frameIndex: this.frameIndex
-                }
+                line: this.position
             }
         })
     }
@@ -347,7 +336,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             ...args(line),
             moveArc: {
                 moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                ...this.arcParams(params, false, this.frameIndex, this.positionReference)
+                ...this.arcParams(
+                    params,
+                    false,
+                    this.position.frameIndex,
+                    this.position.positionReference
+                )
             }
         })
     }
@@ -362,7 +356,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             ...args(line),
             moveArc: {
                 moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                ...this.arcParams(params, true, this.frameIndex, this.positionReference)
+                ...this.arcParams(
+                    params,
+                    true,
+                    this.position.frameIndex,
+                    this.position.positionReference
+                )
             }
         })
     }
@@ -377,29 +376,29 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
-    G54() {
-        this.frameIndex = 0
-    }
-
-    G55() {
-        this.frameIndex = 1
-    }
-
-    G56() {
-        this.frameIndex = 2
-    }
-
-    G57() {
-        this.frameIndex = 3
-    }
-
-    G58() {
-        this.frameIndex = 4
-    }
-
-    G59() {
-        this.frameIndex = 5
-    }
+    // G54() {
+    //     this.frameIndex = 0
+    // }
+    //
+    // G55() {
+    //     this.frameIndex = 1
+    // }
+    //
+    // G56() {
+    //     this.frameIndex = 2
+    // }
+    //
+    // G57() {
+    //     this.frameIndex = 3
+    // }
+    //
+    // G58() {
+    //     this.frameIndex = 4
+    // }
+    //
+    // G59() {
+    //     this.frameIndex = 5
+    // }
 
     G61() {
         // exact stop mode (the default)

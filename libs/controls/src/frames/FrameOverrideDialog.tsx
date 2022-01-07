@@ -51,7 +51,7 @@ const FrameOverride = ({ selected }) => {
         frames.setOverride(selected, arr)
     }
 
-    console.log("OVERRIDE", current_override)
+    // console.log("OVERRIDE", current_override)
     const { x, y, z } = frame.relative.translation // value before override
 
     function pick(index, defaultValue) {
@@ -62,7 +62,7 @@ const FrameOverride = ({ selected }) => {
     return (
         <Form layout="horizontal">
             <Form.Item>
-                <Checkbox checked={current_override !== undefined} onChange={toggle_override}>
+                <Checkbox checked={!!current_override} onChange={toggle_override}>
                     Override
                 </Checkbox>
                 <Button disabled={!current_override} onClick={update_from_current}>
@@ -70,13 +70,13 @@ const FrameOverride = ({ selected }) => {
                 </Button>
             </Form.Item>
             <Form.Item label={"X"}>
-                <Input value={pick(0, x)} disabled={!current_override} onChange={change_x} />
+                <Input value={pick(0, x) || 0} disabled={!current_override} onChange={change_x} />
             </Form.Item>
             <Form.Item label={"Y"}>
-                <Input value={pick(1, y)} disabled={!current_override} onChange={change_y} />
+                <Input value={pick(1, y) || 0} disabled={!current_override} onChange={change_y} />
             </Form.Item>
             <Form.Item label={"Z"}>
-                <Input value={pick(2, z)} disabled={!current_override} onChange={change_z} />
+                <Input value={pick(2, z) || 0} disabled={!current_override} onChange={change_z} />
             </Form.Item>
         </Form>
     )
@@ -103,7 +103,6 @@ export const FrameOverrideDialog = ({ visible, onClose }) => {
     const tree = frames.asTree.map(t => map_tree(t))
 
     const selectedIndex = selected[0]
-    console.log("TREE SELECTED", selected, tree)
 
     return (
         <Modal

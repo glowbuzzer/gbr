@@ -120,6 +120,22 @@ describe("gcode sender adapter path simplification", () => {
         expect(last(buffer).y).toBe(1)
     })
 
+    test("it should handle a simple square", () => {
+        const buffer = exec(
+            `
+        G1 X10
+        G1 Y10
+        G1 X0
+        G1 Y0
+        `
+        )
+
+        expect(buffer.length).toBe(4)
+
+        expect(last(buffer).x).toBe(0)
+        expect(last(buffer).y).toBe(0)
+    })
+
     test("it should read Q setting for tolerance", () => {
         const buffer = exec(
             `

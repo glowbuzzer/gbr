@@ -2,43 +2,30 @@
  (c) 2013, Vladimir Agafonkin
  Simplify.js, a high-performance JS polyline simplification library
  mourner.github.io/simplify-js
+
+ Modified by glowbuzzer to add z-axis and handle null values (eg. relative gcode)
 */
 
-// to suit your point format, run search/replace for '.x', '.y' and '.z';
-// (configurability would draw significant performance overhead)
-
-// square distance between 2 points
-function getSquareDistance(p1, p2) {
-    const dx = p1.x - p2.x,
-        dy = p1.y - p2.y,
-        dz = p1.z - p2.z
-
-    return dx * dx + dy * dy + dz * dz
+function safe(v) {
+    return v || 0
 }
 
 // square distance from a point to a segment
-function getSquareSegmentDistance(p, p1, p2) {
-    // function safe(v, defaultValue) {
-    //     function isNumber(x) {
-    //         return x !== null && x !== undefined
-    //     }
-    //
-    //     return isNumber(v) ? v : isNumber(defaultValue) ? defaultValue : 0
-    // }
-    let x = p1.x || 0,
-        y = p1.y || 0,
-        z = p1.z || 0,
-        dx = p2.x ? p2.x - x : 0,
-        dy = p2.y ? p2.y - y : 0,
-        dz = p2.z ? p2.z - z : 0
+function getSqSegDist(p, p1, p2) {
+    let x = safe(p1.x),
+        y = safe(p1.y),
+        z = safe(p1.z),
+        dx = safe(p2.x) - x,
+        dy = safe(p2.y) - y,
+        dz = safe(p2.z) - z
 
     if (dx !== 0 || dy !== 0 || dz !== 0) {
-        let t = ((p.x - x) * dx + (p.y - y) * dy + (p.z - z) * dz) / (dx * dx + dy * dy + dz * dz)
+        const t = ((p.x - x) * dx + (p.y - y) * dy + (p.z - z) * dz) / (dx * dx + dy * dy + dz * dz)
 
         if (t > 1) {
-            x = p2.x
-            y = p2.y
-            z = p2.z
+            x = safe(p2.x)
+            y = safe(p2.y)
+            z = safe(p2.z)
         } else if (t > 0) {
             x += dx * t
             y += dy * t
@@ -46,108 +33,65 @@ function getSquareSegmentDistance(p, p1, p2) {
         }
     }
 
-    dx = p.x ? p.x - x : p1.x - x
-    dy = p.y ? p.y - y : p1.y - y
-    dz = p.z ? p.z - z : p1.z - z
+    dx = p.x - x
+    dy = p.y - y
+    dz = p.z - z
 
     return dx * dx + dy * dy + dz * dz
 }
 
-// the rest of the code doesn't care for the point format
+function can_simplify(p1, p2 /*, p3*/) {
+    const points = [
+        [p1.x, p2.x /*, p3.x*/],
+        [p1.y, p2.y /*, p3.y*/],
+        [p1.z, p2.z /*, p3.z*/]
+    ]
 
-// basic distance-based simplification
-function simplifyRadialDistance(points, sqTolerance) {
-    let prevPoint = points[0],
-        newPoints = [prevPoint],
-        point
-
-    for (let i = 1, len = points.length; i < len; i++) {
-        point = points[i]
-
-        if (getSquareDistance(point, prevPoint) > sqTolerance) {
-            newPoints.push(point)
-            prevPoint = point
-        }
-    }
-
-    if (prevPoint !== point) {
-        newPoints.push(point)
-    }
-
-    return newPoints
+    // can only simplify if every axis is either all null or all non-null
+    return points.every(axis => axis.every(p => p === null) || !axis.some(p => p === null))
 }
 
-// simplification using optimized Douglas-Peucker algorithm with recursion elimination
-function simplifyDouglasPeucker(points_with_nulls, sqTolerance) {
-    const tracker = { x: null, y: null, z: null }
-    // keep tabs on the absolute position
-    const points = points_with_nulls.map(p => {
-        Object.assign(tracker, {
-            x: p.x === null ? tracker.x : p.x,
-            y: p.y === null ? tracker.y : p.y,
-            z: p.z == null ? tracker.z : p.z
-            // orig: p
-        })
-        return { ...tracker }
-    })
-    let len = points.length,
-        MarkerArray = typeof Uint8Array !== "undefined" ? Uint8Array : Array,
-        markers = new MarkerArray(len),
-        first = 0,
-        last = len - 1,
-        stack = [],
-        newPoints = [],
-        i,
-        maxSqDist,
-        sqDist,
-        index = 0
+function simplifyDPStep(points, first, last, sqTolerance, simplified) {
+    let maxSqDist = -1,
+        index = first + 1
 
-    markers[first] = markers[last] = 1
+    if (can_simplify(points[first], points[last])) {
+        for (let i = first + 1; i < last; i++) {
+            const sqDist = getSqSegDist(points[i], points[first], points[last])
 
-    while (last) {
-        maxSqDist = 0
-
-        const p1 = points[first]
-        const p2 = points[last]
-
-        if (
-            (p1.x === null && p2.x !== null) ||
-            (p1.y === null && p2.y !== null) ||
-            (p1.z === null && p2.z !== null)
-        ) {
-            // we can't know the distance between p1 and p2, so we can't determine square segment distance
-            if (first !== last - 1) {
-                index = first + 1
-                markers[index] = 1
-                stack.push(first, index, index, last)
+            if (sqDist > maxSqDist) {
+                index = i
+                maxSqDist = sqDist
             }
-        } else {
-            for (i = first + 1; i < last; i++) {
-                sqDist = getSquareSegmentDistance(points[i], p1, p2)
-
-                if (sqDist > maxSqDist) {
-                    index = i
-                    maxSqDist = sqDist
-                }
-            }
-
-            if (maxSqDist > sqTolerance) {
-                markers[index] = 1
-                stack.push(first, index, index, last)
-            }
-        }
-
-        last = stack.pop()
-        first = stack.pop()
-    }
-
-    for (i = 0; i < len; i++) {
-        if (markers[i]) {
-            newPoints.push(points[i])
         }
     }
 
-    return newPoints // .map(p => p.orig)
+    if (maxSqDist < 0 || maxSqDist > sqTolerance) {
+        if (index - first > 1) {
+            simplifyDPStep(points, first, index, sqTolerance, simplified)
+        }
+
+        simplified.push(points[index])
+
+        if (last - index > 1) {
+            simplifyDPStep(points, index, last, sqTolerance, simplified)
+        }
+    }
+}
+
+// simplification using Ramer-Douglas-Peucker algorithm
+function simplifyDouglasPeucker(points, sqTolerance) {
+    if (points.length <= 2) {
+        // need more than two points to simplify!
+        return points
+    }
+    const last = points.length - 1
+    const simplified = [points[0]]
+
+    simplifyDPStep(points, 0, last, sqTolerance, simplified)
+
+    simplified.push(points[last])
+    return simplified
 }
 
 // both algorithms combined for awesome performance

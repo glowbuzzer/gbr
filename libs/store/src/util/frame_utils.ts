@@ -1,4 +1,5 @@
 import { Matrix4, Quaternion, Vector3 } from "three"
+import { FramesConfig } from "../gbc"
 
 export type FrameConfig = {
     translation: Vector3
@@ -51,19 +52,23 @@ export function add_frame_config(f1: FrameConfig, f2: FrameConfig): FrameConfig 
  */
 
 function vectorOf(t): Vector3 {
-    return t ? new Vector3(t.x, t.y, t.z) : NULL_FRAME_CONFIG.translation
+    return t ? new Vector3(t.x, t.y, t.z) : NULL_FRAME_CONFIG.translation.clone()
 }
 
 function quatOf(r): Quaternion {
-    return r ? new Quaternion(r.x, r.y, r.z, r.w) : NULL_FRAME_CONFIG.rotation
+    return r ? new Quaternion(r.x, r.y, r.z, r.w) : NULL_FRAME_CONFIG.rotation.clone()
 }
 
 /**
  * Build a tree of frames from the raw config and calculate the relative and absolute transformation matrices for each frame
  *
  * @param frames The raw list of frames in the config containing translation and rotation (quaternion) info
+ * @param overrides Any overrides that are in effect (can be null or undefined)
  */
-export function build_tree(frames: any, overrides) {
+export function build_tree(
+    frames: { [index: string]: FramesConfig },
+    overrides: (number[] | null | undefined)[]
+) {
     const rootFrames = [] as Frame[]
     const parents = [] as Frame[]
 
@@ -141,15 +146,17 @@ function decompose2(matrix: Matrix4) {
 const UNIT_SCALE = new Vector3(1, 1, 1)
 const IDENTITY_MATRIX = new Matrix4()
 
+/*
 function log_translation(f: Matrix4, ...msg) {
     const translation = new Vector3()
     f.decompose(translation, new Quaternion(), new Vector3())
     const { x, y, z } = translation
     console.log(...msg, "X=", x, "Y=", y, "Z=", z)
 }
+*/
 
 /**
- * Take a point (including orientation) in one frome and determine it's position and orientation with respect to
+ * Take a point (including orientation) in one frome and determine its position and orientation with respect to
  * another frame.
  *
  * @param frames The list of all frames

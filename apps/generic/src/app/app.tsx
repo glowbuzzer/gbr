@@ -7,6 +7,7 @@ import {
     DigitalInputsTile,
     DigitalOutputsTile,
     FeedRateTile,
+    FrameOverrideDialog,
     GCodeTile,
     GlowbuzzerApp,
     IntegerInputsTile,
@@ -35,10 +36,21 @@ const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
 
     return (
-        <div>
+        <>
             <Button onClick={() => setVisible(true)}>Preferences</Button>
             <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
-        </div>
+        </>
+    )
+}
+
+const FrameOverridesButton = () => {
+    const [visible, setVisible] = useState(false)
+
+    return (
+        <>
+            <Button onClick={() => setVisible(true)}>Frame Overrides</Button>
+            <FrameOverrideDialog visible={visible} onClose={() => setVisible(false)} />
+        </>
     )
 }
 
@@ -78,8 +90,10 @@ export function App() {
     return (
         <StyledApp>
             <GlowbuzzerApp>
-                <PrefsButton />
-                <SimpleTileLayout appId="generic" tiles={tiles} widths={[1, 2, 1]} />
+                <div>
+                    <PrefsButton /> <FrameOverridesButton />
+                </div>
+                <SimpleTileLayout appId="generic" tiles={tiles} widths={[2, 4, 2]} />
             </GlowbuzzerApp>
         </StyledApp>
     )

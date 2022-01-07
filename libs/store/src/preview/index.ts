@@ -4,6 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useFrames } from "../frames"
 import { useKinematics } from "../kinematics"
+import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 
 export type GCodeSegment = {
     from: { x: number; y: number; z: number }
@@ -52,12 +53,17 @@ export function usePreview() {
     )
     const frames = useFrames()
     const kc = useKinematics(0, frames.active)
+    const currentPosition: CartesianPosition = {
+        positionReference: POSITIONREFERENCE.ABSOLUTE,
+        position: kc.pose.position,
+        frameIndex: frames.active
+    }
 
     const dispatch = useDispatch()
 
     return {
         setGCode(gcode: string) {
-            const interpreter = new GCodePreviewAdapter(kc.pose.position, frames.convertToFrame)
+            const interpreter = new GCodePreviewAdapter(currentPosition, frames.convertToFrame)
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
         },

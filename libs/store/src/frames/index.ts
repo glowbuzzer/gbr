@@ -73,6 +73,8 @@ export const useFrames = () => {
     const asTree = build_tree(config.frames, overrides)
     const asList = build_list(asTree)
 
+    // console.log("FRAME", asList[0].absolute.translation)
+
     function update(index, value) {
         const length =
             value === undefined ? overrides.length : Math.max(index + 1, overrides.length)

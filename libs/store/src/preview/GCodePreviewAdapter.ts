@@ -1,6 +1,7 @@
 import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"
+import { CartesianPosition } from "../gbc"
 
 // function fromVector3(p: Vector3): number[] {
 //     return [p.x, p.y, p.z]
@@ -21,23 +22,22 @@ const MOVE_COLOR = fromHexString("#a7c0fd")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
-    private frameIndex = 0
+    // private frameIndex = 0
     // private kcFrame: number
     private convertToFrame
 
-    constructor(current_positions: { x: number; y: number; z: number }, convertToFrame) {
-        super(current_positions)
+    constructor(currentPosition: CartesianPosition, convertToFrame) {
+        super(currentPosition)
         // this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
     }
 
-    private frame_conversion(point) {
-        const [x, y, z] = point
+    private frame_conversion(cartesianPosition: CartesianPosition) {
+        const { x, y, z } = cartesianPosition.position
         const pos = new Vector3(x, y, z)
         const rot = new Quaternion(0, 0, 0, 1)
-        const new_pos = this.convertToFrame(pos, rot, this.frameIndex, "world").position
-        return [new_pos.x, new_pos.y, new_pos.z]
+        return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world").position
     }
 
     toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
@@ -53,7 +53,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return result
     }
 
-    toArc(params, ccw: boolean, from, to): EllipseCurve {
+    toArc(params, ccw: boolean, fromCp: CartesianPosition, toCp: CartesianPosition): EllipseCurve {
+        const [from, to] = [fromCp, toCp].map(position => this.frame_conversion(position))
         const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from, to]
         const I = params.I || 0
         const J = params.J || 0
@@ -73,8 +74,9 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return new EllipseCurve(cx, cy, r, r, startAngle, endAngle, !ccw /* not sure why? */, 0)
     }
 
-    G0(params, { lineNum }, from, to) {
+    G0(params, { lineNum }, fromCp: CartesianPosition, toCp: CartesianPosition) {
         // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
+        const [from, to] = [fromCp, toCp].map(position => this.frame_conversion(position))
         this.segments.push({
             from,
             to,
@@ -85,10 +87,10 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
 
     G1(params, { lineNum }, from, to) {
         // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
-        // console.log("LINE FROM", from, "TO", to)
+        // console.log("LINE TO", to.x, to.y)
         this.segments.push({
-            from,
-            to,
+            from: this.frame_conversion(from),
+            to: this.frame_conversion(to),
             color: MOVE_COLOR,
             lineNum
         })
@@ -104,29 +106,5 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const arc = this.toArc(params, true, from, to)
         const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
         this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
-    }
-
-    G54() {
-        this.frameIndex = 0
-    }
-
-    G55() {
-        this.frameIndex = 1
-    }
-
-    G56() {
-        this.frameIndex = 2
-    }
-
-    G57() {
-        this.frameIndex = 3
-    }
-
-    G58() {
-        this.frameIndex = 4
-    }
-
-    G59() {
-        this.frameIndex = 5
     }
 }

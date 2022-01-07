@@ -1,7 +1,8 @@
 import { parseStringSync } from "./GCodeParser"
+import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 
 /**
- * Returns an object composed from arrays of property names and values.
+ * Returns an object composed of arrays of property names and values.
  * @example
  *   fromPairs([['a', 1], ['b', 2]]);
  *   // => { 'a': 1, 'b': 2 }
@@ -20,7 +21,7 @@ const fromPairs = pairs => {
 }
 
 const partitionWordsByGroup = (words = []) => {
-    const groups: any[] = []
+    const groups: unknown[][] = []
 
     for (let i = 0; i < words.length; ++i) {
         const word = words[i]
@@ -41,44 +42,33 @@ const partitionWordsByGroup = (words = []) => {
     return groups
 }
 
-// const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
-
-// function update_axis(axis, value, current_positions, relative) {
-//     const index = gcode_axes.indexOf(axis)
-//     if (index < 0) {
-//         return
-//     }
-//     // if (relative) {
-//     //     current_positions[index] += value
-//     // } else {
-//     //     current_positions[index] = value
-//     // }
-// }
-
 const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
 class GCodeInterpreter {
     private motionMode = "G0"
-    private readonly current_positions
-    protected relative: boolean
+    private cartesianPosition: CartesianPosition
+    private previousPosition: CartesianPosition
 
-    constructor(current_positions = { x: null, y: null, z: null }) {
-        this.current_positions = current_positions
+    constructor(cartesianPosition: CartesianPosition) {
+        this.previousPosition = cartesianPosition
+        this.cartesianPosition = cartesianPosition
     }
 
     private updatePositions(params) {
-        if (this.relative) {
-            this.current_positions.x = 0
-            this.current_positions.y = 0
-            this.current_positions.z = 0
+        if (this.cartesianPosition.positionReference === POSITIONREFERENCE.RELATIVE) {
+            this.cartesianPosition.position = { x: 0, y: 0, z: 0 }
+        } else {
+            // clone position before modification
+            this.cartesianPosition.position = { ...this.cartesianPosition.position }
         }
-        const prev = { ...this.current_positions }
         Object.keys(params).forEach(k => {
             if (gcode_axes.includes(k)) {
-                this.current_positions[k.toLowerCase()] = params[k]
+                this.cartesianPosition.position[k.toLowerCase()] = params[k]
             }
         })
-        return [prev, { ...this.current_positions }]
+        const prev = { ...this.previousPosition }
+        this.previousPosition = { ...this.cartesianPosition }
+        return [prev, this.cartesianPosition]
     }
 
     interpret(data) {
@@ -109,9 +99,9 @@ class GCodeInterpreter {
                 ) {
                     this.motionMode = cmd
                 } else if (code === 90 /* absolute */) {
-                    this.relative = false
+                    this.cartesianPosition.positionReference = POSITIONREFERENCE.ABSOLUTE
                 } else if (code === 91 /* relative */) {
-                    this.relative = true
+                    this.cartesianPosition.positionReference = POSITIONREFERENCE.RELATIVE
                 } else if (code === 80) {
                     this.motionMode = ""
                 }
@@ -169,6 +159,30 @@ class GCodeInterpreter {
         }
     }
 
+    G54() {
+        this.cartesianPosition.frameIndex = 0
+    }
+
+    G55() {
+        this.cartesianPosition.frameIndex = 1
+    }
+
+    G56() {
+        this.cartesianPosition.frameIndex = 2
+    }
+
+    G57() {
+        this.cartesianPosition.frameIndex = 3
+    }
+
+    G58() {
+        this.cartesianPosition.frameIndex = 4
+    }
+
+    G59() {
+        this.cartesianPosition.frameIndex = 5
+    }
+
     command(handled, cmd, args, data, current_position, target_position) {
         // override to inspect all commands
     }
@@ -177,8 +191,8 @@ class GCodeInterpreter {
         // override to provide postprocessing logic
     }
 
-    get position() {
-        return { ...this.current_positions }
+    get position(): CartesianPosition {
+        return { ...this.cartesianPosition }
     }
 
     execute(str) {

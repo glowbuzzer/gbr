@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect } from "react"
-import AceEditor, { IMarker } from "react-ace"
+import AceEditor from "react-ace"
 
 import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
@@ -8,18 +8,8 @@ import "ace-builds/src-noconflict/mode-text"
 
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
-import {
-    settings,
-    STREAMCOMMAND,
-    STREAMSTATE,
-    useConfig,
-    useFrames,
-    useGCode,
-    usePrefs,
-    usePreview
-} from "@glowbuzzer/store"
-import styled from "styled-components"
-import { css } from "styled-components"
+import { settings, STREAMCOMMAND, STREAMSTATE, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import styled, { css } from "styled-components"
 
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
@@ -82,7 +72,12 @@ export const GCodeTile = () => {
     useEffect(() => {
         preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
         // eslint-disable-next-line
-    }, [workOffset, gcode, config /* extra dep because config can cause frames to change */])
+    }, [
+        workOffset,
+        gcode,
+        frames.overrides,
+        config /* extra dep because config can cause frames to change */
+    ])
 
     function send_gcode() {
         save(gcode)
