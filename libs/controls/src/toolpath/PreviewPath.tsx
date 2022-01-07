@@ -42,8 +42,8 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
 
     // calculate lower and upper limits of all points
     const { minPoint, maxPoint } = useMemo(() => {
-        const minPoint = new Vector3(0, 0, 0)
-        const maxPoint = new Vector3(0, 0, 0)
+        const minPoint = new Vector3(1e99, 1e99, 1e99)
+        const maxPoint = new Vector3(-1e99, -1e99, -1e99)
 
         for (const point of preview) {
             minPoint.x = Math.min(minPoint.x, point.from.x, point.to.x)
