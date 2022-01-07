@@ -38,6 +38,15 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
 
     const euler = new Euler().setFromQuaternion(orientation)
 
+    const labels = {
+        x: "X",
+        y: "Y",
+        z: "Z",
+        a: "α",
+        b: "β",
+        c: "Ɣ"
+    }
+
     const pos = {
         x: position.x,
         y: position.y,
@@ -49,8 +58,6 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
 
     const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)
 
-    // console.log("FRAME INDEX", frameIndex)
-
     return (
         <div>
             {props.hideFrameSelect || (
@@ -60,7 +67,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
                 </div>
             )}
             {display.map(k => (
-                <DroItem key={k} label={k} value={pos[k]} type={types[k]} />
+                <DroItem key={k} label={labels[k]} value={pos[k]} type={types[k]} />
             ))}
         </div>
     )

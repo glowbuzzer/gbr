@@ -35,9 +35,9 @@ export const DroItem = ({ label, value, type }: DroItemProps) => {
 
     return (
         <Row gutter={0}>
-            <Col style={styles.label}>{label.toUpperCase()}</Col>
+            <Col style={styles.label}>{label}</Col>
             <Col style={styles.dro}>
-                <SegmentDisplay value={convert(label, value)} toFixed={4} width={12}/>
+                <SegmentDisplay value={convert(label, value)} toFixed={4} width={12} />
                 {prefs.current[units]}
             </Col>
         </Row>
