@@ -46,7 +46,7 @@ declare module "styled-components" {
 }
 
 const GlowbuzzerAppStyle = styled.div<{ minWidth: string }>`
-    min-width: ${props => props.minWidth};
+    // min-width: ${props => props.minWidth};
 `
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
