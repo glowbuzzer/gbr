@@ -7,6 +7,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
 import { Quaternion, Vector3 } from "three"
+import { useJointPositions } from "../joints"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -130,10 +131,14 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
     const frames = useFrames()
     const dispatch = useDispatch()
     const connection = useConnection()
+    const rawJointPositions = useJointPositions()
 
     // TODO: seeing 'world' passed here which cannot be found in configs
     const configs = Object.values(config.kinematicsConfiguration)
-    const fromIndex = (configs[kc] || configs[0]).frameIndex
+
+    const { frameIndex: fromIndex, participatingJoints } = configs[kc] || configs[0]
+
+    const jointPositions = participatingJoints.map(j => rawJointPositions[j])
 
     return {
         ...state,
@@ -148,6 +153,8 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
             "world",
             frameIndex
         ),
+        /** The positions of all joints in the kinematics configuration */
+        jointPositions,
         /**
          * Set the feed rate override
          * @param value Percentage from 0-100. If set to zero the machine will pause all motion

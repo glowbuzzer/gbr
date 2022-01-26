@@ -451,6 +451,38 @@
                 }
             }
         },
+        "staubli": {
+            "root": "examples/staubli",
+            "sourceRoot": "examples/staubli/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
+                    "options": {
+                        "outputPath": "dist/examples/staubli",
+                        "index": "examples/staubli/src/index.html",
+                        "main": "examples/staubli/src/main.tsx",
+                        "tsConfig": "examples/staubli/tsconfig.json",
+                        "assets": [
+                            "examples/staubli/src/assets"
+                        ],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "staubli:build",
+                        "hmr": true
+                    }
+                }
+            }
+        },
         "store": {
             "root": "libs/store",
             "sourceRoot": "libs/store/src",

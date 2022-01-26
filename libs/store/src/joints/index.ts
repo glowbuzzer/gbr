@@ -4,6 +4,7 @@ import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { JointConfig } from "../gbc"
+import deepEqual from "fast-deep-equal"
 
 type JointsState = {
     statusWord: number
@@ -84,4 +85,12 @@ export function useJoint(index: number): {
             )
         }
     }
+}
+
+/**
+ * Returns the actual position of all configured joints.
+ */
+export function useJointPositions(): number[] {
+    const joints = useSelector(({ joints }: RootState) => joints, deepEqual)
+    return joints.map(j => j.actPos)
 }

@@ -25,6 +25,9 @@ import {
     TriggerOnConfig
 } from "../gbc"
 import { RootState } from "../root"
+import { settings } from "../util/settings"
+
+const { load, save } = settings("store.config") // we will load/save config as it comes from gbc
 
 const DEFAULT_JOINT_CONFIG = {
     pmin: -100,
@@ -55,26 +58,26 @@ const DEFAULT_JOINT_CONFIG = {
  * ```
  */
 export type ConfigType = {
-    machine: {[index:string]: MachineConfig}
-    kinematicsConfiguration: {[index:string]: KinematicsConfigurationConfig}
-    moveParameters: {[index:string]: MoveParametersConfig}
-    joint: {[index:string]: JointConfig}
-    jog?: {[index:string]: JogConfig}
-    frames: {[index:string]: FramesConfig}
-    task?: {[index:string]: TaskConfig}
-    activity?: {[index:string]: ActivityConfig}
-    dout?: {[index:string]: DoutConfig}
-    aout?: {[index:string]: AoutConfig}
-    iout?: {[index:string]: IoutConfig}
-    din?: {[index:string]: DinConfig}
-    ain?: {[index:string]: AinConfig}
-    iin?: {[index:string]: IinConfig}
-    fieldbus?: {[index:string]: FieldbusConfig}
-    lines?: {[index:string]: LinesConfig}
-    arcs?: {[index:string]: ArcsConfig}
-    cartesianPositions?: {[index:string]: CartesianPositionsConfig}
-    tool?: {[index:string]: ToolConfig}
-    triggerOn?: {[index:string]: TriggerOnConfig}
+    machine: { [index: string]: MachineConfig }
+    kinematicsConfiguration: { [index: string]: KinematicsConfigurationConfig }
+    moveParameters: { [index: string]: MoveParametersConfig }
+    joint: { [index: string]: JointConfig }
+    jog?: { [index: string]: JogConfig }
+    frames: { [index: string]: FramesConfig }
+    task?: { [index: string]: TaskConfig }
+    activity?: { [index: string]: ActivityConfig }
+    dout?: { [index: string]: DoutConfig }
+    aout?: { [index: string]: AoutConfig }
+    iout?: { [index: string]: IoutConfig }
+    din?: { [index: string]: DinConfig }
+    ain?: { [index: string]: AinConfig }
+    iin?: { [index: string]: IinConfig }
+    fieldbus?: { [index: string]: FieldbusConfig }
+    lines?: { [index: string]: LinesConfig }
+    arcs?: { [index: string]: ArcsConfig }
+    cartesianPositions?: { [index: string]: CartesianPositionsConfig }
+    tool?: { [index: string]: ToolConfig }
+    triggerOn?: { [index: string]: TriggerOnConfig }
 }
 
 // TODO: figure out what to do when there is no config yet (before connect)
@@ -180,13 +183,14 @@ export const configSlice: Slice<{
         state: ConfigState.AWAITING_CONFIG as ConfigState,
         version: 1,
         // basic default value to avoid errors from components on startup
-        value: DEFAULT_CONFIG
+        value: load(DEFAULT_CONFIG)
     },
     reducers: {
         setConfig(state, action) {
             state.version++
             state.state = ConfigState.AWAITING_HLC_INIT // GlowbuzzerApp will handle this state
             state.value = action.payload
+            save(action.payload)
         },
         setConfigState(state, action) {
             state.state = action.payload
