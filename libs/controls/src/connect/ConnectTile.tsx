@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Button, Radio, Tag } from "antd"
+import { Button, Radio, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -101,6 +101,7 @@ export const ConnectTile = () => {
     const connected = connection.connected && connection.statusReceived
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
+    const target_not_acquired = machine.actualTarget !== machine.requestedTarget
 
     function determine_traffic_light_color() {
         if (!connected) {
@@ -152,6 +153,12 @@ export const ConnectTile = () => {
                                 className="danger"
                                 value={MACHINETARGET.MACHINETARGET_FIELDBUS}
                             >
+                                {target_not_acquired &&
+                                machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
+                                    <span>
+                                        <Spin size="small" />{" "}
+                                    </span>
+                                ) : null}
                                 Live
                             </Radio.Button>
                         </Radio.Group>
@@ -161,7 +168,7 @@ export const ConnectTile = () => {
                     <div className="label">Machine operation</div>
                     <div className="controls">
                         <Radio.Group
-                            disabled={!connected || fault || fault_active}
+                            disabled={!connected || fault || fault_active || target_not_acquired}
                             size={"small"}
                             value={
                                 state === MachineState.OPERATION_ENABLED
@@ -183,38 +190,42 @@ export const ConnectTile = () => {
                         <Tag>{connected ? MachineState[machine.currentState] : "DISCONNECTED"}</Tag>
                     </div>
                 </div>
-                {connected && fault && <div className="row">
-                    <div className="label" />
-                    <div className="controls">
-                        <Button onClick={issue_reset}>Reset Fault</Button>
+                {connected && fault && (
+                    <div className="row">
+                        <div className="label" />
+                        <div className="controls">
+                            <Button onClick={issue_reset}>Reset Fault</Button>
+                        </div>
                     </div>
-                </div>}
-                {fault_active && <div className="row">
-                    <div className="label">Fault cause</div>
-                    <div className="controls">
-                        {Object.values(FaultCode)
-                            .filter(k => typeof k === "number")
-                            .filter((k: number) => machine.activeFault & k)
-                            .map(k => (
-                                <Tag key={k} color="red">
-                                    {FaultCode[k].substr("FAULT_CAUSE_".length)}
-                                </Tag>
-                            ))}
+                )}
+                {fault_active && (
+                    <div className="row">
+                        <div className="label">Fault cause</div>
+                        <div className="controls">
+                            {Object.values(FaultCode)
+                                .filter(k => typeof k === "number")
+                                .filter((k: number) => machine.activeFault & k)
+                                .map(k => (
+                                    <Tag key={k} color="red">
+                                        {FaultCode[k].substr("FAULT_CAUSE_".length)}
+                                    </Tag>
+                                ))}
+                        </div>
                     </div>
-                </div>}
-                {connected && fault && machine.faultHistory > 0 && <div className="row padded">
-                    <div className="label">Fault history</div>
-                    <div className="controls">
-                        {Object.values(FaultCode)
-                            .filter(k => typeof k === "number")
-                            .filter((k: number) => machine.faultHistory & k)
-                            .map(k => (
-                                <Tag key={k}>
-                                    {FaultCode[k].substr("FAULT_CAUSE_".length)}
-                                </Tag>
-                            ))}
+                )}
+                {connected && fault && machine.faultHistory > 0 && (
+                    <div className="row padded">
+                        <div className="label">Fault history</div>
+                        <div className="controls">
+                            {Object.values(FaultCode)
+                                .filter(k => typeof k === "number")
+                                .filter((k: number) => machine.faultHistory & k)
+                                .map(k => (
+                                    <Tag key={k}>{FaultCode[k].substr("FAULT_CAUSE_".length)}</Tag>
+                                ))}
+                        </div>
                     </div>
-                </div>}
+                )}
 
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}

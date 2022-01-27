@@ -37,6 +37,7 @@ type MachineStatus = {
     faultHistory: number
     requestedTarget: MACHINETARGET
     actualTarget: MACHINETARGET
+    targetConnectRetryCnt: number
     heartbeat?: number
     heartbeatReceived: boolean
 }
@@ -62,12 +63,20 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
     reducers: {
         status: (state, action) => {
             // called with status.machine from the json every time board sends status message
-            const { statusWord, controlWord, activeFault, faultHistory, target } = action.payload
+            const {
+                statusWord,
+                controlWord,
+                activeFault,
+                faultHistory,
+                target,
+                targetConnectRetryCnt
+            } = action.payload
             state.statusWord = statusWord
             state.controlWord = controlWord
             state.activeFault = activeFault
             state.faultHistory = faultHistory
             state.actualTarget = target
+            state.targetConnectRetryCnt = targetConnectRetryCnt
 
             // check if the heartbeat has changed
             state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
@@ -85,6 +94,10 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
             if (state.nextControlWord === undefined) {
                 state.desiredState = DesiredState.NONE
             }
+        },
+        setRequestedTarget: (state, action) => {
+            state.actualTarget = MACHINETARGET.MACHINETARGET_NONE // set to none until we get update
+            state.requestedTarget = action.payload
         },
         setDesiredState: (state, action) => {
             // console.log("SET DESIRED STATE", action.payload)
@@ -114,6 +127,8 @@ export function useMachine(): {
     requestedTarget: MACHINETARGET
     /** The current backend target. Can be different to the requested target if the machine is in the process of switching targets */
     actualTarget: MACHINETARGET
+    /** The number of times connection to the requested target has been attempted */
+    targetConnectRetryCnt: number
     /** Incrementing integer heartbeat */
     heartbeat?: number
     /** Indicates if the heartbeat is being received in a timely manner */
@@ -141,6 +156,7 @@ export function useMachine(): {
     return {
         ...machine,
         setDesiredMachineTarget(target: MACHINETARGET) {
+            dispatch(machineSlice.actions.setRequestedTarget(target))
             dispatch(() => {
                 connection.send(updateMachineTargetMsg(target))
             })
