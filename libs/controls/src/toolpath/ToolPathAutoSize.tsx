@@ -6,7 +6,7 @@ import { OrbitControls } from "three-stdlib"
 
 extend({ OrbitControls })
 
-export const CameraControls = () => {
+const CameraControls = () => {
     // Get a reference to the js Camera, and the canvas html element.
     // We need these to setup the OrbitControls component.
     // https://threejs.org/docs/#examples/en/controls/OrbitControls

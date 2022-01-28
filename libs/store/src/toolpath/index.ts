@@ -11,7 +11,7 @@ export type ToolPathSettingsType = {
     extent: number
 }
 
-type ToolPathElement = {
+export type ToolPathElement = {
     x: number
     y: number
     z: number

@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom"
-import React, { StrictMode, useRef, useState } from "react"
+import React, { StrictMode, useState } from "react"
 import {
     CartesianDro,
     ConnectTile,
@@ -7,18 +7,15 @@ import {
     JogTile,
     JointDroTile,
     PreferencesDialog,
+    RobotModel,
     ToolPathTile
 } from "@glowbuzzer/controls"
-
-import { Button } from "antd"
+import { Button, Space, Switch } from "antd"
+import styled from "styled-components"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import styled from "styled-components"
-import { Canvas, useFrame, useThree } from "react-three-fiber"
-import { useHelper } from "@react-three/drei"
-import { PointLightHelper } from "three"
-import { CameraControls } from "../../../libs/controls/src/toolpath/ToolPathAutoSize"
+import { Vector3 } from "three"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -55,59 +52,34 @@ const PrefsButton = () => {
     )
 }
 
-function Scene() {
-    const { scene } = useThree()
-    const group = useRef()
-    const mesh = useRef()
-    const spotLight = useRef()
-    const pointLight = useRef()
+const DEG90 = Math.PI / 2
 
-    useFrame(({ clock }) => {
-        const x = mesh.current as any
-        x.rotation.x = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        x.rotation.y = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        x.rotation.z = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        x.position.x = Math.sin(clock.elapsedTime)
-        x.position.z = Math.sin(clock.elapsedTime)
-        // ;(group.current as any).rotation.y += 0.02
-    })
-
-    // useEffect(() => void ((spotLight.current as any).target = mesh.current), [scene])
-    // useHelper(mesh, BoxHelper, "#272740")
-    // useHelper(mesh, VertexNormalsHelper, 1, "#272740")
-    // useHelper(spotLight, SpotLightHelper, "teal")
-    useHelper(pointLight, PointLightHelper, 1, "hotpink")
-
-    return (
-        <>
-            {/*<pointLight position={[-10, 0, -20]} color="lightblue" intensity={2.5} />*/}
-            <group ref={group}>
-                <pointLight ref={pointLight} color="red" position={[4, 4, 0]} intensity={5} />
-            </group>
-            {/*<spotLight castShadow position={[2, 5, 2]} ref={spotLight} angle={0.5} distance={20} />*/}
-            <mesh ref={mesh} position={[0, 2, 0]} castShadow>
-                <boxGeometry attach="geometry" />
-                <meshStandardMaterial attach="material" color="lightblue" />
-            </mesh>
-            <gridHelper args={[30, 30, 30]} />
-        </>
-    )
-}
-
-const TestScene = () => {
-    return (
-        <Canvas colorManagement shadowMap camera={{ position: [-5, 5, 5] }}>
-            <CameraControls />
-            <fog attach="fog" args={["floralwhite", 0, 20]} />
-            <Scene />
-        </Canvas>
-    )
+const TX40_MODEL: RobotModel = {
+    name: "tx40",
+    config: [
+        { alpha: -DEG90, limits: [-270, 270] },
+        { alpha: 0, link_length: 0.225, teta: -DEG90, limits: [-270, 270] },
+        { alpha: DEG90, offset: 0.035, teta: DEG90, limits: [-270, 270] },
+        { alpha: -DEG90, offset: 0.225, limits: [-270, 270] },
+        { alpha: DEG90, limits: [-270, 270] },
+        { offset: 0.065, limits: [-270, 270] }
+    ],
+    offset: new Vector3(0, 0, 325),
+    scale: 1000
 }
 
 export function App() {
+    const [showRobot, setShowRobot] = useState(true)
+
     return (
-        <GlowbuzzerApp>
-            <PrefsButton />
+        <>
+            <Space>
+                <PrefsButton />
+                <Space>
+                    <Switch defaultChecked={true} onChange={setShowRobot} />
+                    <div>Show robot</div>
+                </Space>
+            </Space>
             <StyledApp>
                 <nav>
                     <ConnectTile />
@@ -116,19 +88,18 @@ export function App() {
                     <CartesianDro kinematicsConfigurationIndex={0} />
                 </nav>
                 <section>
-                    <ToolPathTile />
-                    {/*
-                    <TestScene />
-*/}
+                    <ToolPathTile model={showRobot && TX40_MODEL} />
                 </section>
             </StyledApp>
-        </GlowbuzzerApp>
+        </>
     )
 }
 
 ReactDOM.render(
     <StrictMode>
-        <App />
+        <GlowbuzzerApp>
+            <App />
+        </GlowbuzzerApp>
     </StrictMode>,
     document.getElementById("root")
 )
