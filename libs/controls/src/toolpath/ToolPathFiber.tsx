@@ -6,7 +6,6 @@ import { ToolPathElement } from "@glowbuzzer/store"
 export const ToolPath = ({ path }: { path: ToolPathElement[] }) => {
     const pathPoints = simplify(path, 0.01).flatMap(p => [p.x, p.y, p.z])
 
-    console.log("POINTS", pathPoints)
     return (
         <DynamicLine
             points={pathPoints} // Array of points

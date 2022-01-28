@@ -167,3 +167,10 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
         }
     }
 }
+
+export const useTcp = (kc: number, frame: number | "world") => {
+    const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
+    const frames = useFrames()
+
+    return frames.convertToFrame(state.pose.position, state.pose.orientation, "world", frame)
+}

@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom"
 import React, { StrictMode, useState } from "react"
 import {
-    CartesianDro,
+    CartesianDroTile,
     ConnectTile,
     GlowbuzzerApp,
     JogTile,
@@ -85,7 +85,7 @@ export function App() {
                     <ConnectTile />
                     <JogTile />
                     <JointDroTile />
-                    <CartesianDro kinematicsConfigurationIndex={0} />
+                    <CartesianDroTile />
                 </nav>
                 <section>
                     <ToolPathTile model={showRobot && TX40_MODEL} />
