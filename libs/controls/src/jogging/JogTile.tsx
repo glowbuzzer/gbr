@@ -2,6 +2,8 @@ import React from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
 import {
     JogDirection,
+    JOINT_TYPE,
+    JointConfig,
     POSITIONREFERENCE,
     useJoint,
     useJointConfig,
@@ -17,6 +19,7 @@ import {
     ArrowRightOutlined,
     ArrowUpOutlined
 } from "@ant-design/icons"
+import { MathUtils } from "three"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -62,11 +65,23 @@ const JointSliderDiv = styled.div`
     }
 `
 
-const JointSliderReadonly = ({ jc, index }) => {
+const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) => {
     // this is separate component so that updates to act pos don't re-render the entire tile
     const joint = useJoint(index)
+    const [min, max] =
+        jc.jointType === JOINT_TYPE.JOINT_REVOLUTE
+            ? [MathUtils.degToRad(jc.negLimit), MathUtils.degToRad(jc.posLimit)]
+            : [jc.negLimit, jc.posLimit]
+
     return (
-        <Slider min={jc.pmin} max={jc.pmax} disabled value={joint?.actPos} tooltipVisible={false} />
+        <Slider
+            step={0.001}
+            min={min}
+            max={max}
+            disabled
+            value={joint?.actPos}
+            tooltipVisible={false}
+        />
     )
 }
 

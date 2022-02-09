@@ -24,8 +24,13 @@ type DroItemProps = {
      * Whether the value is scalar or angular. This affects automatic unit conversion according to preferences.
      */
     type: "scalar" | "angular"
+
+    /**
+     * Whether the value is in error (shown in a different colour)
+     */
+    error?: boolean
 }
-export const DroItem = ({ label, value, type }: DroItemProps) => {
+export const DroItem = ({ label, value, type, error }: DroItemProps) => {
     const prefs = usePrefs()
     const units = "units_" + type
 
@@ -37,7 +42,12 @@ export const DroItem = ({ label, value, type }: DroItemProps) => {
         <Row gutter={0}>
             <Col style={styles.label}>{label}</Col>
             <Col style={styles.dro}>
-                <SegmentDisplay value={convert(label, value)} toFixed={4} width={12} />
+                <SegmentDisplay
+                    value={convert(label, value)}
+                    toFixed={4}
+                    width={12}
+                    error={error}
+                />
                 {prefs.current[units]}
             </Col>
         </Row>

@@ -15,13 +15,13 @@ import {
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
 
-const DisplayValue = ({ value }: { value: number }) => {
-    if (isNaN(value)) {
-        return <>{value.toString()}</>
-    }
-
-    return <>{value.toPrecision(4)}</>
-}
+// const DisplayValue = ({ value }: { value: number }) => {
+//     if (isNaN(value)) {
+//         return <>{value.toString()}</>
+//     }
+//
+//     return <>{value.toPrecision(4)}</>
+// }
 
 const StyledRow = styled(Row)`
     .slider-wrapper {
@@ -91,7 +91,7 @@ const styles: { [key: string]: CSSProperties } = {
     }
 }
 
-const JointDroItem = ({ index }) => {
+const JointDroItem = ({ index, warningThreshold }) => {
     const prefs = usePrefs()
     const j = useJoint(index)
     const config = useJointConfig()[index]
@@ -105,13 +105,16 @@ const JointDroItem = ({ index }) => {
     const min = negLimit * ConversionFactors[units]
     const max = posLimit * ConversionFactors[units]
     const current = actPos * ConversionFactors[units]
-    const progress = (current / (max - min)) * 100
+    const warn_range = (posLimit - negLimit) * warningThreshold
+    const warn =
+        warn_range > 0 && (current < negLimit + warn_range || current > posLimit - warn_range)
+    // const progress = (current / (max - min)) * 100
 
     return (
         <StyledRow key={index}>
             <Col style={styles.label}>{name}</Col>
             <Col style={styles.dro}>
-                <SegmentDisplay value={current} toFixed={4} width={12} />
+                <SegmentDisplay value={current} toFixed={4} width={12} error={warn} />
                 {units}
             </Col>
             <Col flex={"auto"}>
@@ -133,7 +136,13 @@ const JointDroItem = ({ index }) => {
     )
 }
 
-export const JointDro = ({ jointsToDisplay }: { jointsToDisplay?: number[] }) => {
+export const JointDro = ({
+    jointsToDisplay,
+    warningThreshold
+}: {
+    jointsToDisplay?: number[]
+    warningThreshold: number
+}) => {
     // const joint_config = useJointConfig()
     const count = useJointCount()
 
@@ -142,7 +151,7 @@ export const JointDro = ({ jointsToDisplay }: { jointsToDisplay?: number[] }) =>
             {Array.from({ length: count })
                 .filter((_, index) => !jointsToDisplay || jointsToDisplay.includes(index))
                 .map((_, index) => (
-                    <JointDroItem key={index} index={index} />
+                    <JointDroItem key={index} index={index} warningThreshold={warningThreshold} />
                 ))}
         </div>
     )
@@ -150,8 +159,8 @@ export const JointDro = ({ jointsToDisplay }: { jointsToDisplay?: number[] }) =>
 
 export const JointDroTile = () => {
     return (
-        <Tile title="Joint Dro">
-            <JointDro />
+        <Tile title="Joint DRO">
+            <JointDro warningThreshold={0.05} />
         </Tile>
     )
 }

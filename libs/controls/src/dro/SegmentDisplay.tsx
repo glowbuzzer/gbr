@@ -35,9 +35,10 @@ type SegmentDisplayProps = {
     toFixed?: number
     width?: number
     displayAngle?: number
+    error?: boolean
 }
 
-const StyledSegmentDisplay = styled.span`
+const StyledSegmentDisplay = styled.span<{ error }>`
     font-family: DSEG7-Classic;
     font-size: 20px;
     //text-align: center;
@@ -53,10 +54,11 @@ const StyledSegmentDisplay = styled.span`
 
     .foreground {
         z-index: 1000;
+        color: ${props => (props.error ? "red" : "inherit")};
     }
 `
 
-export const SegmentDisplay = ({ value, toFixed, width }: SegmentDisplayProps) => {
+export const SegmentDisplay = ({ value, toFixed, width, error }: SegmentDisplayProps) => {
     let text = toFixed ? value.toFixed(toFixed) : value.toString()
     if (width) {
         const length = width - text.length
@@ -71,7 +73,7 @@ export const SegmentDisplay = ({ value, toFixed, width }: SegmentDisplayProps) =
         .join("")
 
     return (
-        <StyledSegmentDisplay>
+        <StyledSegmentDisplay error={error}>
             <span className="background">{padding}</span>
             <span className="foreground">{text}</span>
         </StyledSegmentDisplay>
