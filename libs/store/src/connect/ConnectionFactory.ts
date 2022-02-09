@@ -223,14 +223,21 @@ if (typeof window !== "undefined") {
                             }
                             if (msg.stream) {
                                 dispatch(gcodeSlice.actions.status(msg.stream))
-                                GCodeStreamer.update(dispatch, getState().gcode, streamItems => {
-                                    console.log("sending gcode")
-                                    ws.send(
-                                        JSON.stringify({
-                                            stream: streamItems
-                                        })
-                                    )
-                                })
+
+                                const store = getState()
+                                GCodeStreamer.update(
+                                    dispatch,
+                                    store.gcode,
+                                    store.machine.currentState,
+                                    streamItems => {
+                                        console.log("sending gcode")
+                                        ws.send(
+                                            JSON.stringify({
+                                                stream: streamItems
+                                            })
+                                        )
+                                    }
+                                )
                             }
                             if (msg.response) {
                                 // responses to request we have sent

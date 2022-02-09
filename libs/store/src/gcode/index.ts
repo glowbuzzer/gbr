@@ -77,6 +77,10 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
             // reduce capacity of control (until new capacity status update)
             state.capacity -= count
         },
+        reset(state) {
+            state.buffer.length = 0
+            state.paused = false
+        },
         status: (state, action) => {
             const {
                 capacity,
