@@ -88,6 +88,7 @@ export function handleMachineState(currentState: MachineState, controlWord: numb
             case MachineState.FAULT_REACTION_ACTIVE:
                 break
             case MachineState.FAULT:
+
                 break
             case MachineState.NOT_READY_TO_SWITCH_ON:
                 break

@@ -119,6 +119,13 @@ export const ConnectTile = () => {
 
     const traffic_light_color = determine_traffic_light_color()
 
+    // console.log("FAULT HISTORY",machine.faultHistory )
+    // if (connected && fault && machine.faultHistory > 0){
+    //     console.log("FAULT HISTORY",machine.faultHistory )
+    // } else {
+    //     console.log("NO FAULT HISTORY")
+    // }
+
     return (
         <Tile
             title="Connection"
