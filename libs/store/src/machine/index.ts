@@ -30,7 +30,7 @@ export enum FaultCode {
     FAULT_CAUSE_PLC_SIGNALLED_AN_ERROR = 1 << 13,
     FAULT_CAUSE_HOMING_ERROR = 1 << 14,
     FAULT_CAUSE_GBC_TO_PLC_CON_ERROR = 1 << 15,
-    FAULT_CAUSE_GBC_ACTION_REQUESTED_WHEN_NOT_OP_EN = 1 << 16
+    FAULT_CAUSE_MOVE_NOT_OP_EN = 1 << 16
 }
 
 // this is the data coming back from board in status.machine
