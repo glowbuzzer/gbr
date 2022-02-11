@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
 import {
     JogDirection,
@@ -19,7 +19,8 @@ import {
     ArrowRightOutlined,
     ArrowUpOutlined
 } from "@ant-design/icons"
-import { MathUtils } from "three"
+import { Euler, MathUtils, Quaternion } from "three"
+import { Waypoints } from "./Waypoints"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -87,6 +88,7 @@ const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) 
 
 // TODO: H: remove use of gcode and use solo activity capability instead
 export const JogTile = () => {
+    const [gotoMode, setGotoMode] = useState(0)
     const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogStep, setJogStep] = useLocalStorage("jog.step", 45)
     const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>(
@@ -102,6 +104,10 @@ export const JogTile = () => {
     const [y, setY] = useLocalStorage("jog.y", 0)
     const [z, setZ] = useLocalStorage("jog.z", 0)
 
+    const [a, setA] = useLocalStorage("jog.a", 0)
+    const [b, setB] = useLocalStorage("jog.b", 0)
+    const [c, setC] = useLocalStorage("jog.c", 0)
+
     // const jogger = useJog(0)
     const joint_config = useJointConfig()
     const motion = useSoloActivity(0)
@@ -112,6 +118,10 @@ export const JogTile = () => {
         vmaxPercentage: jogSpeed,
         amaxPercentage: jogSpeed,
         jmaxPercentage: jogSpeed
+    }
+
+    function update_goto_mode(e) {
+        setGotoMode(e.target.value)
     }
 
     function updateJogStepMode(e) {
@@ -191,12 +201,15 @@ export const JogTile = () => {
     }
 
     function goto() {
-        return motion.moveToPosition({ x, y, z }, POSITIONREFERENCE.ABSOLUTE, move_params).promise()
+        return motion
+            .moveToPosition({ x, y, z }, undefined, POSITIONREFERENCE.ABSOLUTE, move_params)
+            .promise()
     }
 
     function gotoX() {
         motion.moveToPosition(
             { x, y: kc.pose.position.y, z: kc.pose.position.z },
+            undefined,
             POSITIONREFERENCE.ABSOLUTE,
             move_params
         )
@@ -205,6 +218,7 @@ export const JogTile = () => {
     function gotoY() {
         motion.moveToPosition(
             { x: kc.pose.position.x, y, z: kc.pose.position.z },
+            undefined,
             POSITIONREFERENCE.ABSOLUTE,
             move_params
         )
@@ -213,10 +227,38 @@ export const JogTile = () => {
     function gotoZ() {
         motion.moveToPosition(
             { x: kc.pose.position.x, y: kc.pose.position.y, z },
+            undefined,
             POSITIONREFERENCE.ABSOLUTE,
             move_params
         )
     }
+
+    function goto_waypoint(w) {
+        return motion
+            .moveJoints(w.map(MathUtils.degToRad), POSITIONREFERENCE.ABSOLUTE, move_params)
+            .promise()
+    }
+
+    function gotoA() {
+        const euler = new Euler().setFromQuaternion(kc.pose.orientation)
+        euler.x = MathUtils.degToRad(a)
+        const { x, y, z, w } = new Quaternion().setFromEuler(euler)
+
+        console.log("FROM", kc.pose.orientation, "TO", x, y, z, w)
+
+        return motion
+            .moveToPosition(
+                { x: null, y: null, z: null },
+                { x, y, z, w },
+                POSITIONREFERENCE.ABSOLUTE,
+                move_params
+            )
+            .promise()
+    }
+
+    function gotoB() {}
+
+    function gotoC() {}
 
     function JogButton({ index, direction, children }) {
         return (
@@ -256,40 +298,120 @@ export const JogTile = () => {
             <TileInner>
                 {jogMoveMode === JogMoveMode.GOTO ? (
                     <div>
-                        <Form layout="inline" labelCol={{ span: 8 }} wrapperCol={{ span: 16 }}>
-                            <Space align="baseline">
-                                <Input
-                                    type="number"
-                                    value={x}
-                                    onChange={e => setX(Number(e.target.value) || 0)}
-                                />
-                                <Button onClick={gotoX}>Go to X</Button>
-                                <Button onClick={() => setX(0)}>Reset</Button>
-                            </Space>
-                            <Space align="baseline">
-                                <Input
-                                    type="number"
-                                    value={y}
-                                    onChange={e => setY(Number(e.target.value) || 0)}
-                                />
-                                <Button onClick={gotoY}>Go to Y</Button>
-                                <Button onClick={() => setY(0)}>Reset</Button>
-                            </Space>
-                            <Space align="baseline">
-                                <Input
-                                    type="number"
-                                    value={z}
-                                    onChange={e => setZ(Number(e.target.value) || 0)}
-                                />
-                                <Button onClick={gotoZ}>Go to Z</Button>
-                                <Button onClick={() => setZ(0)}>Reset</Button>
-                            </Space>
-                        </Form>
-                        <p>
-                            <Button block={true} onClick={goto}>
-                                Go to XYZ
-                            </Button>
-                        </p>
+                        <Radio.Group onChange={update_goto_mode} value={gotoMode}>
+                            <Radio value={0}>Position</Radio>
+                            <Radio value={1}>Orientation</Radio>
+                            <Radio value={2}>Waypoint</Radio>
+                        </Radio.Group>
+                        {
+                            {
+                                0: (
+                                    <div>
+                                        <Form
+                                            layout="inline"
+                                            labelCol={{ span: 8 }}
+                                            wrapperCol={{ span: 16 }}
+                                        >
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={x}
+                                                    onChange={e =>
+                                                        setX(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoX}>Go to X</Button>
+                                                <Button onClick={() => setX(0)}>Reset</Button>
+                                            </Space>
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={y}
+                                                    onChange={e =>
+                                                        setY(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoY}>Go to Y</Button>
+                                                <Button onClick={() => setY(0)}>Reset</Button>
+                                            </Space>
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={z}
+                                                    onChange={e =>
+                                                        setZ(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoZ}>Go to Z</Button>
+                                                <Button onClick={() => setZ(0)}>Reset</Button>
+                                            </Space>
+                                        </Form>
+                                        <p>
+                                            <Button block={true} onClick={goto}>
+                                                Go to XYZ
+                                            </Button>
+                                        </p>
+                                    </div>
+                                ),
+                                1: (
+                                    <div>
+                                        <Form
+                                            layout="inline"
+                                            labelCol={{ span: 8 }}
+                                            wrapperCol={{ span: 16 }}
+                                        >
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={a}
+                                                    onChange={e =>
+                                                        setA(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoA}>Go to α</Button>
+                                                <Button onClick={() => setX(0)}>Reset</Button>
+                                            </Space>
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={b}
+                                                    onChange={e =>
+                                                        setB(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoB}>Go to β</Button>
+                                                <Button onClick={() => setY(0)}>Reset</Button>
+                                            </Space>
+                                            <Space align="baseline">
+                                                <Input
+                                                    type="number"
+                                                    value={c}
+                                                    onChange={e =>
+                                                        setC(Number(e.target.value) || 0)
+                                                    }
+                                                />
+                                                <Button onClick={gotoC}>Go to Ɣ</Button>
+                                                <Button onClick={() => setZ(0)}>Reset</Button>
+                                            </Space>
+                                        </Form>
+                                        <p>
+                                            <Button block={true} onClick={goto}>
+                                                Go to αβƔ
+                                            </Button>
+                                        </p>
+                                    </div>
+                                ),
+                                2: (
+                                    <Waypoints
+                                        kinematicsConfigurationIndex={0}
+                                        onSelect={goto_waypoint}
+                                    />
+                                )
+                            }[gotoMode]
+                        }
+                        <Form.Item label="Jog Speed %">
+                            <Input type="number" value={jogSpeed} onChange={updateJogSpeed} />
+                        </Form.Item>
                     </div>
                 ) : (
                     <div>

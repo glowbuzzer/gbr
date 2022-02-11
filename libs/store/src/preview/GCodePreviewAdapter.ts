@@ -34,7 +34,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     private frame_conversion(cartesianPosition: CartesianPosition) {
-        const { x, y, z } = cartesianPosition.position
+        const { x, y, z } = cartesianPosition.translation
         const pos = new Vector3(x, y, z)
         const rot = new Quaternion(0, 0, 0, 1)
         return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world").position

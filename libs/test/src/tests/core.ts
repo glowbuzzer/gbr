@@ -4,7 +4,9 @@ import { DesiredState } from "../../../store/src"
 
 const test = uvu.suite("core")
 
-test.before.each(() => gbc.reset())
+test.before.each(() => {
+    gbc.reset()
+})
 
 test("can transition to OPERATION_ENABLED", () => {
     gbc.enable_operation()

@@ -55,7 +55,7 @@ export function usePreview() {
     const kc = useKinematics(0, frames.active)
     const currentPosition: CartesianPosition = {
         positionReference: POSITIONREFERENCE.ABSOLUTE,
-        position: kc.pose.position,
+        translation: kc.pose.position,
         frameIndex: frames.active
     }
 

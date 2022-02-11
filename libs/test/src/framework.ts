@@ -13,7 +13,7 @@ import {
     updateMachineTargetMsg
 } from "../../store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, jointsSlice } from "../../store/src"
+import { activitySlice, gcodeSlice, jointsSlice } from "../../store/src"
 import { updateFroPercentageMsg } from "../../store/src/kinematics"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../store/src/gcode/GCodeSenderAdapter"
@@ -29,13 +29,19 @@ function near(v1, v2) {
 
 const rootReducer = combineReducers({
     activity: activitySlice.reducer,
-    joint: jointsSlice.reducer
+    joint: jointsSlice.reducer,
+    gcode: gcodeSlice.reducer
 })
 
 type State = ReturnType<typeof rootReducer>
 
 export class GbcTest {
-    private capture_state: number[][] | undefined
+    private capture_state:
+        | {
+              joints: number[]
+              activity: { tag: number; streamState: number; activityState: number }
+          }[]
+        | undefined
     private check_limits = true
     private readonly gbc: any
     private store: EnhancedStore<State>
@@ -63,9 +69,14 @@ export class GbcTest {
         return this
     }
 
+    enable_limit_check() {
+        this.check_limits = true
+        return this
+    }
+
     plot(filename) {
         if (this.capture_state) {
-            make_plot(filename, this.capture_state, ["J1", "J2", "J3"])
+            make_plot(filename, this.capture_state)
         }
         return this
     }
@@ -81,11 +92,16 @@ export class GbcTest {
         this.capture_state = undefined
         this.check_limits = true
 
-        this.gbc.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
-        this.gbc.send(updateFroPercentageMsg(0, 100))
+        this.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
+        this.send(updateFroPercentageMsg(0, 100))
         this.exec_double_cycle()
 
         return this
+    }
+
+    send(msg) {
+        // console.log("SENDING", msg)
+        this.gbc.send(msg)
     }
 
     verify() {
@@ -104,13 +120,18 @@ export class GbcTest {
 
     set_fro(kc: number, fro: number) {
         // set fro on KC 0
-        this.gbc.send(updateFroPercentageMsg(kc, fro))
+        this.send(updateFroPercentageMsg(kc, fro))
         this.exec_double_cycle()
+    }
+
+    set_joint_pos(joint: number, value: number) {
+        this.gbc.set_fb_joint_pos(joint, value)
+        return this
     }
 
     stream(stream) {
         // console.log("message", JSON.stringify(stream, null, 2))
-        this.gbc.send(JSON.stringify({ stream }))
+        this.send(JSON.stringify({ stream }))
         return this
     }
 
@@ -214,15 +235,27 @@ export class GbcTest {
             for (let n = 0; n < count; n++) {
                 this.gbc.run(1, single_cycle, this.check_limits)
                 // get the joint status
-                this.status_msg.status.joint &&
-                    this.store.dispatch(jointsSlice.actions.status(this.status_msg.status.joint))
+                const status = this.status_msg.status
+                status.joint && this.store.dispatch(jointsSlice.actions.status(status.joint))
+                status.activity &&
+                    this.store.dispatch(activitySlice.actions.status(status.activity))
+                this.status_msg.stream &&
+                    this.store.dispatch(gcodeSlice.actions.status(this.status_msg.stream))
+
                 const joints_act_pos = this.store.getState().joint.map(j => j.actPos)
-                this.capture_state.push(joints_act_pos)
+                const tag = this.store.getState().gcode.tag
+                const streamState = this.store.getState().gcode.state
+                const activityState = this.gbc.get_streamed_activity_state()
+                this.capture_state.push({
+                    joints: joints_act_pos,
+                    activity: { tag, streamState, activityState }
+                })
             }
         } else {
             this.gbc.run(count, single_cycle, this.check_limits)
         }
-        const { activity } = this.status_msg.status
+        const status = this.status_msg.status
+        const { activity } = status
         activity && this.store.dispatch(activitySlice.actions.status(activity))
         const { tag, state } = this.store.getState().activity[0]
         this.activity_api.update(tag, state)
@@ -312,12 +345,13 @@ export class GbcTest {
     }
 
     transition_to(desired: DesiredState) {
+        this.exec_double_cycle()
         for (let n = 0; n < 5; n++) {
             const { statusWord, controlWord } = this.status_msg.status.machine
             const currentState = determine_machine_state(statusWord)
             const nextControlWord = handleMachineState(currentState, controlWord, desired)
             if (nextControlWord >= 0) {
-                this.gbc.send(updateMachineControlWordMsg(nextControlWord))
+                this.send(updateMachineControlWordMsg(nextControlWord))
                 this.exec_double_cycle()
             }
         }

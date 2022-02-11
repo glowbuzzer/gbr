@@ -33,7 +33,7 @@ export const JointSpinnersTile = () => {
         <Tile title="Joints">
             <StyledDiv>
                 {Array.from({ length: count }).map((_, index) => (
-                    <JointSpinnerItem index={index} />
+                    <JointSpinnerItem key={index} index={index} />
                 ))}
             </StyledDiv>
         </Tile>

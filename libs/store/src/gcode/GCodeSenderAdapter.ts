@@ -46,7 +46,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     constructor(buffer, vmax: number, simplifyTolerance = 0) {
         super({
-            position: { x: null, y: null, z: null },
+            translation: { x: null, y: null, z: null },
             positionReference: POSITIONREFERENCE.ABSOLUTE,
             frameIndex: 0
         })
@@ -60,11 +60,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         const J = params.J || 0
         const R = params.R || 0
 
-        const { x, y, z } = this.position.position
+        const { x, y, z } = this.position.translation
 
         const destination = {
             frameIndex,
-            position: { x, y, z },
+            translation: { x, y, z },
             positionReference
         }
 
@@ -87,7 +87,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                 arcType: ARCTYPE.ARCTYPE_CENTRE,
                 arcDirection,
                 centre: {
-                    position: { x: I, y: J },
+                    translation: { x: I, y: J },
                     positionReference: POSITIONREFERENCE.RELATIVE // we don't support G91.1 right now
                 }
             }
@@ -182,11 +182,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                 const adapter =
                     absRel === POSITIONREFERENCE.ABSOLUTE
                         ? make_abs_adapter()
-                        : make_rel_adapter(target.position)
+                        : make_rel_adapter(target.translation)
 
                 // here we map activities to simple target points
                 const tolerance = sub[0].simplifyTolerance
-                const points = sub.map(p => cartesian_position(p).position).map(adapter.in)
+                const points = sub.map(p => cartesian_position(p).translation).map(adapter.in)
                 const simplify_result = simplify(points, tolerance, false)
 
                 // we want to discard first point of sequence and leave activity unaltered (could be arc, etc)
@@ -203,8 +203,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                                 ...template.moveLine,
                                 line: {
                                     ...template.moveLine.line,
-                                    position: {
-                                        ...template.moveLine.line.position,
+                                    translation: {
+                                        ...template.moveLine.line.translation,
                                         ...p
                                     }
                                 }

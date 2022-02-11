@@ -3,7 +3,9 @@ import { gbc } from "../../gbc"
 
 const test = uvu.suite("io")
 
-test.before.each(() => gbc.reset())
+test.before.each(() => {
+    gbc.reset()
+})
 
 test("can get digital input from fieldbus", async () => {
     const index = 2

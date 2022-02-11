@@ -11,6 +11,7 @@ const head = `<!DOCTYPE html>
 </head>
 <body onload="run()">
 
+<div id="tag"></div>
 <div id="pos"></div>
 <div id="vel"></div>
 <div id="acc"></div>
@@ -69,6 +70,7 @@ function chart (id, csv) {
 }
 
 function run () {
+  chart('tag', tag_csv)
   chart('pos', pos_csv)
   chart('vel', vel_csv)
   chart('acc', acc_csv)
@@ -80,8 +82,17 @@ const tail = `
 </body>
 </html>`
 
-export function make_plot(filename: string, pos: number[][], labels: string[]) {
-    const first_row = labels.join(",")
+export function make_plot(
+    filename: string,
+    data: {
+        joints: number[]
+        activity: { tag: number; streamState: number; activityState: number }
+    }[]
+) {
+    // assume first row of data gives the joint count
+    const first_row = data[0].joints.map((_, i) => "J" + i).join(",")
+
+    const pos = data.map(d => d.joints)
 
     const vel = pos.map((joints, index) =>
         joints.map((j, joint_index) => 250 * (j - pos[index - 1]?.[joint_index] || 0))
@@ -93,6 +104,9 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
         joints.map((j, joint_index) => 250 * (j - acc[index - 1]?.[joint_index] || 0))
     )
 
+    const tag_csv = data
+        .map(r => `${r.activity.tag},${r.activity.streamState},${r.activity.activityState}`)
+        .join("\n")
     const pos_csv = pos.map(r => r.join(",")).join("\n")
     const vel_csv = vel.map(r => r.join(",")).join("\n")
     const acc_csv = acc.map(r => r.join(",")).join("\n")
@@ -101,6 +115,7 @@ export function make_plot(filename: string, pos: number[][], labels: string[]) {
     mkdirSync("plot", { recursive: true })
     const html = `
     ${head}
+    const tag_csv=\`ACTIVITY TAG,STREAM STATE,ACTIVITY_STATE\n${tag_csv}\`
     const pos_csv=\`${first_row}\n${pos_csv}\`
     const vel_csv=\`${first_row}\n${vel_csv}\`
     const acc_csv=\`${first_row}\n${acc_csv}\`

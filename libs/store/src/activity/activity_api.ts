@@ -10,11 +10,13 @@ import {
     MoveLineStream,
     MoveParametersConfig,
     POSITIONREFERENCE,
+    Quat,
     SetAoutCommand,
     SetDoutCommand,
     SetIoutCommand,
     Vector3
 } from "../gbc"
+import { Euler, Quaternion } from "three"
 
 const all_types = [
     "",
@@ -25,11 +27,8 @@ const all_types = [
     "moveArc",
     "moveSpline",
     "moveToPosition",
-    "moveLineWithForce",
-    "moveToPositionWithForce",
     "gearInPos",
     "gearInVelo",
-    "gearInDyn",
     "setDout",
     "setAout",
     "dwell",
@@ -174,11 +173,13 @@ export interface SoloActivityApi {
      * Note that joints are run such that they all start and finish motion at the same time, but the path is not guaranteed to be linear.
      *
      * @param pos Target position
+     * @param orientation Target orientation
      * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
      * @param moveParams Move parameters, if required
      */
     moveToPosition(
-        pos: Vector3,
+        pos?: Vector3,
+        orientation?: Quat,
         positionReference?: POSITIONREFERENCE,
         moveParams?: MoveParametersConfig
     ): SoloActivityApiResult
@@ -318,13 +319,13 @@ export class ActivityApiImpl implements SoloActivityApi {
             {
                 arc: {
                     destination: {
-                        position: target,
+                        translation: target,
                         positionReference
                     },
                     arcDirection,
                     arcType: ARCTYPE.ARCTYPE_CENTRE,
                     centre: {
-                        position: centre,
+                        translation: centre,
                         positionReference
                     }
                 }
@@ -345,7 +346,7 @@ export class ActivityApiImpl implements SoloActivityApi {
             {
                 arc: {
                     destination: {
-                        position: target,
+                        translation: target,
                         positionReference
                     },
                     arcDirection,
@@ -392,7 +393,26 @@ export class ActivityApiImpl implements SoloActivityApi {
             {
                 line: {
                     positionReference,
-                    position: pos
+                    translation: pos
+                }
+            } as MoveLineStream,
+            moveParams
+        )
+    }
+
+    moveLineEuler(
+        pos: Vector3,
+        quat: Quat,
+        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
+        moveParams: MoveParametersConfig = {}
+    ) {
+        return this.buildMotion(
+            ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
+            {
+                line: {
+                    positionReference,
+                    translation: pos,
+                    rotation: quat
                 }
             } as MoveLineStream,
             moveParams
@@ -410,14 +430,16 @@ export class ActivityApiImpl implements SoloActivityApi {
     }
 
     moveToPosition(
-        pos: Vector3,
+        pos?: Vector3,
+        orientation?: Quat,
         positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
         moveParams: MoveParametersConfig = {}
     ) {
         const cartesianPosition: CartesianPositionsConfig = {
             // TODO: can we come up with another name for position to avoid duplication in hierarchy
             position: {
-                position: pos,
+                translation: pos,
+                rotation: orientation,
                 positionReference
             }
         }
@@ -427,6 +449,22 @@ export class ActivityApiImpl implements SoloActivityApi {
             {
                 cartesianPosition
             },
+            moveParams
+        )
+    }
+
+    moveToPositionEuler(
+        pos?: Vector3,
+        orientation?: [number, number, number],
+        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
+        moveParams: MoveParametersConfig = {}
+    ) {
+        const [x, y, z] = orientation
+        const q = new Quaternion().setFromEuler(new Euler(x, y, z))
+        return this.moveToPosition(
+            pos,
+            { x: q.x, y: q.y, z: q.z, w: q.w },
+            positionReference,
             moveParams
         )
     }

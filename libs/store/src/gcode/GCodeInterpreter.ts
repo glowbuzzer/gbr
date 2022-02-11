@@ -56,14 +56,14 @@ class GCodeInterpreter {
 
     private updatePositions(params) {
         if (this.cartesianPosition.positionReference === POSITIONREFERENCE.RELATIVE) {
-            this.cartesianPosition.position = { x: 0, y: 0, z: 0 }
+            this.cartesianPosition.translation = { x: 0, y: 0, z: 0 }
         } else {
             // clone position before modification
-            this.cartesianPosition.position = { ...this.cartesianPosition.position }
+            this.cartesianPosition.translation = { ...this.cartesianPosition.translation }
         }
         Object.keys(params).forEach(k => {
             if (gcode_axes.includes(k)) {
-                this.cartesianPosition.position[k.toLowerCase()] = params[k]
+                this.cartesianPosition.translation[k.toLowerCase()] = params[k]
             }
         })
         const prev = { ...this.previousPosition }

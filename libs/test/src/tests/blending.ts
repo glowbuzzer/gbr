@@ -34,8 +34,16 @@ test("can blend move line / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 5, 0), false, moveParams).command
-    const line2 = gbc.activity.moveLine(new Vector3(20, 25, 0), false, moveParams).command
+    const line1 = gbc.activity.moveLine(
+        new Vector3(25, 5, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
+    const line2 = gbc.activity.moveLine(
+        new Vector3(20, 25, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -58,8 +66,16 @@ test("can blend move line / move line at 50pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 50
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 5, 0), false, moveParams).command
-    const line2 = gbc.activity.moveLine(new Vector3(20, 25, 0), false, moveParams).command
+    const line1 = gbc.activity.moveLine(
+        new Vector3(25, 5, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
+    const line2 = gbc.activity.moveLine(
+        new Vector3(20, 25, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -83,7 +99,11 @@ test("can blend move line / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 0, 0), false, moveParams).command
+    const line1 = gbc.activity.moveLine(
+        new Vector3(25, 0, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const line2 = gbc.activity.moveArcWithCentre(
         new Vector3(0, 25, 0),
         new Vector3(0, 0, 0),
@@ -114,7 +134,12 @@ test("can blend move to / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(new Vector3(25, 0, 0), moveParams).command
+    const line1 = gbc.activity.moveToPosition(
+        new Vector3(25, 0, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const line2 = gbc.activity.moveArcWithCentre(
         new Vector3(0, 25, 0),
         new Vector3(0, 0, 0),
@@ -152,7 +177,11 @@ test("can blend move arc / move line at 100pc", () => {
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
-    const line2 = gbc.activity.moveLine(new Vector3(5, 25, 0), false, moveParams).command
+    const line2 = gbc.activity.moveLine(
+        new Vector3(5, 25, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -181,7 +210,12 @@ test("can blend move arc / move to position at 100pc", () => {
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
-    const line2 = gbc.activity.moveToPosition(new Vector3(5, 25, 0), moveParams).command
+    const line2 = gbc.activity.moveToPosition(
+        new Vector3(5, 25, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -245,8 +279,17 @@ test("can blend move to position / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(new Vector3(25, 5, 0), moveParams).command
-    const line2 = gbc.activity.moveLine(new Vector3(20, 25, 0), false, moveParams).command
+    const line1 = gbc.activity.moveToPosition(
+        new Vector3(25, 5, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
+    const line2 = gbc.activity.moveLine(
+        new Vector3(20, 25, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
 
     const end_program = gbc.activity.endProgram().command
 
@@ -270,8 +313,18 @@ test("can blend move to position / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(new Vector3(25, 5, 0), moveParams).command
-    const line2 = gbc.activity.moveToPosition(new Vector3(20, 25, 0), moveParams).command
+    const line1 = gbc.activity.moveToPosition(
+        new Vector3(25, 5, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
+    const line2 = gbc.activity.moveToPosition(
+        new Vector3(20, 25, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
 
     const end_program = gbc.activity.endProgram().command
 
@@ -295,8 +348,17 @@ test("can blend move line / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 5, 0), false, moveParams).command
-    const line2 = gbc.activity.moveToPosition(new Vector3(20, 25, 0), moveParams).command
+    const line1 = gbc.activity.moveLine(
+        new Vector3(25, 5, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
+    const line2 = gbc.activity.moveToPosition(
+        new Vector3(20, 25, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
 
     const end_program = gbc.activity.endProgram().command
 
@@ -326,7 +388,12 @@ test("CANNOT blend move joints / move to position", () => {
         POSITIONREFERENCE.ABSOLUTE,
         moveParams
     ).command
-    const line2 = gbc.activity.moveToPosition(new Vector3(20, 25, 0), moveParams).command
+    const line2 = gbc.activity.moveToPosition(
+        new Vector3(20, 25, 0),
+        undefined,
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
 
     const end_program = gbc.activity.endProgram().command
 
@@ -350,7 +417,11 @@ test("CANNOT blend move line / move joints", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(new Vector3(25, 5, 0), false, moveParams).command
+    const line1 = gbc.activity.moveLine(
+        new Vector3(25, 5, 0),
+        POSITIONREFERENCE.ABSOLUTE,
+        moveParams
+    ).command
     const line2 = gbc.activity.moveJoints(
         [20, 25, 0],
         POSITIONREFERENCE.ABSOLUTE,

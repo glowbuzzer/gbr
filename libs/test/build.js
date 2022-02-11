@@ -2,7 +2,12 @@ let exampleOnResolvePlugin = {
     name: "example",
     setup(build) {
         const path = require("path")
-
+        build.onStart(() => {
+            console.log("Building...")
+        })
+        build.onEnd(() => {
+            console.log("Build complete")
+        })
         build.onResolve({ filter: /gbc-node/ }, args => {
             console.log("RESOLVE", args.path)
             return {
@@ -33,7 +38,7 @@ let exampleOnResolvePlugin = {
 require("esbuild")
     .build({
         define: {
-            "process.env.NODE_ENV": "\"production\""
+            "process.env.NODE_ENV": '"production"'
         },
         // external: ["canvas"],
         watch: true,
@@ -42,8 +47,8 @@ require("esbuild")
         platform: "node",
         entryPoints: ["./index.ts"],
         bundle: true,
-        outfile: "../../../monorepo/libs/gbc-node/build/index.js",
+        outfile: "../../../gbc/libs/gbc-node/build/index.js",
         plugins: [exampleOnResolvePlugin]
     })
-    .then(() => console.log("Build complete"))
+    .then(() => console.log("Watching for changes"))
     .catch(() => process.exit(1))

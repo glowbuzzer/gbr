@@ -44,7 +44,7 @@ export function determine_machine_state(status: number): MachineState {
 
 // noinspection JSUnusedGlobalSymbols
 export const possible_transitions = {
-    FaultSet: () => 0b01000000,
+    FaultSet: () => 0b10000000000000000,
     FaultClear: c => c & 0b10111111,
     FaultReset: () => 0b10000000,
     Shutdown: () => 0b00000110,

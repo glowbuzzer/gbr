@@ -22,7 +22,6 @@ const IntegerOutputItem = ({ index, label }) => {
     return <NumericOutputWidget label={label} {...iout} onChange={setIout} />
 }
 
-
 export const IntegerOutputsTile = ({ labels = [] }) => {
     const aouts = useIntegerOutputList()
 
@@ -30,7 +29,7 @@ export const IntegerOutputsTile = ({ labels = [] }) => {
         <Tile title="Integer Outputs">
             <StyledDiv>
                 {aouts.map((label, index) => (
-                    <IntegerOutputItem index={index} label={labels[index] || label} />
+                    <IntegerOutputItem key={index} index={index} label={labels[index] || label} />
                 ))}
             </StyledDiv>
         </Tile>

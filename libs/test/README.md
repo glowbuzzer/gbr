@@ -1,26 +1,26 @@
 # Unit tests for the GBC API
 
-The tests in this sub-project exercise some of the frontend Typescript code but 
-more importantly large parts of GBC.
+The tests in this sub-project exercise some of the frontend Typescript code but more importantly large parts of GBC.
 
 Running the tests is a bit convoluted...
 
-> **Important** The build/run instructions assume you have `monorepo` and `frontend` 
-> projects along side each other in your directory tree, and that you are using WSL as
-> your toolchain
+> **Important** The build/run instructions assume you have `gbc` and `gbr`
+> projects alongside each other in your directory tree
 
-1. In the `frontend` project run `node build.js`.
+1. In the `gbr` project run `node build.js`.
 
-    This will compile and watch the Typescript sources using `esbuild`.
-The output is placed in `monorepo/libs/gbc-node/build`
+   This will compile and watch the Typescript sources using `esbuild`. The output is placed in `gbc/libs/gbc-node/build`
 
 
-2. In the `monorepo` project, run the `gbc-node (tests)` run configuration 
-(this coniguration is stored as a project file in the `.run` folder)
+3. In the `gbc` project, cd to `libs/gbc-node` and run `pnpm i` to install node modules. You should now be able to run the tests. If available, use the `gbc-node (tests)` run
+   configuration. This has the following settings:
 
-The esbuild test code (with `store` project bundled) is on your local machine, so the steps above
-only work if you are using WSL as your toolchain, so that the node add-on and esbuild output are
-in the same location.
+```
+Target: gbc-node
+Executable: node (for example, on Ubuntu use /usr/bin/node)
+Arguments: --enable-source-maps build/index.js
+Working directory: $ProjectFileDir$\libs\gbc-node
+```
 
 To restrict tests to a specific area, use `--suite <name>` in the run configuration.
 

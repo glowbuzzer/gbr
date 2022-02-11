@@ -7,7 +7,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
 import { Quaternion, Vector3 } from "three"
-import { useJointPositions } from "../joints"
+import { useRawJointPositions } from "../joints"
 
 const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
 
@@ -21,19 +21,14 @@ enum KINEMATICSCONFIGURATIONTYPE {
     NAKED
 }
 
-type Pose = {
-    position: Vector3
-    orientation: Quaternion
-}
-
 /**
  * The state of the kinematics configuration
  */
 export type KinematicsState = {
     /** The type of kinematics, for example a robot or cartesian machine */
     type: KINEMATICSCONFIGURATIONTYPE // TODO: should come from config
-    /** The position and orientation */
-    pose: Pose
+    /** The translation and rotation */
+    position: { translation: Vector3; rotation: Quaternion }
     /** The current configuration for a robot (waist, elbow, wrist) */
     currentConfiguration: number
     /** The feedrate the kinematics configuration is trying to achieve */
@@ -44,6 +39,7 @@ export type KinematicsState = {
 
 export const status_to_redux_state = (k: KinematicsConfigurationMcStatus) => {
     const { x, y, z } = k.cartesianActPos
+    const { z: qz, y: qy, x: qx, w: qw } = k.cartesianActOrientation
     return {
         type: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
         currentConfiguration: 0,
@@ -52,7 +48,7 @@ export const status_to_redux_state = (k: KinematicsConfigurationMcStatus) => {
         froActual: k.froActual,
         pose: {
             position: { x, y, z },
-            orientation: IDENTITY_ROTATION
+            orientation: { x: qx, y: qy, z: qz, w: qw }
         }
     }
 }
@@ -79,9 +75,9 @@ function unmarshall(state): KinematicsState {
             // frameIndex: 0,
             froTarget: 0,
             froActual: 0,
-            pose: {
-                position: new Vector3(0, 0, 0),
-                orientation: new Quaternion(0, 0, 0, 1)
+            position: {
+                translation: new Vector3(0, 0, 0),
+                rotation: new Quaternion(0, 0, 0, 1)
             }
         }
     }
@@ -90,9 +86,9 @@ function unmarshall(state): KinematicsState {
 
     return {
         ...state,
-        pose: {
-            position: new Vector3(x, y, z),
-            orientation: new Quaternion(qx, qy, qz, qw)
+        position: {
+            translation: new Vector3(x, y, z),
+            rotation: new Quaternion(qx, qy, qz, qw)
         }
     }
 }
@@ -131,7 +127,7 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
     const frames = useFrames()
     const dispatch = useDispatch()
     const connection = useConnection()
-    const rawJointPositions = useJointPositions()
+    const rawJointPositions = useRawJointPositions()
 
     // TODO: seeing 'world' passed here which cannot be found in configs
     const configs = Object.values(config.kinematicsConfiguration)
@@ -148,8 +144,8 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
          * The position and orientation
          */
         pose: frames.convertToFrame(
-            state.pose.position,
-            state.pose.orientation,
+            state.position.translation,
+            state.position.rotation,
             "world",
             frameIndex
         ),
@@ -172,5 +168,21 @@ export const useTcp = (kc: number, frame: number | "world") => {
     const state = unmarshall(useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual))
     const frames = useFrames()
 
-    return frames.convertToFrame(state.pose.position, state.pose.orientation, "world", frame)
+    return frames.convertToFrame(
+        state.position.translation,
+        state.position.rotation,
+        "world",
+        frame
+    )
+}
+
+export function useJointPositions(kc: number) {
+    const rawJointPositions = useRawJointPositions()
+
+    const config = useConfig()
+    const kinematicsConfigurations = Object.values(config.kinematicsConfiguration)
+
+    const { participatingJoints } = kinematicsConfigurations[kc] || kinematicsConfigurations[0]
+
+    return participatingJoints.map(j => rawJointPositions[j])
 }
