@@ -1,5 +1,6 @@
 import * as React from "react"
-import { Button, Radio, Spin, Tag } from "antd"
+import { Button, Radio, Spin, Tag, Popover } from "antd"
+import { QuestionCircleOutlined } from '@ant-design/icons'
 import {
     ConnectionState,
     DesiredState,
@@ -14,6 +15,15 @@ import {
 import { Tile } from "@glowbuzzer/layout"
 import styled from "styled-components"
 import { TrafficLight } from "./TrafficLight"
+
+
+const help = (<div>
+    <p>The connection tile is used to connect to GBC and the PLC and manage their state.</p>
+    <p>The "Simulate" and "Live" buttons toggle between Simulating a PLC and being connected live to a PLC and controlling a real machine.</p>
+    <p>The "Disabled" and "Live" buttons control the state of the machine. Disabled means the machine is not operational whereas Live means the machine is able to move</p>
+    <p>"Current" state shows the current state of the real or simulated machine</p>
+    <p>In the bottom half of the tile, faults are displayed. Ether active faults or a fault history.</p>
+</div>)
 
 const FlexCentered = styled.div`
     display: flex;
@@ -232,6 +242,9 @@ export const ConnectTile = () => {
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
             </StyledDiv>
+            <Popover content={help} title="Connection" placement="rightTop">
+                <QuestionCircleOutlined style={{color:'#8c8c8c'}} />
+            </Popover>
         </Tile>
     )
 }
