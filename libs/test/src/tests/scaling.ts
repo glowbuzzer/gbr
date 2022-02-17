@@ -1,6 +1,5 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { Vector3 } from "three"
 
 const test = uvu.suite("scaling")
 
@@ -19,7 +18,7 @@ test("will use joint scale", async () => {
 })
 
 test("will use kc scale", async () => {
-    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveLine(1, 0, 0).promise)
     await move.start().iterations(20).assertCompleted()
     gbc.assert.jointPosPdo(0, 200000, 1)
     gbc.assert.near(x, 1)

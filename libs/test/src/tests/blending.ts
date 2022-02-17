@@ -1,7 +1,6 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { Vector3 } from "three"
-import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE, POSITIONREFERENCE } from "../../../store/src"
+import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE } from "../../../store/src"
 
 const test = uvu.suite("blending")
 
@@ -34,16 +33,8 @@ test("can blend move line / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(
-        new Vector3(25, 5, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveLine(
-        new Vector3(20, 25, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -66,16 +57,8 @@ test("can blend move line / move line at 50pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 50
     }
-    const line1 = gbc.activity.moveLine(
-        new Vector3(25, 5, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveLine(
-        new Vector3(20, 25, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -99,18 +82,12 @@ test("can blend move line / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(
-        new Vector3(25, 0, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveArcWithCentre(
-        new Vector3(0, 25, 0),
-        new Vector3(0, 0, 0),
-        ARCDIRECTION.ARCDIRECTION_CCW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveLine(25, 0, 0).params(moveParams).command
+    const line2 = gbc.activity
+        .moveArc(0, 25, 0)
+        .centre(0, 0, 0)
+        .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -125,7 +102,7 @@ test("can blend move line / move arc at 100pc", () => {
             ])
             .verify()
     } finally {
-        gbc.plot("moveline-movearc-100")
+        gbc.plot("test")
     }
 })
 
@@ -134,22 +111,17 @@ test("can blend move to / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(
-        new Vector3(25, 0, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveArcWithCentre(
-        new Vector3(0, 25, 0),
-        new Vector3(0, 0, 0),
-        ARCDIRECTION.ARCDIRECTION_CCW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveToPosition(25, 0, 0).params(moveParams).command
+    const line2 = gbc.activity
+        .moveArc(0, 25, 0)
+        .centre(0, 0, 0)
+        .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
+        gbc.capture()
+        gbc.disable_limit_check()
         gbc.stream([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
@@ -161,7 +133,7 @@ test("can blend move to / move arc at 100pc", () => {
             ])
             .verify()
     } finally {
-        gbc.plot("moveto-movearc-100")
+        gbc.plot("test")
     }
 })
 
@@ -170,18 +142,8 @@ test("can blend move arc / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArcWithCentre(
-        new Vector3(25, 25, 0),
-        new Vector3(25, 0, 0),
-        ARCDIRECTION.ARCDIRECTION_CW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveLine(
-        new Vector3(5, 25, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const line2 = gbc.activity.moveLine(5, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -203,19 +165,8 @@ test("can blend move arc / move to position at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArcWithCentre(
-        new Vector3(25, 25, 0),
-        new Vector3(25, 0, 0),
-        ARCDIRECTION.ARCDIRECTION_CW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveToPosition(
-        new Vector3(5, 25, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const line1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const line2 = gbc.activity.moveToPosition(5, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -242,20 +193,8 @@ test("can blend move arc / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const arc1 = gbc.activity.moveArcWithCentre(
-        new Vector3(25, 25, 0),
-        new Vector3(25, 0, 0),
-        ARCDIRECTION.ARCDIRECTION_CW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const arc2 = gbc.activity.moveArcWithCentre(
-        new Vector3(0, 0, 0),
-        new Vector3(0, 25, 0),
-        ARCDIRECTION.ARCDIRECTION_CW,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
+    const arc1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const arc2 = gbc.activity.moveArc(0, 0, 0).centre(0, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -279,18 +218,8 @@ test("can blend move to position / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(
-        new Vector3(25, 5, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveLine(
-        new Vector3(20, 25, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-
+    const line1 = gbc.activity.moveToPosition(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -313,19 +242,8 @@ test("can blend move to position / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(
-        new Vector3(25, 5, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveToPosition(
-        new Vector3(20, 25, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-
+    const line1 = gbc.activity.moveToPosition(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -348,18 +266,8 @@ test("can blend move line / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(
-        new Vector3(25, 5, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveToPosition(
-        new Vector3(20, 25, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-
+    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -383,18 +291,8 @@ test("CANNOT blend move joints / move to position", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveJoints(
-        [25, 5, 0],
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveToPosition(
-        new Vector3(20, 25, 0),
-        undefined,
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-
+    const line1 = gbc.activity.moveJoints([25, 5, 0]).params(moveParams).command
+    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -417,17 +315,8 @@ test("CANNOT blend move line / move joints", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(
-        new Vector3(25, 5, 0),
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-    const line2 = gbc.activity.moveJoints(
-        [20, 25, 0],
-        POSITIONREFERENCE.ABSOLUTE,
-        moveParams
-    ).command
-
+    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.activity.moveJoints([20, 25, 0]).params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {

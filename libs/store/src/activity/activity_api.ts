@@ -1,68 +1,23 @@
+import { ACTIVITYSTATE, MoveParametersConfig } from "../gbc"
 import {
-    ACTIVITYSTATE,
-    ACTIVITYTYPE,
-    ARCDIRECTION,
-    ARCTYPE,
-    CartesianPositionsConfig,
-    CartesianVector,
-    DwellConfig,
-    MoveArcStream,
-    MoveLineStream,
-    MoveParametersConfig,
-    POSITIONREFERENCE,
-    Quat,
-    SetAoutCommand,
-    SetDoutCommand,
-    SetIoutCommand,
-    Vector3
-} from "../gbc"
-import { Euler, Quaternion } from "three"
+    ActivityController,
+    AoutBuilder,
+    CancelActivityBuilder,
+    DoutBuilder,
+    DwellActivityBuilder,
+    EndProgramBuilder,
+    IoutBuilder,
+    MoveArcBuilder,
+    MoveJointsAtVelocityBuilder,
+    MoveJointsBuilder,
+    MoveLineAtVelocityBuilder,
+    MoveLineBuilder,
+    MoveToPositionBuilder
+} from "./builders"
 
-const all_types = [
-    "",
-    "moveJoints",
-    "moveJointsAtVelocity",
-    "moveLine",
-    "moveLineAtVelocity",
-    "moveArc",
-    "moveSpline",
-    "moveToPosition",
-    "gearInPos",
-    "gearInVelo",
-    "setDout",
-    "setAout",
-    "dwell",
-    "waitOn",
-    "switchPose",
-    "latch",
-    "stressTest",
-    "endProgram",
-    "setIout"
-]
-
-function make_activity(index: number, type: ACTIVITYTYPE, tag: number, params?) {
-    const typeName = all_types[type]
-
-    const command_detail =
-        typeName.length && params
-            ? {
-                  [typeName]: {
-                      ...params
-                  }
-              }
-            : {}
-
-    return {
-        activityType: type,
-        tag,
-        ...command_detail
-    }
-}
-
-export type SoloActivityApiResult = {
-    promise: () => Promise<void>
-    tag: number
-    command: any
+// some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
+function nullify(v?: number) {
+    return Number.isInteger(v) ? v : null
 }
 
 /**
@@ -71,118 +26,76 @@ export type SoloActivityApiResult = {
  * configuration and has exclusive access to the motion of that KC. Attempting to execute a solo activity
  * while jogging or streaming (for example, GCode) will result in an error.
  *
- * Each activity runs to completion unless cancelled or another activity is issued. If an activity
+ * The result of each method on the API is an {@link ActivityBuilder} or one of its subclasses. This provides
+ * a fluent API with which you can further specify an activity, along with an `execute` method that invokes the activity.
+ * The `execute` method returns a promise, allowing you to sequence multiple activities together.
+ *
+ * Each activity runs to completion unless cancelled or another activity is executed. If an activity
  * is running and another activity is issued, the first activity is cancelled and allowed to finish
  * gracefully before the new activity is started.
- *
- * The result of each method on the API is a {@link SoloActivityApiResult}. This optionally provides
- * a promise that is resolved when the activity completes or is cancelled. This allows you to sequence
- * multiple activities together.
  *
  * Note that motion using the solo activity API is not blended (that is, absolute stop mode will be used).
  */
 export interface SoloActivityApi {
     /** Cancel any currently executing activity */
-    cancel(): SoloActivityApiResult
+    cancel(): CancelActivityBuilder
 
     /** Dwell for a number of cycles */
-    dwell(ticksToDwell: number): SoloActivityApiResult
+    dwell(ticksToDwell: number): DwellActivityBuilder
 
-    /** Move in an arc specifying a target position and arc center, and arc direction
+    /** Move in an arc.
      *
-     * @param centre Centre of the arc
-     * @param target Target position
-     * @param arcDirection Arc direction, clockwise or counter-clockwise
-     * @param positionReference Whether the target position and centre are relative to the current cartesian position or absolute (default: absolute)
-     * @param moveParams Move parameters, if required
+     * @param x Target x position
+     * @param y Target y position
+     * @param z Target z position
+     * @returns A builder with which you can specify further characteristics of the move
      */
-    moveArcWithCentre(
-        target: Vector3,
-        centre: Vector3,
-        arcDirection: ARCDIRECTION,
-        positionReference?: POSITIONREFERENCE,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
-
-    /** Move in an arc specifying a target position and radius, and arc direction
-     *
-     * @param radius Radius of the arc
-     * @param target Target position
-     * @param arcDirection Arc direction, clockwise or counter-clockwise
-     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
-     * @param moveParams Move parameters, if required
-     */
-    moveArcWithRadius(
-        target: Vector3,
-        radius: number,
-        arcDirection: ARCDIRECTION,
-        positionReference?: POSITIONREFERENCE,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveArc(x?: number, y?: number, z?: number): MoveArcBuilder
 
     /** Move joints to specified positions. All joints in the kinematic configuration should be specified, or they will default to zero.
      *
      * @param jointPositionArray Array of joint positions
-     * @param positionReference Whether the joint positions are relative to the current joint positions or absolute (default: absolute)
-     * @param moveParams Move parameters, if required
      */
-    moveJoints(
-        jointPositionArray: number[],
-        positionReference?: POSITIONREFERENCE,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveJoints(jointPositionArray: number[]): MoveJointsBuilder
 
     /** Move joints at the specified velocities. All joints in the kinematic configuration should be specified, or they will default to zero (no motion).
      *
-     * Note that this activity does not terminate and unless cancelled (using `cancel` or by executing another activity) the joints will run forever.
+     * Note that this activity does not terminate and will run forever unless cancelled (using `cancel` or by executing another activity).
      *
      * @param jointVelocityArray Array of joint velocities
-     * @param moveParams Move parameters, if required
      */
-    moveJointsAtVelocity(
-        jointVelocityArray: number[],
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveJointsAtVelocity(jointVelocityArray: number[]): MoveJointsAtVelocityBuilder
 
     /** Move along a linear path to the target position.
      *
-     * @param pos Target position
-     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
-     * @param moveParams Move parameters, if required
+     * Note that if an axis is not specified (or `undefined`), the current position at the start of the move will be used. For example,
+     * you can move to a new X position while keeping Y and Z constant by only specifying the new X position.
+     *
+     * @param x Target x position
+     * @param y Target y position
+     * @param z Target z position
      */
-    moveLine(
-        pos: Vector3,
-        positionReference?: POSITIONREFERENCE,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveLine(x?: number, y?: number, z?: number): MoveLineBuilder
 
     /** Move in a straight line along the given vector. The velocity of the motion can be controlled using `moveParams`.
      *
-     * Note that this activity does not terminate and unless cancelled (using `cancel` or by executing another activity) it will run forever.
+     * Note that this activity does not terminate and will run forever unless cancelled (using `cancel` or by executing another activity).
      *
-     * @param line Vector to move along. Includes a frame index
-     * @param moveParams Move parameters, including desired velocity for the motion
+     * @param x Vector x component
+     * @param y Vector y component
+     * @param z Vector z component
      */
-    moveLineAtVelocity(
-        line: CartesianVector,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveLineAtVelocity(x: number, y: number, z: number): MoveLineAtVelocityBuilder
 
     /** Move to the target position in joint space.
      *
      * Note that joints are run such that they all start and finish motion at the same time, but the path is not guaranteed to be linear.
      *
-     * @param pos Target position
-     * @param orientation Target orientation
-     * @param positionReference Whether the target position is relative to the current cartesian position or absolute (default: absolute)
-     * @param moveParams Move parameters, if required
+     * @param x Target x position
+     * @param y Target y position
+     * @param z Target z position
      */
-    moveToPosition(
-        pos?: Vector3,
-        orientation?: Quat,
-        positionReference?: POSITIONREFERENCE,
-        moveParams?: MoveParametersConfig
-    ): SoloActivityApiResult
+    moveToPosition(x?: number, y?: number, z?: number): MoveToPositionBuilder
 
     /**
      * Set a digital output. Completes in a single cycle.
@@ -190,7 +103,7 @@ export interface SoloActivityApi {
      * @param index The digital output to set
      * @param value The value to set
      */
-    setDout(index: number, value: boolean): SoloActivityApiResult
+    setDout(index: number, value: boolean): DoutBuilder
 
     /**
      * Set an analog output. Completes in a single cycle.
@@ -198,7 +111,7 @@ export interface SoloActivityApi {
      * @param index The analog output to set
      * @param value The value to set
      */
-    setAout(index: number, value: number): SoloActivityApiResult
+    setAout(index: number, value: number): AoutBuilder
 
     /**
      * Set an integer output. Completes in a single cycle.
@@ -206,26 +119,30 @@ export interface SoloActivityApi {
      * @param index The integer output to set
      * @param value The value to set
      */
-    setIout(index: number, value: number): SoloActivityApiResult
+    setIout(index: number, value: number): IoutBuilder
 
     /**
      * @ignore Has no effect for solo activities
      */
-    endProgram(): SoloActivityApiResult
+    endProgram(): EndProgramBuilder
 }
 
-export class ActivityApiImpl implements SoloActivityApi {
+export class ActivityApiImpl implements SoloActivityApi, ActivityController {
     private readonly index: number
-    private readonly send: (msg: string) => void
+    private readonly _send: (msg: string) => void
     private currentTag = 0
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     constructor(index: number, send: (msg: string) => void) {
         this.index = index
-        this.send = send
+        this._send = send
     }
 
-    buildFromCommand(tag: number, command) {
+    get nextTag(): number {
+        return this.currentTag++
+    }
+
+    execute(command) {
         const soloActivity = JSON.stringify({
             command: {
                 soloActivity: {
@@ -236,32 +153,10 @@ export class ActivityApiImpl implements SoloActivityApi {
             }
         })
 
-        return {
-            promise: () => {
-                return new Promise<void>((resolve, reject) => {
-                    this.promiseFifo.push({ tag, resolve, reject })
-                    this.send(soloActivity)
-                })
-            },
-            tag,
-            command
-        }
-    }
-
-    buildMotion(type: ACTIVITYTYPE, params, moveParams) {
-        const tag = this.currentTag++
-        const command = make_activity(this.index, type, tag, {
-            ...params,
-            kinematicsConfigurationIndex: this.index,
-            moveParams
+        return new Promise((resolve, reject) => {
+            this.promiseFifo.push({ tag: command.tag, resolve, reject })
+            this._send(soloActivity)
         })
-        return this.buildFromCommand(tag, command)
-    }
-
-    buildOther(type: ACTIVITYTYPE, params?) {
-        const tag = this.currentTag++
-        const message = make_activity(this.index, type, tag, params)
-        return this.buildFromCommand(tag, message)
     }
 
     update(tag: number, state: ACTIVITYSTATE) {
@@ -270,227 +165,74 @@ export class ActivityApiImpl implements SoloActivityApi {
         }
         const { promiseFifo } = this
         while (promiseFifo.length && promiseFifo[0].tag < tag) {
-            // reject any old activities that have been superceded by a later tag
-            // console.log("REJECT OLD TAG", promiseFifo[0].tag)
+            // resolve any old activities that have been superceded by a later tag
             promiseFifo.shift()?.resolve({ tag, completed: false })
-            // last.reject(last.tag)
         }
         if (!promiseFifo.length) {
             // nothing to update
             return
         }
-        const lastTag = this.promiseFifo[0].tag
-        // console.log("UPDATE ACTIVITY", tag, ACTIVITYSTATE[state], "LAST TAG", lastTag)
 
         if (state === ACTIVITYSTATE.ACTIVITY_COMPLETED) {
-            // console.log("EXEC COMPLETE FOR TAG", tag)
             const current = promiseFifo.shift()
             current?.resolve({ tag: current.tag, completed: true })
         } else if (state === ACTIVITYSTATE.ACTIVITY_CANCELLED) {
-            // console.log("EXEC CANCELLED FOR TAG", tag)
             const current = promiseFifo.shift()
             current?.resolve({ tag: current.tag, completed: false })
-            // current?.reject(current.tag)
         } else {
             // console.log("TAG RUNNING BUT NOT COMPLETED", tag)
         }
     }
 
     cancel() {
-        return this.buildMotion(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}, {})
+        return new CancelActivityBuilder(this)
+        // return this.buildMotion(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}, {})
     }
 
     dwell(ticksToDwell: number) {
-        return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_DWELL, {
-            ticksToDwell
-        } as DwellConfig)
+        return new DwellActivityBuilder(this, ticksToDwell)
+        // return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_DWELL, {
+        //     ticksToDwell
+        // } as DwellConfig)
     }
 
-    moveArcWithCentre(
-        target: Vector3,
-        centre: Vector3,
-        arcDirection: ARCDIRECTION,
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        // at the moment target and centre must share position reference (relative or absolute)
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
-            {
-                arc: {
-                    destination: {
-                        translation: target,
-                        positionReference
-                    },
-                    arcDirection,
-                    arcType: ARCTYPE.ARCTYPE_CENTRE,
-                    centre: {
-                        translation: centre,
-                        positionReference
-                    }
-                }
-            } as MoveArcStream,
-            moveParams
-        )
+    moveArc(x?: number, y?: number, z?: number) {
+        return new MoveArcBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 
-    moveArcWithRadius(
-        target: Vector3,
-        radius: number,
-        arcDirection: ARCDIRECTION,
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
-            {
-                arc: {
-                    destination: {
-                        translation: target,
-                        positionReference
-                    },
-                    arcDirection,
-                    arcType: ARCTYPE.ARCTYPE_RADIUS,
-                    radius: { value: radius }
-                }
-            } as MoveArcStream,
-            moveParams
-        )
-    }
-
-    moveJoints(
-        jointPositionArray: number[],
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTS,
-            {
-                jointPositionArray,
-                positionReference
-            },
-            moveParams
-        )
+    moveJoints(jointPositionArray: number[]) {
+        return new MoveJointsBuilder(this).joints(jointPositionArray)
     }
 
     moveJointsAtVelocity(jointVelocityArray: number[], moveParams: MoveParametersConfig = {}) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSATVELOCITY,
-            {
-                jointVelocityArray
-            },
-            moveParams
-        )
+        return new MoveJointsAtVelocityBuilder(this).velocities(jointVelocityArray)
     }
 
-    moveLine(
-        pos: Vector3,
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
-            {
-                line: {
-                    positionReference,
-                    translation: pos
-                }
-            } as MoveLineStream,
-            moveParams
-        )
+    moveLine(x?: number, y?: number, z?: number) {
+        return new MoveLineBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 
-    moveLineEuler(
-        pos: Vector3,
-        quat: Quat,
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
-            {
-                line: {
-                    positionReference,
-                    translation: pos,
-                    rotation: quat
-                }
-            } as MoveLineStream,
-            moveParams
-        )
+    moveLineAtVelocity(x: number, y: number, z: number) {
+        return new MoveLineAtVelocityBuilder(this).vector(x, y, z)
     }
 
-    moveLineAtVelocity(line: CartesianVector, moveParams: MoveParametersConfig = {}) {
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVELINEATVELOCITY,
-            {
-                line
-            },
-            moveParams
-        )
-    }
-
-    moveToPosition(
-        pos?: Vector3,
-        orientation?: Quat,
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        const cartesianPosition: CartesianPositionsConfig = {
-            // TODO: can we come up with another name for position to avoid duplication in hierarchy
-            position: {
-                translation: pos,
-                rotation: orientation,
-                positionReference
-            }
-        }
-
-        return this.buildMotion(
-            ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
-            {
-                cartesianPosition
-            },
-            moveParams
-        )
-    }
-
-    moveToPositionEuler(
-        pos?: Vector3,
-        orientation?: [number, number, number],
-        positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE,
-        moveParams: MoveParametersConfig = {}
-    ) {
-        const [x, y, z] = orientation
-        const q = new Quaternion().setFromEuler(new Euler(x, y, z))
-        return this.moveToPosition(
-            pos,
-            { x: q.x, y: q.y, z: q.z, w: q.w },
-            positionReference,
-            moveParams
-        )
+    moveToPosition(x: number, y: number, z: number) {
+        return new MoveToPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 
     setDout(index: number, value: boolean) {
-        return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT, {
-            doutToSet: index,
-            valueToSet: value
-        } as SetDoutCommand)
+        return new DoutBuilder(this).dout(index).value(value)
     }
 
     setAout(index: number, value: number) {
-        return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT, {
-            aoutToSet: index,
-            valueToSet: value
-        } as SetAoutCommand)
+        return new AoutBuilder(this).aout(index).value(value)
     }
 
     setIout(index: number, value: number) {
-        return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT, {
-            ioutToSet: index,
-            valueToSet: value
-        } as SetIoutCommand)
+        return new IoutBuilder(this).iout(index).value(value)
     }
 
     endProgram() {
-        return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM)
+        return new EndProgramBuilder(this)
     }
 }

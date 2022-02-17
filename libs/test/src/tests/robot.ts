@@ -49,11 +49,10 @@ test("can do a joint space move", async () => {
 })
 
 test("can do a cartesian move with orientation", async () => {
-    const vec = { x: 100, y: 100, z: 100 }
     const quaternion = new Quaternion().setFromEuler(new Euler(Math.PI, 0, 0))
     const { x, y, z, w } = quaternion
 
-    const move = gbc.wrap(gbc.activity.moveToPosition(vec, { x, y, z, w }).promise)
+    const move = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).rotation(x, y, z, w).promise)
     await move.start().iterations(100).assertCompleted()
     gbc.plot("test")
 
@@ -61,30 +60,18 @@ test("can do a cartesian move with orientation", async () => {
 })
 
 test("can blend move_to_position (with orientation)", async () => {
-    const vec = { x: 100, y: 100, z: 100 }
-    const quaternion = new Quaternion().setFromEuler(new Euler(Math.PI, 0, 0))
-    const { x, y, z, w } = quaternion
-
-    // gbc.disable_limit_check()
-    // const move = gbc.wrap(gbc.activity.moveToPosition(vec, { x, y, z, w }).promise)
-    // await move.start().iterations(100).assertCompleted()
-
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const move1 = gbc.activity.moveToPositionEuler(
-        { x: 100, y: 100, z: 100 },
-        [Math.PI, 0, 0],
-        0,
-        moveParams
-    ).command
-    const move2 = gbc.activity.moveToPositionEuler(
-        { x: 100, y: 100, z: 300 },
-        [0, Math.PI, 0],
-        0,
-        moveParams
-    ).command
+    const move1 = gbc.activity
+        .moveToPosition(100, 100, 100)
+        .rotationEuler(Math.PI, 0, 0)
+        .params(moveParams).command
+    const move2 = gbc.activity
+        .moveToPosition(100, 100, 300)
+        .rotationEuler(0, Math.PI, 0)
+        .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
@@ -107,34 +94,23 @@ test("can blend move_to_position (with orientation)", async () => {
     assertNear(100, 100, 300, 0, Math.PI, 0)
 })
 
-test("can blend move_to_position with move_line (with orientation)", async () => {
-    const vec = { x: 100, y: 100, z: 100 }
-    const quaternion = new Quaternion().setFromEuler(new Euler(Math.PI, 0, 0))
-    const { x, y, z, w } = quaternion
-
-    // gbc.disable_limit_check()
-    // const move = gbc.wrap(gbc.activity.moveToPosition(vec, { x, y, z, w }).promise)
-    // await move.start().iterations(100).assertCompleted()
-
+test.skip("can blend move_to_position with move_line (with orientation)", async () => {
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const move1 = gbc.activity.moveToPositionEuler(
-        { x: 100, y: 100, z: 100 },
-        [Math.PI, 0, 0],
-        0,
-        moveParams
-    ).command
-    const move2 = gbc.activity.moveLineWithOrientation(
-        { x: 100, y: 100, z: 300 },
-        [0, Math.PI, 0],
-        0,
-        moveParams
-    ).command
+    const move1 = gbc.activity
+        .moveToPosition(100, 100, 100)
+        .rotationEuler(Math.PI, 0, 0)
+        .params(moveParams).command
+    const move2 = gbc.activity
+        .moveLine(100, 100, 300)
+        .rotationEuler(0, Math.PI, 0)
+        .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
+        gbc.disable_limit_check()
         gbc.stream([move1, move2, end_program]) //
             .assert.streamSequence(
                 tag,
@@ -142,7 +118,7 @@ test("can blend move_to_position with move_line (with orientation)", async () =>
                     [20, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [20, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [60, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [300, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
                 ],
                 true
             )

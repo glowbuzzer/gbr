@@ -4,7 +4,6 @@ import {
     JogDirection,
     JOINT_TYPE,
     JointConfig,
-    POSITIONREFERENCE,
     useJoint,
     useJointConfig,
     useKinematics,
@@ -160,19 +159,15 @@ export const JogTile = () => {
                             : -conf.vmax
                         : 0
                 )
-                return motion.moveJointsAtVelocity(velos, move_params).promise()
+                return motion.moveJointsAtVelocity(velos).params(move_params).promise()
             } else {
                 return motion
                     .moveLineAtVelocity(
-                        {
-                            vector: {
-                                x: ortho_vector(0, direction),
-                                y: ortho_vector(1, direction),
-                                z: ortho_vector(2, direction)
-                            }
-                        },
-                        move_params
+                        ortho_vector(0, direction),
+                        ortho_vector(1, direction),
+                        ortho_vector(2, direction)
                     )
+                    .params(move_params)
                     .promise()
             }
             // jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
@@ -195,48 +190,29 @@ export const JogTile = () => {
                             : -jogStep
                         : 0
                 )
-                return motion.moveJoints(steps, POSITIONREFERENCE.RELATIVE, move_params).promise()
+                return motion.moveJoints(steps).relative().params(move_params).promise()
             }
         }
     }
 
     function goto() {
-        return motion
-            .moveToPosition({ x, y, z }, undefined, POSITIONREFERENCE.ABSOLUTE, move_params)
-            .promise()
+        return motion.moveToPosition(x, y, z).params(move_params).promise()
     }
 
     function gotoX() {
-        motion.moveToPosition(
-            { x, y: kc.pose.position.y, z: kc.pose.position.z },
-            undefined,
-            POSITIONREFERENCE.ABSOLUTE,
-            move_params
-        )
+        motion.moveToPosition(x).params(move_params).promise()
     }
 
     function gotoY() {
-        motion.moveToPosition(
-            { x: kc.pose.position.x, y, z: kc.pose.position.z },
-            undefined,
-            POSITIONREFERENCE.ABSOLUTE,
-            move_params
-        )
+        motion.moveToPosition(undefined, y).params(move_params).promise()
     }
 
     function gotoZ() {
-        motion.moveToPosition(
-            { x: kc.pose.position.x, y: kc.pose.position.y, z },
-            undefined,
-            POSITIONREFERENCE.ABSOLUTE,
-            move_params
-        )
+        motion.moveToPosition(undefined, undefined, z).params(move_params).promise()
     }
 
     function goto_waypoint(w) {
-        return motion
-            .moveJoints(w.map(MathUtils.degToRad), POSITIONREFERENCE.ABSOLUTE, move_params)
-            .promise()
+        return motion.moveJoints(w.map(MathUtils.degToRad)).params(move_params).promise()
     }
 
     function gotoA() {
@@ -244,21 +220,16 @@ export const JogTile = () => {
         euler.x = MathUtils.degToRad(a)
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
 
-        console.log("FROM", kc.pose.orientation, "TO", x, y, z, w)
-
-        return motion
-            .moveToPosition(
-                { x: null, y: null, z: null },
-                { x, y, z, w },
-                POSITIONREFERENCE.ABSOLUTE,
-                move_params
-            )
-            .promise()
+        return motion.moveToPosition().rotation(x, y, z, w).params(move_params).promise()
     }
 
-    function gotoB() {}
+    function gotoB() {
+        // TODO
+    }
 
-    function gotoC() {}
+    function gotoC() {
+        // TODO
+    }
 
     function JogButton({ index, direction, children }) {
         return (

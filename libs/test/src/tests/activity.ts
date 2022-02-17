@@ -1,6 +1,5 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { Vector3 } from "three"
 import { ARCDIRECTION } from "../../../store/src"
 
 const test = uvu.suite("activity")
@@ -37,11 +36,11 @@ test("can cancel activity even if none started", async () => {
 
 test("can run move arc to completion", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(1, 1, 0),
-            new Vector3(0, 1, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(1, 1, 0)
+            .centre(0, 1, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await move
         .start() //
@@ -53,8 +52,11 @@ test("can run move arc to completion", async () => {
 
 test("can run move arc in radius mode", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithRadius(new Vector3(1, 1, 0), 1, ARCDIRECTION.ARCDIRECTION_CCW)
-            .promise
+        gbc.activity
+            .moveArc()
+            .translation(1, 1, 0)
+            .radius(1)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     try {
         await move
@@ -68,8 +70,11 @@ test("can run move arc in radius mode", async () => {
 
 test("can run move arc in radius mode with negative radius", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithRadius(new Vector3(1, 1, 0), -1, ARCDIRECTION.ARCDIRECTION_CCW)
-            .promise
+        gbc.activity
+            .moveArc()
+            .translation(1, 1, 0)
+            .radius(-1)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     try {
         await move
@@ -83,11 +88,11 @@ test("can run move arc in radius mode with negative radius", async () => {
 
 test("can run move arc to completion (quadrant 2)", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(-1, 1, 0),
-            new Vector3(-1, 0, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(-1, 1, 0)
+            .centre(-1, 0, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await move
         .start() //
@@ -99,11 +104,11 @@ test("can run move arc to completion (quadrant 2)", async () => {
 
 test("can run move arc to completion (quadrant 3)", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(-1, -1, 0),
-            new Vector3(0, -1, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(-1, -1, 0)
+            .centre(0, -1, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await move
         .start() //
@@ -115,11 +120,11 @@ test("can run move arc to completion (quadrant 3)", async () => {
 
 test("can run move arc to completion (quadrant 4)", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(1, -1, 0),
-            new Vector3(1, 0, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(1, -1, 0)
+            .centre(1, 0, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await move
         .start() //
@@ -131,11 +136,11 @@ test("can run move arc to completion (quadrant 4)", async () => {
 
 test("can run arc with same start and end point (full circle)", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(0, 0, 0),
-            new Vector3(15, 0, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(0, 0, 0)
+            .centre(15, 0, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     try {
         await move
@@ -149,11 +154,11 @@ test("can run arc with same start and end point (full circle)", async () => {
 
 test("can run tiny arc (large jmax) full circle", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(0, 0, 0),
-            new Vector3(1, 0, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(0, 0, 0)
+            .centre(1, 0, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     try {
         await move
@@ -168,11 +173,11 @@ test("can run tiny arc (large jmax) full circle", async () => {
 test.skip("can run zero length arc", async () => {
     // zero length arc is not possible because this will be run as a full circle
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(0, 0, 0),
-            new Vector3(0, 0, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(0, 0, 0)
+            .centre(0, 0, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await move
         .start() //
@@ -182,11 +187,11 @@ test.skip("can run zero length arc", async () => {
 
 test("can cancel move arc", async () => {
     const move = gbc.wrap(
-        gbc.activity.moveArcWithCentre(
-            new Vector3(1, 1, 0),
-            new Vector3(0, 1, 0),
-            ARCDIRECTION.ARCDIRECTION_CCW
-        ).promise
+        gbc.activity
+            .moveArc()
+            .translation(1, 1, 0)
+            .centre(0, 1, 0)
+            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
     )
     await do_cancel(move)
 })
@@ -202,12 +207,12 @@ test("can cancel move joints", async () => {
 })
 
 test("can run short cartesian move to completion", async () => {
-    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveLine(1, 0, 0).promise)
     await move.start().iterations(100).assertCompleted()
 })
 
 test("can run long cartesian move to completion", async () => {
-    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(30, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveLine(30, 0, 0).promise)
     try {
         await move.start().iterations(70).assertCompleted()
     } finally {
@@ -216,12 +221,12 @@ test("can run long cartesian move to completion", async () => {
 })
 
 test("can cancel cartesian move", async () => {
-    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(10, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveLine(10, 0, 0).promise)
     await do_cancel(move)
 })
 
 test("can cancel cartesian move after short time", async () => {
-    const move = gbc.wrap(gbc.activity.moveLine(new Vector3(10, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveLine(10, 0, 0).promise)
 
     // we don't expect the move to be complete after 10 cycles
     await move.start().iterations(10, true).assertNotResolved()
@@ -234,19 +239,19 @@ test("can cancel cartesian move after short time", async () => {
 })
 
 test("can run short move to position to completion", async () => {
-    const move = gbc.wrap(gbc.activity.moveToPosition(new Vector3(1, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveToPosition(1, 0, 0).promise)
     await move.start().iterations(100).assertCompleted()
 })
 
 test("can cancel move to position", async () => {
-    const move = gbc.wrap(gbc.activity.moveToPosition(new Vector3(10, 0, 0)).promise)
+    const move = gbc.wrap(gbc.activity.moveToPosition(100, 0, 0).promise)
     await do_cancel(move)
 })
 
 test("can run cartesian move followed by move to position", async () => {
-    const move1 = gbc.wrap(gbc.activity.moveLine(new Vector3(1, 0, 0)).promise)
+    const move1 = gbc.wrap(gbc.activity.moveLine(1, 0, 0).promise)
     await move1.start().iterations(100).assertCompleted()
-    const move2 = gbc.wrap(gbc.activity.moveToPosition(new Vector3(1, 1, 0)).promise)
+    const move2 = gbc.wrap(gbc.activity.moveToPosition(1, 1, 0).promise)
     await move2.start().iterations(100).assertCompleted()
 })
 
