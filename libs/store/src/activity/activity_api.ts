@@ -26,9 +26,9 @@ function nullify(v?: number) {
  * configuration and has exclusive access to the motion of that KC. Attempting to execute a solo activity
  * while jogging or streaming (for example, GCode) will result in an error.
  *
- * The result of each method on the API is an {@link ActivityBuilder} or one of its subclasses. This provides
- * a fluent API with which you can further specify an activity, along with an `execute` method that invokes the activity.
- * The `execute` method returns a promise, allowing you to sequence multiple activities together.
+ * Each method of the API returns a builder class that provides a fluent API with which you can further specify an activity.
+ * After configuring the activity, call the `promise` method. This returns a promise which will be resolved when the activity completes,
+ * allowing you to sequence multiple activities together.
  *
  * Each activity runs to completion unless cancelled or another activity is executed. If an activity
  * is running and another activity is issued, the first activity is cancelled and allowed to finish
@@ -190,10 +190,7 @@ export class ActivityApiImpl implements SoloActivityApi, ActivityController {
     }
 
     dwell(ticksToDwell: number) {
-        return new DwellActivityBuilder(this, ticksToDwell)
-        // return this.buildOther(ACTIVITYTYPE.ACTIVITYTYPE_DWELL, {
-        //     ticksToDwell
-        // } as DwellConfig)
+        return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
     }
 
     moveArc(x?: number, y?: number, z?: number) {
