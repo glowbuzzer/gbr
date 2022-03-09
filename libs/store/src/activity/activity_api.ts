@@ -12,7 +12,8 @@ import {
     MoveJointsBuilder,
     MoveLineAtVelocityBuilder,
     MoveLineBuilder,
-    MoveToPositionBuilder
+    MoveToPositionBuilder,
+    ToolChangeBuilder
 } from "./builders"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
@@ -121,6 +122,8 @@ export interface SoloActivityApi {
      */
     setIout(index: number, value: number): IoutBuilder
 
+    changeTool(kc: number, toolIndex: number): ToolChangeBuilder
+
     /**
      * @ignore Has no effect for solo activities
      */
@@ -227,6 +230,10 @@ export class ActivityApiImpl implements SoloActivityApi, ActivityController {
 
     setIout(index: number, value: number) {
         return new IoutBuilder(this).iout(index).value(value)
+    }
+
+    changeTool(kc: number, toolIndex: number): ToolChangeBuilder {
+        return new ToolChangeBuilder(this).kinematicsConfigurationIndex(kc).toolIndex(toolIndex)
     }
 
     endProgram() {

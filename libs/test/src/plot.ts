@@ -1,4 +1,5 @@
 import { mkdirSync, writeFileSync } from "fs"
+import { Quaternion, Vector3 } from "three"
 
 const head = `<!DOCTYPE html>
 <html lang="en">
@@ -16,6 +17,8 @@ const head = `<!DOCTYPE html>
 <div id="vel"></div>
 <div id="acc"></div>
 <div id="jerk"></div>
+<div id="p"></div>
+<div id="q"></div>
 
 <script>
 
@@ -75,6 +78,8 @@ function run () {
   chart('vel', vel_csv)
   chart('acc', acc_csv)
   chart('jerk', jerk_csv)
+  chart('p', p_csv)
+  chart('q', q_csv)
 }`
 
 const tail = `
@@ -86,16 +91,18 @@ export function make_plot(
     filename: string,
     data: {
         joints: number[]
+        translation: Vector3
+        rotation: Quaternion
         activity: { tag: number; streamState: number; activityState: number }
     }[]
 ) {
     // assume first row of data gives the joint count
     const first_row = data[0].joints.map((_, i) => "J" + i).join(",")
 
-    const pos = data.map(d => d.joints)
+    const joint_positions = data.map(d => d.joints)
 
-    const vel = pos.map((joints, index) =>
-        joints.map((j, joint_index) => 250 * (j - pos[index - 1]?.[joint_index] || 0))
+    const vel = joint_positions.map((joints, index) =>
+        joints.map((j, joint_index) => 250 * (j - joint_positions[index - 1]?.[joint_index] || 0))
     )
     const acc = vel.map((joints, index) =>
         joints.map((j, joint_index) => 250 * (j - vel[index - 1]?.[joint_index] || 0))
@@ -104,22 +111,30 @@ export function make_plot(
         joints.map((j, joint_index) => 250 * (j - acc[index - 1]?.[joint_index] || 0))
     )
 
+    const p = data.map(d => d.translation)
+    const q = data.map(d => d.rotation)
+
     const tag_csv = data
         .map(r => `${r.activity.tag},${r.activity.streamState},${r.activity.activityState}`)
         .join("\n")
-    const pos_csv = pos.map(r => r.join(",")).join("\n")
+    const joints_csv = joint_positions.map(r => r.join(",")).join("\n")
     const vel_csv = vel.map(r => r.join(",")).join("\n")
     const acc_csv = acc.map(r => r.join(",")).join("\n")
     const jerk_csv = jerk.map(r => r.join(",")).join("\n")
+
+    const p_csv = p.map(r => `${r.x},${r.y},${r.z}`).join("\n")
+    const q_csv = q.map(r => `${r.x},${r.y},${r.z},${r.w}`).join("\n")
 
     mkdirSync("plot", { recursive: true })
     const html = `
     ${head}
     const tag_csv=\`ACTIVITY TAG,STREAM STATE,ACTIVITY_STATE\n${tag_csv}\`
-    const pos_csv=\`${first_row}\n${pos_csv}\`
+    const pos_csv=\`${first_row}\n${joints_csv}\`
     const vel_csv=\`${first_row}\n${vel_csv}\`
     const acc_csv=\`${first_row}\n${acc_csv}\`
     const jerk_csv=\`${first_row}\n${jerk_csv}\`
+    const p_csv=\`X,Y,Z\n${p_csv}\`
+    const q_csv=\`QX,QY,QZ,QW\n${q_csv}\`
     ${tail}
     `
     console.log("Writing plot file:", filename)

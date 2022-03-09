@@ -6,10 +6,8 @@ import { KinematicsConfigurationMcStatus } from "../types"
 import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
-import { Quaternion, Vector3 } from "three"
 import { useRawJointPositions } from "../joints"
-
-const IDENTITY_ROTATION = { x: 0, y: 0, z: 0, w: 1 }
+import * as THREE from "three"
 
 enum KINEMATICSCONFIGURATIONTYPE {
     TX40,
@@ -28,7 +26,7 @@ export type KinematicsState = {
     /** The type of kinematics, for example a robot or cartesian machine */
     type: KINEMATICSCONFIGURATIONTYPE // TODO: should come from config
     /** The translation and rotation */
-    position: { translation: Vector3; rotation: Quaternion }
+    position: { translation: THREE.Vector3; rotation: THREE.Quaternion }
     /** The current configuration for a robot (waist, elbow, wrist) */
     currentConfiguration: number
     /** The feedrate the kinematics configuration is trying to achieve */
@@ -46,9 +44,9 @@ export const status_to_redux_state = (k: KinematicsConfigurationMcStatus) => {
         // frameIndex: 0,
         froTarget: k.froTarget,
         froActual: k.froActual,
-        pose: {
-            position: { x, y, z },
-            orientation: { x: qx, y: qy, z: qz, w: qw }
+        position: {
+            translation: { x, y, z },
+            rotation: { x: qx, y: qy, z: qz, w: qw }
         }
     }
 }
@@ -76,8 +74,8 @@ function unmarshall(state): KinematicsState {
             froTarget: 0,
             froActual: 0,
             position: {
-                translation: new Vector3(0, 0, 0),
-                rotation: new Quaternion(0, 0, 0, 1)
+                translation: new THREE.Vector3(0, 0, 0),
+                rotation: new THREE.Quaternion(0, 0, 0, 1)
             }
         }
     }
@@ -87,8 +85,8 @@ function unmarshall(state): KinematicsState {
     return {
         ...state,
         position: {
-            translation: new Vector3(x, y, z),
-            rotation: new Quaternion(qx, qy, qz, qw)
+            translation: new THREE.Vector3(x, y, z),
+            rotation: new THREE.Quaternion(qx, qy, qz, qw)
         }
     }
 }

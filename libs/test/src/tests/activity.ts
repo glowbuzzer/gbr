@@ -1,6 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { ARCDIRECTION } from "../../../store/src"
+import { assertNear } from "../util"
 
 const test = uvu.suite("activity")
 
@@ -35,19 +36,21 @@ test("can cancel activity even if none started", async () => {
 })
 
 test("can run move arc to completion", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(1, 1, 0)
-            .centre(0, 1, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
-    await move
-        .start() //
-        .iterations(35)
-        .assertCompleted()
-
-    gbc.plot("arc-primitive-quad-1")
+    try {
+        const move = gbc.wrap(
+            gbc.activity
+                .moveArc()
+                .translation(1, 1, 0)
+                .centre(0, 1, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
+        )
+        await move
+            .start() //
+            .iterations(35)
+            .assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
 })
 
 test("can run move arc in radius mode", async () => {
@@ -241,6 +244,13 @@ test("can cancel cartesian move after short time", async () => {
 test("can run short move to position to completion", async () => {
     const move = gbc.wrap(gbc.activity.moveToPosition(1, 0, 0).promise)
     await move.start().iterations(100).assertCompleted()
+})
+
+test("can run move to position with different frame", async () => {
+    const move = gbc.wrap(gbc.activity.moveToPosition(1, 0, 0).frameIndex(1).promise)
+    await move.start().iterations(100).assertCompleted()
+
+    assertNear(0, -1, 0, 0, 0, 0)
 })
 
 test("can cancel move to position", async () => {

@@ -125,7 +125,7 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
 }
 
 abstract class MoveWithFrameBuilder extends SimpleMoveBuilder {
-    protected _frameIndex = 0
+    protected _frameIndex = 0xffff // magic number to mean stay in local frame
 
     /** The frame index to use for the move */
     frameIndex(index: number) {
@@ -136,7 +136,7 @@ abstract class MoveWithFrameBuilder extends SimpleMoveBuilder {
 
 abstract class MoveBuilder extends MoveWithFrameBuilder {
     protected _translation: Vector3
-    protected _rotation: Quat
+    protected _rotation: Quat = { x: null, y: null, z: null, w: null }
     protected _positionReference: POSITIONREFERENCE
 
     /** Specify if the move is relative (default is absolute move). */
@@ -186,7 +186,7 @@ abstract class CartesianMoveBuilder extends MoveBuilder {
 export class MoveToPositionBuilder extends CartesianMoveBuilder {
     protected commandName = "moveToPosition"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION
-    private _configuration
+    private _configuration = 255 // magic for "null" / not specified
 
     protected build(): MoveToPositionStream {
         return {
@@ -403,6 +403,30 @@ export class IoutBuilder extends SetOutputBuilder {
         return {
             ioutToSet: this._ioutToSet,
             ...super.build()
+        }
+    }
+}
+
+export class ToolChangeBuilder extends ActivityBuilder {
+    protected commandName = "toolChange"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE
+    private _kinematicsConfigurationIndex: number
+    private _toolIndex: number
+
+    kinematicsConfigurationIndex(value: number) {
+        this._kinematicsConfigurationIndex = value
+        return this
+    }
+
+    toolIndex(value: number) {
+        this._toolIndex = value
+        return this
+    }
+
+    protected build() {
+        return {
+            kinematicsConfigurationIndex: this._kinematicsConfigurationIndex,
+            toolIndex: this._toolIndex
         }
     }
 }

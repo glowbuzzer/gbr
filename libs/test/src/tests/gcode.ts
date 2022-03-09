@@ -62,15 +62,17 @@ test("can handle null initial positions", async () => {
 test("can handle null initial positions with frame translation", async () => {
     // this test relies on initial positions being 'null', ie. NaN
     try {
+        gbc.assert.near(pos(0), 0)
+        gbc.assert.near(pos(1), 0)
+        gbc.assert.near(pos(2), 0)
         gbc.send_gcode(`
             G55
-            G0 X1
+            G0 X2
             M2`)
         gbc.exec(30)
         gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
-        gbc.assert.near(pos(0), 2)
+        gbc.assert.near(pos(0), 1)
         gbc.assert.near(pos(1), 0)
-        // the Z value is 1 because the frame for kc is shifted in Z
         gbc.assert.near(pos(2), 0)
     } finally {
         gbc.plot("null-initial-position-with-frame")

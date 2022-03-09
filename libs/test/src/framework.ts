@@ -14,9 +14,10 @@ import {
 } from "../../store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import { activitySlice, gcodeSlice, jointsSlice } from "../../store/src"
-import { updateFroPercentageMsg } from "../../store/src/kinematics"
+import { kinematicsSlice, updateFroPercentageMsg } from "../../store/src/kinematics"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../store/src/gcode/GCodeSenderAdapter"
+import { Quaternion, Vector3 } from "three"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -30,7 +31,8 @@ function near(v1, v2) {
 const rootReducer = combineReducers({
     activity: activitySlice.reducer,
     joint: jointsSlice.reducer,
-    gcode: gcodeSlice.reducer
+    gcode: gcodeSlice.reducer,
+    kc: kinematicsSlice.reducer
 })
 
 type State = ReturnType<typeof rootReducer>
@@ -39,6 +41,8 @@ export class GbcTest {
     private capture_state:
         | {
               joints: number[]
+              translation: Vector3
+              rotation: Quaternion
               activity: { tag: number; streamState: number; activityState: number }
           }[]
         | undefined
@@ -142,8 +146,16 @@ export class GbcTest {
         return this.stream(buffer)
     }
 
+    get(selector) {
+        return selector(this.status_msg)
+    }
+
     get assert() {
-        function test_near(actual, expected, tolerance) {
+        function test_near(actual, expected, tolerance, allowNeg = false) {
+            if (allowNeg) {
+                actual = Math.abs(actual)
+                expected = Math.abs(expected)
+            }
             const diff = Math.abs(actual - expected)
             if (tolerance < 0) {
                 // percentage tolerance
@@ -201,9 +213,9 @@ export class GbcTest {
                 assert.equal(actual, expected)
                 return this
             },
-            near: (selector, expected, tolerance = 0.001) => {
+            near: (selector, expected, tolerance = 0.001, allowNeg = false) => {
                 const actual = selector(this.status_msg)
-                test_near(actual, expected, tolerance)
+                test_near(actual, expected, tolerance, allowNeg)
                 return this
             },
             vel: (joint, expected) => {
@@ -237,17 +249,27 @@ export class GbcTest {
                 // get the joint status
                 const status = this.status_msg.status
                 status.joint && this.store.dispatch(jointsSlice.actions.status(status.joint))
+                status.kc && this.store.dispatch(kinematicsSlice.actions.status(status.kc))
                 status.activity &&
                     this.store.dispatch(activitySlice.actions.status(status.activity))
                 this.status_msg.stream &&
                     this.store.dispatch(gcodeSlice.actions.status(this.status_msg.stream))
 
-                const joints_act_pos = this.store.getState().joint.map(j => j.actPos)
-                const tag = this.store.getState().gcode.tag
-                const streamState = this.store.getState().gcode.state
+                const store_state = this.store.getState()
+
+                const joints_act_pos = store_state.joint.map(j => j.actPos)
+
+                const translation = store_state.kc[0].position.translation
+                const rotation = store_state.kc[0].position.rotation
+
+                const tag = store_state.gcode.tag
+                const streamState = store_state.gcode.state
                 const activityState = this.gbc.get_streamed_activity_state()
+
                 this.capture_state.push({
                     joints: joints_act_pos,
+                    translation,
+                    rotation,
                     activity: { tag, streamState, activityState }
                 })
             }

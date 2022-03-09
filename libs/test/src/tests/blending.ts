@@ -8,7 +8,7 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.reset()
     gbc.enable_operation()
-    gbc.capture(false) // set to true to generate trajectory plots
+    gbc.capture(true) // set to true to generate trajectory plots
 })
 
 const tag = state => state.stream.tag
@@ -121,7 +121,6 @@ test("can blend move to / move arc at 100pc", () => {
 
     try {
         gbc.capture()
-        gbc.disable_limit_check()
         gbc.stream([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
@@ -338,7 +337,7 @@ test("can handle very short move in blend sequence", async () => {
         gbc.send_gcode(
             `
                 G64
-                G1X1
+                G1X4
                 G1Y0.1
                 G1X2
                 M2`
@@ -346,11 +345,11 @@ test("can handle very short move in blend sequence", async () => {
             .assert.streamSequence(
                 tag,
                 [
-                    [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [12, 2, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE], // this should be in blend
-                    [5, 3, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
+                    [7, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [14, 2, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE], // this should be in blend
+                    [13, 3, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [6, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [15, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [25, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
                 ],
                 true /* set to false to skip verify */
             )
@@ -358,7 +357,7 @@ test("can handle very short move in blend sequence", async () => {
             .assert.near(pos(0), 2)
             .assert.near(pos(1), 0.1)
     } finally {
-        gbc.plot("blend-short-move-issue")
+        gbc.plot("test")
     }
 })
 
