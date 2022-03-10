@@ -79,8 +79,8 @@ function unmarshall(state): KinematicsState {
             }
         }
     }
-    const { z, y, x } = state.pose.position
-    const { z: qz, y: qy, x: qx, w: qw } = state.pose.orientation
+    const { z, y, x } = state.position.translation
+    const { z: qz, y: qy, x: qx, w: qw } = state.position.rotation
 
     return {
         ...state,
