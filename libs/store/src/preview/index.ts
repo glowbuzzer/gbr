@@ -63,7 +63,11 @@ export function usePreview() {
 
     return {
         setGCode(gcode: string) {
-            const interpreter = new GCodePreviewAdapter(currentPosition, frames.convertToFrame)
+            const interpreter = new GCodePreviewAdapter(
+                currentPosition,
+                kc.frameIndex,
+                frames.convertToFrame
+            )
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
         },

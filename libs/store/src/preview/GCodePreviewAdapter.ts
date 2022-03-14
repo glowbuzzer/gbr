@@ -23,12 +23,12 @@ const MOVE_COLOR = fromHexString("#a7c0fd")
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
     // private frameIndex = 0
-    // private kcFrame: number
+    private kcFrame: number
     private convertToFrame
 
-    constructor(currentPosition: CartesianPosition, convertToFrame) {
+    constructor(currentPosition: CartesianPosition, kcFrame, convertToFrame) {
         super(currentPosition)
-        // this.kcFrame = kcFrame
+        this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
     }

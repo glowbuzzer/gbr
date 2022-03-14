@@ -225,6 +225,22 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
+    M0() {
+        this.push({
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
+        })
+    }
+
+    T(params) {
+        console.log("T code encountered", params)
+        this.push({
+            activityType: ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE,
+            toolChange: {
+                toolIndex: Number(params)
+            }
+        })
+    }
+
     M2() {
         this.push({
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM

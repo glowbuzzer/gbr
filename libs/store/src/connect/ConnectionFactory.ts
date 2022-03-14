@@ -4,7 +4,7 @@ import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroPercentageMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
-import { gcodeSlice } from "../gcode"
+import { gcodeSlice, updateStreamStateMsg } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
@@ -26,6 +26,7 @@ import {
 } from "../machine/machine_api"
 import { RootState } from "../root"
 import { framesSlice } from "../frames"
+import { STREAMCOMMAND, STREAMSTATE } from "@glowbuzzer/store"
 
 abstract class ProcessorBase {
     protected first = true
@@ -223,14 +224,18 @@ if (typeof window !== "undefined") {
                             }
                             if (msg.stream) {
                                 dispatch(gcodeSlice.actions.status(msg.stream))
-
                                 const store = getState()
+                                if (
+                                    store.gcode.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY
+                                ) {
+                                    // gbc state is paused by activity -- we want to transition immediately to paused state
+                                    ws.send(updateStreamStateMsg(STREAMCOMMAND.STREAMCOMMAND_PAUSE))
+                                }
                                 GCodeStreamer.update(
                                     dispatch,
                                     store.gcode,
                                     store.machine.currentState,
                                     streamItems => {
-                                        console.log("sending gcode")
                                         ws.send(
                                             JSON.stringify({
                                                 stream: streamItems

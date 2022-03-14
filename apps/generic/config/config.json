@@ -208,6 +208,18 @@
     },
     "frames": {
         "default": {
+            "translation": {
+                "x": 10
+            }
+        }
+    },
+    "tool": {
+        "default": {
+        },
+        "offsetz": {
+            "translation": {
+                "z": -10
+            }
         }
     },
     "moveParameters": {

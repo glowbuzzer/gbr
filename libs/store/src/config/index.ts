@@ -13,7 +13,6 @@ import {
     FramesConfig,
     IinConfig,
     IoutConfig,
-    JogConfig,
     JointConfig,
     KC_KINEMATICSCONFIGURATIONTYPE,
     KinematicsConfigurationConfig,
@@ -62,7 +61,6 @@ export type ConfigType = {
     kinematicsConfiguration: { [index: string]: KinematicsConfigurationConfig }
     moveParameters: { [index: string]: MoveParametersConfig }
     joint: { [index: string]: JointConfig }
-    jog?: { [index: string]: JogConfig }
     frames: { [index: string]: FramesConfig }
     task?: { [index: string]: TaskConfig }
     activity?: { [index: string]: ActivityConfig }
@@ -115,11 +113,6 @@ export const DEFAULT_CONFIG: ConfigType = {
         0: DEFAULT_JOINT_CONFIG,
         1: DEFAULT_JOINT_CONFIG,
         2: DEFAULT_JOINT_CONFIG
-    },
-    jog: {
-        0: {
-            kinematicsConfigurationIndex: 0
-        }
     },
     frames: {
         0: {

@@ -40,6 +40,8 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     const OFFSET = scale / 10
     const fontSize = scale / 15
 
+    console.log("PREVIEW", preview)
+
     // calculate lower and upper limits of all points
     const { minPoint, maxPoint } = useMemo(() => {
         const minPoint = new Vector3(1e99, 1e99, 1e99)

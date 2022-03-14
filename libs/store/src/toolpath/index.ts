@@ -3,6 +3,8 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import deepEqual from "fast-deep-equal"
 import { settings } from "../util/settings"
 import { RootState } from "../root"
+import { useFrames } from "../frames"
+import { Quaternion, Vector3 } from "three"
 
 const { load, save } = settings("toolpath")
 
@@ -15,9 +17,10 @@ export type ToolPathElement = {
     x: number
     y: number
     z: number
-    a?: number
-    b?: number
-    c?: number
+    qx?: number
+    qy?: number
+    qz?: number
+    qw?: number
 }
 
 type ToolPathForKinematicsConfiguration = {
@@ -79,18 +82,29 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
  * @ignore - Internal to the ToolPathTile
  */
 export const useToolPath = (kc: number) => {
+    const frames = useFrames()
     // select the given kc out of all toolpaths
-    const toolPath = useSelector(
-        ({ toolPath }: RootState) =>
-            toolPath.paths[kc]?.path || [
+    const toolPath = useSelector(({ toolPath }: RootState) => {
+        // TODO: this is very inefficient
+        return (
+            toolPath.paths[kc]?.path.map(({ x, y, z, qx, qy, qz, qw }) => {
+                const p = new Vector3(x, y, z)
+                const q = new Quaternion(qx, qy, qz, qw)
+                const { position } = frames.convertToFrame(p, q, kc, "world")
+                return {
+                    x: position.x,
+                    y: position.y,
+                    z: position.z
+                }
+            }) || [
                 {
                     x: 0,
                     y: 0,
                     z: 0
                 }
-            ],
-        shallowEqual
-    )
+            ]
+        )
+    }, shallowEqual)
     const dispatch = useDispatch()
 
     return {

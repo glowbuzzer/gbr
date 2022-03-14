@@ -144,7 +144,7 @@ export const useKinematics = (kc: number, frameIndex: number | "world") => {
         pose: frames.convertToFrame(
             state.position.translation,
             state.position.rotation,
-            "world",
+            fromIndex,
             frameIndex
         ),
         /** The positions of all joints in the kinematics configuration */

@@ -112,7 +112,7 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
     }
 })
 
-function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
+export function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
     return JSON.stringify({
         command: {
             stream: {
