@@ -181,7 +181,7 @@ export function change_reference_frame(
         // convenience function to construct matrix4 from frame info
         const f = frames.find(f => f.index === index)
         if (!f) {
-            console.warn("Invalid frame requested", index, frames)
+            // console.warn("Invalid frame requested", index, frames)
             return IDENTITY_MATRIX
         }
         return new Matrix4().compose(f.absolute.translation, f.absolute.rotation, UNIT_SCALE)

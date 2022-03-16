@@ -5,6 +5,7 @@ import {
     ARCTYPE,
     CartesianPosition,
     DwellConfig,
+    GTLT,
     MoveJointsAtVelocityStream,
     MoveJointsStream,
     MoveLineAtVelocityStream,
@@ -16,18 +17,22 @@ import {
     SetAoutCommand,
     SetDoutCommand,
     SetIoutCommand,
-    Vector3
+    TRIGGERTYPE,
+    Vector3,
+    WaitOnAnalogInputConfig,
+    WaitOnDigitalInputConfig,
+    WaitOnIntegerInputConfig
 } from "../gbc"
 import { Euler, Quaternion } from "three"
 
 export interface ActivityController {
-    nextTag: number
+    get nextTag(): number
 
     execute(command)
 }
 
 export abstract class ActivityBuilder {
-    private controller: ActivityController
+    private readonly controller: ActivityController
 
     /** @ignore */
     tag: number
@@ -88,9 +93,9 @@ export class EndProgramBuilder extends ActivityBuilder {
 }
 
 export class DwellActivityBuilder extends ActivityBuilder {
-    private _ticksToDwell: number
     protected commandName = "dwell"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_DWELL
+    private _ticksToDwell: number
 
     /** Number of ticks to dwell. */
     ticksToDwell(ticksToDwell: number) {
@@ -101,6 +106,79 @@ export class DwellActivityBuilder extends ActivityBuilder {
     protected build(): DwellConfig {
         return {
             ticksToDwell: this._ticksToDwell
+        }
+    }
+}
+
+abstract class WaitOnBuilder extends ActivityBuilder {
+    protected _index: number
+
+    index(index: number) {
+        this._index = index
+        return this
+    }
+}
+
+export class WaitOnDigitalInputBuilder extends WaitOnBuilder {
+    protected commandName = "waitOnDigitalInput"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_WAITON_DIN
+    private _triggerType: TRIGGERTYPE
+
+    triggerType(type: TRIGGERTYPE) {
+        this._triggerType = type
+        return this
+    }
+
+    protected build(): WaitOnDigitalInputConfig {
+        return {
+            index: this._index,
+            triggerType: this._triggerType
+        }
+    }
+}
+
+abstract class WaitOnNumericBuilder extends WaitOnBuilder {
+    private _value: number
+    private _condition = GTLT.GREATERTHAN
+
+    value(value: number) {
+        this._value = value
+        return this
+    }
+
+    condition(c: GTLT) {
+        this._condition = c
+        return this
+    }
+
+    protected build(): { value?: number; condition?: GTLT } {
+        return {
+            value: this._value,
+            condition: this._condition
+        }
+    }
+}
+
+export class WaitOnIntegerInputBuilder extends WaitOnNumericBuilder {
+    protected commandName = "waitOnIntegerInput"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_WAITON_IIN
+
+    protected build(): WaitOnIntegerInputConfig {
+        return {
+            index: this._index,
+            ...super.build()
+        }
+    }
+}
+
+export class WaitOnAnalogInputBuilder extends WaitOnNumericBuilder {
+    protected commandName = "waitOnAnalogInput"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_WAITON_AIN
+
+    protected build(): WaitOnAnalogInputConfig {
+        return {
+            index: this._index,
+            ...super.build()
         }
     }
 }

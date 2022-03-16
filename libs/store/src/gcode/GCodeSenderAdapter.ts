@@ -14,6 +14,8 @@ import {
     SetIoutCommand
 } from "../gbc"
 import { simplify } from "./simplify"
+import { GCodeContextType } from "./index"
+import { GCodeActivityProvider } from "../activity/GCodeActivityProvider"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
 
@@ -43,8 +45,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private vmaxPercentage = 100 // this will override moveParams above
 
     private canMergePrevious = false // determines if we are allowed to merge with previous
+    private readonly context: GCodeContextType
+    private toolIndex = 0
+    private previousToolIndex = 0
 
-    constructor(buffer, vmax: number, simplifyTolerance = 0) {
+    constructor(buffer, vmax: number, context?: GCodeContextType, simplifyTolerance = 0) {
         super({
             translation: { x: null, y: null, z: null },
             positionReference: POSITIONREFERENCE.ABSOLUTE,
@@ -52,6 +57,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
         this.buffer = buffer
         this.vmax = vmax
+        this.context = context
         this.simplifyTolerance = simplifyTolerance
     }
 
@@ -232,19 +238,37 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     T(params) {
-        console.log("T code encountered", params)
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE,
-            toolChange: {
-                toolIndex: Number(params)
-            }
-        })
+        this.previousToolIndex = this.toolIndex
+        this.toolIndex = Number(params)
     }
 
     M2() {
         this.push({
             activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
         })
+    }
+
+    M6() {
+        // tool change
+        if (this.context) {
+            const provider = new GCodeActivityProvider(this.buffer)
+            // hard coded to first KC for now
+            const builders = this.context.handleToolChange(
+                0,
+                this.previousToolIndex,
+                this.toolIndex,
+                provider
+            )
+            // builder promises will append activities to the buffer
+            builders?.forEach(b => b.promise())
+        } else {
+            this.push({
+                activityType: ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE,
+                toolChange: {
+                    toolIndex: this.toolIndex
+                }
+            })
+        }
     }
 
     M8() {

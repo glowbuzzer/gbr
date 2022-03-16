@@ -1,4 +1,4 @@
-import { ACTIVITYSTATE, MoveParametersConfig } from "../gbc"
+import { ACTIVITYSTATE, MoveParametersConfig, TRIGGERTYPE } from "../gbc"
 import {
     ActivityController,
     AoutBuilder,
@@ -13,7 +13,10 @@ import {
     MoveLineAtVelocityBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
-    ToolChangeBuilder
+    ToolChangeBuilder,
+    WaitOnAnalogInputBuilder,
+    WaitOnDigitalInputBuilder,
+    WaitOnIntegerInputBuilder
 } from "./builders"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
@@ -130,13 +133,88 @@ export interface SoloActivityApi {
     endProgram(): EndProgramBuilder
 }
 
-export class ActivityApiImpl implements SoloActivityApi, ActivityController {
+export abstract class ActivityApiBase implements SoloActivityApi, ActivityController {
+    abstract get nextTag(): number
+
+    abstract execute(command)
+
+    cancel() {
+        return new CancelActivityBuilder(this)
+        // return this.buildMotion(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}, {})
+    }
+
+    dwell(ticksToDwell: number) {
+        return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
+    }
+
+    waitOnDigitalInput(index: number, type: TRIGGERTYPE) {
+        return new WaitOnDigitalInputBuilder(this).index(index).triggerType(type)
+    }
+
+    waitOnIntegerInput(index: number) {
+        return new WaitOnIntegerInputBuilder(this).index(index)
+    }
+
+    waitOnAnalogInput(index: number) {
+        return new WaitOnAnalogInputBuilder(this).index(index)
+    }
+
+    moveArc(x?: number, y?: number, z?: number) {
+        return new MoveArcBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+    }
+
+    moveJoints(jointPositionArray: number[]) {
+        return new MoveJointsBuilder(this).joints(jointPositionArray)
+    }
+
+    moveJointsAtVelocity(jointVelocityArray: number[], moveParams: MoveParametersConfig = {}) {
+        return new MoveJointsAtVelocityBuilder(this).velocities(jointVelocityArray)
+    }
+
+    moveLine(x?: number, y?: number, z?: number) {
+        return new MoveLineBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+    }
+
+    moveLineAtVelocity(x: number, y: number, z: number) {
+        return new MoveLineAtVelocityBuilder(this).vector(x, y, z)
+    }
+
+    moveToPosition(x: number, y: number, z: number) {
+        return new MoveToPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+    }
+
+    setDout(index: number, value: boolean) {
+        return new DoutBuilder(this).dout(index).value(value)
+    }
+
+    setAout(index: number, value: number) {
+        return new AoutBuilder(this).aout(index).value(value)
+    }
+
+    setIout(index: number, value: number) {
+        return new IoutBuilder(this).iout(index).value(value)
+    }
+
+    changeTool(kc: number, toolIndex: number): ToolChangeBuilder {
+        return new ToolChangeBuilder(this).kinematicsConfigurationIndex(kc).toolIndex(toolIndex)
+    }
+
+    endProgram() {
+        return new EndProgramBuilder(this)
+    }
+}
+
+export class ActivityApiImpl
+    extends ActivityApiBase
+    implements SoloActivityApi, ActivityController
+{
     private readonly index: number
     private readonly _send: (msg: string) => void
     private currentTag = 0
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     constructor(index: number, send: (msg: string) => void) {
+        super()
         this.index = index
         this._send = send
     }
@@ -185,58 +263,5 @@ export class ActivityApiImpl implements SoloActivityApi, ActivityController {
         } else {
             // console.log("TAG RUNNING BUT NOT COMPLETED", tag)
         }
-    }
-
-    cancel() {
-        return new CancelActivityBuilder(this)
-        // return this.buildMotion(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}, {})
-    }
-
-    dwell(ticksToDwell: number) {
-        return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
-    }
-
-    moveArc(x?: number, y?: number, z?: number) {
-        return new MoveArcBuilder(this).translation(nullify(x), nullify(y), nullify(z))
-    }
-
-    moveJoints(jointPositionArray: number[]) {
-        return new MoveJointsBuilder(this).joints(jointPositionArray)
-    }
-
-    moveJointsAtVelocity(jointVelocityArray: number[], moveParams: MoveParametersConfig = {}) {
-        return new MoveJointsAtVelocityBuilder(this).velocities(jointVelocityArray)
-    }
-
-    moveLine(x?: number, y?: number, z?: number) {
-        return new MoveLineBuilder(this).translation(nullify(x), nullify(y), nullify(z))
-    }
-
-    moveLineAtVelocity(x: number, y: number, z: number) {
-        return new MoveLineAtVelocityBuilder(this).vector(x, y, z)
-    }
-
-    moveToPosition(x: number, y: number, z: number) {
-        return new MoveToPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
-    }
-
-    setDout(index: number, value: boolean) {
-        return new DoutBuilder(this).dout(index).value(value)
-    }
-
-    setAout(index: number, value: number) {
-        return new AoutBuilder(this).aout(index).value(value)
-    }
-
-    setIout(index: number, value: number) {
-        return new IoutBuilder(this).iout(index).value(value)
-    }
-
-    changeTool(kc: number, toolIndex: number): ToolChangeBuilder {
-        return new ToolChangeBuilder(this).kinematicsConfigurationIndex(kc).toolIndex(toolIndex)
-    }
-
-    endProgram() {
-        return new EndProgramBuilder(this)
     }
 }

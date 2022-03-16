@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
@@ -6,6 +7,7 @@ import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnection } from "../connect"
 import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { ActivityBuilder, SoloActivityApi } from "../activity"
 
 const { load, save } = settings("store.gcode")
 
@@ -64,8 +66,8 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         },
         append(state, action) {
             console.log("Starting interpreter")
-            const { gcode, vmax } = action.payload
-            const interpreter = new GCodeSenderAdapter(state.buffer, vmax)
+            const { gcode, vmax, context } = action.payload
+            const interpreter = new GCodeSenderAdapter(state.buffer, vmax, context)
             interpreter.execute(gcode)
             console.log("Interpreter done")
         },
@@ -155,6 +157,7 @@ export function useGCode(): {
         ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
         shallowEqual
     )
+    const context = useContext(gcodeContext)
     const dispatch = useDispatch()
     const connection = useConnection()
 
@@ -163,7 +166,7 @@ export function useGCode(): {
         time,
         lineNum: tag,
         send(gcode, vmax: number) {
-            dispatch(gcodeSlice.actions.append({ gcode, vmax }))
+            dispatch(gcodeSlice.actions.append({ gcode, vmax, context }))
         },
         setState(streamCommand: STREAMCOMMAND) {
             dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
@@ -176,3 +179,16 @@ export function useGCodeSettings() {
     return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings
 }
+
+export type GCodeContextType = {
+    handleToolChange(
+        kinematicsConfigurationIndex: number,
+        currentToolIndex: number,
+        newToolIndex: number,
+        api: SoloActivityApi
+    ): ActivityBuilder[]
+}
+
+export const gcodeContext = createContext<GCodeContextType>(null)
+
+export const GCodeContextProvider = gcodeContext.Provider

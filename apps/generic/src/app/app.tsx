@@ -27,8 +27,8 @@ import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout
 import React, { useState } from "react"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
-//tutorial
 import "react-grid-layout/css/styles.css"
+import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
 
 const StyledApp = styled.div``
 
@@ -87,13 +87,29 @@ export function App() {
         ]
     ]
 
+    function handleToolChange(
+        kinematicsConfigurationIndex: number,
+        current: number,
+        next: number,
+        api: SoloActivityApi
+    ) {
+        console.log("TOOL CHANGE!")
+        return [
+            api.moveToPosition(null, null, 50),
+            api.changeTool(kinematicsConfigurationIndex, next),
+            api.dwell(500)
+        ]
+    }
+
     return (
         <StyledApp>
             <GlowbuzzerApp>
-                <div>
-                    <PrefsButton /> <FrameOverridesButton />
-                </div>
-                <SimpleTileLayout appId="generic" tiles={tiles} widths={[2, 4, 2]} />
+                <GCodeContextProvider value={{ handleToolChange }}>
+                    <div>
+                        <PrefsButton /> <FrameOverridesButton />
+                    </div>
+                    <SimpleTileLayout appId="generic" tiles={tiles} widths={[2, 4, 2]} />
+                </GCodeContextProvider>
             </GlowbuzzerApp>
         </StyledApp>
     )

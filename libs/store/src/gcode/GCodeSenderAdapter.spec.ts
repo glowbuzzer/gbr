@@ -2,7 +2,7 @@ import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 
 function exec(gcode, tolerance = 0) {
     const buffer = []
-    const adapter = new GCodeSenderAdapter(buffer, 100, tolerance)
+    const adapter = new GCodeSenderAdapter(buffer, 100, undefined, tolerance)
     adapter.execute(gcode)
     return buffer
 }

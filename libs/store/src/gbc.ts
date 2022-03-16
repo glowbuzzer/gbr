@@ -59,6 +59,10 @@
     export enum ACTIVITYTYPE {
         /**  No activity */
         ACTIVITYTYPE_NONE,
+        /**  Pause program activity (streamed) */
+        ACTIVITYTYPE_PAUSEPROGRAM,
+        /**  End program activity (streamed) */
+        ACTIVITYTYPE_ENDPROGRAM,
         /**  Move a set of joints to a given position */
         ACTIVITYTYPE_MOVEJOINTS,
         /**  Move a set of joints at a given velocity */
@@ -73,32 +77,32 @@
         ACTIVITYTYPE_MOVESPLINE,
         /**  Move a kinematics configuration&#x27;s tool to given position (with orientation) in joint space */
         ACTIVITYTYPE_MOVETOPOSITION,
-        /**  Gear in a master and slave specifying position */
-        ACTIVITYTYPE_GEARINPOS,
-        /**  Gear in a master and slave specifying velocity */
-        ACTIVITYTYPE_GEARINVELO,
         /**  Set a digital out  */
         ACTIVITYTYPE_SETDOUT,
+        /**  Set an integer out */
+        ACTIVITYTYPE_SETIOUT,
         /**  Set an analog out */
         ACTIVITYTYPE_SETAOUT,
         /**  Dwell (wait) for a period of time */
         ACTIVITYTYPE_DWELL,
-        /**  Wait for a trigger */
-        ACTIVITYTYPE_WAITON,
+        /**  Wait for a digital input */
+        ACTIVITYTYPE_WAITON_DIN,
+        /**  Wait for an integer input */
+        ACTIVITYTYPE_WAITON_IIN,
+        /**  Wait for an analog input */
+        ACTIVITYTYPE_WAITON_AIN,
+        /**  Gear in a master and slave specifying position */
+        ACTIVITYTYPE_GEARINPOS,
+        /**  Gear in a master and slave specifying velocity */
+        ACTIVITYTYPE_GEARINVELO,
         /**  Switch a robot&#x27;s configuration */
         ACTIVITYTYPE_SWITCHPOSE,
+        /**  Change tool */
+        ACTIVITYTYPE_TOOLCHANGE,
         /**  Latch the value of a position */
         ACTIVITYTYPE_LATCH,
         /**  Internal stress test activity */
-        ACTIVITYTYPE_STRESSTEST,
-        /**  End program activity (streamed) */
-        ACTIVITYTYPE_ENDPROGRAM,
-        /**  Set an integer out */
-        ACTIVITYTYPE_SETIOUT,
-        /**  Change tool */
-        ACTIVITYTYPE_TOOLCHANGE,
-        /**  Pause program activity (streamed) */
-        ACTIVITYTYPE_PAUSEPROGRAM
+        ACTIVITYTYPE_STRESSTEST
     }
     export enum ACTIVITYSTATE {
         /**  Activity is inactive (not being executed) */
@@ -1171,25 +1175,83 @@
     }
 
     /**
- Configuration parameters for waitOn
+ Configuration parameters for waitOnDigitalInput
  */
-    export type WaitOnConfig = {
-        /**  Trigger upon which to wait */
-        waitOnTriggerIndex?: number
+    export type WaitOnDigitalInputConfig = {
+        /**  Index of the digital input */
+        index?: number
+        /**  Whether to continue on rising or falling edge */
+        triggerType?: TRIGGERTYPE
     }
 
     /**
- Status of waitOn
+ Status of waitOnDigitalInput
  */
-    export type WaitOnStatus = {
-        /**  Signals the waitOn is in waiting state */
+    export type WaitOnDigitalInputStatus = {
+        /**  Signals the waitOnDigitalInput is in waiting state */
         waiting?: boolean
     }
 
     /**
- Command parameters for waitOn
+ Command parameters for waitOnDigitalInput
  */
-    export type WaitOnCommand = {
+    export type WaitOnDigitalInputCommand = {
+        /**  Triggers the activity to stop and skip to the next in a task */
+        skipToNext?: boolean
+    }
+
+    /**
+ Configuration parameters for waitOnIntegerInput
+ */
+    export type WaitOnIntegerInputConfig = {
+        /**  Index of the integer input */
+        index?: number
+        /**  Continue if current integer value matches this value and condition */
+        value?: number
+        /**  Continue if current integer value matches this condition and value */
+        condition?: GTLT
+    }
+
+    /**
+ Status of waitOnIntegerInput
+ */
+    export type WaitOnIntegerInputStatus = {
+        /**  Signals the waitOnIntegerInput is in waiting state */
+        waiting?: boolean
+    }
+
+    /**
+ Command parameters for waitOnIntegerInput
+ */
+    export type WaitOnIntegerInputCommand = {
+        /**  Triggers the activity to stop and skip to the next in a task */
+        skipToNext?: boolean
+    }
+
+    /**
+ Configuration parameters for waitOnAnalogInput
+ */
+    export type WaitOnAnalogInputConfig = {
+        /**  Index of the analog input */
+        index?: number
+        /**  Continue if current analog value matches this value and condition */
+        value?: number
+        /**  Continue if current analog value matches this condition and value */
+        condition?: GTLT
+    }
+
+    /**
+ Status of waitOnAnalogInput
+ */
+    export type WaitOnAnalogInputStatus = {
+        /**  Signals the waitOnAnalogInput is in waiting state */
+        waiting?: boolean
+    }
+
+    /**
+ Command parameters for waitOnAnalogInput
+ */
+    export type WaitOnAnalogInputCommand = {
         /**  Triggers the activity to stop and skip to the next in a task */
         skipToNext?: boolean
     }
@@ -1427,8 +1489,12 @@
         setIout?: SetIoutConfig
         /**  Configuration parameters for dwell activity */
         dwell?: DwellConfig
-        /**  Configuration parameters for wait on activity */
-        waitOn?: WaitOnConfig
+        /**  Configuration parameters for wait on digital input activity */
+        waitOnDigitalInput?: WaitOnDigitalInputConfig
+        /**  Configuration parameters for wait on integer input activity */
+        waitOnIntegerInput?: WaitOnIntegerInputConfig
+        /**  Configuration parameters for wait on analog input activity */
+        waitOnAnalogInput?: WaitOnAnalogInputConfig
         /**  Configuration parameters for switch pose activity */
         switchPose?: SwitchPoseConfig
         /**  Configuration parameters for latch position activity */
@@ -1438,187 +1504,201 @@
         //              End of Union
     }
 
-/**
+    /**
  This is a union
  */
-export type ActivityStatus = {
-    /**  current state of the activity */
-    state?: ACTIVITYSTATE
-    /**  User defined. Used by Glowbuzzer React to track gcode line */
-    tag?: number
-    //              Start of Union
-    /**  Status of the move joints activity */
-    moveJoints?: MoveJointsStatus
-    /**  Status of the move joints at velocity activity */
-    moveJointsAtVelocity?: MoveJointsAtVelocityStatus
-    /**  Status of the move line activity */
-    moveLine?: MoveLineStatus
-    /**  Status of the move line at velocity activity */
-    moveLineAtVelocity?: MoveLineAtVelocityStatus
-    /**  Status of the move arc activity */
-    moveArc?: MoveArcStatus
-    /**  Status of the move spline activity */
-    moveSpline?: MoveSplineStatus
-    /**  Status of the move to position activity */
-    moveToPosition?: MoveToPositionStatus
-    /**  Status of the gear in position activity */
-    gearInPos?: GearInPosStatus
-    /**  Status of the gear in velocity activity */
-    gearInVelo?: GearInVeloStatus
-    /**  Status of the set dout activity */
-    setDout?: SetDoutStatus
-    /**  Status of the set aout activity */
-    setAout?: SetAoutStatus
-    /**  Status of the set iout activity */
-    setIout?: SetIoutStatus
-    /**  Status of the set dwell activity */
-    dwell?: DwellStatus
-    /**  Status of the wait on activity */
-    waitOn?: WaitOnStatus
-    /**  Status of the switch pose activity */
-    switchPose?: SwitchPoseStatus
-    /**  Status of the latch pos activity */
-    latchPos?: LatchPosStatus
-    /**  Status of the stress test activity */
-    stressTest?: StressTestStatus
-    //              End of Union
-}
+    export type ActivityStatus = {
+        /**  current state of the activity */
+        state?: ACTIVITYSTATE
+        /**  User defined. Used by Glowbuzzer React to track gcode line */
+        tag?: number
+        //              Start of Union
+        /**  Status of the move joints activity */
+        moveJoints?: MoveJointsStatus
+        /**  Status of the move joints at velocity activity */
+        moveJointsAtVelocity?: MoveJointsAtVelocityStatus
+        /**  Status of the move line activity */
+        moveLine?: MoveLineStatus
+        /**  Status of the move line at velocity activity */
+        moveLineAtVelocity?: MoveLineAtVelocityStatus
+        /**  Status of the move arc activity */
+        moveArc?: MoveArcStatus
+        /**  Status of the move spline activity */
+        moveSpline?: MoveSplineStatus
+        /**  Status of the move to position activity */
+        moveToPosition?: MoveToPositionStatus
+        /**  Status of the gear in position activity */
+        gearInPos?: GearInPosStatus
+        /**  Status of the gear in velocity activity */
+        gearInVelo?: GearInVeloStatus
+        /**  Status of the set dout activity */
+        setDout?: SetDoutStatus
+        /**  Status of the set aout activity */
+        setAout?: SetAoutStatus
+        /**  Status of the set iout activity */
+        setIout?: SetIoutStatus
+        /**  Status of the set dwell activity */
+        dwell?: DwellStatus
+        /**  Status of the wait on digital input activity */
+        waitOnDigitalInput?: WaitOnDigitalInputStatus
+        /**  Status of the wait on integer input activity */
+        waitOnIntegerInput?: WaitOnIntegerInputStatus
+        /**  Status of the wait on analog input activity */
+        waitOnAnalogInput?: WaitOnAnalogInputStatus
+        /**  Status of the switch pose activity */
+        switchPose?: SwitchPoseStatus
+        /**  Status of the latch pos activity */
+        latchPos?: LatchPosStatus
+        /**  Status of the stress test activity */
+        stressTest?: StressTestStatus
+        //              End of Union
+    }
 
-/**
+    /**
  This is a union. There is no discriminator for this union as the Activity will have been configured with a specific type of activity and these are the commands that act on this type.
  */
-export type ActivityCommand = {
-    //              Start of Union
-    /**  Move joints command object for activity */
-    moveJoints?: MoveJointsCommand
-    /**  Move joints at velocity command object for activity */
-    moveJointsAtVelocity?: MoveJointsAtVelocityCommand
-    /**  Move line command object for activity */
-    moveLine?: MoveLineCommand
-    /**  Move line at velocity command object for activity */
-    moveLineAtVelocity?: MoveLineAtVelocityCommand
-    /**  Move arc command object for activity */
-    moveArc?: MoveArcCommand
-    /**  Move spline command object for activity */
-    moveSpline?: MoveSplineCommand
-    /**  Move to position command object for activity */
-    moveToPosition?: MoveToPositionCommand
-    /**  Gear in position command object for activity */
-    gearInPos?: GearInPosCommand
-    /**  Gear in velocity command object for activity */
-    gearInVelo?: GearInVeloCommand
-    /**  Set dout command object for activity */
-    setDout?: SetDoutCommand
-    /**  Set aout command object for activity */
-    setAout?: SetAoutCommand
-    /**  Set iout command object for activity */
-    setIout?: SetIoutCommand
-    /**  Set dwell command object for activity */
-    dwell?: DwellCommand
-    /**  Set wait on command object for activity */
-    waitOn?: WaitOnCommand
-    /**  Set switch pose command object for activity */
-    switchPose?: SwitchPoseCommand
-    /**  Set latch position  command object for activity */
-    latchPos?: LatchPosCommand
-    /**  Set stress test command object for activity */
-    stressTest?: StressTestCommand
-    //              End of Union
-    /**  Trigger a skip to next on the activity */
-    skipToNext?: boolean
-}
+    export type ActivityCommand = {
+        //              Start of Union
+        /**  Move joints command object for activity */
+        moveJoints?: MoveJointsCommand
+        /**  Move joints at velocity command object for activity */
+        moveJointsAtVelocity?: MoveJointsAtVelocityCommand
+        /**  Move line command object for activity */
+        moveLine?: MoveLineCommand
+        /**  Move line at velocity command object for activity */
+        moveLineAtVelocity?: MoveLineAtVelocityCommand
+        /**  Move arc command object for activity */
+        moveArc?: MoveArcCommand
+        /**  Move spline command object for activity */
+        moveSpline?: MoveSplineCommand
+        /**  Move to position command object for activity */
+        moveToPosition?: MoveToPositionCommand
+        /**  Gear in position command object for activity */
+        gearInPos?: GearInPosCommand
+        /**  Gear in velocity command object for activity */
+        gearInVelo?: GearInVeloCommand
+        /**  Set dout command object for activity */
+        setDout?: SetDoutCommand
+        /**  Set aout command object for activity */
+        setAout?: SetAoutCommand
+        /**  Set iout command object for activity */
+        setIout?: SetIoutCommand
+        /**  Set dwell command object for activity */
+        dwell?: DwellCommand
+        /**  Set wait on digital input command object for activity */
+        waitOnDigitalInput?: WaitOnDigitalInputCommand
+        /**  Set wait on integer input command object for activity */
+        waitOnIntegerInput?: WaitOnIntegerInputCommand
+        /**  Set wait on analog input command object for activity */
+        waitOnAnalogInput?: WaitOnAnalogInputCommand
+        /**  Set switch pose command object for activity */
+        switchPose?: SwitchPoseCommand
+        /**  Set latch position  command object for activity */
+        latchPos?: LatchPosCommand
+        /**  Set stress test command object for activity */
+        stressTest?: StressTestCommand
+        //              End of Union
+        /**  Trigger a skip to next on the activity */
+        skipToNext?: boolean
+    }
 
-/**
+    /**
  This is a union
  */
-export type ActivityStreamItem = {
-    /**  Discriminator - the type of activity */
-    activityType?: ACTIVITYTYPE
-    /**  User defined. Used by Glowbuzzer React to track gcode line */
-    tag?: number
-    //              Start of Union
-    /**  Parameters for a streamed move joints */
-    moveJoints?: MoveJointsStream
-    /**  Parameters for a streamed move joints at velocity */
-    moveJointsAtVelocity?: MoveJointsAtVelocityStream
-    /**  Parameters for a streamed move line */
-    moveLine?: MoveLineStream
-    /**  Parameters for a streamed move line at velocity */
-    moveLineAtVelocity?: MoveLineAtVelocityStream
-    /**  Parameters for a streamed move arc */
-    moveArc?: MoveArcStream
-    /**  Parameters for a streamed move to position */
-    moveToPosition?: MoveToPositionStream
-    /**  Parameters for a streamed set dout */
-    setDout?: SetDoutCommand
-    /**  Parameters for a streamed set aout */
-    setAout?: SetAoutCommand
-    /**  Parameters for a streamed set iout */
-    setIout?: SetIoutCommand
-    /**  Parameters for a streamed dwell */
-    dwell?: DwellConfig
-    /**  Parameters for a streamed tool change */
-    toolChange?: ToolChangeConfig
-    /**  Parameters for a streamed stress test */
-    stressTest?: StressTestStream
-    //              End of Union
-}
+    export type ActivityStreamItem = {
+        /**  Discriminator - the type of activity */
+        activityType?: ACTIVITYTYPE
+        /**  User defined. Used by Glowbuzzer React to track gcode line */
+        tag?: number
+        //              Start of Union
+        /**  Parameters for a streamed move joints */
+        moveJoints?: MoveJointsStream
+        /**  Parameters for a streamed move joints at velocity */
+        moveJointsAtVelocity?: MoveJointsAtVelocityStream
+        /**  Parameters for a streamed move line */
+        moveLine?: MoveLineStream
+        /**  Parameters for a streamed move line at velocity */
+        moveLineAtVelocity?: MoveLineAtVelocityStream
+        /**  Parameters for a streamed move arc */
+        moveArc?: MoveArcStream
+        /**  Parameters for a streamed move to position */
+        moveToPosition?: MoveToPositionStream
+        /**  Parameters for a streamed set dout */
+        setDout?: SetDoutCommand
+        /**  Parameters for a streamed set aout */
+        setAout?: SetAoutCommand
+        /**  Parameters for a streamed set iout */
+        setIout?: SetIoutCommand
+        /**  Parameters for a streamed dwell */
+        dwell?: DwellConfig
+        /**  Parameters for a streamed tool change */
+        toolChange?: ToolChangeConfig
+        /**  Parameters for a streamed wait on digital input */
+        waitOnDigitalInput?: WaitOnDigitalInputConfig
+        /**  Parameters for a streamed wait on integer input */
+        waitOnIntegerInput?: WaitOnIntegerInputConfig
+        /**  Parameters for a streamed wait on analog input */
+        waitOnAnalogInput?: WaitOnAnalogInputConfig
+        /**  Parameters for a streamed stress test */
+        stressTest?: StressTestStream
+        //              End of Union
+    }
 
-export type SoloActivityConfig = {}
+    export type SoloActivityConfig = {}
 
-export type SoloActivityStatus = ActivityStatus
-export type SoloActivityCommand = ActivityStreamItem
-/**
+    export type SoloActivityStatus = ActivityStatus
+    export type SoloActivityCommand = ActivityStreamItem
+    /**
  Configuration parameters for frame
  */
-export type FramesConfig = {
-    /**  Translation of the frame */
-    translation?: Vector3
-    /**  Rotation of the frame */
-    rotation?: Quat
-    /**  Link to the parent of the frame */
-    parent?: number
-    /**  Whether the frame is referenced with an absolute or relative position */
-    absRel?: FRAME_ABSRELATIVE
-}
+    export type FramesConfig = {
+        /**  Translation of the frame */
+        translation?: Vector3
+        /**  Rotation of the frame */
+        rotation?: Quat
+        /**  Link to the parent of the frame */
+        parent?: number
+        /**  Whether the frame is referenced with an absolute or relative position */
+        absRel?: FRAME_ABSRELATIVE
+    }
 
-/**
+    /**
  Command parameters for frame
  */
-export type FramesCommand = {
-    /**  Translation to be applied to the frame */
-    translation?: Vector3
-    /**  Rotation to be applied to the frame */
-    rotation?: Quat
-    /**  Should the frame&#x27;s value be overridden */
-    override?: boolean
-}
+    export type FramesCommand = {
+        /**  Translation to be applied to the frame */
+        translation?: Vector3
+        /**  Rotation to be applied to the frame */
+        rotation?: Quat
+        /**  Should the frame&#x27;s value be overridden */
+        override?: boolean
+    }
 
-export type FramesStatus = {}
+    export type FramesStatus = {}
 
-/**
+    /**
  Configuration parameters for a tool
  */
-export type ToolConfig = {
-    /**  Translation of the tool */
-    translation?: Vector3
-    /**  Rotation of the tool */
-    rotation?: Quat
-}
+    export type ToolConfig = {
+        /**  Translation of the tool */
+        translation?: Vector3
+        /**  Rotation of the tool */
+        rotation?: Quat
+    }
 
-export type TriggerOnConfig = {
-    /**  Index of analog input to act as a trigger */
-    aiIndex?: number
-    /**  Threshold for analog in at which trigger occurs */
-    threshold?: number
-    /**  Trigger occurs at threshold greater or less than */
-    aiThreholdGreaterLessThan?: GTLT
-    /**  Index of digital input to act as a trigger */
-    diIndex?: number
-    /**  State that triggers */
-    diTriggerState?: ONOFF
-    /**  Filter for trigger */
-    numberofTicksBeforeTrigger?: number
-}
+    export type TriggerOnConfig = {
+        /**  Index of analog input to act as a trigger */
+        aiIndex?: number
+        /**  Threshold for analog in at which trigger occurs */
+        threshold?: number
+        /**  Trigger occurs at threshold greater or less than */
+        aiThreholdGreaterLessThan?: GTLT
+        /**  Index of digital input to act as a trigger */
+        diIndex?: number
+        /**  State that triggers */
+        diTriggerState?: ONOFF
+        /**  Filter for trigger */
+        numberofTicksBeforeTrigger?: number
+    }
 
 
