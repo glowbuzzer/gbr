@@ -26,7 +26,7 @@ import {
 } from "../machine/machine_api"
 import { RootState } from "../root"
 import { framesSlice } from "../frames"
-import { STREAMCOMMAND, STREAMSTATE } from "@glowbuzzer/store"
+import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
 
 abstract class ProcessorBase {
     protected first = true
