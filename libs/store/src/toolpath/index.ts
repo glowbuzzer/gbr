@@ -50,7 +50,7 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
                     // nothing's changed, so don't add to toolpath
                     return
                 }
-                const { x, y, z } = kc.cartesianActPos
+                const { x, y, z } = kc.position.translation
                 current.path.push({ x, y, z })
                 if (current.path.length > 500) {
                     // TODO: make max path length configurable
@@ -90,11 +90,11 @@ export const useToolPath = (kc: number) => {
             toolPath.paths[kc]?.path.map(({ x, y, z, qx, qy, qz, qw }) => {
                 const p = new Vector3(x, y, z)
                 const q = new Quaternion(qx, qy, qz, qw)
-                const { position } = frames.convertToFrame(p, q, kc, "world")
+                const { translation } = frames.convertToFrame(p, q, kc, "world")
                 return {
-                    x: position.x,
-                    y: position.y,
-                    z: position.z
+                    x: translation.x,
+                    y: translation.y,
+                    z: translation.z
                 }
             }) || [
                 {

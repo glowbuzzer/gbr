@@ -160,21 +160,21 @@ function log_translation(f: Matrix4, ...msg) {
  * another frame.
  *
  * @param frames The list of all frames
- * @param position The cartesian position to be changed
- * @param orientation The quaternion orientation to be changed
+ * @param translation The cartesian position to be changed
+ * @param rotation The quaternion orientation to be changed
  * @param fromIndex The reference frame of the input pose
  * @param toIndex The desired reference frame of the output pose
  */
 export function change_reference_frame(
     frames: Frame[],
-    position: Vector3,
-    orientation: Quaternion,
+    translation: Vector3,
+    rotation: Quaternion,
     fromIndex: number | "world",
     toIndex?: number | "world"
-): { position: Vector3; orientation: Quaternion } {
+): { translation: Vector3; rotation: Quaternion } {
     if (toIndex === fromIndex) {
         // console.log("NULL FRAME CONVERSION, SAME FROM AND TO FRAME", toIndex)
-        return { position, orientation }
+        return { translation, rotation }
     }
 
     function matrixOf(index: number) {
@@ -199,13 +199,32 @@ export function change_reference_frame(
     // log_translation(transformation, "RESULT")
 
     // we can apply the transformation matrix to the input position directly
-    const transformed_pose = position.clone().applyMatrix4(transformation)
+    const transformed_translation = translation.clone().applyMatrix4(transformation)
 
     // console.log("Transform", position, "to", transformed_pose)
 
     return {
-        position: transformed_pose,
+        translation: transformed_translation,
         // sum the rotation due to the transformation and the 'mobile' orientation of the input position
-        orientation: decompose2(transformation).rotation.multiply(orientation)
+        rotation: decompose2(transformation).rotation.multiply(rotation)
     }
+}
+
+export function apply_offset(
+    position: {
+        translation: Vector3
+        rotation: Quaternion
+    },
+    offset: { translation: Vector3; rotation: Quaternion }
+): { translation: Vector3; rotation: Quaternion } {
+    const p = new Matrix4().compose(position.translation, position.rotation, new Vector3(1, 1, 1))
+    const q = new Matrix4().compose(offset.translation, offset.rotation, new Vector3(1, 1, 1))
+
+    p.premultiply(q)
+
+    const translation = new Vector3()
+    const rotation = new Quaternion()
+    p.decompose(translation, rotation, new Vector3())
+
+    return { translation, rotation }
 }

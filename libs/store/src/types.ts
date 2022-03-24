@@ -1,4 +1,5 @@
 import { Connection } from "./connect/Connection"
+import * as THREE from "three"
 
 // export enum ACTIVITYTYPE {
 //     MOVEJOINTSATVELOCITY,
@@ -31,20 +32,18 @@ import { Connection } from "./connect/Connection"
 // }
 
 export type KinematicsConfigurationMcStatus = {
-    cartesianActPos: {
-        x: number
-        y: number
-        z: number
+    position: {
+        translation: THREE.Vector3
+        rotation: THREE.Quaternion
     }
-    cartesianActOrientation: {
-        x: number
-        y: number
-        z: number
-        w: number
+    offset: {
+        translation: THREE.Vector3
+        rotation: THREE.Quaternion
     }
     froTarget: number
     froActual: number
-    configuration: number
+    currentConfiguration: number
+    type: number
 }
 
 declare global {

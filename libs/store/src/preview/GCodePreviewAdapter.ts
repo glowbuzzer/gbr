@@ -37,7 +37,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const { x, y, z } = cartesianPosition.translation
         const pos = new Vector3(x, y, z)
         const rot = new Quaternion(0, 0, 0, 1)
-        return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world").position
+        return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world").translation
     }
 
     toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
@@ -86,8 +86,6 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G1(params, { lineNum }, from, to) {
-        // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
-        // console.log("LINE TO", to.x, to.y)
         this.segments.push({
             from: this.frame_conversion(from),
             to: this.frame_conversion(to),

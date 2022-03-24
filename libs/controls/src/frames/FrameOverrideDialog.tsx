@@ -18,7 +18,14 @@ const FrameOverride = ({ selected }) => {
     const parentIndex = frame.parentIndex // could be undefined = world
     // console.log("PARENT INDEX", parentIndex)
     // we want position relative to the parent frame, if relative
-    const kc = useKinematics(0, parentIndex)
+    const kc = useKinematics(0)
+    const { translation } = frames.convertToFrame(
+        kc.translation,
+        kc.rotation,
+        kc.frameIndex,
+        parentIndex
+    )
+
     const overrides = frames.overrides
 
     const current_override = overrides[selected]
@@ -43,15 +50,12 @@ const FrameOverride = ({ selected }) => {
     const change_z = e => set_override(2, e.target.value)
 
     function update_from_current() {
-        // const { position } = frames.convertToFrame(kc.pose.position, kc.pose.orientation, selected, kc.frameIndex)
-        const position = kc.pose.position
-        const { x, y, z } = position
+        const { x, y, z } = translation
         const arr = [x, y, z]
         console.log("SET FROM CURRENT", arr)
         frames.setOverride(selected, arr)
     }
 
-    // console.log("OVERRIDE", current_override)
     const { x, y, z } = frame.relative.translation // value before override
 
     function pick(index, defaultValue) {

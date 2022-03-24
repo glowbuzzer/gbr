@@ -7,6 +7,7 @@ import {
     useJoint,
     useJointConfig,
     useKinematics,
+    usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
 import styled from "styled-components"
@@ -110,7 +111,8 @@ export const JogTile = () => {
     // const jogger = useJog(0)
     const joint_config = useJointConfig()
     const motion = useSoloActivity(0)
-    const kc = useKinematics(0, 0)
+    const kc = useKinematics(0)
+    const preview = usePreview()
 
     // we scale all limits by the jog speed percent
     const move_params = {
@@ -159,8 +161,14 @@ export const JogTile = () => {
                             : -conf.vmax
                         : 0
                 )
-                return motion.moveJointsAtVelocity(velos).params(move_params).promise()
+                preview.disable()
+                return motion
+                    .moveJointsAtVelocity(velos)
+                    .params(move_params)
+                    .promise()
+                    .finally(preview.enable)
             } else {
+                preview.disable()
                 return motion
                     .moveLineAtVelocity(
                         ortho_vector(0, direction),
@@ -169,6 +177,7 @@ export const JogTile = () => {
                     )
                     .params(move_params)
                     .promise()
+                    .finally(preview.enable)
             }
             // jogger.setJog(jogMoveMode === JogMoveMode.CARTESIAN ? JogMode.JOGMODE_CARTESIAN : JogMode.JOGMODE_JOINT, index, direction, jogSpeed)
         }
@@ -190,37 +199,62 @@ export const JogTile = () => {
                             : -jogStep
                         : 0
                 )
-                return motion.moveJoints(steps).relative().params(move_params).promise()
+                preview.disable()
+                return motion
+                    .moveJoints(steps)
+                    .relative()
+                    .params(move_params)
+                    .promise()
+                    .finally(preview.enable)
             }
         }
     }
 
     function goto() {
-        return motion.moveToPosition(x, y, z).params(move_params).promise()
+        preview.disable()
+        return motion.moveToPosition(x, y, z).params(move_params).promise().finally(preview.enable)
     }
 
     function gotoX() {
-        motion.moveToPosition(x).params(move_params).promise()
+        preview.disable()
+        motion.moveToPosition(x).params(move_params).promise().finally(preview.enable)
     }
 
     function gotoY() {
-        motion.moveToPosition(undefined, y).params(move_params).promise()
+        preview.disable()
+        motion.moveToPosition(undefined, y).params(move_params).promise().finally(preview.enable)
     }
 
     function gotoZ() {
-        motion.moveToPosition(undefined, undefined, z).params(move_params).promise()
+        preview.disable()
+        motion
+            .moveToPosition(undefined, undefined, z)
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function goto_waypoint(w) {
-        return motion.moveJoints(w.map(MathUtils.degToRad)).params(move_params).promise()
+        preview.disable()
+        return motion
+            .moveJoints(w.map(MathUtils.degToRad))
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function gotoA() {
-        const euler = new Euler().setFromQuaternion(kc.pose.orientation)
+        const euler = new Euler().setFromQuaternion(kc.rotation)
         euler.x = MathUtils.degToRad(a)
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
 
-        return motion.moveToPosition().rotation(x, y, z, w).params(move_params).promise()
+        preview.disable()
+        return motion
+            .moveToPosition()
+            .rotation(x, y, z, w)
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function gotoB() {

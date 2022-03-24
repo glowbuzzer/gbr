@@ -123,10 +123,10 @@ export class DevWebSocket implements WebSocket {
                     })),
                     kc: [
                         {
-                            cartesianActPos: { x, y, z },
-                            cartesianActVel: { x: 0, y: 0, z: 0 },
-                            cartesianActAcc: { x: 0, y: 0, z: 0 },
-                            cartesianActOrientation: { x: 0, y: 0, z: 0, w: 1 },
+                            position: {
+                                translation: { x, y, z },
+                                rotation: { x: 0, y: 0, z: 0, w: 1 }
+                            },
                             froTarget: 100,
                             froActual: 100,
                             configuration: 0
@@ -196,7 +196,11 @@ export class DevWebSocket implements WebSocket {
         listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any,
         options?: boolean | AddEventListenerOptions
     ): void
-    addEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions): void
+    addEventListener(
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        options?: boolean | AddEventListenerOptions
+    ): void
     addEventListener(type: any, listener: any, options?: any) {
         throw new Error("Method not implemented.")
     }
@@ -206,7 +210,11 @@ export class DevWebSocket implements WebSocket {
         listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any,
         options?: boolean | EventListenerOptions
     ): void
-    removeEventListener(type: string, listener: EventListenerOrEventListenerObject, options?: boolean | EventListenerOptions): void
+    removeEventListener(
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        options?: boolean | EventListenerOptions
+    ): void
     removeEventListener(type: any, listener: any, options?: any) {
         throw new Error("Method not implemented.")
     }

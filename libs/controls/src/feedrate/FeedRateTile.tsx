@@ -1,18 +1,18 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
-import { useKinematics } from "@glowbuzzer/store"
+import { useFeedRate } from "@glowbuzzer/store"
 import { InputNumber } from "antd"
 
 export const FeedRateTile = () => {
-    const kinematics = useKinematics(0, 0)
+    const kinematics = useFeedRate(0)
 
     function onChange(value) {
-        kinematics.setFroPercentage(value)
+        kinematics.setFeedRatePercentage(value)
     }
 
     return (
         <Tile title="Feedrate">
-            <div>Current: {kinematics.froActual}</div>
+            <div>Current: {kinematics.froActual * 100}%</div>
             <div>
                 <InputNumber
                     defaultValue={kinematics.froActual * 100}

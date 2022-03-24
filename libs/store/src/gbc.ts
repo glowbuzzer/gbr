@@ -748,9 +748,14 @@
     }
 
     export type KinematicsConfigurationCommand = {
+        /**  Not used */
         doStop?: boolean
-
+        /**  Desired feed rate as a percentage of velocity maximum */
         froPercentage?: number
+        /**  Optional logical translation applied to all moves */
+        translation?: Vector3
+        /**  Optional logical rotation applied to all moves */
+        rotation?: Quat
     }
 
     /**

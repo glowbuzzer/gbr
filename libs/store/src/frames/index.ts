@@ -88,13 +88,13 @@ export const useFrames = () => {
         overrides,
         active: activeFrame,
         convertToFrame(
-            position: Vector3,
-            orientation: Quaternion,
+            translation: Vector3,
+            rotation: Quaternion,
             fromIndex: number | "world",
             toIndex: number | "world"
         ) {
             // console.log("FROM", fromIndex, "TO", toIndex)
-            return change_reference_frame(asList, position, orientation, fromIndex, toIndex)
+            return change_reference_frame(asList, translation, rotation, fromIndex, toIndex)
         },
         setOverride(index: number, value: number[] | undefined) {
             const new_list = update(index, value)

@@ -5,6 +5,7 @@ import { Button, Checkbox, Form, Input } from "antd"
 import {
     ToolPathSettingsType,
     useConfig,
+    useFrames,
     useKinematics,
     usePreview,
     useToolPath,
@@ -75,9 +76,17 @@ type ToolPathTileProps = {
 
 export const ToolPathTile = ({ model }: ToolPathTileProps) => {
     const { path, reset } = useToolPath(0)
-    const { jointPositions, pose } = useKinematics(0, "world")
+    const { jointPositions, translation, rotation, frameIndex } = useKinematics(0)
+    const { convertToFrame } = useFrames()
 
-    const { segments, highlightLine } = usePreview()
+    const { translation: world_translation } = convertToFrame(
+        translation,
+        rotation,
+        frameIndex,
+        "world"
+    )
+
+    const { segments, highlightLine, disabled } = usePreview()
     const { settings } = useToolPathSettings()
     const config = useConfig()
 
@@ -87,7 +96,7 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
         if (settings.overrideWorkspace) {
             return settings.extent
         }
-        // just return the max of the abs of any of our cartesian limits
+        // just return the max of the abs of our cartesian limits
         return Math.max.apply(
             Math.max,
             [xExtents, yExtents, zExtents].flat().map(v => Math.abs(v))
@@ -124,12 +133,18 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
                     <WorkspaceDimensions extent={extent} />
 
                     <ToolPath path={path} />
-                    <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
+                    {disabled ? null : (
+                        <PreviewPath
+                            preview={segments}
+                            scale={extent}
+                            highlightLine={highlightLine}
+                        />
+                    )}
 
                     {model ? (
                         <TcpRobot model={model} joints={jointPositions} />
                     ) : (
-                        <TcpFulcrum scale={extent} position={pose.position} />
+                        <TcpFulcrum scale={extent} position={world_translation} />
                     )}
                 </ToolPathAutoSize>
             </Canvas>

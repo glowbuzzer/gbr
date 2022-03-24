@@ -14,7 +14,11 @@ import {
 } from "../../store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import { activitySlice, gcodeSlice, jointsSlice } from "../../store/src"
-import { kinematicsSlice, updateFroPercentageMsg } from "../../store/src/kinematics"
+import {
+    kinematicsSlice,
+    updateFroPercentageMsg,
+    updateOffsetMsg
+} from "../../store/src/kinematics"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
@@ -386,5 +390,10 @@ export class GbcTest {
                 : MachineState.SWITCH_ON_DISABLED
         )
         return this
+    }
+
+    offset(translation: Vector3, rotation?: Quaternion) {
+        this.send(updateOffsetMsg(0, translation, rotation))
+        this.exec_double_cycle()
     }
 }

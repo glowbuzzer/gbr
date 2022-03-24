@@ -59,7 +59,7 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
             // called when connection established and we get the first status update with act pos
             // TODO: for now we only deal with kc 0
             const status = action.payload[0] as KinematicsConfigurationMcStatus
-            const { x, y, z } = status.cartesianActPos
+            const { x, y, z } = status.position.translation
             state.current_positions = [x, y, z]
             console.log("SET CURRENT POS", state.current_positions)
             state.ready = true

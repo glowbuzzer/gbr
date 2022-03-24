@@ -1,14 +1,14 @@
 import { Euler, Quaternion } from "three"
 import { gbc } from "../gbc"
 
-const px = state => state.status.kc[0].cartesianActPos.x
-const py = state => state.status.kc[0].cartesianActPos.y
-const pz = state => state.status.kc[0].cartesianActPos.z
+const px = state => state.status.kc[0].position.translation.x
+const py = state => state.status.kc[0].position.translation.y
+const pz = state => state.status.kc[0].position.translation.z
 
-const aw = state => state.status.kc[0].cartesianActOrientation.w
-const ax = state => state.status.kc[0].cartesianActOrientation.x
-const ay = state => state.status.kc[0].cartesianActOrientation.y
-const az = state => state.status.kc[0].cartesianActOrientation.z
+const aw = state => state.status.kc[0].position.rotation.w
+const ax = state => state.status.kc[0].position.rotation.x
+const ay = state => state.status.kc[0].position.rotation.y
+const az = state => state.status.kc[0].position.rotation.z
 
 export function assertNear(x, y, z, a, b, c) {
     const q = new Quaternion().setFromEuler(new Euler(a, b, c))

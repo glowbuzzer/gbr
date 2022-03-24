@@ -1,9 +1,10 @@
 import * as React from "react"
+import { Euler, Quaternion, Vector3 } from "three"
 import { FrameSelector } from "../misc"
-import { useConfig, useKinematics, useTcp } from "@glowbuzzer/store"
+import { apply_offset, useConfig, useFrames, useKinematics } from "@glowbuzzer/store"
 import { DroItem } from "./DroItem"
-import { Euler } from "three"
 import { Tile } from "@glowbuzzer/layout"
+import { Button, Space } from "antd"
 
 type CartesianDisplayProps = {
     /**
@@ -37,18 +38,35 @@ const types = {
     c: "angular"
 }
 
+function invert_kc_local(p: Vector3, q: Quaternion) {
+    return {
+        translation: new Vector3(-p.x, -p.y, -p.z),
+        rotation: q.clone().invert()
+    }
+}
+
 export const CartesianDro = (props: CartesianDisplayProps) => {
     const [frameIndex, setFrameIndex] = React.useState<number>(0)
-    const kinematics = useKinematics(0, frameIndex)
+    const kinematics = useKinematics(0)
     const config = useConfig()
+    const { convertToFrame } = useFrames()
 
     const kc = Object.values(config.kinematicsConfiguration)[0]
     const params = kc?.kinematicsParameters
 
-    const { position, orientation } = kinematics.pose
-    const { position: local_position } = useTcp(0, "world")
+    const p = convertToFrame(
+        kinematics.translation,
+        kinematics.rotation,
+        kinematics.frameIndex,
+        frameIndex
+    )
 
-    const euler = new Euler().setFromQuaternion(orientation)
+    const { translation, rotation } = apply_offset(p, kinematics.offset)
+
+    // this is the local xyz, used to warn when tcp is near/outside of kc limits
+    const local_translation = kinematics.translation
+
+    const euler = new Euler().setFromQuaternion(rotation)
 
     const labels = {
         x: "X",
@@ -60,9 +78,9 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
     }
 
     const pos = {
-        x: position.x,
-        y: position.y,
-        z: position.z,
+        x: translation.x,
+        y: translation.y,
+        z: translation.z,
         a: euler.x,
         b: euler.y,
         c: euler.z
@@ -76,19 +94,35 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
 
     const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)
 
+    function zero_dro() {
+        const { translation, rotation } = invert_kc_local(
+            kinematics.translation,
+            kinematics.rotation
+        )
+        kinematics.setOffset(translation, rotation)
+    }
+
     return (
         <div>
-            {props.hideFrameSelect || (
+            <Space>
+                {props.hideFrameSelect || (
+                    <div>
+                        Frame:{" "}
+                        <FrameSelector
+                            defaultFrame={kinematics.frameIndex}
+                            onChange={setFrameIndex}
+                        />
+                    </div>
+                )}
                 <div>
-                    Frame:{" "}
-                    <FrameSelector defaultFrame={kinematics.frameIndex} onChange={setFrameIndex} />
+                    <Button onClick={zero_dro}>Zero DRO</Button>
                 </div>
-            )}
+            </Space>
             {display.map(k => {
                 const axis_extents = extents[k]
 
                 function should_warn() {
-                    const value = local_position[k]
+                    const value = local_translation[k]
                     if (axis_extents) {
                         const [min, max] = axis_extents
                         const tolerance = (max - min) * props.warningThreshold

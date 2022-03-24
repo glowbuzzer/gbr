@@ -2,7 +2,7 @@ import "./connect/ConnectionFactory"
 
 export * from "./gbc"
 
-export { Frame } from "./util/frame_utils"
+export { Frame, apply_offset } from "./util/frame_utils"
 export { ConnectionState, useConnection, connectionSlice } from "./connect"
 export {
     DesiredState,
@@ -27,7 +27,7 @@ export { useAnalogInputs } from "./io/ain"
 export { useAnalogOutputList, useAnalogOutputState } from "./io/aout"
 export { useIntegerInputs } from "./io/iin"
 export * from "./io/iout"
-export { useKinematics, useTcp, useJointPositions } from "./kinematics"
+export { useKinematics, useTcp, useJointPositions, useFeedRate } from "./kinematics"
 export * from "./toolpath"
 export * from "./devtools"
 export * from "./jogging"

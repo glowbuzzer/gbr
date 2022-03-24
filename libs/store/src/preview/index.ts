@@ -5,6 +5,8 @@ import { RootState } from "../root"
 import { useFrames } from "../frames"
 import { useKinematics } from "../kinematics"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
+import { Quaternion, Vector3 } from "three"
+import { apply_offset } from "../util/frame_utils"
 
 export type GCodeSegment = {
     from: { x: number; y: number; z: number }
@@ -16,28 +18,33 @@ export type GCodeSegment = {
 type PreviewSliceState = {
     highlightLine?: number
     segments: GCodeSegment[]
+    disabled?: boolean
 }
 
 export const previewSlice: Slice<PreviewSliceState> = createSlice({
     name: "preview",
     initialState: {
         highlightLine: undefined as number | undefined,
-        segments: [] as GCodeSegment[]
+        segments: [] as GCodeSegment[],
+        disabled: false as boolean
     },
     reducers: {
         set(store, action) {
             store.segments = action.payload
         },
-        setSimple(store, action) {
-            const path = action.payload
-            store.segments = path.slice(1).map((p, index) => ({
-                from: path[index],
-                to: p,
-                color: [0.5, 0.5, 0.5] // neutral grey
-            }))
-        },
+        // setSimple(store, action) {
+        //     const path = action.payload
+        //     store.segments = path.slice(1).map((p, index) => ({
+        //         from: path[index],
+        //         to: p,
+        //         color: [0.5, 0.5, 0.5] // neutral grey
+        //     }))
+        // },
         setHighlightLine(store, action) {
             store.highlightLine = action.payload
+        },
+        setDisabled(store, action) {
+            store.disabled = action.payload
         }
     }
 })
@@ -51,11 +58,19 @@ export function usePreview() {
         ({ preview: { highlightLine } }: RootState) => highlightLine,
         shallowEqual
     )
+    const disabled = useSelector(({ preview: { disabled } }: RootState) => disabled, shallowEqual)
+
     const frames = useFrames()
-    const kc = useKinematics(0, frames.active)
+    const kc = useKinematics(0)
+    const { translation } = frames.convertToFrame(
+        kc.translation,
+        kc.rotation,
+        kc.frameIndex,
+        frames.active
+    )
     const currentPosition: CartesianPosition = {
         positionReference: POSITIONREFERENCE.ABSOLUTE,
-        translation: kc.pose.position,
+        translation,
         frameIndex: frames.active
     }
 
@@ -63,10 +78,28 @@ export function usePreview() {
 
     return {
         setGCode(gcode: string) {
+            const convertToFrame = (
+                translation: Vector3,
+                rotation: Quaternion,
+                fromIndex: number | "world",
+                toIndex: number | "world"
+            ) => {
+                // apply any kc offset to the calculated positions
+                const p = frames.convertToFrame(translation, rotation, fromIndex, toIndex)
+                const result = apply_offset(p, kc.offset)
+                console.log(
+                    "APPLY OFFSET",
+                    p.translation,
+                    result.translation,
+                    kc.offset.translation
+                )
+                return result
+            }
+
             const interpreter = new GCodePreviewAdapter(
                 currentPosition,
                 kc.frameIndex,
-                frames.convertToFrame
+                convertToFrame
             )
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
@@ -74,7 +107,14 @@ export function usePreview() {
         setHighlightLine(lineNum: number) {
             dispatch(previewSlice.actions.setHighlightLine(lineNum))
         },
+        disable() {
+            dispatch(previewSlice.actions.setDisabled(true))
+        },
+        enable() {
+            dispatch(previewSlice.actions.setDisabled(false))
+        },
         segments,
+        disabled,
         highlightLine
     }
 }
