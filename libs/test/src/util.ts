@@ -40,19 +40,3 @@ export function assertNear(x, y, z, a, b, c) {
     gbc.assert.near(az, q.z, 0.01, true)
 }
 
-export function init_robot_test() {
-    // need to disable limit check before we hack the joints
-    gbc.disable_limit_check()
-
-    // we can't start the robot at a singularity, and we want config to not be zero
-    gbc.set_joint_pos(0, 0)
-    gbc.set_joint_pos(1, 0)
-    gbc.set_joint_pos(2, Math.PI / 2)
-    gbc.set_joint_pos(3, -Math.PI)
-    gbc.set_joint_pos(4, -Math.PI / 4)
-    gbc.set_joint_pos(5, 0)
-
-    gbc.enable_operation()
-    gbc.enable_limit_check()
-    gbc.capture()
-}

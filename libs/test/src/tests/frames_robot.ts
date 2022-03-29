@@ -1,15 +1,9 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { assertNear, init_robot_test } from "../util"
+import { assertNear } from "../util"
 import { Euler, Matrix4, Quaternion, Vector3 } from "three"
 
 const test = uvu.suite("frames robot")
-
-const config = state => state.status.kc[0].configuration
-
-const tag = state => state.stream.tag
-
-const INITIAL_CONFIG = 1
 
 const px = state => state.status.kc[0].position.translation.x
 const py = state => state.status.kc[0].position.translation.y
@@ -28,11 +22,9 @@ function assertNearWorld(x, y, z, a, b, c) {
     // console.log("ROBOT LOCAL POS", gbc.get(px), gbc.get(py), gbc.get(pz))
     // console.log("ROBOT LOCAL ROT", gbc.get(ax), gbc.get(ay), gbc.get(az), gbc.get(aw))
 
-    const from_world_trsf = new Matrix4().compose(
-        robotTranslation,
-        robotRotation,
-        new Vector3(1, 1, 1)
-    )
+    const from_world_trsf = new Matrix4()
+        .compose(robotTranslation, robotRotation, new Vector3(1, 1, 1))
+        .invert()
 
     // convert world to robot
     const world = new Matrix4().compose(
@@ -40,7 +32,7 @@ function assertNearWorld(x, y, z, a, b, c) {
         new Quaternion().setFromEuler(new Euler(a, b, c)),
         new Vector3(1, 1, 1)
     )
-    const local = new Matrix4().multiplyMatrices(from_world_trsf, world)
+    const local = world.clone().premultiply(from_world_trsf)
     const p = new Vector3()
     const q = new Quaternion()
     local.decompose(p, q, new Vector3())
@@ -60,14 +52,29 @@ function assertNearWorld(x, y, z, a, b, c) {
  * These tests check that frame handling for moves is working properly
  */
 
+function init_robot_test() {
+    // need to disable limit check before we hack the joints
+    gbc.disable_limit_check()
+
+    // we can't start the robot at a singularity, and we want config to not be zero
+    gbc.set_joint_pos(0, 0)
+    gbc.set_joint_pos(1, 0)
+    gbc.set_joint_pos(2, Math.PI / 2)
+    gbc.set_joint_pos(3, (-3 * Math.PI) / 4)
+    gbc.set_joint_pos(4, Math.PI / 2)
+    gbc.set_joint_pos(5, Math.PI)
+
+    gbc.enable_operation()
+    gbc.enable_limit_check()
+}
+
 test.before.each(() => {
     gbc.reset("configs/frames_robot.json")
     init_robot_test()
 })
 
 test("initial kc local position from joint angles is not rotated", async () => {
-    // initial position is (x 270.962, y 35, z 179.038, qx 0.924, qy 0, qz 0.383, qw 0) in local
-    assertNear(270.962, 35, 179.038, -Math.PI, Math.PI / 4, 0)
+    assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 })
 
 test("basic move_to_position in kc local coords", async () => {
@@ -78,42 +85,60 @@ test("basic move_to_position in kc local coords", async () => {
                 // frameIndex 1 is robot
                 .frameIndex(1).promise
         )
-        await move.start().iterations(75).assertCompleted()
-        assertNear(100, 100, 100, -Math.PI, Math.PI / 4, 0)
+        await move.start().iterations(125).assertCompleted()
+        assertNear(100, 100, 100, Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
     }
 })
 
-test("basic move_to_position with no frame index specified (use kc local)", async () => {
+test("move_to_position with no frame index specified (use kc local)", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).promise)
-        await move.start().iterations(75).assertCompleted()
-        assertNear(100, 100, 100, -Math.PI, Math.PI / 4, 0)
+        await move.start().iterations(125).assertCompleted()
+        assertNear(100, 100, 100, Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
     }
 })
 
-test("basic move_to_position with different frame index for target", async () => {
+test("move_to_position with different frame index for target", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(
             gbc.activity
-                .moveToPosition(100, 100, 100)
+                .moveToPosition(200, 100, 100)
                 // world frame index
                 .frameIndex(0).promise
         )
-        await move.start().iterations(75).assertCompleted()
-        // const q = new Quaternion()
-        //     .setFromEuler(new Euler(-Math.PI, Math.PI / 4, 0))
-        //     .premultiply(new Quaternion().setFromEuler(new Euler(-Math.PI / 4, 0, 0)))
-        // console.log("QUAT", q)
-        // console.log("EULER", new Euler().setFromQuaternion(q))
+        await move.start().iterations(125).assertCompleted()
 
-        // fuck knows if this is correct!
-        assertNearWorld(100, 100, 100, (3 * Math.PI) / 4, Math.PI / 4, 0)
+        gbc.assert.near(px, 100) // because frame is translated by 100 in X
+        gbc.assert.near(py, 141.421)
+        gbc.assert.near(pz, 0.001)
+        assertNearWorld(200, 100, 100, Math.PI / 2, 0, 0)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move_to_position in world frame with rotation", async () => {
+    try {
+        // default frame index is zero
+        const move = gbc.wrap(
+            gbc.activity
+                .moveToPosition(200, 100, 100)
+                .rotationEuler(-Math.PI / 4, 0, 0)
+                // world frame index
+                .frameIndex(0).promise
+        )
+        await move.start().iterations(125).assertCompleted()
+
+        gbc.assert.near(px, 100, 0.01) // because frame is translated by 100 in X
+        gbc.assert.near(py, 141.421)
+        gbc.assert.near(pz, 0.001)
+        assertNearWorld(200, 100, 100, -Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
     }

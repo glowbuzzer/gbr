@@ -10,7 +10,9 @@ import {
     DigitalInputsTile,
     DigitalOutputsTile,
     FeedRateTile,
+    FrameOverrideDialog,
     GCodeTile,
+    GlowbuzzerApp,
     IntegerInputsTile,
     IntegerOutputsTile,
     JogTile,
@@ -21,11 +23,8 @@ import {
 } from "@glowbuzzer/controls"
 import { DrivesTile } from "./tiles/DrivesTile"
 import { SimpleDroTile } from "./tiles/SimpleDroTile"
-import { TestTile } from "./tiles/TestTile"
 import { CheckOutlined } from "@ant-design/icons"
-import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { CartesianApp } from "./CartesianApp"
-import { FrameOverrideDialog } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.css"
 import "./app.css"
@@ -152,7 +151,7 @@ export const App = () => {
             width: 2,
             height: 2,
             title: "Digital Readout",
-            render: tile => <SimpleDroTile />
+            render: () => <SimpleDroTile />
         },
         dins: {
             x: 6,
@@ -236,7 +235,7 @@ export const App = () => {
             width: 2,
             height: 5,
             title: "GCode",
-            render: tile => <GCodeTile />
+            render: () => <GCodeTile />
         },
         devtools: {
             x: 6,
@@ -252,7 +251,7 @@ export const App = () => {
             width: 4,
             height: 8,
             title: "Drives",
-            render: tile => <DrivesTile />
+            render: () => <DrivesTile />
         },
         toolpath: {
             x: 2,
@@ -260,7 +259,7 @@ export const App = () => {
             width: 4,
             height: 11,
             title: "Tool Path",
-            render: tile => <ToolPathTile />
+            render: () => <ToolPathTile />
         },
         telemetry: {
             x: 2,
@@ -268,7 +267,7 @@ export const App = () => {
             width: 4,
             height: 6,
             title: "Telemetry",
-            render: tile => <TelemetryTile />
+            render: () => <TelemetryTile />
         }
     }
 

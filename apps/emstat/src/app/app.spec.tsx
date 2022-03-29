@@ -2,9 +2,6 @@ import React from "react"
 import { render } from "@testing-library/react"
 
 import App from "./app"
-import {Tree} from "antd";
-
-
 
 describe("App", () => {
     it("should render successfully", () => {
@@ -17,8 +14,6 @@ describe("App", () => {
         const { getByText } = render(<App />)
 
         expect(getByText("Welcome to emstat!!")).toBeTruthy()
-
-
     })
 })
 

@@ -40,7 +40,10 @@
                         "main": "apps/cartmc/src/main.tsx",
                         "polyfills": "apps/cartmc/src/polyfills.ts",
                         "tsConfig": "apps/cartmc/tsconfig.app.json",
-                        "assets": ["apps/cartmc/src/favicon.ico", "apps/cartmc/src/assets"],
+                        "assets": [
+                            "apps/cartmc/src/favicon.ico",
+                            "apps/cartmc/src/assets"
+                        ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -84,7 +87,9 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["apps/cartmc/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "apps/cartmc/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
@@ -105,7 +110,9 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["libs/controls/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "libs/controls/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
@@ -124,14 +131,19 @@
             "architect": {
                 "build": {
                     "builder": "@nrwl/web:build",
-                    "outputs": ["{options.outputPath}"],
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
                     "options": {
                         "outputPath": "dist/apps/convmc",
                         "index": "apps/convmc/src/index.html",
                         "main": "apps/convmc/src/main.tsx",
                         "polyfills": "apps/convmc/src/polyfills.ts",
                         "tsConfig": "apps/convmc/tsconfig.app.json",
-                        "assets": ["apps/convmc/src/favicon.ico", "apps/convmc/src/assets"],
+                        "assets": [
+                            "apps/convmc/src/favicon.ico",
+                            "apps/convmc/src/assets"
+                        ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -175,12 +187,16 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["apps/convmc/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "apps/convmc/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
                     "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/apps/convmc"],
+                    "outputs": [
+                        "coverage/apps/convmc"
+                    ],
                     "options": {
                         "jestConfig": "apps/convmc/jest.config.js",
                         "passWithNoTests": true
@@ -195,13 +211,20 @@
             "architect": {
                 "build": {
                     "builder": "@nrwl/web:package",
-                    "outputs": ["{options.outputPath}"],
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
                     "options": {
                         "outputPath": "dist/libs/dummy",
                         "tsConfig": "libs/dummy/tsconfig.lib.json",
                         "project": "libs/dummy/package.json",
                         "entryFile": "libs/dummy/src/index.ts",
-                        "external": ["react", "react-dom", "react-is", "styled-components"],
+                        "external": [
+                            "react",
+                            "react-dom",
+                            "react-is",
+                            "styled-components"
+                        ],
                         "babelConfig": "@nrwl/react/plugins/bundle-babel",
                         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
                         "assets": [
@@ -216,12 +239,16 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["libs/dummy/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "libs/dummy/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
                     "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/libs/dummy"],
+                    "outputs": [
+                        "coverage/libs/dummy"
+                    ],
                     "options": {
                         "jestConfig": "libs/dummy/jest.config.js",
                         "passWithNoTests": true
@@ -243,7 +270,10 @@
                         "main": "apps/emstat/src/main.tsx",
                         "polyfills": "apps/emstat/src/polyfills.ts",
                         "tsConfig": "apps/emstat/tsconfig.app.json",
-                        "assets": ["apps/emstat/src/favicon.ico", "apps/emstat/src/assets"],
+                        "assets": [
+                            "apps/emstat/src/favicon.ico",
+                            "apps/emstat/src/assets"
+                        ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -287,7 +317,9 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["apps/emstat/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "apps/emstat/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
@@ -306,14 +338,19 @@
             "architect": {
                 "build": {
                     "builder": "@nrwl/web:build",
-                    "outputs": ["{options.outputPath}"],
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
                     "options": {
                         "outputPath": "dist/apps/generic",
                         "index": "apps/generic/src/index.html",
                         "main": "apps/generic/src/main.tsx",
                         "polyfills": "apps/generic/src/polyfills.ts",
                         "tsConfig": "apps/generic/tsconfig.app.json",
-                        "assets": ["apps/generic/src/favicon.ico", "apps/generic/src/assets"],
+                        "assets": [
+                            "apps/generic/src/favicon.ico",
+                            "apps/generic/src/assets"
+                        ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
@@ -359,12 +396,16 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["apps/generic/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "apps/generic/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
                     "builder": "@nrwl/jest:jest",
-                    "outputs": ["coverage/apps/generic"],
+                    "outputs": [
+                        "coverage/apps/generic"
+                    ],
                     "options": {
                         "jestConfig": "apps/generic/jest.config.js",
                         "passWithNoTests": true
@@ -381,7 +422,9 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["libs/layout/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "libs/layout/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {
@@ -499,7 +542,12 @@
                         "tsConfig": "libs/store/tsconfig.lib.json",
                         "project": "libs/store/package.json",
                         "entryFile": "libs/store/src/index.ts",
-                        "external": ["react", "react-dom", "react-is", "styled-components"],
+                        "external": [
+                            "react",
+                            "react-dom",
+                            "react-is",
+                            "styled-components"
+                        ],
                         "babelConfig": "@nrwl/react/plugins/bundle-babel",
                         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
                         "assets": [
@@ -514,7 +562,9 @@
                 "lint": {
                     "builder": "@nrwl/linter:eslint",
                     "options": {
-                        "lintFilePatterns": ["libs/store/**/*.{ts,tsx,js,jsx}"]
+                        "lintFilePatterns": [
+                            "libs/store/**/*.{ts,tsx,js,jsx}"
+                        ]
                     }
                 },
                 "test": {

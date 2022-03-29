@@ -8,7 +8,6 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.reset()
     gbc.enable_operation()
-    gbc.capture(true) // set to true to generate trajectory plots
 })
 
 const tag = state => state.stream.tag
@@ -120,7 +119,6 @@ test("can blend move to / move arc at 100pc", () => {
     const end_program = gbc.activity.endProgram().command
 
     try {
-        gbc.capture()
         gbc.stream([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],

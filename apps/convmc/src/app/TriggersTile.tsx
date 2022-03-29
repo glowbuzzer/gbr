@@ -1,8 +1,7 @@
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
-import { Button, Checkbox, Radio, Space } from "antd"
-import { useDigitalInputOverrides } from "../../../../libs/store/src/util/enhancers/digitalInputEnhancer"
-import { useDigitalInputs } from "@glowbuzzer/store"
+import { Checkbox, Radio, Space } from "antd"
+import { useDigitalInputOverrides, useDigitalInputs } from "@glowbuzzer/store"
 
 export const TriggersTile = () => {
     const digitalInputOverrides = useDigitalInputOverrides()

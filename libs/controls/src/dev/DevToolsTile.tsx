@@ -40,7 +40,7 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
         throw new Error("Invalidate state - no machine")
     }
 
-    const result: any = {}
+    const result = {}
 
     function add(...keys) {
         for (const key of keys) {

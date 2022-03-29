@@ -76,7 +76,7 @@ export const useConnection = (): {
     /** Disconnect */
     disconnect(): void
     /** Send a message over websocket. See GBC schema docs for format */
-    send(message: any): void
+    send(message): void
     /** Set whether connection should be re-established automatically after unexpected disconnects */
     setAutoConnect(value: boolean): void
 } => {

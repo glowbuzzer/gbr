@@ -212,6 +212,13 @@ export const useKinematics = (kc: number) => {
     }
 }
 
+export const useKinematicsTranslation = (kc: number) => {
+    return useSelector(
+        ({ kinematics }: RootState) => kinematics[kc]?.position?.translation,
+        shallowEqual
+    )
+}
+
 export const useTcp = (kc: number, frame: number | "world") => {
     const state = unmarshall_from_state(
         useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
@@ -255,4 +262,8 @@ export function useFeedRate(kc: number) {
         },
         froActual
     }
+}
+
+export function useKinematicsOffset(kc: number) {
+    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.offset, deepEqual)
 }

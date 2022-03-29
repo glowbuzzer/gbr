@@ -4,6 +4,7 @@ import * as all_suites from "./src/all_tests"
 const program = new Command()
 
 program
+    .option("-p, --plot", "whether to output plot files")
     .option("-s, --suite <suite>", "suite to run")
     .option("-l, --lib <gbc_lib_path>", "path to gbc node add-in")
 

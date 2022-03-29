@@ -20,11 +20,10 @@ export class MotorDro extends React.PureComponent<MotorProps> {
     }
 
     assign(elem: SVGElement | null) {
-        if (!elem) {
-            return
+        if (elem) {
+            this.spinner = elem.querySelector("#spinner")
+            this.update()
         }
-        this.spinner = elem.querySelector("#spinner")!
-        this.update()
     }
 
     update() {

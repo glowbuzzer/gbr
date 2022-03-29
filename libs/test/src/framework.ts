@@ -54,12 +54,14 @@ export class GbcTest {
     private readonly gbc: any
     private store: EnhancedStore<State>
     private activity_api: ActivityApiImpl
+    private readonly enable_plot: boolean
 
-    constructor(gbc) {
+    constructor(gbc, plot) {
         this.gbc = gbc
+        this.enable_plot = plot
     }
 
-    capture(enabled = true) {
+    private capture(enabled) {
         this.capture_state = enabled ? [] : undefined
         return this
     }
@@ -350,7 +352,9 @@ export class GbcTest {
     }
 
     enable_operation() {
-        return this.transition_to(DesiredState.OPERATIONAL)
+        this.transition_to(DesiredState.OPERATIONAL)
+        this.capture(this.enable_plot)
+        return this
     }
 
     get pdo() {

@@ -1,10 +1,10 @@
-import { createSlice, Slice } from "@reduxjs/toolkit"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { DesiredState, determine_machine_state, handleMachineState, MachineState } from "./MachineStateHandler"
-import { RootState } from "../root"
-import { useConnection } from "../connect"
-import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
-import { MACHINETARGET } from "../gbc"
+import {createSlice, Slice} from "@reduxjs/toolkit"
+import {shallowEqual, useDispatch, useSelector} from "react-redux"
+import {DesiredState, determine_machine_state, handleMachineState, MachineState} from "./MachineStateHandler"
+import {RootState} from "../root"
+import {useConnection} from "../connect"
+import {updateMachineControlWordMsg, updateMachineTargetMsg} from "./machine_api"
+import {MACHINETARGET} from "../gbc"
 
 // export enum MachineTarget {
 //     NONE,

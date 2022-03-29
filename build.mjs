@@ -1,15 +1,15 @@
-import { build } from 'esbuild';
+import {build} from 'esbuild';
 import fs from 'fs';
 import path from 'path';
-import { execSync } from 'child_process';
+import {execSync} from 'child_process';
 
 const [, , p, version] = process.argv;
 
-if ( !p?.length ) {
+if (!p?.length) {
     throw new Error("No list of packages given")
 }
 
-if ( !version?.length ) {
+if (!version?.length) {
     throw new Error("No version bump given")
 }
 
@@ -18,7 +18,7 @@ const projects = p.split(",")
 console.log("Packaging the following projects:", projects.join(","))
 console.log("Bumping all versions to:", version)
 
-for ( const project of projects ) {
+for (const project of projects) {
     console.log("Processing", project)
     const pkg = JSON.parse(fs.readFileSync(`./libs/${project}/package.json`).toString());
     if (!pkg.exports) {
@@ -89,7 +89,7 @@ for ( const project of projects ) {
             {
                 ...common_options,
                 outdir: `dist/${project}/esm/${sub_module}`,
-                outExtension: { '.js': '.mjs' },
+                outExtension: {'.js': '.mjs'},
                 format: 'esm'
             },
             {
@@ -118,10 +118,10 @@ for ( const project of projects ) {
         execSync(`mv dist/types/libs/${project}/src dist/${project}/types`)
 
         // re-write dependencies between included packages so everything uses new version
-        for ( const dep of projects ) {
+        for (const dep of projects) {
             const key = `@glowbuzzer/${dep}`;
-            if ( pkg.dependencies?.[key] ) {
-                pkg.dependencies[key]=version
+            if (pkg.dependencies?.[key]) {
+                pkg.dependencies[key] = version
             }
         }
         fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({

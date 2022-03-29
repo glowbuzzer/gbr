@@ -62,7 +62,7 @@ export function usePreview() {
 
     const frames = useFrames()
     const kc = useKinematics(0)
-    const { translation } = frames.convertToFrame(
+    const { translation, rotation } = frames.convertToFrame(
         kc.translation,
         kc.rotation,
         kc.frameIndex,
@@ -70,7 +70,8 @@ export function usePreview() {
     )
     const currentPosition: CartesianPosition = {
         positionReference: POSITIONREFERENCE.ABSOLUTE,
-        translation,
+        // we need to undo the effect of kc offset because gcode adapter will apply it to all positions
+        translation: apply_offset({ translation, rotation }, kc.offset).translation,
         frameIndex: frames.active
     }
 
@@ -86,16 +87,10 @@ export function usePreview() {
             ) => {
                 // apply any kc offset to the calculated positions
                 const p = frames.convertToFrame(translation, rotation, fromIndex, toIndex)
-                const result = apply_offset(p, kc.offset)
-                console.log(
-                    "APPLY OFFSET",
-                    p.translation,
-                    result.translation,
-                    kc.offset.translation
-                )
-                return result
+                return apply_offset(p, kc.offset, true)
             }
 
+            console.log("CURRENT POSITION", currentPosition.translation)
             const interpreter = new GCodePreviewAdapter(
                 currentPosition,
                 kc.frameIndex,

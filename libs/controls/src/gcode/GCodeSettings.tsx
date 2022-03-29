@@ -23,7 +23,10 @@ export const GCodeSettings = () => {
 
     return (
         <TileSettings onConfirm={save} title="GCode Settings">
-            <Checkbox checked={settings.sendEndProgram} onChange={() => update_settings({ sendEndProgram: !settings.sendEndProgram })}>
+            <Checkbox
+                checked={settings.sendEndProgram}
+                onChange={() => update_settings({ sendEndProgram: !settings.sendEndProgram })}
+            >
                 Send End Program
             </Checkbox>
         </TileSettings>

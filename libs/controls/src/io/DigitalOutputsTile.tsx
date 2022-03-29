@@ -2,7 +2,7 @@ import React from "react"
 import { Tile } from "@glowbuzzer/layout"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
-import { useDigitalOutputState, useDigitalOutputList } from "@glowbuzzer/store"
+import { useDigitalOutputList, useDigitalOutputState } from "@glowbuzzer/store"
 
 const { Option } = Select
 
@@ -19,15 +19,7 @@ const StyledDiv = styled.div`
     }
 `
 
-const DigitalOutputItem = ({
-    index,
-    name,
-    label
-}: {
-    index: number
-    name: string
-    label?: string
-}) => {
+const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) => {
     const [dout, setDout] = useDigitalOutputState(index)
 
     function handle_override_change(value) {
@@ -72,12 +64,7 @@ export const DigitalOutputsTile = ({ labels = [] }) => {
         <Tile title="Digital Outputs">
             <StyledDiv>
                 {douts.map((name, index) => (
-                    <DigitalOutputItem
-                        key={index}
-                        index={index}
-                        name={name}
-                        label={labels[index]}
-                    />
+                    <DigitalOutputItem key={index} index={index} label={labels[index]} />
                 ))}
             </StyledDiv>
         </Tile>

@@ -4,18 +4,7 @@ import { assertNear } from "../util"
 
 const test = uvu.suite("frames simple")
 
-const tag = state => state.stream.tag
-
-const INITIAL_CONFIG = 1
-
-const px = state => state.status.kc[0].position.translation.x
 const py = state => state.status.kc[0].position.translation.y
-const pz = state => state.status.kc[0].position.translation.z
-
-const aw = state => state.status.kc[0].position.rotation.w
-const ax = state => state.status.kc[0].position.rotation.x
-const ay = state => state.status.kc[0].position.rotation.y
-const az = state => state.status.kc[0].position.rotation.z
 
 /**
  * These tests check that frame handling for moves is working properly
@@ -33,7 +22,6 @@ test.before.each(() => {
 
     gbc.enable_operation()
     gbc.enable_limit_check()
-    gbc.capture()
 })
 
 test("initial kc local position from joint angles is not rotated", async () => {
@@ -53,7 +41,7 @@ test("move_to_position in kc local coords", async () => {
     }
 })
 
-test.only("move_to_position with different frame index (translation only)", async () => {
+test("move_to_position with different frame index (translation only)", async () => {
     try {
         // kc frame index is zero (no translation/rotation)
         const move = gbc.wrap(
@@ -80,7 +68,7 @@ test("move_to_position with different frame index (translation and rotation)", a
                 .frameIndex(2).promise
         )
         await move.start().iterations(75).assertCompleted()
-        assertNear(30, 0, -10, 0, 0, 0)
+        assertNear(30, 0, 10, 0, 0, 0)
     } finally {
         gbc.plot("test")
     }
@@ -94,7 +82,7 @@ test("move_arc in rotated frame (local xy-plane)", async () => {
             gbc.activity
                 // we want to end up at 0,10 in target frame
                 // frame 3 is rotated 90deg in X
-                // so we are at 10,0,10 in target frame
+                // so we are at 10,0,-10 in target frame
                 .moveArc(0, 10, null)
                 .radius(10)
                 .frameIndex(3).promise
@@ -108,13 +96,13 @@ test("move_arc in rotated frame (local xy-plane)", async () => {
         // run rest of arc
         await move.iterations(50).assertCompleted()
 
-        assertNear(0, 10, -10, 0, 0, 0)
+        assertNear(0, 10, 10, 0, 0, 0)
     } finally {
         gbc.plot("test")
     }
 })
 
-test.only("move_line in rotated frame", async () => {
+test("move_line in rotated frame", async () => {
     try {
         // kc frame index is zero (no translation)
         assertNear(10, 10, 0, 0, 0, 0)
@@ -122,12 +110,12 @@ test.only("move_line in rotated frame", async () => {
             gbc.activity
                 // frame 3 is rotated 90 around X
                 // we start at 10,0,10 in target frame and want to end up at
-                // 0,10,0 in target frame, which is 0,0,-10 in kc local <--- ?????
+                // 0,10,0 in target frame, which is 0,0,10 in kc local
                 .moveLine(0, 10, 0)
                 .frameIndex(3).promise
         )
         await move.start().iterations(100).assertCompleted()
-        assertNear(0, 0, -10, 0, 0, 0)
+        assertNear(0, 0, 10, 0, 0, 0)
     } finally {
         gbc.plot("test")
     }

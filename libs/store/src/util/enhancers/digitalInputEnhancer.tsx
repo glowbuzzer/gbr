@@ -54,8 +54,10 @@ export function useDigitalInputOverrides() {
     return context
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const digitalInputEnhancer: StoreEnhancer<any> = createStore => {
     return (rootReducer, preloadedState) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const store = createStore<any>(rootReducer, preloadedState)
         return {
             ...store,

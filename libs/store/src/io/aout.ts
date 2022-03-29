@@ -34,7 +34,6 @@ export function useAnalogOutputList() {
     return Object.keys(config.aout)
 }
 
-
 /**
  * Returns the state of an analog output, and a function to set the desired state.
  *
@@ -43,14 +42,17 @@ export function useAnalogOutputList() {
  *
  * @param index The index in the configuration of the analog output
  */
-export function useAnalogOutputState(index: number): [{
-    /** The current effective value */
-    effectiveValue: number
-    /** The desired value */
-    setValue: number
-    /** Whether the desired value should override the value last set by an activity */
-    override: boolean
-}, (setValue: number, override: boolean) => void] {
+export function useAnalogOutputState(index: number): [
+    {
+        /** The current effective value */
+        effectiveValue: number
+        /** The desired value */
+        setValue: number
+        /** Whether the desired value should override the value last set by an activity */
+        override: boolean
+    },
+    (setValue: number, override: boolean) => void
+] {
     const connection = useConnection()
     const ref = useRef<AnalogOutputStatus>(null)
 
@@ -66,21 +68,26 @@ export function useAnalogOutputState(index: number): [{
     }
 
     const value = ref.current
-    return useMemo(() =>
-        [value, (value: number, override = true) => {
-            connection.send(
-                JSON.stringify({
-                    command: {
-                        aout: {
-                            [index]: {
-                                command: {
-                                    setValue: value,
-                                    override
+    return useMemo(
+        () => [
+            value,
+            (value: number, override = true) => {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            aout: {
+                                [index]: {
+                                    command: {
+                                        setValue: value,
+                                        override
+                                    }
                                 }
                             }
                         }
-                    }
-                })
-            )
-        }], [index, value, connection])
+                    })
+                )
+            }
+        ],
+        [index, value, connection]
+    )
 }

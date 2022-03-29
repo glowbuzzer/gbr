@@ -2,6 +2,7 @@ import * as React from "react"
 import { usePrefs } from "@glowbuzzer/store"
 import { Select } from "antd"
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Option = Select.Option as any // hack alert
 
 const scalar_units = {

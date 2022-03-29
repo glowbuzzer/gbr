@@ -54,7 +54,6 @@ export const alTable = {
     65535: "Unknown"
 }
 
-
 export const slaveStateTable = {
     0: "EC State: None",
     1: "EC State: Init",

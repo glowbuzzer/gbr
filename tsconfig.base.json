@@ -10,8 +10,13 @@
         "importHelpers": true,
         "target": "es6",
         "module": "esnext",
-        "typeRoots": ["node_modules/@types"],
-        "lib": ["es2019", "dom"],
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "lib": [
+            "es2019",
+            "dom"
+        ],
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "downlevelIteration": true,
@@ -19,11 +24,22 @@
         "noImplicitReturns": false,
         "baseUrl": ".",
         "paths": {
-            "@glowbuzzer/controls": ["libs/controls/src/index.ts"],
-            "@glowbuzzer/dummy": ["libs/dummy/src/index.ts"],
-            "@glowbuzzer/layout": ["libs/layout/src/index.ts"],
-            "@glowbuzzer/store": ["libs/store/src/index.ts"]
+            "@glowbuzzer/controls": [
+                "libs/controls/src/index.ts"
+            ],
+            "@glowbuzzer/dummy": [
+                "libs/dummy/src/index.ts"
+            ],
+            "@glowbuzzer/layout": [
+                "libs/layout/src/index.ts"
+            ],
+            "@glowbuzzer/store": [
+                "libs/store/src/index.ts"
+            ]
         }
     },
-    "exclude": ["node_modules", "tmp"]
+    "exclude": [
+        "node_modules",
+        "tmp"
+    ]
 }

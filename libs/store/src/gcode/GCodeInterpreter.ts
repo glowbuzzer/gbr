@@ -66,9 +66,15 @@ class GCodeInterpreter {
                 this.cartesianPosition.translation[k.toLowerCase()] = params[k]
             }
         })
-        const prev = { ...this.previousPosition }
-        this.previousPosition = { ...this.cartesianPosition }
-        return [prev, this.cartesianPosition]
+        // this is handled differently by preview adapter
+        const [prev, next] = this.shiftPositions(this.previousPosition, this.cartesianPosition)
+        this.previousPosition = next // for next iteration
+        return [prev, next]
+    }
+
+    protected shiftPositions(prev: CartesianPosition, next: CartesianPosition) {
+        // gbc handles all relative moves so there is nothing to do here
+        return [{ ...prev }, { ...next }]
     }
 
     interpret(data) {

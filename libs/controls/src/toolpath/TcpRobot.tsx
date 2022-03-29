@@ -1,4 +1,4 @@
-import { RobotModel } from "@glowbuzzer/controls"
+import { RobotModel } from "./robots"
 import * as THREE from "three"
 
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
@@ -111,9 +111,8 @@ export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
             joints.forEach((value, index) => {
                 if (robotModels[index]) {
                     const theta = value || 0
-                    const angle = adjustForTeta(index, theta)
                     // console.log("SET JOINT ANGLE", index, "RADS", theta, "ADJUSTED", angle)
-                    robotModels[index + 1].rotation.z = angle
+                    robotModels[index + 1].rotation.z = adjustForTeta(index, theta)
                 }
             })
         }

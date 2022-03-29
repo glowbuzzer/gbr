@@ -27,12 +27,13 @@ const parseLine = (() => {
         const re3 = new RegExp(/\s+/g)
         return line => line.replace(re1, "").replace(re2, "").replace(re3, "")
     })()
+    // noinspection RegExpUnnecessaryNonCapturingGroup
     const re = /(%.*)|({.*)|((?:\$\$)|(?:\$[a-zA-Z0-9#]*))|([a-zA-Z][0-9+\-.]+)|(\*[0-9]+)/gim
 
     return line => {
         const result = {
             line: line,
-            words: [] as any[],
+            words: [],
             ln: null
         }
 
@@ -104,7 +105,7 @@ const parseLine = (() => {
 })()
 
 const parseStringSync = str => {
-    const results:any[] = []
+    const results = []
     const lines = Array.from(lineParser(str)) // str.split("\n")
 
     for (let i = 0; i < lines.length; ++i) {

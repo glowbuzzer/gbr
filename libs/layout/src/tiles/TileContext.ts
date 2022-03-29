@@ -1,5 +1,5 @@
-import {createContext} from "react";
-import {TileDefinition} from "./TileProvider";
+import { createContext } from "react"
+import { TileDefinition } from "./TileProvider"
 
 type TileInstance = TileDefinition & { id: string; visible: boolean }
 
@@ -17,4 +17,3 @@ export type TileContextType = {
 }
 
 export const tileContext = createContext<TileContextType>(null)
-

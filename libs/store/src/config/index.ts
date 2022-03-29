@@ -107,7 +107,7 @@ export const DEFAULT_CONFIG: ConfigType = {
         }
     },
     moveParameters: {
-        default: { vmaxPercentage: 100, amaxPercentage: 100, jmaxPercentage: 100 }
+        default: {vmaxPercentage: 100, amaxPercentage: 100, jmaxPercentage: 100}
     },
     joint: {
         0: DEFAULT_JOINT_CONFIG,
@@ -116,7 +116,7 @@ export const DEFAULT_CONFIG: ConfigType = {
     },
     frames: {
         0: {
-            translation: { x: 0, y: 0, z: 0 }
+            translation: {x: 0, y: 0, z: 0}
         }
     },
     task: {

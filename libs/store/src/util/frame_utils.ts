@@ -215,12 +215,18 @@ export function apply_offset(
         translation: Vector3
         rotation: Quaternion
     },
-    offset: { translation: Vector3; rotation: Quaternion }
+    offset: { translation: Vector3; rotation: Quaternion },
+    invert = false
 ): { translation: Vector3; rotation: Quaternion } {
     const p = new Matrix4().compose(position.translation, position.rotation, new Vector3(1, 1, 1))
     const q = new Matrix4().compose(offset.translation, offset.rotation, new Vector3(1, 1, 1))
 
-    p.premultiply(q)
+    if (invert) {
+        q.invert()
+        p.multiply(q)
+    } else {
+        p.premultiply(q)
+    }
 
     const translation = new Vector3()
     const rotation = new Quaternion()

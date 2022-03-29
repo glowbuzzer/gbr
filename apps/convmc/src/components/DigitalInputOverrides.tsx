@@ -5,9 +5,8 @@
  */
 import React from "react"
 import { Tile } from "@glowbuzzer/layout"
-import { useDigitalInputs } from "@glowbuzzer/store"
+import { useDigitalInputOverrides, useDigitalInputs } from "@glowbuzzer/store"
 import { Select, Switch, Tag } from "antd"
-import { useDigitalInputOverrides } from "@glowbuzzer/store"
 import styled from "styled-components"
 
 const { Option } = Select
@@ -25,7 +24,7 @@ const StyledDiv = styled.div`
     }
 `
 
-const DigitalInputOverrideItem = ({ index, item, label }) => {
+const DigitalInputOverrideItem = ({index, item, label}) => {
     const digitalInputOverrides = useDigitalInputOverrides()
 
     function handle_override_change(value) {
@@ -44,7 +43,7 @@ const DigitalInputOverrideItem = ({ index, item, label }) => {
                 <Select
                     size="small"
                     value={item.override ? 1 : 0}
-                    style={{ width: "90px" }}
+                    style={{width: "90px"}}
                     onChange={handle_override_change}
                 >
                     <Option value={0}>Auto</Option>
@@ -63,7 +62,7 @@ const DigitalInputOverrideItem = ({ index, item, label }) => {
     )
 }
 
-export const DigitalInputOverrideTile = ({ labels }) => {
+export const DigitalInputOverrideTile = ({labels}) => {
     const dins = useDigitalInputs()
     const digitalInputOverrides = useDigitalInputOverrides()
 

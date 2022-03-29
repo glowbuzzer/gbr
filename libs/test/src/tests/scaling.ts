@@ -3,7 +3,7 @@ import { gbc } from "../../gbc"
 
 const test = uvu.suite("scaling")
 
-const pos = joint => state => state.status.joint[joint].actPos
+// const pos = joint => state => state.status.joint[joint].actPos
 const x = state => state.status.kc[0].position.translation.x
 
 test.before.each(() => {

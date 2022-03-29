@@ -1,7 +1,7 @@
 import { Tile } from "@glowbuzzer/layout"
 import React, { createContext, FC, useContext, useRef, useState } from "react"
 import { Button } from "antd"
-import { useConnection, useSoloActivity } from "@glowbuzzer/store"
+import { useConnection } from "@glowbuzzer/store"
 import { Vector3 } from "three"
 
 type SoloActivityContextType = {
@@ -12,7 +12,7 @@ const soloActivityContext = createContext<SoloActivityContextType>(null)
 
 export const SoloActivityProvider: FC = ({ children }) => {
     const connection = useConnection()
-    const activityArray = useSoloActivity()
+    // const activityArray = useSoloActivity()
     const tag = useRef(1) // initial value will be zero on m7
     const promisesRef = useRef({})
 

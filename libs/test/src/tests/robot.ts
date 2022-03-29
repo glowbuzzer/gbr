@@ -1,7 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { ACTIVITYSTATE, BLENDTYPE } from "../../../store/src"
-import { assertNear, init_robot_test } from "../util"
+import { assertNear } from "../util"
 
 const test = uvu.suite("robot")
 
@@ -10,6 +10,22 @@ const config = state => state.status.kc[0].configuration
 const tag = state => state.stream.tag
 
 const INITIAL_CONFIG = 1
+
+function init_robot_test() {
+    // need to disable limit check before we hack the joints
+    gbc.disable_limit_check()
+
+    // we can't start the robot at a singularity, and we want config to not be zero
+    gbc.set_joint_pos(0, 0)
+    gbc.set_joint_pos(1, 0)
+    gbc.set_joint_pos(2, Math.PI / 2)
+    gbc.set_joint_pos(3, -Math.PI)
+    gbc.set_joint_pos(4, -Math.PI / 4)
+    gbc.set_joint_pos(5, 0)
+
+    gbc.enable_operation()
+    gbc.enable_limit_check()
+}
 
 test.before.each(() => {
     gbc.reset("configs/tx40_config.json")

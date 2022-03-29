@@ -38,6 +38,7 @@ type SegmentDisplayProps = {
     error?: boolean
 }
 
+// noinspection CssNoGenericFontName
 const StyledSegmentDisplay = styled.span<{ error }>`
     font-family: DSEG7-Classic;
     font-size: 20px;

@@ -11,4 +11,4 @@ export const GlobalStyles = {
     dro: {
         marginTop: "6px"
     }
-};
+}

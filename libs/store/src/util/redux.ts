@@ -1,4 +1,4 @@
-import { CaseReducer, PayloadAction, Slice } from "@reduxjs/toolkit"
+import {CaseReducer, PayloadAction, Slice} from "@reduxjs/toolkit"
 
 /** Convenience type for a reducer that takes status as payload and passes it into the redux store (perhaps with some processing) */
 export type StatusUpdateReducer<T> = { status: CaseReducer<T, PayloadAction<T>> }

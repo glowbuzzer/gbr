@@ -1,6 +1,7 @@
 import { ActivityApiBase } from "./activity_api"
 
 export class GCodeActivityProvider extends ActivityApiBase {
+    // noinspection JSMismatchedCollectionQueryUpdate
     private readonly buffer: unknown[]
 
     constructor(buffer: unknown[]) {

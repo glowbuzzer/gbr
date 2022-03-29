@@ -42,7 +42,22 @@ export class SimulatedArc extends AbstractSimulatedActivity {
         const r = c.distanceTo(start)
         this.radius = r
 
-        console.log("ARC: centre=", c, "radius=", r, "start=", start, "end=", end, "waypoint=", waypoint, "k1=", k1, "k2=", k2)
+        console.log(
+            "ARC: centre=",
+            c,
+            "radius=",
+            r,
+            "start=",
+            start,
+            "end=",
+            end,
+            "waypoint=",
+            waypoint,
+            "k1=",
+            k1,
+            "k2=",
+            k2
+        )
 
         const [s, e] = [start, end].map(p => new Vector3().subVectors(p, c))
 
@@ -94,7 +109,11 @@ export class SimulatedArc extends AbstractSimulatedActivity {
 
     exec_internal(tcp: Vector3, elapsed_ticks: number) {
         const current_angle = ((this.cw ? -1 : 1) * this.arcAngle * this.tick) / elapsed_ticks
-        const pos = new Vector3(Math.cos(current_angle) * this.radius, Math.sin(current_angle) * this.radius, 0)
+        const pos = new Vector3(
+            Math.cos(current_angle) * this.radius,
+            Math.sin(current_angle) * this.radius,
+            0
+        )
         pos.applyMatrix4(this.matrix)
         tcp.set(pos.x, pos.y, pos.z)
     }

@@ -3,7 +3,7 @@
     border: 2px dashed black !important;
 }
 
-ul{
+ul {
     list-style-type: square;
     text-indent: -30px;
 }
@@ -11,6 +11,7 @@ ul{
 .site-page-header {
     border: 1px solid rgb(235, 237, 240);
 }
+
 .ant-row {
     margin-right: 0 !important;
     margin-left: 0 !important;
@@ -21,6 +22,6 @@ body {
 }
 
 
-.my-class  {
+.my-class {
     color: rgb(235, 237, 20)
 }

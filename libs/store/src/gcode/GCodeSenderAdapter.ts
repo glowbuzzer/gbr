@@ -193,7 +193,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                 // here we map activities to simple target points
                 const tolerance = sub[0].simplifyTolerance
                 const points = sub.map(p => cartesian_position(p).translation).map(adapter.in)
-                const simplify_result = simplify(points, tolerance, false)
+                const simplify_result = simplify(points, tolerance)
 
                 // we want to discard first point of sequence and leave activity unaltered (could be arc, etc)
                 const lines = simplify_result.slice(1)

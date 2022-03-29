@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Frame } from "@glowbuzzer/store"
 import * as React from "react"
 import { Select } from "antd"
@@ -35,7 +36,11 @@ export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameS
     render_items(props.items, items, 0, props.defaultFrame)
 
     return (
-        <Select dropdownMatchSelectWidth={200} defaultValue={props.defaultFrame} onChange={props.onChange}>
+        <Select
+            dropdownMatchSelectWidth={200}
+            defaultValue={props.defaultFrame}
+            onChange={props.onChange}
+        >
             {items}
         </Select>
     )

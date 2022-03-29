@@ -43,14 +43,17 @@ export function useIntegerOutputList() {
  *
  * @param index The index in the configuration of the analog output
  */
-export function useIntegerOutputState(index: number): [{
-    /** The current effective value */
-    effectiveValue: number
-    /** The desired value */
-    setValue: number
-    /** Whether the desired value should override the value last set by an activity */
-    override: boolean
-}, (setValue: number, override: boolean) => void] {
+export function useIntegerOutputState(index: number): [
+    {
+        /** The current effective value */
+        effectiveValue: number
+        /** The desired value */
+        setValue: number
+        /** Whether the desired value should override the value last set by an activity */
+        override: boolean
+    },
+    (setValue: number, override: boolean) => void
+] {
     const connection = useConnection()
     const ref = useRef<IntegerOutputStatus>(null)
 
@@ -66,21 +69,26 @@ export function useIntegerOutputState(index: number): [{
     }
 
     const value = ref.current
-    return useMemo(() =>
-        [value, (value: number, override = true) => {
-            connection.send(
-                JSON.stringify({
-                    command: {
-                        iout: {
-                            [index]: {
-                                command: {
-                                    setValue: value,
-                                    override
+    return useMemo(
+        () => [
+            value,
+            (value: number, override = true) => {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            iout: {
+                                [index]: {
+                                    command: {
+                                        setValue: value,
+                                        override
+                                    }
                                 }
                             }
                         }
-                    }
-                })
-            )
-        }], [index, value, connection])
+                    })
+                )
+            }
+        ],
+        [index, value, connection]
+    )
 }

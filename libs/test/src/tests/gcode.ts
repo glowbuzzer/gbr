@@ -12,7 +12,6 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.reset()
     gbc.enable_operation()
-    gbc.capture(true)
 })
 
 test("can execute basic gcode", async () => {
@@ -71,7 +70,7 @@ test("can handle null initial positions with frame translation", async () => {
             M2`)
         gbc.exec(30)
         gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
-        gbc.assert.near(pos(0), 1)
+        gbc.assert.near(pos(0), 3)
         gbc.assert.near(pos(1), 0)
         gbc.assert.near(pos(2), 0)
     } finally {

@@ -31,11 +31,13 @@ const SparklineDiv = styled.div`
 export const SparklineDynamic = ({ data, duration }: SparklineDynamicProps) => {
     const divRef = useRef<HTMLDivElement>(null)
     const axisX = useRef<{
-        scale: ScaleLinear<number, number>
-        axis: Axis<AxisDomain>
-        node: Selection<any, unknown, null, undefined>
-    }>({} as any)
+        scale?: ScaleLinear<number, number>
+        axis?: Axis<AxisDomain>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        node?: Selection<any, unknown, null, undefined>
+    }>({})
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [chart, setChart] = useState<Selection<any, unknown, null, undefined>>()
 
     useEffect(() => {

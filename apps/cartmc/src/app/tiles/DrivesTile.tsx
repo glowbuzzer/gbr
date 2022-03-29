@@ -7,6 +7,7 @@ import { useJoint, useJointCount } from "@glowbuzzer/store"
 const controlLabels = ["ENABLE"]
 const statusLabels = ["QUICK STOP"]
 
+// TODO: migrate somewhere else
 export const DrivesTile = () => {
     const count = useJointCount()
 

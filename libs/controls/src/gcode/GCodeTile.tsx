@@ -8,7 +8,18 @@ import "ace-builds/src-noconflict/mode-text"
 
 import { Tile } from "@glowbuzzer/layout"
 import { Radio, Select, Space, Tag } from "antd"
-import { settings, STREAMCOMMAND, STREAMSTATE, useConfig, useFrames, useGCode, usePrefs, usePreview } from "@glowbuzzer/store"
+import {
+    settings,
+    STREAMCOMMAND,
+    STREAMSTATE,
+    useConfig,
+    useFrames,
+    useGCode,
+    useKinematicsOffset,
+    useKinematicsTranslation,
+    usePrefs,
+    usePreview
+} from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 
 import { GCodeSettings } from "./GCodeSettings"
@@ -64,16 +75,25 @@ export const GCodeTile = () => {
     const active = stream.state !== STREAMSTATE.STREAMSTATE_IDLE
     const workOffset = frames.active
     const config = useConfig()
+    const offset = useKinematicsOffset(0)
+    const position = useKinematicsTranslation(0)
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.kinematicsParameters
         .cartesianParameters.linearVmax
 
+    const stream_state = stream.state
     useEffect(() => {
-        preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
+        if (stream_state === STREAMSTATE.STREAMSTATE_IDLE) {
+            // we should only update the preview if stream is idle (otherwise whole preview moves while running)
+            preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
+        }
         // eslint-disable-next-line
     }, [
+        stream_state,
         workOffset,
+        position,
+        offset,
         gcode,
         frames.overrides,
         config /* extra dep because config can cause frames to change */

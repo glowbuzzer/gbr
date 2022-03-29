@@ -28,7 +28,7 @@ const StyledTaskItem = styled.div`
     }
 `
 
-const TaskItem = ({ status, index }: {status:TaskStatus, index: number}) => {
+const TaskItem = ({ status, index }: { status: TaskStatus; index: number }) => {
     const task = useTask(index)
 
     return (

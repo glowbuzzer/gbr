@@ -1,7 +1,6 @@
-let exampleOnResolvePlugin = {
+const exampleOnResolvePlugin = {
     name: "example",
     setup(build) {
-        const path = require("path")
         build.onStart(() => {
             console.log("Building...")
         })

@@ -3,6 +3,7 @@ import { CounterCow, CounterPig, CounterUnknown } from "./animation/counters"
 import anime from "animejs"
 import { CAMERA_TO_CYLINDER_DISTANCE, useApp } from "./AppContext"
 import { CameraEye } from "./animation/CameraEye"
+import styled from "styled-components"
 
 const WORLD_TO_PIXELS = 0.5
 
@@ -271,7 +272,7 @@ export const JobAnimation = ({ c1, c2 }) => {
                 </g>
                 <CameraEye />
             </StyledJobAnimation>
-            {imageRef.current && <img width={200} src={imageRef.current} />}
+            {imageRef.current && <img width={200} src={imageRef.current} alt="camera image" />}
         </>
     )
 }

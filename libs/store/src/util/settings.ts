@@ -5,7 +5,7 @@ export function settings(key: string) {
     return {
         load(defaultValue = {}) {
             try {
-                if ( localStorage ) {
+                if (localStorage) {
                     const valueString = localStorage.getItem(key)
                     if (valueString) {
                         return JSON.parse(valueString) || defaultValue

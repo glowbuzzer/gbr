@@ -15,8 +15,6 @@ test.before.each(() => {
     // gbc.set_joint_pos(2, 0)
     //
     gbc.enable_operation()
-    // gbc.enable_limit_check()
-    gbc.capture()
 })
 
 test("move_line with simple translation", async () => {

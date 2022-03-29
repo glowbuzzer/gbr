@@ -1,5 +1,5 @@
 {
-//    "extends": "./tsconfig.base.json",
+    //    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "target": "ES5",
         "lib": [
@@ -8,22 +8,22 @@
         ],
         "esModuleInterop": true,
         "downlevelIteration": true,
-//        "allowSyntheticDefaultImports": true,
-        "jsx": "react",
-//        "target": "ES6",
-//        "downlevelIteration": true
+        //        "allowSyntheticDefaultImports": true,
+        "jsx": "react"
+        //        "target": "ES6",
+        //        "downlevelIteration": true
         //        "noResolve": true,
-//        "skipLibCheck": true
+        //        "skipLibCheck": true
     },
     "exclude": [
-//        "apps/**/**",
-//        "public/static/**/**",
+        //        "apps/**/**",
+        //        "public/static/**/**",
         "./node_modules/**"
     ],
     "files": [
         "./libs/store/src/index.ts"
-    ],
-//    "include": [
-//        "./libs/store/src/**/*.ts"
-//    ]
+    ]
+    //    "include": [
+    //        "./libs/store/src/**/*.ts"
+    //    ]
 }

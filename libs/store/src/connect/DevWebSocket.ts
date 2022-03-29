@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Vector3 } from "three"
 import { SimulatedArc, SimulatedMoveLine, SimulatedMoveToPosition } from "./dev"
 import { configTICK_RATE_HZ, millisecondsPerMachineTick } from "./dev/AbstractSimulatedActivity"
@@ -43,6 +44,7 @@ const DevActivityStream = tcp => {
     }
 }
 
+// noinspection JSUnusedGlobalSymbols
 export class DevWebSocket implements WebSocket {
     private readonly interval
     private tick = new Date().getTime()

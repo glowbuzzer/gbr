@@ -1,8 +1,8 @@
-import { useSoloActivity } from "@glowbuzzer/store"
-import { Vector3 } from "three"
-import React, { useCallback, useState } from "react"
-import { Button, Space } from "antd"
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
+import {useSoloActivity} from "@glowbuzzer/store"
+import {Vector3} from "three"
+import React, {useCallback, useState} from "react"
+import {Button, Space} from "antd"
+import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons"
 
 /**
  * Simple button that will correctly handle mouse events to ensure jogging is stopped

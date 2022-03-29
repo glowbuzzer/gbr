@@ -27,7 +27,6 @@ test.before.each(ctx => {
     gbc.reset()
     gbc.enable_operation()
     gbc.set_fro(0, 100)
-    gbc.capture(true)
 })
 
 test("can cancel activity even if none started", async () => {
@@ -250,7 +249,7 @@ test("can run move to position with different frame", async () => {
     const move = gbc.wrap(gbc.activity.moveToPosition(1, 0, 0).frameIndex(1).promise)
     await move.start().iterations(100).assertCompleted()
 
-    assertNear(0, -1, 0, 0, 0, 0)
+    assertNear(2, 1, 0, 0, 0, 0)
 })
 
 test("can cancel move to position", async () => {

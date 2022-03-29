@@ -1,12 +1,10 @@
 import React, { useContext, useState } from "react"
 import {
-    POSITIONREFERENCE,
     useDigitalInputs,
     useDigitalOutputState,
     useSoloActivity,
     useStateMachine
 } from "@glowbuzzer/store"
-import { Vector3 } from "three"
 import { appContext } from "./AppContextType"
 import ColorThief from "colorthief"
 
@@ -75,7 +73,7 @@ export const AppContextProvider = ({ children }) => {
     const dins = useDigitalInputs()
     const [, setDoutCamera] = useDigitalOutputState(3)
     const [, setDoutExtend] = useDigitalOutputState(8)
-    const [doutRetract, setDoutRetract] = useDigitalOutputState(9)
+    const [, setDoutRetract] = useDigitalOutputState(9)
     const [extended, retracted, magic_eye] = dins // simple booleans
 
     const [running, setRunning] = useState(false)
@@ -127,6 +125,7 @@ export const AppContextProvider = ({ children }) => {
                         image.onload = () => {
                             try {
                                 const ct = new ColorThief()
+                                // TODO: passing wrong type?
                                 const [r, g, b] = ct.getColor(image)
                                 const hue = toHue(r, g, b)
                                 console.log("LOADED IMAGE, HUE ==", hue, "RGB ==", r, g, b)
@@ -167,10 +166,8 @@ export const AppContextProvider = ({ children }) => {
                 enter: () =>
                     ignored(
                         conveyor1
-                            .moveLine(
-                                new Vector3(CAMERA_TO_CYLINDER_DISTANCE, 0, 0),
-                                POSITIONREFERENCE.RELATIVE
-                            )
+                            .moveLine(CAMERA_TO_CYLINDER_DISTANCE, 0, 0)
+                            .relative(true)
                             .promise()
                     ).then(() => "extend_cylinder"),
                 transitions: {
@@ -203,12 +200,7 @@ export const AppContextProvider = ({ children }) => {
             eject_type1: {
                 enter: () =>
                     ignored(
-                        conveyor1
-                            .moveLine(
-                                new Vector3(EJECT_TYPE1_DISTANCE, 0, 0),
-                                POSITIONREFERENCE.RELATIVE
-                            )
-                            .promise()
+                        conveyor1.moveLine(EJECT_TYPE1_DISTANCE, 0, 0).relative(true).promise()
                     ).then(() => "run_until_magic_eye"),
                 exit: () => conveyor1.cancel().promise(),
                 transitions: {
@@ -218,12 +210,7 @@ export const AppContextProvider = ({ children }) => {
             eject_type2: {
                 enter: () =>
                     ignored(
-                        conveyor2
-                            .moveLine(
-                                new Vector3(-EJECT_TYPE2_DISTANCE, 0, 0),
-                                POSITIONREFERENCE.RELATIVE
-                            )
-                            .promise()
+                        conveyor2.moveLine(-EJECT_TYPE2_DISTANCE, 0, 0).relative(true).promise()
                     ).then(() => "run_until_magic_eye"),
                 exit: () => conveyor2.cancel().promise(),
                 transitions: {

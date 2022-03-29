@@ -1,7 +1,7 @@
 import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"
-import { CartesianPosition } from "../gbc"
+import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 
 // function fromVector3(p: Vector3): number[] {
 //     return [p.x, p.y, p.z]
@@ -18,7 +18,7 @@ function fromHexString(s: string) {
 }
 
 const RAPID_COLOR = fromHexString("#a94d4d")
-const MOVE_COLOR = fromHexString("#a7c0fd")
+const MOVE_COLOR = fromHexString("#0037be")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
@@ -31,6 +31,24 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)
+    }
+
+    protected shiftPositions(prev, next) {
+        if (next.positionReference === POSITIONREFERENCE.RELATIVE) {
+            console.log("SHIFT", prev.translation, next.translation)
+            return [
+                prev,
+                {
+                    ...next,
+                    translation: {
+                        x: next.translation.x + prev.translation.x,
+                        y: next.translation.y + prev.translation.y,
+                        z: next.translation.z + prev.translation.z
+                    }
+                }
+            ]
+        }
+        return super.shiftPositions(prev, next)
     }
 
     private frame_conversion(cartesianPosition: CartesianPosition) {

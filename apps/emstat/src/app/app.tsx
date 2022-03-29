@@ -1,21 +1,6 @@
-import React, { useEffect, useState, createRef } from "react"
+import React, { useEffect, useState } from "react"
 
-import {
-    Row,
-    Col,
-    Divider,
-    PageHeader,
-    Card,
-    Tree,
-    Slider,
-    Tooltip,
-    Button,
-    InputNumber,
-    Typography,
-    Alert,
-    message,
-    Space
-} from "antd"
+import { Alert, Card, Col, PageHeader, Row, Slider, Tooltip, Tree, Typography } from "antd"
 import { ThunderboltFilled } from "@ant-design/icons"
 import { BitFieldDisplay } from "@glowbuzzer/controls"
 import "antd/dist/antd.css"
@@ -23,14 +8,13 @@ import "./app.css"
 import ClipLoader from "react-spinners/ClipLoader"
 import axios from "axios"
 
-import { slaveStateTable, alTable } from "./lookups"
-import { isNull, isNullOrUndefined } from "util"
+import { alTable, slaveStateTable } from "./lookups"
 import { IconType } from "rc-tree/lib/interface"
 import styled from "styled-components"
 
 const style = { background: "#ffffff", padding: "8px 8px" }
 
-const { Text, Link } = Typography
+const { Text } = Typography
 
 const StyledApp = styled.div`
     header {
@@ -57,9 +41,9 @@ const StatusFreqTable = styled.div`
     }
 `
 
-//AK - This is the interface for antd tree data node - should i reuse the one from node_modules/rc-tree/lib/interface.d.ts? if so i can't work out the import syntax
+//AK - This is the interface for antd tree data node - should I reuse the one from node_modules/rc-tree/lib/interface.d.ts? if so I can't work out the import syntax
 interface DataNode {
-    title: any
+    title
     key: string
     isLeaf?: boolean
     className?: string
@@ -67,20 +51,21 @@ interface DataNode {
     children?: DataNode[]
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ShowTree = ({ dataObject }: { dataObject: any }) => {
     return <Tree showIcon treeData={dataObject} />
 }
 
-//AK this is a bit odd - i use for the arrays of int ins etc.
+//AK this is a bit odd - I use for the arrays of int ins etc.
 interface numVal {
     num: number
     val: number
 }
 
 //AK It is a shame these end up with quite a bit of format stuff in them
-const ShowListNoNums = ({ dataObject }: { dataObject: any }) => {
+const ShowListNoNums = ({ dataObject }) => {
     console.log("is this empty (no num)?" + dataObject)
-    if (dataObject.length != 0) {
+    if (dataObject.length !== 0) {
         return (
             <div>
                 {dataObject.map(numVal => (
@@ -98,9 +83,9 @@ const ShowListNoNums = ({ dataObject }: { dataObject: any }) => {
     )
 }
 
-const ShowListNums = ({ dataObject }: { dataObject: any }) => {
+const ShowListNums = ({ dataObject }) => {
     console.log("is this empty (num)?" + dataObject)
-    if (dataObject.length != 0) {
+    if (dataObject.length !== 0) {
         return (
             <div>
                 {dataObject.map(numVal => (
@@ -128,12 +113,19 @@ const ShowListNums = ({ dataObject }: { dataObject: any }) => {
 //     return <h1>Waiting to connect to GBC to pick up status...</h1>;
 // }
 
+enum ConState {
+    noError,
+    noResponseFromGBC,
+    errorResponseFromGBC,
+    unknownConnectionError
+}
+
 function ConnectionStatus() {
     switch (connectionState) {
-        case conState.noError: {
+        case ConState.noError: {
             return null
         }
-        case conState.noResponseFromGBC: {
+        case ConState.noResponseFromGBC: {
             return (
                 <Alert
                     message="GBC did not reply to GET request for the Status JSON file"
@@ -141,7 +133,7 @@ function ConnectionStatus() {
                 />
             )
         }
-        case conState.errorResponseFromGBC: {
+        case ConState.errorResponseFromGBC: {
             return (
                 <Alert
                     message="GBC replied with an error response to the GET request for the Status JSON file"
@@ -149,7 +141,7 @@ function ConnectionStatus() {
                 />
             )
         }
-        case conState.unknownConnectionError: {
+        case ConState.unknownConnectionError: {
             return (
                 <Alert
                     message="An unknown error occurred requesting the Status JSON file from GBC"
@@ -160,17 +152,9 @@ function ConnectionStatus() {
     }
 }
 
-enum conState {
-    noError,
-    noResponseFromGBC,
-    errorResponseFromGBC,
-    unknownConnectionError
-}
+let connectionState = ConState.noError
 
-let connectionState = conState.noError
-
-//AK shame i have these warnings 'Element' is not assignable to type 'string' in here
-function makeDriveTree(statusJSON: any, constJSON: any) {
+function makeDriveTree(statusJSON, constJSON) {
     const driveTree: DataNode[] = []
     let keyCount = 0
 
@@ -179,7 +163,7 @@ function makeDriveTree(statusJSON: any, constJSON: any) {
     for (let i = 0; i < constJSON?.number_of_drives; i++) {
         driveTree.push({ title: constJSON?.drives[i].name, key: "" + keyCount++ })
 
-        driveTree[i].children = new Array()
+        driveTree[i].children = []
 
         if (!statusJSON?.drives[i].error_message) {
             driveTree[i].children.push({
@@ -237,7 +221,7 @@ function makeDriveTree(statusJSON: any, constJSON: any) {
     return driveTree
 }
 
-function makeSlaveTree(statusJSON: any, constJSON: any) {
+function makeSlaveTree(statusJSON, constJSON) {
     const slaveTree: DataNode[] = []
     const alMapper = al => alTable[al] || "No alarm"
     const slaveStateMapper = slaveState => slaveStateTable[slaveState] || "No state"
@@ -247,7 +231,7 @@ function makeSlaveTree(statusJSON: any, constJSON: any) {
 
     for (let i = 0; i < constJSON?.number_of_slaves; i++) {
         slaveTree.push({ title: constJSON?.slaves[i].name, key: "" + keyCount++ })
-        slaveTree[i].children = new Array()
+        slaveTree[i].children = []
 
         slaveTree[i].children.push({
             title: (
@@ -375,7 +359,7 @@ export const App = () => {
         setFrequency(statusFrequency)
     }, [statusFrequency])
 
-    //Need to decide where the connection url comes from. emstat isnt really any use without some sort of gb front end running so be a shame to enter it twice
+    //Need to decide where the connection url comes from. emstat isn't really any use without some sort of gb front end running so be a shame to enter it twice
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -385,22 +369,22 @@ export const App = () => {
                 .then(json => {
                     emstat_status_setResult(json.data)
                     setIsLoading(false)
-                    connectionState = conState.noError
+                    connectionState = ConState.noError
                 })
                 .catch(e => {
                     if (e.response) {
                         // The request was made and the server responded with a status code that falls out of the range of 2xx
                         console.log("response received: " + e.response.data + ".data")
                         console.log("response received: " + e.response.status + ".status")
-                        connectionState = conState.errorResponseFromGBC
+                        connectionState = ConState.errorResponseFromGBC
                     } else if (e.request) {
                         // The request was made but no response was received error.request` is an instance of XMLHttpRequest in the browser and an instance of http.ClientRequest in node.js
                         console.log("no response received: " + e.request + "(.request")
-                        connectionState = conState.noResponseFromGBC
+                        connectionState = ConState.noResponseFromGBC
                     } else {
                         // Something happened in setting up the request that triggered an Error
                         console.log("Somthing else error: ", e.message + "(.message)")
-                        connectionState = conState.unknownConnectionError
+                        connectionState = ConState.unknownConnectionError
                     }
                     console.log("config: " + e.config)
                     setIsLoading(false)

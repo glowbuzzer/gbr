@@ -95,7 +95,7 @@ function simplifyDouglasPeucker(points, sqTolerance) {
 }
 
 // both algorithms combined for awesome performance
-export function simplify(points, tolerance, highestQuality) {
+export function simplify(points, tolerance) {
     const sqTolerance = tolerance !== undefined ? tolerance * tolerance : 1
 
     // TODO: do we care about the high quality pass (if so needs to be adapted to handle nulls!)

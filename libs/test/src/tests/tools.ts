@@ -4,7 +4,7 @@ import { assertNear } from "../util"
 
 const test = uvu.suite("tools")
 
-const tag = state => state.stream.tag
+// const tag = state => state.stream.tag
 
 // raw joint pos
 const joint = joint => state => state.status.joint[joint].actPos
@@ -14,10 +14,10 @@ const px = state => state.status.kc[0].position.translation.x
 const py = state => state.status.kc[0].position.translation.y
 const pz = state => state.status.kc[0].position.translation.z
 
-const aw = state => state.status.kc[0].position.rotation.w
-const ax = state => state.status.kc[0].position.rotation.x
-const ay = state => state.status.kc[0].position.rotation.y
-const az = state => state.status.kc[0].position.rotation.z
+// const aw = state => state.status.kc[0].position.rotation.w
+// const ax = state => state.status.kc[0].position.rotation.x
+// const ay = state => state.status.kc[0].position.rotation.y
+// const az = state => state.status.kc[0].position.rotation.z
 
 /**
  * These tests check tool frame handling
@@ -35,7 +35,6 @@ test.before.each(() => {
 
     gbc.enable_operation()
     gbc.enable_limit_check()
-    gbc.capture()
 })
 
 test("initial kc position is zero (no tool selected)", async () => {

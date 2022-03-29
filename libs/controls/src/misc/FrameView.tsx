@@ -46,10 +46,10 @@ const DisplayNum = ({ value, precision, width, type }: DiplayNumProps) => {
 
     if (isNaN(value)) {
         // this is a fallback in case string value / undefined is passed
-        return <span {...(props as any)}>{value}</span>
+        return <span {...props}>{value}</span>
     }
     if (value * value < 0.000000001) {
-        return <span {...(props as any)}>0</span>
+        return <span {...props}>0</span>
     }
 
     const factors = {
@@ -74,7 +74,7 @@ const DisplayNum = ({ value, precision, width, type }: DiplayNumProps) => {
     // do conversion
     const converted = convert_value()
 
-    return <span {...(props as any)}>{converted.toPrecision(precision || 3)}</span>
+    return <span {...props}>{converted.toPrecision(precision || 3)}</span>
 }
 
 export const FrameView = () => {
