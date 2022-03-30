@@ -3,6 +3,7 @@ import React, { StrictMode, useState } from "react"
 import {
     CartesianDroTile,
     ConnectTile,
+    GCodeTile,
     GlowbuzzerApp,
     JogTile,
     JointDroTile,
@@ -37,7 +38,12 @@ const StyledApp = styled.div`
     section {
         flex-grow: 1;
         min-height: 1200px;
-        //max-width: 1200px;
+        display: flex;
+        flex-direction: row;
+
+        > div:first-child {
+            flex-grow: 1;
+        }
     }
 `
 
@@ -89,6 +95,7 @@ export function App() {
                 </nav>
                 <section>
                     <ToolPathTile model={showRobot && TX40_MODEL} />
+                    <GCodeTile />
                 </section>
             </StyledApp>
         </>
