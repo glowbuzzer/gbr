@@ -90,8 +90,8 @@ export function App() {
                 <nav>
                     <ConnectTile />
                     <JogTile />
-                    <JointDroTile />
                     <CartesianDroTile />
+                    <JointDroTile />
                 </nav>
                 <section>
                     <ToolPathTile model={showRobot && TX40_MODEL} />
