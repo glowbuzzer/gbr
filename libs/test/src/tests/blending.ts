@@ -384,6 +384,7 @@ test("handles incomplete gcode during blend", async () => {
 
 test("can handle very short arc in blend sequence", async () => {
     try {
+        // gbc.disable_limit_check()
         gbc.send_gcode(
             `
                 G64
@@ -406,7 +407,7 @@ test("can handle very short arc in blend sequence", async () => {
             .assert.near(pos(0), 1)
             .assert.near(pos(1), 1)
     } finally {
-        gbc.plot("blend-short-move-arc")
+        gbc.plot("test")
     }
 })
 

@@ -248,6 +248,14 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
         const q = new Quaternion().setFromEuler(new Euler(x, y, z, order))
         return this.rotation(q.x, q.y, q.z, q.w)
     }
+
+    setFromCartesianPosition(cartesianPosition: CartesianPosition) {
+        this._positionReference = cartesianPosition.positionReference
+        this._translation = cartesianPosition.translation
+        this._rotation = cartesianPosition.rotation
+        this._frameIndex = cartesianPosition.frameIndex
+        return this
+    }
 }
 
 abstract class CartesianMoveBuilder extends MoveBuilder {
@@ -370,6 +378,7 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC
     private _direction: ARCDIRECTION = ARCDIRECTION.ARCDIRECTION_CW
     private _centre: Vector3
+    private _centrePositionReference: POSITIONREFERENCE
     private _radius: number
 
     /** The direction of the arc (clockwise or counter-clockwise). */
@@ -379,8 +388,9 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
     }
 
     /** The centre of the arc when using arc centre mode. The centre must be equidistant from the start position and target position. */
-    centre(x, y, z) {
+    centre(x, y, z, positionReference: POSITIONREFERENCE = POSITIONREFERENCE.ABSOLUTE) {
         this._centre = { x, y, z }
+        this._centrePositionReference = positionReference
         return this
     }
 
@@ -395,7 +405,7 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
             ? {
                   arcType: ARCTYPE.ARCTYPE_CENTRE,
                   centre: {
-                      positionReference: this._positionReference,
+                      positionReference: this._centrePositionReference,
                       translation: this._centre
                   }
               }

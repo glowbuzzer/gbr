@@ -90,7 +90,6 @@ export function usePreview() {
                 return apply_offset(p, kc.offset, true)
             }
 
-            console.log("CURRENT POSITION", currentPosition.translation)
             const interpreter = new GCodePreviewAdapter(
                 currentPosition,
                 kc.frameIndex,

@@ -9,10 +9,6 @@ export const GCodeSettings = () => {
     const dispatch = useDispatch()
     const [settings, setSettings] = useState<GCodeSettingsType>(initialSettings)
 
-    useEffect(() => {
-        return () => console.log("UNMOUNT")
-    }, [])
-
     function save() {
         dispatch(gcodeSlice.actions.settings(settings))
     }

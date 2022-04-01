@@ -1,31 +1,32 @@
-// noinspection JSUnresolvedLibraryURL,HtmlUnknownAttribute
+// noinspection JSUnresolvedLibraryURL,HtmlUnknownAttribute,CheckTagEmptyBody
 
 import { mkdirSync, writeFileSync } from "fs"
 import { Quaternion, Vector3 } from "three"
 
-// noinspection HtmlUnknownAttribute,JSUnresolvedVariable
+// noinspection HtmlUnknownAttribute,JSUnresolvedVariable,CheckTagEmptyBody
 const head = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <title>chart-csv</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.css" rel="stylesheet" type="text/css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.10/c3.min.js"></script>
 </head>
 <body onload="run()">
 
-<div id="tag"/>
-<div id="pos"/>
-<div id="vel"/>
-<div id="acc"/>
-<div id="jerk"/>
-<div id="p"/>
-<div id="q"/>
+<div id="tag"></div>
+<div id="pos"></div>
+<div id="vel"></div>
+<div id="acc"></div>
+<div id="jerk"></div>
+<div id="p"></div>
+<div id="q"></div>
 
 <script>
 
 function parseCSV (csv) {
+  console.log("parse csv")
   return csv.split('\\n')
     .filter(function (row) {
       return !!row.trim()

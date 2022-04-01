@@ -4,26 +4,16 @@ import {
     ActivityStreamItem,
     ACTIVITYTYPE,
     ARCDIRECTION,
-    ARCTYPE,
     BLENDTYPE,
     CartesianPosition,
-    MoveArcStream,
-    POSITIONREFERENCE,
-    SetAoutCommand,
-    SetDoutCommand,
-    SetIoutCommand
+    POSITIONREFERENCE
 } from "../gbc"
 import { simplify } from "./simplify"
 import { GCodeContextType } from "./index"
 import { GCodeActivityProvider } from "../activity/GCodeActivityProvider"
+import { MoveArcBuilder } from "../activity"
 
 // responsible for converting gcode to internal representation and doing buffered send to m4
-
-function args(line: GCodeLine) {
-    return {
-        tag: line.lineNum
-    }
-}
 
 // noinspection JSUnusedGlobalSymbols
 export class GCodeSenderAdapter extends GCodeInterpreter {
@@ -48,6 +38,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private readonly context: GCodeContextType
     private toolIndex = 0
     private previousToolIndex = 0
+    private readonly api: GCodeActivityProvider
 
     constructor(buffer, vmax: number, context?: GCodeContextType, simplifyTolerance = 0) {
         super({
@@ -55,49 +46,43 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             positionReference: POSITIONREFERENCE.ABSOLUTE,
             frameIndex: 0
         })
+        this.api = new GCodeActivityProvider(this.buffer)
         this.buffer = buffer
         this.vmax = vmax
         this.context = context
         this.simplifyTolerance = simplifyTolerance
     }
 
-    arcParams(params, ccw, frameIndex, positionReference): MoveArcStream {
+    arcActivity(lineNum: number, params, ccw: boolean): MoveArcBuilder {
         const I = params.I || 0
         const J = params.J || 0
         const R = params.R || 0
 
-        const { x, y, z } = this.position.translation
-
-        const destination = {
-            frameIndex,
-            translation: { x, y, z },
-            positionReference
-        }
-
         const arcDirection = ccw ? ARCDIRECTION.ARCDIRECTION_CCW : ARCDIRECTION.ARCDIRECTION_CW
 
         if (Math.abs(R) > 0) {
-            return {
-                arc: {
-                    destination,
-                    arcType: ARCTYPE.ARCTYPE_RADIUS,
-                    radius: { value: R },
-                    arcDirection
-                }
-            }
+            return this.api
+                .setTag(lineNum)
+                .moveArc()
+                .setFromCartesianPosition(this.position)
+                .radius(R)
+                .direction(arcDirection)
+                .params({
+                    ...this.moveParams,
+                    vmaxPercentage: this.vmaxPercentage
+                })
         }
 
-        return {
-            arc: {
-                destination,
-                arcType: ARCTYPE.ARCTYPE_CENTRE,
-                arcDirection,
-                centre: {
-                    translation: { x: I, y: J },
-                    positionReference: POSITIONREFERENCE.RELATIVE // we don't support G91.1 right now
-                }
-            }
-        }
+        return this.api
+            .setTag(lineNum)
+            .moveArc()
+            .setFromCartesianPosition(this.position)
+            .centre(I, J, null, POSITIONREFERENCE.RELATIVE)
+            .direction(arcDirection)
+            .params({
+                ...this.moveParams,
+                vmaxPercentage: this.vmaxPercentage
+            })
     }
 
     push(primitive) {
@@ -242,22 +227,24 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.toolIndex = Number(params)
     }
 
-    M2() {
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
-        })
+    M2(params, line: GCodeLine) {
+        this.push(this.api.setTag(line.lineNum).endProgram().command)
+
+        // this.push({
+        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
+        // })
     }
 
-    M6() {
+    M6(params, line: GCodeLine) {
+        this.api.setTag(line.lineNum)
         // tool change
         if (this.context) {
-            const provider = new GCodeActivityProvider(this.buffer)
             // hard coded to first KC for now
             const builders = this.context.handleToolChange(
                 0,
                 this.previousToolIndex,
                 this.toolIndex,
-                provider
+                this.api
             )
             // builder promises will append activities to the buffer
             builders?.forEach(b => b.promise())
@@ -271,174 +258,88 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         }
     }
 
-    M8() {
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
-        })
+    M8(params, line: GCodeLine) {
+        this.push(this.api.setTag(line.lineNum).endProgram().command)
+
+        // this.push({
+        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
+        // })
     }
 
-    M200(params, line) {
+    M200(params, line: GCodeLine) {
         const { U, V } = params
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT,
-            ...args(line),
-            setDout: {
-                doutToSet: U || 0,
-                valueToSet: Boolean(V).valueOf() || false
-            } as SetDoutCommand
-        })
+        this.push(
+            this.api.setTag(line.lineNum).setDout(U || 0, Boolean(V).valueOf() || false).command
+        )
     }
 
-    M201(params, line) {
+    M201(params, line: GCodeLine) {
         const { U, V } = params
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT,
-            ...args(line),
-            setAout: {
-                aoutToSet: U || 0,
-                valueToSet: Number(V).valueOf() || 0
-            } as SetAoutCommand
-        })
+        this.push(this.api.setTag(line.lineNum).setAout(U || 0, Number(V).valueOf() || 0).command)
     }
 
-    M202(params, line) {
+    M202(params, line: GCodeLine) {
         const { U, V } = params
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT,
-            ...args(line),
-            setIout: {
-                ioutToSet: U || 0,
-                valueToSet: Number(V).valueOf() || 0
-            } as SetIoutCommand
-        })
+        this.push(this.api.setTag(line.lineNum).setIout(U || 0, Number(V).valueOf() || 0).command)
     }
-
-    // get positionReference() {
-    //     return this.position.positionReference
-    // }
 
     G0(params, line: GCodeLine) {
         // this.updateModals(params)
+        this.api.setTag(line.lineNum)
         if (params.F) {
             // turn this into a linear move_line
             const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
-            this.push({
-                activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
-                ...args(line),
-                moveLine: {
-                    moveParams: {
+            this.push(
+                this.api
+                    .moveLine()
+                    .setFromCartesianPosition(this.position)
+                    .params({
                         ...this.moveParams,
                         vmaxPercentage,
                         blendType: BLENDTYPE.BLENDTYPE_NONE
-                    },
-                    line: this.position
-                }
-            })
+                    }).command
+            )
         } else {
             // use basic move_to_position using full joint limits
-            this.push({
-                activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
-                ...args(line),
-                moveToPosition: {
-                    moveParams: {
+            this.push(
+                this.api
+                    .moveToPosition()
+                    .setFromCartesianPosition(this.position)
+                    .configuration(0)
+                    .params({
                         ...this.moveParams,
                         blendType: BLENDTYPE.BLENDTYPE_NONE
-                    },
-                    cartesianPosition: {
-                        configuration: 0, // TODO: think about how to specify in robot land
-                        position: this.position
-                    }
-                }
-            })
+                    }).command
+            )
         }
     }
 
     G1(params, line: GCodeLine) {
         this.updateVmax(params)
 
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
-            ...args(line),
-            moveLine: {
-                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                line: this.position
-            }
-        })
+        this.push(
+            this.api
+                .setTag(line.lineNum)
+                .moveLine()
+                .setFromCartesianPosition(this.position)
+                .params({
+                    ...this.moveParams,
+                    vmaxPercentage: this.vmaxPercentage
+                }).command
+        )
     }
 
     G2(params, line: GCodeLine) {
-        // const start = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
-        // this.updateModals(params)
-        // const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
-
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
-            ...args(line),
-            moveArc: {
-                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                ...this.arcParams(
-                    params,
-                    false,
-                    this.position.frameIndex,
-                    this.position.positionReference
-                )
-            }
-        })
+        this.push(this.arcActivity(line.lineNum, params, false).command)
     }
 
     G3(params, line: GCodeLine) {
-        // const start = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
-        // this.updateModals(params)
-        // const end = new Vector3(this.current_positions[0], this.current_positions[1], this.current_positions[2])
-
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC,
-            ...args(line),
-            moveArc: {
-                moveParams: { ...this.moveParams, vmaxPercentage: this.vmaxPercentage },
-                ...this.arcParams(
-                    params,
-                    true,
-                    this.position.frameIndex,
-                    this.position.positionReference
-                )
-            }
-        })
+        this.push(this.arcActivity(line.lineNum, params, true).command)
     }
 
     G4(params, line: GCodeLine) {
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-            ...args(line),
-            dwell: {
-                ticksToDwell: params.P || 0
-            }
-        })
+        this.push(this.api.setTag(line.lineNum).dwell(params.P || 0))
     }
-
-    // G54() {
-    //     this.frameIndex = 0
-    // }
-    //
-    // G55() {
-    //     this.frameIndex = 1
-    // }
-    //
-    // G56() {
-    //     this.frameIndex = 2
-    // }
-    //
-    // G57() {
-    //     this.frameIndex = 3
-    // }
-    //
-    // G58() {
-    //     this.frameIndex = 4
-    // }
-    //
-    // G59() {
-    //     this.frameIndex = 5
-    // }
 
     G61() {
         // exact stop mode (the default)

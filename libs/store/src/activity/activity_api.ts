@@ -179,7 +179,7 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
         return new MoveLineAtVelocityBuilder(this).vector(x, y, z)
     }
 
-    moveToPosition(x: number, y: number, z: number) {
+    moveToPosition(x?: number, y?: number, z?: number) {
         return new MoveToPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 

@@ -12,24 +12,78 @@
         "default": {
         }
     },
+    "frames": {
+        "default": {
+            "translation": {
+                "z": 325
+            }
+        },
+        "rotate90": {
+            "translation": {
+                "z": 325
+            },
+            "rotation": {
+                "x": 0.7071068,
+                "y": 0,
+                "z": 0,
+                "w": 0.7071068
+            }
+        }
+    },
     "joint": {
         "0": {
-            "vmax": 201,
-            "amax": 4000,
-            "jmax": 80000,
-            "scale": 133.33333333
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -180,
+            "posLimit": 180
         },
         "1": {
-            "vmax": 200,
-            "amax": 4000,
-            "jmax": 80000,
-            "scale": 266.66666666
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -125,
+            "posLimit": 125
         },
         "2": {
-            "vmax": 200,
-            "amax": 4000,
-            "jmax": 80000,
-            "scale": 1000.0
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -138,
+            "posLimit": 138
+        },
+        "3": {
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -270,
+            "posLimit": 270
+        },
+        "4": {
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -120,
+            "posLimit": 133.5
+        },
+        "5": {
+            "vmax": 1,
+            "amax": 8,
+            "jmax": 160,
+            "scale": 10000,
+            "jointType": 1,
+            "negLimit": -270,
+            "posLimit": 270
         }
     },
     "jog": {
@@ -43,27 +97,30 @@
             "participatingJoints": [
                 0,
                 1,
-                2
+                2,
+                3,
+                4,
+                5
             ],
-            "participatingJointsCount": 3,
+            "participatingJointsCount": 6,
             "kinematicsParameters": {
-                "kinematicsConfigurationType": 3,
+                "kinematicsConfigurationType": 0,
                 "xExtents": [
-                    -100,
-                    100
+                    -1000,
+                    1000
                 ],
                 "yExtents": [
-                    -100,
-                    100
+                    -1000,
+                    1000
                 ],
                 "zExtents": [
-                    -100,
-                    100
+                    0,
+                    840
                 ],
                 "cartesianParameters": {
-                    "linearVmax": 20,
-                    "linearAmax": 400,
-                    "linearJmax": 8000,
+                    "linearVmax": 200,
+                    "linearAmax": 4000,
+                    "linearJmax": 80000,
                     "tcpRotationalVmax": 100,
                     "tcpRotationalAmax": 1000,
                     "tcpRotationalJmax": 10000
@@ -203,49 +260,6 @@
                 "analogCount": 6,
                 "integerOffset": 188,
                 "integerCount": 2
-            }
-        }
-    },
-    "frames": {
-        "default": {
-            "translation": {
-                "x": 10
-            }
-        },
-        "rotate90": {
-            "rotation": {
-                "x": 0.7071068,
-                "y": 0,
-                "z": 0,
-                "w": 0.7071068
-            }
-        }
-    },
-    "tool": {
-        "default": {
-        },
-        "offsetz": {
-            "translation": {
-                "z": -10
-            }
-        }
-    },
-    "moveParameters": {
-        "default": {
-            "vmaxPercentage": 100,
-            "amaxPercentage": 100,
-            "jmaxPercentage": 100
-        }
-    },
-    "lines": {
-        "0": {
-            "destination": {
-                "translation": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0
-                },
-                "frameIndex": 2
             }
         }
     }

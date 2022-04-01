@@ -214,7 +214,7 @@ export class GbcTest {
                 const statusMsg = this.status_msg
                 const actual = selector(statusMsg)
                 if (msg && actual !== expected) {
-                    console.log("Selector mismatch: ", msg)
+                    console.log("Selector mismatch: ", msg, "expected", expected, "actual", actual)
                 }
                 assert.equal(actual, expected)
                 return this

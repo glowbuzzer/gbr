@@ -1,6 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { assertNear } from "../util"
+import { STREAMSTATE } from "../../../store/src"
 
 const test = uvu.suite("frames simple")
 
@@ -97,6 +98,27 @@ test("move_arc in rotated frame (local xy-plane)", async () => {
         await move.iterations(50).assertCompleted()
 
         assertNear(0, 10, 10, 0, 0, 0)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move_arc using gcode in rotated frame", async () => {
+    const state = state => state.stream.state
+    const pos = joint => state => state.status.joint[joint].actPos
+
+    try {
+        gbc.send_gcode(`
+        g57
+        g1 x30 y0 z20
+        g2 i-30 x0 y-30
+        m2`)
+        gbc.exec(160)
+        gbc.assert
+            .selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
+            .assert.near(pos(0), 0)
+            .assert.near(pos(1), -20)
+            .assert.near(pos(2), -30)
     } finally {
         gbc.plot("test")
     }

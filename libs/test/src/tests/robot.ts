@@ -1,12 +1,13 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, BLENDTYPE } from "../../../store/src"
+import { ACTIVITYSTATE, BLENDTYPE, STREAMSTATE } from "../../../store/src"
 import { assertNear } from "../util"
 
 const test = uvu.suite("robot")
 
 const config = state => state.status.kc[0].configuration
 
+const state = state => state.stream.state
 const tag = state => state.stream.tag
 
 const INITIAL_CONFIG = 1
@@ -233,6 +234,23 @@ test("blend move_to_position with move_line (with orientation change)", async ()
 
     assertNear(100, 100, 150, 0, Math.PI, 0)
     gbc.assert.selector(config, INITIAL_CONFIG)
+})
+
+test.skip("execute arc with centre gcode", async () => {
+    assertNear(270.962, 35, 179.038, -Math.PI, Math.PI / 4, 0)
+
+    try {
+        gbc.send_gcode(`
+            g1 x100 y0
+            g2 i-100 x0 y-100
+            m2`)
+        gbc.exec(500)
+        gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
+
+        assertNear(0, -100, 179.038, -Math.PI, Math.PI / 4, 0)
+    } finally {
+        gbc.plot("test")
+    }
 })
 
 export const robot = test

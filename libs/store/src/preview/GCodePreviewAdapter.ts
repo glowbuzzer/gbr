@@ -3,10 +3,6 @@ import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 
-// function fromVector3(p: Vector3): number[] {
-//     return [p.x, p.y, p.z]
-// }
-
 function fromHexString(s: string) {
     // convert web color code, eg '#c0c0c0' into THREE rgb floats in range [0,1]
     const num = parseInt(s.substr(1), 16)
@@ -71,9 +67,23 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return result
     }
 
-    toArc(params, ccw: boolean, fromCp: CartesianPosition, toCp: CartesianPosition): EllipseCurve {
-        const [from, to] = [fromCp, toCp].map(position => this.frame_conversion(position))
-        const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from, to]
+    pushArc(
+        lineNum: number,
+        params,
+        ccw: boolean,
+        fromCp: CartesianPosition,
+        toCp: CartesianPosition
+    ) {
+        // convert start and end into same frame as current
+        const [from, to] = [fromCp, toCp].map(position =>
+            this.convertToFrame(
+                position.translation,
+                position.rotation || new Quaternion().identity(),
+                position.frameIndex,
+                this.position.frameIndex
+            )
+        )
+        const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from.translation, to.translation]
         const I = params.I || 0
         const J = params.J || 0
 
@@ -85,11 +95,47 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const delta = Math.abs(r - r_check)
         if (delta > 0.001) {
             // TODO: error handling
-            console.error("Invalid arc - points not equidistant from centre!", delta)
+            console.error(
+                "Invalid arc - points not equidistant from centre!",
+                delta,
+                x1,
+                y1,
+                x2,
+                y2
+            )
         }
         const startAngle = Math.atan2(y1 - cy, x1 - cx)
         const endAngle = Math.atan2(y2 - cy, x2 - cx)
-        return new EllipseCurve(cx, cy, r, r, startAngle, endAngle, !ccw /* not sure why? */, 0)
+        const arc = new EllipseCurve(
+            cx,
+            cy,
+            r,
+            r,
+            startAngle,
+            endAngle,
+            !ccw /* not sure why? */,
+            0
+        )
+
+        // TODO: H: what happens if from and to are in different frames?
+        const points = arc.getPoints(10).map(p => ({
+            ...this.position,
+            translation: {
+                ...this.position.translation,
+                x: p.x,
+                y: p.y
+            }
+        }))
+        this.segments.push(
+            ...this.toSegments(
+                points.map(p => {
+                    const { x, y, z } = this.frame_conversion(p)
+                    return new Vector3(x, y, z)
+                }),
+                MOVE_COLOR,
+                lineNum
+            )
+        )
     }
 
     G0(params, { lineNum }, fromCp: CartesianPosition, toCp: CartesianPosition) {
@@ -113,14 +159,10 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G2(params, { lineNum }, from, to) {
-        const arc = this.toArc(params, false, from, to)
-        const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
-        this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
+        this.pushArc(lineNum, params, false, from, to)
     }
 
     G3(params, { lineNum }, from, to) {
-        const arc = this.toArc(params, true, from, to)
-        const points = arc.getPoints(10).map(p => new Vector3(p.x, p.y, 0))
-        this.segments.push(...this.toSegments(points, MOVE_COLOR, lineNum))
+        this.pushArc(lineNum, params, true, from, to)
     }
 }
