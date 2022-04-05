@@ -134,6 +134,12 @@ export interface SoloActivityApi {
 }
 
 export abstract class ActivityApiBase implements SoloActivityApi, ActivityController {
+    public readonly kinematicsConfigurationIndex: number
+
+    protected constructor(kinematicsConfigurationIndex: number) {
+        this.kinematicsConfigurationIndex = kinematicsConfigurationIndex
+    }
+
     abstract get nextTag(): number
 
     abstract execute(command)
@@ -214,7 +220,7 @@ export class ActivityApiImpl
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     constructor(index: number, send: (msg: string) => void) {
-        super()
+        super(index)
         this.index = index
         this._send = send
     }

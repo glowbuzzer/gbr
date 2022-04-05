@@ -5,8 +5,8 @@ export class GCodeActivityProvider extends ActivityApiBase {
     private readonly buffer: unknown[]
     private _tag = 0
 
-    constructor(buffer: unknown[]) {
-        super()
+    constructor(kinematicsConfigurationIndex: number, buffer: unknown[]) {
+        super(kinematicsConfigurationIndex)
         this.buffer = buffer
     }
 

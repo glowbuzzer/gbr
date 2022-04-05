@@ -9,7 +9,7 @@ import { useFrames } from "../frames"
 import { useRawJointPositions } from "../joints"
 import * as THREE from "three"
 import { Quaternion, Vector3 } from "three"
-import { KinematicsConfigurationCommand, Quat } from "../gbc"
+import { CartesianPosition, KinematicsConfigurationCommand, Quat } from "../gbc"
 
 enum KINEMATICSCONFIGURATIONTYPE {
     TX40,
@@ -212,11 +212,8 @@ export const useKinematics = (kc: number) => {
     }
 }
 
-export const useKinematicsTranslation = (kc: number) => {
-    return useSelector(
-        ({ kinematics }: RootState) => kinematics[kc]?.position?.translation,
-        shallowEqual
-    )
+export const useKinematicsCartesianPosition = (kc: number): CartesianPosition => {
+    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.position, deepEqual)
 }
 
 export const useTcp = (kc: number, frame: number | "world") => {

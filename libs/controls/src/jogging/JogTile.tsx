@@ -1,17 +1,18 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Tile, useLocalStorage } from "@glowbuzzer/layout"
 import {
     JogDirection,
     JOINT_TYPE,
     JointConfig,
+    useConfig,
     useJoint,
     useJointConfig,
-    useKinematics,
+    useKinematicsCartesianPosition,
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { Button, Form, Input, Radio, Slider, Space } from "antd"
+import { Button, Form, Input, Radio, Select, Slider, Space } from "antd"
 import { StyledControls } from "../util/styled"
 import {
     ArrowDownOutlined,
@@ -108,10 +109,37 @@ export const JogTile = () => {
     const [b, setB] = useLocalStorage("jog.b", 0)
     const [c, setC] = useLocalStorage("jog.c", 0)
 
-    // const jogger = useJog(0)
-    const joint_config = useJointConfig()
-    const motion = useSoloActivity(0)
-    const kc = useKinematics(0)
+    const [selectedKc, setSelectedKc] = useLocalStorage("jog.kc", null)
+
+    const config = useConfig()
+    const kcs = Object.keys(config.kinematicsConfiguration)
+
+    useEffect(() => {
+        if (!selectedKc || !kcs.includes(selectedKc)) {
+            setSelectedKc(kcs[0])
+        }
+    }, [kcs, selectedKc, setSelectedKc])
+
+    const kc_index = kcs.indexOf(selectedKc) || 0
+
+    const kc_config =
+        config.kinematicsConfiguration[selectedKc] || config.kinematicsConfiguration[0]
+
+    const joint_configx = useJointConfig()
+    const joints_for_kc = kc_config.participatingJoints.map(jointNum => ({
+        index: jointNum,
+        config: joint_configx[jointNum]
+    }))
+
+    const {
+        rotation: { x: qx, y: qy, z: qz, w: qw }
+    } = useKinematicsCartesianPosition(selectedKc) || { rotation: { x: 0, y: 0, z: 0, w: 1 } }
+
+    const rotation = new Quaternion(qx, qy, qz, qw)
+
+    // by convention, each solo activity index is bound to corresponding kc by index
+    const motion = useSoloActivity(kc_index)
+
     const preview = usePreview()
 
     // we scale all limits by the jog speed percent
@@ -119,6 +147,10 @@ export const JogTile = () => {
         vmaxPercentage: jogSpeed,
         amaxPercentage: jogSpeed,
         jmaxPercentage: jogSpeed
+    }
+
+    function update_kc(value) {
+        setSelectedKc(value)
     }
 
     function update_goto_mode(e) {
@@ -154,12 +186,22 @@ export const JogTile = () => {
 
         if (jogStepMode === JogStepMode.CONTINUOUS) {
             if (jogMoveMode === JogMoveMode.JOINT) {
-                const velos = joint_config.map((conf, joint_index) =>
-                    joint_index === index
+                // the moveJointsAtVelocity activity accepts an array of velocities for joints in the kc
+                const velos = joints_for_kc.map(({ config }, logical_index) =>
+                    logical_index === index
                         ? direction === JogDirection.POSITIVE
-                            ? conf.vmax
-                            : -conf.vmax
+                            ? config.vmax
+                            : -config.vmax
                         : 0
+                )
+                console.log(
+                    "START JOG, KC=",
+                    kc_index,
+                    "INDEX=",
+                    index,
+                    "VELOS",
+                    velos,
+                    joints_for_kc
                 )
                 preview.disable()
                 return motion
@@ -192,7 +234,7 @@ export const JogTile = () => {
     function stepJog(index, direction: JogDirection) {
         if (jogStepMode === JogStepMode.STEP) {
             if (jogMoveMode === JogMoveMode.JOINT) {
-                const steps = joint_config.map((conf, joint_index) =>
+                const steps = joints_for_kc.map((_, joint_index) =>
                     joint_index === index
                         ? direction === JogDirection.POSITIVE
                             ? jogStep
@@ -244,7 +286,7 @@ export const JogTile = () => {
     }
 
     function gotoA() {
-        const euler = new Euler().setFromQuaternion(kc.rotation)
+        const euler = new Euler().setFromQuaternion(rotation)
         euler.x = MathUtils.degToRad(a)
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
 
@@ -282,6 +324,21 @@ export const JogTile = () => {
             title={"Jogging"}
             controls={
                 <StyledControls>
+                    {kcs.length && (
+                        <Select
+                            size="small"
+                            defaultValue={selectedKc}
+                            onChange={update_kc}
+                            dropdownMatchSelectWidth={200}
+                        >
+                            {kcs.map(k => (
+                                <Select.Option key={k} value={k}>
+                                    {k}
+                                </Select.Option>
+                            ))}
+                        </Select>
+                    )}
+                    &nbsp;
                     <Radio.Group size={"small"} value={jogMoveMode} onChange={updateJogMoveMode}>
                         <Radio.Button value={JogMoveMode.JOINT}>Joint</Radio.Button>
                         <Radio.Button value={JogMoveMode.CARTESIAN}>Cartesian</Radio.Button>
@@ -457,17 +514,28 @@ export const JogTile = () => {
                             </>
                         ) : (
                             <>
-                                {joint_config.map((jc, index) => (
-                                    <JointSliderDiv key={index}>
-                                        <JogButton index={index} direction={JogDirection.NEGATIVE}>
-                                            <ArrowLeftOutlined />
-                                        </JogButton>
-                                        <JointSliderReadonly jc={jc} index={index} />
-                                        <JogButton index={index} direction={JogDirection.POSITIVE}>
-                                            <ArrowRightOutlined />
-                                        </JogButton>
-                                    </JointSliderDiv>
-                                ))}
+                                {joints_for_kc.map(
+                                    ({ config, index: physical_index }, logical_index) => (
+                                        <JointSliderDiv key={logical_index}>
+                                            <JogButton
+                                                index={logical_index}
+                                                direction={JogDirection.NEGATIVE}
+                                            >
+                                                <ArrowLeftOutlined />
+                                            </JogButton>
+                                            <JointSliderReadonly
+                                                jc={config}
+                                                index={physical_index}
+                                            />
+                                            <JogButton
+                                                index={logical_index}
+                                                direction={JogDirection.POSITIVE}
+                                            >
+                                                <ArrowRightOutlined />
+                                            </JogButton>
+                                        </JointSliderDiv>
+                                    )
+                                )}
                             </>
                         )}
 

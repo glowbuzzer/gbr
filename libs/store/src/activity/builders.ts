@@ -26,16 +26,17 @@ import {
 import { Euler, Quaternion } from "three"
 
 export interface ActivityController {
+    get kinematicsConfigurationIndex(): number
+
     get nextTag(): number
 
     execute(command)
 }
 
 export abstract class ActivityBuilder {
-    private readonly controller: ActivityController
-
     /** @ignore */
     tag: number
+    protected readonly controller: ActivityController
 
     /** @ignore */
     constructor(controller: ActivityController) {
@@ -65,11 +66,11 @@ export abstract class ActivityBuilder {
         }
     }
 
-    protected abstract build()
-
     protected abstract get commandName(): string
 
     protected abstract get activityType(): ACTIVITYTYPE
+
+    protected abstract build()
 }
 
 export class CancelActivityBuilder extends ActivityBuilder {
@@ -195,9 +196,13 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
         return this
     }
 
-    protected build(): { moveParams?: MoveParametersConfig } {
+    protected build(): {
+        moveParams?: MoveParametersConfig
+        kinematicsConfigurationIndex?: number
+    } {
         return {
-            moveParams: this._params
+            moveParams: this._params,
+            kinematicsConfigurationIndex: this.controller.kinematicsConfigurationIndex
         }
     }
 }
@@ -274,6 +279,12 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION
     private _configuration = 255 // magic for "null" / not specified
 
+    /** The configuration (waist, elbow, wrist) for the target position. */
+    configuration(c: number) {
+        this._configuration = c
+        return this
+    }
+
     protected build(): MoveToPositionStream {
         return {
             ...super.build(),
@@ -282,12 +293,6 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
                 configuration: this._configuration
             }
         }
-    }
-
-    /** The configuration (waist, elbow, wrist) for the target position. */
-    configuration(c: number) {
-        this._configuration = c
-        return this
     }
 }
 
@@ -306,8 +311,8 @@ export class MoveLineBuilder extends CartesianMoveBuilder {
 export class MoveJointsBuilder extends SimpleMoveBuilder {
     protected commandName = "moveJoints"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTS
-    private jointPositionArray: number[]
     protected _positionReference: POSITIONREFERENCE
+    private jointPositionArray: number[]
 
     /** Specify if the move is relative (default is absolute move). */
     relative(isRelative = true) {

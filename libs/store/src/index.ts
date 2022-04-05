@@ -33,7 +33,7 @@ export {
     useJointPositions,
     useFeedRate,
     useKinematicsOffset,
-    useKinematicsTranslation
+    useKinematicsCartesianPosition
 } from "./kinematics"
 export * from "./toolpath"
 export * from "./devtools"

@@ -15,8 +15,8 @@ import {
     useConfig,
     useFrames,
     useGCode,
+    useKinematicsCartesianPosition,
     useKinematicsOffset,
-    useKinematicsTranslation,
     usePrefs,
     usePreview
 } from "@glowbuzzer/store"
@@ -76,7 +76,7 @@ export const GCodeTile = () => {
     const workOffset = frames.active
     const config = useConfig()
     const offset = useKinematicsOffset(0)
-    const position = useKinematicsTranslation(0)
+    const position = useKinematicsCartesianPosition(0)
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.kinematicsParameters

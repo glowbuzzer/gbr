@@ -46,7 +46,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             positionReference: POSITIONREFERENCE.ABSOLUTE,
             frameIndex: 0
         })
-        this.api = new GCodeActivityProvider(this.buffer)
+        this.api = new GCodeActivityProvider(0 /* TODO: allow different kcs */, this.buffer)
         this.buffer = buffer
         this.vmax = vmax
         this.context = context
@@ -353,16 +353,16 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         // moveParams.radius = params.P || 1e99; // big number meaning go as fast as possible!
     }
 
+    F(value) {
+        this.setVmaxPercentage(value)
+    }
+
     private convertVmaxPercentage(value) {
         return Math.ceil((value / this.vmax) * 100)
     }
 
     private setVmaxPercentage(value) {
         this.vmaxPercentage = this.convertVmaxPercentage(value)
-    }
-
-    F(value) {
-        this.setVmaxPercentage(value)
     }
 
     private updateVmax(params) {

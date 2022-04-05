@@ -1,6 +1,5 @@
 import * as React from "react"
-import { Button, Popover, Radio, Spin, Tag } from "antd"
-import { QuestionCircleOutlined } from "@ant-design/icons"
+import { Button, Radio, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -18,6 +17,7 @@ import { TrafficLight } from "./TrafficLight"
 
 const help = (
     <div>
+        <h4>Connection Tile</h4>
         <p>The connection tile is used to connect to GBC and the PLC and manage their state.</p>
         <p>
             The "Simulate" and "Live" buttons toggle between Simulating a PLC and being connected
@@ -142,6 +142,7 @@ export const ConnectTile = () => {
     return (
         <Tile
             title="Connection"
+            help={help}
             controls={
                 <FlexCentered>
                     {connection.connected ? (
@@ -250,9 +251,6 @@ export const ConnectTile = () => {
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
             </StyledDiv>
-            <Popover content={help} title="Connection" placement="rightTop">
-                <QuestionCircleOutlined style={{ color: "#8c8c8c" }} />
-            </Popover>
         </Tile>
     )
 }

@@ -10,6 +10,8 @@
     },
     "soloActivity": {
         "default": {
+        },
+        "aux": {
         }
     },
     "joint": {
@@ -30,11 +32,20 @@
             "amax": 4000,
             "jmax": 80000,
             "scale": 1000.0
+        },
+        "aux": {
+            "vmax": 200,
+            "amax": 4000,
+            "jmax": 80000,
+            "scale": 1000.0
         }
     },
     "jog": {
         "0": {
             "kinematicsConfigurationIndex": 0
+        },
+        "1": {
+            "kinematicsConfigurationIndex": 1
         }
     },
     "kinematicsConfiguration": {
@@ -105,7 +116,26 @@
                     ]
                 }
             }
+        },
+        "aux": {
+            "frameIndex": 0,
+            "participatingJoints": [
+                3
+            ],
+            "participatingJointsCount": 1,
+            "kinematicsParameters": {
+                "kinematicsConfigurationType": 3,
+                "cartesianParameters": {
+                    "linearVmax": 20,
+                    "linearAmax": 400,
+                    "linearJmax": 8000,
+                    "tcpRotationalVmax": 100,
+                    "tcpRotationalAmax": 1000,
+                    "tcpRotationalJmax": 10000
+                }
+            }
         }
+
     },
     "din": {
         "0": {
@@ -208,6 +238,8 @@
     },
     "frames": {
         "default": {
+        },
+        "translate10": {
             "translation": {
                 "x": 10
             }
@@ -227,25 +259,6 @@
         "offsetz": {
             "translation": {
                 "z": -10
-            }
-        }
-    },
-    "moveParameters": {
-        "default": {
-            "vmaxPercentage": 100,
-            "amaxPercentage": 100,
-            "jmaxPercentage": 100
-        }
-    },
-    "lines": {
-        "0": {
-            "destination": {
-                "translation": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0
-                },
-                "frameIndex": 2
             }
         }
     }
