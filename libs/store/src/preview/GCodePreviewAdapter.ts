@@ -84,11 +84,11 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
             )
         )
         const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from.translation, to.translation]
-        const I = params.I || 0
-        const J = params.J || 0
+        const x_offset = params.I * this.unitConversion || 0
+        const y_offset = params.J * this.unitConversion || 0
 
         // const offset = new Vector3(I, J, 0)
-        const [cx, cy] = [x1 + I, y1 + J]
+        const [cx, cy] = [x1 + x_offset, y1 + y_offset]
 
         const r = Math.hypot(x1 - cx, y1 - cy)
         const r_check = Math.hypot(x2 - cx, y2 - cy)

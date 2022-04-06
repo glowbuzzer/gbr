@@ -45,8 +45,9 @@ const partitionWordsByGroup = (words = []) => {
 const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
 class GCodeInterpreter {
+    protected unitConversion = 1
     private motionMode = "G0"
-    private cartesianPosition: CartesianPosition
+    private readonly cartesianPosition: CartesianPosition
     private previousPosition: CartesianPosition
 
     constructor(cartesianPosition: CartesianPosition) {
@@ -54,27 +55,8 @@ class GCodeInterpreter {
         this.cartesianPosition = cartesianPosition
     }
 
-    private updatePositions(params) {
-        if (this.cartesianPosition.positionReference === POSITIONREFERENCE.RELATIVE) {
-            this.cartesianPosition.translation = { x: 0, y: 0, z: 0 }
-        } else {
-            // clone position before modification
-            this.cartesianPosition.translation = { ...this.cartesianPosition.translation }
-        }
-        Object.keys(params).forEach(k => {
-            if (gcode_axes.includes(k)) {
-                this.cartesianPosition.translation[k.toLowerCase()] = params[k]
-            }
-        })
-        // this is handled differently by preview adapter
-        const [prev, next] = this.shiftPositions(this.previousPosition, this.cartesianPosition)
-        this.previousPosition = next // for next iteration
-        return [prev, next]
-    }
-
-    protected shiftPositions(prev: CartesianPosition, next: CartesianPosition) {
-        // gbc handles all relative moves so there is nothing to do here
-        return [{ ...prev }, { ...next }]
+    get position(): CartesianPosition {
+        return { ...this.cartesianPosition }
     }
 
     interpret(data) {
@@ -165,6 +147,16 @@ class GCodeInterpreter {
         }
     }
 
+    G20() {
+        // imperial units
+        this.unitConversion = 2.54
+    }
+
+    G21() {
+        // metric units
+        this.unitConversion = 1
+    }
+
     G54() {
         this.cartesianPosition.frameIndex = 0
     }
@@ -197,16 +189,36 @@ class GCodeInterpreter {
         // override to provide postprocessing logic
     }
 
-    get position(): CartesianPosition {
-        return { ...this.cartesianPosition }
-    }
-
     execute(str) {
         const list = parseStringSync(str)
         for (let i = 0; i < list.length; ++i) {
             this.interpret(list[i])
         }
         this.post()
+    }
+
+    protected shiftPositions(prev: CartesianPosition, next: CartesianPosition) {
+        // gbc handles all relative moves so there is nothing to do here
+        return [{ ...prev }, { ...next }]
+    }
+
+    private updatePositions(params) {
+        if (this.cartesianPosition.positionReference === POSITIONREFERENCE.RELATIVE) {
+            this.cartesianPosition.translation = { x: 0, y: 0, z: 0 }
+        } else {
+            // clone position before modification
+            this.cartesianPosition.translation = { ...this.cartesianPosition.translation }
+        }
+        Object.keys(params).forEach(k => {
+            if (gcode_axes.includes(k)) {
+                this.cartesianPosition.translation[k.toLowerCase()] =
+                    params[k] * this.unitConversion
+            }
+        })
+        // this is handled differently by preview adapter
+        const [prev, next] = this.shiftPositions(this.previousPosition, this.cartesianPosition)
+        this.previousPosition = next // for next iteration
+        return [prev, next]
     }
 }
 

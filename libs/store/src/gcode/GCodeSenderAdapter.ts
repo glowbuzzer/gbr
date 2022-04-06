@@ -54,9 +54,9 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     arcActivity(lineNum: number, params, ccw: boolean): MoveArcBuilder {
-        const I = params.I || 0
-        const J = params.J || 0
-        const R = params.R || 0
+        const I = params.I * this.unitConversion || 0
+        const J = params.J * this.unitConversion || 0
+        const R = params.R * this.unitConversion || 0
 
         const arcDirection = ccw ? ARCDIRECTION.ARCDIRECTION_CCW : ARCDIRECTION.ARCDIRECTION_CW
 
@@ -218,9 +218,6 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     M0(params, { lineNum }: GCodeLine) {
         this.push(this.api.setTag(lineNum).pauseProgram().command)
-        // {
-        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
-        // })
     }
 
     T(params) {
@@ -230,10 +227,6 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     M2(params, line: GCodeLine) {
         this.push(this.api.setTag(line.lineNum).endProgram().command)
-
-        // this.push({
-        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
-        // })
     }
 
     M6(params, line: GCodeLine) {
