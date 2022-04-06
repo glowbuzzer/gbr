@@ -54,6 +54,7 @@ export abstract class ActivityBuilder {
         if (params) {
             command[this.commandName] = params
         }
+
         return command
     }
 
@@ -86,6 +87,16 @@ export class CancelActivityBuilder extends ActivityBuilder {
 export class EndProgramBuilder extends ActivityBuilder {
     protected commandName = "endProgram"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
+
+    protected build() {
+        // this activity type has no params (not even union member)
+        return null
+    }
+}
+
+export class PauseProgramBuilder extends ActivityBuilder {
+    protected commandName = "pauseProgram"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
 
     protected build() {
         // this activity type has no params (not even union member)
@@ -500,16 +511,10 @@ export class IoutBuilder extends SetOutputBuilder {
     }
 }
 
-export class ToolChangeBuilder extends ActivityBuilder {
-    protected commandName = "toolChange"
-    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE
-    private _kinematicsConfigurationIndex: number
+export class ToolOffsetBuilder extends ActivityBuilder {
+    protected commandName = "setToolOffset"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET
     private _toolIndex: number
-
-    kinematicsConfigurationIndex(value: number) {
-        this._kinematicsConfigurationIndex = value
-        return this
-    }
 
     toolIndex(value: number) {
         this._toolIndex = value
@@ -518,7 +523,7 @@ export class ToolChangeBuilder extends ActivityBuilder {
 
     protected build() {
         return {
-            kinematicsConfigurationIndex: this._kinematicsConfigurationIndex,
+            // kinematicsConfigurationIndex: this.controller.kinematicsConfigurationIndex,
             toolIndex: this._toolIndex
         }
     }

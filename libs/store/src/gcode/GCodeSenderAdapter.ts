@@ -216,10 +216,11 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         })
     }
 
-    M0() {
-        this.push({
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
-        })
+    M0(params, { lineNum }: GCodeLine) {
+        this.push(this.api.setTag(lineNum).pauseProgram().command)
+        // {
+        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
+        // })
     }
 
     T(params) {
@@ -249,12 +250,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             // builder promises will append activities to the buffer
             builders?.forEach(b => b.promise())
         } else {
-            this.push({
-                activityType: ACTIVITYTYPE.ACTIVITYTYPE_TOOLCHANGE,
-                toolChange: {
-                    toolIndex: this.toolIndex
-                }
-            })
+            // tool offset is handled by G43
         }
     }
 
@@ -338,7 +334,15 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     G4(params, line: GCodeLine) {
-        this.push(this.api.setTag(line.lineNum).dwell(params.P || 0))
+        this.push(this.api.setTag(line.lineNum).dwell(params.P || 0).command)
+    }
+
+    G43(params, line: GCodeLine) {
+        this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
+    }
+
+    G49(params, line: GCodeLine) {
+        this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
     }
 
     G61() {

@@ -112,7 +112,6 @@ export class GbcTest {
     }
 
     send(msg) {
-        // console.log("SENDING", msg)
         this.gbc.send(msg)
     }
 

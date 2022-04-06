@@ -329,7 +329,7 @@ export const JogTile = () => {
                             size="small"
                             defaultValue={selectedKc}
                             onChange={update_kc}
-                            dropdownMatchSelectWidth={200}
+                            dropdownMatchSelectWidth={true}
                         >
                             {kcs.map(k => (
                                 <Select.Option key={k} value={k}>

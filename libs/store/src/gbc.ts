@@ -100,8 +100,8 @@
   ACTIVITYTYPE_GEARINVELO ,
         /**  Switch a robot&#x27;s configuration */
   ACTIVITYTYPE_SWITCHPOSE ,
-        /**  Change tool */
-  ACTIVITYTYPE_TOOLCHANGE ,
+        /**  Set tool offset */
+  ACTIVITYTYPE_TOOLOFFSET ,
         /**  Latch the value of a position */
   ACTIVITYTYPE_LATCH ,
         /**  Internal stress test activity */
@@ -1345,9 +1345,9 @@
         }
 
         /** 
-        Configuration parameters for a tool change
+        Configuration parameters for tool offset
          */
-        export type ToolChangeConfig = {
+        export type ToolOffsetConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
                     /**  Index of the tool */
@@ -1705,8 +1705,8 @@
                      setIout?: SetIoutCommand,
                     /**  Parameters for a streamed dwell */
                      dwell?: DwellConfig,
-                    /**  Parameters for a streamed tool change */
-                     toolChange?: ToolChangeConfig,
+                    /**  Parameters for a streamed setting of tool offset */
+                     setToolOffset?: ToolOffsetConfig,
                     /**  Parameters for a streamed wait on digital input */
                      waitOnDigitalInput?: WaitOnDigitalInputConfig,
                     /**  Parameters for a streamed wait on integer input */

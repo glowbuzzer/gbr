@@ -13,7 +13,8 @@ import {
     MoveLineAtVelocityBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
-    ToolChangeBuilder,
+    PauseProgramBuilder,
+    ToolOffsetBuilder,
     WaitOnAnalogInputBuilder,
     WaitOnDigitalInputBuilder,
     WaitOnIntegerInputBuilder
@@ -125,12 +126,14 @@ export interface SoloActivityApi {
      */
     setIout(index: number, value: number): IoutBuilder
 
-    changeTool(kc: number, toolIndex: number): ToolChangeBuilder
+    setToolOffset(kc: number, toolIndex: number): ToolOffsetBuilder
 
     /**
      * @ignore Has no effect for solo activities
      */
     endProgram(): EndProgramBuilder
+
+    pauseProgram(): PauseProgramBuilder
 }
 
 export abstract class ActivityApiBase implements SoloActivityApi, ActivityController {
@@ -201,12 +204,16 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
         return new IoutBuilder(this).iout(index).value(value)
     }
 
-    changeTool(kc: number, toolIndex: number): ToolChangeBuilder {
-        return new ToolChangeBuilder(this).kinematicsConfigurationIndex(kc).toolIndex(toolIndex)
+    setToolOffset(toolIndex: number): ToolOffsetBuilder {
+        return new ToolOffsetBuilder(this).toolIndex(toolIndex)
     }
 
     endProgram() {
         return new EndProgramBuilder(this)
+    }
+
+    pauseProgram() {
+        return new PauseProgramBuilder(this)
     }
 }
 
