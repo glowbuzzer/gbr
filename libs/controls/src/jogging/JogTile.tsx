@@ -22,6 +22,7 @@ import {
 } from "@ant-design/icons"
 import { Euler, MathUtils, Quaternion } from "three"
 import { Waypoints } from "./Waypoints"
+import { FrameSelector } from "../misc"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -110,6 +111,7 @@ export const JogTile = () => {
     const [c, setC] = useLocalStorage("jog.c", 0)
 
     const [selectedKc, setSelectedKc] = useLocalStorage("jog.kc", null)
+    const [selectedFrame, setSelectedFrame] = useState(0)
 
     const config = useConfig()
     const kcs = Object.keys(config.kinematicsConfiguration)
@@ -254,23 +256,39 @@ export const JogTile = () => {
 
     function goto() {
         preview.disable()
-        return motion.moveToPosition(x, y, z).params(move_params).promise().finally(preview.enable)
+        return motion
+            .moveToPosition(x, y, z)
+            .frameIndex(selectedFrame)
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function gotoX() {
         preview.disable()
-        motion.moveToPosition(x).params(move_params).promise().finally(preview.enable)
+        motion
+            .moveToPosition(x)
+            .frameIndex(selectedFrame)
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function gotoY() {
         preview.disable()
-        motion.moveToPosition(undefined, y).params(move_params).promise().finally(preview.enable)
+        motion
+            .moveToPosition(undefined, y)
+            .frameIndex(selectedFrame)
+            .params(move_params)
+            .promise()
+            .finally(preview.enable)
     }
 
     function gotoZ() {
         preview.disable()
         motion
             .moveToPosition(undefined, undefined, z)
+            .frameIndex(selectedFrame)
             .params(move_params)
             .promise()
             .finally(preview.enable)
@@ -285,26 +303,31 @@ export const JogTile = () => {
             .finally(preview.enable)
     }
 
-    function gotoA() {
+    function gotoAngle(key: string, angleInDegrees: number) {
         const euler = new Euler().setFromQuaternion(rotation)
-        euler.x = MathUtils.degToRad(a)
+        euler[key] = MathUtils.degToRad(angleInDegrees)
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
 
         preview.disable()
         return motion
             .moveToPosition()
+            .frameIndex(selectedFrame)
             .rotation(x, y, z, w)
             .params(move_params)
             .promise()
             .finally(preview.enable)
     }
 
+    function gotoA() {
+        return gotoAngle("x", a)
+    }
+
     function gotoB() {
-        // TODO
+        return gotoAngle("y", b)
     }
 
     function gotoC() {
-        // TODO
+        return gotoAngle("z", c)
     }
 
     function JogButton({ index, direction, children }) {
@@ -369,6 +392,13 @@ export const JogTile = () => {
                             {
                                 0: (
                                     <div>
+                                        Frame:{" "}
+                                        <FrameSelector
+                                            onChange={setSelectedFrame}
+                                            value={selectedFrame}
+                                            defaultFrame={kc_config.frameIndex}
+                                            hideWorld
+                                        />
                                         <Form
                                             layout="inline"
                                             labelCol={{ span: 8 }}
@@ -417,6 +447,13 @@ export const JogTile = () => {
                                 ),
                                 1: (
                                     <div>
+                                        Frame:{" "}
+                                        <FrameSelector
+                                            onChange={setSelectedFrame}
+                                            value={selectedFrame}
+                                            defaultFrame={kc_config.frameIndex}
+                                            hideWorld
+                                        />
                                         <Form
                                             layout="inline"
                                             labelCol={{ span: 8 }}

@@ -126,7 +126,7 @@ export interface SoloActivityApi {
      */
     setIout(index: number, value: number): IoutBuilder
 
-    setToolOffset(kc: number, toolIndex: number): ToolOffsetBuilder
+    setToolOffset(toolIndex: number): ToolOffsetBuilder
 
     /**
      * @ignore Has no effect for solo activities

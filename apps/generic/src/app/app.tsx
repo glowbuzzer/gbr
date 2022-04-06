@@ -94,11 +94,7 @@ export function App() {
         api: SoloActivityApi
     ) {
         console.log("TOOL CHANGE!")
-        return [
-            api.moveToPosition(null, null, 50),
-            api.changeTool(kinematicsConfigurationIndex, next),
-            api.dwell(500)
-        ]
+        return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }
 
     return (

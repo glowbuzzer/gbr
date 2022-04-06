@@ -4,12 +4,20 @@ import { FrameSelectorDropdown } from "./FrameSelectorDropdown"
 
 export type FrameSelectorProps = {
     /**
-     * Default selected frame
+     * Selected frame
+     */
+    value: number
+    /**
+     * Default frame (will be highlighted). Normally this is the kinematics configuration's frame index
      */
     defaultFrame?: number
     /**
+     * Whether to hide "World" at the top of the list
+     */
+    hideWorld?: boolean
+    /**
      * Handler for change events
-     * @param frameIndex the selected frame
+     * @param frameIndex the new selected frame
      */
     onChange: (frameIndex: number) => void
 }

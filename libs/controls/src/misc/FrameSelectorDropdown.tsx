@@ -28,19 +28,17 @@ function render_items(items: Frame[], result: any[], level: number, defaultFrame
 
 export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameSelectorProps) => {
     const items = [
-        <Option key={"world"} value={"world"} style={{ fontStyle: "italic" }}>
-            World
-        </Option>
-    ] as any[]
+        props.hideWorld ? null : (
+            <Option key={"world"} value={"world"} style={{ fontStyle: "italic" }}>
+                World
+            </Option>
+        )
+    ].filter(v => v) as any[]
 
     render_items(props.items, items, 0, props.defaultFrame)
 
     return (
-        <Select
-            dropdownMatchSelectWidth={200}
-            defaultValue={props.defaultFrame}
-            onChange={props.onChange}
-        >
+        <Select dropdownMatchSelectWidth={200} value={props.value} onChange={props.onChange}>
             {items}
         </Select>
     )

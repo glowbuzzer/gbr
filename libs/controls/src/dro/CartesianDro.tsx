@@ -46,8 +46,8 @@ function invert_kc_local(p: Vector3, q: Quaternion) {
 }
 
 export const CartesianDro = (props: CartesianDisplayProps) => {
-    const [frameIndex, setFrameIndex] = React.useState<number>(0)
     const kinematics = useKinematics(0)
+    const [frameIndex, setFrameIndex] = React.useState<number>(kinematics.frameIndex)
     const config = useConfig()
     const { convertToFrame } = useFrames()
 
@@ -109,6 +109,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
                     <div>
                         Frame:{" "}
                         <FrameSelector
+                            value={frameIndex}
                             defaultFrame={kinematics.frameIndex}
                             onChange={setFrameIndex}
                         />
