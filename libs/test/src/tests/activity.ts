@@ -199,8 +199,12 @@ test("can cancel move arc", async () => {
 })
 
 test("can run move joints to completion", async () => {
-    const move = gbc.wrap(gbc.activity.moveJoints([10]).promise)
-    await move.start().iterations(100).assertCompleted()
+    try {
+        const move = gbc.wrap(gbc.activity.moveJoints([10]).promise)
+        await move.start().iterations(100).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
 })
 
 test("can cancel move joints", async () => {

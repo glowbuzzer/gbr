@@ -32,54 +32,78 @@
     },
     "joint": {
         "0": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -180,
             "posLimit": 180
         },
         "1": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -125,
             "posLimit": 125
         },
         "2": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -138,
             "posLimit": 138
         },
         "3": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -270,
             "posLimit": 270
         },
         "4": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -120,
             "posLimit": 133.5
         },
         "5": {
-            "vmax": 1,
-            "amax": 8,
-            "jmax": 160,
+            "limits": [
+                {
+                    "vmax": 1,
+                    "amax": 8,
+                    "jmax": 160
+                }
+            ],
             "scale": 10000,
             "jointType": 1,
             "negLimit": -270,
@@ -103,64 +127,68 @@
                 5
             ],
             "participatingJointsCount": 6,
-            "kinematicsParameters": {
-                "kinematicsConfigurationType": 0,
-                "xExtents": [
-                    -1000,
-                    1000
-                ],
-                "yExtents": [
-                    -1000,
-                    1000
-                ],
-                "zExtents": [
-                    0,
-                    840
-                ],
-                "cartesianParameters": {
-                    "linearVmax": 200,
-                    "linearAmax": 4000,
-                    "linearJmax": 80000,
-                    "tcpRotationalVmax": 100,
-                    "tcpRotationalAmax": 1000,
-                    "tcpRotationalJmax": 10000
-                },
-                "kinChainParams": {
-                    "numRows": 6,
-                    "numCols": 5,
-                    "data": [
-                        -90,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        -90,
-                        225,
-                        0,
-                        90,
-                        0,
-                        90,
-                        0,
-                        35,
-                        -90,
-                        0,
-                        0,
-                        0,
-                        225,
-                        90,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0,
-                        65
-                    ]
+            "kinematicsConfigurationType": 0,
+            "extentsX": [
+                -1000,
+                1000
+            ],
+            "extentsY": [
+                -1000,
+                1000
+            ],
+            "extentsZ": [
+                0,
+                840
+            ],
+            "linearLimits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
                 }
+            ],
+            "angularLimits": [
+                {
+                    "vmax": 100,
+                    "amax": 1000,
+                    "jmax": 10000
+                }
+            ],
+            "kinChainParams": {
+                "numRows": 6,
+                "numCols": 5,
+                "data": [
+                    -90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -90,
+                    225,
+                    0,
+                    90,
+                    0,
+                    90,
+                    0,
+                    35,
+                    -90,
+                    0,
+                    0,
+                    0,
+                    225,
+                    90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    65
+                ]
             }
         }
     },

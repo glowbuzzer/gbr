@@ -4,6 +4,8 @@ import {
     JogDirection,
     JOINT_TYPE,
     JointConfig,
+    LIMITPROFILE,
+    MoveParametersConfig,
     useConfig,
     useJoint,
     useJointConfig,
@@ -145,10 +147,11 @@ export const JogTile = () => {
     const preview = usePreview()
 
     // we scale all limits by the jog speed percent
-    const move_params = {
+    const move_params: MoveParametersConfig = {
         vmaxPercentage: jogSpeed,
         amaxPercentage: jogSpeed,
-        jmaxPercentage: jogSpeed
+        jmaxPercentage: jogSpeed,
+        limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_JOGGING
     }
 
     function update_kc(value) {
@@ -189,22 +192,26 @@ export const JogTile = () => {
         if (jogStepMode === JogStepMode.CONTINUOUS) {
             if (jogMoveMode === JogMoveMode.JOINT) {
                 // the moveJointsAtVelocity activity accepts an array of velocities for joints in the kc
-                const velos = joints_for_kc.map(({ config }, logical_index) =>
-                    logical_index === index
+                const velos = joints_for_kc.map(({ config }, logical_index) => {
+                    const vmax =
+                        config.limits[LIMITPROFILE.LIMITPROFILE_JOGGING]?.vmax ||
+                        config.limits[LIMITPROFILE.LIMITPROFILE_DEFAULT].vmax
+
+                    return logical_index === index
                         ? direction === JogDirection.POSITIVE
-                            ? config.vmax
-                            : -config.vmax
+                            ? vmax
+                            : -vmax
                         : 0
-                )
-                console.log(
-                    "START JOG, KC=",
-                    kc_index,
-                    "INDEX=",
-                    index,
-                    "VELOS",
-                    velos,
-                    joints_for_kc
-                )
+                })
+                // console.log(
+                //     "START JOG, KC=",
+                //     kc_index,
+                //     "INDEX=",
+                //     index,
+                //     "VELOS",
+                //     velos,
+                //     joints_for_kc
+                // )
                 preview.disable()
                 return motion
                     .moveJointsAtVelocity(velos)

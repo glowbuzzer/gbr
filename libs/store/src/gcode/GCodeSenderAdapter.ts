@@ -6,6 +6,7 @@ import {
     ARCDIRECTION,
     BLENDTYPE,
     CartesianPosition,
+    LIMITPROFILE,
     POSITIONREFERENCE
 } from "../gbc"
 import { simplify } from "./simplify"
@@ -19,7 +20,7 @@ import { MoveArcBuilder } from "../activity"
 export class GCodeSenderAdapter extends GCodeInterpreter {
     // default move params
     private moveParams = {
-        vmaxPercentage: 100, // this is the default, eg. for G0 without F param
+        vmaxPercentage: 100, // this is the default, full speed
         amaxPercentage: 100,
         jmaxPercentage: 100,
         blendType: 0,
@@ -275,37 +276,53 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     G0(params, line: GCodeLine) {
         // this.updateModals(params)
         this.api.setTag(line.lineNum)
-        if (params.F) {
-            // turn this into a linear move_line
-            const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
-            this.push(
-                this.api
-                    .moveLine()
-                    .setFromCartesianPosition(this.position)
-                    .params({
-                        ...this.moveParams,
-                        vmaxPercentage,
-                        blendType: BLENDTYPE.BLENDTYPE_NONE
-                    }).command
-            )
-        } else {
-            // use basic move_to_position using full joint limits
-            this.push(
-                this.api
-                    .moveToPosition()
-                    .setFromCartesianPosition(this.position)
-                    .configuration(0)
-                    .params({
-                        ...this.moveParams,
-                        blendType: BLENDTYPE.BLENDTYPE_NONE
-                    }).command
-            )
-        }
+        // for now we treat rapids as a linear move but with a different limit profile
+        // (if specified, otherwise gbc will default to regular limits)
+        // F param is ignored
+        this.push(
+            this.api
+                .moveLine()
+                .setFromCartesianPosition(this.position)
+                .params({
+                    ...this.moveParams,
+                    limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_RAPIDS,
+                    blendType: BLENDTYPE.BLENDTYPE_NONE
+                }).command
+        )
+
+        // if (params.F) {
+        //     // turn this into a linear move_line
+        //     const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
+        //     this.push(
+        //         this.api
+        //             .moveLine()
+        //             .setFromCartesianPosition(this.position)
+        //             .params({
+        //                 ...this.moveParams,
+        //                 vmaxPercentage,
+        //                 blendType: BLENDTYPE.BLENDTYPE_NONE
+        //             }).command
+        //     )
+        // } else {
+        //     // use basic move_to_position using full joint limits
+        //     this.push(
+        //         this.api
+        //             .moveToPosition()
+        //             .setFromCartesianPosition(this.position)
+        //             .configuration(0)
+        //             .params({
+        //                 ...this.moveParams,
+        //                 limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_RAPIDS,
+        //                 blendType: BLENDTYPE.BLENDTYPE_NONE
+        //             }).command
+        //     )
+        // }
     }
 
     G1(params, line: GCodeLine) {
         this.updateVmax(params)
 
+        this.F(params.F)
         this.push(
             this.api
                 .setTag(line.lineNum)
@@ -319,10 +336,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     G2(params, line: GCodeLine) {
+        this.F(params.F)
         this.push(this.arcActivity(line.lineNum, params, false).command)
     }
 
     G3(params, line: GCodeLine) {
+        this.F(params.F)
         this.push(this.arcActivity(line.lineNum, params, true).command)
     }
 
@@ -351,7 +370,9 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     F(value) {
-        this.setVmaxPercentage(value)
+        if (value) {
+            this.setVmaxPercentage(value)
+        }
     }
 
     private convertVmaxPercentage(value) {

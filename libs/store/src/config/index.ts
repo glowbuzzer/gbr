@@ -90,24 +90,28 @@ export const DEFAULT_CONFIG: ConfigType = {
             frameIndex: 0,
             participatingJoints: [0, 1, 2],
             participatingJointsCount: 3,
-            kinematicsParameters: {
-                kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-                xExtents: [-10, 10],
-                yExtents: [-10, 10],
-                zExtents: [-10, 10],
-                cartesianParameters: {
-                    linearVmax: 10000,
-                    linearAmax: 100000,
-                    linearJmax: 1000000,
-                    tcpRotationalVmax: 100,
-                    tcpRotationalAmax: 1000,
-                    tcpRotationalJmax: 10000
+            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
+            extentsX: [-10, 10],
+            extentsY: [-10, 10],
+            extentsZ: [-10, 10],
+            linearLimits: [
+                {
+                    vmax: 10000,
+                    amax: 100000,
+                    jmax: 1000000
                 }
-            }
+            ],
+            angularLimits: [
+                {
+                    vmax: 100,
+                    amax: 1000,
+                    jmax: 10000
+                }
+            ]
         }
     },
     moveParameters: {
-        default: {vmaxPercentage: 100, amaxPercentage: 100, jmaxPercentage: 100}
+        default: { vmaxPercentage: 100, amaxPercentage: 100, jmaxPercentage: 100 }
     },
     joint: {
         0: DEFAULT_JOINT_CONFIG,
@@ -116,7 +120,7 @@ export const DEFAULT_CONFIG: ConfigType = {
     },
     frames: {
         0: {
-            translation: {x: 0, y: 0, z: 0}
+            translation: { x: 0, y: 0, z: 0 }
         }
     },
     task: {

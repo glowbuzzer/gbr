@@ -226,24 +226,19 @@ const SparklineCartesian = () => {
     const settings = useTelemetrySettings()
     const config = useConfig()
 
-    const kparams =
-        config.kinematicsConfiguration[Object.keys(config.kinematicsConfiguration)[0]]
-            .kinematicsParameters
+    const kparams = config.kinematicsConfiguration[Object.keys(config.kinematicsConfiguration)[0]]
 
     const pos_domain = useMemo(() => {
         // pick the first kinematics parameters
-        const { xExtents, yExtents, zExtents } = kparams
+        const { extentsX, extentsY, extentsZ } = kparams
         // produce overall [min, max] from individual x, y, z [min, max]
-        return [xExtents, yExtents, zExtents].reduce(
+        return [extentsX, extentsY, extentsZ].reduce(
             ([min, max], xyz) => [Math.min(min, xyz?.[0]), Math.max(max, xyz?.[1])],
             [0, 0]
         )
     }, [kparams])
 
-    const { linearVmax: vmax, linearAmax: amax } = useMemo(
-        () => kparams.cartesianParameters,
-        [kparams]
-    )
+    const { vmax, amax } = useMemo(() => kparams.linearLimits[0], [kparams])
     const options = useMemo(
         () =>
             settings.cartesianAxes
@@ -312,7 +307,10 @@ const SparklineJoints = () => {
             if (!settings.joints[index]) {
                 return [min, max]
             }
-            return [Math.min(min, -config.joint[key].vmax), Math.max(max, config.joint[key].vmax)]
+            return [
+                Math.min(min, -config.joint[key].limits[0].vmax),
+                Math.max(max, config.joint[key].limits[0].vmax)
+            ]
         },
         [0, 0]
     )
@@ -322,7 +320,10 @@ const SparklineJoints = () => {
             if (!settings.joints[index]) {
                 return [min, max]
             }
-            return [Math.min(min, -config.joint[key].amax), Math.max(max, config.joint[key].amax)]
+            return [
+                Math.min(min, -config.joint[key].limits[0].amax),
+                Math.max(max, config.joint[key].limits[0].amax)
+            ]
         },
         [0, 0]
     )

@@ -6,6 +6,14 @@
         OFF,
         ON,
     }
+    export enum LIMITPROFILE {
+        /**  Use default limits */
+  LIMITPROFILE_DEFAULT ,
+        /**  Use jogging limits */
+  LIMITPROFILE_JOGGING ,
+        /**  Use rapid move limits */
+  LIMITPROFILE_RAPIDS ,
+    }
     export enum MACHINETARGET {
         MACHINETARGET_NONE,
         MACHINETARGET_FIELDBUS,
@@ -227,6 +235,16 @@
 
 // STRUCTS
         
+        export type LimitConfiguration = {
+                    /**  Velocity limit */
+                    vmax?:number;
+                    /**  Acceleration limit */
+                    amax?:number;
+                    /**  Jerk limit */
+                    jmax?:number;
+        }
+
+        
         export type Header = {
                     /**  Flags if the shared memory data has been updated */
                     updated?:boolean;
@@ -378,6 +396,8 @@
                     amaxPercentage?:number;
                     /**  Percentage of jmax to be used for move */
                     jmaxPercentage?:number;
+                    /**  Linear and angular limit profile to use for move */
+                    limitConfigurationIndex?:number;
                     /**  Type of blend to be used for the move */
                     blendType?:BLENDTYPE;
                     /**  Blend time percentage to be used for the move */
@@ -538,18 +558,8 @@
         export type JointConfig = {
                     
                     jointType?:JOINT_TYPE;
-                    /**  joint&#x27;s vmax (maximum velocity) */
-                    vmax?:number;
-                    /**  joint&#x27;s amax (maximum acceleration) */
-                    amax?:number;
-                    /**  joint&#x27;s jmax (maximum jerk) */
-                    jmax?:number;
-                    /**  maximum velocity to be used for jogging */
-                    jogVmax?:number;
-                    /**  maximum acceleration to be used for jogging */
-                    jogAmax?:number;
-                    /**  maximum jerk to be used for jogging */
-                    jogJmax?:number;
+                    /**  List of limits to be applied to the joint for different types of move */
+                    limits?:LimitConfiguration[];
                     /**  scale factor to be applied to a joint&#x27;s position for transfer to the fieldbus */
                     scale?:number;
                     /**  TODO */
@@ -625,90 +635,6 @@
         }
 
         
-        export type CartesianKinematicsParameters = {
-                    /**  Scale factor to apply to X axis */
-                    scaleX?:number;
-                    /**  Scale factor to apply to Y axis */
-                    scaleY?:number;
-                    /**  Scale factor to apply to Z axis */
-                    scaleZ?:number;
-                    /**  Vmax (max velocity) to be applied to cartesian moves */
-                    linearVmax?:number;
-                    /**  Amax (max acceleration) to be applied to cartesian moves */
-                    linearAmax?:number;
-                    /**  Jmax (max jerk) to be applied to cartesian moves */
-                    linearJmax?:number;
-                    /**  Vmax (max velocity) to be applied to jogging moves */
-                    jogVmax?:number;
-                    /**  Amax (max acceleration) to be applied to jogging moves */
-                    jogAmax?:number;
-                    /**  Jmax (max jerk) to be applied to jogging moves */
-                    jogJmax?:number;
-                    /**  Rotational Vmax (max velocity) to be applied to cartesian moves */
-                    tcpRotationalVmax?:number;
-                    /**  Rotational Amax (max acceleration) to be applied to cartesian moves */
-                    tcpRotationalAmax?:number;
-                    /**  Rotational Jmax (max jerk) to be applied to cartesian moves */
-                    tcpRotationalJmax?:number;
-        }
-
-        
-        export type SixDofKinematicsParameters = {
-                    /**  Scale factor to apply to X axis */
-                    scaleX?:number;
-                    /**  Scale factor to apply to Y axis */
-                    scaleY?:number;
-                    /**  Scale factor to apply to Z axis */
-                    scaleZ?:number;
-                    /**  Vmax (max velocity) to be applied to cartesian moves */
-                    linearVmax?:number;
-                    /**  Amax (max acceleration) to be applied to cartesian moves */
-                    linearAmax?:number;
-                    /**  Jmax (max jerk) to be applied to cartesian moves */
-                    linearJmax?:number;
-                    /**  Vmax (max velocity) to be applied to jogging moves */
-                    jogVmax?:number;
-                    /**  Amax (max acceleration) to be applied to jogging moves */
-                    jogAmax?:number;
-                    /**  Jmax (max jerk) to be applied to jogging moves */
-                    jogJmax?:number;
-                    /**  Rotational Vmax (max velocity) to be applied to cartesian moves */
-                    tcpRotationalVmax?:number;
-                    /**  Rotational Amax (max acceleration) to be applied to cartesian moves */
-                    tcpRotationalAmax?:number;
-                    /**  Rotational Jmax (max jerk) to be applied to cartesian moves */
-                    tcpRotationalJmax?:number;
-        }
-
-        
-        export type ScaraKinematicsParameters = {
-                    /**  Scale factor to apply to X axis */
-                    scaleX?:number;
-                    /**  Scale factor to apply to Y axis */
-                    scaleY?:number;
-                    /**  Scale factor to apply to Z axis */
-                    scaleZ?:number;
-                    /**  Vmax (max velocity) to be applied to cartesian moves */
-                    linearVmax?:number;
-                    /**  Amax (max acceleration) to be applied to cartesian moves */
-                    linearAmax?:number;
-                    /**  Jmax (max jerk) to be applied to cartesian moves */
-                    linearJmax?:number;
-                    /**  Vmax (max velocity) to be applied to jogging moves */
-                    jogVmax?:number;
-                    /**  Amax (max acceleration) to be applied to jogging moves */
-                    jogAmax?:number;
-                    /**  Jmax (max jerk) to be applied to jogging moves */
-                    jogJmax?:number;
-                    /**  Rotational Vmax (max velocity) to be applied to cartesian moves */
-                    tcpRotationalVmax?:number;
-                    /**  Rotational Amax (max acceleration) to be applied to cartesian moves */
-                    tcpRotationalAmax?:number;
-                    /**  Rotational Jmax (max jerk) to be applied to cartesian moves */
-                    tcpRotationalJmax?:number;
-        }
-
-        
         export type MatrixInstanceDouble = {
                     /**  Number of rows in matrix */
                     numRows?:number;
@@ -719,39 +645,35 @@
         }
 
         
-        export type KinematicsParameters = {
-                    /**  Kinematics configuration type - i.e. the kinematics model that will be used. Used as discriminator for the union */
-                    kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
-                    /**  Extent (size) of workspace in X */
-                    xExtents?:number[];
-                    /**  Extent (size) of workspace in Y */
-                    yExtents?:number[];
-                    /**  Extent (size) of workspace in Z */
-                    zExtents?:number[];
-//              Start of Union
-                    /**  This is a union */
-                     scaraParameters?: ScaraKinematicsParameters,
-                    /**  This is a union */
-                     sixDofsParameters?: SixDofKinematicsParameters,
-                    /**  This is a union */
-                     cartesianParameters?: CartesianKinematicsParameters,
-//              End of Union
-                    /**  Matrix containing the DH parameters for the kinematics model */
-                    kinChainParams?:MatrixInstanceDouble;
-        }
-
-        
         export type KinematicsConfigurationConfig = {
                     
                     kinematicsConfigurationIndex?:number;
+                    /**  Kinematics configuration type - i.e. the kinematics model that will be used. Used as discriminator for the union */
+                    kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
                     
                     frameIndex?:number;
                     
                     participatingJoints?:number[];
                     
                     participatingJointsCount?:number;
-                    
-                    kinematicsParameters?:KinematicsParameters;
+                    /**  Extent (size) of workspace in X */
+                    extentsX?:number[];
+                    /**  Extent (size) of workspace in Y */
+                    extentsY?:number[];
+                    /**  Extent (size) of workspace in Z */
+                    extentsZ?:number[];
+                    /**  Scale factor to apply to X axis */
+                    scaleX?:number;
+                    /**  Scale factor to apply to Y axis */
+                    scaleY?:number;
+                    /**  Scale factor to apply to Z axis */
+                    scaleZ?:number;
+                    /**  List of linear limits to be applied to the kinematics configuration for different types of move */
+                    linearLimits?:LimitConfiguration[];
+                    /**  List of angular limits to be applied to the kinematics configuration for different types of move */
+                    angularLimits?:LimitConfiguration[];
+                    /**  Matrix containing the DH parameters for the kinematics model */
+                    kinChainParams?:MatrixInstanceDouble;
         }
 
         

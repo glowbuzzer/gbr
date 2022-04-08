@@ -90,8 +90,8 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
     const { settings } = useToolPathSettings()
     const config = useConfig()
 
-    const parameters = Object.values(config.kinematicsConfiguration)[0].kinematicsParameters
-    const { xExtents, yExtents, zExtents } = parameters
+    const parameters = Object.values(config.kinematicsConfiguration)[0]
+    const { extentsX, extentsY, extentsZ } = parameters
     const extent = useMemo(() => {
         if (settings.overrideWorkspace) {
             return settings.extent
@@ -99,9 +99,9 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
         // just return the max of the abs of our cartesian limits
         return Math.max.apply(
             Math.max,
-            [xExtents, yExtents, zExtents].flat().map(v => Math.abs(v))
+            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
         )
-    }, [xExtents, yExtents, zExtents, settings])
+    }, [extentsX, extentsY, extentsZ, settings])
 
     // noinspection RequiredAttributes
     return (

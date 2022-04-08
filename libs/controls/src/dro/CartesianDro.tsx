@@ -52,7 +52,6 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
     const { convertToFrame } = useFrames()
 
     const kc = Object.values(config.kinematicsConfiguration)[0]
-    const params = kc?.kinematicsParameters
 
     const p = convertToFrame(
         kinematics.translation,
@@ -87,9 +86,9 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
     }
 
     const extents = {
-        x: params?.xExtents,
-        y: params?.yExtents,
-        z: params?.zExtents
+        x: kc.extentsX,
+        y: kc.extentsY,
+        z: kc.extentsZ
     }
 
     const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)

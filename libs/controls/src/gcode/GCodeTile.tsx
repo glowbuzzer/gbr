@@ -79,8 +79,7 @@ export const GCodeTile = () => {
     const position = useKinematicsCartesianPosition(0)
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
-    const vmax = Object.values(config.kinematicsConfiguration)[0]?.kinematicsParameters
-        .cartesianParameters.linearVmax
+    const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
 
     const stream_state = stream.state
     useEffect(() => {

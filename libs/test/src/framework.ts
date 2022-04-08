@@ -88,7 +88,7 @@ export class GbcTest {
         if (this.capture_state) {
             make_plot(filename, this.capture_state)
         } else {
-            console.log("No capture available to plot")
+            // console.log("No capture available to plot")
         }
         return this
     }
