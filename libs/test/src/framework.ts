@@ -61,11 +61,6 @@ export class GbcTest {
         this.enable_plot = plot
     }
 
-    private capture(enabled) {
-        this.capture_state = enabled ? [] : undefined
-        return this
-    }
-
     get m4_stream_total_cap() {
         return this.gbc.get_m4_stream_total_cap()
     }
@@ -74,90 +69,11 @@ export class GbcTest {
         return this.gbc.get_m7_stream_total_cap()
     }
 
-    disable_limit_check() {
-        this.check_limits = false
-        return this
-    }
-
-    enable_limit_check() {
-        this.check_limits = true
-        return this
-    }
-
-    plot(filename) {
-        if (this.capture_state) {
-            make_plot(filename, this.capture_state)
-        } else {
-            // console.log("No capture available to plot")
-        }
-        return this
-    }
-
-    reset(configFile?) {
-        this.gbc.reset(configFile)
-
-        this.store = configureStore({
-            reducer: rootReducer
-        })
-
-        this.activity_api = new ActivityApiImpl(0, this.gbc.send)
-        this.capture_state = undefined
-        this.check_limits = true
-
-        this.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
-        this.send(updateFroPercentageMsg(0, 100))
-        this.exec_double_cycle()
-
-        return this
-    }
-
-    send(msg) {
-        this.gbc.send(msg)
-    }
-
-    verify() {
-        // this performs some post-test checks
-        this.gbc.verify()
-        return this
-    }
-
-    private get status_msg() {
-        return JSON.parse(this.gbc.status())
-    }
-
     get status() {
         return this.status_msg.status
     }
 
-    set_fro(kc: number, fro: number) {
-        // set fro on KC 0
-        this.send(updateFroPercentageMsg(kc, fro))
-        this.exec_double_cycle()
-    }
-
-    set_joint_pos(joint: number, value: number) {
-        this.gbc.set_fb_joint_pos(joint, value)
-        return this
-    }
-
-    stream(stream) {
-        // console.log("message", JSON.stringify(stream, null, 2))
-        this.send(JSON.stringify({ stream }))
-        return this
-    }
-
-    send_gcode(gcode) {
-        const buffer = [] as any[]
-        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
-        adapter.execute(gcode)
-        return this.stream(buffer)
-    }
-
-    get(selector) {
-        return selector(this.status_msg)
-    }
-
-    get assert() {
+    get assert(): any {
         function test_near(actual, expected, tolerance, allowNeg = false) {
             if (allowNeg) {
                 actual = Math.abs(actual)
@@ -249,6 +165,103 @@ export class GbcTest {
         }
     }
 
+    get activity() {
+        return this.activity_api
+    }
+
+    get pdo() {
+        return {
+            set_din: (index, value) => {
+                this.gbc.set_fb_din(index, value)
+            },
+            set_ain: (index, value) => {
+                this.gbc.set_fb_ain(index, value)
+            },
+            set_iin: (index, value) => {
+                this.gbc.set_fb_iin(index, value)
+            }
+        }
+    }
+
+    private get status_msg() {
+        return JSON.parse(this.gbc.status())
+    }
+
+    disable_limit_check() {
+        this.check_limits = false
+        return this
+    }
+
+    enable_limit_check() {
+        this.check_limits = true
+        return this
+    }
+
+    plot(filename) {
+        if (this.capture_state) {
+            make_plot(filename, this.capture_state)
+        } else {
+            // console.log("No capture available to plot")
+        }
+        return this
+    }
+
+    reset(configFile?) {
+        this.gbc.reset(configFile)
+
+        this.store = configureStore({
+            reducer: rootReducer
+        })
+
+        this.activity_api = new ActivityApiImpl(0, this.gbc.send)
+        this.capture_state = undefined
+        this.check_limits = true
+
+        this.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
+        this.send(updateFroPercentageMsg(0, 100))
+        this.exec_double_cycle()
+
+        return this
+    }
+
+    send(msg) {
+        this.gbc.send(msg)
+    }
+
+    verify() {
+        // this performs some post-test checks
+        this.gbc.verify()
+        return this
+    }
+
+    set_fro(kc: number, fro: number) {
+        // set fro on KC 0
+        this.send(updateFroPercentageMsg(kc, fro))
+        this.exec_double_cycle()
+    }
+
+    set_joint_pos(joint: number, value: number) {
+        this.gbc.set_fb_joint_pos(joint, value)
+        return this
+    }
+
+    stream(stream) {
+        // console.log("message", JSON.stringify(stream, null, 2))
+        this.send(JSON.stringify({ stream }))
+        return this
+    }
+
+    send_gcode(gcode) {
+        const buffer = [] as any[]
+        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
+        adapter.execute(gcode)
+        return this.stream(buffer)
+    }
+
+    get(selector) {
+        return selector(this.status_msg)
+    }
+
     exec(count = 1, single_cycle = false) {
         if (this.capture_state) {
             for (let n = 0; n < count; n++) {
@@ -293,10 +306,6 @@ export class GbcTest {
 
     exec_double_cycle() {
         this.exec(2)
-    }
-
-    get activity() {
-        return this.activity_api
     }
 
     wrap(factory: () => Promise<any>) {
@@ -358,23 +367,6 @@ export class GbcTest {
         return this
     }
 
-    get pdo() {
-        return {
-            set_din: (index, value) => {
-                this.gbc.set_fb_din(index, value)
-                return this
-            },
-            set_ain: (index, value) => {
-                this.gbc.set_fb_ain(index, value)
-                return this
-            },
-            set_iin: (index, value) => {
-                this.gbc.set_fb_iin(index, value)
-                return this
-            }
-        }
-    }
-
     transition_to(desired: DesiredState) {
         this.exec_double_cycle()
         for (let n = 0; n < 5; n++) {
@@ -400,5 +392,10 @@ export class GbcTest {
     offset(translation: Vector3, rotation?: Quaternion) {
         this.send(updateOffsetMsg(0, translation, rotation))
         this.exec_double_cycle()
+    }
+
+    private capture(enabled) {
+        this.capture_state = enabled ? [] : undefined
+        return this
     }
 }
