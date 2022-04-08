@@ -7,7 +7,8 @@ import {
     BLENDTYPE,
     CartesianPosition,
     LIMITPROFILE,
-    POSITIONREFERENCE
+    POSITIONREFERENCE,
+    SPINDLEDIRECTION
 } from "../gbc"
 import { simplify } from "./simplify"
 import { GCodeContextType } from "./index"
@@ -40,6 +41,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private toolIndex = 0
     private previousToolIndex = 0
     private readonly api: GCodeActivityProvider
+    private spindleSpeed: number
 
     constructor(buffer, vmax: number, context?: GCodeContextType, simplifyTolerance = 0) {
         super({
@@ -230,6 +232,29 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.push(this.api.setTag(line.lineNum).endProgram().command)
     }
 
+    M3(params, line: GCodeLine) {
+        this.S(params.S) // modal S code
+        this.push(
+            this.api
+                .setTag(line.lineNum)
+                .spindle(0, true, this.spindleSpeed, SPINDLEDIRECTION.SPINDLEDIRECTION_CW).command
+        )
+    }
+
+    M4(params, line: GCodeLine) {
+        this.S(params.S) // modal S code
+        this.push(
+            this.api
+                .setTag(line.lineNum)
+                .spindle(0, true, this.spindleSpeed, SPINDLEDIRECTION.SPINDLEDIRECTION_CCW).command
+        )
+    }
+
+    M5(params, line: GCodeLine) {
+        this.S(params.S) // modal S code
+        this.push(this.api.setTag(line.lineNum).spindle(0, false).command)
+    }
+
     M6(params, line: GCodeLine) {
         this.api.setTag(line.lineNum)
         // tool change
@@ -372,6 +397,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     F(value) {
         if (value) {
             this.setVmaxPercentage(value)
+        }
+    }
+
+    S(value) {
+        if (value) {
+            console.log("SET SPINDLE SPEED!!", value)
+            this.spindleSpeed = value
         }
     }
 

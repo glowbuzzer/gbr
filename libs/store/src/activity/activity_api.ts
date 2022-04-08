@@ -1,4 +1,4 @@
-import { ACTIVITYSTATE, MoveParametersConfig, TRIGGERTYPE } from "../gbc"
+import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, TRIGGERTYPE } from "../gbc"
 import {
     ActivityController,
     AoutBuilder,
@@ -14,6 +14,7 @@ import {
     MoveLineBuilder,
     MoveToPositionBuilder,
     PauseProgramBuilder,
+    SpindleActivityBuilder,
     ToolOffsetBuilder,
     WaitOnAnalogInputBuilder,
     WaitOnDigitalInputBuilder,
@@ -206,6 +207,19 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
 
     setToolOffset(toolIndex: number): ToolOffsetBuilder {
         return new ToolOffsetBuilder(this).toolIndex(toolIndex)
+    }
+
+    spindle(
+        spindleIndex,
+        enable?: boolean,
+        speed?: number,
+        direction?: SPINDLEDIRECTION
+    ): SpindleActivityBuilder {
+        return new SpindleActivityBuilder(this)
+            .spindleIndex(spindleIndex)
+            .enable(enable)
+            .speed(speed)
+            .direction(direction)
     }
 
     endProgram() {

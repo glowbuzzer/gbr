@@ -191,7 +191,7 @@ export class GbcTest {
                 return this
             },
             aoutPdo: (index, value) => {
-                assert.is(near(this.gbc.get_fb_aout(index), value), true)
+                test_near(this.gbc.get_fb_aout(index), value, 0.0001)
                 return this
             },
             ioutPdo: (index, value) => {
@@ -302,7 +302,7 @@ export class GbcTest {
     wrap(factory: () => Promise<any>) {
         const self = this
         return new (class {
-            private resolution
+            public resolution
 
             constructor() {
                 this.resolve = this.resolve.bind(this)

@@ -96,6 +96,8 @@
   ACTIVITYTYPE_SETAOUT ,
         /**  Dwell (wait) for a period of time */
   ACTIVITYTYPE_DWELL ,
+        /**  Start/stop spindle */
+  ACTIVITYTYPE_SPINDLE ,
         /**  Wait for a digital input */
   ACTIVITYTYPE_WAITON_DIN ,
         /**  Wait for an integer input */
@@ -152,6 +154,12 @@
   ARCDIRECTION_CW ,
         /**  Arc direction is counter-clockwise */
   ARCDIRECTION_CCW ,
+    }
+    export enum SPINDLEDIRECTION {
+        /**  Spindle direction is clockwise */
+  SPINDLEDIRECTION_CW ,
+        /**  Spindle direction is counter-clockwise */
+  SPINDLEDIRECTION_CCW ,
     }
     export enum JOINT_TYPE {
         /**  Joint type is prismatic (linear) - this is for the kinematics models */
@@ -1161,6 +1169,76 @@
         }
 
         /** 
+        Configuration parameters for dwell
+         */
+        export type DwellConfig = {
+                    /**  Number of ticks that you want to wait for */
+                    ticksToDwell?:number;
+        }
+
+        /** 
+        Status of Dwell
+         */
+        export type DwellStatus = {
+                    /**  Number of ticks that are remaining in the dwell */
+                    remainingTicks?:number;
+        }
+
+        /** 
+        Command parameters for dwell
+         */
+        export type DwellCommand = {
+                    /**  Triggers the activity to stop and skip to the next in a task */
+                    skipToNext?:boolean;
+        }
+
+        /** 
+        Configuration parameters for spindle
+         */
+        export type SpindleConfig = {
+                    /**  Index of the digital output used to turn on the spindle */
+                    enableDigitalOutIndex?:number;
+                    /**  Index of the digital output used to control direction of spindle */
+                    directionDigitalOutIndex?:number;
+                    /**  If set, clockwise direction command will drop digital output on &#x60;directionIndex&#x60; */
+                    directionInvert?:boolean;
+                    /**  Index of the analogue output used to control the spindle speed */
+                    speedAnalogOutIndex?:number;
+        }
+
+        /** 
+        Status of spindle
+         */
+        export type SpindleStatus = {
+        }
+
+        /** 
+        Command parameters for spindle
+         */
+        export type SpindleCommand = {
+                    /**  Whether to enable or disable the spindle */
+                    enable?:boolean;
+                    /**  Direction of the spindle */
+                    direction?:SPINDLEDIRECTION;
+                    /**  Speed of the spindle */
+                    speed?:number;
+        }
+
+        /** 
+        Parameters for streamed spindle activity
+         */
+        export type SpindleStream = {
+                    /**  Index of the spindle in the configuration */
+                    spindleIndex?:number;
+                    /**  Whether to enable or disable the spindle */
+                    enable?:boolean;
+                    /**  Direction of the spindle */
+                    direction?:SPINDLEDIRECTION;
+                    /**  Speed of the spindle */
+                    speed?:number;
+        }
+
+        /** 
         Configuration parameters for waitOnDigitalInput
          */
         export type WaitOnDigitalInputConfig = {
@@ -1238,30 +1316,6 @@
         Command parameters for waitOnAnalogInput
          */
         export type WaitOnAnalogInputCommand = {
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for dwell
-         */
-        export type DwellConfig = {
-                    /**  Number of ticks that you want to wait for */
-                    ticksToDwell?:number;
-        }
-
-        /** 
-        Status of Dwell
-         */
-        export type DwellStatus = {
-                    /**  Number of ticks that are remaining in the dwell */
-                    remainingTicks?:number;
-        }
-
-        /** 
-        Command parameters for dwell
-         */
-        export type DwellCommand = {
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -1485,6 +1539,8 @@
                      setIout?: SetIoutConfig,
                     /**  Configuration parameters for dwell activity */
                      dwell?: DwellConfig,
+                    /**  Configuration parameters for spindle activity */
+                     spindle?: SpindleConfig,
                     /**  Configuration parameters for wait on digital input activity */
                      waitOnDigitalInput?: WaitOnDigitalInputConfig,
                     /**  Configuration parameters for wait on integer input activity */
@@ -1535,6 +1591,8 @@
                      setIout?: SetIoutStatus,
                     /**  Status of the set dwell activity */
                      dwell?: DwellStatus,
+                    /**  Status of the set spindle activity */
+                     spindle?: SpindleStatus,
                     /**  Status of the wait on digital input activity */
                      waitOnDigitalInput?: WaitOnDigitalInputStatus,
                     /**  Status of the wait on integer input activity */
@@ -1581,6 +1639,8 @@
                      setIout?: SetIoutCommand,
                     /**  Set dwell command object for activity */
                      dwell?: DwellCommand,
+                    /**  Set spindle command object for activity */
+                     spindle?: SpindleCommand,
                     /**  Set wait on digital input command object for activity */
                      waitOnDigitalInput?: WaitOnDigitalInputCommand,
                     /**  Set wait on integer input command object for activity */
@@ -1627,6 +1687,8 @@
                      setIout?: SetIoutCommand,
                     /**  Parameters for a streamed dwell */
                      dwell?: DwellConfig,
+                    /**  Parameters for a streamed spindle change */
+                     spindle?: SpindleStream,
                     /**  Parameters for a streamed setting of tool offset */
                      setToolOffset?: ToolOffsetConfig,
                     /**  Parameters for a streamed wait on digital input */

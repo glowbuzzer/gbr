@@ -104,6 +104,10 @@ class GCodeInterpreter {
                 // F750 ; w/o motion command
                 cmd = letter
                 args = code
+            } else if (letter === "S") {
+                // S without motion command
+                cmd = letter
+                args = code
             } else if ("XYZABCIJK".indexOf(letter) >= 0) {
                 // Use previous motion command if the line does not start with G-code or M-code.
                 // @example
@@ -128,13 +132,6 @@ class GCodeInterpreter {
             if (!cmd) {
                 continue
             }
-
-            // if (typeof this.handlers[cmd] === "function") {
-            //     const func = this.handlers[cmd]
-            //     func(args)
-            // } else if (typeof this.defaultHandler === "function") {
-            //     this.defaultHandler(cmd, args)
-            // }
 
             const [current_position, target_position] = this.updatePositions(args)
             if (typeof this[cmd] === "function") {

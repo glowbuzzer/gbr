@@ -17,6 +17,9 @@ import {
     SetAoutCommand,
     SetDoutCommand,
     SetIoutCommand,
+    SpindleConfig,
+    SPINDLEDIRECTION,
+    SpindleStream,
     TRIGGERTYPE,
     Vector3,
     WaitOnAnalogInputConfig,
@@ -24,6 +27,7 @@ import {
     WaitOnIntegerInputConfig
 } from "../gbc"
 import { Euler, Quaternion } from "three"
+import { spindle } from "../../../test/src/tests/spindle"
 
 export interface ActivityController {
     get kinematicsConfigurationIndex(): number
@@ -118,6 +122,44 @@ export class DwellActivityBuilder extends ActivityBuilder {
     protected build(): DwellConfig {
         return {
             ticksToDwell: this._ticksToDwell
+        }
+    }
+}
+
+export class SpindleActivityBuilder extends ActivityBuilder {
+    protected commandName = "spindle"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SPINDLE
+    private _spindleIndex: number
+    private _speed: number
+    private _direction: SPINDLEDIRECTION
+    private _enable: boolean
+
+    spindleIndex(spindleIndex: number) {
+        this._spindleIndex = spindleIndex
+        return this
+    }
+
+    speed(speed: number) {
+        this._speed = speed
+        return this
+    }
+
+    direction(direction: SPINDLEDIRECTION) {
+        this._direction = direction
+        return this
+    }
+
+    enable(enable: boolean) {
+        this._enable = enable
+        return this
+    }
+
+    protected build(): SpindleStream {
+        return {
+            spindleIndex: this._spindleIndex,
+            speed: this._speed,
+            direction: this._direction,
+            enable: this._enable
         }
     }
 }

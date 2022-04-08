@@ -199,22 +199,23 @@ test("F code modal doesn't affect G0", async () => {
     }
 })
 
-test("F code on G0 doesn't affect G1", async () => {
-    try {
-        gbc.send_gcode(`
-            G0 X30 F150
-            G1 X60 ; reverts to vmax
-            M2`)
-        gbc.exec(30)
-        gbc.assert.vel(0, 150)
-        gbc.exec(45)
-        gbc.exec(30)
-        gbc.assert.vel(0, 200)
-        gbc.exec(30)
-        gbc.verify()
-    } finally {
-        // gbc.plot("gcode-g1-with-feedrate")
-    }
-})
+// this test doesn't work any more because rapids use linear move and ignore F code (use rapid limit profile)
+// test.only("F code on G0 doesn't affect G1", async () => {
+//     try {
+//         gbc.send_gcode(`
+//             G0 X30 F150
+//             G1 X60 ; reverts to vmax
+//             M2`)
+//         gbc.exec(30)
+//         gbc.assert.vel(0, 150)
+//         gbc.exec(45)
+//         gbc.exec(30)
+//         gbc.assert.vel(0, 200)
+//         gbc.exec(30)
+//         gbc.verify()
+//     } finally {
+//         // gbc.plot("gcode-g1-with-feedrate")
+//     }
+// })
 
 export const gcode = test
