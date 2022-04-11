@@ -6,10 +6,11 @@ import { Route } from "react-router"
 import { CommissioningUi } from "./CommissioningUi"
 import { DevelopmentUi } from "./DevelopmentUi"
 import { digitalInputEnhancer, DigitalInputMockProvider } from "@glowbuzzer/store"
-import { SoloActivityProvider } from "../components/TestMotionTile"
 import { AppContextProvider } from "./AppContext"
 
 import "antd/dist/antd.css"
+import "dseg/css/dseg.css"
+import "react-grid-layout/css/styles.css"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -26,25 +27,23 @@ export function App() {
     return (
         <GlowbuzzerApp minWidth={"1080px"} storeEnhancers={[digitalInputEnhancer]}>
             <DigitalInputMockProvider>
-                <SoloActivityProvider>
-                    <AppContextProvider>
-                        <BrowserRouter>
-                            <Menu mode="horizontal">
-                                <Menu.Item>
-                                    <Link to="/">Commissioning</Link>
-                                </Menu.Item>
-                                <Menu.Item>
-                                    <Link to="/devel">Development</Link>
-                                </Menu.Item>
-                                <Menu.Item>HMI</Menu.Item>
+                <AppContextProvider>
+                    <BrowserRouter>
+                        <Menu mode="horizontal">
+                            <Menu.Item>
+                                <Link to="/">Commissioning</Link>
+                            </Menu.Item>
+                            <Menu.Item>
+                                <Link to="/devel">Development</Link>
+                            </Menu.Item>
+                            <Menu.Item>HMI</Menu.Item>
 
-                                <PrefsButton />
-                            </Menu>
-                            <Route path="/" exact={true} component={CommissioningUi} />
-                            <Route path="/devel" exact={true} component={DevelopmentUi} />
-                        </BrowserRouter>
-                    </AppContextProvider>
-                </SoloActivityProvider>
+                            <PrefsButton />
+                        </Menu>
+                        <Route path="/" exact={true} component={CommissioningUi} />
+                        <Route path="/devel" exact={true} component={DevelopmentUi} />
+                    </BrowserRouter>
+                </AppContextProvider>
             </DigitalInputMockProvider>
         </GlowbuzzerApp>
     )

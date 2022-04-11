@@ -99,8 +99,8 @@ export const DevelopmentUi = () => {
         [
             { render: <DevelopmentUiTile />, height: 4, title: "Development UI" },
             { render: <TriggersTile />, height: 4, title: "Triggers" },
-            { render: <ConveyorsTile />, height: 4, title: "Conveyors" },
-            { render: <TelemetryTile />, height: 4, title: "Telemetry" }
+            { render: <ConveyorsTile />, height: 4, title: "Conveyors" }
+            // { render: <TelemetryTile />, height: 4, title: "Telemetry" }
         ]
     ]
 

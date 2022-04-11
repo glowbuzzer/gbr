@@ -1,0 +1,298 @@
+{
+    "machine": {
+        "default": {
+            "busCycleTime": 4
+        }
+    },
+    "stream": {
+        "default": {
+        }
+    },
+    "soloActivity": {
+        "default": {
+        },
+        "aux": {
+        }
+    },
+    "joint": {
+        "0": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 1000.0
+        },
+        "1": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 1000.0
+        },
+        "2": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 1000.0
+        },
+        "aux": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 1000.0
+        }
+    },
+    "jog": {
+        "0": {
+            "kinematicsConfigurationIndex": 0
+        },
+        "1": {
+            "kinematicsConfigurationIndex": 1
+        }
+    },
+    "kinematicsConfiguration": {
+        "default": {
+            "frameIndex": 0,
+            "participatingJoints": [
+                0,
+                1,
+                2
+            ],
+            "participatingJointsCount": 3,
+            "kinematicsConfigurationType": 3,
+            "extentsX": [
+                -100,
+                100
+            ],
+            "extentsY": [
+                -100,
+                100
+            ],
+            "extentsZ": [
+                -100,
+                100
+            ],
+            "linearLimits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                },
+                {
+                    "vmax": 10,
+                    "amax": 200,
+                    "jmax": 4000
+                },
+                {
+                    "vmax": 20,
+                    "amax": 400,
+                    "jmax": 8000
+                }
+            ],
+            "angularLimits": [
+                {
+                    "vmax": 100,
+                    "amax": 1000,
+                    "jmax": 10000
+                }
+            ],
+            "kinChainParams": {
+                "numRows": 6,
+                "numCols": 5,
+                "data": [
+                    -90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -90,
+                    225,
+                    0,
+                    90,
+                    0,
+                    90,
+                    0,
+                    35,
+                    -90,
+                    0,
+                    0,
+                    0,
+                    225,
+                    90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    65
+                ]
+            }
+        },
+        "aux": {
+            "frameIndex": 0,
+            "participatingJoints": [
+                3
+            ],
+            "participatingJointsCount": 1,
+            "kinematicsConfigurationType": 3,
+            "linearLimits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "angularLimits": [
+                {
+                    "vmax": 100,
+                    "amax": 1000,
+                    "jmax": 10000
+                }
+            ]
+        }
+    },
+    "din": {
+        "0": {
+            "inverted": 1
+        },
+        "1": {
+            "inverted": 0
+        },
+        "2": {
+            "inverted": 0
+        },
+        "3": {
+            "inverted": 0
+        }
+    },
+    "dout": {
+        "0": {
+            "inverted": 0
+        },
+        "1": {
+            "inverted": 0
+        },
+        "2": {
+            "inverted": 0
+        },
+        "3": {
+            "inverted": 0
+        },
+        "4": {
+            "inverted": 0
+        },
+        "5": {
+            "inverted": 0
+        },
+        "6": {
+            "inverted": 0
+        },
+        "7": {
+            "inverted": 0
+        },
+        "8": {
+            "inverted": 0
+        },
+        "9": {
+            "inverted": 0
+        }
+    },
+    "ain": {
+        "0": {
+        }
+    },
+    "aout": {
+        "0": {
+        }
+    },
+    "iin": {
+        "0": {
+        }
+    },
+    "iout": {
+        "0": {
+        }
+    },
+    "fieldbus": {
+        "0": {
+            "jointCount": 10,
+            "RxPdo": {
+                "machineStatusWordOffset": 0,
+                "activeFaultOffset": 4,
+                "faultHistoryOffset": 8,
+                "heartbeatOffset": 12,
+                "jointStatuswordOffset": 16,
+                "jointActualPositionOffset": 36,
+                "jointActualVelocityOffset": 76,
+                "jointActualTorqueOffset": 116,
+                "digitalOffset": 156,
+                "digitalCount": 8,
+                "analogOffset": 164,
+                "analogCount": 6,
+                "integerOffset": 188,
+                "integerCount": 2
+            },
+            "TxPdo": {
+                "machineControlWordOffset": 0,
+                "gbcControlWordOffset": 4,
+                "hlcControlWordOffset": 8,
+                "heartbeatOffset": 12,
+                "jointControlwordOffset": 16,
+                "jointSetPositionOffset": 36,
+                "jointSetVelocityOffset": 76,
+                "jointSetTorqueOffset": 116,
+                "digitalOffset": 156,
+                "digitalCount": 10,
+                "analogOffset": 164,
+                "analogCount": 6,
+                "integerOffset": 188,
+                "integerCount": 2
+            }
+        }
+    },
+    "frames": {
+        "default": {
+        },
+        "translate10": {
+            "translation": {
+                "x": 10
+            }
+        },
+        "rotate90": {
+            "rotation": {
+                "x": 0.7071068,
+                "y": 0,
+                "z": 0,
+                "w": 0.7071068
+            }
+        }
+    },
+    "tool": {
+        "default": {
+        },
+        "offsetz": {
+            "translation": {
+                "z": -10
+            }
+        }
+    }
+}

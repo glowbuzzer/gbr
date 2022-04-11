@@ -1,8 +1,7 @@
-import {useSoloActivity} from "@glowbuzzer/store"
-import {Vector3} from "three"
-import React, {useCallback, useState} from "react"
-import {Button, Space} from "antd"
-import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons"
+import { useSoloActivity } from "@glowbuzzer/store"
+import React, { useCallback, useState } from "react"
+import { Button, Space } from "antd"
+import { ArrowLeftOutlined, ArrowRightOutlined } from "@ant-design/icons"
 
 /**
  * Simple button that will correctly handle mouse events to ensure jogging is stopped
@@ -52,7 +51,7 @@ export const ConveyorControlMotion = ({ index, step }) => {
     }
 
     function move_relative_amount(distance: number) {
-        return motion.moveLine(new Vector3(distance, 0, 0), true).promise()
+        return motion.moveLine(distance, 0, 0).relative(true).promise()
     }
 
     function move_relative() {
@@ -60,7 +59,7 @@ export const ConveyorControlMotion = ({ index, step }) => {
     }
 
     function home() {
-        return motion.moveLine(new Vector3(0, 0, 0)).promise()
+        return motion.moveLine(0, 0, 0).promise()
     }
 
     const stop_conveyor_motion = useCallback(() => {

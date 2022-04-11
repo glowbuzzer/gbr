@@ -1,0 +1,170 @@
+{
+    "machine": {
+        "default": {
+            "busCycleTime": 4
+        }
+    },
+    "stream": {
+        "default": {
+        }
+    },
+    "soloActivity": {
+        "0": {
+        },
+        "1": {
+        }
+    },
+    "frames": {
+        "default": {
+        }
+    },
+    "joint": {
+        "0": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 133.33333333
+        },
+        "1": {
+            "limits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ],
+            "scale": 266.66666666
+        }
+    },
+    "kinematicsConfiguration": {
+        "conveyor1": {
+            "frameIndex": 0,
+            "participatingJoints": [
+                0
+            ],
+            "participatingJointsCount": 1,
+            "kinematicsConfigurationType": 3,
+            "extentsX": [
+                -100,
+                100
+            ],
+            "linearLimits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ]
+        },
+        "conveyor2": {
+            "frameIndex": 0,
+            "participatingJoints": [
+                1
+            ],
+            "participatingJointsCount": 1,
+            "kinematicsConfigurationType": 3,
+            "extentsX": [
+                -100,
+                100
+            ],
+            "linearLimits": [
+                {
+                    "vmax": 200,
+                    "amax": 4000,
+                    "jmax": 80000
+                }
+            ]
+        }
+    },
+    "din": {
+        "0": {
+            "inverted": 1
+        },
+        "1": {
+            "inverted": 0
+        },
+        "2": {
+            "inverted": 0
+        },
+        "3": {
+            "inverted": 0
+        }
+    },
+    "dout": {
+        "0": {
+            "inverted": 0
+        },
+        "1": {
+            "inverted": 0
+        },
+        "2": {
+            "inverted": 0
+        },
+        "3": {
+            "inverted": 0
+        },
+        "4": {
+            "inverted": 0
+        },
+        "5": {
+            "inverted": 0
+        }
+    },
+    "ain": {
+        "0": {
+        }
+    },
+    "aout": {
+        "0": {
+        }
+    },
+    "iin": {
+        "0": {
+        }
+    },
+    "iout": {
+        "0": {
+        }
+    },
+    "fieldbus": {
+        "0": {
+            "jointCount": 10,
+            "RxPdo": {
+                "machineStatusWordOffset": 0,
+                "activeFaultOffset": 4,
+                "faultHistoryOffset": 8,
+                "heartbeatOffset": 12,
+                "jointStatuswordOffset": 16,
+                "jointActualPositionOffset": 36,
+                "jointActualVelocityOffset": 76,
+                "jointActualTorqueOffset": 116,
+                "digitalOffset": 156,
+                "digitalCount": 8,
+                "analogOffset": 164,
+                "analogCount": 6,
+                "integerOffset": 188,
+                "integerCount": 2
+            },
+            "TxPdo": {
+                "machineControlWordOffset": 0,
+                "gbcControlWordOffset": 4,
+                "hlcControlWordOffset": 8,
+                "heartbeatOffset": 12,
+                "jointControlwordOffset": 16,
+                "jointSetPositionOffset": 36,
+                "jointSetVelocityOffset": 76,
+                "jointSetTorqueOffset": 116,
+                "digitalOffset": 156,
+                "digitalCount": 10,
+                "analogOffset": 164,
+                "analogCount": 6,
+                "integerOffset": 188,
+                "integerCount": 2
+            }
+        }
+    }
+}

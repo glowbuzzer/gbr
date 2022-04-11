@@ -63,68 +63,18 @@
                         "outputPath": "dist/examples/convmc",
                         "index": "examples/convmc/src/index.html",
                         "main": "examples/convmc/src/main.tsx",
-                        "polyfills": "examples/convmc/src/polyfills.ts",
-                        "tsConfig": "examples/convmc/tsconfig.app.json",
+                        "tsConfig": "examples/convmc/tsconfig.json",
                         "assets": [
-                            "examples/convmc/src/favicon.ico",
-                            "examples/convmc/src/assets"
                         ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
-                    },
-                    "configurations": {
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "examples/convmc/src/environments/environment.ts",
-                                    "with": "examples/convmc/src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "2mb",
-                                    "maximumError": "5mb"
-                                }
-                            ]
-                        }
                     }
                 },
                 "serve": {
                     "builder": "@nrwl/web:dev-server",
                     "options": {
                         "buildTarget": "convmc:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "buildTarget": "convmc:build:production"
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": [
-                            "examples/convmc/**/*.{ts,tsx,js,jsx}"
-                        ]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": [
-                        "coverage/examples/convmc"
-                    ],
-                    "options": {
-                        "jestConfig": "examples/convmc/jest.config.js",
-                        "passWithNoTests": true
                     }
                 }
             }
@@ -143,39 +93,12 @@
                         "outputPath": "dist/examples/generic",
                         "index": "examples/generic/src/index.html",
                         "main": "examples/generic/src/main.tsx",
-                        "polyfills": "examples/generic/src/polyfills.ts",
-                        "tsConfig": "examples/generic/tsconfig.app.json",
+                        "tsConfig": "examples/generic/tsconfig.json",
                         "assets": [
-                            "examples/generic/src/favicon.ico",
-                            "examples/generic/src/assets"
                         ],
                         "styles": [],
                         "scripts": [],
                         "webpackConfig": "@nrwl/react/plugins/webpack"
-                    },
-                    "configurations": {
-                        "production": {
-                            "fileReplacements": [
-                                {
-                                    "replace": "examples/generic/src/environments/environment.ts",
-                                    "with": "examples/generic/src/environments/environment.prod.ts"
-                                }
-                            ],
-                            "optimization": true,
-                            "outputHashing": "all",
-                            "sourceMap": false,
-                            "extractCss": true,
-                            "namedChunks": false,
-                            "extractLicenses": true,
-                            "vendorChunk": false,
-                            "budgets": [
-                                {
-                                    "type": "initial",
-                                    "maximumWarning": "500kb",
-                                    "maximumError": "1mb"
-                                }
-                            ]
-                        }
                     }
                 },
                 "serve": {
@@ -183,30 +106,6 @@
                     "options": {
                         "buildTarget": "generic:build",
                         "hmr": true
-                    },
-                    "configurations": {
-                        "production": {
-                            "buildTarget": "generic:build:production",
-                            "hmr": false
-                        }
-                    }
-                },
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": [
-                            "examples/generic/**/*.{ts,tsx,js,jsx}"
-                        ]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "outputs": [
-                        "coverage/examples/generic"
-                    ],
-                    "options": {
-                        "jestConfig": "examples/generic/jest.config.js",
-                        "passWithNoTests": true
                     }
                 }
             }
