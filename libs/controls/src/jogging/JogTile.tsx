@@ -127,7 +127,8 @@ export const JogTile = () => {
     const kc_index = kcs.indexOf(selectedKc) || 0
 
     const kc_config =
-        config.kinematicsConfiguration[selectedKc] || config.kinematicsConfiguration[0]
+        config.kinematicsConfiguration[selectedKc] ||
+        Object.values(config.kinematicsConfiguration)[0]
 
     const joint_configx = useJointConfig()
     const joints_for_kc = kc_config.participatingJoints.map(jointNum => ({

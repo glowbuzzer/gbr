@@ -28,19 +28,10 @@
         }
     },
     "projects": {
-        "cartmc": {
-            "tags": []
-        },
         "controls": {
             "tags": []
         },
         "convmc": {
-            "tags": []
-        },
-        "dummy": {
-            "tags": []
-        },
-        "emstat": {
             "tags": []
         },
         "generic": {

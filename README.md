@@ -2,6 +2,8 @@
 
 # Glowbuzzer React
 
-## What is it?
+This project contains the Glowbuzzer React source code, including example projects.
 
-React components glowbuzzer toolkit.
+Glowbuzzer React allows you to quickly build a full featured machine control front-end.
+
+For more information go to [glowbuzzer.com](https://www.glowbuzzer.com).
