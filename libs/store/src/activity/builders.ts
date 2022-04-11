@@ -27,7 +27,6 @@ import {
     WaitOnIntegerInputConfig
 } from "../gbc"
 import { Euler, Quaternion } from "three"
-import { spindle } from "../../../test/src/tests/spindle"
 
 export interface ActivityController {
     get kinematicsConfigurationIndex(): number
