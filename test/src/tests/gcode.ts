@@ -1,6 +1,6 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, STREAMSTATE } from "../../../store/src"
+import { ACTIVITYSTATE, STREAMSTATE } from "../../../libs/store/src"
 
 const test = uvu.suite("gcode")
 

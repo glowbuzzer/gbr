@@ -2,7 +2,8 @@ import "./connect/ConnectionFactory"
 
 export * from "./gbc"
 
-export { Frame, apply_offset } from "./util/frame_utils"
+export * from "./util/frame_utils"
+export * from "./activity/activity_api"
 export { ConnectionState, useConnection, connectionSlice } from "./connect"
 export {
     DesiredState,

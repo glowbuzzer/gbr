@@ -1,6 +1,6 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, BLENDTYPE, STREAMSTATE } from "../../../store/src"
+import { ACTIVITYSTATE, BLENDTYPE, STREAMSTATE } from "../../../libs/store/src"
 import { assertNear } from "../util"
 
 const test = uvu.suite("robot")

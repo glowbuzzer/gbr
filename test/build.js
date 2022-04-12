@@ -46,7 +46,7 @@ require("esbuild")
         platform: "node",
         entryPoints: ["./index.ts"],
         bundle: true,
-        outfile: "../../../gbc/libs/gbc-node/build/index.js",
+        outfile: "../../gbc/libs/gbc-node/build/index.js",
         plugins: [exampleOnResolvePlugin]
     })
     .then(() => console.log("Watching for changes"))

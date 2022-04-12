@@ -1,6 +1,6 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ARCDIRECTION } from "../../../store/src"
+import { ARCDIRECTION } from "../../../libs/store/src"
 import { assertNear } from "../util"
 
 const test = uvu.suite("activity")

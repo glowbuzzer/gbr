@@ -1,7 +1,5 @@
-# store
+# Glowbuzzer React - Redux Store and Hooks
 
-This library was generated with [Nx](https://nx.dev).
+This project contains the Redux core of the Glowbuzzer React framework plus a number of hooks to make working with the store easier.
 
-## Running unit tests
 
-Run `nx test store` to execute the unit tests via [Jest](https://jestjs.io).

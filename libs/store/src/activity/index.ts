@@ -58,5 +58,4 @@ export function useSoloActivity(index = 0): SoloActivityApi {
     return api
 }
 
-export { SoloActivityApi } from "./activity_api"
 export * from "./builders"

@@ -1,7 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { assertNear } from "../util"
-import { STREAMSTATE } from "../../../store/src"
+import { STREAMSTATE } from "../../../libs/store/src"
 
 const test = uvu.suite("frames simple")
 

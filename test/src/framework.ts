@@ -3,7 +3,7 @@ import {
     determine_machine_state,
     handleMachineState,
     MachineState
-} from "../../store/src/machine/MachineStateHandler"
+} from "../../libs/store/src/machine/MachineStateHandler"
 import * as assert from "uvu/assert"
 import {
     ActivityApiImpl,
@@ -11,16 +11,16 @@ import {
     MACHINETARGET,
     updateMachineControlWordMsg,
     updateMachineTargetMsg
-} from "../../store/src/api"
+} from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, gcodeSlice, jointsSlice } from "../../store/src"
+import { activitySlice, gcodeSlice, jointsSlice } from "../../libs/store/src"
 import {
     kinematicsSlice,
     updateFroPercentageMsg,
     updateOffsetMsg
-} from "../../store/src/kinematics"
+} from "../../libs/store/src/kinematics"
 import { make_plot } from "./plot"
-import { GCodeSenderAdapter } from "../../store/src/gcode/GCodeSenderAdapter"
+import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
 
 function nextTick() {

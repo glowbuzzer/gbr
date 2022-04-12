@@ -1,6 +1,6 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { DesiredState } from "../../../store/src"
+import { DesiredState } from "../../../libs/store/src"
 
 const test = uvu.suite("core")
 

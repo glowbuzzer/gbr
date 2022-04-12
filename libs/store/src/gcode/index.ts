@@ -7,7 +7,8 @@ import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnection } from "../connect"
 import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
-import { ActivityBuilder, SoloActivityApi } from "../activity"
+import { SoloActivityApi } from "../activity/activity_api"
+import { ActivityBuilder } from "../activity"
 
 const { load, save } = settings("store.gcode")
 
