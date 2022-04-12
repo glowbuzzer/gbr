@@ -49,9 +49,3 @@ jobs:
                 run: npm publish dist/store
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-            -   name: Publish dist/layout
-                run: npm publish dist/layout
-                env:
-                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
