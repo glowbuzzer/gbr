@@ -1,5 +1,5 @@
 import React from "react"
-import { SimpleTileDefinition, SimpleTileLayout } from "@glowbuzzer/layout"
+import { SimpleTileDefinition, SimpleTileLayout } from "@glowbuzzer/controls"
 import {
     AnalogInputsTile,
     ConnectTile,

@@ -1,5 +1,5 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { useIntegerOutputList, useIntegerOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"

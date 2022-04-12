@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { Tile, useLocalStorage } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import {
     JogDirection,
     JOINT_TYPE,
@@ -25,6 +25,7 @@ import {
 import { Euler, MathUtils, Quaternion } from "three"
 import { Waypoints } from "./Waypoints"
 import { FrameSelector } from "../misc"
+import { useLocalStorage } from "../util/LocalStorageHook"
 
 enum JogMoveMode {
     CARTESIAN,

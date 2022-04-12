@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
+import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
 import { ConnectTile, DevToolsTile, TelemetryTile } from "@glowbuzzer/controls"
 import { Button, Space, Tag } from "antd"
 import { useDigitalInputs, useDigitalOutputState, useJoint } from "@glowbuzzer/store"

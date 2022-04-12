@@ -1,6 +1,6 @@
 import React from "react"
 import { useIntegerInputs } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
 

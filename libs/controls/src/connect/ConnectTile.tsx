@@ -11,7 +11,7 @@ import {
     useConnection,
     useMachine
 } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import styled from "styled-components"
 import { TrafficLight } from "./TrafficLight"
 

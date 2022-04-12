@@ -1,10 +1,10 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
 import { Button, Tag } from "antd"
 import { TASK_STATE, TaskStatus, useTask, useTaskStatus } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
+import { Tile } from "../tiles"
 
 const StyledTaskItem = styled.div`
     padding: 4px 0;

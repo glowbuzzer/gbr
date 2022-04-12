@@ -1,4 +1,4 @@
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "@glowbuzzer/controls"
 import React, { useState } from "react"
 import { Button } from "antd"
 import { useSoloActivity } from "@glowbuzzer/store"

@@ -44,7 +44,7 @@ for (const project of projects) {
             sourcemap: true,
             // format: 'cjs',
             external: index ? undefined : [
-                '@glowbuzzer/layout', '@glowbuzzer/store',
+                '@glowbuzzer/store',
                 // core
                 'react', 'react-dom', 'react-reconciler',
                 'react-redux', '@reduxjs/toolkit',

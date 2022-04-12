@@ -1,5 +1,5 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "@glowbuzzer/controls"
 import { Checkbox, Radio, Space } from "antd"
 import { useDigitalInputOverrides, useDigitalInputs } from "@glowbuzzer/store"
 

@@ -1,5 +1,5 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import styled from "styled-components"
 import { useAnalogOutputList, useAnalogOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"

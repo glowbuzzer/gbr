@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
-import { Tile, TileSettings } from "@glowbuzzer/layout"
+import { Tile, TileSettings } from "../tiles"
 import styled from "styled-components"
 import { Button, Checkbox, Col, InputNumber, Row } from "antd"
 import { CheckboxChangeEvent } from "antd/es/checkbox"

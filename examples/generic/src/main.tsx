@@ -25,7 +25,7 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 
 import { Button } from "antd"
-import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/layout"
+import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 import "react-grid-layout/css/styles.css"

@@ -12,7 +12,7 @@ import {
     useJointCount,
     usePrefs
 } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import styled from "styled-components"
 
 // const DisplayValue = ({ value }: { value: number }) => {

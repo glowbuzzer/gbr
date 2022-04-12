@@ -27,12 +27,6 @@
             "@glowbuzzer/controls": [
                 "libs/controls/src/index.ts"
             ],
-            "@glowbuzzer/dummy": [
-                "libs/dummy/src/index.ts"
-            ],
-            "@glowbuzzer/layout": [
-                "libs/layout/src/index.ts"
-            ],
             "@glowbuzzer/store": [
                 "libs/store/src/index.ts"
             ]

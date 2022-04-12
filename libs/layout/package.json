@@ -1,7 +1,0 @@
-{
-    "name": "@glowbuzzer/layout",
-    "version": "0.0.0",
-    "exports": {
-        ".": {}
-    }
-}

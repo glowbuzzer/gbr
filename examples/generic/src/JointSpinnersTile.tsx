@@ -1,5 +1,5 @@
 import { useJoint, useJointCount } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "@glowbuzzer/controls"
 import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
 import React from "react"
 import styled from "styled-components"

@@ -110,29 +110,6 @@
                 }
             }
         },
-        "layout": {
-            "root": "libs/layout",
-            "sourceRoot": "libs/layout/src",
-            "projectType": "library",
-            "schematics": {},
-            "architect": {
-                "lint": {
-                    "builder": "@nrwl/linter:eslint",
-                    "options": {
-                        "lintFilePatterns": [
-                            "libs/layout/**/*.{ts,tsx,js,jsx}"
-                        ]
-                    }
-                },
-                "test": {
-                    "builder": "@nrwl/jest:jest",
-                    "options": {
-                        "jestConfig": "libs/layout/jest.config.js",
-                        "passWithNoTests": true
-                    }
-                }
-            }
-        },
         "oscillating-move": {
             "root": "examples/oscillating-move",
             "sourceRoot": "examples/oscillating-move/src",

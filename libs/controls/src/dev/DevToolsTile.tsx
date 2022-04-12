@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { Button, Slider, Tag } from "antd"
 import {
     determine_machine_state,

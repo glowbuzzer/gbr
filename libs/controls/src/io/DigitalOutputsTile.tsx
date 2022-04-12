@@ -1,5 +1,5 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
 import { useDigitalOutputList, useDigitalOutputState } from "@glowbuzzer/store"

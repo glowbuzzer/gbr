@@ -3,7 +3,7 @@ import { Euler, Quaternion, Vector3 } from "three"
 import { FrameSelector } from "../misc"
 import { apply_offset, useConfig, useFrames, useKinematics } from "@glowbuzzer/store"
 import { DroItem } from "./DroItem"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { Button, Space } from "antd"
 
 type CartesianDisplayProps = {

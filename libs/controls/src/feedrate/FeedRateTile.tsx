@@ -1,5 +1,5 @@
 import React from "react"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { useFeedRate } from "@glowbuzzer/store"
 import { InputNumber } from "antd"
 

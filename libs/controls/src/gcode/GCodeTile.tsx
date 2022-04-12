@@ -6,7 +6,7 @@ import "ace-builds/src-noconflict/theme-github"
 import "ace-builds/src-noconflict/mode-gcode"
 import "ace-builds/src-noconflict/mode-text"
 
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "../tiles"
 import { Radio, Select, Space, Tag } from "antd"
 import {
     settings,

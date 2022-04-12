@@ -35,7 +35,7 @@ jobs:
                 run: pnpm install # --no-optional
 
             -   name: Package libs
-                run: node build.mjs controls,layout,store 1.0.1-alpha.${{ github.run_number }}
+                run: node build.mjs controls,store 1.0.1-alpha.${{ github.run_number }}
 
             -   name: Generate react component docs
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src

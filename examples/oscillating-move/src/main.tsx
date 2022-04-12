@@ -2,7 +2,7 @@ import ReactDOM from "react-dom"
 import React, { StrictMode, useState } from "react"
 import { CartesianDro, ConnectTile, GlowbuzzerApp, PreferencesDialog } from "@glowbuzzer/controls"
 import { MachineState, useConnection, useMachine, useSoloActivity } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "@glowbuzzer/controls"
 
 import { Button } from "antd"
 

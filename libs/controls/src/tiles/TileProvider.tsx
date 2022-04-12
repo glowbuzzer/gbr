@@ -1,6 +1,6 @@
 import * as React from "react"
 import { FC, useContext } from "react"
-import { useLocalStorage } from "./LocalStorageHook"
+import { useLocalStorage } from "../util/LocalStorageHook"
 import { tileLayoutContext, TileLayoutContextType } from "./TileContext"
 
 function fromEntries(iterable) {

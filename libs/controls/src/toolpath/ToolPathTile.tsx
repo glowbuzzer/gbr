@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useMemo, useState } from "react"
-import { Tile, TileSettings } from "@glowbuzzer/layout"
+import { Tile, TileSettings } from "../tiles"
 import { Button, Checkbox, Form, Input } from "antd"
 import {
     ToolPathSettingsType,

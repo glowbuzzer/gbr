@@ -7,7 +7,7 @@ import {
     PreferencesDialog
 } from "@glowbuzzer/controls"
 import { MachineState, useConnection, useDigitalOutputState, useMachine } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/layout"
+import { Tile } from "@glowbuzzer/controls"
 
 import { Button, Switch } from "antd"
 
