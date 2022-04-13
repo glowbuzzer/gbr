@@ -60,7 +60,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
         frameIndex
     )
 
-    const { translation, rotation } = apply_offset(p, kinematics.offset)
+    const { translation, rotation } = apply_offset(p, kinematics.offset, true)
 
     // this is the local xyz, used to warn when tcp is near/outside of kc limits
     const local_translation = kinematics.translation
@@ -94,11 +94,20 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
     const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)
 
     function zero_dro() {
-        const { translation, rotation } = invert_kc_local(
+        // const { translation, rotation } = invert_kc_local(
+        //     kinematics.translation,
+        //     kinematics.rotation
+        // )
+        // console.log("INVERTED", translation, rotation)
+
+        kinematics.setOffset(
             kinematics.translation,
-            kinematics.rotation
+            /*kinematics.rotation*/ new Quaternion().identity()
         )
-        kinematics.setOffset(translation, rotation)
+    }
+
+    function reset_dro() {
+        kinematics.setOffset(new Vector3(0, 0, 0), new Quaternion().identity())
     }
 
     return (
@@ -116,6 +125,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
                 )}
                 <div>
                     <Button onClick={zero_dro}>Zero DRO</Button>
+                    <Button onClick={reset_dro}>Reset DRO</Button>
                 </div>
             </Space>
             {display.map(k => {

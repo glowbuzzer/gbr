@@ -96,6 +96,10 @@ const JointDroItem = ({ index, warningThreshold }) => {
     const j = useJoint(index)
     const config = useJointConfig()[index]
 
+    if (!config) {
+        return null
+    }
+
     const { name, finiteContinuous, negLimit, posLimit, jointType } = config
     const { actPos } = j
     const showSlider = finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE

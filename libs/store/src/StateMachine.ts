@@ -29,9 +29,10 @@ export type StateMachineDefinition = {
 }
 
 export class StateMachine {
-    private currentState: string | undefined
+    public currentState: string | undefined
+    public userData: string | undefined
+    private readonly initialState: string
     private previousState: string | undefined
-    private userData: string | undefined
     private readonly onChangeHandler: (state: {
         currentState: string
         previousState?: string
@@ -52,8 +53,33 @@ export class StateMachine {
             userData: unknown
         }) => void
     ) {
-        this.currentState = initialState
+        this.initialState = initialState
         this.onChangeHandler = onChange
+    }
+
+    /**
+     * Perform an eval on the given state machine.
+     *
+     * Checks the transitions of the currently active state and performs the tr
+     * @param machine
+     */
+    eval(machine: StateMachineDefinition) {
+        if (!this.currentState) {
+            // first eval
+            this.transition(machine, this.initialState)
+        }
+        const state = machine[this.currentState]
+        if (state === undefined) {
+            throw new Error("Invalid current state: " + this.currentState)
+        }
+        if (state?.transitions) {
+            for (const [next_state, value] of Object.entries(state.transitions)) {
+                if ((typeof value === "function" && value()) || value) {
+                    this.transition(machine, next_state)
+                    break // don't eval any more next state functions
+                }
+            }
+        }
     }
 
     private triggerChangeEffect() {
@@ -94,30 +120,6 @@ export class StateMachine {
             })
         } else if (result) {
             this.transition(machine, result)
-        }
-    }
-
-    /**
-     * Perform an eval on the given state machine.
-     *
-     * Checks the transitions of the currently active state and performs the tr
-     * @param machine
-     */
-    eval(machine: StateMachineDefinition) {
-        // if (!this.current_state) {
-        //     this.transition(machine, this.initial_state)
-        // }
-        const state = machine[this.currentState]
-        if (state === undefined) {
-            throw new Error("Invalid current state: " + this.currentState)
-        }
-        if (state?.transitions) {
-            for (const [next_state, value] of Object.entries(state.transitions)) {
-                if ((typeof value === "function" && value()) || value) {
-                    this.transition(machine, next_state)
-                    break // don't eval any more next state functions
-                }
-            }
         }
     }
 }

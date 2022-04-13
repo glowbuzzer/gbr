@@ -71,7 +71,7 @@ export function usePreview() {
     const currentPosition: CartesianPosition = {
         positionReference: POSITIONREFERENCE.ABSOLUTE,
         // we need to undo the effect of kc offset because gcode adapter will apply it to all positions
-        translation: apply_offset({ translation, rotation }, kc.offset).translation,
+        translation: apply_offset({ translation, rotation }, kc.offset, true).translation,
         frameIndex: frames.active
     }
 
@@ -83,11 +83,12 @@ export function usePreview() {
                 translation: Vector3,
                 rotation: Quaternion,
                 fromIndex: number | "world",
-                toIndex: number | "world"
+                toIndex: number | "world",
+                applyOffset = true
             ) => {
                 // apply any kc offset to the calculated positions
                 const p = frames.convertToFrame(translation, rotation, fromIndex, toIndex)
-                return apply_offset(p, kc.offset, true)
+                return applyOffset ? apply_offset(p, kc.offset, false) : p
             }
 
             const interpreter = new GCodePreviewAdapter(

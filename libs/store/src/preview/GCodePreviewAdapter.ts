@@ -31,7 +31,6 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
 
     protected shiftPositions(prev, next) {
         if (next.positionReference === POSITIONREFERENCE.RELATIVE) {
-            console.log("SHIFT", prev.translation, next.translation)
             return [
                 prev,
                 {
@@ -47,11 +46,12 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return super.shiftPositions(prev, next)
     }
 
-    private frame_conversion(cartesianPosition: CartesianPosition) {
+    private frame_conversion(cartesianPosition: CartesianPosition, applyOffset = true) {
         const { x, y, z } = cartesianPosition.translation
         const pos = new Vector3(x, y, z)
         const rot = new Quaternion(0, 0, 0, 1)
-        return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world").translation
+        return this.convertToFrame(pos, rot, cartesianPosition.frameIndex, "world", applyOffset)
+            .translation
     }
 
     toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
@@ -83,7 +83,8 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
                 this.position.frameIndex
             )
         )
-        const [{ x: x1, y: y1 }, { x: x2, y: y2 }] = [from.translation, to.translation]
+        // we use the target Z for the points on the arc
+        const [{ x: x1, y: y1 }, { x: x2, y: y2, z: z2 }] = [from.translation, to.translation]
         const x_offset = params.I * this.unitConversion || 0
         const y_offset = params.J * this.unitConversion || 0
 
@@ -118,18 +119,19 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         )
 
         // TODO: H: what happens if from and to are in different frames?
+
         const points = arc.getPoints(10).map(p => ({
             ...this.position,
             translation: {
-                ...this.position.translation,
                 x: p.x,
-                y: p.y
+                y: p.y,
+                z: z2
             }
         }))
         this.segments.push(
             ...this.toSegments(
                 points.map(p => {
-                    const { x, y, z } = this.frame_conversion(p)
+                    const { x, y, z } = this.frame_conversion(p, false)
                     return new Vector3(x, y, z)
                 }),
                 MOVE_COLOR,
@@ -139,7 +141,6 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     }
 
     G0(params, { lineNum }, fromCp: CartesianPosition, toCp: CartesianPosition) {
-        // const [from, to] = this.updatePositions(params).map(this.frame_conversion)
         const [from, to] = [fromCp, toCp].map(position => this.frame_conversion(position))
         this.segments.push({
             from,

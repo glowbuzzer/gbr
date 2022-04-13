@@ -191,7 +191,6 @@ if (typeof window !== "undefined") {
                     ws = new WebSocket(url)
                     ws.onopen = () => {
                         start_status_timeout()
-                        console.log("CONNECTED!!")
                         ws.send(
                             JSON.stringify({
                                 request: {

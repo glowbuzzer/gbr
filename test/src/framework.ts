@@ -170,15 +170,19 @@ export class GbcTest {
     }
 
     get pdo() {
+        const self = this
         return {
             set_din: (index, value) => {
                 this.gbc.set_fb_din(index, value)
+                return self
             },
             set_ain: (index, value) => {
                 this.gbc.set_fb_ain(index, value)
+                return self
             },
             set_iin: (index, value) => {
                 this.gbc.set_fb_iin(index, value)
+                return self
             }
         }
     }

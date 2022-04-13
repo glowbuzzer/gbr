@@ -28,7 +28,7 @@ describe("state machine handling", () => {
             },
             end: {}
         })
-        expect(stateMachine.current_state).toEqual("end")
+        expect(stateMachine.currentState).toEqual("end")
     })
 
     test("should execute exit side effect", () => {
@@ -43,7 +43,7 @@ describe("state machine handling", () => {
             },
             end: null
         })
-        expect(stateMachine.current_state).toEqual("end")
+        expect(stateMachine.currentState).toEqual("end")
         expect(testval).toEqual(1)
     })
 
@@ -62,7 +62,7 @@ describe("state machine handling", () => {
                 }
             }
         })
-        expect(stateMachine.current_state).toEqual("step1")
+        expect(stateMachine.currentState).toEqual("step1")
         expect(testval).toEqual(1)
     })
 
@@ -74,7 +74,7 @@ describe("state machine handling", () => {
             },
             end: null
         })
-        expect(stateMachine.current_state).toEqual("end")
+        expect(stateMachine.currentState).toEqual("end")
     })
 
     test("state can return next state plus user data", () => {
@@ -85,8 +85,8 @@ describe("state machine handling", () => {
             },
             end: null
         })
-        expect(stateMachine.current_state).toEqual("end")
-        expect(stateMachine.user_data).toEqual("foo")
+        expect(stateMachine.currentState).toEqual("end")
+        expect(stateMachine.userData).toEqual("foo")
     })
 
     test("enter function can return a promise", async () => {
@@ -103,7 +103,7 @@ describe("state machine handling", () => {
         deferred.resolve("end")
         await nextTick()
 
-        expect(machine.current_state).toEqual("end")
+        expect(machine.currentState).toEqual("end")
     })
 
     test("should not change state on async if already transitioned", async () => {
@@ -121,12 +121,12 @@ describe("state machine handling", () => {
             other: null
         })
 
-        expect(machine.current_state).toEqual("other")
+        expect(machine.currentState).toEqual("other")
 
         deferred.resolve("end")
         await nextTick()
 
-        expect(machine.current_state).toEqual("other")
+        expect(machine.currentState).toEqual("other")
     })
 
     test("should execute exit function even if not eval", async () => {
@@ -144,11 +144,11 @@ describe("state machine handling", () => {
             end: null
         })
 
-        expect(machine.current_state).toEqual("start")
+        expect(machine.currentState).toEqual("start")
         deferred.resolve("end")
         await nextTick()
 
-        expect(machine.current_state).toEqual("end")
+        expect(machine.currentState).toEqual("end")
         expect(testval).toEqual(true)
     })
 })

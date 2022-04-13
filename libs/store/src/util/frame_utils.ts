@@ -225,7 +225,9 @@ export function apply_offset(
         q.invert()
         p.multiply(q)
     } else {
-        p.premultiply(q)
+        // console.log("P", position.translation, position.rotation)
+        // console.log("Q", offset.translation, offset.rotation)
+        p.multiply(q)
     }
 
     const translation = new Vector3()

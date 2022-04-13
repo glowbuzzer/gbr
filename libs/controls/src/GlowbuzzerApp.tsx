@@ -93,7 +93,6 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
 
     const { autoConnect, state, reconnect } = connection
     useEffect(() => {
-        console.log("EFFECT", autoConnect, state)
         if (autoConnect && state === ConnectionState.DISCONNECTED) {
             // trigger immediate attempt to connect
             interval.current = Math.max(3, Math.min(30, interval.current * 2))
@@ -126,14 +125,12 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
     }, [autoConnect, state])
 
     useEffect(() => {
-        console.log("COUNTDOWN EFFECT", countdown)
         if (countdown === 0) {
             setCountdown(-1)
             // if ( state === ConnectionState.DISCONNECTED ) {
             //     setCountdown(interval.current)
             // }
             setTimeout(() => {
-                console.log("RECONNECT IN COUNTDOWN EFFECT")
                 reconnect()
             }, 0)
         } else if (countdown > 0 && autoConnect) {

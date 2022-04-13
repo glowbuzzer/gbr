@@ -62,15 +62,13 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
             const status = action.payload[0] as KinematicsConfigurationMcStatus
             const { x, y, z } = status.position.translation
             state.current_positions = [x, y, z]
-            console.log("SET CURRENT POS", state.current_positions)
             state.ready = true
         },
         append(state, action) {
-            console.log("Starting interpreter")
+            // convert the given gcode text into activities and add to buffer
             const { gcode, vmax, context } = action.payload
             const interpreter = new GCodeSenderAdapter(state.buffer, vmax, context)
             interpreter.execute(gcode)
-            console.log("Interpreter done")
         },
         consume(state, action) {
             // remove requested count from the front of the queue
@@ -94,11 +92,12 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
                 writeCount
             } = action.payload
 
-            // tag is UDF for current item, active is whether any item is currently executing
+            // tag is UDF for current item
             state.tag = tag
             state.state = stream_state
             state.time = time
 
+            // have both read and write counts changed, which indicates movement on the queue
             if (state.readCount !== readCount && state.writeCount !== writeCount) {
                 // safe to record new capacity
                 state.capacity = capacity
@@ -181,7 +180,40 @@ export function useGCodeSettings() {
         .settings
 }
 
+/**
+ * Provides additional context to gcode interpreter. For now, this context provides a mechanism to handle tool change
+ * M06 gcode.
+ */
 export type GCodeContextType = {
+    /**
+     * Provide an implementation of this function to handle automated tool changes. Typically this function is supplied to
+     * {@see GCodeContextProvider}. The function you supply should return an array of activities which achieve the tool change.
+     * These activities will be inserted in place of the the M06 code and queued for processing. For example:
+     * ```
+     *    function handleToolChange(
+     *         kinematicsConfigurationIndex: number,
+     *         current: number,
+     *         next: number,
+     *         api: SoloActivityApi
+     *     ) {
+     *         return [
+     *              api.moveToPosition(null, null, 50),
+     *              api.setToolOffset(next),
+     *              api.dwell(500)
+     *         ]
+     *     }
+     *
+     *     return (
+     *         <GCodeContextProvider value={{ handleToolChange }}>
+     *             ... app ...
+     *         </GCodeContextProvider>
+     *     )
+     * ```
+     * @param kinematicsConfigurationIndex The kinematics configuration
+     * @param currentToolIndex The current tool index
+     * @param newToolIndex The new tool index (set by Tn code)
+     * @param api The activity API you can use to create activities to execute
+     */
     handleToolChange(
         kinematicsConfigurationIndex: number,
         currentToolIndex: number,

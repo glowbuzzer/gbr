@@ -86,6 +86,9 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
         )
     }
 
+    if (!preview.length) {
+        return null
+    }
     // noinspection RequiredAttributes
     return (
         <group position={new Vector3(minPoint.x, minPoint.y, 0)}>
