@@ -60,7 +60,6 @@ export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
     const [robotModels, setRobotModels] = useState<THREE.Group[]>([])
 
     useEffect(() => {
-        console.log("LOAD MODEL", model.name)
         const actual_links = model.config.filter(c => c.limits)
 
         const files = Array.from({ length: actual_links.length + 1 }).map(
@@ -111,7 +110,6 @@ export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
             joints.forEach((value, index) => {
                 if (robotModels[index]) {
                     const theta = value || 0
-                    // console.log("SET JOINT ANGLE", index, "RADS", theta, "ADJUSTED", angle)
                     robotModels[index + 1].rotation.z = adjustForTeta(index, theta)
                 }
             })

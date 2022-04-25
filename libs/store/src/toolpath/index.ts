@@ -71,7 +71,6 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
             }
         },
         settings(state, action) {
-            console.log("TOOLPATH SETTINGS CHANGED", action.payload)
             state.settings = action.payload
             save(action.payload)
         }

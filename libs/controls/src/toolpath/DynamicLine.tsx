@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react"
-// import { Line2 } from "three/examples/jsm/lines/Line2"
-// import { LineMaterial } from "three/examples/jsm/lines/LineMaterial"
 import { Vector2 } from "three"
 import { Line2, LineGeometry, LineMaterial } from "three-stdlib"
-// import { LineGeometry } from "three/examples/jsm/lines/LineGeometry"
 
 type DynamicLineProps = {
     points: number[] // must be flat pairs of points
@@ -30,7 +27,6 @@ export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Li
     return (
         <primitive dispose={undefined} object={line2} ref={ref} {...rest}>
             <primitive
-                dispose={undefined}
                 object={lineMaterial}
                 attach="material"
                 color={color}

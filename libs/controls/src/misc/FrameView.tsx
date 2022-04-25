@@ -16,7 +16,7 @@ type DiplayNumProps = {
     value: number
     precision?: number
     width?: number
-    type?: "scalar" | "angular" | "generic"
+    type?: "linear" | "angular" | "generic"
 }
 
 const DisplayNumList = (props: Omit<DiplayNumProps, "value"> & { values: number[] }) => {
@@ -52,19 +52,11 @@ const DisplayNum = ({ value, precision, width, type }: DiplayNumProps) => {
         return <span {...props}>0</span>
     }
 
-    const factors = {
-        mm: 1,
-        in: 0.254,
-        rad: 1,
-        deg: 180 / Math.PI
-    }
-
     function convert_value() {
         switch (type) {
-            case "scalar":
-                return value * factors[prefs.current.units_scalar]
+            case "linear":
             case "angular":
-                return value * factors[prefs.current.units_angular]
+                return prefs.fromSI(value, type)
             case "generic":
             default:
                 return value
@@ -98,7 +90,7 @@ export const FrameView = () => {
         return {
             key: item.index,
             title: <div style={{ marginLeft: indent }}>{item.text}</div>,
-            translation: <DisplayNumList type="scalar" values={[t.x, t.y, t.z]} width={40} />,
+            translation: <DisplayNumList type="linear" values={[t.x, t.y, t.z]} width={40} />,
             rotation: renderAngles(r)
         }
     })

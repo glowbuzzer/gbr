@@ -1,8 +1,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, apply_offset, BLENDTYPE } from "../../../libs/store/src"
+import { ACTIVITYSTATE, BLENDTYPE } from "../../../libs/store/src"
 import { assertNear } from "../util"
-import { Euler, Quaternion, Vector3 } from "three"
 
 const test = uvu.suite("robot")
 
@@ -31,10 +30,10 @@ function init_robot_test() {
 
 test.before.each(() => {
     gbc.reset("configs/tx40_config.json")
-    init_robot_test()
 })
 
 test("joint space move", async () => {
+    init_robot_test()
     // this just tests that scale (100000 as configured) is used when putting in PDO
     try {
         const move = gbc.wrap(gbc.activity.moveJoints([1]).promise)
@@ -44,7 +43,29 @@ test("joint space move", async () => {
     }
 })
 
+test("joint space move with empty array from all joints zero", async () => {
+    gbc.enable_operation()
+    try {
+        const move = gbc.wrap(gbc.activity.moveJoints([]).promise)
+        await move.start().iterations(5).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move to position from all joints zero", async () => {
+    gbc.enable_operation()
+    // this tests that we can move away from a singularity with a joint space move
+    try {
+        const move = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).promise)
+        await move.start().iterations(66).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
+})
+
 test("move line keeping same orientation", async () => {
+    init_robot_test()
     try {
         // gbc.disable_limit_check()
         const move = gbc.wrap(
@@ -61,6 +82,7 @@ test("move line keeping same orientation", async () => {
 })
 
 test("move line keeping same orientation (rotation not specified)", async () => {
+    init_robot_test()
     try {
         // gbc.disable_limit_check()
         const move = gbc.wrap(
@@ -77,6 +99,7 @@ test("move line keeping same orientation (rotation not specified)", async () => 
 })
 
 test("move line with change in orientation", async () => {
+    init_robot_test()
     try {
         const move = gbc.wrap(
             gbc.activity.moveLine(100, 100, 100).rotationEuler(Math.PI, 0, Math.PI / 4).promise
@@ -91,6 +114,7 @@ test("move line with change in orientation", async () => {
 })
 
 test("move to position with change in orientation", async () => {
+    init_robot_test()
     gbc.assert.selector(config, INITIAL_CONFIG)
     assertNear(270.962, 35, 179.038, -Math.PI, Math.PI / 4, 0)
 
@@ -109,6 +133,7 @@ test("move to position with change in orientation", async () => {
 })
 
 test("move to position without orientation specified", async () => {
+    init_robot_test()
     const move = gbc.wrap(
         gbc.activity.moveToPosition(100, 100, 100).configuration(INITIAL_CONFIG).promise
     )
@@ -121,6 +146,7 @@ test("move to position without orientation specified", async () => {
 })
 
 test("move to position without configuration specified", async () => {
+    init_robot_test()
     // if target configuration not specified, it should stay in the current configuration
     const move = gbc.wrap(
         gbc.activity.moveToPosition(100, 100, 100).rotationEuler(Math.PI, 0, Math.PI / 4).promise
@@ -133,7 +159,36 @@ test("move to position without configuration specified", async () => {
     gbc.assert.selector(config, INITIAL_CONFIG)
 })
 
+test("move to position with change in configuration", async () => {
+    init_robot_test()
+    // if target configuration not specified, it should stay in the current configuration
+    try {
+        const move = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).configuration(2).promise)
+        await move.start().iterations(200).assertCompleted()
+        gbc.assert.selector(config, 2)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move to position changing configuration but not position", async () => {
+    init_robot_test()
+    // if target configuration not specified, it should stay in the current configuration
+    try {
+        const move1 = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).configuration(4).promise)
+        await move1.start().iterations(100).assertCompleted()
+        gbc.assert.selector(config, 4)
+
+        const move2 = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).configuration(0).promise)
+        await move2.start().iterations(100).assertCompleted()
+        gbc.assert.selector(config, 0)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
 test("blend move_to_position (with different orientation)", async () => {
+    init_robot_test()
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
@@ -167,6 +222,7 @@ test("blend move_to_position (with different orientation)", async () => {
 })
 
 test("blend move_to_position (with configuration change)", async () => {
+    init_robot_test()
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
@@ -200,7 +256,8 @@ test("blend move_to_position (with configuration change)", async () => {
     gbc.assert.selector(config, 0)
 })
 
-test("blend move_to_position with move_line (with orientation change)", async () => {
+test("blend move_to_position with move_line (with configuration and orientation change)", async () => {
+    init_robot_test()
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
@@ -208,10 +265,10 @@ test("blend move_to_position with move_line (with orientation change)", async ()
     const move1 = gbc.activity
         .moveToPosition(100, 100, 100)
         .rotationEuler(Math.PI, 0, 0)
+        .configuration(2)
         .params(moveParams).command
     const move2 = gbc.activity
         .moveLine(100, 100, 150)
-        // .rotationEuler(Math.PI, 0, 0)
         .rotationEuler(0, Math.PI, 0)
         .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
@@ -234,7 +291,7 @@ test("blend move_to_position with move_line (with orientation change)", async ()
     }
 
     assertNear(100, 100, 150, 0, Math.PI, 0)
-    gbc.assert.selector(config, INITIAL_CONFIG)
+    gbc.assert.selector(config, 2)
 })
 
 export const robot = test

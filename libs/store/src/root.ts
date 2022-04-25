@@ -10,7 +10,6 @@ import { toolPathSlice } from "./toolpath"
 import { kinematicsSlice } from "./kinematics"
 import { devToolsSlice } from "./devtools"
 import { previewSlice } from "./preview"
-import { jogSlice } from "./jogging"
 import { digitalInputsSlice } from "./io/din"
 import { digitalOutputsSlice } from "./io/dout"
 import { analogInputsSlice } from "./io/ain"
@@ -37,7 +36,6 @@ export const standardReducers = {
     aout: analogOutputsSlice.reducer,
     iin: integerInputsSlice.reducer,
     iout: integerOutputsSlice.reducer,
-    jog: jogSlice.reducer,
     gcode: gcodeSlice.reducer,
     preview: previewSlice.reducer,
     toolPath: toolPathSlice.reducer,

@@ -14,7 +14,7 @@ export {
     FaultCode
 } from "./machine"
 export { useConfig, configSlice } from "./config"
-export { usePrefs } from "./prefs"
+export * from "./prefs"
 export * from "./frames"
 export * from "./tasks"
 export * from "./activity"
@@ -38,7 +38,6 @@ export {
 } from "./kinematics"
 export * from "./toolpath"
 export * from "./devtools"
-export * from "./jogging"
 
 export * from "./root"
 

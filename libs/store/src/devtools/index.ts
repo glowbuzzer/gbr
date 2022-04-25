@@ -24,7 +24,7 @@ export function updateStatusFrequencyMsg(value: number) {
 }
 
 /**
- * @ignore
+ * @ignore - internal to dev tools tile
  */
 export const useDevTools = () => {
     const devtools = useSelector(({ devtools }: RootState) => devtools, shallowEqual)

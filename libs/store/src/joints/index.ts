@@ -5,6 +5,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { JointConfig } from "../gbc"
 import deepEqual from "fast-deep-equal"
+import { useMemo } from "react"
 
 type JointsState = {
     statusWord: number
@@ -19,7 +20,7 @@ export const jointsSlice: Slice<JointsState> = createSlice({
     initialState: [] as JointsState,
     reducers: {
         status: (state, action) => {
-            // called with status.joints from the json every time board sends status message
+            // called with status.joints from the json every time GBC sends status message
             return [...action.payload]
         }
     }
@@ -31,10 +32,14 @@ export function useJointConfig(): ({
 } & JointConfig)[] {
     const config = useConfig()
     // convert keyed object to array
-    return Object.entries(config.joint).map(([name, value]) => ({
-        name,
-        ...value
-    }))
+    return useMemo(
+        () =>
+            Object.entries(config.joint).map(([name, value]) => ({
+                name,
+                ...value
+            })),
+        [config]
+    )
 }
 
 /** Returns the number of joints configured */

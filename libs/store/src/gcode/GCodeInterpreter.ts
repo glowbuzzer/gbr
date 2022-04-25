@@ -2,6 +2,10 @@ import { parseStringSync } from "./GCodeParser"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 
 /**
+ * Code heavily adapted from https://github.com/cncjs/gcode-interpreter/blob/master/src/Interpreter.js
+ */
+
+/**
  * Returns an object composed of arrays of property names and values.
  * @example
  *   fromPairs([['a', 1], ['b', 2]]);

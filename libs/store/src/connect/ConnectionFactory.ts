@@ -8,8 +8,7 @@ import { gcodeSlice, updateStreamStateMsg } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { jogSlice, processJogStateChanges } from "../jogging"
-import { configSlice } from "../config"
+import { configSlice, ConfigState } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
 import { analogOutputsSlice } from "../io/aout"
@@ -45,14 +44,15 @@ abstract class ProcessorBase {
     }
 }
 
-// noinspection DuplicatedCode
+/**
+ * This class handles status messages from GBC and updates the redux store. It also handles
+ * startup behaviour on initial connection to GBC and the transition of GBC into the desired
+ * state in the state machine.
+ */
 class StatusProcessor extends ProcessorBase {
     private tick: number
 
     process_internal(msg, dispatch, ws, getState, first) {
-        const previousJogState = [...getState().jog] // this happens before the status update
-
-        // reducer runs synchronously, so after dispatch the state is updated already
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
         msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
@@ -65,14 +65,11 @@ class StatusProcessor extends ProcessorBase {
         msg.status.iout && dispatch(integerOutputsSlice.actions.status(msg.status.iout))
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
-        msg.status.jog && dispatch(jogSlice.actions.status(msg.status.jog))
 
-        // compare previous jog states with latest
-        processJogStateChanges(previousJogState, getState().jog, msg => ws.send(msg))
-
-        // this is after the status update on slices, so state now has latest from GBC
+        // this is after the status update on slices above, so state now has latest from GBC
         const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
 
+        // do initial connection handling
         if (first) {
             this.tick = 0
 
@@ -85,6 +82,7 @@ class StatusProcessor extends ProcessorBase {
             if (!msg.status.kc) {
                 console.error("First status message did not contain 'kc' info!")
             } else {
+                // update current position within gcode slice with status
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
 
                 const kinematics = getState().kinematics
@@ -93,16 +91,12 @@ class StatusProcessor extends ProcessorBase {
                     if (froTarget === 0) {
                         // set fro to 100% if not already set on connect
                         setTimeout(() => {
-                            console.log("SETTING FRO TO 100 ON KC", n)
                             ws.send(updateFroPercentageMsg(n, 100))
                         }, 1000)
                     }
                 }
             }
             dispatch(telemetrySlice.actions.init())
-
-            // push any override frames on connect (from local storage)
-            // ws.send(updateFrameOverridesMsg(getState().frames.overrides))
         }
 
         if (this.tick % 50 === 0) {
@@ -115,7 +109,7 @@ class StatusProcessor extends ProcessorBase {
         }
 
         if (nextControlWord !== undefined) {
-            console.log("Setting machine control word")
+            // logic wants to dictate new control word to GBC
             ws.send(updateMachineControlWordMsg(nextControlWord))
         }
 
@@ -145,7 +139,6 @@ class DevToolsProcessor extends ProcessorBase {
             // load and send the desired frequency on startup
             try {
                 const value = load()
-                console.log("DISPATCH DESIRED REFRESH FREQUENCY", value)
                 dispatch(() => {
                     ws.send(updateStatusFrequencyMsg(value))
                 })
@@ -187,10 +180,11 @@ if (typeof window !== "undefined") {
                     }
 
                     dispatch(connectionSlice.actions.connecting())
-                    console.log("CONNECTING!!!", new Error().stack)
                     ws = new WebSocket(url)
                     ws.onopen = () => {
+                        // websocket is open, so start expecting status messages
                         start_status_timeout()
+                        // and send a request to get the current config
                         ws.send(
                             JSON.stringify({
                                 request: {
@@ -214,10 +208,12 @@ if (typeof window !== "undefined") {
                         dispatch(connectionSlice.actions.disconnected())
                     }
                     ws.onmessage = event => {
+                        // message received so inspect it to decide where to route it (or parts of it)
                         try {
                             const msg = JSON.parse(event.data)
                             msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
                             if (msg.status) {
+                                // restart status timer
                                 start_status_timeout()
                                 statusProcessor.process(msg, dispatch, ws, getState)
                             }
@@ -228,8 +224,11 @@ if (typeof window !== "undefined") {
                                     store.gcode.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY
                                 ) {
                                     // gbc state is paused by activity -- we want to transition immediately to paused state
+                                    // this is so UI can then allow operator to continue / unpause
                                     ws.send(updateStreamStateMsg(STREAMCOMMAND.STREAMCOMMAND_PAUSE))
                                 }
+                                // there may be capacity on the GBC queue where before there was none, so give
+                                // an opportunity to stream more activities from the gcode queue
                                 GCodeStreamer.update(
                                     dispatch,
                                     store.gcode,
@@ -244,7 +243,7 @@ if (typeof window !== "undefined") {
                                 )
                             }
                             if (msg.response) {
-                                // responses to request we have sent
+                                // responses to request we have sent, eg. request for config
                                 responseProcessor.process(msg, dispatch, ws, getState)
                             }
                             if (msg.devtools) {

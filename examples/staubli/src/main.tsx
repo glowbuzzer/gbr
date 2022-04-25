@@ -103,10 +103,8 @@ export function App() {
 }
 
 ReactDOM.render(
-    <StrictMode>
-        <GlowbuzzerApp>
-            <App />
-        </GlowbuzzerApp>
-    </StrictMode>,
+    <GlowbuzzerApp>
+        <App />
+    </GlowbuzzerApp>,
     document.getElementById("root")
 )

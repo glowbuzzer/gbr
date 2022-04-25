@@ -1,6 +1,5 @@
 import { GlobalStyles } from "../misc/GlobalStyles"
 import { usePrefs } from "@glowbuzzer/store"
-import { ConversionFactors } from "../util/unit_conversion"
 import { Col, Row } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
 import * as React from "react"
@@ -23,7 +22,7 @@ type DroItemProps = {
     /**
      * Whether the value is scalar or angular. This affects automatic unit conversion according to preferences.
      */
-    type: "scalar" | "angular"
+    type: "linear" | "angular"
 
     /**
      * Whether the value is in error (shown in a different colour)
@@ -32,23 +31,18 @@ type DroItemProps = {
 }
 export const DroItem = ({ label, value, type, error }: DroItemProps) => {
     const prefs = usePrefs()
-    const units = "units_" + type
-
-    function convert(k, v) {
-        return v * ConversionFactors[prefs.current[units]]
-    }
 
     return (
         <Row gutter={0}>
             <Col style={styles.label}>{label}</Col>
             <Col style={styles.dro}>
                 <SegmentDisplay
-                    value={convert(label, value)}
+                    value={prefs.fromSI(value, type)}
                     toFixed={4}
                     width={12}
                     error={error}
                 />
-                {prefs.current[units]}
+                {prefs.getUnits(type)}
             </Col>
         </Row>
     )

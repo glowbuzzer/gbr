@@ -3,7 +3,6 @@ import { CSSProperties } from "react"
 import { Col, Row, Slider } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
 import { GlobalStyles } from "../misc/GlobalStyles"
-import { ConversionFactors } from "../util/unit_conversion"
 import {
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
@@ -14,14 +13,6 @@ import {
 } from "@glowbuzzer/store"
 import { Tile } from "../tiles"
 import styled from "styled-components"
-
-// const DisplayValue = ({ value }: { value: number }) => {
-//     if (isNaN(value)) {
-//         return <>{value.toString()}</>
-//     }
-//
-//     return <>{value.toPrecision(4)}</>
-// }
 
 const StyledRow = styled(Row)`
     .slider-wrapper {
@@ -103,12 +94,12 @@ const JointDroItem = ({ index, warningThreshold }) => {
     const { name, finiteContinuous, negLimit, posLimit, jointType } = config
     const { actPos } = j
     const showSlider = finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
-    const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "units_angular" : "units_scalar"
+    const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
 
-    const units = prefs.current[type]
-    const min = negLimit * ConversionFactors[units]
-    const max = posLimit * ConversionFactors[units]
-    const current = actPos * ConversionFactors[units]
+    const units = prefs.getUnits(type)
+    const min = prefs.fromSI(negLimit, type)
+    const max = prefs.fromSI(posLimit, type)
+    const current = prefs.fromSI(actPos, type)
     const warn_range = (posLimit - negLimit) * warningThreshold
     const warn =
         warn_range > 0 && (current < negLimit + warn_range || current > posLimit - warn_range)

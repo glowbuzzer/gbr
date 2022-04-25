@@ -60,7 +60,7 @@ export class StateMachine {
     /**
      * Perform an eval on the given state machine.
      *
-     * Checks the transitions of the currently active state and performs the tr
+     * Checks the possibly transitions of the currently active state and transitions the first new state where the eval function returns `true`.
      * @param machine
      */
     eval(machine: StateMachineDefinition) {

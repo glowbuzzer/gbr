@@ -89,7 +89,6 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     if (!preview.length) {
         return null
     }
-    // noinspection RequiredAttributes
     return (
         <group position={new Vector3(minPoint.x, minPoint.y, 0)}>
             <DashedExtent
@@ -155,7 +154,6 @@ export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps)
         return new Float32BufferAttribute(floats, 3)
     }, [preview, highlightLine])
 
-    // noinspection RequiredAttributes
     return useMemo(
         () => (
             <>

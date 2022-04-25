@@ -1,16 +1,15 @@
-import {createSlice, Slice} from "@reduxjs/toolkit"
-import {shallowEqual, useDispatch, useSelector} from "react-redux"
-import {DesiredState, determine_machine_state, handleMachineState, MachineState} from "./MachineStateHandler"
-import {RootState} from "../root"
-import {useConnection} from "../connect"
-import {updateMachineControlWordMsg, updateMachineTargetMsg} from "./machine_api"
-import {MACHINETARGET} from "../gbc"
-
-// export enum MachineTarget {
-//     NONE,
-//     FIELDBUS,
-//     SIMULATION
-// }
+import { createSlice, Slice } from "@reduxjs/toolkit"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import {
+    DesiredState,
+    determine_machine_state,
+    handleMachineState,
+    MachineState
+} from "./MachineStateHandler"
+import { RootState } from "../root"
+import { useConnection } from "../connect"
+import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
+import { MACHINETARGET } from "../gbc"
 
 // noinspection JSUnusedGlobalSymbols
 export enum FaultCode {
@@ -33,7 +32,7 @@ export enum FaultCode {
     FAULT_CAUSE_MOVE_NOT_OP_EN = 1 << 16
 }
 
-// this is the data coming back from board in status.machine
+// this is the data coming back from GBC in status.machine
 type MachineStatus = {
     statusWord: number
     controlWord: number
@@ -66,7 +65,7 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
     } as MachineSliceType,
     reducers: {
         status: (state, action) => {
-            // called with status.machine from the json every time board sends status message
+            // called with status.machine from the json every time GBC sends status message
             const {
                 statusWord,
                 controlWord,
@@ -104,7 +103,6 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
             state.requestedTarget = action.payload
         },
         setDesiredState: (state, action) => {
-            // console.log("SET DESIRED STATE", action.payload)
             state.desiredState = action.payload
         }
     }

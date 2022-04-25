@@ -38,7 +38,12 @@ export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameS
     render_items(props.items, items, 0, props.defaultFrame)
 
     return (
-        <Select dropdownMatchSelectWidth={200} value={props.value} onChange={props.onChange}>
+        <Select
+            dropdownMatchSelectWidth={200}
+            value={props.value}
+            onChange={props.onChange}
+            size="small"
+        >
             {items}
         </Select>
     )

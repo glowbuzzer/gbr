@@ -9,7 +9,8 @@ import { useFrames } from "../frames"
 import { useRawJointPositions } from "../joints"
 import * as THREE from "three"
 import { Quaternion, Vector3 } from "three"
-import { CartesianPosition, KinematicsConfigurationCommand, Quat } from "../gbc"
+import { KinematicsConfigurationCommand, POSITIONREFERENCE, Quat } from "../gbc"
+import { useMemo } from "react"
 
 enum KINEMATICSCONFIGURATIONTYPE {
     TX40,
@@ -212,8 +213,39 @@ export const useKinematics = (kc: number) => {
     }
 }
 
-export const useKinematicsCartesianPosition = (kc: number): CartesianPosition => {
-    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.position, deepEqual)
+export const useKinematicsConfiguration = (index: number) => {
+    const config = useConfig()
+    const list = Object.values(config.kinematicsConfiguration)
+    return list[index] || list[0]
+}
+
+export const useKinematicsCartesianPosition = (kc: number) => {
+    const config = useKinematicsConfiguration(kc)
+    const state = useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
+    const frameIndex = config?.frameIndex
+
+    return useMemo(() => {
+        if (!state) {
+            return {
+                position: {
+                    translation: { x: 0, y: 0, z: 0 },
+                    rotation: { x: 0, y: 0, z: 0, w: 1 },
+                    positionReference: POSITIONREFERENCE.ABSOLUTE,
+                    frameIndex: 0
+                },
+                configuration: 0
+            }
+        }
+
+        return {
+            configuration: state?.currentConfiguration,
+            position: {
+                ...state.position,
+                frameIndex: frameIndex,
+                positionReference: POSITIONREFERENCE.ABSOLUTE
+            }
+        }
+    }, [state, frameIndex])
 }
 
 export const useTcp = (kc: number, frame: number | "world") => {

@@ -3,15 +3,16 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { settings } from "../util/settings"
 import { useMemo } from "react"
 import { RootState } from "../root"
+import { ConversionFactors } from "./unit_conversion"
 
 const default_prefs = {
-    units_scalar: "mm",
+    units_linear: "mm",
     units_angular: "rad",
     url: "ws://localhost:9001/ws"
 }
 
 type PrefsState = {
-    units_scalar: "mm" | "in"
+    units_linear: "mm" | "in"
     units_angular: "rad" | "deg"
     url: string
 } & { [index: string]: string }
@@ -47,7 +48,7 @@ export const prefsSlice: Slice<PrefsState> = createSlice({
 export function usePrefs(): {
     current: {
         /** Default scalar units */
-        units_scalar: "mm" | "in"
+        units_linear: "mm" | "in"
         /** Default angular units */
         units_angular: "rad" | "deg"
         /** Connection url for GBC websocket */
@@ -56,13 +57,29 @@ export function usePrefs(): {
         /** Application defined preferences */
         [index: string]: string
     }
+    /** Store preference */
     update(name, value): void
+    /** Convert value in preferred units to SI */
+    toSI(value: number, type: "linear" | "angular"): number
+    /** Convert value in SI to preferred units */
+    fromSI(value: number, type: "linear" | "angular"): number
+    /** Get current units of type */
+    getUnits(type: "linear" | "angular"): string
 } {
     const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
     const dispatch = useDispatch()
     return useMemo(
         () => ({
             current: prefs,
+            toSI(value: number, type): number {
+                return value * ConversionFactors[prefs["units_" + type]]
+            },
+            fromSI(value: number, type): number {
+                return value / ConversionFactors[prefs["units_" + type]]
+            },
+            getUnits(type: "linear" | "angular"): string {
+                return prefs["units_" + type]
+            },
             update(name, value) {
                 dispatch(prefsSlice.actions.set({ name, value }))
             }
@@ -70,3 +87,5 @@ export function usePrefs(): {
         [dispatch, prefs]
     )
 }
+
+export * from "./unit_conversion"

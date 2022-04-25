@@ -1,16 +1,18 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 import { Button, Input } from "antd"
 import { ConversionFactors, usePrefs } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import styled from "styled-components"
 
 export type JogGotoItem = {
-    key: string
+    key: string | number
     type: "linear" | "angular"
     label: string
 }
 
 const StyledDiv = styled.div`
+    padding: 8px 0;
+
     .invalid .ant-input {
         border: 1px solid red;
         background: rgba(255, 0, 0, 0.1);
@@ -20,21 +22,25 @@ const StyledDiv = styled.div`
         display: flex;
 
         .ant-input-group-wrapper {
-            width: 0;
-            min-width: 167px;
-        }
-
-        .ant-input {
-            width: 0;
-            min-width: 120px;
+            max-width: 140px;
+            flex-grow: 2;
+            .ant-input-wrapper {
+                .ant-input {
+                }
+                .ant-input-group-addon {
+                    width: 50px;
+                }
+            }
         }
 
         .ant-btn:nth-child(2) {
-            width: 150px;
+            flex-grow: 1;
+            padding: 0 20px;
         }
 
         .ant-btn:nth-child(3) {
-            width: 80px;
+            flex-grow: 1;
+            padding: 0 20px;
         }
     }
 `
@@ -42,10 +48,17 @@ const StyledDiv = styled.div`
 type JogGotoInputPanelProps = {
     localStorageKey: string
     items: JogGotoItem[]
+    onGoto(key: string | number, value: number)
+    onGotoAll(values: { [index: string]: number })
 }
 
-export const JogGotoInputPanel = ({ localStorageKey, items }: JogGotoInputPanelProps) => {
-    const { getUnits } = usePrefs()
+export const JogGotoInputPanel = ({
+    localStorageKey,
+    items,
+    onGoto,
+    onGotoAll
+}: JogGotoInputPanelProps) => {
+    const { toSI, getUnits } = usePrefs()
     const [values, setValues] = useLocalStorage<string[]>(localStorageKey, [])
 
     const linearUnits = getUnits("linear")
@@ -59,23 +72,24 @@ export const JogGotoInputPanel = ({ localStorageKey, items }: JogGotoInputPanelP
             const values = items.map(({ type }, index) => {
                 let value = Number(current[index]) || 0
 
-                const from = ConversionFactors[linearUnitsRef.current]
-                const to = ConversionFactors[linearUnits]
                 if (type === "linear" && linearUnits !== linearUnitsRef.current) {
-                    console.log("CONVERT", linearUnitsRef.current, linearUnits, value, from, to)
+                    const from = ConversionFactors[linearUnitsRef.current]
+                    const to = ConversionFactors[linearUnits]
                     value = (value * from) / to
-                    console.log("NEW VALUE", value)
                 }
 
-                // return "100"
-                return value.toFixed(2)
-                // return type === "linear" ? "xxxx" : "yyyy"
+                if (type === "angular" && angularUnits !== angularUnitsRef.current) {
+                    const from = ConversionFactors[angularUnitsRef.current]
+                    const to = ConversionFactors[angularUnits]
+                    value = (value * from) / to
+                }
+
+                return value.toString()
             })
 
             linearUnitsRef.current = linearUnits
             angularUnitsRef.current = angularUnits
 
-            console.log("VALUES IN USE EFFECT", values)
             return values
         })
     }, [items, linearUnits, angularUnits, setValues])
@@ -86,28 +100,46 @@ export const JogGotoInputPanel = ({ localStorageKey, items }: JogGotoInputPanelP
 
     const invalid = items.map((_, index) => isNaN(Number(values[index])))
 
-    console.log("VALUES", values)
+    function goto(key: string | number, index: number) {
+        // always execute in SI units
+        const value = toSI(Number(values[index]), items[index].type)
+        onGoto(key, value)
+    }
+
+    function goto_all() {
+        onGotoAll(
+            Object.fromEntries(
+                items.map(({ key, type }, index) => [key, toSI(Number(values[index]), type)])
+            )
+        )
+    }
 
     return (
         <StyledDiv>
-            {values.map((v, index) => {
-                console.log("VALUE", v)
-                const { label, type } = items[index]
-                return (
-                    <div>
-                        <Input
-                            className={invalid[index] ? "invalid" : ""}
-                            addonAfter={getUnits(type)}
-                            value={values[index]}
-                            onChange={e => update_position(index, e.target.value)}
-                        />
-                        <Button onClick={() => {}}>Go to {label}</Button>
-                        <Button onClick={() => update_position(index, "0")}>Zero</Button>
-                    </div>
-                )
-            })}
+            {items.map(({ key, type, label }, index) => (
+                <div key={index}>
+                    <Input
+                        size="small"
+                        className={invalid[index] ? "invalid" : ""}
+                        addonAfter={getUnits(type)}
+                        value={values[index]}
+                        onChange={e => update_position(index, e.target.value)}
+                    />
+                    <Button size="small" onClick={() => goto(key, index)} disabled={invalid[index]}>
+                        Go to {label}
+                    </Button>
+                    <Button size="small" onClick={() => update_position(index, "0")}>
+                        Zero
+                    </Button>
+                </div>
+            ))}
             <div>
-                <Button block={true} onClick={() => {}}>
+                <Button
+                    size="small"
+                    block={true}
+                    onClick={goto_all}
+                    disabled={invalid.some(p => p)}
+                >
                     Go to All
                 </Button>
             </div>

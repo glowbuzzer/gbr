@@ -5,7 +5,7 @@ import { Select } from "antd"
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Option = Select.Option as any // hack alert
 
-const scalar_units = {
+const linear_units = {
     mm: "Millimeters",
     in: "Inches"
 }
@@ -15,7 +15,7 @@ const angular_units = {
     deg: "Degrees"
 }
 
-export const UnitSelector = ({ type }: { type: "scalar" | "angular" }) => {
+export const UnitSelector = ({ type }: { type: "linear" | "angular" }) => {
     const prefs = usePrefs()
     const key = "units_" + type
 
@@ -24,7 +24,7 @@ export const UnitSelector = ({ type }: { type: "scalar" | "angular" }) => {
     }
 
     const pref = prefs.current[key]
-    const units = type === "scalar" ? scalar_units : angular_units
+    const units = type === "linear" ? linear_units : angular_units
 
     return (
         <Select defaultValue={pref} onChange={change} dropdownMatchSelectWidth={200}>

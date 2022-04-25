@@ -18,9 +18,8 @@ const MOVE_COLOR = fromHexString("#0037be")
 
 export class GCodePreviewAdapter extends GCodeInterpreter {
     readonly segments: GCodeSegment[] = []
-    // private frameIndex = 0
     private kcFrame: number
-    private convertToFrame
+    private readonly convertToFrame
 
     constructor(currentPosition: CartesianPosition, kcFrame, convertToFrame) {
         super(currentPosition)
@@ -31,6 +30,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
 
     protected shiftPositions(prev, next) {
         if (next.positionReference === POSITIONREFERENCE.RELATIVE) {
+            // handle relative moves by incrementing position x,y,z rather than base implementation which is a pass-through
             return [
                 prev,
                 {
@@ -54,7 +54,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
             .translation
     }
 
-    toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
+    private toSegments(points: Vector3[], color: number[], lineNum?: number): GCodeSegment[] {
         const result: GCodeSegment[] = []
         points.slice(1).forEach((p, index) =>
             result.push({
@@ -67,7 +67,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         return result
     }
 
-    pushArc(
+    private pushArc(
         lineNum: number,
         params,
         ccw: boolean,
@@ -140,17 +140,16 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         )
     }
 
-    G0(params, { lineNum }, fromCp: CartesianPosition, toCp: CartesianPosition) {
-        const [from, to] = [fromCp, toCp].map(position => this.frame_conversion(position))
+    G0(params, { lineNum }, from: CartesianPosition, to: CartesianPosition) {
         this.segments.push({
-            from,
-            to,
+            from: this.frame_conversion(from),
+            to: this.frame_conversion(to),
             color: RAPID_COLOR,
             lineNum
         })
     }
 
-    G1(params, { lineNum }, from, to) {
+    G1(params, { lineNum }, from: CartesianPosition, to: CartesianPosition) {
         this.segments.push({
             from: this.frame_conversion(from),
             to: this.frame_conversion(to),
@@ -159,11 +158,11 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         })
     }
 
-    G2(params, { lineNum }, from, to) {
+    G2(params, { lineNum }, from: CartesianPosition, to: CartesianPosition) {
         this.pushArc(lineNum, params, false, from, to)
     }
 
-    G3(params, { lineNum }, from, to) {
+    G3(params, { lineNum }, from: CartesianPosition, to: CartesianPosition) {
         this.pushArc(lineNum, params, true, from, to)
     }
 }

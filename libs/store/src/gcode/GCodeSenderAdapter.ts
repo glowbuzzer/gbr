@@ -15,16 +15,17 @@ import { GCodeContextType } from "./index"
 import { GCodeActivityProvider } from "../activity/GCodeActivityProvider"
 import { MoveArcBuilder } from "../activity"
 
-// responsible for converting gcode to internal representation and doing buffered send to m4
-
 // noinspection JSUnusedGlobalSymbols
+/**
+ * This class is responsible for converting gcode to the glowbuzzer wire format and doing a buffered send to GBC
+ */
 export class GCodeSenderAdapter extends GCodeInterpreter {
     // default move params
     private moveParams = {
         vmaxPercentage: 100, // this is the default, full speed
         amaxPercentage: 100,
         jmaxPercentage: 100,
-        blendType: 0,
+        blendType: BLENDTYPE.BLENDTYPE_NONE, // blending disabled
         blendTimePercentage: 100
     }
     // private frameIndex = 0
@@ -56,7 +57,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.simplifyTolerance = simplifyTolerance
     }
 
-    arcActivity(lineNum: number, params, ccw: boolean): MoveArcBuilder {
+    private arcActivity(lineNum: number, params, ccw: boolean): MoveArcBuilder {
         const I = params.I * this.unitConversion || 0
         const J = params.J * this.unitConversion || 0
         const R = params.R * this.unitConversion || 0
@@ -88,7 +89,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             })
     }
 
-    push(primitive) {
+    private push(primitive) {
         this.buffer.push({
             ...primitive,
             canMergePrevious:
@@ -104,6 +105,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.canMergePrevious = supported_move && !vmax_changed
     }
 
+    /**
+     * This function post-processes moves and applies a simplification algorithm to reduce the absolute number of moves required
+     * based on a path tolerance. It has some complex logic to convert relative moves to absolute where possible. We don't know at the
+     * time the gcode is interpreted the precise location of the machine, and relative moves are streamed to GBC for interpretation
+     * in real time. But we can fill in some blanks in relatives moves and the `make_rel_adapter` function does so before moves are
+     * passed to the simplification algorithm.
+     */
     post() {
         function make_abs_adapter() {
             let tracker = { x: null, y: null, z: null }
@@ -162,7 +170,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             }
         }
 
-        // here we want to simplify straight line segments
+        // batch up and simplify straight line segments
         for (let n = 0; n < this.buffer.length; n++) {
             let merge = 0
             while (this.buffer[n + merge + 1]?.canMergePrevious) {
@@ -224,6 +232,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     T(params) {
+        // just update the previous and current tool index
         this.previousToolIndex = this.toolIndex
         this.toolIndex = Number(params)
     }
@@ -232,6 +241,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.push(this.api.setTag(line.lineNum).endProgram().command)
     }
 
+    // run spindle clockwise
     M3(params, line: GCodeLine) {
         this.S(params.S) // modal S code
         this.push(
@@ -241,6 +251,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         )
     }
 
+    // run spindle counter-clockwise
     M4(params, line: GCodeLine) {
         this.S(params.S) // modal S code
         this.push(
@@ -250,11 +261,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         )
     }
 
+    // stop spindle
     M5(params, line: GCodeLine) {
         this.S(params.S) // modal S code
         this.push(this.api.setTag(line.lineNum).spindle(0, false).command)
     }
 
+    // handle tool change, if a callback function is registered
     M6(params, line: GCodeLine) {
         this.api.setTag(line.lineNum)
         // tool change
@@ -275,12 +288,9 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     M8(params, line: GCodeLine) {
         this.push(this.api.setTag(line.lineNum).endProgram().command)
-
-        // this.push({
-        //     activityType: ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
-        // })
     }
 
+    // set a digital out
     M200(params, line: GCodeLine) {
         const { U, V } = params
         this.push(
@@ -288,20 +298,21 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         )
     }
 
+    // set an analog out
     M201(params, line: GCodeLine) {
         const { U, V } = params
         this.push(this.api.setTag(line.lineNum).setAout(U || 0, Number(V).valueOf() || 0).command)
     }
 
+    // set an integer out
     M202(params, line: GCodeLine) {
         const { U, V } = params
         this.push(this.api.setTag(line.lineNum).setIout(U || 0, Number(V).valueOf() || 0).command)
     }
 
     G0(params, line: GCodeLine) {
-        // this.updateModals(params)
         this.api.setTag(line.lineNum)
-        // for now we treat rapids as a linear move but with a different limit profile
+        // we treat rapids as a linear move but with a different limit profile
         // (if specified, otherwise gbc will default to regular limits)
         // F param is ignored
         this.push(
@@ -314,40 +325,10 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
                     blendType: BLENDTYPE.BLENDTYPE_NONE
                 }).command
         )
-
-        // if (params.F) {
-        //     // turn this into a linear move_line
-        //     const vmaxPercentage = Math.ceil((params.F / this.vmax) * 100)
-        //     this.push(
-        //         this.api
-        //             .moveLine()
-        //             .setFromCartesianPosition(this.position)
-        //             .params({
-        //                 ...this.moveParams,
-        //                 vmaxPercentage,
-        //                 blendType: BLENDTYPE.BLENDTYPE_NONE
-        //             }).command
-        //     )
-        // } else {
-        //     // use basic move_to_position using full joint limits
-        //     this.push(
-        //         this.api
-        //             .moveToPosition()
-        //             .setFromCartesianPosition(this.position)
-        //             .configuration(0)
-        //             .params({
-        //                 ...this.moveParams,
-        //                 limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_RAPIDS,
-        //                 blendType: BLENDTYPE.BLENDTYPE_NONE
-        //             }).command
-        //     )
-        // }
     }
 
     G1(params, line: GCodeLine) {
-        this.updateVmax(params)
-
-        this.F(params.F)
+        this.F(params.F) // modal feedrate
         this.push(
             this.api
                 .setTag(line.lineNum)
@@ -402,7 +383,6 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     S(value) {
         if (value) {
-            console.log("SET SPINDLE SPEED!!", value)
             this.spindleSpeed = value
         }
     }
@@ -413,11 +393,5 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     private setVmaxPercentage(value) {
         this.vmaxPercentage = this.convertVmaxPercentage(value)
-    }
-
-    private updateVmax(params) {
-        if (params.F) {
-            this.setVmaxPercentage(params.F)
-        }
     }
 }

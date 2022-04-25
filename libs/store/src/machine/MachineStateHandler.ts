@@ -1,4 +1,7 @@
-/* eslint-disable no-mixed-operators */
+/**
+ * The code in this file looks at the cia402 state given in messages from GBC and the desired state wanted by GBR
+ * and determines what state command should next be sent in order to transition the state machine towards the desired state.
+ */
 
 export enum MachineState {
     UNKNOWN = "UNKNOWN",

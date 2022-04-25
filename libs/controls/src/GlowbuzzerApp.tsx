@@ -1,34 +1,17 @@
 import * as React from "react"
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, useEffect, useRef } from "react"
 import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
 import {
     ConfigState,
-    connectionSlice,
     ConnectionState,
     rootReducer,
     useConfigState,
-    useConnection,
-    usePrefs
+    useConnection
 } from "@glowbuzzer/store"
 import styled, { css, ThemeProvider } from "styled-components"
 import { Button } from "antd"
-import { CloseOutlined, ReloadOutlined } from "@ant-design/icons"
-
-const Startup = ({ autoConnect }) => {
-    const connection = useConnection()
-    const prefs = usePrefs()
-
-    useEffect(() => {
-        if (autoConnect) {
-            console.log("AUTO CONNECT")
-            connection.connect(prefs.current.url)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [autoConnect])
-
-    return null
-}
+import { CloseOutlined } from "@ant-design/icons"
 
 const theme = {
     colors: {
@@ -44,10 +27,6 @@ declare module "styled-components" {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     export interface DefaultTheme extends Theme {}
 }
-
-const GlowbuzzerAppStyle = styled.div<{ minWidth: string }>`
-    // min-width: ${props => props.minWidth};
-`
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     display: none;
@@ -78,69 +57,26 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
 `
 
 type GlowbuzzerContainerProps = {
-    minWidth?: string
     init?(connection)
 }
 
-const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, minWidth }) => {
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) => {
     const connection = useConnection()
     const [configState, setConfigState] = useConfigState()
+    const connectDelay = useRef(0)
 
-    const [countdown, setCountdown] = useState(-1)
-    const [showRetry, setShowRetry] = useState(false)
-    // const timer = useRef(null)
-    const interval = useRef(0)
-
-    const { autoConnect, state, reconnect } = connection
-    useEffect(() => {
-        if (autoConnect && state === ConnectionState.DISCONNECTED) {
-            // trigger immediate attempt to connect
-            interval.current = Math.max(3, Math.min(30, interval.current * 2))
-            setCountdown(c => (c < 0 ? 0 : c))
-            // timer.current = setInterval(() => {
-            //     console.log("TIMER FIRED")
-            //     setCountdown(countdown => {
-            //         countdown--
-            //         console.log("COUNTDOWN", countdown)
-            //         if (countdown === 0) {
-            //             console.log("COUNTDOWN AT ZERO")
-            //             interval.current = Math.min(30, interval.current * 2)
-            //             countdown = interval.current
-            //             setShowRetry(false)
-            //
-            //             if ( connection.state === ConnectionState.DISCONNECTED ) {
-            //                 setTimeout(() => {
-            //                     console.log("CALLING RECONNECT")
-            //                     connection.reconnect()
-            //                 }, 0)
-            //             }
-            //         } else {
-            //             setShowRetry(true)
-            //         }
-            //         return countdown
-            //     })
-            // }, 1000)
-            // return () => clearInterval(timer.current)
-        }
-    }, [autoConnect, state])
+    const { state, autoConnect, reconnect } = connection
 
     useEffect(() => {
-        if (countdown === 0) {
-            setCountdown(-1)
-            // if ( state === ConnectionState.DISCONNECTED ) {
-            //     setCountdown(interval.current)
-            // }
-            setTimeout(() => {
-                reconnect()
-            }, 0)
-        } else if (countdown > 0 && autoConnect) {
-            if (countdown > 3) {
-                setShowRetry(true)
-            }
-            const timer = setTimeout(() => setCountdown(c => c - 1), 1000)
-            return () => clearTimeout(timer)
+        if (state === ConnectionState.DISCONNECTED && autoConnect) {
+            setTimeout(reconnect, connectDelay.current)
+            connectDelay.current = 5000
         }
-    }, [autoConnect, countdown, reconnect])
+    }, [state, autoConnect, reconnect])
+
+    useEffect(() => {
+        connectDelay.current = 0
+    }, [autoConnect])
 
     useEffect(() => {
         if (configState === ConfigState.AWAITING_HLC_INIT) {
@@ -149,17 +85,15 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
         }
     }, [init, configState, setConfigState])
 
-    function retry_now() {
-        setCountdown(2)
-    }
-
     function cancel() {
-        setCountdown(2)
-        interval.current = 3
         connection.setAutoConnect(false)
     }
 
     function ConfigStateMessage() {
+        if (state !== ConnectionState.CONNECTED) {
+            return <>Connecting...</>
+        }
+
         switch (configState) {
             case ConfigState.AWAITING_CONFIG:
                 return <>Waiting for config</>
@@ -171,7 +105,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
     }
 
     return (
-        <GlowbuzzerAppStyle minWidth={minWidth || "3160px"}>
+        <div>
             <GlowbuzzerDimmerStyle
                 visible={
                     !(connection.connected && configState === ConfigState.READY) &&
@@ -180,42 +114,25 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init, min
             >
                 <div className="reconnect-panel">
                     <div>
-                        {showRetry && countdown > 2 ? (
-                            <>
-                                <p>Retry in {countdown} second(s).</p>
-                                <p>
-                                    <Button icon={<ReloadOutlined />} onClick={retry_now}>
-                                        Retry Now
-                                    </Button>
-                                    &nbsp;
-                                    <Button icon={<CloseOutlined />} onClick={cancel}>
-                                        Cancel
-                                    </Button>
-                                </p>
-                            </>
-                        ) : (
+                        <p>
                             <ConfigStateMessage />
-                        )}
+                        </p>
+                        <Button icon={<CloseOutlined />} onClick={cancel}>
+                            Cancel
+                        </Button>
                     </div>
                 </div>
             </GlowbuzzerDimmerStyle>
             {children}
-        </GlowbuzzerAppStyle>
+        </div>
     )
 }
 
 type GlowbuzzerAppProps = {
-    autoConnect?: boolean
-    minWidth?: string
     storeEnhancers?: StoreEnhancer[]
 }
 
-export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({
-    autoConnect,
-    minWidth,
-    storeEnhancers,
-    children
-}) => {
+export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({ storeEnhancers, children }) => {
     const middleware = getDefault => {
         return getDefault({ immutableCheck: false, serializableCheck: false })
     }
@@ -226,14 +143,10 @@ export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({
         enhancers: storeEnhancers
     })
 
-    // pass autoConnect setting to the store on startup
-    store.dispatch(connectionSlice.actions.autoConnect(autoConnect))
-
     return (
         <ThemeProvider theme={theme}>
             <Provider store={store}>
-                <Startup autoConnect={autoConnect} />
-                <GlowbuzzerContainer minWidth={minWidth}>{children}</GlowbuzzerContainer>
+                <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
             </Provider>
         </ThemeProvider>
     )

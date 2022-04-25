@@ -30,19 +30,12 @@ type CartesianDisplayProps = {
 }
 
 const types = {
-    x: "scalar",
-    y: "scalar",
-    z: "scalar",
+    x: "linear",
+    y: "linear",
+    z: "linear",
     a: "angular",
     b: "angular",
     c: "angular"
-}
-
-function invert_kc_local(p: Vector3, q: Quaternion) {
-    return {
-        translation: new Vector3(-p.x, -p.y, -p.z),
-        rotation: q.clone().invert()
-    }
 }
 
 export const CartesianDro = (props: CartesianDisplayProps) => {

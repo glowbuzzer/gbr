@@ -287,8 +287,6 @@ export class ActivityApiImpl
         } else if (state === ACTIVITYSTATE.ACTIVITY_CANCELLED) {
             const current = promiseFifo.shift()
             current?.resolve({ tag: current.tag, completed: false })
-        } else {
-            // console.log("TAG RUNNING BUT NOT COMPLETED", tag)
         }
     }
 }

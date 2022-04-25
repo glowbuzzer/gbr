@@ -11,7 +11,7 @@ import {
     useToolPath,
     useToolPathSettings
 } from "@glowbuzzer/store"
-import { ToolPath } from "./ToolPathFiber"
+import { ToolPath } from "./ToolPath"
 import { Canvas } from "react-three-fiber"
 import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
@@ -103,7 +103,6 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
         )
     }, [extentsX, extentsY, extentsZ, settings])
 
-    // noinspection RequiredAttributes
     return (
         <Tile
             title={"Toolpath"}
@@ -133,6 +132,7 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
                     <WorkspaceDimensions extent={extent} />
 
                     <ToolPath path={path} />
+
                     {disabled ? null : (
                         <PreviewPath
                             preview={segments}

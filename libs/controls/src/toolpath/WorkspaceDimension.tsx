@@ -9,7 +9,6 @@ type WorkspaceDimensionProps = {
 export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
     const fontSize = extent / 10
     const maxWidth = extent
-    // noinspection RequiredAttributes
     return (
         <>
             <Text

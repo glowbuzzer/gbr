@@ -29,7 +29,7 @@ export const activitySlice: Slice<
 /**
  * Instantiates and returns a solo activity API on a given kinematics configuration (KC) index.
  *
- * Each KC can have at most one solo activity executing againt it at any time. For more information see {@link SoloActivityApi}.
+ * Each KC can have at most one solo activity executing at any time. For more information see {@link SoloActivityApi}.
  *
  * @param index The kinematics configuration index the solo activity API will execute against
  */
@@ -39,8 +39,6 @@ export function useSoloActivity(index = 0): SoloActivityApi {
         ({ activity }: RootState) => activity[index],
         deepEqual
     ) as ActivityStatus
-    // const currentTag = useRef(1) // initial value will be zero on m7
-    // const promiseRef = useRef<{ tag: number; resolve; reject }>()
 
     const api = useMemo(() => {
         return new ActivityApiImpl(index, connection.send)

@@ -62,7 +62,7 @@ export function updateFrameOverridesMsg(overrides: number[][]) {
     })
 }
 
-/** @ignore */
+/** @ignore - currently part of the internal API */
 export const useFrames = () => {
     const dispatch = useDispatch()
     const connection = useConnection()

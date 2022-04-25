@@ -17,7 +17,6 @@ import {
     SetAoutCommand,
     SetDoutCommand,
     SetIoutCommand,
-    SpindleConfig,
     SPINDLEDIRECTION,
     SpindleStream,
     TRIGGERTYPE,
@@ -564,7 +563,6 @@ export class ToolOffsetBuilder extends ActivityBuilder {
 
     protected build() {
         return {
-            // kinematicsConfigurationIndex: this.controller.kinematicsConfigurationIndex,
             toolIndex: this._toolIndex
         }
     }

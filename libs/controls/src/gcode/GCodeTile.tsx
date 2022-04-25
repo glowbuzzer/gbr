@@ -25,18 +25,6 @@ import styled, { css } from "styled-components"
 import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
-// import loadable from "@loadable/component"
-
-// const AceEditor = loadable(async () => {
-//     if (typeof window !== "undefined") {
-//         const editor = await import("react-ace")
-//         // import("ace-builds/src-noconflict/theme-github")
-//         // import("ace-builds/src-noconflict/mode-gcode")
-//         // import("ace-builds/src-noconflict/mode-text")
-//         return editor
-//     }
-//     return null
-// })
 
 const { Option } = Select
 
@@ -76,7 +64,7 @@ export const GCodeTile = () => {
     const workOffset = frames.active
     const config = useConfig()
     const offset = useKinematicsOffset(0)
-    const position = useKinematicsCartesianPosition(0)
+    const position = useKinematicsCartesianPosition(0).position
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
@@ -109,7 +97,6 @@ export const GCodeTile = () => {
     }
 
     function update_cursor(e) {
-        // console.log(e.cursor.row)
         preview.setHighlightLine(e.cursor.row + 1)
     }
 
@@ -156,8 +143,6 @@ export const GCodeTile = () => {
             send_gcode()
         }
     }
-
-    // console.log("GCODE", gcode)
 
     return (
         <Tile

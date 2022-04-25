@@ -30,8 +30,8 @@ export const PreferencesDialog = ({ visible, onClose }: PreferencesDialogProps) 
                     <Input defaultValue={prefs.current.url} onChange={update_url} />
                 </Form.Item>
 
-                <Form.Item label="Scalar Units" labelCol={labelCol} wrapperCol={wrapperCol}>
-                    <UnitSelector type="scalar" />
+                <Form.Item label="Linear Units" labelCol={labelCol} wrapperCol={wrapperCol}>
+                    <UnitSelector type="linear" />
                 </Form.Item>
                 <Form.Item label="Angular Units" labelCol={labelCol} wrapperCol={wrapperCol}>
                     <UnitSelector type="angular" />

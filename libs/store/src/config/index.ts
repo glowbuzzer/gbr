@@ -13,6 +13,7 @@ import {
     FramesConfig,
     IinConfig,
     IoutConfig,
+    JOINT_TYPE,
     JointConfig,
     KC_KINEMATICSCONFIGURATIONTYPE,
     KinematicsConfigurationConfig,
@@ -29,6 +30,7 @@ import { RootState } from "../root"
 // const { load, save } = settings("store.config") // we will load/save config as it comes from gbc
 
 const DEFAULT_JOINT_CONFIG = {
+    jointType: JOINT_TYPE.JOINT_PRISMATIC,
     pmin: -100,
     pmax: 100,
     vmax: 2000,

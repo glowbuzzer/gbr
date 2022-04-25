@@ -32,7 +32,7 @@ export const connectionSlice: Slice<
     initialState: {
         state: ConnectionState.DISCONNECTED as ConnectionState,
         error: null,
-        autoConnect: true,
+        autoConnect: false,
         statusReceived: true // assume all okay at start
     } as ConnectionSliceType,
     reducers: {
