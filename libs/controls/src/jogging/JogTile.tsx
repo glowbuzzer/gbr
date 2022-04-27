@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { Tile } from "../tiles"
-import { useConfig } from "@glowbuzzer/store"
+import { KC_KINEMATICSCONFIGURATIONTYPE, useConfig } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Radio, Select, Slider } from "antd"
 import { StyledControls } from "../util/styled"
@@ -71,32 +71,34 @@ const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => 
             )
     }
 }
-const JogPanel = ({ jogMoveMode, jogMode, jogSpeed }) => {
-    const [selectedKc, setSelectedKc] = useLocalStorage("jog.kc", null)
 
+const NotSupportedDiv = styled.div`
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+`
+
+const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex }) => {
     const config = useConfig()
-    const kcs = Object.keys(config.kinematicsConfiguration)
-
-    useEffect(() => {
-        if (!selectedKc || !kcs.includes(selectedKc)) {
-            setSelectedKc(kcs[0])
-        }
-    }, [kcs, selectedKc, setSelectedKc])
-
-    const kinematicsConfigurationIndex = kcs.indexOf(selectedKc) || 0
-
     const kcConfig = Object.values(config.kinematicsConfiguration)[kinematicsConfigurationIndex]
     const defaultFrameIndex = kcConfig.frameIndex
 
+    const supports_cartesian =
+        kcConfig.kinematicsConfigurationType !== KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED
+
     switch (jogMoveMode) {
         case JogMoveMode.CARTESIAN:
-            return (
+            return supports_cartesian ? (
                 <JogCartesianPanel
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                     defaultFrameIndex={defaultFrameIndex}
                 />
+            ) : (
+                <NotSupportedDiv>Cartesian kinematics not supported</NotSupportedDiv>
             )
         case JogMoveMode.JOINT:
             return (
@@ -121,6 +123,8 @@ export const JogTile = () => {
 
     const config = useConfig()
     const kcs = Object.keys(config.kinematicsConfiguration)
+
+    const kinematicsConfigurationIndex = Math.max(kcs.indexOf(selectedKc), 0)
 
     useEffect(() => {
         if (!selectedKc || !kcs.includes(selectedKc)) {
@@ -180,7 +184,12 @@ export const JogTile = () => {
             }
         >
             <TileInner>
-                <JogPanel jogMoveMode={jogMoveMode} jogMode={jogMode} jogSpeed={jogSpeed} />
+                <JogPanel
+                    kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    jogMoveMode={jogMoveMode}
+                    jogMode={jogMode}
+                    jogSpeed={jogSpeed}
+                />
             </TileInner>
         </Tile>
     )

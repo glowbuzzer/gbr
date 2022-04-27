@@ -22,11 +22,13 @@ const StyledDiv = styled.div`
         display: flex;
 
         .ant-input-group-wrapper {
-            max-width: 140px;
-            flex-grow: 2;
+            max-width: 180px;
+            flex-grow: 3;
+
             .ant-input-wrapper {
                 .ant-input {
                 }
+
                 .ant-input-group-addon {
                     width: 50px;
                 }
@@ -34,11 +36,13 @@ const StyledDiv = styled.div`
         }
 
         .ant-btn:nth-child(2) {
+            flex-basis: 0;
             flex-grow: 1;
             padding: 0 20px;
         }
 
         .ant-btn:nth-child(3) {
+            flex-basis: 0;
             flex-grow: 1;
             padding: 0 20px;
         }
@@ -133,16 +137,18 @@ export const JogGotoInputPanel = ({
                     </Button>
                 </div>
             ))}
-            <div>
-                <Button
-                    size="small"
-                    block={true}
-                    onClick={goto_all}
-                    disabled={invalid.some(p => p)}
-                >
-                    Go to All
-                </Button>
-            </div>
+            {items.length > 1 && (
+                <div>
+                    <Button
+                        size="small"
+                        block={true}
+                        onClick={goto_all}
+                        disabled={invalid.some(p => p)}
+                    >
+                        Go to All
+                    </Button>
+                </div>
+            )}
         </StyledDiv>
     )
 }

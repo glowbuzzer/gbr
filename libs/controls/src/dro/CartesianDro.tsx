@@ -117,8 +117,12 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
                     </div>
                 )}
                 <div>
-                    <Button onClick={zero_dro}>Zero DRO</Button>
-                    <Button onClick={reset_dro}>Reset DRO</Button>
+                    <Button onClick={zero_dro} size="small">
+                        Zero DRO
+                    </Button>
+                    <Button onClick={reset_dro} size="small">
+                        Reset DRO
+                    </Button>
                 </div>
             </Space>
             {display.map(k => {

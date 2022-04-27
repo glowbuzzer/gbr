@@ -73,7 +73,7 @@
                 2
             ],
             "participatingJointsCount": 3,
-            "kinematicsConfigurationType": 3,
+            "kinematicsConfigurationType": 4,
             "extentsX": [
                 -100,
                 100
@@ -153,7 +153,7 @@
                 3
             ],
             "participatingJointsCount": 1,
-            "kinematicsConfigurationType": 3,
+            "kinematicsConfigurationType": 4,
             "linearLimits": [
                 {
                     "vmax": 200,

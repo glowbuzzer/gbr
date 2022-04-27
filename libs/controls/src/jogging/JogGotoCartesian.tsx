@@ -179,7 +179,11 @@ export const JogGotoCartesian = ({
                     />
                 </Tab>
                 <Tab value={Mode.WAYPOINT} mode={mode}>
-                    <WaypointsCartesian position={waypoint} onSelect={goto_waypoint} />
+                    <WaypointsCartesian
+                        kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                        position={waypoint}
+                        onSelect={goto_waypoint}
+                    />
                 </Tab>
             </div>
         </StyledJogDiv>

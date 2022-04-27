@@ -174,6 +174,8 @@
   JOINT_CONTINUOUS ,
     }
     export enum KC_KINEMATICSCONFIGURATIONTYPE {
+        /**  The kinematics configuration will have no kinematics model (algorithm) applied */
+  KC_NAKED ,
         /**  The kinematics configuration will have the SIXDOF kinematics model (algorithm) applied */
   KC_SIXDOF ,
         /**  The kinematics configuration will have the IGUS kinematics model (algorithm) applied */
@@ -184,8 +186,6 @@
   KC_CARTESIAN ,
         /**  The kinematics configuration will have the CARTESIAN_SLAVED kinematics model (algorithm) applied */
   KC_CARTESIAN_SLAVED ,
-        /**  The kinematics configuration will have no kinematics model (algorithm) applied */
-  KC_NAKED ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */

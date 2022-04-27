@@ -156,7 +156,7 @@ const JogArrowsJointStep = ({
                         onChange={e => updateJogStep(logical_index, e)}
                         addonBefore={config.name}
                         addonAfter={getUnits(
-                            config.jointType === JOINT_TYPE.JOINT_PRISMATIC ? "linear" : "angular"
+                            config.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
                         )}
                     />
                     <Button onClick={() => jogStep(logical_index, steps[logical_index])}>

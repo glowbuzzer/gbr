@@ -28,14 +28,7 @@ export { useAnalogInputs } from "./io/ain"
 export { useAnalogOutputList, useAnalogOutputState } from "./io/aout"
 export { useIntegerInputs } from "./io/iin"
 export * from "./io/iout"
-export {
-    useKinematics,
-    useTcp,
-    useJointPositions,
-    useFeedRate,
-    useKinematicsOffset,
-    useKinematicsCartesianPosition
-} from "./kinematics"
+export * from "./kinematics"
 export * from "./toolpath"
 export * from "./devtools"
 

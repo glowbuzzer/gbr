@@ -8,6 +8,7 @@ import {
     MoveParametersConfig,
     useJointConfig,
     useJointPositions,
+    useKinematicsConfiguration,
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
@@ -27,17 +28,24 @@ const Tab = ({ mode, value, children }) => (
 export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
     const [mode, setMode] = useState(Mode.POSITION)
 
-    const [positions, setPositions] = useLocalStorage("jog.joints", [])
+    const [positions, setPositions] = useLocalStorage(
+        `jog.joints.${kinematicsConfigurationIndex}`,
+        []
+    )
 
     const jointConfig = useJointConfig()
+    const kcConfig = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const jointItems = useMemo<JogGotoItem[]>(
         () =>
-            jointConfig.map((j, index) => ({
-                type: j.jointType === JOINT_TYPE.JOINT_PRISMATIC ? "linear" : "angular",
-                label: "J" + index,
-                key: index
-            })),
-        [jointConfig]
+            kcConfig.participatingJoints.map((physicalJointIndex, index) => {
+                const j = jointConfig[physicalJointIndex]
+                return {
+                    type: j.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear",
+                    label: j.name,
+                    key: index
+                }
+            }),
+        [jointConfig, kcConfig.participatingJoints]
     )
 
     const motion = useSoloActivity(kinematicsConfigurationIndex)
