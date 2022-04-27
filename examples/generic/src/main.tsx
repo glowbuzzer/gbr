@@ -5,6 +5,7 @@ import {
     AnalogInputsTile,
     AnalogOutputsTile,
     CartesianDro,
+    CartesianDroTile,
     ConnectTile,
     DevToolsTile,
     DigitalInputsTile,
@@ -58,11 +59,7 @@ function App() {
         [
             { render: <ConnectTile />, height: 2, title: "Connection" },
             {
-                render: (
-                    <Tile title="Cartesian DRO">
-                        <CartesianDro kinematicsConfigurationIndex={0} />
-                    </Tile>
-                ),
+                render: <CartesianDroTile kinematicsConfigurationIndex={0} clipboardMode={true} />,
                 height: 2,
                 title: "Cartesian DRO"
             },

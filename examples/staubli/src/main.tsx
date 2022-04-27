@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom"
-import React, { StrictMode, useState } from "react"
+import React, { useState } from "react"
 import {
     CartesianDroTile,
     ConnectTile,
@@ -90,7 +90,7 @@ export function App() {
                 <nav>
                     <ConnectTile />
                     <JogTile />
-                    <CartesianDroTile />
+                    <CartesianDroTile clipboardMode={true} />
                     <JointDroTile />
                 </nav>
                 <section>
