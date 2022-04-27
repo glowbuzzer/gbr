@@ -11,12 +11,13 @@ import {
     RobotModel,
     ToolPathTile
 } from "@glowbuzzer/controls"
-import { Button, Space, Switch } from "antd"
+import { Button, Modal, Space, Switch } from "antd"
 import styled from "styled-components"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import { Vector3 } from "three"
+import { useConfig } from "@glowbuzzer/store"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -58,6 +59,31 @@ const PrefsButton = () => {
     )
 }
 
+const StyledModal = styled(Modal)`
+    pre {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+`
+const ConfigButton = () => {
+    const [visible, setVisible] = useState(false)
+    const config = useConfig()
+
+    return (
+        <div>
+            <Button onClick={() => setVisible(true)}>View Config</Button>
+            <StyledModal
+                title="Configuration"
+                visible={visible}
+                onCancel={() => setVisible(false)}
+                footer={[<Button onClick={() => setVisible(false)}>Close</Button>]}
+            >
+                <pre>{JSON.stringify(config, null, 2)}</pre>
+            </StyledModal>
+        </div>
+    )
+}
+
 const DEG90 = Math.PI / 2
 
 const TX40_MODEL: RobotModel = {
@@ -81,6 +107,7 @@ export function App() {
         <>
             <Space>
                 <PrefsButton />
+                <ConfigButton />
                 <Space>
                     <Switch defaultChecked={true} onChange={setShowRobot} />
                     <div>Show robot</div>

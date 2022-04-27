@@ -25,12 +25,13 @@ import {
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 
-import { Button } from "antd"
+import { Button, Modal, Space } from "antd"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 import "react-grid-layout/css/styles.css"
-import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
+import { GCodeContextProvider, SoloActivityApi, useConfig } from "@glowbuzzer/store"
+import styled from "styled-components"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -51,6 +52,31 @@ const FrameOverridesButton = () => {
             <Button onClick={() => setVisible(true)}>Frame Overrides</Button>
             <FrameOverrideDialog visible={visible} onClose={() => setVisible(false)} />
         </>
+    )
+}
+
+const StyledModal = styled(Modal)`
+    pre {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+`
+const ConfigButton = () => {
+    const [visible, setVisible] = useState(false)
+    const config = useConfig()
+
+    return (
+        <div>
+            <Button onClick={() => setVisible(true)}>View Config</Button>
+            <StyledModal
+                title="Configuration"
+                visible={visible}
+                onCancel={() => setVisible(false)}
+                footer={[<Button onClick={() => setVisible(false)}>Close</Button>]}
+            >
+                <pre>{JSON.stringify(config, null, 2)}</pre>
+            </StyledModal>
+        </div>
     )
 }
 
@@ -95,9 +121,11 @@ function App() {
 
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
-            <div>
-                <PrefsButton /> <FrameOverridesButton />
-            </div>
+            <Space>
+                <PrefsButton />
+                <FrameOverridesButton />
+                <ConfigButton />
+            </Space>
             <SimpleTileLayout appId="generic" tiles={tiles} widths={[2, 4, 2]} />
         </GCodeContextProvider>
     )
