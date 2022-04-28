@@ -29,6 +29,11 @@ const JointSliderDiv = styled.div`
 
     .ant-slider {
         flex-grow: 1;
+        cursor: default;
+    }
+
+    .ant-slider-handle {
+        display: none;
     }
 `
 
