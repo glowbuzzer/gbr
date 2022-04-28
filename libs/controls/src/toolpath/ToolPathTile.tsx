@@ -8,6 +8,8 @@ import {
     useFrames,
     useKinematics,
     usePreview,
+    useToolConfig,
+    useToolIndex,
     useToolPath,
     useToolPathSettings
 } from "@glowbuzzer/store"
@@ -76,6 +78,9 @@ type ToolPathTileProps = {
 
 export const ToolPathTile = ({ model }: ToolPathTileProps) => {
     const { path, reset } = useToolPath(0)
+    const toolIndex = useToolIndex(0)
+    const toolConfig = useToolConfig(toolIndex)
+
     const { jointPositions, translation, rotation, frameIndex } = useKinematics(0)
     const { convertToFrame } = useFrames()
 
@@ -142,7 +147,7 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
                     )}
 
                     {model ? (
-                        <TcpRobot model={model} joints={jointPositions} />
+                        <TcpRobot model={model} joints={jointPositions} toolConfig={toolConfig} />
                     ) : (
                         <TcpFulcrum scale={extent} position={world_translation} />
                     )}

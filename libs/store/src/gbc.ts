@@ -708,6 +708,8 @@
                     isMoving?:boolean;
                     
                     isNearSingularity?:boolean;
+                    
+                    toolIndex?:number;
         }
 
         
@@ -1746,6 +1748,8 @@
                     translation?:Vector3;
                     /**  Rotation of the tool */
                     rotation?:Quat;
+                    /**  Diameter of the tool */
+                    diameter?:number;
         }
 
         

@@ -13,6 +13,7 @@ export type KinematicsConfigurationMcStatus = {
     froTarget: number
     froActual: number
     currentConfiguration: number
+    toolIndex: number
     type: number
 }
 

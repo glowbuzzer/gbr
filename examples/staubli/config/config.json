@@ -115,6 +115,21 @@
             "kinematicsConfigurationIndex": 0
         }
     },
+    "tool": {
+        "default": {
+            "diameter": 10,
+            "translation": {
+                "z": 40
+            }
+        },
+        "offset": {
+            "diameter": 15,
+            "translation": {
+                "y": -35,
+                "z": 30
+            }
+        }
+    },
     "kinematicsConfiguration": {
         "default": {
             "frameIndex": 0,

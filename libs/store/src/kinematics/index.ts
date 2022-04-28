@@ -38,6 +38,8 @@ export type KinematicsState = {
     froTarget: number
     /** The actual feedrate */
     froActual: number
+    /** The current tool index */
+    toolIndex: number
 }
 
 export const kinematicsSlice: Slice<KinematicsState[]> = createSlice({
@@ -75,7 +77,8 @@ function marshal_into_state(k: KinematicsConfigurationMcStatus) {
         froTarget: k.froTarget,
         froActual: k.froActual,
         position: marshal_tr_into_state(k.position),
-        offset: marshal_tr_into_state(k.offset)
+        offset: marshal_tr_into_state(k.offset),
+        toolIndex: k.toolIndex
     }
 }
 
@@ -116,13 +119,15 @@ function unmarshall_from_state(state: KinematicsConfigurationMcStatus): Kinemati
             offset: {
                 translation: new THREE.Vector3(0, 0, 0),
                 rotation: new THREE.Quaternion(0, 0, 0, 1)
-            }
+            },
+            toolIndex: 0
         }
     }
     return {
         ...state,
         position: unmarshall_tr_from_state(state.position),
-        offset: unmarshall_tr_from_state(state.offset)
+        offset: unmarshall_tr_from_state(state.offset),
+        toolIndex: state.toolIndex
     }
 }
 
@@ -189,7 +194,6 @@ export const useKinematics = (kc: number) => {
     return {
         /** The current robot configuration */
         currentConfiguration: state.currentConfiguration,
-        // ...state,
         /** The local frame index for the kinematics configuration */
         frameIndex,
         /** The current translation (cartesian position) */
@@ -295,4 +299,10 @@ export function useFeedRate(kc: number) {
 
 export function useKinematicsOffset(kc: number) {
     return useSelector(({ kinematics }: RootState) => kinematics[kc]?.offset, deepEqual)
+}
+
+export function useToolIndex(kc: number) {
+    return useSelector(({ kinematics }: RootState) => {
+        return kinematics[kc]?.toolIndex
+    }, shallowEqual)
 }

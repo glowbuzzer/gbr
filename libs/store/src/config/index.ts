@@ -25,6 +25,7 @@ import {
     TriggerOnConfig
 } from "../gbc"
 import { RootState } from "../root"
+import deepEqual from "fast-deep-equal"
 // import { settings } from "../util/settings"
 
 // const { load, save } = settings("store.config") // we will load/save config as it comes from gbc
@@ -217,4 +218,19 @@ export function useConfig() {
         (state: RootState) => state.config,
         (a, b) => a.version === b.version // only update on version change
     ).value
+}
+
+const EMPTY_TOOL: ToolConfig = {
+    translation: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0, w: 1 }
+}
+
+export function useToolConfig(toolIndex: number): ToolConfig {
+    return useSelector((state: RootState) => {
+        // console.log("GET TOOL CONFIG", toolIndex, state.config.value.tool)
+
+        return state.config.value.tool
+            ? Object.values(state?.config?.value?.tool)[toolIndex]
+            : EMPTY_TOOL
+    })
 }

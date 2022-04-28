@@ -54,9 +54,10 @@ function add_next(group: THREE.Group, config, triad) {
 type TcpRobotProps = {
     model: RobotModel
     joints: number[]
+    toolConfig: ToolConfig
 }
 
-export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
+export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
     const [robotModels, setRobotModels] = useState<THREE.Group[]>([])
 
     useEffect(() => {
@@ -75,21 +76,44 @@ export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
             .then((models: GLTF[]) => {
                 let current = new THREE.Group()
                 let model_index = 0
-                return [...model.config, {}].map((c, index) => {
+                const links = [...model.config, {}].map((c, index) => {
                     if (c && !c.skip_link) {
                         const model = models[model_index++].scene
                         current.add(model)
                     }
-                    const next = add_next(
-                        current,
-                        model.config[index - 1],
-                        index === model.config.length
-                    )
+                    const next = add_next(current, model.config[index - 1], false)
                     // current.rotation.z = joints[model_index]
                     const last = current
                     current = next
                     return last
                 })
+
+                const x = (toolConfig.translation.x || 0) / model.scale
+                const y = (toolConfig.translation.y || 0) / model.scale
+                const z = (toolConfig.translation.z || 0) / model.scale
+
+                const toolDiameter = toolConfig.diameter / model.scale / 2
+
+                const geometry = new THREE.CylinderGeometry(toolDiameter, toolDiameter, z)
+                const material = new THREE.MeshBasicMaterial({ color: 0x303030 })
+
+                const cone = new THREE.Mesh(geometry, material)
+                cone.translateZ(-z / 2)
+                cone.rotateX(Math.PI / 2)
+
+                const cone_group = new THREE.Group()
+                cone_group.add(cone)
+                cone_group.translateX(x)
+                cone_group.translateY(y)
+                cone_group.translateZ(z)
+
+                // TODO: L: figure out how to represent a rotation in the tool
+                // const { x: qx, y: qy, z: qz, w: qw } = toolConfig.rotation
+                // cone_group.setRotationFromQuaternion(new Quaternion(qx, qy, qz, qw))
+
+                add_triad(cone_group)
+                current.add(cone_group)
+                return links
             })
             .then(models => {
                 models[0].scale.setScalar(model.scale)
@@ -99,7 +123,7 @@ export const TcpRobot = ({ model, joints }: TcpRobotProps) => {
                 setRobotModels(models)
             })
             .catch(console.log)
-    }, [model])
+    }, [model, toolConfig])
 
     useEffect(() => {
         function adjustForTeta(index: number, a: number) {
