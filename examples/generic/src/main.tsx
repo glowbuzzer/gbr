@@ -19,7 +19,8 @@ import {
     JogTile,
     JointDroTile,
     PreferencesDialog,
-    ToolPathTile
+    ToolPathTile,
+    ToolsTile
 } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.css"
@@ -92,6 +93,7 @@ function App() {
             { render: <FeedRateTile />, height: 2, title: "Feedrate" },
             { render: <JogTile />, height: 4, title: "Jogging" },
             { render: <JointDroTile />, height: 4, title: "Joint Indicators" },
+            { render: <ToolsTile />, height: 4, title: "Tools" },
             { render: <DevToolsTile />, height: 3, title: "Dev Tools" }
         ],
         [
