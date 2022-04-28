@@ -9,6 +9,7 @@ import {
     JointDroTile,
     PreferencesDialog,
     RobotModel,
+    ToolsTile,
     ToolPathTile
 } from "@glowbuzzer/controls"
 import { Button, Modal, Space, Switch } from "antd"
@@ -119,6 +120,7 @@ export function App() {
                     <JogTile />
                     <CartesianDroTile clipboardMode={true} />
                     <JointDroTile />
+                    <ToolsTile />
                 </nav>
                 <section>
                     <ToolPathTile model={showRobot && TX40_MODEL} />

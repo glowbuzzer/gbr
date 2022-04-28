@@ -226,11 +226,11 @@ const EMPTY_TOOL: ToolConfig = {
 }
 
 export function useToolConfig(toolIndex: number): ToolConfig {
-    return useSelector((state: RootState) => {
-        // console.log("GET TOOL CONFIG", toolIndex, state.config.value.tool)
+    return useSelector((state: RootState) =>
+        state.config.value.tool ? Object.values(state?.config?.value?.tool)[toolIndex] : EMPTY_TOOL
+    )
+}
 
-        return state.config.value.tool
-            ? Object.values(state?.config?.value?.tool)[toolIndex]
-            : EMPTY_TOOL
-    })
+export function useToolList(): { [index: string]: ToolConfig } {
+    return useSelector((state: RootState) => state.config.value.tool || {}, deepEqual)
 }

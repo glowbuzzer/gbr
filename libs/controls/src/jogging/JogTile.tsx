@@ -1,5 +1,5 @@
 import React, { useEffect } from "react"
-import { Tile } from "../tiles"
+import { Tile, TileEmptyMessage } from "../tiles"
 import { KC_KINEMATICSCONFIGURATIONTYPE, useConfig } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Radio, Select, Slider } from "antd"
@@ -72,14 +72,6 @@ const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => 
     }
 }
 
-const NotSupportedDiv = styled.div`
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-`
-
 const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex }) => {
     const config = useConfig()
     const kcConfig = Object.values(config.kinematicsConfiguration)[kinematicsConfigurationIndex]
@@ -98,7 +90,7 @@ const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex
                     defaultFrameIndex={defaultFrameIndex}
                 />
             ) : (
-                <NotSupportedDiv>Cartesian kinematics not supported</NotSupportedDiv>
+                <TileEmptyMessage>Cartesian kinematics not supported</TileEmptyMessage>
             )
         case JogMoveMode.JOINT:
             return (
