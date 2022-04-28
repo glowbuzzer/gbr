@@ -5,6 +5,7 @@ import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
 import * as React from "react"
 import { useEffect, useState } from "react"
+import { ToolConfig } from "@glowbuzzer/store"
 
 const loader = new GLTFLoader()
 const dracoLoader = new DRACOLoader()
