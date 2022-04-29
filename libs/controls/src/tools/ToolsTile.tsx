@@ -24,8 +24,6 @@ export const ToolsTile = () => {
         return api.setToolOffset(index).promise()
     }
 
-    console.log("TOOL INDEX", toolIndex)
-
     return (
         <Tile title={"Tools"}>
             {Object.entries(tools).map(([name, config], index) => (
@@ -33,7 +31,7 @@ export const ToolsTile = () => {
                     <div className="name">{name}</div>
                     {index === toolIndex && <RightOutlined />}
                     <Tag>
-                        {fromSI(config.translation.z, "linear")} {getUnits("linear")}
+                        {fromSI(config.translation?.z || 0, "linear")} {getUnits("linear")}
                     </Tag>
                     <Button size="small" onClick={() => select(index)}>
                         Select

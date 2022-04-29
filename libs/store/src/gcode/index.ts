@@ -80,6 +80,8 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         },
         reset(state) {
             state.buffer.length = 0
+            state.readCount = -1
+            state.writeCount = -1
             state.paused = false
         },
         status: (state, action) => {
@@ -139,7 +141,7 @@ export function updateStreamStateMsg(streamCommand: STREAMCOMMAND) {
  * You can pause, resume and cancel gcode execution using the `setState` method.
  */
 export function useGCode(): {
-    /** The current state of the gcode execution */
+    /** The current state of the gcode execution from gbc */
     state: STREAMSTATE
     /** @ignore */
     time: number
@@ -152,6 +154,8 @@ export function useGCode(): {
     send(gcode: string, vmax: number)
     /** Set the state of gcode execution, for example pause, resume and cancel */
     setState(state: STREAMCOMMAND)
+    /** Reset the stream queue */
+    reset()
 } {
     const { state, tag, time } = useSelector(
         ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
@@ -170,6 +174,9 @@ export function useGCode(): {
         },
         setState(streamCommand: STREAMCOMMAND) {
             dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
+        },
+        reset() {
+            dispatch(gcodeSlice.actions.reset({}))
         }
     }
 }

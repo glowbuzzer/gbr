@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import AceEditor from "react-ace"
 
 import "ace-builds/src-noconflict/theme-github"
@@ -65,6 +65,7 @@ export const GCodeTile = () => {
     const config = useConfig()
     const offset = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
+    const editorRef = useRef<AceEditor>(null)
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
@@ -103,8 +104,8 @@ export const GCodeTile = () => {
     const highlight = active
         ? [
               {
-                  startRow: stream.lineNum,
-                  endRow: stream.lineNum + 1,
+                  startRow: stream.lineNum - 1,
+                  endRow: stream.lineNum,
                   startCol: 0,
                   endCol: 0,
                   type: "screenLine",
@@ -112,6 +113,12 @@ export const GCodeTile = () => {
               }
           ]
         : []
+
+    useEffect(() => {
+        if (active) {
+            editorRef.current.editor.scrollToLine(stream.lineNum - 1, true, true, () => {})
+        }
+    }, [active, stream.lineNum])
 
     const inferredCommand = (() => {
         switch (stream.state) {
@@ -135,12 +142,19 @@ export const GCodeTile = () => {
 
     function send_command(v) {
         stream.setState(v.target.value)
-        if (
-            stream.state === STREAMSTATE.STREAMSTATE_IDLE &&
-            v.target.value === STREAMCOMMAND.STREAMCOMMAND_RUN
-        ) {
-            console.log("send gcode")
-            send_gcode()
+        switch (v.target.value as STREAMCOMMAND) {
+            case STREAMCOMMAND.STREAMCOMMAND_RUN:
+                if (stream.state === STREAMSTATE.STREAMSTATE_IDLE) {
+                    console.log("reset and send gcode")
+                    stream.reset()
+                    send_gcode()
+                }
+                break
+            case STREAMCOMMAND.STREAMCOMMAND_PAUSE:
+                break
+            case STREAMCOMMAND.STREAMCOMMAND_STOP:
+                stream.reset()
+                break
         }
     }
 
@@ -196,6 +210,7 @@ export const GCodeTile = () => {
         >
             <StyledDiv readOnly={active}>
                 <AceEditor
+                    ref={editorRef}
                     readOnly={active}
                     mode="gcode"
                     theme="github"
