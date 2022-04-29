@@ -1,4 +1,4 @@
-name: Publish examples/generic
+name: Publish examples/staubli
 on:
     push:
         branches:
