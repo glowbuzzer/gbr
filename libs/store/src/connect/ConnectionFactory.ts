@@ -138,7 +138,7 @@ class DevToolsProcessor extends ProcessorBase {
         if (first) {
             // load and send the desired frequency on startup
             try {
-                const value = load()
+                const value = load(50)
                 dispatch(() => {
                     ws.send(updateStatusFrequencyMsg(value))
                 })

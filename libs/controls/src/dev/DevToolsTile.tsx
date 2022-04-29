@@ -115,13 +115,13 @@ export const DevToolsTile = () => {
                     value={frequency}
                     onChange={setFrequency}
                     onAfterChange={send_frequency}
-                    min={0}
+                    min={50}
                     max={100}
                     step={25}
                     marks={{
-                        0: "Slow (10s)",
-                        50: "Medium",
-                        100: "Fast (1/10s)"
+                        50: "Slow",
+                        75: "Medium",
+                        100: "Fast"
                     }}
                 />
             </StatusFreqTable>
