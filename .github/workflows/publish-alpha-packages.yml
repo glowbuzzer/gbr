@@ -5,7 +5,7 @@ on:
             - main
         paths:
             - "libs/**"
-            - ".github/**"
+            - ".github/publish-alpha-packages.yml"
             - "build.mjs"
             - "package.json"
 
