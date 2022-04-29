@@ -35,7 +35,7 @@ jobs:
                 run: pnpm install
 
             -   name: Build app
-                run: pnpm run nx build generic --baseHref=/examples/generic/
+                run: ./node_modules/.bin/nx build generic --baseHref=/examples/generic/
 
             -   name: Deploy site
                 run: ./examples/deploy-example.sh generic preview.glowbuzzer.com E284GBH6OG76DV
