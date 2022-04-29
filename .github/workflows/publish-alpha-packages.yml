@@ -4,10 +4,10 @@ on:
         branches:
             - main
         paths:
-            - "libs/**"
-            - ".github/publish-alpha-packages.yml"
-            - "build.mjs"
+            - ".github/workflows/publish-alpha-packages.yml"
             - "package.json"
+            - "libs/**"
+            - "build.mjs"
 
 jobs:
     deploy:
