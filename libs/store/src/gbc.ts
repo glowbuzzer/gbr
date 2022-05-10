@@ -703,6 +703,8 @@
                     
                     cartesianActAcc?:Vector3;
                     
+                    limitsDisabled?:boolean;
+                    
                     isStopping?:boolean;
                     
                     isMoving?:boolean;
@@ -716,6 +718,8 @@
         export type KinematicsConfigurationCommand = {
                     /**  Not used */
                     doStop?:boolean;
+                    /**  Whether soft joint limits should be disabled */
+                    disableLimits?:boolean;
                     /**  Desired feed rate as a percentage of velocity maximum */
                     froPercentage?:number;
                     /**  Optional logical translation applied to all moves */

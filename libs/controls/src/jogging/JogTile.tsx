@@ -10,6 +10,7 @@ import { JogGotoJoint } from "./JogGotoJoint"
 import { JogArrowsCartesian } from "./JogArrowsCartesian"
 import { JogArrowsJoint } from "./JogArrowsJoint"
 import { JogMode } from "./types"
+import { JogLimitsCheckbox } from "./JogLimitsCheckbox"
 
 enum JogMoveMode {
     CARTESIAN,
@@ -170,7 +171,12 @@ export const JogTile = () => {
             }
             footer={
                 <>
-                    <div>Jog Speed (%)</div>
+                    <div>
+                        Jog Speed (%)
+                        <JogLimitsCheckbox
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                        />
+                    </div>
                     <Slider value={jogSpeed} min={1} max={100} onChange={setJogSpeed} />
                 </>
             }

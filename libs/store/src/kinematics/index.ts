@@ -40,6 +40,8 @@ export type KinematicsState = {
     froActual: number
     /** The current tool index */
     toolIndex: number
+    /** Indicates if limit checking is currently disabled */
+    limitsDisabled: boolean
 }
 
 export const kinematicsSlice: Slice<KinematicsState[]> = createSlice({
@@ -78,7 +80,8 @@ function marshal_into_state(k: KinematicsConfigurationMcStatus) {
         froActual: k.froActual,
         position: marshal_tr_into_state(k.position),
         offset: marshal_tr_into_state(k.offset),
-        toolIndex: k.toolIndex
+        toolIndex: k.toolIndex,
+        limitsDisabled: k.limitsDisabled
     }
 }
 
@@ -120,14 +123,16 @@ function unmarshall_from_state(state: KinematicsConfigurationMcStatus): Kinemati
                 translation: new THREE.Vector3(0, 0, 0),
                 rotation: new THREE.Quaternion(0, 0, 0, 1)
             },
-            toolIndex: 0
+            toolIndex: 0,
+            limitsDisabled: false
         }
     }
     return {
         ...state,
         position: unmarshall_tr_from_state(state.position),
         offset: unmarshall_tr_from_state(state.offset),
-        toolIndex: state.toolIndex
+        toolIndex: state.toolIndex,
+        limitsDisabled: state.limitsDisabled
     }
 }
 
@@ -154,6 +159,20 @@ export function updateOffsetMsg(kc: number, { x, y, z }: Vector3, rotation?: Qua
                     command: {
                         translation: { x, y, z },
                         rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w }
+                    } as KinematicsConfigurationCommand
+                }
+            }
+        }
+    })
+}
+
+export function updateDisableLimitsMsg(kc: number, disableLimits) {
+    return JSON.stringify({
+        command: {
+            kinematicsConfiguration: {
+                [kc]: {
+                    command: {
+                        disableLimits
                     } as KinematicsConfigurationCommand
                 }
             }
@@ -299,6 +318,10 @@ export function useFeedRate(kc: number) {
 
 export function useKinematicsOffset(kc: number) {
     return useSelector(({ kinematics }: RootState) => kinematics[kc]?.offset, deepEqual)
+}
+
+export function useKinematicsLimitsDisabled(kc: number) {
+    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.limitsDisabled)
 }
 
 export function useToolIndex(kc: number) {

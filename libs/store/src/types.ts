@@ -14,6 +14,7 @@ export type KinematicsConfigurationMcStatus = {
     froActual: number
     currentConfiguration: number
     toolIndex: number
+    limitsDisabled: boolean
     type: number
 }
 
