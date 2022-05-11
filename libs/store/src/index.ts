@@ -30,7 +30,6 @@ export { useIntegerInputs } from "./io/iin"
 export * from "./io/iout"
 export * from "./kinematics"
 export * from "./toolpath"
-export * from "./devtools"
 
 export * from "./root"
 

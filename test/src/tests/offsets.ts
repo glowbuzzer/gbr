@@ -9,7 +9,7 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.reset()
     gbc.enable_operation()
-    gbc.set_fro(0, 100)
+    gbc.set_fro(0, 1)
 })
 
 test("can run move line with simple translation offset", async () => {

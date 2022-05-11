@@ -3,7 +3,7 @@ import { SimpleTileDefinition, SimpleTileLayout } from "@glowbuzzer/controls"
 import {
     AnalogInputsTile,
     ConnectTile,
-    DevToolsTile,
+    StateMachineToolsTile,
     DigitalInputsTile,
     DigitalOutputsTile,
     JogTile
@@ -16,7 +16,7 @@ export const CommissioningUi = () => {
     const tiles: SimpleTileDefinition[][] = [
         [
             { render: <ConnectTile />, height: 4, title: "Connection" },
-            { render: <DevToolsTile />, height: 4, title: "Dev Tools" },
+            { render: <StateMachineToolsTile />, height: 4, title: "Dev Tools" },
             { render: <TestMotionTile />, height: 4, title: "Test Motion" },
             { render: <JogTile />, height: 4, title: "Jogging" }
         ],

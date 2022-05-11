@@ -10,7 +10,8 @@ import {
     PreferencesDialog,
     RobotModel,
     ToolsTile,
-    ToolPathTile
+    ToolPathTile,
+    FeedRateTile
 } from "@glowbuzzer/controls"
 import { Button, Modal, Space, Switch } from "antd"
 import styled from "styled-components"
@@ -23,11 +24,16 @@ import { useConfig } from "@glowbuzzer/store"
 const StyledApp = styled.div`
     padding: 20px;
     display: flex;
+    justify-content: space-between;
     width: 100%;
     gap: 20px;
 
-    nav {
-        min-width: 300px;
+    nav.left {
+        flex-basis: 350px;
+    }
+
+    nav.right {
+        flex-basis: 500px;
     }
 
     nav,
@@ -39,13 +45,6 @@ const StyledApp = styled.div`
 
     section {
         flex-grow: 1;
-        min-height: 1200px;
-        display: flex;
-        flex-direction: row;
-
-        > div:first-child {
-            flex-grow: 1;
-        }
     }
 `
 
@@ -115,7 +114,7 @@ export function App() {
                 </Space>
             </Space>
             <StyledApp>
-                <nav>
+                <nav className="left">
                     <ConnectTile />
                     <JogTile />
                     <CartesianDroTile clipboardMode={true} />
@@ -124,8 +123,11 @@ export function App() {
                 </nav>
                 <section>
                     <ToolPathTile model={showRobot && TX40_MODEL} />
-                    <GCodeTile />
                 </section>
+                <nav className="right">
+                    <FeedRateTile />
+                    <GCodeTile />
+                </nav>
             </StyledApp>
         </>
     )

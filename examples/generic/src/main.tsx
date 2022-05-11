@@ -4,10 +4,9 @@ import React, { StrictMode, useState } from "react"
 import {
     AnalogInputsTile,
     AnalogOutputsTile,
-    CartesianDro,
     CartesianDroTile,
     ConnectTile,
-    DevToolsTile,
+    StateMachineToolsTile,
     DigitalInputsTile,
     DigitalOutputsTile,
     FeedRateTile,
@@ -19,6 +18,8 @@ import {
     JogTile,
     JointDroTile,
     PreferencesDialog,
+    SimpleTileDefinition,
+    SimpleTileLayout,
     ToolPathTile,
     ToolsTile
 } from "@glowbuzzer/controls"
@@ -27,7 +28,6 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 
 import { Button, Modal, Space } from "antd"
-import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 import "react-grid-layout/css/styles.css"
@@ -94,7 +94,7 @@ function App() {
             { render: <JogTile />, height: 4, title: "Jogging" },
             { render: <JointDroTile />, height: 4, title: "Joint Indicators" },
             { render: <ToolsTile />, height: 4, title: "Tools" },
-            { render: <DevToolsTile />, height: 3, title: "Dev Tools" }
+            { render: <StateMachineToolsTile />, height: 3, title: "State Machine Tools" }
         ],
         [
             { render: <JointSpinnersTile />, height: 8, title: "Joints" },

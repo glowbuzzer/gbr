@@ -8,7 +8,6 @@ import { jointsSlice } from "./joints"
 import { gcodeSlice } from "./gcode"
 import { toolPathSlice } from "./toolpath"
 import { kinematicsSlice } from "./kinematics"
-import { devToolsSlice } from "./devtools"
 import { previewSlice } from "./preview"
 import { digitalInputsSlice } from "./io/din"
 import { digitalOutputsSlice } from "./io/dout"
@@ -39,8 +38,7 @@ export const standardReducers = {
     gcode: gcodeSlice.reducer,
     preview: previewSlice.reducer,
     toolPath: toolPathSlice.reducer,
-    kinematics: kinematicsSlice.reducer,
-    devtools: devToolsSlice.reducer
+    kinematics: kinematicsSlice.reducer
 }
 
 export const rootReducer = combineReducers(standardReducers)

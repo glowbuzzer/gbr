@@ -1,30 +1,18 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
 import { Tile } from "../tiles"
-import { Button, Slider, Tag } from "antd"
+import { Button, Tag } from "antd"
 import {
     determine_machine_state,
     MachineState,
     possible_transitions,
-    useDevTools,
     useMachine
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
-const StatusFreqTable = styled.div`
-    display: flex;
-    gap: 30px;
-    align-items: center;
-    .ant-slider {
-        flex-grow: 1;
-        margin: 10px 20px;
-    }
-`
-
 const CurrentMachineState = styled.div`
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 10px;
 `
 
 const MachineTransitionsDiv = styled.div`
@@ -90,12 +78,13 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
     )
 }
 
-export const DevToolsTile = () => {
-    const devtools = useDevTools()
+export const StateMachineToolsTile = () => {
+    // const devtools = useDevTools()
     const machine = useMachine()
 
     const currentMachineState = determine_machine_state(machine.statusWord)
 
+    /*
     const [frequency, setFrequency] = useState(devtools.statusFrequency)
 
     useEffect(() => {
@@ -105,26 +94,10 @@ export const DevToolsTile = () => {
     function send_frequency(v) {
         devtools.setStatusFrequency(v)
     }
+*/
 
     return (
-        <Tile title="Developer Tools">
-            <StatusFreqTable>
-                <div>Status Frequency</div>
-                <Slider
-                    tipFormatter={null}
-                    value={frequency}
-                    onChange={setFrequency}
-                    onAfterChange={send_frequency}
-                    min={50}
-                    max={100}
-                    step={25}
-                    marks={{
-                        50: "Slow",
-                        75: "Medium",
-                        100: "Fast"
-                    }}
-                />
-            </StatusFreqTable>
+        <Tile title="State Machine Tools">
             <CurrentMachineState>
                 <div>Current Machine State</div>
                 <Tag

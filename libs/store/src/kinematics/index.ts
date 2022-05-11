@@ -136,13 +136,13 @@ function unmarshall_from_state(state: KinematicsConfigurationMcStatus): Kinemati
     }
 }
 
-export function updateFroPercentageMsg(kc: number, value: number) {
+export function updateFroMsg(kc: number, value: number) {
     return JSON.stringify({
         command: {
             kinematicsConfiguration: {
                 [kc]: {
                     command: {
-                        froPercentage: value
+                        fro: value
                     }
                 }
             }
@@ -309,7 +309,7 @@ export function useFeedRate(kc: number) {
             // TODO: use this value on connect (currently defaults to 100%)
             window.localStorage.setItem(`kinematics.${kc}.fro`, JSON.stringify(value))
             dispatch(() => {
-                connection.send(updateFroPercentageMsg(kc, value))
+                connection.send(updateFroMsg(kc, value))
             })
         },
         froActual

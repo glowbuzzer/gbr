@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
-import { ConnectTile, DevToolsTile, TelemetryTile } from "@glowbuzzer/controls"
+import { ConnectTile, StateMachineToolsTile, TelemetryTile } from "@glowbuzzer/controls"
 import { Button, Space, Tag } from "antd"
 import { useDigitalInputs, useDigitalOutputState, useJoint } from "@glowbuzzer/store"
 import { DigitalInputOverrideTile } from "../components/DigitalInputOverrides"
@@ -89,7 +89,7 @@ export const DevelopmentUi = () => {
     const tiles: SimpleTileDefinition[][] = [
         [
             { render: <ConnectTile />, height: 4, title: "Connection" },
-            { render: <DevToolsTile />, height: 4, title: "Dev Tools" },
+            { render: <StateMachineToolsTile />, height: 4, title: "Dev Tools" },
             {
                 render: <DigitalInputOverrideTile labels={dinLabels} />,
                 height: 4,

@@ -262,6 +262,8 @@
         export type MachineConfig = {
                     /**  The bus cycle time (in milliseconds) */
                     busCycleTime?:number;
+                    /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
+                    statusFrequency?:number;
         }
 
         
@@ -720,8 +722,8 @@
                     doStop?:boolean;
                     /**  Whether soft joint limits should be disabled */
                     disableLimits?:boolean;
-                    /**  Desired feed rate as a percentage of velocity maximum */
-                    froPercentage?:number;
+                    /**  Desired feed rate, with 1 being normal and zero being stopped. A value of 2 would give double normal speed, for example */
+                    fro?:number;
                     /**  Optional logical translation applied to all moves */
                     translation?:Vector3;
                     /**  Optional logical rotation applied to all moves */

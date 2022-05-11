@@ -14,11 +14,7 @@ import {
 } from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import { activitySlice, gcodeSlice, jointsSlice } from "../../libs/store/src"
-import {
-    kinematicsSlice,
-    updateFroPercentageMsg,
-    updateOffsetMsg
-} from "../../libs/store/src/kinematics"
+import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src/kinematics"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
@@ -222,7 +218,7 @@ export class GbcTest {
         this.check_limits = true
 
         this.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
-        this.send(updateFroPercentageMsg(0, 100))
+        this.send(updateFroMsg(0, 1))
         this.exec_double_cycle()
 
         return this
@@ -240,7 +236,7 @@ export class GbcTest {
 
     set_fro(kc: number, fro: number) {
         // set fro on KC 0
-        this.send(updateFroPercentageMsg(kc, fro))
+        this.send(updateFroMsg(kc, fro))
         this.exec_double_cycle()
     }
 

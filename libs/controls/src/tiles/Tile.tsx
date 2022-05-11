@@ -1,5 +1,5 @@
 import React, { FC, useContext, useState } from "react"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { Button, Modal, Popover } from "antd"
 import { EditOutlined, QuestionCircleOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"
@@ -43,16 +43,21 @@ export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset,
 
 type TileProps = {
     title
+    fullHeight?
     help?
     footer?
     controls?
     settings?
 }
 
-const StyledTile = styled.div`
+const StyledTile = styled.div<{ fullHeight: boolean }>`
     display: flex;
     flex-direction: column;
-    height: 100%;
+    ${props =>
+        props.fullHeight &&
+        css`
+            height: 100%;
+        `}
     border: 1px solid #cccccc;
     border-radius: 5px;
 
@@ -124,12 +129,13 @@ export const Tile: FC<TileProps> = ({
     settings = null,
     footer = undefined,
     help = undefined,
+    fullHeight = true,
     children
 }) => {
     const [showSettings, setShowSettings] = useState(false)
 
     return (
-        <StyledTile>
+        <StyledTile fullHeight={fullHeight}>
             <tileContext.Provider value={{ showSettings, setShowSettings }}>
                 <div className="title">
                     <div className="text draggable">

@@ -160,7 +160,7 @@ export const GCodeTile = () => {
 
     return (
         <Tile
-            title="GCode Sender"
+            title="GCode"
             settings={<GCodeSettings />}
             controls={
                 <>

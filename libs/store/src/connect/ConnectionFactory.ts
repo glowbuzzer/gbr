@@ -2,13 +2,12 @@ import { AppThunk, Connection } from "./Connection"
 import { telemetrySlice } from "../telemetry"
 import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
-import { kinematicsSlice, updateFroPercentageMsg } from "../kinematics"
+import { kinematicsSlice, updateFroMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
 import { gcodeSlice, updateStreamStateMsg } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
-import { devToolsSlice, updateStatusFrequencyMsg } from "../devtools"
 import { connectionSlice } from "./index"
-import { configSlice, ConfigState } from "../config"
+import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
 import { analogOutputsSlice } from "../io/aout"
@@ -16,7 +15,6 @@ import { integerOutputsSlice } from "../io/iout"
 import { analogInputsSlice } from "../io/ain"
 import { integerInputsSlice } from "../io/iin"
 import { tasksSlice } from "../tasks"
-import { settings } from "../util/settings"
 import { activitySlice } from "../activity"
 import {
     updateMachineCommandMsg,
@@ -91,7 +89,7 @@ class StatusProcessor extends ProcessorBase {
                     if (froTarget === 0) {
                         // set fro to 100% if not already set on connect
                         setTimeout(() => {
-                            ws.send(updateFroPercentageMsg(n, 100))
+                            ws.send(updateFroMsg(n, 1))
                         }, 1000)
                     }
                 }
@@ -125,31 +123,6 @@ class ResponseProcessor extends ProcessorBase {
     }
 }
 
-const { load } = settings("devtools.statusFrequency")
-
-class DevToolsProcessor extends ProcessorBase {
-    protected process_internal(
-        msg,
-        dispatch,
-        ws: WebSocket,
-        getState: () => RootState,
-        first: boolean
-    ) {
-        if (first) {
-            // load and send the desired frequency on startup
-            try {
-                const value = load(50)
-                dispatch(() => {
-                    ws.send(updateStatusFrequencyMsg(value))
-                })
-            } catch (e) {
-                console.log(e)
-            }
-        }
-        dispatch(devToolsSlice.actions.status(msg.devtools))
-    }
-}
-
 /**
  * This needs to be global on window, otherwise there is a circular dependency: connection -> actions -> useConnect -> connection
  */
@@ -163,7 +136,6 @@ if (typeof window !== "undefined") {
                 return async (dispatch, getState) => {
                     const statusProcessor = new StatusProcessor()
                     const responseProcessor = new ResponseProcessor()
-                    const devToolsProcessor = new DevToolsProcessor()
 
                     function no_status_handler() {
                         dispatch(connectionSlice.actions.statusReceived(false))
@@ -245,9 +217,6 @@ if (typeof window !== "undefined") {
                             if (msg.response) {
                                 // responses to request we have sent, eg. request for config
                                 responseProcessor.process(msg, dispatch, ws, getState)
-                            }
-                            if (msg.devtools) {
-                                devToolsProcessor.process(msg, dispatch, ws, getState)
                             }
                         } catch (e) {
                             console.error(e)
