@@ -7,7 +7,7 @@ Running the tests is a bit convoluted...
 > **Important** The build/run instructions assume you have `gbc` and `gbr`
 > projects alongside each other in your directory tree
 
-1. In the `gbr` project run `node build.js`.
+1. In the `gbr` project run `node build.mjs --watch`.
 
    This will compile and watch the Typescript sources using `esbuild`. The output is placed in `gbc/libs/gbc-node/build`
 
@@ -25,3 +25,5 @@ Working directory: $ProjectFileDir$\libs\gbc-node
 To restrict tests to a specific area, use `--suite <name>` in the run configuration.
 
 To restrict to a single test within a test suite, using `test.only` (part of `uvu`).
+
+The build script supports `--watch` and `--outfile` options.

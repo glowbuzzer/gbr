@@ -1,0 +1,44 @@
+name: Publish GBR Test Code
+on:
+    push:
+        branches:
+            - main
+        paths:
+            - ".github/workflows/publish-test-code.yml"
+            - "package.json"
+            - "libs/**"
+            - "test/**"
+
+jobs:
+    deploy:
+        runs-on: ubuntu-18.04
+        steps:
+            -   uses: actions/checkout@v1
+
+            -   name: Cache pnpm modules
+                uses: actions/cache@v2
+                with:
+                    path: ~/.pnpm-store
+                    key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+                    restore-keys: |
+                        ${{ runner.os }}-
+
+            -   uses: actions/setup-node@v1
+                with:
+                    node-version: "14.x"
+
+            -   uses: pnpm/action-setup@v2.0.1
+                with:
+                    version: 6.13.0
+
+            -   name: Install packages
+                run: pnpm install
+
+            -   name: Build test code
+                run: node test/build.mjs --outfile test.js --source test/index.ts
+
+            -   name: Deploy code
+                run: sh ./test/deploy-test.sh downloads.glowbuzzer.com E36QR0RH2CR6EK
+                env:
+                    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
