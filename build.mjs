@@ -46,7 +46,7 @@ for (const project of projects) {
             external: index ? undefined : [
                 '@glowbuzzer/store',
                 // core
-                'react', 'react-dom', 'react-reconciler',
+                'react', 'react-dom'/*, 'react-reconciler'*/,
                 'react-redux', '@reduxjs/toolkit',
                 'antd', '@ant-design/icons',
                 'styled-components',
