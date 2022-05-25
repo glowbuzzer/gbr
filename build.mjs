@@ -46,14 +46,14 @@ for (const project of projects) {
             external: index ? undefined : [
                 '@glowbuzzer/store',
                 // core
-                'react', 'react-dom'/*, 'react-reconciler'*/,
+                'react', 'react-dom', 'react-reconciler',
                 'react-redux', '@reduxjs/toolkit',
                 'antd', '@ant-design/icons',
                 'styled-components',
                 // currently core but am not a huge fan
                 'react-grid-layout',
                 // required for robot and toolpath display
-                'three', // 'three-stdlib', 'react-three-fiber', // not sure why, can't extern these without react-fiber 'extend' error
+                'three', 'three-stdlib', '@react-three/fiber', // not sure why, can't extern these without react-fiber 'extend' error
                 // required for telemetry tile
                 'd3',
                 // required for gcode editor
