@@ -1,4 +1,4 @@
-import { extend, useThree } from "react-three-fiber"
+import { extend, useThree } from "@react-three/fiber"
 import * as React from "react"
 import { useEffect, useRef } from "react"
 import { PerspectiveCamera } from "three"
@@ -23,14 +23,14 @@ const CameraControls = () => {
 }
 
 export const ToolPathAutoSize = ({ extent, children }) => {
-    const { size, setDefaultCamera } = useThree()
+    const { size, camera } = useThree()
 
-    useEffect(() => {
-        const cam = new PerspectiveCamera(70, size.width / size.height, 0.01, 10000)
-        cam.position.z = 2 * extent
-        cam.up.set(0, 0, 1)
-        setDefaultCamera(cam)
-    }, [size.width, size.height, extent, setDefaultCamera])
+    // useEffect(() => {
+    //     const cam = new PerspectiveCamera(70, size.width / size.height, 0.01, 10000)
+    //     cam.position.z = 2 * extent
+    //     cam.up.set(0, 0, 1)
+    //     camera.setDefaultCamera(cam)
+    // }, [size.width, size.height, extent, setDefaultCamera])
 
     return (
         <>

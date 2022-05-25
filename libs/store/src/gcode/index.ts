@@ -173,7 +173,8 @@ export function useGCode(): {
             dispatch(gcodeSlice.actions.append({ gcode, vmax, context }))
         },
         setState(streamCommand: STREAMCOMMAND) {
-            dispatch(() => connection.send(updateStreamStateMsg(streamCommand)))
+            connection.send(updateStreamStateMsg(streamCommand))
+            // dispatch<any>(() => )
         },
         reset() {
             dispatch(gcodeSlice.actions.reset({}))

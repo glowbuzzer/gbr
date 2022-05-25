@@ -2,8 +2,8 @@
  * This file provides a Redux store enhancer and hook that allows override of digital inputs.
  * This is useful during development to similate digital inputs from GBC where there are none.
  */
-import React, { createContext, FC, useContext, useMemo, useState } from "react"
-import { StoreEnhancer } from "@reduxjs/toolkit"
+import React, {createContext, useContext, useMemo, useState} from "react"
+import {StoreEnhancer} from "@reduxjs/toolkit"
 
 let values = []
 
@@ -15,7 +15,7 @@ type DigitalInputMockContextType = {
 
 const digitalInputMockContext = createContext<DigitalInputMockContextType | null>(null)
 
-export const DigitalInputMockProvider: FC = ({ children }) => {
+export const DigitalInputMockProvider = ({ children }) => {
     const [state, setState] = useState([] as boolean[])
     const context = useMemo(
         () => ({

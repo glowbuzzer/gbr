@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom"
-import React, { useState } from "react"
+import React, { StrictMode, useState } from "react"
 import {
     CartesianDroTile,
     ConnectTile,
@@ -20,6 +20,7 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import { Vector3 } from "three"
 import { useConfig } from "@glowbuzzer/store"
+import { createRoot } from "react-dom/client"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -133,9 +134,11 @@ export function App() {
     )
 }
 
-ReactDOM.render(
-    <GlowbuzzerApp>
-        <App />
-    </GlowbuzzerApp>,
-    document.getElementById("root")
+const root = createRoot(document.getElementById("root"))
+root.render(
+    <StrictMode>
+        <GlowbuzzerApp>
+            <App />
+        </GlowbuzzerApp>
+    </StrictMode>
 )

@@ -9,6 +9,7 @@ import { Button } from "antd"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import styled from "styled-components"
+import { createRoot } from "react-dom/client"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -96,7 +97,7 @@ const OscillatingMoveTile = () => {
 
 export function App() {
     return (
-        <GlowbuzzerApp minWidth="0px">
+        <GlowbuzzerApp>
             <StyledApp>
                 <nav>
                     <ConnectTile />
@@ -116,9 +117,9 @@ export function App() {
     )
 }
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root"))
+root.render(
     <StrictMode>
         <App />
-    </StrictMode>,
-    document.getElementById("root")
+    </StrictMode>
 )

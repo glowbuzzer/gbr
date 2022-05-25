@@ -1,14 +1,13 @@
 import { RobotModel } from "./robots"
 import * as THREE from "three"
 
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
+import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib"
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { ToolConfig } from "@glowbuzzer/store"
 
 const loader = new GLTFLoader()
-loader.setPath(new URL("./assets", window.location.href).href)
+// loader.setPath(new URL("./assets", window.location.href).href)
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.4.0/")
 loader.setDRACOLoader(dracoLoader)

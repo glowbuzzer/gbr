@@ -14,7 +14,7 @@ import {
     useToolPathSettings
 } from "@glowbuzzer/store"
 import { ToolPath } from "./ToolPath"
-import { Canvas } from "react-three-fiber"
+import { Canvas } from "@react-three/fiber"
 import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { ToolPathAutoSize } from "./ToolPathAutoSize"
@@ -114,7 +114,7 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
             footer={<Button onClick={reset}>Reset</Button>}
             settings={<ToolPathSettings />}
         >
-            <Canvas colorManagement shadowMap>
+            <Canvas>
                 <ToolPathAutoSize extent={extent}>
                     {lighting.map((position, index) => (
                         <pointLight

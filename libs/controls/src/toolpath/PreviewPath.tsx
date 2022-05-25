@@ -24,8 +24,11 @@ const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
         position.clone().add(new Vector3(distanceX, 0, 0))
     ].map(v => [v.x, v.y, v.z] as [number, number, number])
 
-    // noinspection RequiredAttributes
+    // TODO: C: fix issue on first load of Line below - React 18 issue?
+    return null
+
     return (
+        // @ts-ignore
         <Line
             color="#909090"
             points={points}
@@ -67,8 +70,8 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     const lineHeight = 1.5
 
     function LabelText({ position, label, distance }) {
-        // noinspection RequiredAttributes
         return (
+            // @ts-ignore
             <Text
                 position={position}
                 color={"#909090"}

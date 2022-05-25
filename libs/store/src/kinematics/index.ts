@@ -12,6 +12,7 @@ import { Quaternion, Vector3 } from "three"
 import { KinematicsConfigurationCommand, POSITIONREFERENCE, Quat } from "../gbc"
 import { useMemo } from "react"
 
+// TODO: H: remove this and use gbc schema version
 enum KINEMATICSCONFIGURATIONTYPE {
     TX40,
     TX60,
@@ -229,9 +230,9 @@ export const useKinematics = (kc: number) => {
          * @param rotation? Logical rotation to apply
          */
         setOffset(translation: Vector3, rotation?: Quaternion) {
-            dispatch(() => {
-                connection.send(updateOffsetMsg(kc, translation, rotation))
-            })
+            // dispatch<any>(() => {
+            connection.send(updateOffsetMsg(kc, translation, rotation))
+            // })
         }
     }
 }
@@ -308,9 +309,9 @@ export function useFeedRate(kc: number) {
         setFeedRatePercentage(value: number) {
             // TODO: use this value on connect (currently defaults to 100%)
             window.localStorage.setItem(`kinematics.${kc}.fro`, JSON.stringify(value))
-            dispatch(() => {
-                connection.send(updateFroMsg(kc, value))
-            })
+            // dispatch(() => {
+            connection.send(updateFroMsg(kc, value))
+            // })
         },
         froActual
     }

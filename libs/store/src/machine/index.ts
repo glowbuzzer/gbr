@@ -159,17 +159,17 @@ export function useMachine(): {
         ...machine,
         setDesiredMachineTarget(target: MACHINETARGET) {
             dispatch(machineSlice.actions.setRequestedTarget(target))
-            dispatch(() => {
-                connection.send(updateMachineTargetMsg(target))
-            })
+            // dispatch(() => {
+            connection.send(updateMachineTargetMsg(target))
+            // })
         },
         setDesiredState(state: DesiredState) {
             dispatch(machineSlice.actions.setDesiredState(state))
         },
         setMachineControlWord(controlWord: number) {
-            dispatch(() => {
-                connection.send(updateMachineControlWordMsg(controlWord))
-            })
+            // dispatch(() => {
+            connection.send(updateMachineControlWordMsg(controlWord))
+            // })
         }
     }
 }

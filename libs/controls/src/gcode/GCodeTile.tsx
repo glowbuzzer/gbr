@@ -2,9 +2,9 @@ import * as React from "react"
 import { useEffect, useRef } from "react"
 import AceEditor from "react-ace"
 
-import "ace-builds/src-noconflict/theme-github"
-import "ace-builds/src-noconflict/mode-gcode"
-import "ace-builds/src-noconflict/mode-text"
+import "ace-builds/src-noconflict/theme-github.js"
+import "ace-builds/src-noconflict/mode-gcode.js"
+import "ace-builds/src-noconflict/mode-text.js"
 
 import { Tile } from "../tiles"
 import { Radio, Select, Space, Tag } from "antd"

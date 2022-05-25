@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FC, useEffect, useRef } from "react"
+import { FC, ReactNode, useEffect, useRef } from "react"
 import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
 import {
@@ -58,6 +58,7 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
 
 type GlowbuzzerContainerProps = {
     init?(connection)
+    children: ReactNode
 }
 
 const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) => {
@@ -130,6 +131,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
 
 type GlowbuzzerAppProps = {
     storeEnhancers?: StoreEnhancer[]
+    children: ReactNode
 }
 
 export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({ storeEnhancers, children }) => {

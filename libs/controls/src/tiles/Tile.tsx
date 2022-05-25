@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from "react"
+import React, { FC, ReactNode, useContext, useState } from "react"
 import styled, { css } from "styled-components"
 import { Button, Modal, Popover } from "antd"
 import { EditOutlined, QuestionCircleOutlined } from "@ant-design/icons"
@@ -8,6 +8,7 @@ type TileSettingsProps = {
     title?: string
     onConfirm(): void
     onReset?(): void
+    children: ReactNode
 }
 
 export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset, children }) => {
@@ -48,6 +49,7 @@ type TileProps = {
     footer?
     controls?
     settings?
+    children?: ReactNode
 }
 
 const StyledTile = styled.div<{ fullHeight: boolean }>`

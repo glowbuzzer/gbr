@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FC, useContext } from "react"
+import { FC, ReactNode, useContext } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { tileLayoutContext, TileLayoutContextType } from "./TileContext"
 
@@ -24,6 +24,7 @@ export type TileConfiguration = { [index: string]: TileDefinition }
 type TileProviderProps = {
     prefix?: string
     tiles: TileConfiguration
+    children: ReactNode
 }
 
 export const TileProvider: FC<TileProviderProps> = ({ prefix, tiles, children }) => {

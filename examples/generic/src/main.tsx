@@ -33,6 +33,7 @@ import { JointSpinnersTile } from "./JointSpinnersTile"
 import "react-grid-layout/css/styles.css"
 import { GCodeContextProvider, SoloActivityApi, useConfig } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { createRoot } from "react-dom/client"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -133,11 +134,11 @@ function App() {
     )
 }
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root"))
+root.render(
     <StrictMode>
         <GlowbuzzerApp>
             <App />
         </GlowbuzzerApp>
-    </StrictMode>,
-    document.getElementById("root")
+    </StrictMode>
 )
