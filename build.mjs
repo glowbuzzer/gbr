@@ -100,7 +100,7 @@ for (const project of projects) {
         ];
         exports[sub_module] = {
             'require': `${sub_module}/index.js`,
-            'module': `./esm/${sub_module === '.' ? '' : (sub_module.substr(2) + '/')}index.mjs`
+            'import': `./esm/${sub_module === '.' ? '' : (sub_module.substr(2) + '/')}index.mjs`
         };
         return Promise.all(sub_builds.map(options => build(options).then(r => {
             const meta = r.metafile;
