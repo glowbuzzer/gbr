@@ -2,6 +2,8 @@ import * as React from "react"
 import { useEffect, useRef } from "react"
 import AceEditor from "react-ace"
 
+const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
+
 import "ace-builds/src-noconflict/theme-github.js"
 import "ace-builds/src-noconflict/mode-gcode.js"
 import "ace-builds/src-noconflict/mode-text.js"
@@ -209,7 +211,7 @@ export const GCodeTile = () => {
             }
         >
             <StyledDiv readOnly={active}>
-                <AceEditor
+                <AceEditorFixed
                     ref={editorRef}
                     readOnly={active}
                     mode="gcode"
