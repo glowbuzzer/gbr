@@ -53,7 +53,7 @@ for (const project of projects) {
                 // currently core but am not a huge fan
                 'react-grid-layout',
                 // required for robot and toolpath display
-                'three', 'three-stdlib', '@react-three/fiber', // not sure why, can't extern these without react-fiber 'extend' error
+                'three', 'three-stdlib', '@react-three/fiber', '@react-three/drei',
                 // required for telemetry tile
                 'd3',
                 // required for gcode editor
