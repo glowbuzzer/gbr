@@ -68,7 +68,7 @@ export const GCodeTile = () => {
     const offset = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
     const editorRef = useRef<AceEditor>(null)
-    const timerRef = useRef<NodeJS.Timeout>()
+    const timerRef = useRef<any>()
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
