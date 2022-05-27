@@ -2,7 +2,8 @@ import * as React from "react"
 import { useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import { GCodeSegment } from "@glowbuzzer/store"
-import { Line, Text } from "@react-three/drei"
+import { Text } from "@react-three/drei"
+import { Line } from "./Line"
 
 function toVector3(vals: { x: number; y: number; z: number }) {
     const { x, y, z } = vals
@@ -23,9 +24,6 @@ const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
         position.clone().add(new Vector3(distanceX, distanceY, 0)),
         position.clone().add(new Vector3(distanceX, 0, 0))
     ].map(v => [v.x, v.y, v.z] as [number, number, number])
-
-    // TODO: C: fix issue on first load of Line below - React 18 issue?
-    return null
 
     return (
         // @ts-ignore
