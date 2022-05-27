@@ -68,16 +68,20 @@ export const GCodeTile = () => {
     const offset = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
     const editorRef = useRef<AceEditor>(null)
+    const timerRef = useRef<NodeJS.Timeout>()
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
 
     const stream_state = stream.state
     useEffect(() => {
-        if (stream_state === STREAMSTATE.STREAMSTATE_IDLE) {
-            // we should only update the preview if stream is idle (otherwise whole preview moves while running)
-            preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
-        }
+        timerRef.current = setTimeout(() => {
+            if (stream_state === STREAMSTATE.STREAMSTATE_IDLE) {
+                // we should only update the preview if stream is idle (otherwise whole preview moves while running)
+                preview.setGCode("G" + (54 + workOffset) + "\n" + gcode)
+            }
+        }, 500)
+        return () => clearTimeout(timerRef.current)
         // eslint-disable-next-line
     }, [
         stream_state,
