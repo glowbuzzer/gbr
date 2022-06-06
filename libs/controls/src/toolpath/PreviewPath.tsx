@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useMemo } from "react"
+import { useLayoutEffect, useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import { GCodeSegment } from "@glowbuzzer/store"
 import { Line, Text } from "@react-three/drei"
@@ -36,6 +36,24 @@ const DashedExtent = ({ position, distanceX, distanceY, scale }) => {
     )
 }
 
+const LabelText = ({ position, label, distance, fontSize, lineHeight }) => (
+    // @ts-ignore
+    <Text
+        position={position}
+        color={"#909090"}
+        fontSize={fontSize}
+        maxWidth={fontSize * 10}
+        lineHeight={lineHeight}
+        letterSpacing={0}
+        textAlign={"left"}
+        font="arial"
+        anchorX="left"
+        anchorY="top"
+    >
+        {label} {distance.toFixed(2)} mm
+    </Text>
+)
+
 const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     const OFFSET = scale / 10
     const fontSize = scale / 15
@@ -65,26 +83,6 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
     const extentZ = maxPoint.z - minPoint.z
 
     const lineHeight = 1.5
-
-    function LabelText({ position, label, distance }) {
-        return (
-            // @ts-ignore
-            <Text
-                position={position}
-                color={"#909090"}
-                fontSize={fontSize}
-                maxWidth={fontSize * 10}
-                lineHeight={lineHeight}
-                letterSpacing={0}
-                textAlign={"left"}
-                font="arial"
-                anchorX="left"
-                anchorY="top"
-            >
-                {label} {distance.toFixed(2)} mm
-            </Text>
-        )
-    }
 
     if (!preview.length) {
         return null
@@ -120,13 +118,27 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
                 position={new Vector3(0, -OFFSET - fontSize, 0)}
                 label=" X"
                 distance={extentX}
+                fontSize={fontSize}
+                lineHeight={lineHeight}
             />
-            <LabelText position={new Vector3(-OFFSET, 0, 0)} label="Y" distance={extentY} />
+            <LabelText
+                position={new Vector3(-OFFSET, 0, 0)}
+                label="Y"
+                distance={extentY}
+                fontSize={fontSize}
+                lineHeight={lineHeight}
+            />
             <group
                 position={new Vector3(extentX + OFFSET, 0, fontSize * lineHeight)}
                 rotation={new Euler(Math.PI / 2, 0, 0)}
             >
-                <LabelText position={new Vector3()} label=" Z" distance={extentZ} />
+                <LabelText
+                    position={new Vector3()}
+                    label=" Z"
+                    distance={extentZ}
+                    fontSize={fontSize}
+                    lineHeight={lineHeight}
+                />
             </group>
         </group>
     )
@@ -139,36 +151,31 @@ type PreviewPathProps = {
 }
 
 export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps) => {
-    const previewPoints = useMemo(() => {
-        return preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat()
-    }, [preview])
+    const ref = React.useRef</*BufferGeometry*/ any>(null)
 
-    const colors = useMemo(() => {
+    useLayoutEffect(() => {
         function get_color(segment: GCodeSegment) {
             const color = segment.lineNum === highlightLine ? [0, 0, 0] : segment.color
             return [color, color].flat()
         }
 
-        const floats = preview.flatMap(s => get_color(s))
+        const previewPoints = preview.map(s => [toVector3(s.from), toVector3(s.to)]).flat()
+        const colors = preview.flatMap(s => get_color(s))
+        const colors_array = new Float32BufferAttribute(colors, 3)
 
-        return new Float32BufferAttribute(floats, 3)
+        if (ref.current) {
+            ref.current.setFromPoints(previewPoints)
+            ref.current.setAttribute("color", colors_array)
+        }
     }, [preview, highlightLine])
 
-    return useMemo(
-        () => (
-            <>
-                <lineSegments>
-                    <bufferGeometry
-                        onUpdate={geom => {
-                            geom.setAttribute("color", colors)
-                            geom.setFromPoints(previewPoints)
-                        }}
-                    />
-                    <lineBasicMaterial vertexColors={true} linewidth={1} />
-                </lineSegments>
-                <DrawingExtent preview={preview} scale={scale} />
-            </>
-        ),
-        [previewPoints, colors, scale, preview]
+    return (
+        <>
+            <lineSegments>
+                <bufferGeometry ref={ref} />
+                <lineBasicMaterial vertexColors={true} linewidth={1} />
+            </lineSegments>
+            <DrawingExtent preview={preview} scale={scale} />
+        </>
     )
 }
