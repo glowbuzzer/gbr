@@ -1,7 +1,5 @@
-# controls
+# Glowbuzzer React (GBR) controls
 
-This library was generated with [Nx](https://nx.dev).
+This library contains many React components useful for building machine controls.
 
-## Running unit tests
-
-Run `nx test controls` to execute the unit tests via [Jest](https://jestjs.io).
+For further information, [visit the GBR documentation](https://www.glowbuzzer.com/docs/gbr/overview) on our website.

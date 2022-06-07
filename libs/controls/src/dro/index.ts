@@ -1,5 +1,6 @@
 export * from "./BitFieldDisplay"
 export * from "./CartesianDro"
+export * from "./DroItem"
 export * from "./MotorDro"
 export * from "./JointDro"
 export * from "./RobotConfigurationDro"

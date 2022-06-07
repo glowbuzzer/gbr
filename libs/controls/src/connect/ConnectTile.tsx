@@ -146,12 +146,16 @@ export const ConnectTile = () => {
             controls={
                 <FlexCentered>
                     {connection.connected ? (
-                        <Button onClick={disconnect}>Disconnect</Button>
+                        <Button size="small" onClick={disconnect}>
+                            Disconnect
+                        </Button>
                     ) : (
                         <div>Not connected</div>
                     )}
                     {!connection.connected && !connection.autoConnect && (
-                        <Button onClick={connect}>Connect</Button>
+                        <Button size="small" onClick={connect}>
+                            Connect
+                        </Button>
                     )}
                     <TrafficLight width={20} color={traffic_light_color} />
                 </FlexCentered>
