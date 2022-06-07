@@ -33,6 +33,7 @@ specifiers:
   '@types/react-is': ^17.0.3
   '@types/resize-observer-browser': ^0.1.7
   '@types/styled-components': ^5.1.25
+  '@types/three': ^0.141.0
   '@typescript-eslint/eslint-plugin': ^5.26.0
   '@typescript-eslint/parser': ^5.26.0
   ace-builds: ^1.5.1
@@ -152,6 +153,7 @@ devDependencies:
   '@types/react-is': 17.0.3
   '@types/resize-observer-browser': 0.1.7
   '@types/styled-components': 5.1.25
+  '@types/three': 0.141.0
   '@typescript-eslint/eslint-plugin': 5.26.0_3e687f93547efbf7d61b629ca4d69a5c
   '@typescript-eslint/parser': 5.26.0_eslint@8.16.0+typescript@4.7.2
   ace-builds: 1.5.1
@@ -3590,6 +3592,12 @@ packages:
       csstype: 3.0.9
     dev: true
 
+  /@types/three/0.141.0:
+    resolution: {integrity: sha512-OJdKDgTPVBUgc+s74DYoy4aLznbFFC38Xm4ElmU1YwGNgR7GGFVvFCX7lpVgOsT6S1zSJtGdajTsOYE8/xY9nA==}
+    dependencies:
+      '@types/webxr': 0.4.0
+    dev: true
+
   /@types/use-sync-external-store/0.0.3:
     resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
     dev: false
@@ -3600,6 +3608,10 @@ packages:
       '@types/node': 17.0.35
       '@types/source-list-map': 0.1.2
       source-map: 0.6.1
+    dev: true
+
+  /@types/webxr/0.4.0:
+    resolution: {integrity: sha512-LQvrACV3Pj17GpkwHwXuTd733gfY+D7b9mKdrTmLdO7vo7P/o6209Qqtk63y/FCv/lspdmi0pWz6Qe/ull9kQg==}
     dev: true
 
   /@types/yargs-parser/20.2.1:
@@ -8732,7 +8744,7 @@ packages:
     dev: true
 
   /image-size/0.5.5:
-    resolution: {integrity: sha1-Cd/Uq50g4p6xw+gLiZA3jfnjy5w=}
+    resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
     engines: {node: '>=0.10.0'}
     hasBin: true
     requiresBuild: true
