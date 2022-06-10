@@ -104,6 +104,42 @@ const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex
     }
 }
 
+/**
+ * The jog tile allows direct movement of your machine, either in joint or cartesian mode.
+ *
+ * If you have multiple kinematics configurations, you can switch between them.
+ * Cartesian jogging is allowed if your kinematics support it.
+ *
+ * The jog tile uses the solo activity API to perform all moves. Features provided:
+ *
+ * Movement mode
+ *
+ * : Choose between joint and cartesian jog. In cartesian mode you can select the reference frame for the move.
+ *
+ * Action mode
+ *
+ * : Choose between continuous jog, step or goto mode. When the mode is goto, you have the option
+ * of position, orientation or waypoint modes.
+ *
+ * Waypoints
+ *
+ * : Choose the goto action mode where you can set or use previously created waypoints.
+ *
+ * Robot configuration
+ *
+ * : Choose the goto action mode where you can choose the target configuration (waist, elbow, wrist) for the robot.
+ *
+ * Jog speed
+ *
+ * : Jogging limits can be set separately in the configuration and you can dial these down further.
+ *
+ * Disable limit checking
+ *
+ * : Normally GBC will not allow you to jog outside of the machine's limits, set in the configuration.
+ * However it can be useful to disable this check if the machine has already gone outside of the soft limits
+ * and you need to jog it back into position.
+ *
+ */
 export const JogTile = () => {
     const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>(

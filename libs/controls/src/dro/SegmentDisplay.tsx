@@ -3,9 +3,13 @@ import React from "react"
 import styled from "styled-components"
 
 type SegmentDisplayProps = {
+    /** Value to display */
     value: number
+    /** Fixed number of decimal places */
     toFixed?: number
+    /** Number of digits to display. Values will be padded with leading zeros up to this width */
     width?: number
+    /** Whether the value is in error (for example, beyond configured extents). Causes the value to be displayed in red */
     error?: boolean
 }
 
@@ -30,6 +34,9 @@ const StyledSegmentDisplay = styled.span<{ error }>`
     }
 `
 
+/**
+ * Displays a given numeric value as a traditional segmented display.
+ */
 export const SegmentDisplay = ({ value, toFixed, width, error }: SegmentDisplayProps) => {
     let text = toFixed ? value.toFixed(toFixed) : value.toString()
     if (width) {

@@ -19,10 +19,13 @@ const StyledDiv = styled.div`
 `
 
 type RobotConfigurationSelectorProps = {
+    /** Current configuration */
     value: number
+    /** On change handler, called when the user interacts with the control */
     onChange(value: number)
 }
 
+/** @ignore - internal to the jog tile */
 export const RobotConfigurationSelector = ({
     value,
     onChange

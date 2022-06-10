@@ -22,7 +22,24 @@ const AnalogOutputItem = ({ index, label }) => {
     return <NumericOutputWidget label={label} {...aout} onChange={setAout} />
 }
 
-export const AnalogOutputsTile = ({ labels = [] }) => {
+type AnalogOutputsTileProps = {
+    /**
+     * Labels to use for outputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+/**
+ * The analog outputs tile allows you to view and control all analog outputs on a machine.
+ *
+ * By default (in auto mode) analog outputs are controlled by activities, either using the solo activity API
+ * or streamed (for example, using G-code M201). However this tile (and the underlying hook) allows
+ * you to override an analog output. When an analog output is overridden, the value you specify will
+ * be used regardless of any changes from an activity. For example, if you execute some G-code with
+ * an M201 code, but have overridden an analog output using this tile, the M201 code will be ignored.
+ *
+ */
+export const AnalogOutputsTile = ({ labels = [] }: AnalogOutputsTileProps) => {
     const aouts = useAnalogOutputList()
 
     return (

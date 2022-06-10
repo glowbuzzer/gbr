@@ -15,6 +15,7 @@ const angular_units = {
     deg: "Degrees"
 }
 
+/** @ignore - internal to the preferences dialog */
 export const UnitSelector = ({ type }: { type: "linear" | "angular" }) => {
     const prefs = usePrefs()
     const key = "units_" + type

@@ -78,6 +78,9 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
     )
 }
 
+/**
+ * @ignore
+ */
 export const StateMachineToolsTile = () => {
     // const devtools = useDevTools()
     const machine = useMachine()

@@ -58,6 +58,7 @@ type TcpRobotProps = {
     toolConfig: ToolConfig
 }
 
+/** @ignore - internal to the tool path tile */
 export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
     const [robotModels, setRobotModels] = useState<THREE.Group[]>([])
 

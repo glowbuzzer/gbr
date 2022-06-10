@@ -12,9 +12,9 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { StyledJogDiv } from "./StyledJogDiv"
+import { StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
-import { WaypointsJoints } from "./Waypoints"
+import { WaypointsJoints } from "./WaypointsJoints"
 
 enum Mode {
     POSITION,
@@ -25,6 +25,7 @@ const Tab = ({ mode, value, children }) => (
     <div className={"tab" + (value === mode ? " selected" : "")}>{children}</div>
 )
 
+/** @ignore - internal to the jog tile */
 export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
     const [mode, setMode] = useState(Mode.POSITION)
 

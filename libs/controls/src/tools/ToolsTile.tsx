@@ -14,6 +14,12 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * The tools tile shows all tools in the configuration and allows you to switch tools.
+ *
+ * It is your responsibility to ensure the machine is at rest when the tool is changed.
+ * For tool changes when running a job (for example, during G-code execution), see the section on automated tool changes.
+ */
 export const ToolsTile = () => {
     const tools = useToolList()
     const toolIndex = useToolIndex(0)

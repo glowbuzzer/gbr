@@ -179,6 +179,7 @@ type JogArrowsJointProps = {
     jogSpeed: number
 }
 
+/** @ignore - internal to the jog tile */
 export const JogArrowsJoint = ({
     jogMode,
     kinematicsConfigurationIndex,

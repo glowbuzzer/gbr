@@ -150,6 +150,7 @@ type PreviewPathProps = {
     scale: number
 }
 
+/** @ignore - internal to the tool path tile */
 export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps) => {
     const ref = React.useRef</*BufferGeometry*/ any>(null)
 

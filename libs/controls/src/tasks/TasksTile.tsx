@@ -59,9 +59,11 @@ const TaskItem = ({ status, index }: { status: TaskStatus; index: number }) => {
     )
 }
 
+/**
+ * The tasks tile shows the current status of all tasks in the configuration and allows you to start and stop tasks.
+ */
 export const TasksTile = () => {
     const status = useTaskStatus()
-    // console.log("STATUS", status)
     return (
         <Tile title="Tasks">
             {status.map((t, index) => (

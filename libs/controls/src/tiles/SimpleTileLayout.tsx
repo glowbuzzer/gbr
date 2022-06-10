@@ -14,6 +14,7 @@ type SimpleTileLayoutProps = {
     widths: number[]
 }
 
+/** @ignore - not currenly supported */
 export const SimpleTileLayout = ({ appId, tiles, widths }: SimpleTileLayoutProps) => {
     const mapped = widths
         .flatMap((width, col) => {

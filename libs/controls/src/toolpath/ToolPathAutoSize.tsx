@@ -5,6 +5,7 @@ import { OrbitControls } from "three-stdlib"
 
 extend({ OrbitControls })
 
+/** @ignore - internal to the tool path tile */
 export const ToolPathAutoSize = ({ extent, children }) => {
     const {
         camera,

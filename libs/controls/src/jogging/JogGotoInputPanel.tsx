@@ -56,6 +56,7 @@ type JogGotoInputPanelProps = {
     onGotoAll(values: { [index: string]: number })
 }
 
+/** @ignore - internal to the jog tile */
 export const JogGotoInputPanel = ({
     localStorageKey,
     items,

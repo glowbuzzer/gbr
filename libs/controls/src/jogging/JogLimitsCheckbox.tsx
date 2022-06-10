@@ -6,6 +6,7 @@ import {
 import { Checkbox } from "antd"
 import React from "react"
 
+/** @ignore - internal to the jog tile */
 export const JogLimitsCheckbox = ({ kinematicsConfigurationIndex }) => {
     const connection = useConnection()
     const disabled = useKinematicsLimitsDisabled(kinematicsConfigurationIndex)

@@ -467,6 +467,9 @@ const TelemetryControls = () => {
     )
 }
 
+/**
+ * @ignore
+ */
 export const TelemetryTile = () => {
     return (
         <Tile title="Telemetry" settings={<TelemetrySettings />} footer={<TelemetryControls />}>

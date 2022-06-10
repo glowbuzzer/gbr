@@ -10,6 +10,7 @@ const TileContainer = styled.div`
     background: white;
 `
 
+/** @ignore - not currently supported */
 export const TileLayout = () => {
     const { tiles, onLayoutChange } = useTiles()
 

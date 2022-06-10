@@ -55,6 +55,22 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
     }
 `
 
+/**
+ * The G-code tile provides an editor for G-code and the ability to stream programs to GBC.
+ *
+ * Changes you make to the G-code will be reflected by the preview in the {@link ToolPathTile}.
+ *
+ * You can execute, pause, resume and cancel jobs using the controls in the title bar of the tile.
+ *
+ * As G-code executes the currently executing activity is highlighted in the editor.
+ *
+ * The work offset drop down allows you to specify the default work offset at the start of the program.
+ * If your G-code specifies work offsets within it, these will override this setting.
+ *
+ * Note that the work offsets G54 and so on correspond to frames in your configuration, starting
+ * at frame zero.
+ *
+ */
 export const GCodeTile = () => {
     const [gcode, setGCode] = React.useState(load("G1 X10 Y5 Z2"))
 

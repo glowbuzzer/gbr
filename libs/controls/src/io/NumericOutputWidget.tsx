@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import { Button, InputNumber, Switch, Tag } from "antd"
 import { ArrowRightOutlined } from "@ant-design/icons"
 
+/** @ignore - internal to the jog tile */
 export function NumericOutputWidget({
     label,
     effectiveValue,

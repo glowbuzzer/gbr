@@ -6,6 +6,7 @@ type WorkspaceDimensionProps = {
     extent: number
 }
 
+/** @ignore - internal to the tool path tile */
 export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
     const fontSize = extent / 10
     const maxWidth = extent

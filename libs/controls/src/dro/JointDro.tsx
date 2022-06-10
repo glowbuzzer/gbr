@@ -11,7 +11,6 @@ import {
     useJointCount,
     usePrefs
 } from "@glowbuzzer/store"
-import { Tile } from "../tiles"
 import styled from "styled-components"
 
 const StyledRow = styled(Row)`
@@ -131,6 +130,10 @@ const JointDroItem = ({ index, warningThreshold }) => {
     )
 }
 
+/**
+ * Displays values of joints. By default will display all configured joints. If joints specify minimum and maximum values,
+ * a gauge will be displayed showing the range of motion.
+ */
 export const JointDro = ({
     jointsToDisplay,
     warningThreshold
@@ -149,13 +152,5 @@ export const JointDro = ({
                     <JointDroItem key={index} index={index} warningThreshold={warningThreshold} />
                 ))}
         </div>
-    )
-}
-
-export const JointDroTile = () => {
-    return (
-        <Tile title="Joint DRO">
-            <JointDro warningThreshold={0.05} />
-        </Tile>
     )
 }

@@ -6,6 +6,7 @@ type TcpFulcrumProps = {
     position: Vector3
 }
 
+/** @ignore - internal to the tool path tile */
 export const TcpFulcrum = ({ scale, position }: TcpFulcrumProps) => {
     const fulcrumHeight = 0.4 * scale
 

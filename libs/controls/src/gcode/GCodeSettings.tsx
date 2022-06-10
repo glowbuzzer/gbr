@@ -4,6 +4,9 @@ import { TileSettings } from "../tiles"
 import { GCodeSettingsType, gcodeSlice, useGCodeSettings } from "@glowbuzzer/store"
 import { Checkbox } from "antd"
 
+/**
+ * @ignore - internal to GCodeTile
+ */
 export const GCodeSettings = () => {
     const initialSettings = useGCodeSettings()
     const dispatch = useDispatch()

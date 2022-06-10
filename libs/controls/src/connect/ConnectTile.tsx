@@ -95,6 +95,13 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * The connect tile allows you to connect and disconnect from a running GBC, and interact with the basic state of the machine.
+ *
+ * The url used to connect is set in the preferences (see {@link PreferencesDialog}). Once connected you can switch
+ * between simulation and live running, and enable or disable operation. If any faults have occurred these are displayed
+ * and you can reset the fault ready and continue operation.
+ */
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()

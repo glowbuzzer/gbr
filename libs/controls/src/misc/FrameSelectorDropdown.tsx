@@ -26,6 +26,7 @@ function render_items(items: Frame[], result: any[], level: number, defaultFrame
     }
 }
 
+/** @ignore - internal to FrameSelector */
 export const FrameSelectorDropdown = (props: FrameSelectorDropdownProps & FrameSelectorProps) => {
     const items = [
         props.hideWorld ? null : (

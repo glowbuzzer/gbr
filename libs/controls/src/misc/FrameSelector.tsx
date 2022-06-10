@@ -22,6 +22,9 @@ export type FrameSelectorProps = {
     onChange: (frameIndex: number) => void
 }
 
+/**
+ * Provides a way to select preferred frame of reference (normally used in combination with a digital readout component).
+ */
 export const FrameSelector = (props: FrameSelectorProps) => {
     const { asTree: items } = useFrames()
 

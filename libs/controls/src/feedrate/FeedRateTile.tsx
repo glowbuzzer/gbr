@@ -2,9 +2,16 @@ import React, { useEffect, useRef, useState } from "react"
 import { Tile } from "../tiles"
 import { useConfig, useFeedRate } from "@glowbuzzer/store"
 import { Select, Slider } from "antd"
-import { OptionalType } from "typedoc"
 import { useLocalStorage } from "../util/LocalStorageHook"
 
+/**
+ * The feed rate tile provides a simple way to adjust the feedrate for a kinematics configuration.
+ *
+ * If multiple kinematics configurations are configured, the tile provides a way to switch between
+ * them.
+ *
+ * The feedrate set affects all moves on the kinematics configuration.
+ */
 export const FeedRateTile = () => {
     const [selectedKc, setSelectedKc] = useLocalStorage("feedrate.kc", 0)
 
@@ -26,15 +33,13 @@ export const FeedRateTile = () => {
     const fro = kinematics.froActual
     useEffect(() => {
         timer.current = setTimeout(() => {
-            const in_slide_scale = fro // fro <= 1 ? fro : (fro + 3) / 4
-            setValueInternal(in_slide_scale)
+            setValueInternal(fro)
         }, 500)
         return () => clearTimeout(timer.current)
     }, [fro])
 
     function setValue(value) {
-        const in_linear_scale = value // value <= 1 ? value : value * 4 - 3
-        kinematics.setFeedRatePercentage(in_linear_scale)
+        kinematics.setFeedRatePercentage(value)
         setValueInternal(value)
     }
 

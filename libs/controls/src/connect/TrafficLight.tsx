@@ -7,6 +7,7 @@ const StyledSvg = styled.svg<{ color?: string }>`
     }
 `
 
+/** @ignore - internal to the connect tile */
 export const TrafficLight = ({ ...props }) => (
     <StyledSvg width={32} {...props} viewBox="0 0 64 64">
         <filter id="counter" filterUnits="objectBoundingBox">

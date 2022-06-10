@@ -57,7 +57,24 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
     )
 }
 
-export const DigitalOutputsTile = ({ labels = [] }) => {
+type DigitalOutputsTileProps = {
+    /**
+     * Labels to use for outputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+/**
+ * The digital outputs tile allows you to view and control all digital outputs on a machine.
+ *
+ * By default (in auto mode) digital outputs are controlled by activities, either using the solo activity API
+ * or streamed (for example, using G-code M200). However this tile (and the underlying hook) allows
+ * you to override an digital output. When an digital output is overridden, the value you specify will
+ * be used regardless of any changes from an activity. For example, if you execute some G-code with
+ * an M201 code, but have overridden an digital output using this tile, the M200 code will be ignored.
+ *
+ */
+export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => {
     const douts = useDigitalOutputList()
 
     return (

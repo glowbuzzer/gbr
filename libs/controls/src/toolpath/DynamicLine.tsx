@@ -8,6 +8,7 @@ type DynamicLineProps = {
     lineWidth: number
 }
 
+/** @ignore - internal to tool path display */
 export const DynamicLine = React.forwardRef<Line2, DynamicLineProps>(function Line(
     { points, color = "black", lineWidth, ...rest },
     ref

@@ -4,10 +4,15 @@ import { usePrefs } from "@glowbuzzer/store"
 import { UnitSelector } from "./UnitSelector"
 
 type PreferencesDialogProps = {
+    /** Whether the preferences dialog is visible */
     visible: boolean
-    onClose(): void
+    /** Invoked when the dialog is closed */
+    onClose: () => void
 }
 
+/**
+ * Provides a simple dialog that can be used to set user preferences such as display units.
+ */
 export const PreferencesDialog = ({ visible, onClose }: PreferencesDialogProps) => {
     const prefs = usePrefs()
 

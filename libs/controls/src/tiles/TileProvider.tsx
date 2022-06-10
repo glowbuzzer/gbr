@@ -27,6 +27,7 @@ type TileProviderProps = {
     children: ReactNode
 }
 
+/** @ignore - not currently supported */
 export const TileProvider: FC<TileProviderProps> = ({ prefix, tiles, children }) => {
     const defaultTilesAsArray = Object.entries(tiles).map(([id, tile]) => ({ id, ...tile }))
     const defaultVisibility = fromEntries(defaultTilesAsArray.map(t => [t.id, true]))

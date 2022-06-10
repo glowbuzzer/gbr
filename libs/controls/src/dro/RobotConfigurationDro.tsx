@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons"
 import { useKinematics } from "@glowbuzzer/store"
 
+/** @ignore - not currently supported */
 export const RobotConfigurationDro = () => {
     const kinematics = useKinematics(0)
 

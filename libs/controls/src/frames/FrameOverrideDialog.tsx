@@ -99,6 +99,9 @@ const StyledModal = styled.div`
     }
 `
 
+/**
+ * @ignore - internal
+ */
 export const FrameOverrideDialog = ({ visible, onClose }) => {
     const [selected, setSelected] = useState([])
     const frames = useFrames()

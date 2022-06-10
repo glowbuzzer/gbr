@@ -9,7 +9,17 @@ const StyledDiv = styled.div`
     justify-content: space-between;
 `
 
-export const AnalogInputsTile = ({ labels = [] }) => {
+type AnalogInputsTileProps = {
+    /**
+     * Labels to use for inputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+/**
+ * The analog inputs tile shows a simple table of all current analog input values.
+ */
+export const AnalogInputsTile = ({ labels = [] }: AnalogInputsTileProps) => {
     const ain = useAnalogInputs()
 
     return (

@@ -84,6 +84,9 @@ type BitFieldDisplayProps = {
     className?: string
 }
 
+/**
+ * Displays a numeric values as bits, either read-only or editable. Bits are displayed most significant bit first.
+ */
 export const BitFieldDisplay = (props: BitFieldDisplayProps) => {
     const bits_as_single_list = Array.from({ length: props.bitCount }, () => true)
 

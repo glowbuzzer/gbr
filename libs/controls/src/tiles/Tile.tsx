@@ -1,46 +1,8 @@
-import React, { FC, ReactNode, useContext, useState } from "react"
+import React, { FC, ReactNode, useState } from "react"
 import styled, { css } from "styled-components"
-import { Button, Modal, Popover } from "antd"
-import { EditOutlined, QuestionCircleOutlined } from "@ant-design/icons"
+import { Popover } from "antd"
+import { QuestionCircleOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"
-
-type TileSettingsProps = {
-    title?: string
-    onConfirm(): void
-    onReset?(): void
-    children: ReactNode
-}
-
-export const TileSettings: FC<TileSettingsProps> = ({ title, onConfirm, onReset, children }) => {
-    const { showSettings, setShowSettings } = useContext(tileContext)
-
-    function cancel() {
-        if (onReset) {
-            onReset()
-        }
-        setShowSettings(false)
-    }
-
-    function ok() {
-        onConfirm()
-        setShowSettings(false)
-    }
-
-    return (
-        <>
-            <Button onClick={() => setShowSettings(!showSettings)} icon={<EditOutlined />} />
-            <Modal
-                destroyOnClose={true}
-                title={title}
-                visible={showSettings}
-                onCancel={cancel}
-                onOk={ok}
-            >
-                {children}
-            </Modal>
-        </>
-    )
-}
 
 type TileProps = {
     title

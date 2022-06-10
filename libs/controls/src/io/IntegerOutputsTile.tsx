@@ -22,7 +22,24 @@ const IntegerOutputItem = ({ index, label }) => {
     return <NumericOutputWidget label={label} {...iout} onChange={setIout} />
 }
 
-export const IntegerOutputsTile = ({ labels = [] }) => {
+type IntegerOutputsTileProps = {
+    /**
+     * Labels to use for outputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+/**
+ * The integer outputs tile allows you to view and control all integer outputs on a machine.
+ *
+ * By default (in auto mode) integer outputs are controlled by activities, either using the solo activity API
+ * or streamed (for example, using G-code M200). However this tile (and the underlying hook) allows
+ * you to override an integer output. When an integer output is overridden, the value you specify will
+ * be used regardless of any changes from an activity. For example, if you execute some G-code with
+ * an M201 code, but have overridden an integer output using this tile, the M200 code will be ignored.
+ *
+ */
+export const IntegerOutputsTile = ({ labels = [] }: IntegerOutputsTileProps) => {
     const aouts = useIntegerOutputList()
 
     return (

@@ -69,6 +69,9 @@ const DisplayNum = ({ value, precision, width, type }: DiplayNumProps) => {
     return <span {...props}>{converted.toPrecision(precision || 3)}</span>
 }
 
+/**
+ * Shows the hierarchy of configured frames.
+ */
 export const FrameView = () => {
     const [angleType, setAngleType] = React.useState(AngleType.QUATERNION)
     const [absRel, setAbsRel] = React.useState(1)

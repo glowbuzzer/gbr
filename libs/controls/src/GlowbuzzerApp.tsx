@@ -130,11 +130,22 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
 }
 
 type GlowbuzzerAppProps = {
+    /** Enhancers that can be used to manipulate the store. See [the Redux Toolkit documentation](https://redux-toolkit.js.org/api/configureStore#enhancers) */
     storeEnhancers?: StoreEnhancer[]
+    /** Your application */
     children: ReactNode
 }
 
-export const GlowbuzzerApp: FC<GlowbuzzerAppProps> = ({ storeEnhancers, children }) => {
+/**
+ * Provides a convenient way to instantiate the default GBR Redux store in your application.
+ *
+ * This component also provides an overlay/dimmer that is activated when your application is connecting to GBC.
+ *
+ * The store that is created provides all the features needed to support the GBR tiles, controls and hooks.
+ *
+ * You can look at the source for this component to see how to configure the GBR Redux store from scratch.
+ */
+export const GlowbuzzerApp = ({ storeEnhancers, children }: GlowbuzzerAppProps) => {
     const middleware = getDefault => {
         return getDefault({ immutableCheck: false, serializableCheck: false })
     }

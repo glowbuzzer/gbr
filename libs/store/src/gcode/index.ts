@@ -10,6 +10,8 @@ import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
 import { SoloActivityApi } from "../activity/activity_api"
 import { ActivityBuilder } from "../activity"
 
+// test
+
 const { load, save } = settings("store.gcode")
 
 export type GCodeSettingsType = {

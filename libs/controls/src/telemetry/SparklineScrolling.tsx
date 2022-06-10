@@ -27,6 +27,7 @@ const StyledDiv = styled.div`
     width: 100%;
 `
 
+/** @ignore - not currenly supported */
 export const SparklineScrolling = ({ options, data, domain }: SparklineScrollingProps) => {
     const height = 200
     const xmargin = 20

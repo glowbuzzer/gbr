@@ -12,8 +12,8 @@ import {
     useSoloActivity
 } from "@glowbuzzer/store"
 import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
-import { WaypointsCartesian } from "./Waypoints"
-import { StyledJogDiv } from "./StyledJogDiv"
+import { WaypointsCartesian } from "./WaypointsCartesian"
+import { StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
 
 enum Mode {
@@ -38,6 +38,7 @@ const abcItems: JogGotoItem[] = [
     { type: "angular", key: "z", label: "Ɣ" }
 ]
 
+/** @ignore - internal to the jog tile */
 export const JogGotoCartesian = ({
     kinematicsConfigurationIndex,
     jogSpeed,

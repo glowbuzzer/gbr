@@ -9,7 +9,19 @@ const StyledDiv = styled.div`
     justify-content: space-between;
 `
 
-export const IntegerInputsTile = ({ labels = [] }) => {
+type IntegerInputsTileProps = {
+    /**
+     * Labels to use for inputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+/**
+ * The digital inputs tile shows a simple table of all current digital input values.
+ *
+ * The labels property allows you to provide meaningful labels to each input.
+ */
+export const IntegerInputsTile = ({ labels = [] }: IntegerInputsTileProps) => {
     const ain = useIntegerInputs()
 
     return (
