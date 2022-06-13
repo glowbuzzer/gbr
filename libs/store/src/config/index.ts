@@ -225,12 +225,20 @@ const EMPTY_TOOL: ToolConfig = {
     rotation: { x: 0, y: 0, z: 0, w: 1 }
 }
 
+/**
+ * Returns the configuration for the given tool index.
+ *
+ * @param toolIndex The tool index
+ */
 export function useToolConfig(toolIndex: number): ToolConfig {
     return useSelector((state: RootState) =>
         state.config.value.tool ? Object.values(state?.config?.value?.tool)[toolIndex] : EMPTY_TOOL
     )
 }
 
+/**
+ * Returns the configuration for all tools.
+ */
 export function useToolList(): { [index: string]: ToolConfig } {
     return useSelector((state: RootState) => state.config.value.tool || {}, deepEqual)
 }

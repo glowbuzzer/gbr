@@ -16,9 +16,48 @@ const CLIPBOARD_MODE_TITLES = {
 }
 
 type CartesianDroTileProps = {
+    /** The kinematics configuration to display */
     kinematicsConfigurationIndex?: number
+    /** The clipboard mode to provide, if any */
     clipboardMode?: true | false | CartesianDroClipboardOption
 }
+
+/**
+ * The cartesian DRO tile shows the current position of a kinematics configuration. It also provides an option to
+ * zero the current X, Y and Z using the Zero DRO button. When you zero the DRO, all subsequent moves will be translated
+ * such that the origin is the current tool position. The orientation of the tool is unaffected by this setting.
+ *
+ * The clipboard mode property gives options to let the user to copy the current position in various formats. Valid options are:
+ *
+ * `false`
+ *
+ * : No clipboard copy provided
+ *
+ * `true`
+ *
+ * : Provide a menu of all copy formats allowing the user to choose.
+ *
+ * `CartesianDroClipboardOption.POSITION`
+ *
+ * : Simple comma separated list of x,y,z
+ *
+ * `CartesianDroClipboardOption.POSITION_EULER`
+ *
+ * : Position and orientation in the form x,y,z:a,b,c
+ *
+ * `CartesianDroClipboardOption.POSITION_QUATERNION`
+ *
+ * : Position and orientation in the form x,y,z:qx,qy,qz,qw
+ *
+ * `CartesianDroClipboardOption.MOVE_LINE`
+ *
+ * : Solo activity API code for move line activity.
+ *
+ * `CartesianDroClipboardOption.MOVE_TO_POSITION`
+ *
+ * : Solo activity API code for move to position activity.
+ *
+ */
 export const CartesianDroTile = ({
     kinematicsConfigurationIndex: kcIndexMayBeUndefined,
     clipboardMode

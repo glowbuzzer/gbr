@@ -11,6 +11,9 @@ type MotorProps = {
     value: number
 }
 
+/**
+ * Displays a simple visualisation of a motor with position indicator.
+ */
 export class MotorDro extends React.PureComponent<MotorProps> {
     private spinner: Element | undefined
 

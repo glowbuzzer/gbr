@@ -73,9 +73,19 @@ const lighting = [
 ]
 
 type ToolPathTileProps = {
+    /** Optional robot model information */
     model?: RobotModel
 }
 
+/**
+ * The tool path tile provides a 3d visualisation of the planned motion (from G-code) and the actual path
+ * taken while the machine is running.
+ *
+ * The `model` property allows you to provide the location of model files for your machine and information
+ * about the joints in the model. The joints in the model will be adjusted according to the actual position of the
+ * physical joints on the machine. For an example of this in practice, refer to the
+ * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
+ */
 export const ToolPathTile = ({ model }: ToolPathTileProps) => {
     const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)

@@ -9,7 +9,13 @@ import { useFrames } from "../frames"
 import { useRawJointPositions } from "../joints"
 import * as THREE from "three"
 import { Quaternion, Vector3 } from "three"
-import { KinematicsConfigurationCommand, POSITIONREFERENCE, Quat } from "../gbc"
+import {
+    CartesianPosition,
+    CartesianPositionsConfig,
+    KinematicsConfigurationCommand,
+    POSITIONREFERENCE,
+    Quat
+} from "../gbc"
 import { useMemo } from "react"
 
 // TODO: H: remove this and use gbc schema version
@@ -190,12 +196,15 @@ export function updateDisableLimitsMsg(kc: number, disableLimits) {
  * to other reference frames. The configuration of the KC, typically used for robots, indicates which of the
  * possible configurations (waist, elbow, wrist) the machine is currently in.
  *
- * @param kc The kinematics configuration index
+ * @param kinematicsConfigurationIndex The kinematics configuration index
  */
-export const useKinematics = (kc: number) => {
+export const useKinematics = (kinematicsConfigurationIndex: number) => {
     // select the given kc
     const state = unmarshall_from_state(
-        useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
+        useSelector(
+            ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex],
+            deepEqual
+        )
     )
     const config = useConfig()
     // const frames = useFrames()
@@ -206,7 +215,7 @@ export const useKinematics = (kc: number) => {
     // TODO: seeing 'world' passed here which cannot be found in configs
     const configs = Object.values(config.kinematicsConfiguration)
 
-    const { frameIndex, participatingJoints } = configs[kc] || configs[0]
+    const { frameIndex, participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
     const { position, offset } = state
     const { translation, rotation } = position
     const jointPositions = participatingJoints.map(j => rawJointPositions[j])
@@ -231,24 +240,37 @@ export const useKinematics = (kc: number) => {
          */
         setOffset(translation: Vector3, rotation?: Quaternion) {
             // dispatch<any>(() => {
-            connection.send(updateOffsetMsg(kc, translation, rotation))
+            connection.send(updateOffsetMsg(kinematicsConfigurationIndex, translation, rotation))
             // })
         }
     }
 }
 
-export const useKinematicsConfiguration = (index: number) => {
+/**
+ * Returns the configuration settings for the given kinematics configuration
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export const useKinematicsConfiguration = (kinematicsConfigurationIndex: number) => {
     const config = useConfig()
     const list = Object.values(config.kinematicsConfiguration)
-    return list[index] || list[0]
+    return list[kinematicsConfigurationIndex] || list[0]
 }
 
-export const useKinematicsCartesianPosition = (kc: number) => {
-    const config = useKinematicsConfiguration(kc)
-    const state = useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
+/**
+ * Returns the current cartesian position of the kinematics configuration given.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: number) => {
+    const config = useKinematicsConfiguration(kinematicsConfigurationIndex)
+    const state = useSelector(
+        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex],
+        deepEqual
+    )
     const frameIndex = config?.frameIndex
 
-    return useMemo(() => {
+    return useMemo<CartesianPositionsConfig>(() => {
         if (!state) {
             return {
                 position: {
@@ -272,6 +294,7 @@ export const useKinematicsCartesianPosition = (kc: number) => {
     }, [state, frameIndex])
 }
 
+/** @ignore - not currently supported */
 export const useTcp = (kc: number, frame: number | "world") => {
     const state = unmarshall_from_state(
         useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
@@ -286,20 +309,32 @@ export const useTcp = (kc: number, frame: number | "world") => {
     )
 }
 
-export function useJointPositions(kc: number) {
+/**
+ * Returns the current position for all joints in a kinematics configuration, in the order they are given
+ * in the configuration.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export function useJointPositions(kinematicsConfigurationIndex: number) {
     const rawJointPositions = useRawJointPositions()
 
     const config = useConfig()
     const kinematicsConfigurations = Object.values(config.kinematicsConfiguration)
 
-    const { participatingJoints } = kinematicsConfigurations[kc] || kinematicsConfigurations[0]
+    const { participatingJoints } =
+        kinematicsConfigurations[kinematicsConfigurationIndex] || kinematicsConfigurations[0]
 
     return participatingJoints.map(j => rawJointPositions[j])
 }
 
-export function useFeedRate(kc: number) {
+/**
+ * Returns the current feedrate and a method to set the desired feedrate for a given kinematics configuration.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export function useFeedRate(kinematicsConfigurationIndex: number) {
     const froActual = useSelector(
-        ({ kinematics }: RootState) => kinematics[kc]?.froActual,
+        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.froActual,
         shallowEqual
     )
     const dispatch = useDispatch()
@@ -308,25 +343,58 @@ export function useFeedRate(kc: number) {
     return {
         setFeedRatePercentage(value: number) {
             // TODO: use this value on connect (currently defaults to 100%)
-            window.localStorage.setItem(`kinematics.${kc}.fro`, JSON.stringify(value))
+            window.localStorage.setItem(
+                `kinematics.${kinematicsConfigurationIndex}.fro`,
+                JSON.stringify(value)
+            )
             // dispatch(() => {
-            connection.send(updateFroMsg(kc, value))
+            connection.send(updateFroMsg(kinematicsConfigurationIndex, value))
             // })
         },
         froActual
     }
 }
 
-export function useKinematicsOffset(kc: number) {
-    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.offset, deepEqual)
+/**
+ * Returns the current offset for the kinematics configuration.
+ *
+ * This is normally set using the Zero DRO feature in the {@link CartesianDroTile}, but can be set by issuing
+ * a {@link KinematicsConfigurationCommand} to GBC.
+ *
+ * Note that providing a rotation offset is not currently supported.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export function useKinematicsOffset(kinematicsConfigurationIndex: number): {
+    translation: Vector3
+    rotation: Quaternion
+} {
+    return useSelector(
+        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.offset,
+        deepEqual
+    )
 }
 
-export function useKinematicsLimitsDisabled(kc: number) {
-    return useSelector(({ kinematics }: RootState) => kinematics[kc]?.limitsDisabled)
+/**
+ * Returns whether kinematic limits are currently disabled.
+ *
+ * Kinematics limits can be disabled to allow jogging when a machine has run beyond its soft limits.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export function useKinematicsLimitsDisabled(kinematicsConfigurationIndex: number) {
+    return useSelector(
+        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.limitsDisabled
+    )
 }
 
-export function useToolIndex(kc: number) {
+/**
+ * Returns the index of the currently active tool for the given kinematics configuration.
+ *
+ * @param kinematicsConfigurationIndex The kinematics configuration index
+ */
+export function useToolIndex(kinematicsConfigurationIndex: number): number {
     return useSelector(({ kinematics }: RootState) => {
-        return kinematics[kc]?.toolIndex
+        return kinematics[kinematicsConfigurationIndex]?.toolIndex
     }, shallowEqual)
 }

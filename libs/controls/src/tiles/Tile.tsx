@@ -1,16 +1,23 @@
-import React, { FC, ReactNode, useState } from "react"
+import React, { FC, ReactElement, ReactNode, useState } from "react"
 import styled, { css } from "styled-components"
 import { Popover } from "antd"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { tileContext } from "./TileContext"
 
 type TileProps = {
-    title
-    fullHeight?
-    help?
-    footer?
-    controls?
-    settings?
+    /** Title for the tile in the title bar */
+    title: ReactNode
+    /** Whether the tile should occupy the full height of its container, or simply grow according to its content */
+    fullHeight?: boolean
+    /** Help text to display behind a popup in the title bar */
+    help?: ReactNode
+    /** Content to display in the footer of the tile */
+    footer?: ReactNode
+    /** Controls to display in the top right of the title bar, next to settings */
+    controls?: ReactNode
+    /** Can display a settings button with modal settings panel, using `TileSettings` component */
+    settings?: ReactNode
+    /** Tile content */
     children?: ReactNode
 }
 
@@ -87,15 +94,20 @@ const StyledTile = styled.div<{ fullHeight: boolean }>`
     }
 `
 
-export const Tile: FC<TileProps> = ({
+/**
+ * The base for all GBR tiles.
+ * Provides a title bar and properties for populating other parts of the tile. Children of this component
+ * are rendered inside the body of the tile.
+ */
+export const Tile = ({
     title,
-    controls = undefined,
-    settings = null,
-    footer = undefined,
-    help = undefined,
+    controls,
+    settings,
+    footer,
+    help,
     fullHeight = true,
     children
-}) => {
+}: TileProps) => {
     const [showSettings, setShowSettings] = useState(false)
 
     return (

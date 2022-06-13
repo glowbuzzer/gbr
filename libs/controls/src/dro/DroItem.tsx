@@ -29,6 +29,10 @@ type DroItemProps = {
      */
     error?: boolean
 }
+
+/**
+ * Displays a single DRO item with label and optional error state.
+ */
 export const DroItem = ({ label, value, type, error }: DroItemProps) => {
     const prefs = usePrefs()
 

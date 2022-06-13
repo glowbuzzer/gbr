@@ -524,9 +524,9 @@
         Parameters for cartesian positions
          */
         export type CartesianPositionsConfig = {
-                    
+                    /**  The position including translation and rotation */
                     position?:CartesianPosition;
-                    
+                    /**  The robot configuration (waist/elbow/wrist), if applicable */
                     configuration?:number;
         }
 
