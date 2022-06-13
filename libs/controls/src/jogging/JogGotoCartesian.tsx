@@ -71,7 +71,7 @@ export const JogGotoCartesian = ({
         y: qy,
         z: qz,
         w: qw
-    } = useKinematicsCartesianPosition(kinematicsConfigurationIndex).position || {
+    } = waypoint.position.rotation || {
         x: 0,
         y: 0,
         z: 0,
