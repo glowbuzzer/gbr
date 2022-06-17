@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { TileSettings } from "../tiles"
 import { GCodeSettingsType, gcodeSlice, useGCodeSettings } from "@glowbuzzer/store"

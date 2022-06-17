@@ -286,9 +286,10 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         }
     }
 
-    M8(params, line: GCodeLine) {
-        this.push(this.api.setTag(line.lineNum).endProgram().command)
-    }
+    // TODO: M7-M9 are coolant control and need aliasing
+    // M8(params, line: GCodeLine) {
+    //     this.push(this.api.setTag(line.lineNum).endProgram().command)
+    // }
 
     // set a digital out
     M200(params, line: GCodeLine) {

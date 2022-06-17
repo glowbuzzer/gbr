@@ -8,7 +8,7 @@ import {
     GTLT,
     MoveJointsAtVelocityStream,
     MoveJointsStream,
-    MoveLineAtVelocityStream,
+    MoveVectorAtVelocityStream,
     MoveLineStream,
     MoveParametersConfig,
     MoveToPositionStream,
@@ -409,7 +409,7 @@ export class MoveJointsAtVelocityBuilder extends SimpleMoveBuilder {
 
 export class MoveLineAtVelocityBuilder extends MoveWithFrameBuilder {
     protected commandName = "moveLineAtVelocity"
-    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVELINEATVELOCITY
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEVECTORATVELOCITY
     private _vector: Vector3
 
     /** Vector in which move will be made. Velocity is specified using `params` method. */
@@ -418,10 +418,10 @@ export class MoveLineAtVelocityBuilder extends MoveWithFrameBuilder {
         return this
     }
 
-    protected build(): MoveLineAtVelocityStream {
+    protected build(): MoveVectorAtVelocityStream {
         return {
             ...super.build(),
-            line: {
+            vector: {
                 frameIndex: this._frameIndex,
                 vector: this._vector
             }

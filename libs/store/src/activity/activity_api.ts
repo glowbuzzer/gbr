@@ -41,6 +41,18 @@ function nullify(v?: number) {
  * gracefully before the new activity is started.
  *
  * Note that motion using the solo activity API is not blended (that is, absolute stop mode will be used).
+ *
+ * If you want to execute a series of moves, possibly with blending, you can stream activities using G-code.
+ * Refer to the {@link useGCode} hook for more information.
+ *
+ * Example
+ * ```jsx
+ * const api=useSoloActivity(0) // instantiate API on first kinematics configuration
+ * await api.moveArc(100,100,0) // initiate builder
+ *          .centre(100, 0, 0)  // configure
+ *          .direction(ARCDIRECTION.ARCDIRECTION_CW)
+ *          .promise()          // execute and await
+ * ```
  */
 export interface SoloActivityApi {
     /** Cancel any currently executing activity */

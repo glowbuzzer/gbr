@@ -1,4 +1,4 @@
-import React, { FC, ReactElement, ReactNode, useState } from "react"
+import React, { ReactNode, useState } from "react"
 import styled, { css } from "styled-components"
 import { Popover } from "antd"
 import { QuestionCircleOutlined } from "@ant-design/icons"

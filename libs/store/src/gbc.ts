@@ -81,11 +81,11 @@
         /**  Move a kinematics configuration&#x27;s tool along a line in cartesian space to a given position (with orientation) */
   ACTIVITYTYPE_MOVELINE ,
         /**  Move a kinematics configuration&#x27;s tool along a line in cartesian space to a given position (with orientation) at a given velocity */
-  ACTIVITYTYPE_MOVELINEATVELOCITY ,
+  ACTIVITYTYPE_MOVEVECTORATVELOCITY ,
         /**  Move a kinematics configuration&#x27;s tool along an arc in cartesian space to a given position (with orientation) */
   ACTIVITYTYPE_MOVEARC ,
-        /**  Move a kinematics configuration&#x27;s tool along a spline in cartesian space to a given position (with orientation) */
-  ACTIVITYTYPE_MOVESPLINE ,
+        /**  Reserved for future use */
+  ACTIVITYTYPE_RESERVED1 ,
         /**  Move a kinematics configuration&#x27;s tool to given position (with orientation) in joint space */
   ACTIVITYTYPE_MOVETOPOSITION ,
         /**  Set a digital out  */
@@ -854,6 +854,12 @@
         export type MoveJointsConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
+                    /**  Array of joint positions */
+                    jointPositionArray?:number[];
+                    
+                    positionReference?:POSITIONREFERENCE;
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
         }
 
         /** 
@@ -868,12 +874,6 @@
         Command parameters for MoveJoints
          */
         export type MoveJointsCommand = {
-                    /**  Array of joint positions */
-                    jointPositionArray?:number[];
-                    
-                    positionReference?:POSITIONREFERENCE;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -898,24 +898,22 @@
         export type MoveJointsAtVelocityConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
+                    /**  Array of joints to be used for the moveJointsAtVelocity */
+                    jointVelocityArray?:number[];
         }
 
         /** 
         Status of MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityStatus = {
-                    /**  Signals that the move as reached its programmed speed */
-                    atSpeed?:boolean;
         }
 
         /** 
         Command parameters for MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityCommand = {
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    /**  Array of joints to be used for the moveJointsAtVelocity */
-                    jointVelocityArray?:number[];
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -938,7 +936,11 @@
         export type MoveLineConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
+                    /**  Line object for move */
+                    line?:CartesianPosition;
+                    /**  @ignore */
                     superimposedIndex?:number;
         }
 
@@ -954,10 +956,6 @@
         Command parameters for MoveLine
          */
         export type MoveLineCommand = {
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    /**  Index of line to use for move */
-                    lineIndex?:number;
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -977,43 +975,41 @@
         }
 
         /** 
-        Configuration parameters for moveLineAtVelocity.
+        Configuration parameters for moveVectorAtVelocity.
          */
-        export type MoveLineAtVelocityConfig = {
+        export type MoveVectorAtVelocityConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
+                    /**  The vector (direction) to move in */
+                    vector?:CartesianVector;
         }
 
         /** 
         Status of MoveLineAtVelocity
          */
-        export type MoveLineAtVelocityStatus = {
-                    
-                    atSpeed?:boolean;
+        export type MoveVectorAtVelocityStatus = {
         }
 
         /** 
-        Command parameters for moveLineAtVelocity
+        Command parameters for moveVectorAtVelocity
          */
-        export type MoveLineAtVelocityCommand = {
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    
-                    line?:CartesianVector;
+        export type MoveVectorAtVelocityCommand = {
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
 
         /** 
-        Parameters for streamed moveLineAtVelocity
+        Parameters for streamed moveVectorAtVelocity
          */
-        export type MoveLineAtVelocityStream = {
+        export type MoveVectorAtVelocityStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
                     
                     moveParams?:MoveParametersConfig;
                     
-                    line?:CartesianVector;
+                    vector?:CartesianVector;
         }
 
         /** 
@@ -1024,24 +1020,22 @@
                     kinematicsConfigurationIndex?:number;
                     
                     superimposedIndex?:number;
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
+                    
+                    arc?:ArcsConfig;
         }
 
         /** 
         Status of MoveArc
          */
         export type MoveArcStatus = {
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
         }
 
         /** 
         Command parameters for moveArc
          */
         export type MoveArcCommand = {
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    
-                    arcIndex?:number;
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -1061,39 +1055,15 @@
         }
 
         /** 
-        Configuration parameters for moveSpline
-         */
-        export type MoveSplineConfig = {
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-        }
-
-        /** 
-        Status of MoveSpline
-         */
-        export type MoveSplineStatus = {
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-        }
-
-        /** 
-        Command parameters for moveSpline
-         */
-        export type MoveSplineCommand = {
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    
-                    splineIndex?:number;
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
         Configuration parameters for moveToPosition
          */
         export type MoveToPositionConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
+                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                    moveParamsIndex?:number;
+                    
+                    cartesianPosition?:CartesianPositionsConfig;
         }
 
         /** 
@@ -1108,10 +1078,6 @@
         Command parameters for moveToPosition
          */
         export type MoveToPositionCommand = {
-                    
-                    cartesianPositionIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
         }
@@ -1215,21 +1181,29 @@
         }
 
         /** 
-        Status of spindle
+        Configuration parameters for spindle
          */
-        export type SpindleStatus = {
-        }
-
-        /** 
-        Command parameters for spindle
-         */
-        export type SpindleCommand = {
+        export type SpindleActivityConfig = {
+                    /**  Index of the spindle in the configuration */
+                    spindleIndex?:number;
                     /**  Whether to enable or disable the spindle */
                     enable?:boolean;
                     /**  Direction of the spindle */
                     direction?:SPINDLEDIRECTION;
                     /**  Speed of the spindle */
                     speed?:number;
+        }
+
+        /** 
+        Status of spindle
+         */
+        export type SpindleActivityStatus = {
+        }
+
+        /** 
+        Command parameters for spindle
+         */
+        export type SpindleActivityCommand = {
         }
 
         /** 
@@ -1528,11 +1502,9 @@
                     /**  Configuration parameters for move line activity */
                      moveLine?: MoveLineConfig,
                     /**  Configuration parameters for move line at velocity activity */
-                     moveLineAtVelocity?: MoveLineAtVelocityConfig,
+                     moveVectorAtVelocity?: MoveVectorAtVelocityConfig,
                     /**  Configuration parameters for move arc activity */
                      moveArc?: MoveArcConfig,
-                    /**  Configuration parameters for move arc activity */
-                     moveSpline?: MoveSplineConfig,
                     /**  Configuration parameters for move to position activity */
                      moveToPosition?: MoveToPositionConfig,
                     /**  Configuration parameters for gear in position activity */
@@ -1548,7 +1520,7 @@
                     /**  Configuration parameters for dwell activity */
                      dwell?: DwellConfig,
                     /**  Configuration parameters for spindle activity */
-                     spindle?: SpindleConfig,
+                     spindle?: SpindleActivityConfig,
                     /**  Configuration parameters for wait on digital input activity */
                      waitOnDigitalInput?: WaitOnDigitalInputConfig,
                     /**  Configuration parameters for wait on integer input activity */
@@ -1580,11 +1552,9 @@
                     /**  Status of the move line activity */
                      moveLine?: MoveLineStatus,
                     /**  Status of the move line at velocity activity */
-                     moveLineAtVelocity?: MoveLineAtVelocityStatus,
+                     moveVectorAtVelocity?: MoveVectorAtVelocityStatus,
                     /**  Status of the move arc activity */
                      moveArc?: MoveArcStatus,
-                    /**  Status of the move spline activity */
-                     moveSpline?: MoveSplineStatus,
                     /**  Status of the move to position activity */
                      moveToPosition?: MoveToPositionStatus,
                     /**  Status of the gear in position activity */
@@ -1600,7 +1570,7 @@
                     /**  Status of the set dwell activity */
                      dwell?: DwellStatus,
                     /**  Status of the set spindle activity */
-                     spindle?: SpindleStatus,
+                     spindle?: SpindleActivityStatus,
                     /**  Status of the wait on digital input activity */
                      waitOnDigitalInput?: WaitOnDigitalInputStatus,
                     /**  Status of the wait on integer input activity */
@@ -1628,11 +1598,9 @@
                     /**  Move line command object for activity */
                      moveLine?: MoveLineCommand,
                     /**  Move line at velocity command object for activity */
-                     moveLineAtVelocity?: MoveLineAtVelocityCommand,
+                     moveVectorAtVelocity?: MoveVectorAtVelocityCommand,
                     /**  Move arc command object for activity */
                      moveArc?: MoveArcCommand,
-                    /**  Move spline command object for activity */
-                     moveSpline?: MoveSplineCommand,
                     /**  Move to position command object for activity */
                      moveToPosition?: MoveToPositionCommand,
                     /**  Gear in position command object for activity */
@@ -1648,7 +1616,7 @@
                     /**  Set dwell command object for activity */
                      dwell?: DwellCommand,
                     /**  Set spindle command object for activity */
-                     spindle?: SpindleCommand,
+                     spindle?: SpindleActivityCommand,
                     /**  Set wait on digital input command object for activity */
                      waitOnDigitalInput?: WaitOnDigitalInputCommand,
                     /**  Set wait on integer input command object for activity */
@@ -1682,7 +1650,7 @@
                     /**  Parameters for a streamed move line */
                      moveLine?: MoveLineStream,
                     /**  Parameters for a streamed move line at velocity */
-                     moveLineAtVelocity?: MoveLineAtVelocityStream,
+                     moveVectorAtVelocity?: MoveVectorAtVelocityStream,
                     /**  Parameters for a streamed move arc */
                      moveArc?: MoveArcStream,
                     /**  Parameters for a streamed move to position */
