@@ -1,4 +1,4 @@
-name: Publish alpha npm packages
+name: Publish RELEASE npm packages
 on:
     push:
         tags:

@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import {execSync} from 'child_process';
 
-const GITHUB_TAG_PREFIX = "/refs/tags/";
+const GITHUB_TAG_PREFIX = "refs/tags/";
 
 const [, , p, version_or_github_ref] = process.argv;
 
