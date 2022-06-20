@@ -92,7 +92,7 @@ export const JogArrowsCartesian = ({
         if (jogMode === JogMode.CONTINUOUS) {
             preview.disable()
             return motion
-                .moveLineAtVelocity(
+                .moveVectorAtVelocity(
                     ortho_vector(0, direction),
                     ortho_vector(1, direction),
                     ortho_vector(2, direction)

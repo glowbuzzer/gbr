@@ -987,7 +987,7 @@
         }
 
         /** 
-        Status of MoveLineAtVelocity
+        Status of MoveVectorAtVelocity
          */
         export type MoveVectorAtVelocityStatus = {
         }

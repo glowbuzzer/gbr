@@ -407,8 +407,8 @@ export class MoveJointsAtVelocityBuilder extends SimpleMoveBuilder {
     }
 }
 
-export class MoveLineAtVelocityBuilder extends MoveWithFrameBuilder {
-    protected commandName = "moveLineAtVelocity"
+export class MoveVectorAtVelocityBuilder extends MoveWithFrameBuilder {
+    protected commandName = "moveVectorAtVelocity"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEVECTORATVELOCITY
     private _vector: Vector3
 

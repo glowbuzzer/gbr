@@ -10,7 +10,7 @@ import {
     MoveArcBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
-    MoveLineAtVelocityBuilder,
+    MoveVectorAtVelocityBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
     PauseProgramBuilder,
@@ -103,7 +103,7 @@ export interface SoloActivityApi {
      * @param y Vector y component
      * @param z Vector z component
      */
-    moveLineAtVelocity(x: number, y: number, z: number): MoveLineAtVelocityBuilder
+    moveVectorAtVelocity(x: number, y: number, z: number): MoveVectorAtVelocityBuilder
 
     /** Move to the target position in joint space.
      *
@@ -197,8 +197,8 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
         return new MoveLineBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 
-    moveLineAtVelocity(x: number, y: number, z: number) {
-        return new MoveLineAtVelocityBuilder(this).vector(x, y, z)
+    moveVectorAtVelocity(x: number, y: number, z: number) {
+        return new MoveVectorAtVelocityBuilder(this).vector(x, y, z)
     }
 
     moveToPosition(x?: number, y?: number, z?: number) {
