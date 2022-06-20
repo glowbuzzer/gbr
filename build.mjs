@@ -3,17 +3,21 @@ import fs from 'fs';
 import path from 'path';
 import {execSync} from 'child_process';
 
-const [, , p, version] = process.argv;
+const GITHUB_TAG_PREFIX = "/refs/tags/";
+
+const [, , p, version_or_github_ref] = process.argv;
 
 if (!p?.length) {
     throw new Error("No list of packages given")
 }
 
-if (!version?.length) {
+if (!version_or_github_ref?.length) {
     throw new Error("No version bump given")
 }
 
 const projects = p.split(",")
+
+const version = version_or_github_ref.startsWith(GITHUB_TAG_PREFIX) ? version_or_github_ref.substring(GITHUB_TAG_PREFIX.length) : version_or_github_ref
 
 console.log("Packaging the following projects:", projects.join(","))
 console.log("Bumping all versions to:", version)
