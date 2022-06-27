@@ -4,5 +4,5 @@
 # Copyright (c) 2022. Glowbuzzer. All rights reserved
 #
 
-aws s3 cp ./test.js "s3://$1/gbr/test.js" && \
-aws cloudfront create-invalidation --paths "/*" --distribution-id $2
+aws s3 cp --region eu-west-1 ./test.js "s3://$1/gbr/test.js" && \
+aws cloudfront create-invalidation --region eu-west-1 --paths "/*" --distribution-id $2
