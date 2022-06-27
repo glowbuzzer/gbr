@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, TRIGGERTYPE } from "../gbc"
 import {
     ActivityController,

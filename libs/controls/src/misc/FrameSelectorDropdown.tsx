@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Frame } from "@glowbuzzer/store"
 import * as React from "react"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { RobotModel } from "./robots"
 import * as THREE from "three"
 

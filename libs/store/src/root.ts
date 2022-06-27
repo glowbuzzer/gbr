@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { combineReducers } from "@reduxjs/toolkit"
 import { configSlice } from "./config"
 import { connectionSlice } from "./connect"

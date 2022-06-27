@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import {build} from 'esbuild';
 import fs from 'fs';
 import path from 'path';

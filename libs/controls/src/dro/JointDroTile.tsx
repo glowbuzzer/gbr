@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Tile } from "../tiles"
 import * as React from "react"
 import { JointDro } from "./JointDro"

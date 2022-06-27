@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { Euler, Quaternion, Vector3 } from "three"
 import { FrameSelector } from "../misc"

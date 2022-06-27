@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import {Action, ThunkAction} from "@reduxjs/toolkit"
 import {RootState} from "../root"
 

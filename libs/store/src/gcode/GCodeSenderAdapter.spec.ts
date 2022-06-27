@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 
 function exec(gcode, tolerance = 0) {

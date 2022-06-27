@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { RootState } from "../root"

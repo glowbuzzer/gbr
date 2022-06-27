@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 export * from "./tests/core"
 export * from "./tests/io"
 export * from "./tests/activity"

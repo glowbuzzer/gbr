@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { AppThunk, Connection } from "./Connection"
 import { telemetrySlice } from "../telemetry"
 import { machineSlice } from "../machine"

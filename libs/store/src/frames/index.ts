@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { Quaternion, Vector3 } from "three"
 import { settings } from "../util/settings"

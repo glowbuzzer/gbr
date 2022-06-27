@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { parseStringSync } from "./GCodeParser"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 

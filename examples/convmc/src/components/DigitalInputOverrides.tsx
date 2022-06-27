@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /**
  * This component provides an example of how to use the digital inputs override hook.
  * This hook is useful if you want to simulate digital inputs during development.

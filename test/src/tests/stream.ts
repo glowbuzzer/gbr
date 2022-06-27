@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { STREAMSTATE } from "../../../libs/store/src"

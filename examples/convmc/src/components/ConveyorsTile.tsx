@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { useJoint } from "@glowbuzzer/store"
 import { Tile } from "@glowbuzzer/controls"
 import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"

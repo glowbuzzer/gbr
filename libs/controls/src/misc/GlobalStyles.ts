@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 export const GlobalStyles = {
     label: {
         size: "1.3em",

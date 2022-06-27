@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Matrix4, Quaternion, Vector3 } from "three"
 import { FramesConfig } from "../gbc"
 

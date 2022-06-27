@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { extend, useThree } from "@react-three/fiber"
 import * as React from "react"
 import { useEffect } from "react"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { Tile } from "../tiles"
 import { Button, Tag } from "antd"

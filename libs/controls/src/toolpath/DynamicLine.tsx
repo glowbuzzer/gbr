@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useEffect, useState } from "react"
 import { Vector2 } from "three"
 import { Line2, LineGeometry, LineMaterial } from "three-stdlib"

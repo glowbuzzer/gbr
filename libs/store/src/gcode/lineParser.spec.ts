@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { lineParser } from "./lineParser"
 
 test("it should parse some lines", () => {

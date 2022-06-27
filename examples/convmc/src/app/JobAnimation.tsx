@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useEffect, useRef, useState } from "react"
 import { CounterCow, CounterPig, CounterUnknown } from "./animation/counters"
 import anime from "animejs"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import * as d3 from "d3"

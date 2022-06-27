@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import simplify from "./simplify"
 import { DynamicLine } from "./DynamicLine"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { FC, ReactNode, useContext } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"

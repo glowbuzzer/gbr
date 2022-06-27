@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { createContext, useContext } from "react"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"

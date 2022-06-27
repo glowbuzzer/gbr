@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { ActivityApiBase } from "./activity_api"
 
 export class GCodeActivityProvider extends ActivityApiBase {

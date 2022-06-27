@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 module.exports = {
     displayName: "store",
     preset: "../../jest.preset.js",

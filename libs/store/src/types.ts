@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Connection } from "./connect/Connection"
 import * as THREE from "three"
 

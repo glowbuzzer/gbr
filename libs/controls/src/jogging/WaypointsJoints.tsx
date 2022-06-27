@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { WaypointsProps } from "./types"
 import {
     JOINT_TYPE,

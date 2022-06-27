@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
+/*
  (c) 2013, Vladimir Agafonkin
  Simplify.js, a high-performance JS polyline simplification library
  mourner.github.io/simplify-js

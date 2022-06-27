@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { useSoloActivity } from "@glowbuzzer/store"
 import React, { useCallback, useState } from "react"
 import { Button, Space } from "antd"

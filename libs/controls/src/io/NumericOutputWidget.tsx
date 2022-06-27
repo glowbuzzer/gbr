@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useState } from "react"
 import { Button, InputNumber, Switch, Tag } from "antd"
 import { ArrowRightOutlined } from "@ant-design/icons"

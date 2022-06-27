@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 export type WaypointsProps = {
     kinematicsConfigurationIndex: number
     onSelect(waypoint: number[]): void

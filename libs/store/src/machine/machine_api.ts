@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { MACHINETARGET } from "../gbc"
 
 export function updateMachineCommandMsg(command) {

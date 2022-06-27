@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useEffect } from "react"
 import { Tile, TileEmptyMessage } from "../tiles"
 import { KC_KINEMATICSCONFIGURATIONTYPE, useConfig } from "@glowbuzzer/store"

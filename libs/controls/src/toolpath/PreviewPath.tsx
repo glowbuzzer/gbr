@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { useLayoutEffect, useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"

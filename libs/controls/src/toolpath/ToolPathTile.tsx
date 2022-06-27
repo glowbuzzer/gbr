@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { Tile, TileSettings } from "../tiles"

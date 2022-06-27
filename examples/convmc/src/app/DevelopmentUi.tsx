@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useEffect } from "react"
 import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
 import { ConnectTile, StateMachineToolsTile, TelemetryTile } from "@glowbuzzer/controls"

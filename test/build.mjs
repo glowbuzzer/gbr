@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import {Command} from "commander"
 import * as esbuild from "esbuild"
 

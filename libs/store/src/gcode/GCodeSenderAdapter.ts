@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import GCodeInterpreter from "./GCodeInterpreter"
 import { GCodeLine } from "./lineParser"
 import {

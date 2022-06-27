@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { createContext } from "react"
 import { TileDefinition } from "./TileProvider"
 

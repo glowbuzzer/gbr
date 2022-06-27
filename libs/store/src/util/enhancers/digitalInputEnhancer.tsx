@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /**
  * This file provides a Redux store enhancer and hook that allows override of digital inputs.
  * This is useful during development to similate digital inputs from GBC where there are none.

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
 
 // function get_value(key, initialValue) {

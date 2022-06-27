@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { useDigitalInputs } from "@glowbuzzer/store"
 import { Tile } from "../tiles"

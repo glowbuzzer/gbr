@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 export * from "./BitFieldDisplay"
 export * from "./CartesianDro"
 export * from "./CartesianDroTile"

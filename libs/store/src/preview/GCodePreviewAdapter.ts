@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"

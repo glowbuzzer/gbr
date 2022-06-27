@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /**
  * Code heavily adapted from https://github.com/cncjs/gcode-parser/blob/master/src/index.js
  */

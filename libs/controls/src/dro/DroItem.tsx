@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { GlobalStyles } from "../misc/GlobalStyles"
 import { usePrefs } from "@glowbuzzer/store"
 import { Col, Row } from "antd"

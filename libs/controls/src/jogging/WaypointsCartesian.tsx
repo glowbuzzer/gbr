@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { usePrefs } from "@glowbuzzer/store"
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons"

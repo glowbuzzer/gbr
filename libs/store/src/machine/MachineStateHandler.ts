@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /**
  * The code in this file looks at the cia402 state given in messages from GBC and the desired state wanted by GBR
  * and determines what state command should next be sent in order to transition the state machine towards the desired state.

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { Tile } from "../tiles"
 import styled from "styled-components"

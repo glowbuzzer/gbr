@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 /* eslint-disable @typescript-eslint/ban-types */
 // noinspection JSUnusedGlobalSymbols
 
@@ -242,7 +246,7 @@
 
 
 // STRUCTS
-        
+
         export type LimitConfiguration = {
                     /**  Velocity limit */
                     vmax?:number;
@@ -252,13 +256,13 @@
                     jmax?:number;
         }
 
-        
+
         export type Header = {
                     /**  Flags if the shared memory data has been updated */
                     updated?:boolean;
         }
 
-        
+
         export type MachineConfig = {
                     /**  The bus cycle time (in milliseconds) */
                     busCycleTime?:number;
@@ -266,7 +270,7 @@
                     statusFrequency?:number;
         }
 
-        
+
         export type MachineStatus = {
                     /**  CiA 402 status word for the machine as a whole */
                     statusWord?:number;
@@ -282,7 +286,7 @@
                     targetConnectRetryCnt?:number;
         }
 
-        
+
         export type MachineCommand = {
                     /**  CiA 402 control word for the machine */
                     controlWord?:number;
@@ -294,27 +298,27 @@
                     target?:MACHINETARGET;
         }
 
-        
+
         export type StreamConfig = {
         }
 
-        
+
         export type StreamStatus = {
-                    
+
                     streamState?:STREAMSTATE;
-                    
+
                     tag?:number;
-                    
+
                     time?:number;
         }
 
-        
+
         export type StreamCommand = {
-                    
+
                     streamCommand?:STREAMCOMMAND;
         }
 
-        /** 
+        /**
         Layout of fieldbus RxPdo
          */
         export type FieldbusTxPdoLayout = {
@@ -348,7 +352,7 @@
                     integerCount?:number;
         }
 
-        /** 
+        /**
         Layout of fieldbus TxPdo
          */
         export type FieldbusRxPdoLayout = {
@@ -382,7 +386,7 @@
                     integerCount?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for fieldbus
          */
         export type FieldbusConfig = {
@@ -394,7 +398,7 @@
                     RxPdo?:FieldbusRxPdoLayout;
         }
 
-        /** 
+        /**
         Configuration parameters for move parameters
          */
         export type MoveParametersConfig = {
@@ -418,7 +422,7 @@
                     toolIndex?:number;
         }
 
-        /** 
+        /**
         Parameters for vector 3
          */
         export type Vector3 = {
@@ -430,7 +434,7 @@
                     z?:number;
         }
 
-        /** 
+        /**
         Parameters for a quaternion
          */
         export type Quat = {
@@ -444,7 +448,7 @@
                     z?:number;
         }
 
-        /** 
+        /**
         Parameters for a cartesian position
          */
         export type CartesianPosition = {
@@ -458,7 +462,7 @@
                     frameIndex?:number;
         }
 
-        /** 
+        /**
         Parameters for an absolute / relative position
          */
         export type PositionAbsRel = {
@@ -468,7 +472,7 @@
                     translation?:Vector3;
         }
 
-        /** 
+        /**
         Parameters for a cartesian vector
          */
         export type CartesianVector = {
@@ -478,23 +482,23 @@
                     frameIndex?:number;
         }
 
-        
+
         export type DoubleValue = {
-                    
+
                     value?:number;
         }
 
-        /** 
+        /**
         Parameters for a joint position
          */
         export type JointPosition = {
-                    
+
                     positionReference?:POSITIONREFERENCE;
-                    
+
                     value?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for lines
          */
         export type LinesConfig = {
@@ -502,7 +506,7 @@
                     destination?:CartesianPosition;
         }
 
-        /** 
+        /**
         Configuration parameters for arcs
          */
         export type ArcsConfig = {
@@ -520,7 +524,7 @@
 //              End of Union
         }
 
-        /** 
+        /**
         Parameters for cartesian positions
          */
         export type CartesianPositionsConfig = {
@@ -530,7 +534,7 @@
                     configuration?:number;
         }
 
-        /** 
+        /**
         Config parameters for Tasks
          */
         export type TaskConfig = {
@@ -544,7 +548,7 @@
                     startTriggerOnIndex?:number;
         }
 
-        /** 
+        /**
         Status parameters for Tasks
          */
         export type TaskStatus = {
@@ -554,7 +558,7 @@
                     currentActivityIndex?:number;
         }
 
-        /** 
+        /**
         Command parameters for Tasks
          */
         export type TaskCommand = {
@@ -562,11 +566,11 @@
                     taskCommand?:TASK_COMMAND;
         }
 
-        /** 
+        /**
         Configuration parameters for joint
          */
         export type JointConfig = {
-                    
+
                     jointType?:JOINT_TYPE;
                     /**  List of limits to be applied to the joint for different types of move */
                     limits?:LimitConfiguration[];
@@ -580,19 +584,19 @@
                     posLimit?:number;
                     /**  flags that a joint&#x27;s motion is inverted */
                     isInverted?:boolean;
-                    
+
                     finiteContinuous?:JOINT_FINITECONTINUOUS;
-                    
+
                     isVirtualInternal?:boolean;
-                    
+
                     isVirtualFromEncoder?:boolean;
-                    
+
                     correspondingJointNumberOnPhysicalFieldbus?:number;
-                    
+
                     correspondingJointNumberOnVirtualFieldbus?:number;
         }
 
-        /** 
+        /**
         Status of joint
          */
         export type JointStatus = {
@@ -606,7 +610,7 @@
                     actAcc?:number;
         }
 
-        /** 
+        /**
         Command parameters for joint
          */
         export type JointCommand = {
@@ -614,37 +618,37 @@
                     controlWord?:number;
         }
 
-        
+
         export type SixDofJointConfiguration = {
-                    
+
                     shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                    
+
                     elbowConfiguration?:KC_ELBOWCONFIGURATION;
-                    
+
                     wristConfiguration?:KC_WRISTCONFIGURATION;
         }
 
-        
+
         export type ScaraJointConfiguration = {
-                    
+
                     shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                    
+
                     elbowConfiguration?:KC_ELBOWCONFIGURATION;
         }
 
-        
+
         export type JointConfiguration = {
-                    
+
                     kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
 //              Start of Union
-                    
+
                      sixDofConfiguration?: SixDofJointConfiguration,
-                    
+
                      scaraConfiguration?: ScaraJointConfiguration,
 //              End of Union
         }
 
-        
+
         export type MatrixInstanceDouble = {
                     /**  Number of rows in matrix */
                     numRows?:number;
@@ -654,17 +658,17 @@
                     data?:number[];
         }
 
-        
+
         export type KinematicsConfigurationConfig = {
-                    
+
                     kinematicsConfigurationIndex?:number;
                     /**  Kinematics configuration type - i.e. the kinematics model that will be used. Used as discriminator for the union */
                     kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
-                    
+
                     frameIndex?:number;
-                    
+
                     participatingJoints?:number[];
-                    
+
                     participatingJointsCount?:number;
                     /**  Extent (size) of workspace in X */
                     extentsX?:number[];
@@ -686,37 +690,37 @@
                     kinChainParams?:MatrixInstanceDouble;
         }
 
-        
+
         export type KinematicsConfigurationStatus = {
-                    
+
                     froTarget?:number;
-                    
+
                     froActual?:number;
-                    
+
                     atSpeed?:boolean;
-                    
+
                     currentJointConfiguration?:number;
-                    
+
                     cartesianActPos?:Vector3;
-                    
+
                     cartesianActOrientation?:Quat;
-                    
+
                     cartesianActVel?:Vector3;
-                    
+
                     cartesianActAcc?:Vector3;
-                    
+
                     limitsDisabled?:boolean;
-                    
+
                     isStopping?:boolean;
-                    
+
                     isMoving?:boolean;
-                    
+
                     isNearSingularity?:boolean;
-                    
+
                     toolIndex?:number;
         }
 
-        
+
         export type KinematicsConfigurationCommand = {
                     /**  Not used */
                     doStop?:boolean;
@@ -730,7 +734,7 @@
                     rotation?:Quat;
         }
 
-        /** 
+        /**
         Configuration parameters for Digital In (din)
          */
         export type DinConfig = {
@@ -738,7 +742,7 @@
                     inverted?:boolean;
         }
 
-        /** 
+        /**
         Status of Digital In
          */
         export type DinStatus = {
@@ -746,7 +750,7 @@
                     actValue?:ONOFF;
         }
 
-        /** 
+        /**
         Configuration parameters for Digital Outs (dout)
          */
         export type DoutConfig = {
@@ -754,7 +758,7 @@
                     inverted?:boolean;
         }
 
-        /** 
+        /**
         Status of Digital Outs (dout)
          */
         export type DoutStatus = {
@@ -762,7 +766,7 @@
                     effectiveValue?:ONOFF;
         }
 
-        /** 
+        /**
         Command for Digital Outs (dout)
          */
         export type DoutCommand = {
@@ -772,7 +776,7 @@
                     setValue?:ONOFF;
         }
 
-        /** 
+        /**
         Configuration parameters for Analog Ins (ain - floats)
          */
         export type AinConfig = {
@@ -782,7 +786,7 @@
                     jointIndexForVirtualAxis?:number;
         }
 
-        /** 
+        /**
         Status of Analog Ins (ain - floats)
          */
         export type AinStatus = {
@@ -790,15 +794,15 @@
                     actValue?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for Analog Outs (aout - floats)
          */
         export type AoutConfig = {
         }
 
-        /** 
-        Status of an analog output. The status includes the effective value which is 
-        either the value set by {@link AoutCommand} if &#x60;override&#x60; flag is set, 
+        /**
+        Status of an analog output. The status includes the effective value which is
+        either the value set by {@link AoutCommand} if &#x60;override&#x60; flag is set,
         or the last value set by an activity (&#x60;setAout&#x60; in {@link ActivityCommand} or {@link ActivityStreamItem}).
          */
         export type AoutStatus = {
@@ -806,7 +810,7 @@
                     effectiveValue?:number;
         }
 
-        /** 
+        /**
         Command for Analog Outs (aout - floats)
          */
         export type AoutCommand = {
@@ -816,13 +820,13 @@
                     setValue?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for Integer Ins (iin)
          */
         export type IinConfig = {
         }
 
-        /** 
+        /**
         Status of Analog Ins (ain - floats)
          */
         export type IinStatus = {
@@ -830,17 +834,17 @@
                     actValue?:number;
         }
 
-        
+
         export type IoutConfig = {
         }
 
-        
+
         export type IoutStatus = {
                     /**  Effective value of the iout (integer out) */
                     effectiveValue?:number;
         }
 
-        
+
         export type IoutCommand = {
                     /**  Override the value of the iout (integer out) set by the HLC */
                     override?:boolean;
@@ -848,7 +852,7 @@
                     setValue?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for moveJoints
          */
         export type MoveJointsConfig = {
@@ -856,13 +860,13 @@
                     kinematicsConfigurationIndex?:number;
                     /**  Array of joint positions */
                     jointPositionArray?:number[];
-                    
+
                     positionReference?:POSITIONREFERENCE;
                     /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                     moveParamsIndex?:number;
         }
 
-        /** 
+        /**
         Status of moveJoints
          */
         export type MoveJointsStatus = {
@@ -870,7 +874,7 @@
                     percentageComplete?:number;
         }
 
-        /** 
+        /**
         Command parameters for MoveJoints
          */
         export type MoveJointsCommand = {
@@ -878,21 +882,21 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed moveJoints
          */
         export type MoveJointsStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     positionReference?:POSITIONREFERENCE;
-                    
+
                     jointPositionArray?:number[];
-                    
+
                     moveParams?:MoveParametersConfig;
         }
 
-        /** 
+        /**
         Configuration parameters for MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityConfig = {
@@ -904,13 +908,13 @@
                     jointVelocityArray?:number[];
         }
 
-        /** 
+        /**
         Status of MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityStatus = {
         }
 
-        /** 
+        /**
         Command parameters for MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityCommand = {
@@ -918,19 +922,19 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed MoveJointsAtVelocity
          */
         export type MoveJointsAtVelocityStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     moveParams?:MoveParametersConfig;
-                    
+
                     jointVelocityArray?:number[];
         }
 
-        /** 
+        /**
         Configuration parameters for moveLine
          */
         export type MoveLineConfig = {
@@ -944,7 +948,7 @@
                     superimposedIndex?:number;
         }
 
-        /** 
+        /**
         Status of MoveJoints
          */
         export type MoveLineStatus = {
@@ -952,7 +956,7 @@
                     percentageComplete?:number;
         }
 
-        /** 
+        /**
         Command parameters for MoveLine
          */
         export type MoveLineCommand = {
@@ -960,21 +964,21 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed moveLine
          */
         export type MoveLineStream = {
                     /** The kinematics configuration to use for the move qq */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     moveParams?:MoveParametersConfig;
                     /**  Line object for move */
                     line?:CartesianPosition;
-                    
+
                     superimposedIndex?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for moveVectorAtVelocity.
          */
         export type MoveVectorAtVelocityConfig = {
@@ -986,13 +990,13 @@
                     vector?:CartesianVector;
         }
 
-        /** 
+        /**
         Status of MoveVectorAtVelocity
          */
         export type MoveVectorAtVelocityStatus = {
         }
 
-        /** 
+        /**
         Command parameters for moveVectorAtVelocity
          */
         export type MoveVectorAtVelocityCommand = {
@@ -1000,39 +1004,39 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed moveVectorAtVelocity
          */
         export type MoveVectorAtVelocityStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     moveParams?:MoveParametersConfig;
-                    
+
                     vector?:CartesianVector;
         }
 
-        /** 
+        /**
         Configuration parameters for moveArc.
          */
         export type MoveArcConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     superimposedIndex?:number;
                     /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                     moveParamsIndex?:number;
-                    
+
                     arc?:ArcsConfig;
         }
 
-        /** 
+        /**
         Status of MoveArc
          */
         export type MoveArcStatus = {
         }
 
-        /** 
+        /**
         Command parameters for moveArc
          */
         export type MoveArcCommand = {
@@ -1040,21 +1044,21 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed moveArc
          */
         export type MoveArcStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     moveParams?:MoveParametersConfig;
-                    
+
                     arc?:ArcsConfig;
-                    
+
                     superimposedIndex?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for moveToPosition
          */
         export type MoveToPositionConfig = {
@@ -1062,11 +1066,11 @@
                     kinematicsConfigurationIndex?:number;
                     /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                     moveParamsIndex?:number;
-                    
+
                     cartesianPosition?:CartesianPositionsConfig;
         }
 
-        /** 
+        /**
         Status of MoveToPosition
          */
         export type MoveToPositionStatus = {
@@ -1074,7 +1078,7 @@
                     percentageComplete?:number;
         }
 
-        /** 
+        /**
         Command parameters for moveToPosition
          */
         export type MoveToPositionCommand = {
@@ -1082,67 +1086,67 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Parameters for streamed moveToPosition
          */
         export type MoveToPositionStream = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     moveParams?:MoveParametersConfig;
-                    
+
                     cartesianPosition?:CartesianPositionsConfig;
         }
 
-        
+
         export type SetDoutConfig = {
         }
 
-        
+
         export type SetDoutStatus = {
         }
 
-        
+
         export type SetDoutCommand = {
-                    
+
                     doutToSet?:number;
-                    
+
                     valueToSet?:boolean;
         }
 
-        
+
         export type SetAoutConfig = {
         }
 
-        
+
         export type SetAoutStatus = {
         }
 
-        
+
         export type SetAoutCommand = {
-                    
+
                     aoutToSet?:number;
-                    
+
                     valueToSet?:number;
         }
 
-        
+
         export type SetIoutConfig = {
         }
 
-        
+
         export type SetIoutStatus = {
         }
 
-        
+
         export type SetIoutCommand = {
-                    
+
                     ioutToSet?:number;
-                    
+
                     valueToSet?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for dwell
          */
         export type DwellConfig = {
@@ -1150,7 +1154,7 @@
                     ticksToDwell?:number;
         }
 
-        /** 
+        /**
         Status of Dwell
          */
         export type DwellStatus = {
@@ -1158,7 +1162,7 @@
                     remainingTicks?:number;
         }
 
-        /** 
+        /**
         Command parameters for dwell
          */
         export type DwellCommand = {
@@ -1166,7 +1170,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for spindle
          */
         export type SpindleConfig = {
@@ -1180,7 +1184,7 @@
                     speedAnalogOutIndex?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for spindle
          */
         export type SpindleActivityConfig = {
@@ -1194,19 +1198,19 @@
                     speed?:number;
         }
 
-        /** 
+        /**
         Status of spindle
          */
         export type SpindleActivityStatus = {
         }
 
-        /** 
+        /**
         Command parameters for spindle
          */
         export type SpindleActivityCommand = {
         }
 
-        /** 
+        /**
         Parameters for streamed spindle activity
          */
         export type SpindleStream = {
@@ -1220,7 +1224,7 @@
                     speed?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for waitOnDigitalInput
          */
         export type WaitOnDigitalInputConfig = {
@@ -1230,7 +1234,7 @@
                     triggerType?:TRIGGERTYPE;
         }
 
-        /** 
+        /**
         Status of waitOnDigitalInput
          */
         export type WaitOnDigitalInputStatus = {
@@ -1238,7 +1242,7 @@
                     waiting?:boolean;
         }
 
-        /** 
+        /**
         Command parameters for waitOnDigitalInput
          */
         export type WaitOnDigitalInputCommand = {
@@ -1246,7 +1250,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for waitOnIntegerInput
          */
         export type WaitOnIntegerInputConfig = {
@@ -1258,7 +1262,7 @@
                     condition?:GTLT;
         }
 
-        /** 
+        /**
         Status of waitOnIntegerInput
          */
         export type WaitOnIntegerInputStatus = {
@@ -1266,7 +1270,7 @@
                     waiting?:boolean;
         }
 
-        /** 
+        /**
         Command parameters for waitOnIntegerInput
          */
         export type WaitOnIntegerInputCommand = {
@@ -1274,7 +1278,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for waitOnAnalogInput
          */
         export type WaitOnAnalogInputConfig = {
@@ -1286,7 +1290,7 @@
                     condition?:GTLT;
         }
 
-        /** 
+        /**
         Status of waitOnAnalogInput
          */
         export type WaitOnAnalogInputStatus = {
@@ -1294,7 +1298,7 @@
                     waiting?:boolean;
         }
 
-        /** 
+        /**
         Command parameters for waitOnAnalogInput
          */
         export type WaitOnAnalogInputCommand = {
@@ -1302,7 +1306,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for tool offset
          */
         export type ToolOffsetConfig = {
@@ -1312,33 +1316,33 @@
                     toolIndex?:number;
         }
 
-        /** 
+        /**
         Configuration parameters for latchPos
          */
         export type LatchPosConfig = {
-                    
+
                     cartesianLatch?:boolean;
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     jointLatch?:boolean;
-                    
+
                     latchTriggerIndex?:number;
         }
 
-        /** 
+        /**
         Status of latchPos
          */
         export type LatchPosStatus = {
-                    
+
                     latched?:boolean;
-                    
+
                     latchedCartesianPosition?:CartesianPosition;
-                    
+
                     latchedJointArray?:JointPosition[];
         }
 
-        /** 
+        /**
         Command parameters for latchPos
          */
         export type LatchPosCommand = {
@@ -1346,19 +1350,19 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for switchPose
          */
         export type SwitchPoseConfig = {
                     /**  Index of the Kinematics Configuration (KC) to use */
                     kinematicsConfigurationIndex?:number;
-                    
+
                     newJointConfiguration?:number;
                     /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                     moveParamsIndex?:number;
         }
 
-        /** 
+        /**
         Status of switchPose
          */
         export type SwitchPoseStatus = {
@@ -1366,7 +1370,7 @@
                     percentageComplete?:number;
         }
 
-        /** 
+        /**
         Command parameters for switchPose
          */
         export type SwitchPoseCommand = {
@@ -1374,7 +1378,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for gearInVelo
          */
         export type GearInVeloConfig = {
@@ -1382,39 +1386,39 @@
                     masterKinematicsConfigurationIndex?:number;
                     /**  Kinematics configuration to use for the slave */
                     slaveKinematicsConfigurationIndex?:number;
-                    
+
                     gearingFrameIndex?:number;
-                    
+
                     gearRatio?:number;
-                    
+
                     syncActivationDelay?:number;
         }
 
-        /** 
+        /**
         Status of gearInVelo
          */
         export type GearInVeloStatus = {
                     /**  Percentage through move we currently are */
                     percentageComplete?:number;
-                    
+
                     gearInFailed?:boolean;
-                    
+
                     gearedIn?:boolean;
         }
 
-        /** 
+        /**
         Command parameters for gearInVelo
          */
         export type GearInVeloCommand = {
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
-                    
+
                     updatedRatio?:number;
-                    
+
                     updateRation?:boolean;
         }
 
-        /** 
+        /**
         Configuration parameters for gearInPos
          */
         export type GearInPosConfig = {
@@ -1422,70 +1426,70 @@
                     masterKinematicsConfigurationIndex?:number;
                     /**  Kinematics configuration to use for the slave */
                     slaveKinematicsConfigurationIndex?:number;
-                    
+
                     gearingFrameIndex?:number;
-                    
+
                     gearRatio?:number;
-                    
+
                     strategyToUse?:STRATEGYGEARINPOS;
-                    
+
                     gearRatioMaster?:number;
-                    
+
                     gearRatioSlave?:number;
-                    
+
                     masterSyncPosition?:CartesianPosition;
-                    
+
                     slaveSyncPosition?:CartesianPosition;
-                    
+
                     syncActivationDelay?:number;
         }
 
-        /** 
+        /**
         Status of gearInPos
          */
         export type GearInPosStatus = {
                     /**  Percentage through move we currently are */
                     percentageComplete?:number;
-                    
+
                     gearInFailed?:boolean;
-                    
+
                     gearedIn?:boolean;
         }
 
-        /** 
+        /**
         Command parameters for gearInPos
          */
         export type GearInPosCommand = {
                     /**  Triggers the activity to stop and skip to the next in a task */
                     skipToNext?:boolean;
-                    
+
                     updatedRatioMaster?:number;
-                    
+
                     updatedRatioSlave?:number;
-                    
+
                     updatedMasterSyncPosition?:CartesianPosition;
-                    
+
                     updatedSlaveSyncPosition?:CartesianPosition;
         }
 
-        
+
         export type StressTestConfig = {
         }
 
-        
+
         export type StressTestStatus = {
         }
 
-        
+
         export type StressTestCommand = {
         }
 
-        
+
         export type StressTestStream = {
         }
 
-        /** 
-        This is a union discriminated by activityType. 
+        /**
+        This is a union discriminated by activityType.
          */
         export type ActivityConfig = {
                     /**  IMPORTANT: This is the discriminator for the union */
@@ -1536,7 +1540,7 @@
 //              End of Union
         }
 
-        /** 
+        /**
         This is a union
          */
         export type ActivityStatus = {
@@ -1586,7 +1590,7 @@
 //              End of Union
         }
 
-        /** 
+        /**
         This is a union. There is no discriminator for this union as the Activity will have been configured with a specific type of activity and these are the commands that act on this type.
          */
         export type ActivityCommand = {
@@ -1634,7 +1638,7 @@
                     skipToNext?:boolean;
         }
 
-        /** 
+        /**
         This is a union
          */
         export type ActivityStreamItem = {
@@ -1678,13 +1682,13 @@
 //              End of Union
         }
 
-        
+
         export type SoloActivityConfig = {
         }
 
         export type SoloActivityStatus = ActivityStatus
         export type SoloActivityCommand = ActivityStreamItem
-        /** 
+        /**
         Configuration parameters for frame
          */
         export type FramesConfig = {
@@ -1698,7 +1702,7 @@
                     absRel?:FRAME_ABSRELATIVE;
         }
 
-        /** 
+        /**
         Command parameters for frame
          */
         export type FramesCommand = {
@@ -1710,11 +1714,11 @@
                     override?:boolean;
         }
 
-        
+
         export type FramesStatus = {
         }
 
-        /** 
+        /**
         Configuration parameters for a tool
          */
         export type ToolConfig = {
@@ -1726,7 +1730,7 @@
                     diameter?:number;
         }
 
-        
+
         export type TriggerOnConfig = {
                     /**  Index of analog input to act as a trigger */
                     aiIndex?:number;

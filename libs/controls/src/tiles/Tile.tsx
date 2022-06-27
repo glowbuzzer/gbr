@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { ReactNode, useState } from "react"
 import styled, { css } from "styled-components"
 import { Popover } from "antd"

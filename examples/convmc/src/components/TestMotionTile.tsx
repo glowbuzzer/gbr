@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Tile } from "@glowbuzzer/controls"
 import React, { useState } from "react"
 import { Button } from "antd"

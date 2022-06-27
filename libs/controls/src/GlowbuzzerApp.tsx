@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { FC, ReactNode, useEffect, useRef } from "react"
 import { Provider } from "react-redux"

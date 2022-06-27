@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import ReactDOM from "react-dom"
 import React, { StrictMode, useState } from "react"
 import { CartesianDro, ConnectTile, GlowbuzzerApp, PreferencesDialog } from "@glowbuzzer/controls"

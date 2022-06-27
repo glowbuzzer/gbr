@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useState } from "react"
 import { useDispatch } from "react-redux"
 import { TileSettings } from "../tiles"

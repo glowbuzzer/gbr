@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import "./connect/ConnectionFactory"
 
 export * from "./gbc"

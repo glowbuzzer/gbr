@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 const windowGlobal = typeof window !== "undefined" && window
 const localStorage = windowGlobal ? windowGlobal.localStorage : null
 

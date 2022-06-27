@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { Button, Form, Input, Modal } from "antd"
 import { usePrefs } from "@glowbuzzer/store"

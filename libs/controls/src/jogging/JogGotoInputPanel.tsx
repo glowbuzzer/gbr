@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useEffect, useRef } from "react"
 import { Button, Input } from "antd"
 import { ConversionFactors, usePrefs } from "@glowbuzzer/store"

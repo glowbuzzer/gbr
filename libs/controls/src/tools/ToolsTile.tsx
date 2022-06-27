@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import * as React from "react"
 import { Tile, TileEmptyMessage } from "@glowbuzzer/controls"
 import { usePrefs, useSoloActivity, useToolIndex, useToolList } from "@glowbuzzer/store"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import {CaseReducer, PayloadAction, Slice} from "@reduxjs/toolkit"
 
 /** Convenience type for a reducer that takes status as payload and passes it into the redux store (perhaps with some processing) */

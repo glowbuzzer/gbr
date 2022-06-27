@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { Button, Dropdown, Menu, message } from "antd"

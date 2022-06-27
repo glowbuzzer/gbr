@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React, { useState } from "react"
 import { GlowbuzzerApp, PreferencesDialog } from "@glowbuzzer/controls"
 import { Button, Menu } from "antd"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { Button, Tag } from "antd"
 import { TASK_STATE, TaskStatus, useTask, useTaskStatus } from "@glowbuzzer/store"

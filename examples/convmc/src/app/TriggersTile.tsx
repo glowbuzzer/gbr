@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { Tile } from "@glowbuzzer/controls"
 import { Checkbox, Radio, Space } from "antd"

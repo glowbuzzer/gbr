@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Radio } from "antd"
 import { FrameSelector } from "../misc"
 import React, { useState } from "react"

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import React from "react"
 import { Text } from "@react-three/drei"
 import { Euler, Vector3 } from "three"

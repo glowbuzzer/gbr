@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Command } from "commander"
 import * as all_suites from "./src/all_tests"
 

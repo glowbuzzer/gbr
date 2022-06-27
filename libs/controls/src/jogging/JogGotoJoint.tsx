@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
 import { Radio } from "antd"
 import React, { useEffect, useMemo, useState } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
