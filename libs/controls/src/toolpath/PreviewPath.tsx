@@ -50,7 +50,6 @@ const LabelText = ({ position, label, distance, fontSize, lineHeight }) => (
         lineHeight={lineHeight}
         letterSpacing={0}
         textAlign={"left"}
-        font="arial"
         anchorX="left"
         anchorY="top"
     >

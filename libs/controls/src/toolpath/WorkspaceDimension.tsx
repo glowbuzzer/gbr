@@ -25,7 +25,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
                 lineHeight={1}
                 letterSpacing={0}
                 textAlign={"left"}
-                font="arial"
                 anchorX="left"
                 anchorY="top"
             >
@@ -41,7 +40,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
                 lineHeight={1}
                 letterSpacing={0}
                 textAlign={"left"}
-                font="arial"
                 anchorX="left"
                 anchorY="bottom"
             >
