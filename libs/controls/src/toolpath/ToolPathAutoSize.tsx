@@ -18,6 +18,10 @@ export const ToolPathAutoSize = ({ extent, children }) => {
 
     useEffect(() => {
         camera.position.z = 2 * extent
+        camera.near = 0.01
+        camera.far = 10000
+
+        camera.updateProjectionMatrix()
     }, [extent])
 
     return (

@@ -70,7 +70,7 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
         const actual_links = model.config.filter(c => c.limits)
 
         const files = Array.from({ length: actual_links.length + 1 }).map(
-            (_, index) => `/${model.name}/L${index}.glb`
+            (_, index) => `/assets/${model.name}/L${index}.glb`
         )
 
         Promise.all(
