@@ -11,7 +11,7 @@ import { useEffect, useState } from "react"
 import { ToolConfig } from "@glowbuzzer/store"
 
 const loader = new GLTFLoader()
-// loader.setPath(new URL("./assets", window.location.href).href)
+loader.setPath(new URL("./assets", window.location.href).href)
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.4.0/")
 loader.setDRACOLoader(dracoLoader)
@@ -70,7 +70,7 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
         const actual_links = model.config.filter(c => c.limits)
 
         const files = Array.from({ length: actual_links.length + 1 }).map(
-            (_, index) => `/assets/${model.name}/L${index}.glb`
+            (_, index) => `/${model.name}/L${index}.glb`
         )
 
         Promise.all(
