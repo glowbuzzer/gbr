@@ -284,4 +284,10 @@ test("can cancel dwell", async () => {
     await do_cancel(dwell, 1, 3) // TODO: L: not sure why it takes 3 cycles to reject
 })
 
+test("can cancel move vector at velocity", async () => {
+    const move = gbc.wrap(gbc.activity.moveVectorAtVelocity(1, 0, 0).promise)
+    // on the first cycle after cancel we are cancelling the dwell so the cancel itself completes on the cycle after
+    await do_cancel(move, 1, 50)
+})
+
 export const activity = test
