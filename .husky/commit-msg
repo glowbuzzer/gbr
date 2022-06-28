@@ -1,8 +1,0 @@
-#!/bin/sh
-#
-# Copyright (c) 2022. Glowbuzzer. All rights reserved
-#
-
-. "$(dirname "$0")/_/husky.sh"
-
-pnpx --no-install commitlint --edit "$1"

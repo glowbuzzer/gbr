@@ -23,8 +23,7 @@
         "update": "nx migrate latest",
         "workspace-schematic": "nx workspace-schematic",
         "dep-graph": "nx dep-graph",
-        "help": "nx help",
-        "prepare": "husky install"
+        "help": "nx help"
     },
     "private": true,
     "optionalDependencies": {
@@ -35,7 +34,7 @@
         "@babel/plugin-proposal-class-properties": "^7.17.12",
         "@react-three/drei": "^9.11.3",
         "@reduxjs/toolkit": "^1.8.2",
-        "antd": "^4.20.6",
+        "antd": "^4.21.4",
         "babel-loader": "^8.2.5",
         "core-js": "^3.22.7",
         "d3": "^7.4.4",
@@ -65,8 +64,6 @@
         "@babel/preset-flow": "^7.17.12",
         "@babel/preset-react": "^7.17.12",
         "@babel/preset-typescript": "^7.17.12",
-        "@commitlint/cli": "^17.0.2",
-        "@commitlint/config-conventional": "^17.0.2",
         "@cypress/webpack-preprocessor": "^5.11.1",
         "@nrwl/cli": "12.7.1",
         "@nrwl/cypress": "12.7.1",
@@ -113,7 +110,6 @@
         "eslint-plugin-react": "^7.30.0",
         "eslint-plugin-react-hooks": "^4.5.0",
         "event-source-polyfill": "^1.0.26",
-        "husky": "^8.0.0",
         "jest": "^28.1.0",
         "lodash": "^4.17.21",
         "prettier": "^2.6.2",
