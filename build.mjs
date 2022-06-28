@@ -23,8 +23,10 @@ const projects = p.split(",")
 
 const version = version_or_github_ref.startsWith(GITHUB_TAG_PREFIX) ? version_or_github_ref.substring(GITHUB_TAG_PREFIX.length) : version_or_github_ref
 
+const master = JSON.parse(fs.readFileSync(`./package.json`).toString())
+
 console.log("Packaging the following projects:", projects.join(","))
-console.log("Bumping all versions to:", version)
+console.log("Setting all versions to:", version)
 
 for (const project of projects) {
     console.log("Processing", project)
@@ -132,6 +134,18 @@ for (const project of projects) {
                 pkg.dependencies[key] = version
             }
         }
+        // fill dependency versions from those we have in the top-level project
+        // noinspection JSCheckFunctionSignatures
+        pkg.dependencies = Object.fromEntries(Object.entries(pkg.dependencies).map(([name, version]) => {
+            if (version !== "auto") {
+                return [name, version]
+            }
+            const auto = master.dependencies[name]
+            if (!auto) {
+                throw new Error("Failed to find master dependency version for: " + name)
+            }
+            return [name, auto]
+        }))
         fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
             ...pkg,
             version,

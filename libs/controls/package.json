@@ -2,7 +2,11 @@
     "name": "@glowbuzzer/controls",
     "version": "0.0.0",
     "dependencies": {
-        "@glowbuzzer/store": "latest"
+        "@glowbuzzer/store": "latest",
+        "@ant-design/icons": "auto",
+        "antd": "auto",
+        "react-grid-layout": "auto",
+        "styled-components": "auto"
     },
     "exports": {
         ".": {
