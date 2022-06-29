@@ -54,13 +54,14 @@ const StyledTile = styled.div<{ fullHeight: boolean }>`
     }
 
     .title .help {
-        display: none;
+        padding: 0 6px;
+        display: inline-block;
+        cursor: default;
+        visibility: hidden;
     }
 
     .title:hover .help {
-        padding: 0 6px;
-        cursor: default;
-        display: inline-block;
+        visibility: visible;
     }
 
     > .content {
@@ -122,7 +123,7 @@ export const Tile = ({
                         {title}
                         {help && (
                             <span className="help">
-                                <Popover content={help} placement="bottom">
+                                <Popover trigger="click" content={help} placement="rightBottom">
                                     <QuestionCircleOutlined style={{ color: "#8c8c8c" }} />
                                 </Popover>
                             </span>
