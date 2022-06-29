@@ -16,6 +16,30 @@ import { JogArrowsJoint } from "./JogArrowsJoint"
 import { JogMode } from "./types"
 import { JogLimitsCheckbox } from "./JogLimitsCheckbox"
 
+const help = (
+    <div>
+        <h4>Jog Tile</h4>
+        <p>The Jog Tile allows the user to manually move their machine.</p>
+        <p>There are three main jog modes:</p>
+        <ol>
+            <li>
+                Joint jog - where individual joints are moved
+            </li>
+            <li>
+                Cartesian jog - where the "tool" of a machine is moved in cartesian space (position & orientation)
+            </li>
+            <li>
+                Goto - where joints are moved to specified angles/positions or the the "tool" of a machine is moves to a specific position/orientation in cartesian space
+            </li>
+        </ol>
+        <p>Joint jog and Cartesian jog can be executed in step jog mode where the machine moves a fixed (specified) distance</p>
+        <p>on each click of the button or in continous mode where the machine moves as long as the button is held down.</p>
+        <p>For cartesian jogging or goto the kinematics configuration (kc) must be specified as each kc can be moved independently.</p>
+        <p>For joint jog, the kc that contains the joint you want to move must be selected in the kc drop down</p>
+        <p>If the limits checkbox is checked in the Jog Tile it is not possibled to move beyond the limits defined in the machine's configuration.</p>
+        </div>
+        )
+
 enum JogMoveMode {
     CARTESIAN,
     JOINT
@@ -180,6 +204,7 @@ export const JogTile = () => {
     return (
         <Tile
             title={"Jogging"}
+            help={help}
             controls={
                 <StyledControls>
                     {kcs.length > 1 && (

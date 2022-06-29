@@ -22,7 +22,7 @@ import { TrafficLight } from "./TrafficLight"
 const help = (
     <div>
         <h4>Connection Tile</h4>
-        <p>The connection tile is used to connect to GBC and the PLC and manage their state.</p>
+        <p>The connection tile is used to connect to GBC and the PLC (GBEM/GBSM etc.) and manage their joint state.</p>
         <p>
             The "Simulate" and "Live" buttons toggle between Simulating a PLC and being connected
             live to a PLC and controlling a real machine.

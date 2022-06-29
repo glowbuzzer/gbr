@@ -9,6 +9,18 @@ import { Button, Tag } from "antd"
 import styled from "styled-components"
 import { LeftOutlined, RightOutlined } from "@ant-design/icons"
 
+
+const help = (
+    <div>
+        <h4>Tools Tile</h4>
+        <p>The Tools Tile shows the tools that have been configured in the tools section of the JSON config file.</p>
+        <p>It allows a user to manually select a tool.</p>
+        <p>The machine must be in the <code>OPERATION_ENABLED</code> state to perform a tool change.</p>
+        <p>The Toolpath Display will show a change of position when tools of different lengths are selected.</p>
+    </div>
+)
+
+
 const StyledDiv = styled.div`
     display: flex;
     align-items: center;
@@ -35,7 +47,7 @@ export const ToolsTile = () => {
     }
 
     return (
-        <Tile title={"Tools"}>
+        <Tile title={"Tools"} help={help}>
             {Object.entries(tools).map(([name, config], index) => (
                 <StyledDiv key={name}>
                     <div className="name">{name}</div>

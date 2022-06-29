@@ -8,6 +8,18 @@ import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
 import { useDigitalOutputList, useDigitalOutputState } from "@glowbuzzer/store"
 
+const help = (
+    <div>
+        <h4>Digital Outputs Tile</h4>
+        <p>The Digital Outputs Tile allows you to control analog outputs on your machine.</p>
+        <p>If you want your outputs to be controlled by your programs (or gcode) then set "Auto" mode in the dropdown. </p>
+        <p>If you want to force the value of the output from the Tile, set "Override" mode in the dropdown.</p>
+        <p>In overide mode the value can be changed with the toggle switch.</p>
+        <p>The current value of the output will be shown in the state indicator on the far right.</p>
+    </div>
+)
+
+
 const { Option } = Select
 
 const StyledDiv = styled.div`
@@ -82,7 +94,7 @@ export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => 
     const douts = useDigitalOutputList()
 
     return (
-        <Tile title="Digital Outputs">
+        <Tile title={"Digital Outputs"} help={help}>
             <StyledDiv>
                 {douts.map((name, index) => (
                     <DigitalOutputItem key={index} index={index} label={labels[index]} />

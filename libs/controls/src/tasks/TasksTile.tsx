@@ -10,6 +10,13 @@ import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 import { Tile } from "../tiles"
 
+const help = (
+    <div>
+        <h4>Tasks Tile</h4>
+        <p>The Tasks Tile shows the configured tasks and allows the user to start and stop them.</p>
+    </div>
+)
+
 const StyledTaskItem = styled.div`
     padding: 4px 0;
     width: 100%;
@@ -69,7 +76,7 @@ const TaskItem = ({ status, index }: { status: TaskStatus; index: number }) => {
 export const TasksTile = () => {
     const status = useTaskStatus()
     return (
-        <Tile title="Tasks">
+        <Tile title={"Tasks"} help={help}>
             {status.map((t, index) => (
                 <TaskItem key={t.name} status={t.status} index={index} />
             ))}

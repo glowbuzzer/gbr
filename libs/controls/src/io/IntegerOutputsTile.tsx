@@ -8,6 +8,18 @@ import { useIntegerOutputList, useIntegerOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"
 
+const help = (
+    <div>
+        <h4>Integer Outputs Tile</h4>
+        <p>The Integer Outputs Tile allows you to control analog outputs on your machine.</p>
+        <p>If you want your outputs to be controlled by your programs (or gcode) then set "Auto" mode in the dropdown. </p>
+        <p>If you want to force the value of the output from the Tile, set "Override" mode in the dropdown.</p>
+        <p>In overide mode the value can be changed by specifying it the box and using the arrow button to trigger the set operation.</p>
+        <p>The current value of the output will be shown in the indicator on the far right.</p>
+    </div>
+)
+
+
 const StyledDiv = styled.div`
     padding-top: 20px;
 
@@ -47,7 +59,7 @@ export const IntegerOutputsTile = ({ labels = [] }: IntegerOutputsTileProps) => 
     const aouts = useIntegerOutputList()
 
     return (
-        <Tile title="Integer Outputs">
+        <Tile title={"Integer Outputs"} help={help}>
             <StyledDiv>
                 {aouts.map((label, index) => (
                     <IntegerOutputItem key={index} index={index} label={labels[index] || label} />

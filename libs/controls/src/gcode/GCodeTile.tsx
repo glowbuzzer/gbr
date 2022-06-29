@@ -32,6 +32,19 @@ import { GCodeSettings } from "./GCodeSettings"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 
+const help = (
+    <div>
+        <h4>Gcode Tile</h4>
+        <p>The Gcode Tile is used to load and stream gcode programes to the machine.</p>
+        <p>A Gcode program can be types or pasted into the tile's body</p>
+        <p>The <CaretRightOutlined/> button starts the gcode streaming to the machine and jobs can be paused with the <PauseOutlined/> button.</p>
+        <p> Jobs can be stopped with the <StopIcon/> button.</p>
+        <p>The gocde work offset (G54, G55 etc. which are set from frames in your config.json) file can be applied before a job is run.</p>
+        <p>The estimated job running time is shown on the tile's top bar.</p>
+    </div>
+)
+
+
 const { Option } = Select
 
 const { load, save } = settings("tiles.gcode")
@@ -187,6 +200,7 @@ export const GCodeTile = () => {
     return (
         <Tile
             title="GCode"
+            help={help}
             settings={<GCodeSettings />}
             controls={
                 <>
