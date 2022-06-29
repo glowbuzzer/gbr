@@ -16,6 +16,7 @@ import {
     usePrefs
 } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { MathUtils } from "three"
 
 const StyledRow = styled(Row)`
     .slider-wrapper {
@@ -100,8 +101,8 @@ const JointDroItem = ({ index, warningThreshold }) => {
     const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
 
     const units = prefs.getUnits(type)
-    const min = prefs.fromSI(negLimit, type)
-    const max = prefs.fromSI(posLimit, type)
+    const min = prefs.fromSI(MathUtils.degToRad(negLimit), type)
+    const max = prefs.fromSI(MathUtils.degToRad(posLimit), type)
     const current = prefs.fromSI(actPos, type)
     const warn_range = (posLimit - negLimit) * warningThreshold
     const warn =
