@@ -290,4 +290,10 @@ test("can cancel move vector at velocity", async () => {
     await do_cancel(move, 1, 50)
 })
 
+test("will normalise move vector at velocity", async () => {
+    // the vector given here is not normalised but should still work without error
+    const move = gbc.wrap(gbc.activity.moveVectorAtVelocity(100, 0, 0).promise)
+    await do_cancel(move, 1, 50)
+})
+
 export const activity = test
