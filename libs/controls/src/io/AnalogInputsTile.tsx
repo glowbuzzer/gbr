@@ -8,6 +8,15 @@ import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
 
+const help = (
+    <div>
+        <h4>Analog Inputs Tile</h4>
+        <p>The Analog Inputs Tile shows the "live" value of all of the analog inputs</p>
+        <p>that have been configured for a machine.</p>
+    </div>
+)
+
+
 const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
@@ -27,7 +36,7 @@ export const AnalogInputsTile = ({ labels = [] }: AnalogInputsTileProps) => {
     const ain = useAnalogInputs()
 
     return (
-        <Tile title="Analog Inputs">
+        <Tile title="Analog Inputs" help={help}>
             {ain.map((item, index) => (
                 <StyledDiv key={index}>
                     <div>{labels[index] || "Unknown"}</div>

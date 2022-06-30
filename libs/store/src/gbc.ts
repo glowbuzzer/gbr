@@ -166,9 +166,9 @@
   SPINDLEDIRECTION_CCW ,
     }
     export enum JOINT_TYPE {
-        /**  Joint type is prismatic (linear) - this is for the kinematics models */
+        /**  Joint type is prismatic (linear) - linear units */
   JOINT_PRISMATIC ,
-        /**  Joint type is revolute (rotary) - this is for the kinematics models */
+        /**  Joint type is revolute (rotary) - radians units */
   JOINT_REVOLUTE ,
     }
     export enum JOINT_FINITECONTINUOUS {

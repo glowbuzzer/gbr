@@ -8,6 +8,14 @@ import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
 
+const help = (
+    <div>
+        <h4>Integer Inputs Tile</h4>
+        <p>The Integer Inputs Tile shows the "live" value of all of the integer inputs</p>
+        <p>that have been configured for a machine.</p>
+    </div>
+)
+
 const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
@@ -29,7 +37,7 @@ export const IntegerInputsTile = ({ labels = [] }: IntegerInputsTileProps) => {
     const ain = useIntegerInputs()
 
     return (
-        <Tile title="Integer Inputs">
+        <Tile title="Integer Inputs" help={help}>
             {ain.map((item, index) => (
                 <StyledDiv key={index}>
                     <div>{labels[index] || "Unknown"}</div>
