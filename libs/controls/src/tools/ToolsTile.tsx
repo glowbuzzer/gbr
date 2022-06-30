@@ -7,7 +7,7 @@ import { Tile, TileEmptyMessage } from "@glowbuzzer/controls"
 import { usePrefs, useSoloActivity, useToolIndex, useToolList } from "@glowbuzzer/store"
 import { Button, Tag } from "antd"
 import styled from "styled-components"
-import { LeftOutlined, RightOutlined } from "@ant-design/icons"
+import { CloseCircleOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -41,8 +41,24 @@ export const ToolsTile = () => {
                     <div className="name">{name}</div>
                     {index === toolIndex && <RightOutlined />}
                     <Tag>
-                        {fromSI(config.translation?.z || 0, "linear")} {getUnits("linear")}
+                        {fromSI(config.translation?.z || 0, "linear").toFixed(2)}{" "}
+                        {getUnits("linear")}
                     </Tag>
+                    {config.diameter && (
+                        <Tag>
+                            <svg viewBox="0 0 16 16" width={16}>
+                                <circle
+                                    cx={6}
+                                    cy={10}
+                                    r={5}
+                                    stroke="black"
+                                    fill="none"
+                                    strokeWidth={1}
+                                />
+                            </svg>
+                            {fromSI(config.diameter || 0, "linear").toFixed(2)} {getUnits("linear")}
+                        </Tag>
+                    )}
                     <Button size="small" onClick={() => select(index)}>
                         Select
                     </Button>
