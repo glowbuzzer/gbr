@@ -18,7 +18,7 @@ import {
 } from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import { activitySlice, gcodeSlice, jointsSlice } from "../../libs/store/src"
-import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src/kinematics"
+import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
@@ -272,11 +272,15 @@ export class GbcTest {
                 this.gbc.run(1, single_cycle, this.check_limits)
                 // get the joint status
                 const status = this.status_msg.status
+                // @ts-ignore
                 status.joint && this.store.dispatch(jointsSlice.actions.status(status.joint))
+                // @ts-ignore
                 status.kc && this.store.dispatch(kinematicsSlice.actions.status(status.kc))
                 status.activity &&
+                    // @ts-ignore
                     this.store.dispatch(activitySlice.actions.status(status.activity))
                 this.status_msg.stream &&
+                    // @ts-ignore
                     this.store.dispatch(gcodeSlice.actions.status(this.status_msg.stream))
 
                 const store_state = this.store.getState()
@@ -302,6 +306,7 @@ export class GbcTest {
         }
         const status = this.status_msg.status
         const { activity } = status
+        // @ts-ignore
         activity && this.store.dispatch(activitySlice.actions.status(activity))
         const { tag, state } = this.store.getState().activity[0]
         this.activity_api.update(tag, state)

@@ -28,4 +28,10 @@ test("move_line with simple translation", async () => {
     assertNear(0, 0, 0, 0, 0, 0)
 })
 
+test("move_to_position with simple translation", async () => {
+    const move = gbc.wrap(gbc.activity.moveToPosition(15, 0, 0).frameIndex(0).promise)
+    await move.start().iterations(50).assertCompleted()
+    assertNear(5, 0, 0, 0, 0, 0)
+})
+
 export const frames_alt = test
