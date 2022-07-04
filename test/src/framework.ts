@@ -141,6 +141,26 @@ export class GbcTest {
                 test_near(actual, expected, tolerance, allowNeg)
                 return this
             },
+            gt: (selector, expected) => {
+                const actual = selector(this.status_msg)
+                if (actual < expected) {
+                    assert.not.ok(
+                        actual,
+                        `Numeric gt test failed: expected=${expected}, actual=${actual}`
+                    )
+                }
+                return this
+            },
+            lt: (selector, expected) => {
+                const actual = selector(this.status_msg)
+                if (actual >= expected) {
+                    assert.not.ok(
+                        actual,
+                        `Numeric lt test failed: expected=${expected}, actual=${actual}`
+                    )
+                }
+                return this
+            },
             vel: (joint, expected) => {
                 const actual = this.gbc.get_joint_vel(joint)
                 test_near(actual, expected, -0.1 /* within 10% */)
