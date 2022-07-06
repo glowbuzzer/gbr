@@ -4,7 +4,11 @@
 
 import React, { useEffect } from "react"
 import { Tile, TileEmptyMessage } from "../tiles"
-import { KC_KINEMATICSCONFIGURATIONTYPE, useConfig } from "@glowbuzzer/store"
+import {
+    KC_KINEMATICSCONFIGURATIONTYPE,
+    useConfig,
+    useKinematicsConfigurationList
+} from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Radio, Select, Slider } from "antd"
 import { StyledControls } from "../util/styled"
@@ -22,23 +26,38 @@ const help = (
         <p>The Jog Tile allows the user to manually move their machine.</p>
         <p>There are three main jog modes:</p>
         <ol>
+            <li>Joint jog - where individual joints are moved</li>
             <li>
-                Joint jog - where individual joints are moved
+                Cartesian jog - where the "tool" of a machine is moved in cartesian space (position
+                & orientation)
             </li>
             <li>
-                Cartesian jog - where the "tool" of a machine is moved in cartesian space (position & orientation)
-            </li>
-            <li>
-                Goto - where joints are moved to specified angles/positions or the the "tool" of a machine is moves to a specific position/orientation in cartesian space
+                Goto - where joints are moved to specified angles/positions or the the "tool" of a
+                machine is moves to a specific position/orientation in cartesian space
             </li>
         </ol>
-        <p>Joint jog and Cartesian jog can be executed in step jog mode where the machine moves a fixed (specified) distance</p>
-        <p>on each click of the button or in continous mode where the machine moves as long as the button is held down.</p>
-        <p>For cartesian jogging or goto the kinematics configuration (kc) must be specified as each kc can be moved independently.</p>
-        <p>For joint jog, the kc that contains the joint you want to move must be selected in the kc drop down</p>
-        <p>If the limits checkbox is checked in the Jog Tile it is not possibled to move beyond the limits defined in the machine's configuration.</p>
-        </div>
-        )
+        <p>
+            Joint jog and Cartesian jog can be executed in step jog mode where the machine moves a
+            fixed (specified) distance
+        </p>
+        <p>
+            on each click of the button or in continous mode where the machine moves as long as the
+            button is held down.
+        </p>
+        <p>
+            For cartesian jogging or goto the kinematics configuration (kc) must be specified as
+            each kc can be moved independently.
+        </p>
+        <p>
+            For joint jog, the kc that contains the joint you want to move must be selected in the
+            kc drop down
+        </p>
+        <p>
+            If the limits checkbox is checked in the Jog Tile it is not possibled to move beyond the
+            limits defined in the machine's configuration.
+        </p>
+    </div>
+)
 
 enum JogMoveMode {
     CARTESIAN,
@@ -176,20 +195,17 @@ export const JogTile = () => {
     )
     const [jogMode, setJogMode] = useLocalStorage<JogMode>("jog.mode", JogMode.CONTINUOUS)
 
-    const [selectedKc, setSelectedKc] = useLocalStorage("jog.kc", null)
+    const [selectedKc, setSelectedKc] = useLocalStorage("jog.kc", 0)
 
-    const config = useConfig()
-    const kcs = Object.keys(config.kinematicsConfiguration)
-
-    const kinematicsConfigurationIndex = Math.max(kcs.indexOf(selectedKc), 0)
+    const kcs = useKinematicsConfigurationList()
 
     useEffect(() => {
-        if (!selectedKc || !kcs.includes(selectedKc)) {
-            setSelectedKc(kcs[0])
+        if (!kcs[selectedKc]) {
+            setSelectedKc(0)
         }
     }, [kcs, selectedKc, setSelectedKc])
 
-    function update_kc(value) {
+    function update_kc(value: number) {
         setSelectedKc(value)
     }
 
@@ -214,9 +230,9 @@ export const JogTile = () => {
                             onChange={update_kc}
                             dropdownMatchSelectWidth={true}
                         >
-                            {kcs.map(k => (
-                                <Select.Option key={k} value={k}>
-                                    {k}
+                            {kcs.map((config, index) => (
+                                <Select.Option key={index} value={index}>
+                                    {config.name}
                                 </Select.Option>
                             ))}
                         </Select>
@@ -238,9 +254,7 @@ export const JogTile = () => {
                 <>
                     <div>
                         Jog Speed (%)
-                        <JogLimitsCheckbox
-                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                        />
+                        <JogLimitsCheckbox kinematicsConfigurationIndex={selectedKc} />
                     </div>
                     <Slider value={jogSpeed} min={1} max={100} onChange={setJogSpeed} />
                 </>
@@ -248,7 +262,7 @@ export const JogTile = () => {
         >
             <TileInner>
                 <JogPanel
-                    kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    kinematicsConfigurationIndex={selectedKc}
                     jogMoveMode={jogMoveMode}
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}

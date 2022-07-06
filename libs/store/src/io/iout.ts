@@ -36,7 +36,7 @@ export const integerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[]> = cre
  */
 export function useIntegerOutputList() {
     const config = useConfig()
-    return Object.keys(config.iout)
+    return config.iout
 }
 
 /**

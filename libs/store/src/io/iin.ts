@@ -3,9 +3,10 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
+import { useConfig } from "../config"
 
 export const integerInputsSlice: StatusUpdateSlice<number[]> = createSlice({
     name: "iin",
@@ -18,16 +19,20 @@ export const integerInputsSlice: StatusUpdateSlice<number[]> = createSlice({
 })
 
 /**
- * Returns the current state of all integer inputs as an array.
+ * Returns the list of configured integer input names. The index of names in the list can be used with {@link useIntegerInputState}.
  *
- * For example:
- * ```jsx
- * const iins=useIntegerInputs()
- * console.log(iins[2])
- * ```
- *
- * The names given to integer inputs can be discovered using {@link useConfig}.
+ * @returns The list of configured integer input names.
  */
-export function useIntegerInputs() {
-    return useSelector(({ iin }: RootState) => iin, shallowEqual)
+export function useIntegerInputList() {
+    const config = useConfig()
+    return config.iin
+}
+
+/**
+ * Returns the state of an integer input
+ *
+ * @param index The index in the configuration of the integer input
+ */
+export function useIntegerInputState(index: number): number {
+    return useSelector((state: RootState) => state.iin[index])
 }

@@ -7,19 +7,26 @@ import { Tile, TileEmptyMessage } from "@glowbuzzer/controls"
 import { usePrefs, useSoloActivity, useToolIndex, useToolList } from "@glowbuzzer/store"
 import { Button, Tag } from "antd"
 import styled from "styled-components"
-import { CloseCircleOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons"
-
+import { RightOutlined } from "@ant-design/icons"
 
 const help = (
     <div>
         <h4>Tools Tile</h4>
-        <p>The Tools Tile shows the tools that have been configured in the tools section of the JSON config file.</p>
+        <p>
+            The Tools Tile shows the tools that have been configured in the tools section of the
+            JSON config file.
+        </p>
         <p>It allows a user to manually select a tool.</p>
-        <p>The machine must be in the <code>OPERATION_ENABLED</code> state to perform a tool change.</p>
-        <p>The Toolpath Display will show a change of position when tools of different lengths are selected.</p>
+        <p>
+            The machine must be in the <code>OPERATION_ENABLED</code> state to perform a tool
+            change.
+        </p>
+        <p>
+            The Toolpath Display will show a change of position when tools of different lengths are
+            selected.
+        </p>
     </div>
 )
-
 
 const StyledDiv = styled.div`
     display: flex;
@@ -48,9 +55,9 @@ export const ToolsTile = () => {
 
     return (
         <Tile title={"Tools"} help={help}>
-            {Object.entries(tools).map(([name, config], index) => (
-                <StyledDiv key={name}>
-                    <div className="name">{name}</div>
+            {tools?.map((config, index) => (
+                <StyledDiv key={index}>
+                    <div className="name">{config.name}</div>
                     {index === toolIndex && <RightOutlined />}
                     <Tag>
                         {fromSI(config.translation?.z || 0, "linear").toFixed(2)}{" "}
@@ -76,9 +83,7 @@ export const ToolsTile = () => {
                     </Button>
                 </StyledDiv>
             ))}
-            {Object.keys(tools).length === 0 && (
-                <TileEmptyMessage>No tools configured</TileEmptyMessage>
-            )}
+            {!tools?.length && <TileEmptyMessage>No tools configured</TileEmptyMessage>}
         </Tile>
     )
 }

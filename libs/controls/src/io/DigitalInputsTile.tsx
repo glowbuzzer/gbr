@@ -3,9 +3,9 @@
  */
 
 import React from "react"
-import { useDigitalInputs } from "@glowbuzzer/store"
 import { Tile } from "../tiles"
 import { BitFieldDisplay } from "../dro"
+import { useDigitalInputBits, useDigitalInputList } from "@glowbuzzer/store"
 
 const help = (
     <div>
@@ -14,7 +14,6 @@ const help = (
         <p>that have been configured for a machine.</p>
     </div>
 )
-
 
 type DigitalInputsTileProps = {
     /**
@@ -27,12 +26,18 @@ type DigitalInputsTileProps = {
  * The digital inputs tile shows a simple view of all current digital input values.
  */
 export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
-    const din = useDigitalInputs()
+    const dins = useDigitalInputList()
+    const bits = useDigitalInputBits()
 
-    const dinValue = din.reduce((value, current, index) => value | (current ? 1 << index : 0), 0)
+    const normalised_labels = dins?.map(
+        (config, index) => labels[index] || config.name || index.toString()
+    )
+
     return (
         <Tile title="Digital Inputs" help={help}>
-            <BitFieldDisplay bitCount={din.length} value={dinValue} labels={labels} />
+            {dins && (
+                <BitFieldDisplay bitCount={dins.length} value={bits} labels={normalised_labels} />
+            )}
         </Tile>
     )
 }

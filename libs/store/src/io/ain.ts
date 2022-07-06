@@ -3,9 +3,10 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
+import { useConfig } from "../config"
 
 export const analogInputsSlice: StatusUpdateSlice<number[]> = createSlice({
     name: "ain",
@@ -18,16 +19,20 @@ export const analogInputsSlice: StatusUpdateSlice<number[]> = createSlice({
 })
 
 /**
- * Returns the current state of all analog inputs as an array.
+ * Returns the list of configured analog input names. The index of names in the list can be used with {@link useAnalogInputState}.
  *
- * For example:
- * ```jsx
- * const ains=useAnalogInputs()
- * console.log(ains[2])
- * ```
- *
- * The names given to analog inputs can be discovered using {@link useConfig}.
+ * @returns The list of configured analog input names.
  */
-export function useAnalogInputs() {
-    return useSelector(({ ain }: RootState) => ain, shallowEqual)
+export function useAnalogInputList() {
+    const config = useConfig()
+    return config.ain
+}
+
+/**
+ * Returns the state of an analog input
+ *
+ * @param index The index in the configuration of the analog input
+ */
+export function useAnalogInputState(index: number): number {
+    return useSelector((state: RootState) => state.ain[index])
 }

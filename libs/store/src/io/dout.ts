@@ -34,11 +34,11 @@ export const digitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = cre
 })
 
 /**
- * Returns a list of configured digital output names. The index of names in the list can be used with {@link useDigitalOutputState}.
+ * Returns the list of configured digital outputs. The indexes of items in the list can be used with {@link useDigitalOutputState} to get and manipulate the output.
  */
 export function useDigitalOutputList() {
     const config = useConfig()
-    return Object.keys(config.dout)
+    return config.dout
 }
 
 /**

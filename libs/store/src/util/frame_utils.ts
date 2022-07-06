@@ -69,16 +69,12 @@ function quatOf(r): Quaternion {
  * @param frames The raw list of frames in the config containing translation and rotation (quaternion) info
  * @param overrides Any overrides that are in effect (can be null or undefined)
  */
-export function build_tree(
-    frames: { [index: string]: FramesConfig },
-    overrides: (number[] | null | undefined)[]
-) {
+export function build_tree(frames: FramesConfig[], overrides: (number[] | null | undefined)[]) {
     const rootFrames = [] as Frame[]
     const parents = [] as Frame[]
 
-    let index = 0
-    for (const k of Object.keys(frames)) {
-        const def = frames[k]
+    for (const [index, def] of Object.entries(frames || [])) {
+        // const def = frames[k]
         const relative = {
             translation: vectorOf(def.translation),
             rotation: quatOf(def.rotation)
@@ -89,9 +85,9 @@ export function build_tree(
             relative.translation.setZ(overrides[index][2])
         }
         const item: Frame = {
-            index: index,
+            index: Number(index),
             parentIndex: def.parent,
-            text: k,
+            text: def.name || index,
             level: 0,
             absolute: relative, // will be modified if parent specified
             relative
@@ -114,7 +110,7 @@ export function build_tree(
             rootFrames.push(item)
         }
         parents.push(item)
-        index++
+        // index++
     }
     return rootFrames
 }

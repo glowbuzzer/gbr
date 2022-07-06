@@ -3,10 +3,10 @@
  */
 
 import React from "react"
-import { useAnalogInputs } from "@glowbuzzer/store"
 import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
+import { useAnalogInputList, useAnalogInputState } from "@glowbuzzer/store"
 
 const help = (
     <div>
@@ -16,11 +16,22 @@ const help = (
     </div>
 )
 
-
 const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
 `
+
+const AnalogInputItem = ({ label, index }) => {
+    const ain = useAnalogInputState(index)
+    return (
+        <StyledDiv key={index}>
+            <div>{label}</div>
+            <div>
+                <Tag>{ain}</Tag>
+            </div>
+        </StyledDiv>
+    )
+}
 
 type AnalogInputsTileProps = {
     /**
@@ -33,17 +44,16 @@ type AnalogInputsTileProps = {
  * The analog inputs tile shows a simple table of all current analog input values.
  */
 export const AnalogInputsTile = ({ labels = [] }: AnalogInputsTileProps) => {
-    const ain = useAnalogInputs()
+    const ain = useAnalogInputList()
 
     return (
         <Tile title="Analog Inputs" help={help}>
-            {ain.map((item, index) => (
-                <StyledDiv key={index}>
-                    <div>{labels[index] || "Unknown"}</div>
-                    <div>
-                        <Tag>{item}</Tag>
-                    </div>
-                </StyledDiv>
+            {ain?.map((config, index) => (
+                <AnalogInputItem
+                    key={index}
+                    index={index}
+                    label={labels[index] || config.name || index}
+                />
             ))}
         </Tile>
     )

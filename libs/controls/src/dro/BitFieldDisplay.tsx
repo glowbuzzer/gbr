@@ -121,7 +121,7 @@ export const BitFieldDisplay = (props: BitFieldDisplayProps) => {
     }
 
     function desc(bit) {
-        if (props.labels && props.labels[bit]) {
+        if (props.labels && props.labels[bit] && props.labels[bit] != bit) {
             return `${bit} ${props.labels[bit]}`
         }
         return bit

@@ -30,7 +30,7 @@ const help = (
 const { Option } = Select
 
 const StyledDiv = styled.div`
-    padding-top: 20px;
+    //padding-top: 20px;
 
     > div {
         display: flex;
@@ -103,8 +103,12 @@ export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => 
     return (
         <Tile title={"Digital Outputs"} help={help}>
             <StyledDiv>
-                {douts.map((name, index) => (
-                    <DigitalOutputItem key={index} index={index} label={labels[index] || name} />
+                {douts?.map((config, index) => (
+                    <DigitalOutputItem
+                        key={index}
+                        index={index}
+                        label={labels[index] || config.name || index.toString()}
+                    />
                 ))}
             </StyledDiv>
         </Tile>

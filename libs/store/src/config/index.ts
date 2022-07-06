@@ -45,130 +45,54 @@ const DEFAULT_JOINT_CONFIG = {
 }
 
 /**
- * The configuration uploaded to GBC and which is retrieved by GBR on connection. The keyed properties
- * allow naming of individual config items, or they can be simple numeric keys, for example:
+ * The configuration uploaded to GBC and which is retrieved by GBR on connection. Each key has a list of configuration objects for that part of the configuration.
+ *
+ * Each configuration object in the list can have an optional `name` property which will be displayed in the UI.
+ *
  * ```js
  * const config:ConfigType={
- *     joint: {
- *         0: {...},
- *         1: {...},
- *         2: {...}
- *     },
- *     frames: {
- *         "robot": {...}
- *         "pallet": {...}
- *     }
+ *     joint: [
+ *         {name: "my joint", ...},
+ *         {...},
+ *         {...}
+ *     ],
+ *     frames: [
+ *         {...}
+ *         {...}
+ *     ]
  * }
  *
  * See the individual types for each configuration item for further details.
  * ```
  */
 export type ConfigType = {
-    machine: { [index: string]: MachineConfig }
-    kinematicsConfiguration: { [index: string]: KinematicsConfigurationConfig }
-    moveParameters: { [index: string]: MoveParametersConfig }
-    joint: { [index: string]: JointConfig }
-    frames: { [index: string]: FramesConfig }
-    task?: { [index: string]: TaskConfig }
-    activity?: { [index: string]: ActivityConfig }
-    dout?: { [index: string]: DoutConfig }
-    aout?: { [index: string]: AoutConfig }
-    iout?: { [index: string]: IoutConfig }
-    din?: { [index: string]: DinConfig }
-    ain?: { [index: string]: AinConfig }
-    iin?: { [index: string]: IinConfig }
-    fieldbus?: { [index: string]: FieldbusConfig }
-    lines?: { [index: string]: LinesConfig }
-    arcs?: { [index: string]: ArcsConfig }
-    cartesianPositions?: { [index: string]: CartesianPositionsConfig }
-    tool?: { [index: string]: ToolConfig }
-    triggerOn?: { [index: string]: TriggerOnConfig }
+    machine?: MachineConfig[]
+    kinematicsConfiguration?: KinematicsConfigurationConfig[]
+    moveParameters?: MoveParametersConfig[]
+    joint?: JointConfig[]
+    frames?: FramesConfig[]
+    task?: TaskConfig[]
+    activity?: ActivityConfig[] // TODO: ??
+    dout?: DoutConfig[]
+    aout?: AoutConfig[]
+    iout?: IoutConfig[]
+    din?: DinConfig[]
+    ain?: AinConfig[]
+    iin?: IinConfig[]
+    fieldbus?: FieldbusConfig[]
+    tool?: ToolConfig[]
+    triggerOn?: TriggerOnConfig[]
 }
 
 // TODO: figure out what to do when there is no config yet (before connect)
 export const DEFAULT_CONFIG: ConfigType = {
-    machine: {
-        default: {
-            busCycleTime: 1
+    frames: [{}],
+    kinematicsConfiguration: [
+        {
+            participatingJoints: [0]
         }
-    },
-    kinematicsConfiguration: {
-        default: {
-            frameIndex: 0,
-            participatingJoints: [0, 1, 2],
-            participatingJointsCount: 3,
-            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-            extentsX: [-10, 10],
-            extentsY: [-10, 10],
-            extentsZ: [-10, 10],
-            linearLimits: [
-                {
-                    vmax: 10000,
-                    amax: 100000,
-                    jmax: 1000000
-                }
-            ],
-            angularLimits: [
-                {
-                    vmax: 100,
-                    amax: 1000,
-                    jmax: 10000
-                }
-            ]
-        }
-    },
-    moveParameters: {
-        default: { vmaxPercentage: 100, amaxPercentage: 100, jmaxPercentage: 100 }
-    },
-    joint: {
-        0: DEFAULT_JOINT_CONFIG,
-        1: DEFAULT_JOINT_CONFIG,
-        2: DEFAULT_JOINT_CONFIG
-    },
-    frames: {
-        0: {
-            translation: { x: 0, y: 0, z: 0 }
-        }
-    },
-    task: {
-        // only here for a bit of code completion
-        // (replaced by actual config from GBC)
-        "task 0": {
-            firstActivityIndex: 0
-        }
-    },
-    activity: {
-        "activity 0": {
-            activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-            dwell: {
-                ticksToDwell: 1000
-            }
-        }
-    },
-    dout: {
-        0: {},
-        1: {}
-    },
-    aout: {
-        0: {},
-        1: {}
-    },
-    iout: {
-        0: {},
-        1: {}
-    },
-    din: {
-        0: {},
-        1: {}
-    },
-    ain: {
-        0: {},
-        1: {}
-    },
-    iin: {
-        0: {},
-        1: {}
-    }
+    ],
+    joint: [{}]
 }
 
 export enum ConfigState {
@@ -243,6 +167,6 @@ export function useToolConfig(toolIndex: number): ToolConfig {
 /**
  * Returns the configuration for all tools.
  */
-export function useToolList(): { [index: string]: ToolConfig } {
-    return useSelector((state: RootState) => state.config.value.tool || {}, deepEqual)
+export function useToolList(): ToolConfig[] {
+    return useSelector((state: RootState) => state.config.value.tool, deepEqual)
 }

@@ -192,6 +192,14 @@ export function updateDisableLimitsMsg(kc: number, disableLimits) {
 }
 
 /**
+ * Returns a list of kinematics configurations in the configuration
+ */
+export function useKinematicsConfigurationList() {
+    const config = useConfig()
+    return config.kinematicsConfiguration
+}
+
+/**
  * Read and manipulate a kinematics configuration.
  *
  * A kinematics configuration (KC) represents a number of
@@ -210,14 +218,13 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
             deepEqual
         )
     )
-    const config = useConfig()
     // const frames = useFrames()
     const dispatch = useDispatch()
     const connection = useConnection()
     const rawJointPositions = useRawJointPositions()
 
     // TODO: seeing 'world' passed here which cannot be found in configs
-    const configs = Object.values(config.kinematicsConfiguration)
+    const configs = useKinematicsConfigurationList()
 
     const { frameIndex, participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
     const { position, offset } = state
@@ -256,8 +263,7 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
  * @param kinematicsConfigurationIndex The kinematics configuration index
  */
 export const useKinematicsConfiguration = (kinematicsConfigurationIndex: number) => {
-    const config = useConfig()
-    const list = Object.values(config.kinematicsConfiguration)
+    const list = useKinematicsConfigurationList()
     return list[kinematicsConfigurationIndex] || list[0]
 }
 
@@ -322,8 +328,7 @@ export const useTcp = (kc: number, frame: number | "world") => {
 export function useJointPositions(kinematicsConfigurationIndex: number) {
     const rawJointPositions = useRawJointPositions()
 
-    const config = useConfig()
-    const kinematicsConfigurations = Object.values(config.kinematicsConfiguration)
+    const kinematicsConfigurations = useKinematicsConfigurationList()
 
     const { participatingJoints } =
         kinematicsConfigurations[kinematicsConfigurationIndex] || kinematicsConfigurations[0]

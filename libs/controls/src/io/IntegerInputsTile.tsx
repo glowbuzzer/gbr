@@ -3,10 +3,10 @@
  */
 
 import React from "react"
-import { useIntegerInputs } from "@glowbuzzer/store"
 import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
+import { useIntegerInputList, useIntegerInputState } from "@glowbuzzer/store"
 
 const help = (
     <div>
@@ -21,6 +21,18 @@ const StyledDiv = styled.div`
     justify-content: space-between;
 `
 
+const IntegerInputItem = ({ label, index }) => {
+    const ain = useIntegerInputState(index)
+    return (
+        <StyledDiv key={index}>
+            <div>{label}</div>
+            <div>
+                <Tag>{ain}</Tag>
+            </div>
+        </StyledDiv>
+    )
+}
+
 type IntegerInputsTileProps = {
     /**
      * Labels to use for inputs, in the order given in the configuration
@@ -34,17 +46,16 @@ type IntegerInputsTileProps = {
  * The labels property allows you to provide meaningful labels to each input.
  */
 export const IntegerInputsTile = ({ labels = [] }: IntegerInputsTileProps) => {
-    const ain = useIntegerInputs()
+    const iin = useIntegerInputList()
 
     return (
         <Tile title="Integer Inputs" help={help}>
-            {ain.map((item, index) => (
-                <StyledDiv key={index}>
-                    <div>{labels[index] || "Unknown"}</div>
-                    <div>
-                        <Tag>{item}</Tag>
-                    </div>
-                </StyledDiv>
+            {iin?.map(({ name }, index) => (
+                <IntegerInputItem
+                    key={index}
+                    index={index}
+                    label={labels[index] || name || index}
+                />
             ))}
         </Tile>
     )

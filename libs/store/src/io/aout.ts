@@ -35,7 +35,7 @@ export const analogOutputsSlice: StatusUpdateSlice<AnalogOutputStatus[]> = creat
  */
 export function useAnalogOutputList() {
     const config = useConfig()
-    return Object.keys(config.aout)
+    return config.aout
 }
 
 /**
