@@ -32,7 +32,7 @@
     "dependencies": {
         "@ant-design/icons": "^4.7.0",
         "@babel/plugin-proposal-class-properties": "^7.17.12",
-        "@react-three/drei": "^9.11.3",
+        "@react-three/drei": "^9.17.1",
         "@reduxjs/toolkit": "^1.8.2",
         "antd": "^4.21.4",
         "babel-loader": "^8.2.5",
@@ -73,7 +73,7 @@
         "@nrwl/tao": "^12.10.0",
         "@nrwl/web": "12.7.1",
         "@nrwl/workspace": "12.7.1",
-        "@react-three/fiber": "^8.0.19",
+        "@react-three/fiber": "^8.1.0",
         "@testing-library/react": "^13.2.0",
         "@types/d3": "^7.4.0",
         "@types/jest": "^27.5.1",
