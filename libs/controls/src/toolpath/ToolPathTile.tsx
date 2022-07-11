@@ -33,26 +33,26 @@ const help = (
         <p>The Toolpath Tile performs a number of functions. These are:</p>
         <ol>
             <li>
-                Shows the current position of the tool in 3D space which updates as the tool is moved by programs
+                Shows the current position of the tool in 3D space which updates as the tool is
+                moved by programs
             </li>
             <li>
                 Shows the future position of the toolpath (if say a gcode program has been loaded)
             </li>
-            <li>
-                Shows past path the tool has followed
-            </li>
-            <li>
-                Shows a 3D model of the machine (if available)
-            </li>
-                <li>
-                    Shows objects the machine may interact with
-                </li>
+            <li>Shows past path the tool has followed</li>
+            <li>Shows a 3D model of the machine (if available)</li>
+            <li>Shows objects the machine may interact with</li>
         </ol>
-        <p>The view has a set controls allowing the view to be panned, rotated and zoomed with the mouse. </p>
-        <p>The view also shows the extents of the machine (its envelope) these can be overridden by using the top-right config button.</p>
+        <p>
+            The view has a set controls allowing the view to be panned, rotated and zoomed with the
+            mouse.{" "}
+        </p>
+        <p>
+            The view also shows the extents of the machine (its envelope) these can be overridden by
+            using the top-right config button.
+        </p>
     </div>
 )
-
 
 const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
@@ -143,9 +143,11 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
             return settings.extent
         }
         // just return the max of the abs of our cartesian limits
-        return Math.max.apply(
-            Math.max,
-            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
+        return (
+            Math.max.apply(
+                Math.max,
+                [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
+            ) || 1000
         )
     }, [extentsX, extentsY, extentsZ, settings])
 

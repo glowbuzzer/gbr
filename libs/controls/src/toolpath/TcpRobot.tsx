@@ -98,7 +98,7 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
                 const y = (toolConfig.translation.y || 0) / model.scale
                 const z = (toolConfig.translation.z || 0) / model.scale
 
-                const toolDiameter = toolConfig.diameter / model.scale / 2
+                const toolDiameter = toolConfig.diameter / model.scale / 2 || 0
 
                 const geometry = new THREE.CylinderGeometry(toolDiameter, toolDiameter, z)
                 const material = new THREE.MeshBasicMaterial({ color: 0x303030 })
@@ -112,10 +112,6 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
                 cone_group.translateX(x)
                 cone_group.translateY(y)
                 cone_group.translateZ(z)
-
-                // TODO: L: figure out how to represent a rotation in the tool
-                // const { x: qx, y: qy, z: qz, w: qw } = toolConfig.rotation
-                // cone_group.setRotationFromQuaternion(new Quaternion(qx, qy, qz, qw))
 
                 add_triad(cone_group)
                 current.add(cone_group)
