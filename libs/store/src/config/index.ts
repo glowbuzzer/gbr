@@ -24,6 +24,7 @@ import {
     LinesConfig,
     MachineConfig,
     MoveParametersConfig,
+    SpindleConfig,
     TaskConfig,
     ToolConfig,
     TriggerOnConfig
@@ -80,6 +81,7 @@ export type ConfigType = {
     ain?: AinConfig[]
     iin?: IinConfig[]
     fieldbus?: FieldbusConfig[]
+    spindle?: SpindleConfig[]
     tool?: ToolConfig[]
     triggerOn?: TriggerOnConfig[]
 }

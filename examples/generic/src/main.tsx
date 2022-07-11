@@ -38,6 +38,7 @@ import "react-grid-layout/css/styles.css"
 import { GCodeContextProvider, SoloActivityApi, useConfig } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { createRoot } from "react-dom/client"
+import { SpindleTile } from "../../../libs/controls/src/spindle/SpindleTile"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -107,6 +108,7 @@ function App() {
             { render: <GCodeTile />, height: 4, title: "GCode" }
         ],
         [
+            { render: <SpindleTile />, height: 4, title: "Spindle" },
             { render: <DigitalOutputsTile />, height: 4, title: "Digital Outputs" },
             { render: <DigitalInputsTile />, height: 4, title: "Digital Inputs" },
             { render: <AnalogOutputsTile />, height: 4, title: "Analog Outputs" },
