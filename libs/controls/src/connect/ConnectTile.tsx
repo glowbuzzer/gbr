@@ -22,7 +22,10 @@ import { TrafficLight } from "./TrafficLight"
 const help = (
     <div>
         <h4>Connection Tile</h4>
-        <p>The connection tile is used to connect to GBC and the PLC (GBEM/GBSM etc.) and manage their joint state.</p>
+        <p>
+            The connection tile is used to connect to GBC and the PLC (GBEM/GBSM etc.) and manage
+            their joint state.
+        </p>
         <p>
             The "Simulate" and "Live" buttons toggle between Simulating a PLC and being connected
             live to a PLC and controlling a real machine.
@@ -156,12 +159,10 @@ export const ConnectTile = () => {
             help={help}
             controls={
                 <FlexCentered>
-                    {connection.connected ? (
+                    {connection.connected && (
                         <Button size="small" onClick={disconnect}>
                             Disconnect
                         </Button>
-                    ) : (
-                        <div>Not connected</div>
                     )}
                     {!connection.connected && !connection.autoConnect && (
                         <Button size="small" onClick={connect}>
@@ -173,6 +174,14 @@ export const ConnectTile = () => {
             }
         >
             <StyledDiv>
+                <div className="row">
+                    <div className="label">Machine</div>
+                    <div className="controls">
+                        <Tag color={connected ? undefined : "red"}>
+                            {connected ? machine.name || "Unknown" : "Not Connected"}
+                        </Tag>
+                    </div>
+                </div>
                 <div className="row">
                     <div className="label">Change mode</div>
                     <div className="controls">
@@ -223,7 +232,7 @@ export const ConnectTile = () => {
                 <div className="row">
                     <div className="label">Current state</div>
                     <div className="controls">
-                        <Tag>{connected ? MachineState[machine.currentState] : "DISCONNECTED"}</Tag>
+                        <Tag>{connected ? MachineState[machine.currentState] : "None"}</Tag>
                     </div>
                 </div>
                 {connected && fault && (

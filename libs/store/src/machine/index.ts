@@ -14,6 +14,7 @@ import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
 import { MACHINETARGET } from "../gbc"
+import { useConfig } from "../config"
 
 // noinspection JSUnusedGlobalSymbols
 export enum FaultCode {
@@ -121,6 +122,8 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
  * Finally, GBC increments a heartbeat on the machine so that GBR knows it is running.
  */
 export function useMachine(): {
+    /** The name of the machine */
+    name: string
     /** The current CIA 402 status word */
     statusWord: number
     /** The CIA 402 control word sent */
@@ -152,6 +155,7 @@ export function useMachine(): {
 } {
     // by using a selector, components using this hook will only render when machine state changes (not the whole state)
     const machine = useSelector(({ machine }: RootState) => machine, shallowEqual)
+    const config = useConfig()
 
     // this is our hook giving access to the underlying websocket connection
     const connection = useConnection()
@@ -160,6 +164,7 @@ export function useMachine(): {
     const dispatch = useDispatch()
 
     return {
+        name: config?.machine?.[0]?.name,
         ...machine,
         setDesiredMachineTarget(target: MACHINETARGET) {
             dispatch(machineSlice.actions.setRequestedTarget(target))
