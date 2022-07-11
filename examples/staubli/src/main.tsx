@@ -34,7 +34,7 @@ const StyledApp = styled.div`
     gap: 20px;
 
     nav.left {
-        flex-basis: 350px;
+        flex-basis: 450px;
     }
 
     nav.right {
@@ -127,7 +127,14 @@ export function App() {
                     <ToolsTile />
                 </nav>
                 <section>
-                    <ToolPathTile model={showRobot && TX40_MODEL} />
+                    <ToolPathTile model={showRobot && TX40_MODEL}>
+                        {["red", "green", "blue"].map((colour, index) => (
+                            <mesh position={[500, (index - 1) * 200, 75]}>
+                                <boxGeometry args={[150, 150, 150]} />
+                                <meshStandardMaterial color={colour} />
+                            </mesh>
+                        ))}
+                    </ToolPathTile>
                 </section>
                 <nav className="right">
                     <FeedRateTile />

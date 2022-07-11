@@ -106,6 +106,8 @@ const lighting = [
 type ToolPathTileProps = {
     /** Optional robot model information */
     model?: RobotModel
+    /** Optional react-three-fiber children to render */
+    children?: React.ReactNode
 }
 
 /**
@@ -117,7 +119,7 @@ type ToolPathTileProps = {
  * physical joints on the machine. For an example of this in practice, refer to the
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
-export const ToolPathTile = ({ model }: ToolPathTileProps) => {
+export const ToolPathTile = ({ model, children }: ToolPathTileProps) => {
     const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)
     const toolConfig = useToolConfig(toolIndex)
@@ -195,6 +197,9 @@ export const ToolPathTile = ({ model }: ToolPathTileProps) => {
                     ) : (
                         <TcpFulcrum scale={extent} position={world_translation} />
                     )}
+
+                    {/* Render any react-three-fiber nodes supplied */}
+                    {children}
                 </ToolPathAutoSize>
             </Canvas>
         </Tile>
