@@ -19,6 +19,7 @@ import { JogArrowsCartesian } from "./JogArrowsCartesian"
 import { JogArrowsJoint } from "./JogArrowsJoint"
 import { JogMode } from "./types"
 import { JogLimitsCheckbox } from "./JogLimitsCheckbox"
+import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 const help = (
     <div>
@@ -73,6 +74,7 @@ const JogCartesianPanel = ({
     jogMode,
     jogSpeed,
     kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex,
     defaultFrameIndex
 }) => {
     switch (jogMode) {
@@ -83,6 +85,7 @@ const JogCartesianPanel = ({
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                     defaultFrameIndex={defaultFrameIndex}
                 />
             )
@@ -92,6 +95,7 @@ const JogCartesianPanel = ({
                 <JogGotoCartesian
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                     defaultFrameIndex={defaultFrameIndex}
                     showRobotConfiguration
                 />
@@ -99,7 +103,12 @@ const JogCartesianPanel = ({
     }
 }
 
-const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => {
+const JogJointsPanel = ({
+    jogMode,
+    jogSpeed,
+    kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex
+}) => {
     switch (jogMode) {
         case JogMode.CONTINUOUS:
         case JogMode.STEP:
@@ -108,6 +117,7 @@ const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => 
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                 />
             )
         case JogMode.GOTO:
@@ -115,14 +125,36 @@ const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => 
                 <JogGotoJoint
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                 />
             )
     }
 }
 
-const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex }) => {
+const CartesianNotSupported = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    .message {
+        font-weight: bold;
+    }
+    //font-weight: bold;
+`
+
+const JogPanel = ({
+    jogMoveMode,
+    jogMode,
+    jogSpeed,
+    kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex
+}) => {
     const config = useConfig()
-    const kcConfig = Object.values(config.kinematicsConfiguration)[kinematicsConfigurationIndex]
+    const kcConfig = config.kinematicsConfiguration[kinematicsConfigurationIndex]
     const defaultFrameIndex = kcConfig.frameIndex
 
     const supports_cartesian =
@@ -135,10 +167,22 @@ const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                     defaultFrameIndex={defaultFrameIndex}
                 />
             ) : (
-                <TileEmptyMessage>Cartesian kinematics not supported</TileEmptyMessage>
+                <CartesianNotSupported>
+                    <div className="message">Cartesian kinematics not supported</div>
+                    <div className="select">
+                        <div>Select alternative kinematics configuration</div>
+                        <div>
+                            <KinematicsConfigurationSelector
+                                value={kinematicsConfigurationIndex}
+                                onChange={onChangeKinematicsConfigurationIndex}
+                            />
+                        </div>
+                    </div>
+                </CartesianNotSupported>
             )
         case JogMoveMode.JOINT:
             return (
@@ -146,6 +190,7 @@ const JogPanel = ({ jogMoveMode, jogMode, jogSpeed, kinematicsConfigurationIndex
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
                 />
             )
     }
@@ -223,21 +268,6 @@ export const JogTile = () => {
             help={help}
             controls={
                 <StyledControls>
-                    {kcs.length > 1 && (
-                        <Select
-                            size="small"
-                            defaultValue={selectedKc}
-                            onChange={update_kc}
-                            dropdownMatchSelectWidth={true}
-                        >
-                            {kcs.map((config, index) => (
-                                <Select.Option key={index} value={index}>
-                                    {config.name}
-                                </Select.Option>
-                            ))}
-                        </Select>
-                    )}
-                    &nbsp;
                     <Radio.Group size={"small"} value={jogMoveMode} onChange={updateJogMoveMode}>
                         <Radio.Button value={JogMoveMode.JOINT}>Joint</Radio.Button>
                         <Radio.Button value={JogMoveMode.CARTESIAN}>Cartesian</Radio.Button>
@@ -263,6 +293,7 @@ export const JogTile = () => {
             <TileInner>
                 <JogPanel
                     kinematicsConfigurationIndex={selectedKc}
+                    onChangeKinematicsConfigurationIndex={setSelectedKc}
                     jogMoveMode={jogMoveMode}
                     jogMode={jogMode}
                     jogSpeed={jogSpeed}

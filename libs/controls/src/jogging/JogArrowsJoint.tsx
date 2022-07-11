@@ -26,6 +26,8 @@ import {
     DoubleRightOutlined
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
+import { JogTileItem } from "./JogTileItem"
+import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 const JointSliderDiv = styled.div`
     display: flex;
@@ -61,7 +63,12 @@ const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) 
     )
 }
 
-const JogArrowsJointContinuous = ({ joints, kinematicsConfigurationIndex, moveParams }) => {
+const JogArrowsJointContinuous = ({
+    joints,
+    kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex,
+    moveParams
+}) => {
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
@@ -99,6 +106,15 @@ const JogArrowsJointContinuous = ({ joints, kinematicsConfigurationIndex, movePa
 
     return (
         <>
+            <JogTileItem>
+                <div>
+                    Kinematics:{" "}
+                    <KinematicsConfigurationSelector
+                        onChange={onChangeKinematicsConfigurationIndex}
+                        value={kinematicsConfigurationIndex}
+                    />
+                </div>
+            </JogTileItem>
             {joints.map(({ config, index: physical_index }, logical_index) => (
                 <JointSliderDiv key={logical_index}>
                     <JogButton index={logical_index} direction={JogDirection.NEGATIVE}>
@@ -117,12 +133,14 @@ const JogArrowsJointContinuous = ({ joints, kinematicsConfigurationIndex, movePa
 type JogArrowsJointStepProps = {
     joints: { index: number; config: JointConfig & { name: string } }[]
     kinematicsConfigurationIndex: number
+    onChangeKinematicsConfigurationIndex: (number) => void
     moveParams: MoveParametersConfig
 }
 
 const JogArrowsJointStep = ({
     joints,
     kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex,
     moveParams
 }: JogArrowsJointStepProps) => {
     const { getUnits, toSI } = usePrefs()
@@ -155,6 +173,15 @@ const JogArrowsJointStep = ({
 
     return (
         <div>
+            <JogTileItem>
+                <div>
+                    Kinematics:{" "}
+                    <KinematicsConfigurationSelector
+                        onChange={onChangeKinematicsConfigurationIndex}
+                        value={kinematicsConfigurationIndex}
+                    />
+                </div>
+            </JogTileItem>
             {joints.map(({ config, index: physical_index }, logical_index) => (
                 <JointSliderDiv key={logical_index}>
                     <Button onClick={() => jogStep(logical_index, -steps[logical_index])}>
@@ -180,6 +207,7 @@ const JogArrowsJointStep = ({
 type JogArrowsJointProps = {
     jogMode: JogMode
     kinematicsConfigurationIndex: number
+    onChangeKinematicsConfigurationIndex: (index: number) => void
     jogSpeed: number
 }
 
@@ -187,6 +215,7 @@ type JogArrowsJointProps = {
 export const JogArrowsJoint = ({
     jogMode,
     kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex,
     jogSpeed
 }: JogArrowsJointProps) => {
     const config = useConfig()
@@ -211,12 +240,14 @@ export const JogArrowsJoint = ({
             joints={joints}
             moveParams={moveParams}
             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+            onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
         />
     ) : (
         <JogArrowsJointStep
             joints={joints}
             moveParams={moveParams}
             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+            onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
         />
     )
 }

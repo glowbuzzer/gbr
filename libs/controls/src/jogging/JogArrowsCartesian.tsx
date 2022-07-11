@@ -5,7 +5,7 @@
 import * as React from "react"
 import { useState } from "react"
 import styled from "styled-components"
-import { Button, Input } from "antd"
+import { Button, Input, Space } from "antd"
 import {
     LIMITPROFILE,
     MoveParametersConfig,
@@ -22,6 +22,8 @@ import {
 import { FrameSelector } from "@glowbuzzer/controls"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogDirection, JogMode } from "./types"
+import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
+import { JogTileItem } from "./JogTileItem"
 
 const ArrowsDiv = styled.div`
     display: flex;
@@ -55,6 +57,7 @@ type JogArrowsCartesianProps = {
     jogMode: JogMode
     jogSpeed: number
     defaultFrameIndex: number
+    onChangeKinematicsConfigurationIndex: (index: number) => void
 }
 
 /** @ignore - internal to the jog tile */
@@ -62,7 +65,8 @@ export const JogArrowsCartesian = ({
     kinematicsConfigurationIndex,
     jogMode,
     jogSpeed,
-    defaultFrameIndex
+    defaultFrameIndex,
+    onChangeKinematicsConfigurationIndex
 }: JogArrowsCartesianProps) => {
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
@@ -146,15 +150,24 @@ export const JogArrowsCartesian = ({
 
     return (
         <>
-            <div className="frame">
-                Frame:{" "}
-                <FrameSelector
-                    onChange={setSelectedFrame}
-                    value={selectedFrame}
-                    defaultFrame={defaultFrameIndex}
-                    hideWorld
-                />
-            </div>
+            <JogTileItem>
+                <div>
+                    Kinematics:{" "}
+                    <KinematicsConfigurationSelector
+                        onChange={onChangeKinematicsConfigurationIndex}
+                        value={kinematicsConfigurationIndex}
+                    />
+                </div>
+                <div className="frame">
+                    Frame:{" "}
+                    <FrameSelector
+                        onChange={setSelectedFrame}
+                        value={selectedFrame}
+                        defaultFrame={defaultFrameIndex}
+                        hideWorld
+                    />
+                </div>
+            </JogTileItem>
             <ArrowsDiv>
                 <ButtonLayoutDiv>
                     <div>

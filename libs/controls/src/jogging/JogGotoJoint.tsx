@@ -19,6 +19,8 @@ import {
 import { StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
 import { WaypointsJoints } from "./WaypointsJoints"
+import { JogTileItem } from "./JogTileItem"
+import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 enum Mode {
     POSITION,
@@ -30,7 +32,11 @@ const Tab = ({ mode, value, children }) => (
 )
 
 /** @ignore - internal to the jog tile */
-export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
+export const JogGotoJoint = ({
+    kinematicsConfigurationIndex,
+    onChangeKinematicsConfigurationIndex,
+    jogSpeed
+}) => {
     const [mode, setMode] = useState(Mode.POSITION)
 
     const [positions, setPositions] = useLocalStorage(
@@ -91,10 +97,19 @@ export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
 
     return (
         <StyledJogDiv>
-            <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
-                <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
-                <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
-            </Radio.Group>
+            <JogTileItem>
+                <div>
+                    Kinematics:{" "}
+                    <KinematicsConfigurationSelector
+                        onChange={onChangeKinematicsConfigurationIndex}
+                        value={kinematicsConfigurationIndex}
+                    />
+                </div>
+                <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
+                    <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
+                    <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
+                </Radio.Group>
+            </JogTileItem>
             <div>
                 <Tab value={Mode.POSITION} mode={mode}>
                     <JogGotoInputPanel

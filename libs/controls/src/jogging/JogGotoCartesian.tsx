@@ -19,6 +19,8 @@ import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
 import { WaypointsCartesian } from "./WaypointsCartesian"
 import { StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
+import { JogTileItem } from "./JogTileItem"
+import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 enum Mode {
     POSITION,
@@ -47,7 +49,8 @@ export const JogGotoCartesian = ({
     kinematicsConfigurationIndex,
     jogSpeed,
     defaultFrameIndex,
-    showRobotConfiguration
+    showRobotConfiguration,
+    onChangeKinematicsConfigurationIndex
 }) => {
     const [mode, setMode] = useState(Mode.POSITION)
 
@@ -157,11 +160,20 @@ export const JogGotoCartesian = ({
 
     return (
         <StyledJogDiv>
-            <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
-                <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
-                <Radio.Button value={Mode.ORIENTATION}>Orientation</Radio.Button>
-                <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
-            </Radio.Group>
+            <JogTileItem>
+                <div>
+                    Kinematics:{" "}
+                    <KinematicsConfigurationSelector
+                        onChange={onChangeKinematicsConfigurationIndex}
+                        value={kinematicsConfigurationIndex}
+                    />
+                </div>
+                <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
+                    <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
+                    <Radio.Button value={Mode.ORIENTATION}>Orientation</Radio.Button>
+                    <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
+                </Radio.Group>
+            </JogTileItem>
             <div>
                 <Tab value={Mode.POSITION} mode={mode}>
                     <Selectors />
