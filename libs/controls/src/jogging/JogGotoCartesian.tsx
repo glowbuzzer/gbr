@@ -17,9 +17,8 @@ import {
 } from "@glowbuzzer/store"
 import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
 import { WaypointsCartesian } from "./WaypointsCartesian"
-import { StyledJogDiv } from "./util"
+import { JogTileItem, StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
-import { JogTileItem } from "./JogTileItem"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 enum Mode {

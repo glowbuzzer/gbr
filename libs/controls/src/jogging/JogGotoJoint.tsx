@@ -16,10 +16,9 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { StyledJogDiv } from "./util"
+import { JogTileItem, StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
 import { WaypointsJoints } from "./WaypointsJoints"
-import { JogTileItem } from "./JogTileItem"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 enum Mode {

@@ -3,6 +3,7 @@
  */
 
 import styled from "styled-components"
+import { Space } from "antd"
 
 export const StyledWaypointsDiv = styled.div`
     padding: 10px;
@@ -50,4 +51,11 @@ export const StyledJogDiv = styled.div`
     .tab.selected {
         display: block;
     }
+`
+/** @ignore */
+export const JogTileItem = styled(Space)`
+    text-align: center;
+    justify-content: center;
+    width: 100%;
+    padding: 4px 0;
 `

@@ -23,7 +23,7 @@ import { FrameSelector } from "@glowbuzzer/controls"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogDirection, JogMode } from "./types"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
-import { JogTileItem } from "./JogTileItem"
+import { JogTileItem } from "./util"
 
 const ArrowsDiv = styled.div`
     display: flex;

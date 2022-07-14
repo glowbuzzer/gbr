@@ -26,8 +26,8 @@ import {
     DoubleRightOutlined
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { JogTileItem } from "./JogTileItem"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
+import { JogTileItem } from "./util"
 
 const JointSliderDiv = styled.div`
     display: flex;

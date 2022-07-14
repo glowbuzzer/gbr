@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-types */
 // noinspection JSUnusedGlobalSymbols
 
+export * from "./gbc_extra"
+
 // ENUMS
     export enum ONOFF {
         OFF,
@@ -241,1689 +243,1467 @@
     }
 
 
+
 // STRUCTS
-        
-        export type LimitConfiguration = {
-        
-                    /**  Velocity limit */
-                    vmax?:number;
-                    /**  Acceleration limit */
-                    amax?:number;
-                    /**  Jerk limit */
-                    jmax?:number;
-        }
-
-        
-        export type Header = {
-        
-                    /**  Flags if the shared memory data has been updated */
-                    updated?:boolean;
-        }
-
-        
-        export type MachineConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  The bus cycle time (in milliseconds) */
-                    busCycleTime?:number;
-                    /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
-                    statusFrequency?:number;
-        }
-
-        
-        export type MachineStatus = {
-        
-                    /**  CiA 402 status word for the machine as a whole */
-                    statusWord?:number;
-                    /**  Word containing any active faults the machine may have */
-                    activeFault?:number;
-                    /**  Word containing the fault history (faults that were active when the machine entered the fault state) */
-                    faultHistory?:number;
-                    /**  Heartbeat (integer that increments each cycle) */
-                    heartbeat?:number;
-                    /**  What the current target of the machine is - e.g. is it is simulation mode */
-                    target?:MACHINETARGET;
-                    /**  Number of times we have tried to connect to the target */
-                    targetConnectRetryCnt?:number;
-        }
-
-        
-        export type MachineCommand = {
-        
-                    /**  CiA 402 control word for the machine */
-                    controlWord?:number;
-                    /**  HLC (High-Level-Control) control word */
-                    hlcControlWord?:number;
-                    /**  Heartbeat (integer that increments each cycle) */
-                    heartbeat?:number;
-                    /**  What target we want the machine to connect to - e.g. fieldbus, simulation */
-                    target?:MACHINETARGET;
-        }
-
-        
-        export type StreamConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-        }
-
-        
-        export type StreamStatus = {
-        
-                    
-                    streamState?:STREAMSTATE;
-                    
-                    tag?:number;
-                    
-                    time?:number;
-        }
-
-        
-        export type StreamCommand = {
-        
-                    
-                    streamCommand?:STREAMCOMMAND;
-        }
-
-        /** 
-        Layout of fieldbus RxPdo
-         */
-        export type FieldbusTxPdoLayout = {
-        
-                    /**  Offset (in bytes) in the fieldbus process data to the machine control word (CiA 402) */
-                    machineControlWordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the GBC control word  */
-                    gbcControlWordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the HLC (High-Level-Control) control word */
-                    hlcControlWordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint control word */
-                    jointControlwordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint set position word */
-                    jointSetPositionOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint set velocity word */
-                    jointSetVelocityOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint set torque world */
-                    jointSetTorqueOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
-                    heartbeatOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
-                    digitalOffset?:number;
-                    /**  Number of digital (ins/outs) used in the fieldbus process data */
-                    digitalCount?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
-                    analogOffset?:number;
-                    /**  Number of analog (ins/outs) used in the fieldbus process data */
-                    analogCount?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
-                    integerOffset?:number;
-                    /**  Number of integer (ins/outs) used in the fieldbus process data */
-                    integerCount?:number;
-        }
-
-        /** 
-        Layout of fieldbus TxPdo
-         */
-        export type FieldbusRxPdoLayout = {
-        
-                    /**  Offset (in bytes) in the fieldbus process data to the machine status word (CiA 402) */
-                    machineStatusWordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the active fault word */
-                    activeFaultOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the fault history word */
-                    faultHistoryOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint status word */
-                    jointStatuswordOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint actual position word */
-                    jointActualPositionOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint actual velocity word */
-                    jointActualVelocityOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the joint actual torque word */
-                    jointActualTorqueOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
-                    heartbeatOffset?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
-                    digitalOffset?:number;
-                    /**  Number of digital (ins/outs) used in the fieldbus process data */
-                    digitalCount?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
-                    analogOffset?:number;
-                    /**  Number of analog (ins/outs) used in the fieldbus process data */
-                    analogCount?:number;
-                    /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
-                    integerOffset?:number;
-                    /**  Number of integer (ins/outs) used in the fieldbus process data */
-                    integerCount?:number;
-        }
-
-        /** 
-        Configuration parameters for fieldbus
-         */
-        export type FieldbusConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Number of joints stored in the fieldbus process data */
-                    jointCount?:number;
-                    /**  TxPdo object */
-                    TxPdo?:FieldbusTxPdoLayout;
-                    /**  RxPdo object */
-                    RxPdo?:FieldbusRxPdoLayout;
-        }
-
-        /** 
-        Configuration parameters for move parameters
-         */
-        export type MoveParametersConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Vmax (max velocity) for move */
-                    vmax?:number;
-                    /**  Percentage of vmax to be used for move */
-                    vmaxPercentage?:number;
-                    /**  Percentage of amax to be used for move */
-                    amaxPercentage?:number;
-                    /**  Percentage of jmax to be used for move */
-                    jmaxPercentage?:number;
-                    /**  Linear and angular limit profile to use for move */
-                    limitConfigurationIndex?:number;
-                    /**  Type of blend to be used for the move */
-                    blendType?:BLENDTYPE;
-                    /**  Blend time percentage to be used for the move */
-                    blendTimePercentage?:number;
-                    /**  Tolerance to be applied to the blend  */
-                    blendTolerance?:number;
-                    /**  Tool to be used for the move */
-                    toolIndex?:number;
-        }
-
-        /** 
-        Parameters for vector 3
-         */
-        export type Vector3 = {
-        
-                    /**  Cartesian position on x axis */
-                    x?:number;
-                    /**  Cartesian position on y axis */
-                    y?:number;
-                    /**  Cartesian position on x axis */
-                    z?:number;
-        }
-
-        /** 
-        Parameters for a quaternion
-         */
-        export type Quat = {
-        
-                    /**  Quaternion orientation coefficient */
-                    w?:number;
-                    /**  Quaternion orientation coefficient */
-                    x?:number;
-                    /**  Quaternion orientation coefficient */
-                    y?:number;
-                    /**  Quaternion orientation coefficient */
-                    z?:number;
-        }
-
-        /** 
-        Parameters for a cartesian position
-         */
-        export type CartesianPosition = {
-        
-                    /**  Whether the position is absolute or relative */
-                    positionReference?:POSITIONREFERENCE;
-                    /**  Translation vector object */
-                    translation?:Vector3;
-                    /**  Rotation quaternion object  */
-                    rotation?:Quat;
-                    /**  Index of the frame the position is with respect to */
-                    frameIndex?:number;
-        }
-
-        /** 
-        Parameters for an absolute / relative position
-         */
-        export type PositionAbsRel = {
-        
-                    /**  Whether the position is absolute or relative */
-                    positionReference?:POSITIONREFERENCE;
-                    /**  Position vector object */
-                    translation?:Vector3;
-        }
-
-        /** 
-        Parameters for a cartesian vector
-         */
-        export type CartesianVector = {
-        
-                    /**  Vector itself (x,y,z) */
-                    vector?:Vector3;
-                    /**  Index of frame for vector */
-                    frameIndex?:number;
-        }
-
-        
-        export type DoubleValue = {
-        
-                    
-                    value?:number;
-        }
-
-        /** 
-        Parameters for a joint position
-         */
-        export type JointPosition = {
-        
-                    
-                    positionReference?:POSITIONREFERENCE;
-                    
-                    value?:number;
-        }
-
-        /** 
-        Configuration parameters for lines
-         */
-        export type LinesConfig = {
-        
-                    /**  Destination of the line */
-                    destination?:CartesianPosition;
-        }
-
-        /** 
-        Configuration parameters for arcs
-         */
-        export type ArcsConfig = {
-        
-                    /**  Whether the arc is defined by centre or radius */
-                    arcType?:ARCTYPE;
-                    /**  Is the arc direction CW or CCW (clockwise or counter-clockwise) */
-                    arcDirection?:ARCDIRECTION;
-                    /**  Destination position for the arc */
-                    destination?:CartesianPosition;
-//              Start of Union
-                    /**  Is the centre defined absolutely or relatively */
-                     centre?: PositionAbsRel,
-                    /**  Radius of the arc */
-                     radius?: DoubleValue,
-//              End of Union
-        }
-
-        /** 
-        Parameters for cartesian positions
-         */
-        export type CartesianPositionsConfig = {
-        
-                    /**  The position including translation and rotation */
-                    position?:CartesianPosition;
-                    /**  The robot configuration (waist/elbow/wrist), if applicable */
-                    configuration?:number;
-        }
-
-        /** 
-        Config parameters for Tasks
-         */
-        export type TaskConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Number of activities in this task */
-                    activityCount?:number;
-                    /**  First activity in this task  */
-                    firstActivityIndex?:number;
-                    /**  Link to trigger to cancel task */
-                    cancelTriggerOnIndex?:number;
-                    /**  Link to trigger to start task */
-                    startTriggerOnIndex?:number;
-        }
-
-        /** 
-        Status parameters for Tasks
-         */
-        export type TaskStatus = {
-        
-                    /**  Object representing the current state of the task */
-                    taskState?:TASK_STATE;
-                    /**  Current activity that is running */
-                    currentActivityIndex?:number;
-        }
-
-        /** 
-        Command parameters for Tasks
-         */
-        export type TaskCommand = {
-        
-                    /**  Command object for task */
-                    taskCommand?:TASK_COMMAND;
-        }
-
-        /** 
-        Configuration parameters for joint
-         */
-        export type JointConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    
-                    jointType?:JOINT_TYPE;
-                    /**  List of limits to be applied to the joint for different types of move */
-                    limits?:LimitConfiguration[];
-                    /**  scale factor to be applied to a joint&#x27;s position for transfer to the fieldbus */
-                    scale?:number;
-                    /**  TODO */
-                    pow10?:number;
-                    /**  negative soft limit for the travel of the joint */
-                    negLimit?:number;
-                    /**  positive soft limit for the travel of the joint */
-                    posLimit?:number;
-                    /**  flags that a joint&#x27;s motion is inverted */
-                    isInverted?:boolean;
-                    
-                    finiteContinuous?:JOINT_FINITECONTINUOUS;
-                    
-                    isVirtualInternal?:boolean;
-                    
-                    isVirtualFromEncoder?:boolean;
-                    
-                    correspondingJointNumberOnPhysicalFieldbus?:number;
-                    
-                    correspondingJointNumberOnVirtualFieldbus?:number;
-        }
-
-        /** 
-        Status of joint
-         */
-        export type JointStatus = {
-        
-                    /**  CiA 402 status word for the joint */
-                    statusWord?:number;
-                    /**  Actual Position of the joint */
-                    actPos?:number;
-                    /**  Actual Velocitys of the joint */
-                    actVel?:number;
-                    /**  Actual Acceleration of the joint */
-                    actAcc?:number;
-        }
-
-        /** 
-        Command parameters for joint
-         */
-        export type JointCommand = {
-        
-                    /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
-                    controlWord?:number;
-        }
-
-        
-        export type SixDofJointConfiguration = {
-        
-                    
-                    shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                    
-                    elbowConfiguration?:KC_ELBOWCONFIGURATION;
-                    
-                    wristConfiguration?:KC_WRISTCONFIGURATION;
-        }
-
-        
-        export type ScaraJointConfiguration = {
-        
-                    
-                    shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                    
-                    elbowConfiguration?:KC_ELBOWCONFIGURATION;
-        }
-
-        
-        export type JointConfiguration = {
-        
-                    
-                    kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
-//              Start of Union
-                    
-                     sixDofConfiguration?: SixDofJointConfiguration,
-                    
-                     scaraConfiguration?: ScaraJointConfiguration,
-//              End of Union
-        }
-
-        
-        export type MatrixInstanceDouble = {
-        
-                    /**  Number of rows in matrix */
-                    numRows?:number;
-                    /**  Number of columns in matrix */
-                    numCols?:number;
-                    /**  Data for matrix */
-                    data?:number[];
-        }
-
-        
-        export type KinematicsConfigurationConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    
-                    kinematicsConfigurationIndex?:number;
-                    /**  Kinematics configuration type - i.e. the kinematics model that will be used. Used as discriminator for the union */
-                    kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
-                    
-                    frameIndex?:number;
-                    
-                    participatingJoints?:number[];
-                    
-                    participatingJointsCount?:number;
-                    /**  Extent (size) of workspace in X */
-                    extentsX?:number[];
-                    /**  Extent (size) of workspace in Y */
-                    extentsY?:number[];
-                    /**  Extent (size) of workspace in Z */
-                    extentsZ?:number[];
-                    /**  Scale factor to apply to X axis */
-                    scaleX?:number;
-                    /**  Scale factor to apply to Y axis */
-                    scaleY?:number;
-                    /**  Scale factor to apply to Z axis */
-                    scaleZ?:number;
-                    /**  List of linear limits to be applied to the kinematics configuration for different types of move */
-                    linearLimits?:LimitConfiguration[];
-                    /**  List of angular limits to be applied to the kinematics configuration for different types of move */
-                    angularLimits?:LimitConfiguration[];
-                    /**  Matrix containing the DH parameters for the kinematics model */
-                    kinChainParams?:MatrixInstanceDouble;
-        }
-
-        
-        export type KinematicsConfigurationStatus = {
-        
-                    
-                    froTarget?:number;
-                    
-                    froActual?:number;
-                    
-                    atSpeed?:boolean;
-                    
-                    currentJointConfiguration?:number;
-                    
-                    cartesianActPos?:Vector3;
-                    
-                    cartesianActOrientation?:Quat;
-                    
-                    cartesianActVel?:Vector3;
-                    
-                    cartesianActAcc?:Vector3;
-                    
-                    limitsDisabled?:boolean;
-                    
-                    isStopping?:boolean;
-                    
-                    isMoving?:boolean;
-                    
-                    isNearSingularity?:boolean;
-                    
-                    toolIndex?:number;
-        }
-
-        
-        export type KinematicsConfigurationCommand = {
-        
-                    /**  Not used */
-                    doStop?:boolean;
-                    /**  Whether soft joint limits should be disabled */
-                    disableLimits?:boolean;
-                    /**  Desired feed rate, with 1 being normal and zero being stopped. A value of 2 would give double normal speed, for example */
-                    fro?:number;
-                    /**  Optional logical translation applied to all moves */
-                    translation?:Vector3;
-                    /**  Optional logical rotation applied to all moves */
-                    rotation?:Quat;
-        }
-
-        /** 
-        Configuration parameters for Digital In (din)
-         */
-        export type DinConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Defines if the input signal is inverted */
-                    inverted?:boolean;
-        }
-
-        /** 
-        Status of Digital In
-         */
-        export type DinStatus = {
-        
-                    /**  State of the Digital In */
-                    actValue?:ONOFF;
-        }
-
-        /** 
-        Configuration parameters for Digital Outs (dout)
-         */
-        export type DoutConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Defines if the ouput signal is inverted */
-                    inverted?:boolean;
-        }
-
-        /** 
-        Status of Digital Outs (dout)
-         */
-        export type DoutStatus = {
-        
-                    /**  State of the Digital Out */
-                    effectiveValue?:ONOFF;
-        }
-
-        /** 
-        Command for Digital Outs (dout)
-         */
-        export type DoutCommand = {
-        
-                    /**  Defines if the Dout state is to be overridden */
-                    override?:boolean;
-                    /**  State of the Digital Out */
-                    setValue?:ONOFF;
-        }
-
-        /** 
-        Configuration parameters for Analog Ins (ain - floats)
-         */
-        export type AinConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Flag to indicate this analog input should control the position of a virtual axis (joint) */
-                    useForVirtualAxis?:boolean;
-                    /**  Index of joint used for virtual axis (sim) */
-                    jointIndexForVirtualAxis?:number;
-        }
-
-        /** 
-        Status of Analog Ins (ain - floats)
-         */
-        export type AinStatus = {
-        
-                    /**  Actual value of the analog input */
-                    actValue?:number;
-        }
-
-        /** 
-        Configuration parameters for Analog Outs (aout - floats)
-         */
-        export type AoutConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-        }
-
-        /** 
-        Status of an analog output. The status includes the effective value which is 
-        either the value set by {@link AoutCommand} if &#x60;override&#x60; flag is set, 
-        or the last value set by an activity (&#x60;setAout&#x60; in {@link ActivityCommand} or {@link ActivityStreamItem}).
-         */
-        export type AoutStatus = {
-        
-                    /**  Effective value of analog out */
-                    effectiveValue?:number;
-        }
-
-        /** 
-        Command for Analog Outs (aout - floats)
-         */
-        export type AoutCommand = {
-        
-                    /**  Whether to override the value of the analog out that might be set by an activity */
-                    override?:boolean;
-                    /**  Desired value of the analog out (ignored if override not set) */
-                    setValue?:number;
-        }
-
-        /** 
-        Configuration parameters for Integer Ins (iin)
-         */
-        export type IinConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-        }
-
-        /** 
-        Status of Analog Ins (ain - floats)
-         */
-        export type IinStatus = {
-        
-                    /**  value of iin */
-                    actValue?:number;
-        }
-
-        
-        export type IoutConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-        }
-
-        
-        export type IoutStatus = {
-        
-                    /**  Effective value of the iout (integer out) */
-                    effectiveValue?:number;
-        }
-
-        
-        export type IoutCommand = {
-        
-                    /**  Override the value of the iout (integer out) set by the HLC */
-                    override?:boolean;
-                    /**  Value to set the iout (integer out) to */
-                    setValue?:number;
-        }
-
-        /** 
-        Configuration parameters for moveJoints
-         */
-        export type MoveJointsConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Array of joint positions */
-                    jointPositionArray?:number[];
-                    
-                    positionReference?:POSITIONREFERENCE;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-        }
-
-        /** 
-        Status of moveJoints
-         */
-        export type MoveJointsStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-        }
-
-        /** 
-        Command parameters for MoveJoints
-         */
-        export type MoveJointsCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed moveJoints
-         */
-        export type MoveJointsStream = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    positionReference?:POSITIONREFERENCE;
-                    
-                    jointPositionArray?:number[];
-                    
-                    moveParams?:MoveParametersConfig;
-        }
-
-        /** 
-        Configuration parameters for MoveJointsAtVelocity
-         */
-        export type MoveJointsAtVelocityConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    /**  Array of joints to be used for the moveJointsAtVelocity */
-                    jointVelocityArray?:number[];
-        }
-
-        /** 
-        Status of MoveJointsAtVelocity
-         */
-        export type MoveJointsAtVelocityStatus = {
-        
-        }
-
-        /** 
-        Command parameters for MoveJointsAtVelocity
-         */
-        export type MoveJointsAtVelocityCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed MoveJointsAtVelocity
-         */
-        export type MoveJointsAtVelocityStream = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    moveParams?:MoveParametersConfig;
-                    
-                    jointVelocityArray?:number[];
-        }
-
-        /** 
-        Configuration parameters for moveLine
-         */
-        export type MoveLineConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    /**  Line object for move */
-                    line?:CartesianPosition;
-                    /**  @ignore */
-                    superimposedIndex?:number;
-        }
-
-        /** 
-        Status of MoveJoints
-         */
-        export type MoveLineStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-        }
-
-        /** 
-        Command parameters for MoveLine
-         */
-        export type MoveLineCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed moveLine
-         */
-        export type MoveLineStream = {
-        
-                    /** The kinematics configuration to use for the move qq */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    moveParams?:MoveParametersConfig;
-                    /**  Line object for move */
-                    line?:CartesianPosition;
-                    
-                    superimposedIndex?:number;
-        }
-
-        /** 
-        Configuration parameters for moveVectorAtVelocity.
-         */
-        export type MoveVectorAtVelocityConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    /**  The vector (direction) to move in */
-                    vector?:CartesianVector;
-        }
-
-        /** 
-        Status of MoveVectorAtVelocity
-         */
-        export type MoveVectorAtVelocityStatus = {
-        
-        }
-
-        /** 
-        Command parameters for moveVectorAtVelocity
-         */
-        export type MoveVectorAtVelocityCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed moveVectorAtVelocity
-         */
-        export type MoveVectorAtVelocityStream = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    moveParams?:MoveParametersConfig;
-                    
-                    vector?:CartesianVector;
-        }
-
-        /** 
-        Configuration parameters for moveArc.
-         */
-        export type MoveArcConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    superimposedIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    
-                    arc?:ArcsConfig;
-        }
-
-        /** 
-        Status of MoveArc
-         */
-        export type MoveArcStatus = {
-        
-        }
-
-        /** 
-        Command parameters for moveArc
-         */
-        export type MoveArcCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed moveArc
-         */
-        export type MoveArcStream = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    moveParams?:MoveParametersConfig;
-                    
-                    arc?:ArcsConfig;
-                    
-                    superimposedIndex?:number;
-        }
-
-        /** 
-        Configuration parameters for moveToPosition
-         */
-        export type MoveToPositionConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-                    
-                    cartesianPosition?:CartesianPositionsConfig;
-        }
-
-        /** 
-        Status of MoveToPosition
-         */
-        export type MoveToPositionStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-        }
-
-        /** 
-        Command parameters for moveToPosition
-         */
-        export type MoveToPositionCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Parameters for streamed moveToPosition
-         */
-        export type MoveToPositionStream = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    moveParams?:MoveParametersConfig;
-                    
-                    cartesianPosition?:CartesianPositionsConfig;
-        }
-
-        
-        export type SetDoutConfig = {
-        
-        }
-
-        
-        export type SetDoutStatus = {
-        
-        }
-
-        
-        export type SetDoutCommand = {
-        
-                    
-                    doutToSet?:number;
-                    
-                    valueToSet?:boolean;
-        }
-
-        
-        export type SetAoutConfig = {
-        
-        }
-
-        
-        export type SetAoutStatus = {
-        
-        }
-
-        
-        export type SetAoutCommand = {
-        
-                    
-                    aoutToSet?:number;
-                    
-                    valueToSet?:number;
-        }
-
-        
-        export type SetIoutConfig = {
-        
-        }
-
-        
-        export type SetIoutStatus = {
-        
-        }
-
-        
-        export type SetIoutCommand = {
-        
-                    
-                    ioutToSet?:number;
-                    
-                    valueToSet?:number;
-        }
-
-        /** 
-        Configuration parameters for dwell
-         */
-        export type DwellConfig = {
-        
-                    /**  Number of ticks that you want to wait for */
-                    ticksToDwell?:number;
-        }
-
-        /** 
-        Status of Dwell
-         */
-        export type DwellStatus = {
-        
-                    /**  Number of ticks that are remaining in the dwell */
-                    remainingTicks?:number;
-        }
-
-        /** 
-        Command parameters for dwell
-         */
-        export type DwellCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for spindle
-         */
-        export type SpindleConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Index of the digital output used to turn on the spindle */
-                    enableDigitalOutIndex?:number;
-                    /**  Index of the digital output used to control direction of spindle */
-                    directionDigitalOutIndex?:number;
-                    /**  If set, clockwise direction command will drop digital output on &#x60;directionIndex&#x60; */
-                    directionInvert?:boolean;
-                    /**  Index of the analogue output used to control the spindle speed */
-                    speedAnalogOutIndex?:number;
-        }
-
-        /** 
-        Configuration parameters for spindle
-         */
-        export type SpindleActivityConfig = {
-        
-                    /**  Index of the spindle in the configuration */
-                    spindleIndex?:number;
-                    /**  Whether to enable or disable the spindle */
-                    enable?:boolean;
-                    /**  Direction of the spindle */
-                    direction?:SPINDLEDIRECTION;
-                    /**  Speed of the spindle */
-                    speed?:number;
-        }
-
-        /** 
-        Status of spindle
-         */
-        export type SpindleActivityStatus = {
-        
-        }
-
-        /** 
-        Command parameters for spindle
-         */
-        export type SpindleActivityCommand = {
-        
-        }
-
-        /** 
-        Parameters for streamed spindle activity
-         */
-        export type SpindleStream = {
-        
-                    /**  Index of the spindle in the configuration */
-                    spindleIndex?:number;
-                    /**  Whether to enable or disable the spindle */
-                    enable?:boolean;
-                    /**  Direction of the spindle */
-                    direction?:SPINDLEDIRECTION;
-                    /**  Speed of the spindle */
-                    speed?:number;
-        }
-
-        /** 
-        Configuration parameters for waitOnDigitalInput
-         */
-        export type WaitOnDigitalInputConfig = {
-        
-                    /**  Index of the digital input */
-                    index?:number;
-                    /**  Whether to continue on rising or falling edge */
-                    triggerType?:TRIGGERTYPE;
-        }
-
-        /** 
-        Status of waitOnDigitalInput
-         */
-        export type WaitOnDigitalInputStatus = {
-        
-                    /**  Signals the waitOnDigitalInput is in waiting state */
-                    waiting?:boolean;
-        }
-
-        /** 
-        Command parameters for waitOnDigitalInput
-         */
-        export type WaitOnDigitalInputCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for waitOnIntegerInput
-         */
-        export type WaitOnIntegerInputConfig = {
-        
-                    /**  Index of the integer input */
-                    index?:number;
-                    /**  Continue if current integer value matches this value and condition */
-                    value?:number;
-                    /**  Continue if current integer value matches this condition and value */
-                    condition?:GTLT;
-        }
-
-        /** 
-        Status of waitOnIntegerInput
-         */
-        export type WaitOnIntegerInputStatus = {
-        
-                    /**  Signals the waitOnIntegerInput is in waiting state */
-                    waiting?:boolean;
-        }
-
-        /** 
-        Command parameters for waitOnIntegerInput
-         */
-        export type WaitOnIntegerInputCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for waitOnAnalogInput
-         */
-        export type WaitOnAnalogInputConfig = {
-        
-                    /**  Index of the analog input */
-                    index?:number;
-                    /**  Continue if current analog value matches this value and condition */
-                    value?:number;
-                    /**  Continue if current analog value matches this condition and value */
-                    condition?:GTLT;
-        }
-
-        /** 
-        Status of waitOnAnalogInput
-         */
-        export type WaitOnAnalogInputStatus = {
-        
-                    /**  Signals the waitOnAnalogInput is in waiting state */
-                    waiting?:boolean;
-        }
-
-        /** 
-        Command parameters for waitOnAnalogInput
-         */
-        export type WaitOnAnalogInputCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for tool offset
-         */
-        export type ToolOffsetConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    /**  Index of the tool */
-                    toolIndex?:number;
-        }
-
-        /** 
-        Configuration parameters for latchPos
-         */
-        export type LatchPosConfig = {
-        
-                    
-                    cartesianLatch?:boolean;
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    jointLatch?:boolean;
-                    
-                    latchTriggerIndex?:number;
-        }
-
-        /** 
-        Status of latchPos
-         */
-        export type LatchPosStatus = {
-        
-                    
-                    latched?:boolean;
-                    
-                    latchedCartesianPosition?:CartesianPosition;
-                    
-                    latchedJointArray?:JointPosition[];
-        }
-
-        /** 
-        Command parameters for latchPos
-         */
-        export type LatchPosCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for switchPose
-         */
-        export type SwitchPoseConfig = {
-        
-                    /**  Index of the Kinematics Configuration (KC) to use */
-                    kinematicsConfigurationIndex?:number;
-                    
-                    newJointConfiguration?:number;
-                    /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
-                    moveParamsIndex?:number;
-        }
-
-        /** 
-        Status of switchPose
-         */
-        export type SwitchPoseStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-        }
-
-        /** 
-        Command parameters for switchPose
-         */
-        export type SwitchPoseCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        Configuration parameters for gearInVelo
-         */
-        export type GearInVeloConfig = {
-        
-                    /**  Kinematics configuration to use for the master */
-                    masterKinematicsConfigurationIndex?:number;
-                    /**  Kinematics configuration to use for the slave */
-                    slaveKinematicsConfigurationIndex?:number;
-                    
-                    gearingFrameIndex?:number;
-                    
-                    gearRatio?:number;
-                    
-                    syncActivationDelay?:number;
-        }
-
-        /** 
-        Status of gearInVelo
-         */
-        export type GearInVeloStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-                    
-                    gearInFailed?:boolean;
-                    
-                    gearedIn?:boolean;
-        }
-
-        /** 
-        Command parameters for gearInVelo
-         */
-        export type GearInVeloCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-                    
-                    updatedRatio?:number;
-                    
-                    updateRation?:boolean;
-        }
-
-        /** 
-        Configuration parameters for gearInPos
-         */
-        export type GearInPosConfig = {
-        
-                    /**  Kinematics configuration to use for the master */
-                    masterKinematicsConfigurationIndex?:number;
-                    /**  Kinematics configuration to use for the slave */
-                    slaveKinematicsConfigurationIndex?:number;
-                    
-                    gearingFrameIndex?:number;
-                    
-                    gearRatio?:number;
-                    
-                    strategyToUse?:STRATEGYGEARINPOS;
-                    
-                    gearRatioMaster?:number;
-                    
-                    gearRatioSlave?:number;
-                    
-                    masterSyncPosition?:CartesianPosition;
-                    
-                    slaveSyncPosition?:CartesianPosition;
-                    
-                    syncActivationDelay?:number;
-        }
-
-        /** 
-        Status of gearInPos
-         */
-        export type GearInPosStatus = {
-        
-                    /**  Percentage through move we currently are */
-                    percentageComplete?:number;
-                    
-                    gearInFailed?:boolean;
-                    
-                    gearedIn?:boolean;
-        }
-
-        /** 
-        Command parameters for gearInPos
-         */
-        export type GearInPosCommand = {
-        
-                    /**  Triggers the activity to stop and skip to the next in a task */
-                    skipToNext?:boolean;
-                    
-                    updatedRatioMaster?:number;
-                    
-                    updatedRatioSlave?:number;
-                    
-                    updatedMasterSyncPosition?:CartesianPosition;
-                    
-                    updatedSlaveSyncPosition?:CartesianPosition;
-        }
-
-        
-        export type StressTestConfig = {
-        
-        }
-
-        
-        export type StressTestStatus = {
-        
-        }
-
-        
-        export type StressTestCommand = {
-        
-        }
-
-        
-        export type StressTestStream = {
-        
-        }
-
-        /** 
-        This is a union discriminated by activityType. 
-         */
-        export type ActivityConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  IMPORTANT: This is the discriminator for the union */
-                    activityType?:ACTIVITYTYPE;
-                    /**  Index of trigger for skip-to-next */
-                    skipToNextTriggerIndex?:number;
-                    /**  Type of trigger for skip to next  */
-                    skipToNextTriggerType?:TRIGGERTYPE;
-//              Start of Union
-                    /**  Configuration parameters for move joints activity */
-                     moveJoints?: MoveJointsConfig,
-                    /**  Configuration parameters for move joints at velocity activity */
-                     moveJointsAtVelocity?: MoveJointsAtVelocityConfig,
-                    /**  Configuration parameters for move line activity */
-                     moveLine?: MoveLineConfig,
-                    /**  Configuration parameters for move line at velocity activity */
-                     moveVectorAtVelocity?: MoveVectorAtVelocityConfig,
-                    /**  Configuration parameters for move arc activity */
-                     moveArc?: MoveArcConfig,
-                    /**  Configuration parameters for move to position activity */
-                     moveToPosition?: MoveToPositionConfig,
-                    /**  Configuration parameters for gear in position activity */
-                     gearInPos?: GearInPosConfig,
-                    /**  Configuration parameters for gear in velocity activity */
-                     gearInVelo?: GearInVeloConfig,
-                    /**  Configuration parameters for set dout activity */
-                     setDout?: SetDoutConfig,
-                    /**  Configuration parameters for set aout activity */
-                     setAout?: SetAoutConfig,
-                    /**  Configuration parameters for set aout activity */
-                     setIout?: SetIoutConfig,
-                    /**  Configuration parameters for dwell activity */
-                     dwell?: DwellConfig,
-                    /**  Configuration parameters for spindle activity */
-                     spindle?: SpindleActivityConfig,
-                    /**  Configuration parameters for wait on digital input activity */
-                     waitOnDigitalInput?: WaitOnDigitalInputConfig,
-                    /**  Configuration parameters for wait on integer input activity */
-                     waitOnIntegerInput?: WaitOnIntegerInputConfig,
-                    /**  Configuration parameters for wait on analog input activity */
-                     waitOnAnalogInput?: WaitOnAnalogInputConfig,
-                    /**  Configuration parameters for switch pose activity */
-                     switchPose?: SwitchPoseConfig,
-                    /**  Configuration parameters for latch position activity */
-                     latchPos?: LatchPosConfig,
-                    /**  Configuration parameters for stress test activity */
-                     stressTest?: StressTestConfig,
-//              End of Union
-        }
-
-        /** 
-        This is a union
-         */
-        export type ActivityStatus = {
-        
-                    /**  current state of the activity */
-                    state?:ACTIVITYSTATE;
-                    /**  User defined. Used by Glowbuzzer React to track gcode line */
-                    tag?:number;
-//              Start of Union
-                    /**  Status of the move joints activity */
-                     moveJoints?: MoveJointsStatus,
-                    /**  Status of the move joints at velocity activity */
-                     moveJointsAtVelocity?: MoveJointsAtVelocityStatus,
-                    /**  Status of the move line activity */
-                     moveLine?: MoveLineStatus,
-                    /**  Status of the move line at velocity activity */
-                     moveVectorAtVelocity?: MoveVectorAtVelocityStatus,
-                    /**  Status of the move arc activity */
-                     moveArc?: MoveArcStatus,
-                    /**  Status of the move to position activity */
-                     moveToPosition?: MoveToPositionStatus,
-                    /**  Status of the gear in position activity */
-                     gearInPos?: GearInPosStatus,
-                    /**  Status of the gear in velocity activity */
-                     gearInVelo?: GearInVeloStatus,
-                    /**  Status of the set dout activity */
-                     setDout?: SetDoutStatus,
-                    /**  Status of the set aout activity */
-                     setAout?: SetAoutStatus,
-                    /**  Status of the set iout activity */
-                     setIout?: SetIoutStatus,
-                    /**  Status of the set dwell activity */
-                     dwell?: DwellStatus,
-                    /**  Status of the set spindle activity */
-                     spindle?: SpindleActivityStatus,
-                    /**  Status of the wait on digital input activity */
-                     waitOnDigitalInput?: WaitOnDigitalInputStatus,
-                    /**  Status of the wait on integer input activity */
-                     waitOnIntegerInput?: WaitOnIntegerInputStatus,
-                    /**  Status of the wait on analog input activity */
-                     waitOnAnalogInput?: WaitOnAnalogInputStatus,
-                    /**  Status of the switch pose activity */
-                     switchPose?: SwitchPoseStatus,
-                    /**  Status of the latch pos activity */
-                     latchPos?: LatchPosStatus,
-                    /**  Status of the stress test activity */
-                     stressTest?: StressTestStatus,
-//              End of Union
-        }
-
-        /** 
-        This is a union. There is no discriminator for this union as the Activity will have been configured with a specific type of activity and these are the commands that act on this type.
-         */
-        export type ActivityCommand = {
-        
-//              Start of Union
-                    /**  Move joints command object for activity */
-                     moveJoints?: MoveJointsCommand,
-                    /**  Move joints at velocity command object for activity */
-                     moveJointsAtVelocity?: MoveJointsAtVelocityCommand,
-                    /**  Move line command object for activity */
-                     moveLine?: MoveLineCommand,
-                    /**  Move line at velocity command object for activity */
-                     moveVectorAtVelocity?: MoveVectorAtVelocityCommand,
-                    /**  Move arc command object for activity */
-                     moveArc?: MoveArcCommand,
-                    /**  Move to position command object for activity */
-                     moveToPosition?: MoveToPositionCommand,
-                    /**  Gear in position command object for activity */
-                     gearInPos?: GearInPosCommand,
-                    /**  Gear in velocity command object for activity */
-                     gearInVelo?: GearInVeloCommand,
-                    /**  Set dout command object for activity */
-                     setDout?: SetDoutCommand,
-                    /**  Set aout command object for activity */
-                     setAout?: SetAoutCommand,
-                    /**  Set iout command object for activity */
-                     setIout?: SetIoutCommand,
-                    /**  Set dwell command object for activity */
-                     dwell?: DwellCommand,
-                    /**  Set spindle command object for activity */
-                     spindle?: SpindleActivityCommand,
-                    /**  Set wait on digital input command object for activity */
-                     waitOnDigitalInput?: WaitOnDigitalInputCommand,
-                    /**  Set wait on integer input command object for activity */
-                     waitOnIntegerInput?: WaitOnIntegerInputCommand,
-                    /**  Set wait on analog input command object for activity */
-                     waitOnAnalogInput?: WaitOnAnalogInputCommand,
-                    /**  Set switch pose command object for activity */
-                     switchPose?: SwitchPoseCommand,
-                    /**  Set latch position  command object for activity */
-                     latchPos?: LatchPosCommand,
-                    /**  Set stress test command object for activity */
-                     stressTest?: StressTestCommand,
-//              End of Union
-                    /**  Trigger a skip to next on the activity */
-                    skipToNext?:boolean;
-        }
-
-        /** 
-        This is a union
-         */
-        export type ActivityStreamItem = {
-        
-                    /**  Discriminator - the type of activity */
-                    activityType?:ACTIVITYTYPE;
-                    /**  User defined. Used by Glowbuzzer React to track gcode line */
-                    tag?:number;
-//              Start of Union
-                    /**  Parameters for a streamed move joints */
-                     moveJoints?: MoveJointsStream,
-                    /**  Parameters for a streamed move joints at velocity */
-                     moveJointsAtVelocity?: MoveJointsAtVelocityStream,
-                    /**  Parameters for a streamed move line */
-                     moveLine?: MoveLineStream,
-                    /**  Parameters for a streamed move line at velocity */
-                     moveVectorAtVelocity?: MoveVectorAtVelocityStream,
-                    /**  Parameters for a streamed move arc */
-                     moveArc?: MoveArcStream,
-                    /**  Parameters for a streamed move to position */
-                     moveToPosition?: MoveToPositionStream,
-                    /**  Parameters for a streamed set dout */
-                     setDout?: SetDoutCommand,
-                    /**  Parameters for a streamed set aout */
-                     setAout?: SetAoutCommand,
-                    /**  Parameters for a streamed set iout */
-                     setIout?: SetIoutCommand,
-                    /**  Parameters for a streamed dwell */
-                     dwell?: DwellConfig,
-                    /**  Parameters for a streamed spindle change */
-                     spindle?: SpindleStream,
-                    /**  Parameters for a streamed setting of tool offset */
-                     setToolOffset?: ToolOffsetConfig,
-                    /**  Parameters for a streamed wait on digital input */
-                     waitOnDigitalInput?: WaitOnDigitalInputConfig,
-                    /**  Parameters for a streamed wait on integer input */
-                     waitOnIntegerInput?: WaitOnIntegerInputConfig,
-                    /**  Parameters for a streamed wait on analog input */
-                     waitOnAnalogInput?: WaitOnAnalogInputConfig,
-                    /**  Parameters for a streamed stress test */
-                     stressTest?: StressTestStream,
-//              End of Union
-        }
-
-        
-        export type SoloActivityConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-        }
-
-        export type SoloActivityStatus = ActivityStatus
-        export type SoloActivityCommand = ActivityStreamItem
-        /** 
-        Configuration parameters for frame
-         */
-        export type FramesConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Translation of the frame */
-                    translation?:Vector3;
-                    /**  Rotation of the frame */
-                    rotation?:Quat;
-                    /**  Link to the parent of the frame */
-                    parent?:number;
-                    /**  Whether the frame is referenced with an absolute or relative position */
-                    absRel?:FRAME_ABSRELATIVE;
-        }
-
-        /** 
-        Command parameters for frame
-         */
-        export type FramesCommand = {
-        
-                    /**  Translation to be applied to the frame */
-                    translation?:Vector3;
-                    /**  Rotation to be applied to the frame */
-                    rotation?:Quat;
-                    /**  Should the frame&#x27;s value be overridden */
-                    override?:boolean;
-        }
-
-        
-        export type FramesStatus = {
-        
-        }
-
-        /** 
-        Configuration parameters for a tool
-         */
-        export type ToolConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Translation of the tool */
-                    translation?:Vector3;
-                    /**  Rotation of the tool */
-                    rotation?:Quat;
-                    /**  Diameter of the tool */
-                    diameter?:number;
-        }
-
-        
-        export type TriggerOnConfig = {
-        
-                /** Name for this configuration item */
-                name?: string
-        
-                    /**  Index of analog input to act as a trigger */
-                    aiIndex?:number;
-                    /**  Threshold for analog in at which trigger occurs */
-                    threshold?:number;
-                    /**  Trigger occurs at threshold greater or less than */
-                    aiThreholdGreaterLessThan?:GTLT;
-                    /**  Index of digital input to act as a trigger */
-                    diIndex?:number;
-                    /**  State that triggers */
-                    diTriggerState?:ONOFF;
-                    /**  Filter for trigger */
-                    numberofTicksBeforeTrigger?:number;
-        }
-
+            
+            export type LimitConfiguration = {
+            
+                        /**  Velocity limit */
+                        vmax?:number;
+                        /**  Acceleration limit */
+                        amax?:number;
+                        /**  Jerk limit */
+                        jmax?:number;
+            }
+            
+            export type Header = {
+            
+                        /**  Flags if the shared memory data has been updated */
+                        updated?:boolean;
+            }
+            
+            export type MachineConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  The bus cycle time (in milliseconds) */
+                        busCycleTime?:number;
+                        /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
+                        statusFrequency?:number;
+            }
+            
+            export type MachineStatus = {
+            
+                        /**  CiA 402 status word for the machine as a whole */
+                        statusWord?:number;
+                        /**  Word containing any active faults the machine may have */
+                        activeFault?:number;
+                        /**  Word containing the fault history (faults that were active when the machine entered the fault state) */
+                        faultHistory?:number;
+                        /**  Heartbeat (integer that increments each cycle) */
+                        heartbeat?:number;
+                        /**  What the current target of the machine is - e.g. is it is simulation mode */
+                        target?:MACHINETARGET;
+                        /**  Number of times we have tried to connect to the target */
+                        targetConnectRetryCnt?:number;
+            }
+            
+            export type MachineCommand = {
+            
+                        /**  CiA 402 control word for the machine */
+                        controlWord?:number;
+                        /**  HLC (High-Level-Control) control word */
+                        hlcControlWord?:number;
+                        /**  Heartbeat (integer that increments each cycle) */
+                        heartbeat?:number;
+                        /**  What target we want the machine to connect to - e.g. fieldbus, simulation */
+                        target?:MACHINETARGET;
+            }
+            
+            export type StreamConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+            }
+            
+            export type StreamStatus = {
+            
+                        
+                        streamState?:STREAMSTATE;
+                        
+                        tag?:number;
+                        
+                        time?:number;
+            }
+            
+            export type StreamCommand = {
+            
+                        
+                        streamCommand?:STREAMCOMMAND;
+            }
+            /** 
+            Layout of fieldbus RxPdo
+             */
+            export type FieldbusTxPdoLayout = {
+            
+                        /**  Offset (in bytes) in the fieldbus process data to the machine control word (CiA 402) */
+                        machineControlWordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the GBC control word  */
+                        gbcControlWordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the HLC (High-Level-Control) control word */
+                        hlcControlWordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint control word */
+                        jointControlwordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint set position word */
+                        jointSetPositionOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint set velocity word */
+                        jointSetVelocityOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint set torque world */
+                        jointSetTorqueOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
+                        heartbeatOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
+                        digitalOffset?:number;
+                        /**  Number of digital (ins/outs) used in the fieldbus process data */
+                        digitalCount?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
+                        analogOffset?:number;
+                        /**  Number of analog (ins/outs) used in the fieldbus process data */
+                        analogCount?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
+                        integerOffset?:number;
+                        /**  Number of integer (ins/outs) used in the fieldbus process data */
+                        integerCount?:number;
+            }
+            /** 
+            Layout of fieldbus TxPdo
+             */
+            export type FieldbusRxPdoLayout = {
+            
+                        /**  Offset (in bytes) in the fieldbus process data to the machine status word (CiA 402) */
+                        machineStatusWordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the active fault word */
+                        activeFaultOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the fault history word */
+                        faultHistoryOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint status word */
+                        jointStatuswordOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint actual position word */
+                        jointActualPositionOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint actual velocity word */
+                        jointActualVelocityOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the joint actual torque word */
+                        jointActualTorqueOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
+                        heartbeatOffset?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
+                        digitalOffset?:number;
+                        /**  Number of digital (ins/outs) used in the fieldbus process data */
+                        digitalCount?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
+                        analogOffset?:number;
+                        /**  Number of analog (ins/outs) used in the fieldbus process data */
+                        analogCount?:number;
+                        /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
+                        integerOffset?:number;
+                        /**  Number of integer (ins/outs) used in the fieldbus process data */
+                        integerCount?:number;
+            }
+            /** 
+            Configuration parameters for fieldbus
+             */
+            export type FieldbusConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Number of joints stored in the fieldbus process data */
+                        jointCount?:number;
+                        /**  TxPdo object */
+                        TxPdo?:FieldbusTxPdoLayout;
+                        /**  RxPdo object */
+                        RxPdo?:FieldbusRxPdoLayout;
+            }
+            /** 
+            Configuration parameters for move parameters
+             */
+            export type MoveParametersConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Vmax (max velocity) for move */
+                        vmax?:number;
+                        /**  Percentage of vmax to be used for move */
+                        vmaxPercentage?:number;
+                        /**  Percentage of amax to be used for move */
+                        amaxPercentage?:number;
+                        /**  Percentage of jmax to be used for move */
+                        jmaxPercentage?:number;
+                        /**  Linear and angular limit profile to use for move */
+                        limitConfigurationIndex?:number;
+                        /**  Type of blend to be used for the move */
+                        blendType?:BLENDTYPE;
+                        /**  Blend time percentage to be used for the move */
+                        blendTimePercentage?:number;
+                        /**  Tolerance to be applied to the blend  */
+                        blendTolerance?:number;
+                        /**  Tool to be used for the move */
+                        toolIndex?:number;
+            }
+            /** 
+            Parameters for vector 3
+             */
+            export type Vector3 = {
+            
+                        /**  Cartesian position on x axis */
+                        x?:number;
+                        /**  Cartesian position on y axis */
+                        y?:number;
+                        /**  Cartesian position on x axis */
+                        z?:number;
+            }
+            /** 
+            Parameters for a quaternion
+             */
+            export type Quat = {
+            
+                        /**  Quaternion orientation coefficient */
+                        w?:number;
+                        /**  Quaternion orientation coefficient */
+                        x?:number;
+                        /**  Quaternion orientation coefficient */
+                        y?:number;
+                        /**  Quaternion orientation coefficient */
+                        z?:number;
+            }
+            /** 
+            Parameters for a cartesian position
+             */
+            export type CartesianPosition = {
+            
+                        /**  Whether the position is absolute or relative */
+                        positionReference?:POSITIONREFERENCE;
+                        /**  Translation vector object */
+                        translation?:Vector3;
+                        /**  Rotation quaternion object  */
+                        rotation?:Quat;
+                        /**  Index of the frame the position is with respect to */
+                        frameIndex?:number;
+            }
+            /** 
+            Parameters for an absolute / relative position
+             */
+            export type PositionAbsRel = {
+            
+                        /**  Whether the position is absolute or relative */
+                        positionReference?:POSITIONREFERENCE;
+                        /**  Position vector object */
+                        translation?:Vector3;
+            }
+            /** 
+            Parameters for a cartesian vector
+             */
+            export type CartesianVector = {
+            
+                        /**  Vector itself (x,y,z) */
+                        vector?:Vector3;
+                        /**  Index of frame for vector */
+                        frameIndex?:number;
+            }
+            
+            export type DoubleValue = {
+            
+                        
+                        value?:number;
+            }
+            /** 
+            Parameters for a joint position
+             */
+            export type JointPosition = {
+            
+                        
+                        positionReference?:POSITIONREFERENCE;
+                        
+                        value?:number;
+            }
+            /** 
+            Configuration parameters for lines
+             */
+            export type LinesConfig = {
+            
+                        /**  Destination of the line */
+                        destination?:CartesianPosition;
+            }
+            /** 
+            Configuration parameters for arcs
+             */
+            export type ArcsConfig = {
+            
+                        /**  Whether the arc is defined by centre or radius */
+                        arcType?:ARCTYPE;
+                        /**  Is the arc direction CW or CCW (clockwise or counter-clockwise) */
+                        arcDirection?:ARCDIRECTION;
+                        /**  Destination position for the arc */
+                        destination?:CartesianPosition;
+    //              Start of Union
+                        /**  Is the centre defined absolutely or relatively */
+                         centre?: PositionAbsRel,
+                        /**  Radius of the arc */
+                         radius?: DoubleValue,
+    //              End of Union
+            }
+            /** 
+            Parameters for cartesian positions
+             */
+            export type CartesianPositionsConfig = {
+            
+                        /**  The position including translation and rotation */
+                        position?:CartesianPosition;
+                        /**  The robot configuration (waist/elbow/wrist), if applicable */
+                        configuration?:number;
+            }
+            /** 
+            Config parameters for Tasks
+             */
+            export type TaskConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Number of activities in this task */
+                        activityCount?:number;
+                        /**  First activity in this task  */
+                        firstActivityIndex?:number;
+                        /**  Link to trigger to cancel task */
+                        cancelTriggerOnIndex?:number;
+                        /**  Link to trigger to start task */
+                        startTriggerOnIndex?:number;
+            }
+            /** 
+            Status parameters for Tasks
+             */
+            export type TaskStatus = {
+            
+                        /**  Object representing the current state of the task */
+                        taskState?:TASK_STATE;
+                        /**  Current activity that is running */
+                        currentActivityIndex?:number;
+            }
+            /** 
+            Command parameters for Tasks
+             */
+            export type TaskCommand = {
+            
+                        /**  Command object for task */
+                        taskCommand?:TASK_COMMAND;
+            }
+            /** 
+            Configuration parameters for joint
+             */
+            export type JointConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        
+                        jointType?:JOINT_TYPE;
+                        /**  List of limits to be applied to the joint for different types of move */
+                        limits?:LimitConfiguration[];
+                        /**  scale factor to be applied to a joint's position for transfer to the fieldbus */
+                        scale?:number;
+                        /**  TODO */
+                        pow10?:number;
+                        /**  negative soft limit for the travel of the joint */
+                        negLimit?:number;
+                        /**  positive soft limit for the travel of the joint */
+                        posLimit?:number;
+                        /**  flags that a joint's motion is inverted */
+                        isInverted?:boolean;
+                        
+                        finiteContinuous?:JOINT_FINITECONTINUOUS;
+                        
+                        isVirtualInternal?:boolean;
+                        
+                        isVirtualFromEncoder?:boolean;
+                        
+                        correspondingJointNumberOnPhysicalFieldbus?:number;
+                        
+                        correspondingJointNumberOnVirtualFieldbus?:number;
+            }
+            /** 
+            Status of joint
+             */
+            export type JointStatus = {
+            
+                        /**  CiA 402 status word for the joint */
+                        statusWord?:number;
+                        /**  Actual Position of the joint */
+                        actPos?:number;
+                        /**  Actual Velocitys of the joint */
+                        actVel?:number;
+                        /**  Actual Acceleration of the joint */
+                        actAcc?:number;
+            }
+            /** 
+            Command parameters for joint
+             */
+            export type JointCommand = {
+            
+                        /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
+                        controlWord?:number;
+            }
+            
+            export type SixDofJointConfiguration = {
+            
+                        
+                        shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
+                        
+                        elbowConfiguration?:KC_ELBOWCONFIGURATION;
+                        
+                        wristConfiguration?:KC_WRISTCONFIGURATION;
+            }
+            
+            export type ScaraJointConfiguration = {
+            
+                        
+                        shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
+                        
+                        elbowConfiguration?:KC_ELBOWCONFIGURATION;
+            }
+            
+            export type JointConfiguration = {
+            
+                        
+                        kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
+    //              Start of Union
+                        
+                         sixDofConfiguration?: SixDofJointConfiguration,
+                        
+                         scaraConfiguration?: ScaraJointConfiguration,
+    //              End of Union
+            }
+            
+            export type MatrixInstanceDouble = {
+            
+                        /**  Number of rows in matrix */
+                        numRows?:number;
+                        /**  Number of columns in matrix */
+                        numCols?:number;
+                        /**  Data for matrix */
+                        data?:number[];
+            }
+            /** Configuration parameters for a kinematics configuration */
+            export type KinematicsConfigurationConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Kinematics configuration type. That is, the kinematics model that will be used. Used as discriminator for the union */
+                        kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
+                        /**  Frame index this kinematics configuration will use */
+                        frameIndex?:number;
+                        /**  Array of physical joint indices use in this kinematics configuration */
+                        participatingJoints?:number[];
+                        /**  Number of joints */
+                        participatingJointsCount?:number;
+                        /**  Extent (size) of workspace in X */
+                        extentsX?:number[];
+                        /**  Extent (size) of workspace in Y */
+                        extentsY?:number[];
+                        /**  Extent (size) of workspace in Z */
+                        extentsZ?:number[];
+                        /**  Scale factor to apply to X axis */
+                        scaleX?:number;
+                        /**  Scale factor to apply to Y axis */
+                        scaleY?:number;
+                        /**  Scale factor to apply to Z axis */
+                        scaleZ?:number;
+                        /**  List of linear limits to be applied to the kinematics configuration for different types of move */
+                        linearLimits?:LimitConfiguration[];
+                        /**  List of angular limits to be applied to the kinematics configuration for different types of move */
+                        angularLimits?:LimitConfiguration[];
+                        /**  Matrix containing the DH parameters for the kinematics model */
+                        kinChainParams?:MatrixInstanceDouble;
+            }
+            /** Status of a kinematics configuration */
+            export type KinematicsConfigurationStatus = {
+            
+                        /**  Feed rate target value */
+                        froTarget?:number;
+                        /**  Feed rate actual value */
+                        froActual?:number;
+                        /**  Configuration (for example, waist/elbow/wrist) of the kinematics configuration */
+                        configuration?:number;
+                        /**  @ignore (not exposed) */
+                        cartesianActPos?:Vector3;
+                        /**  @ignore (not exposed) */
+                        cartesianActOrientation?:Quat;
+                        /**  @ignore (not exposed) */
+                        cartesianActVel?:Vector3;
+                        /**  @ignore (not exposed) */
+                        cartesianActAcc?:Vector3;
+                        /**  Indicates if soft limits (machine extents) are disabled */
+                        limitsDisabled?:boolean;
+                        /**  Current tool index */
+                        toolIndex?:number;
+            }
+            
+            export type KinematicsConfigurationCommand = {
+            
+                        /**  Not used */
+                        doStop?:boolean;
+                        /**  Whether soft joint limits should be disabled */
+                        disableLimits?:boolean;
+                        /**  Desired feed rate, with 1 being normal and zero being stopped. A value of 2 would give double normal speed, for example */
+                        fro?:number;
+                        /**  Optional logical translation applied to all moves */
+                        translation?:Vector3;
+                        /**  Optional logical rotation applied to all moves */
+                        rotation?:Quat;
+            }
+            /** 
+            Configuration parameters for Digital In (din)
+             */
+            export type DinConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Defines if the input signal is inverted */
+                        inverted?:boolean;
+            }
+            /** 
+            Status of Digital In
+             */
+            export type DinStatus = {
+            
+                        /**  State of the Digital In */
+                        actValue?:ONOFF;
+            }
+            /** 
+            Configuration parameters for Digital Outs (dout)
+             */
+            export type DoutConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Defines if the ouput signal is inverted */
+                        inverted?:boolean;
+            }
+            /** 
+            Status of Digital Outs (dout)
+             */
+            export type DoutStatus = {
+            
+                        /**  State of the Digital Out */
+                        effectiveValue?:ONOFF;
+            }
+            /** 
+            Command for Digital Outs (dout)
+             */
+            export type DoutCommand = {
+            
+                        /**  Defines if the Dout state is to be overridden */
+                        override?:boolean;
+                        /**  State of the Digital Out */
+                        setValue?:ONOFF;
+            }
+            /** 
+            Configuration parameters for Analog Ins (ain - floats)
+             */
+            export type AinConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Flag to indicate this analog input should control the position of a virtual axis (joint) */
+                        useForVirtualAxis?:boolean;
+                        /**  Index of joint used for virtual axis (sim) */
+                        jointIndexForVirtualAxis?:number;
+            }
+            /** 
+            Status of Analog Ins (ain - floats)
+             */
+            export type AinStatus = {
+            
+                        /**  Actual value of the analog input */
+                        actValue?:number;
+            }
+            /** 
+            Configuration parameters for Analog Outs (aout - floats)
+             */
+            export type AoutConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+            }
+            /** 
+            Status of an analog output. The status includes the effective value which is 
+            either the value set by {@link AoutCommand} if `override` flag is set, 
+            or the last value set by an activity (`setAout` in {@link ActivityCommand} or {@link ActivityStreamItem}).
+             */
+            export type AoutStatus = {
+            
+                        /**  Effective value of analog out */
+                        effectiveValue?:number;
+            }
+            /** 
+            Command for Analog Outs (aout - floats)
+             */
+            export type AoutCommand = {
+            
+                        /**  Whether to override the value of the analog out that might be set by an activity */
+                        override?:boolean;
+                        /**  Desired value of the analog out (ignored if override not set) */
+                        setValue?:number;
+            }
+            /** 
+            Configuration parameters for Integer Ins (iin)
+             */
+            export type IinConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+            }
+            /** 
+            Status of Analog Ins (ain - floats)
+             */
+            export type IinStatus = {
+            
+                        /**  value of iin */
+                        actValue?:number;
+            }
+            
+            export type IoutConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+            }
+            
+            export type IoutStatus = {
+            
+                        /**  Effective value of the iout (integer out) */
+                        effectiveValue?:number;
+            }
+            
+            export type IoutCommand = {
+            
+                        /**  Override the value of the iout (integer out) set by the HLC */
+                        override?:boolean;
+                        /**  Value to set the iout (integer out) to */
+                        setValue?:number;
+            }
+            /** 
+            Configuration parameters for moveJoints
+             */
+            export type MoveJointsConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Array of joint positions */
+                        jointPositionArray?:number[];
+                        
+                        positionReference?:POSITIONREFERENCE;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+            }
+            /** @ignore */
+            export type MoveJointsStatus = {
+            
+                        /**  Percentage through move we currently are */
+                        percentageComplete?:number;
+            }
+            /** 
+            Command parameters for MoveJoints
+             */
+            export type MoveJointsCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed moveJoints
+             */
+            export type MoveJointsStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        positionReference?:POSITIONREFERENCE;
+                        
+                        jointPositionArray?:number[];
+                        
+                        moveParams?:MoveParametersConfig;
+            }
+            /** 
+            Configuration parameters for MoveJointsAtVelocity
+             */
+            export type MoveJointsAtVelocityConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+                        /**  Array of joints to be used for the moveJointsAtVelocity */
+                        jointVelocityArray?:number[];
+            }
+            /** @ignore */
+            export type MoveJointsAtVelocityStatus = {
+            
+            }
+            /** 
+            Command parameters for MoveJointsAtVelocity
+             */
+            export type MoveJointsAtVelocityCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed MoveJointsAtVelocity
+             */
+            export type MoveJointsAtVelocityStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        moveParams?:MoveParametersConfig;
+                        
+                        jointVelocityArray?:number[];
+            }
+            /** 
+            Configuration parameters for moveLine
+             */
+            export type MoveLineConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+                        /**  Line object for move */
+                        line?:CartesianPosition;
+                        /**  @ignore */
+                        superimposedIndex?:number;
+            }
+            /** @ignore */
+            export type MoveLineStatus = {
+            
+            }
+            /** 
+            Command parameters for MoveLine
+             */
+            export type MoveLineCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed moveLine
+             */
+            export type MoveLineStream = {
+            
+                        /** The kinematics configuration to use for the move qq */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        moveParams?:MoveParametersConfig;
+                        /**  Line object for move */
+                        line?:CartesianPosition;
+                        
+                        superimposedIndex?:number;
+            }
+            /** 
+            Configuration parameters for moveVectorAtVelocity.
+             */
+            export type MoveVectorAtVelocityConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+                        /**  The vector (direction) to move in */
+                        vector?:CartesianVector;
+            }
+            /** @ignore */
+            export type MoveVectorAtVelocityStatus = {
+            
+            }
+            /** 
+            Command parameters for moveVectorAtVelocity
+             */
+            export type MoveVectorAtVelocityCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed moveVectorAtVelocity
+             */
+            export type MoveVectorAtVelocityStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        moveParams?:MoveParametersConfig;
+                        
+                        vector?:CartesianVector;
+            }
+            /** 
+            Configuration parameters for moveArc.
+             */
+            export type MoveArcConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        superimposedIndex?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+                        
+                        arc?:ArcsConfig;
+            }
+            /** @ignore */
+            export type MoveArcStatus = {
+            
+            }
+            /** 
+            Command parameters for moveArc
+             */
+            export type MoveArcCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed moveArc
+             */
+            export type MoveArcStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        moveParams?:MoveParametersConfig;
+                        
+                        arc?:ArcsConfig;
+                        
+                        superimposedIndex?:number;
+            }
+            /** 
+            Configuration parameters for moveToPosition
+             */
+            export type MoveToPositionConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+                        
+                        cartesianPosition?:CartesianPositionsConfig;
+            }
+            /** @ignore */
+            export type MoveToPositionStatus = {
+            
+            }
+            /** 
+            Command parameters for moveToPosition
+             */
+            export type MoveToPositionCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Parameters for streamed moveToPosition
+             */
+            export type MoveToPositionStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        moveParams?:MoveParametersConfig;
+                        
+                        cartesianPosition?:CartesianPositionsConfig;
+            }
+            
+            export type SetDoutConfig = {
+            
+            }
+            /** @ignore */
+            export type SetDoutStatus = {
+            
+            }
+            
+            export type SetDoutCommand = {
+            
+                        
+                        doutToSet?:number;
+                        
+                        valueToSet?:boolean;
+            }
+            
+            export type SetAoutConfig = {
+            
+            }
+            /** @ignore */
+            export type SetAoutStatus = {
+            
+            }
+            
+            export type SetAoutCommand = {
+            
+                        
+                        aoutToSet?:number;
+                        
+                        valueToSet?:number;
+            }
+            
+            export type SetIoutConfig = {
+            
+            }
+            /** @ignore */
+            export type SetIoutStatus = {
+            
+            }
+            
+            export type SetIoutCommand = {
+            
+                        
+                        ioutToSet?:number;
+                        
+                        valueToSet?:number;
+            }
+            /** 
+            Configuration parameters for dwell
+             */
+            export type DwellConfig = {
+            
+                        /**  Number of ticks that you want to wait for */
+                        ticksToDwell?:number;
+            }
+            /** @ignore */
+            export type DwellStatus = {
+            
+            }
+            /** 
+            Command parameters for dwell
+             */
+            export type DwellCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Configuration parameters for spindle
+             */
+            export type SpindleConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Index of the digital output used to turn on the spindle */
+                        enableDigitalOutIndex?:number;
+                        /**  Index of the digital output used to control direction of spindle */
+                        directionDigitalOutIndex?:number;
+                        /**  If set, clockwise direction command will drop digital output on `directionIndex` */
+                        directionInvert?:boolean;
+                        /**  Index of the analogue output used to control the spindle speed */
+                        speedAnalogOutIndex?:number;
+            }
+            /** 
+            Configuration parameters for spindle
+             */
+            export type SpindleActivityConfig = {
+            
+                        /**  Index of the spindle in the configuration */
+                        spindleIndex?:number;
+                        /**  Whether to enable or disable the spindle */
+                        enable?:boolean;
+                        /**  Direction of the spindle */
+                        direction?:SPINDLEDIRECTION;
+                        /**  Speed of the spindle */
+                        speed?:number;
+            }
+            /** @ignore */
+            export type SpindleActivityStatus = {
+            
+            }
+            /** 
+            Command parameters for spindle
+             */
+            export type SpindleActivityCommand = {
+            
+            }
+            /** 
+            Parameters for streamed spindle activity
+             */
+            export type SpindleStream = {
+            
+                        /**  Index of the spindle in the configuration */
+                        spindleIndex?:number;
+                        /**  Whether to enable or disable the spindle */
+                        enable?:boolean;
+                        /**  Direction of the spindle */
+                        direction?:SPINDLEDIRECTION;
+                        /**  Speed of the spindle */
+                        speed?:number;
+            }
+            /** 
+            Configuration parameters for waitOnDigitalInput
+             */
+            export type WaitOnDigitalInputConfig = {
+            
+                        /**  Index of the digital input */
+                        index?:number;
+                        /**  Whether to continue on rising or falling edge */
+                        triggerType?:TRIGGERTYPE;
+            }
+            /** @ignore */
+            export type WaitOnDigitalInputStatus = {
+            
+                        /**  Signals the waitOnDigitalInput is in waiting state */
+                        waiting?:boolean;
+            }
+            /** 
+            Command parameters for waitOnDigitalInput
+             */
+            export type WaitOnDigitalInputCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Configuration parameters for waitOnIntegerInput
+             */
+            export type WaitOnIntegerInputConfig = {
+            
+                        /**  Index of the integer input */
+                        index?:number;
+                        /**  Continue if current integer value matches this value and condition */
+                        value?:number;
+                        /**  Continue if current integer value matches this condition and value */
+                        condition?:GTLT;
+            }
+            /** @ignore */
+            export type WaitOnIntegerInputStatus = {
+            
+                        /**  Signals the waitOnIntegerInput is in waiting state */
+                        waiting?:boolean;
+            }
+            /** 
+            Command parameters for waitOnIntegerInput
+             */
+            export type WaitOnIntegerInputCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Configuration parameters for waitOnAnalogInput
+             */
+            export type WaitOnAnalogInputConfig = {
+            
+                        /**  Index of the analog input */
+                        index?:number;
+                        /**  Continue if current analog value matches this value and condition */
+                        value?:number;
+                        /**  Continue if current analog value matches this condition and value */
+                        condition?:GTLT;
+            }
+            /** @ignore */
+            export type WaitOnAnalogInputStatus = {
+            
+                        /**  Signals the waitOnAnalogInput is in waiting state */
+                        waiting?:boolean;
+            }
+            /** 
+            Command parameters for waitOnAnalogInput
+             */
+            export type WaitOnAnalogInputCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** 
+            Configuration parameters for tool offset
+             */
+            export type ToolOffsetConfig = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Index of the tool */
+                        toolIndex?:number;
+            }
+            /** @ignore */
+            export type LatchPosConfig = {
+            
+                        
+                        cartesianLatch?:boolean;
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        jointLatch?:boolean;
+                        
+                        latchTriggerIndex?:number;
+            }
+            /** @ignore */
+            export type LatchPosStatus = {
+            
+                        
+                        latched?:boolean;
+                        
+                        latchedCartesianPosition?:CartesianPosition;
+                        
+                        latchedJointArray?:JointPosition[];
+            }
+            /** @ignore */
+            export type LatchPosCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+            }
+            /** @ignore */
+            export type GearInVeloConfig = {
+            
+                        /**  Kinematics configuration to use for the master */
+                        masterKinematicsConfigurationIndex?:number;
+                        /**  Kinematics configuration to use for the slave */
+                        slaveKinematicsConfigurationIndex?:number;
+                        
+                        gearingFrameIndex?:number;
+                        
+                        gearRatio?:number;
+                        
+                        syncActivationDelay?:number;
+            }
+            /** @ignore */
+            export type GearInVeloStatus = {
+            
+                        /**  Percentage through move we currently are */
+                        percentageComplete?:number;
+                        
+                        gearInFailed?:boolean;
+                        
+                        gearedIn?:boolean;
+            }
+            /** @ignore */
+            export type GearInVeloCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+                        
+                        updatedRatio?:number;
+                        
+                        updateRation?:boolean;
+            }
+            /** @ignore */
+            export type GearInPosConfig = {
+            
+                        /**  Kinematics configuration to use for the master */
+                        masterKinematicsConfigurationIndex?:number;
+                        /**  Kinematics configuration to use for the slave */
+                        slaveKinematicsConfigurationIndex?:number;
+                        
+                        gearingFrameIndex?:number;
+                        
+                        gearRatio?:number;
+                        
+                        strategyToUse?:STRATEGYGEARINPOS;
+                        
+                        gearRatioMaster?:number;
+                        
+                        gearRatioSlave?:number;
+                        
+                        masterSyncPosition?:CartesianPosition;
+                        
+                        slaveSyncPosition?:CartesianPosition;
+                        
+                        syncActivationDelay?:number;
+            }
+            /** @ignore */
+            export type GearInPosStatus = {
+            
+                        /**  Percentage through move we currently are */
+                        percentageComplete?:number;
+                        
+                        gearInFailed?:boolean;
+                        
+                        gearedIn?:boolean;
+            }
+            /** @ignore */
+            export type GearInPosCommand = {
+            
+                        /**  Triggers the activity to stop and skip to the next in a task */
+                        skipToNext?:boolean;
+                        
+                        updatedRatioMaster?:number;
+                        
+                        updatedRatioSlave?:number;
+                        
+                        updatedMasterSyncPosition?:CartesianPosition;
+                        
+                        updatedSlaveSyncPosition?:CartesianPosition;
+            }
+            
+            export type StressTestConfig = {
+            
+            }
+            
+            export type StressTestStatus = {
+            
+            }
+            
+            export type StressTestCommand = {
+            
+            }
+            
+            export type StressTestStream = {
+            
+            }
+            /** 
+            This is a union discriminated by activityType. 
+             */
+            export type ActivityConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  IMPORTANT: This is the discriminator for the union */
+                        activityType?:ACTIVITYTYPE;
+                        /**  Index of trigger for skip-to-next */
+                        skipToNextTriggerIndex?:number;
+                        /**  Type of trigger for skip to next  */
+                        skipToNextTriggerType?:TRIGGERTYPE;
+    //              Start of Union
+                        /**  Configuration parameters for move joints activity */
+                         moveJoints?: MoveJointsConfig,
+                        /**  Configuration parameters for move joints at velocity activity */
+                         moveJointsAtVelocity?: MoveJointsAtVelocityConfig,
+                        /**  Configuration parameters for move line activity */
+                         moveLine?: MoveLineConfig,
+                        /**  Configuration parameters for move line at velocity activity */
+                         moveVectorAtVelocity?: MoveVectorAtVelocityConfig,
+                        /**  Configuration parameters for move arc activity */
+                         moveArc?: MoveArcConfig,
+                        /**  Configuration parameters for move to position activity */
+                         moveToPosition?: MoveToPositionConfig,
+                        /**  Configuration parameters for gear in position activity */
+                         gearInPos?: GearInPosConfig,
+                        /**  Configuration parameters for gear in velocity activity */
+                         gearInVelo?: GearInVeloConfig,
+                        /**  Configuration parameters for set dout activity */
+                         setDout?: SetDoutConfig,
+                        /**  Configuration parameters for set aout activity */
+                         setAout?: SetAoutConfig,
+                        /**  Configuration parameters for set aout activity */
+                         setIout?: SetIoutConfig,
+                        /**  Configuration parameters for dwell activity */
+                         dwell?: DwellConfig,
+                        /**  Configuration parameters for spindle activity */
+                         spindle?: SpindleActivityConfig,
+                        /**  Configuration parameters for wait on digital input activity */
+                         waitOnDigitalInput?: WaitOnDigitalInputConfig,
+                        /**  Configuration parameters for wait on integer input activity */
+                         waitOnIntegerInput?: WaitOnIntegerInputConfig,
+                        /**  Configuration parameters for wait on analog input activity */
+                         waitOnAnalogInput?: WaitOnAnalogInputConfig,
+                        /**  Configuration parameters for stress test activity */
+                         stressTest?: StressTestConfig,
+    //              End of Union
+            }
+            /** Status of an activity */
+            export type ActivityStatus = {
+            
+                        /**  Current state of the activity */
+                        state?:ACTIVITYSTATE;
+                        /**  User defined. Used by Glowbuzzer React to correlate activities */
+                        tag?:number;
+    //              Start of Union
+                        /**  @ignore */
+                         moveJoints?: MoveJointsStatus,
+                        /**  @ignore */
+                         moveJointsAtVelocity?: MoveJointsAtVelocityStatus,
+                        /**  @ignore */
+                         moveLine?: MoveLineStatus,
+                        /**  @ignore */
+                         moveVectorAtVelocity?: MoveVectorAtVelocityStatus,
+                        /**  @ignore */
+                         moveArc?: MoveArcStatus,
+                        /**  @ignore */
+                         moveToPosition?: MoveToPositionStatus,
+                        /**  @ignore */
+                         gearInPos?: GearInPosStatus,
+                        /**  @ignore */
+                         gearInVelo?: GearInVeloStatus,
+                        /**  @ignore */
+                         setDout?: SetDoutStatus,
+                        /**  @ignore */
+                         setAout?: SetAoutStatus,
+                        /**  @ignore */
+                         setIout?: SetIoutStatus,
+                        /**  @ignore */
+                         dwell?: DwellStatus,
+                        /**  @ignore */
+                         spindle?: SpindleActivityStatus,
+                        /**  @ignore */
+                         waitOnDigitalInput?: WaitOnDigitalInputStatus,
+                        /**  @ignore */
+                         waitOnIntegerInput?: WaitOnIntegerInputStatus,
+                        /**  @ignore */
+                         waitOnAnalogInput?: WaitOnAnalogInputStatus,
+                        /**  @ignore */
+                         stressTest?: StressTestStatus,
+    //              End of Union
+            }
+            /** 
+            This is a union. There is no discriminator for this union as the Activity will have been configured with a specific type of activity and these are the commands that act on this type.
+             */
+            export type ActivityCommand = {
+            
+    //              Start of Union
+                        /**  Move joints command object for activity */
+                         moveJoints?: MoveJointsCommand,
+                        /**  Move joints at velocity command object for activity */
+                         moveJointsAtVelocity?: MoveJointsAtVelocityCommand,
+                        /**  Move line command object for activity */
+                         moveLine?: MoveLineCommand,
+                        /**  Move line at velocity command object for activity */
+                         moveVectorAtVelocity?: MoveVectorAtVelocityCommand,
+                        /**  Move arc command object for activity */
+                         moveArc?: MoveArcCommand,
+                        /**  Move to position command object for activity */
+                         moveToPosition?: MoveToPositionCommand,
+                        /**  Gear in position command object for activity */
+                         gearInPos?: GearInPosCommand,
+                        /**  Gear in velocity command object for activity */
+                         gearInVelo?: GearInVeloCommand,
+                        /**  Set dout command object for activity */
+                         setDout?: SetDoutCommand,
+                        /**  Set aout command object for activity */
+                         setAout?: SetAoutCommand,
+                        /**  Set iout command object for activity */
+                         setIout?: SetIoutCommand,
+                        /**  Set dwell command object for activity */
+                         dwell?: DwellCommand,
+                        /**  Set spindle command object for activity */
+                         spindle?: SpindleActivityCommand,
+                        /**  Set wait on digital input command object for activity */
+                         waitOnDigitalInput?: WaitOnDigitalInputCommand,
+                        /**  Set wait on integer input command object for activity */
+                         waitOnIntegerInput?: WaitOnIntegerInputCommand,
+                        /**  Set wait on analog input command object for activity */
+                         waitOnAnalogInput?: WaitOnAnalogInputCommand,
+                        /**  Set stress test command object for activity */
+                         stressTest?: StressTestCommand,
+    //              End of Union
+                        /**  Trigger a skip to next on the activity */
+                        skipToNext?:boolean;
+            }
+            /** 
+            This is a union
+             */
+            export type ActivityStreamItem = {
+            
+                        /**  Discriminator - the type of activity */
+                        activityType?:ACTIVITYTYPE;
+                        /**  User defined. Used by Glowbuzzer React to track gcode line */
+                        tag?:number;
+    //              Start of Union
+                        /**  Parameters for a streamed move joints */
+                         moveJoints?: MoveJointsStream,
+                        /**  Parameters for a streamed move joints at velocity */
+                         moveJointsAtVelocity?: MoveJointsAtVelocityStream,
+                        /**  Parameters for a streamed move line */
+                         moveLine?: MoveLineStream,
+                        /**  Parameters for a streamed move line at velocity */
+                         moveVectorAtVelocity?: MoveVectorAtVelocityStream,
+                        /**  Parameters for a streamed move arc */
+                         moveArc?: MoveArcStream,
+                        /**  Parameters for a streamed move to position */
+                         moveToPosition?: MoveToPositionStream,
+                        /**  Parameters for a streamed set dout */
+                         setDout?: SetDoutCommand,
+                        /**  Parameters for a streamed set aout */
+                         setAout?: SetAoutCommand,
+                        /**  Parameters for a streamed set iout */
+                         setIout?: SetIoutCommand,
+                        /**  Parameters for a streamed dwell */
+                         dwell?: DwellConfig,
+                        /**  Parameters for a streamed spindle change */
+                         spindle?: SpindleStream,
+                        /**  Parameters for a streamed setting of tool offset */
+                         setToolOffset?: ToolOffsetConfig,
+                        /**  Parameters for a streamed wait on digital input */
+                         waitOnDigitalInput?: WaitOnDigitalInputConfig,
+                        /**  Parameters for a streamed wait on integer input */
+                         waitOnIntegerInput?: WaitOnIntegerInputConfig,
+                        /**  Parameters for a streamed wait on analog input */
+                         waitOnAnalogInput?: WaitOnAnalogInputConfig,
+                        /**  Parameters for a streamed stress test */
+                         stressTest?: StressTestStream,
+    //              End of Union
+            }
+            
+            export type SoloActivityConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+            }
+            export type SoloActivityStatus = ActivityStatus
+            export type SoloActivityCommand = ActivityStreamItem
+            /** 
+            Configuration parameters for frame
+             */
+            export type FramesConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Translation of the frame */
+                        translation?:Vector3;
+                        /**  Rotation of the frame */
+                        rotation?:Quat;
+                        /**  Link to the parent of the frame */
+                        parent?:number;
+                        /**  Whether the frame is referenced with an absolute or relative position */
+                        absRel?:FRAME_ABSRELATIVE;
+            }
+            /** 
+            Command parameters for frame
+             */
+            export type FramesCommand = {
+            
+                        /**  Translation to be applied to the frame */
+                        translation?:Vector3;
+                        /**  Rotation to be applied to the frame */
+                        rotation?:Quat;
+                        /**  Should the frame's value be overridden */
+                        override?:boolean;
+            }
+            
+            export type FramesStatus = {
+            
+            }
+            /** 
+            Configuration parameters for a tool
+             */
+            export type ToolConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Translation of the tool */
+                        translation?:Vector3;
+                        /**  Rotation of the tool */
+                        rotation?:Quat;
+                        /**  Diameter of the tool */
+                        diameter?:number;
+            }
+            
+            export type TriggerOnConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Index of analog input to act as a trigger */
+                        aiIndex?:number;
+                        /**  Threshold for analog in at which trigger occurs */
+                        threshold?:number;
+                        /**  Trigger occurs at threshold greater or less than */
+                        aiThreholdGreaterLessThan?:GTLT;
+                        /**  Index of digital input to act as a trigger */
+                        diIndex?:number;
+                        /**  State that triggers */
+                        diTriggerState?:ONOFF;
+                        /**  Filter for trigger */
+                        numberofTicksBeforeTrigger?:number;
+            }
+
+// TS-ONLY STRUCTS
 
