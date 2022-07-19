@@ -880,6 +880,9 @@ export * from "./gbc_extra"
                         /**  Value to set the iout (integer out) to */
                         setValue?:number;
             }
+            export type SetDoutStream = SetDoutConfig
+            export type SetAoutStream = SetAoutConfig
+            export type SetIoutStream = SetIoutConfig
             /** 
             Configuration parameters for moveJoints
              */
@@ -1113,50 +1116,50 @@ export * from "./gbc_extra"
             
             export type SetDoutConfig = {
             
+                        /**  The index of the digital output to set */
+                        doutToSet?:number;
+                        /**  The value to set */
+                        valueToSet?:boolean;
             }
             /** @ignore */
             export type SetDoutStatus = {
             
             }
-            
+            /** @ignore */
             export type SetDoutCommand = {
             
-                        
-                        doutToSet?:number;
-                        
-                        valueToSet?:boolean;
             }
             
             export type SetAoutConfig = {
             
+                        /**  The index of the analog output to set */
+                        aoutToSet?:number;
+                        /**  The value to set */
+                        valueToSet?:number;
             }
             /** @ignore */
             export type SetAoutStatus = {
             
             }
-            
+            /** @ignore */
             export type SetAoutCommand = {
             
-                        
-                        aoutToSet?:number;
-                        
-                        valueToSet?:number;
             }
             
             export type SetIoutConfig = {
             
+                        /**  The index of the integer output to set */
+                        ioutToSet?:number;
+                        /**  The value to set */
+                        valueToSet?:number;
             }
             /** @ignore */
             export type SetIoutStatus = {
             
             }
-            
+            /** @ignore */
             export type SetIoutCommand = {
             
-                        
-                        ioutToSet?:number;
-                        
-                        valueToSet?:number;
             }
             /** 
             Configuration parameters for dwell
@@ -1429,19 +1432,19 @@ export * from "./gbc_extra"
                         
                         updatedSlaveSyncPosition?:CartesianPosition;
             }
-            
+            /** @ignore */
             export type StressTestConfig = {
             
             }
-            
+            /** @ignore */
             export type StressTestStatus = {
             
             }
-            
+            /** @ignore */
             export type StressTestCommand = {
             
             }
-            
+            /** @ignore */
             export type StressTestStream = {
             
             }
@@ -1562,11 +1565,11 @@ export * from "./gbc_extra"
                          gearInPos?: GearInPosCommand,
                         /**  Gear in velocity command object for activity */
                          gearInVelo?: GearInVeloCommand,
-                        /**  Set dout command object for activity */
+                        /**  @ignore - no command properties */
                          setDout?: SetDoutCommand,
-                        /**  Set aout command object for activity */
+                        /**  @ignore - no command properties */
                          setAout?: SetAoutCommand,
-                        /**  Set iout command object for activity */
+                        /**  @ignore - no command properties */
                          setIout?: SetIoutCommand,
                         /**  Set dwell command object for activity */
                          dwell?: DwellCommand,
@@ -1607,11 +1610,11 @@ export * from "./gbc_extra"
                         /**  Parameters for a streamed move to position */
                          moveToPosition?: MoveToPositionStream,
                         /**  Parameters for a streamed set dout */
-                         setDout?: SetDoutCommand,
+                         setDout?: SetDoutStream,
                         /**  Parameters for a streamed set aout */
-                         setAout?: SetAoutCommand,
+                         setAout?: SetAoutStream,
                         /**  Parameters for a streamed set iout */
-                         setIout?: SetIoutCommand,
+                         setIout?: SetIoutStream,
                         /**  Parameters for a streamed dwell */
                          dwell?: DwellConfig,
                         /**  Parameters for a streamed spindle change */
