@@ -745,7 +745,7 @@ export * from "./gbc_extra"
                         rotation?:Quat;
             }
             /** 
-            Configuration parameters for Digital In (din)
+            Configuration parameters for a digital input
              */
             export type DinConfig = {
             
@@ -760,7 +760,7 @@ export * from "./gbc_extra"
              */
             export type DinStatus = {
             
-                        /**  State of the Digital In */
+                        /**  State of the digital input */
                         actValue?:ONOFF;
             }
             /** 
@@ -793,20 +793,20 @@ export * from "./gbc_extra"
                         setValue?:ONOFF;
             }
             /** 
-            Configuration parameters for Analog Ins (ain - floats)
+            Configuration parameters for an analogue input
              */
             export type AinConfig = {
             
                     /** Name for this configuration item */
                     name?: string
             
-                        /**  Flag to indicate this analog input should control the position of a virtual axis (joint) */
+                        /**  @ignore Flag to indicate this analog input should control the position of a virtual axis (joint) */
                         useForVirtualAxis?:boolean;
-                        /**  Index of joint used for virtual axis (sim) */
+                        /**  @ignore Index of joint used for virtual axis (sim) */
                         jointIndexForVirtualAxis?:number;
             }
             /** 
-            Status of Analog Ins (ain - floats)
+            Status of an analog input
              */
             export type AinStatus = {
             
@@ -843,7 +843,7 @@ export * from "./gbc_extra"
                         setValue?:number;
             }
             /** 
-            Configuration parameters for Integer Ins (iin)
+            Configuration parameters for an integer input
              */
             export type IinConfig = {
             
@@ -852,7 +852,7 @@ export * from "./gbc_extra"
             
             }
             /** 
-            Status of Analog Ins (ain - floats)
+            Status of an integer input
              */
             export type IinStatus = {
             
@@ -880,13 +880,10 @@ export * from "./gbc_extra"
                         /**  Value to set the iout (integer out) to */
                         setValue?:number;
             }
-            export type SetDoutStream = SetDoutConfig
-            export type SetAoutStream = SetAoutConfig
-            export type SetIoutStream = SetIoutConfig
             /** 
-            Configuration parameters for moveJoints
+            Parameters for move joints activity
              */
-            export type MoveJointsConfig = {
+            export type MoveJointsActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -898,21 +895,21 @@ export * from "./gbc_extra"
                         moveParamsIndex?:number;
             }
             /** @ignore */
-            export type MoveJointsStatus = {
+            export type MoveJointsActivityStatus = {
             
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
             }
             /** 
-            Command parameters for MoveJoints
+            Command for a running move joints activity
              */
-            export type MoveJointsCommand = {
+            export type MoveJointsActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed moveJoints
+            Parameters for a streamed move joints activity
              */
             export type MoveJointsStream = {
             
@@ -926,9 +923,9 @@ export * from "./gbc_extra"
                         moveParams?:MoveParametersConfig;
             }
             /** 
-            Configuration parameters for MoveJointsAtVelocity
+            Parameters for a move joints at velocity activity
              */
-            export type MoveJointsAtVelocityConfig = {
+            export type MoveJointsAtVelocityActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -938,19 +935,19 @@ export * from "./gbc_extra"
                         jointVelocityArray?:number[];
             }
             /** @ignore */
-            export type MoveJointsAtVelocityStatus = {
+            export type MoveJointsAtVelocityActivityStatus = {
             
             }
             /** 
-            Command parameters for MoveJointsAtVelocity
+            Command for a running move joints at velocity activity
              */
-            export type MoveJointsAtVelocityCommand = {
+            export type MoveJointsAtVelocityActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed MoveJointsAtVelocity
+            Parameters for a streamed move joints at velocity activity
              */
             export type MoveJointsAtVelocityStream = {
             
@@ -962,9 +959,9 @@ export * from "./gbc_extra"
                         jointVelocityArray?:number[];
             }
             /** 
-            Configuration parameters for moveLine
+            Parameters for a move line activity
              */
-            export type MoveLineConfig = {
+            export type MoveLineActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -976,19 +973,19 @@ export * from "./gbc_extra"
                         superimposedIndex?:number;
             }
             /** @ignore */
-            export type MoveLineStatus = {
+            export type MoveLineActivityStatus = {
             
             }
             /** 
-            Command parameters for MoveLine
+            Command for a running move line activity
              */
-            export type MoveLineCommand = {
+            export type MoveLineActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed moveLine
+            Parameters for a streamed move line activity
              */
             export type MoveLineStream = {
             
@@ -1002,9 +999,9 @@ export * from "./gbc_extra"
                         superimposedIndex?:number;
             }
             /** 
-            Configuration parameters for moveVectorAtVelocity.
+            Parameters for a move vector at velocity activity
              */
-            export type MoveVectorAtVelocityConfig = {
+            export type MoveVectorAtVelocityActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -1014,19 +1011,19 @@ export * from "./gbc_extra"
                         vector?:CartesianVector;
             }
             /** @ignore */
-            export type MoveVectorAtVelocityStatus = {
+            export type MoveVectorAtVelocityActivityStatus = {
             
             }
             /** 
-            Command parameters for moveVectorAtVelocity
+            Command for a running move vector at velocity activity
              */
-            export type MoveVectorAtVelocityCommand = {
+            export type MoveVectorAtVelocityActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed moveVectorAtVelocity
+            Parameters for a streamed move vector at velocity activity
              */
             export type MoveVectorAtVelocityStream = {
             
@@ -1038,9 +1035,9 @@ export * from "./gbc_extra"
                         vector?:CartesianVector;
             }
             /** 
-            Configuration parameters for moveArc.
+            Parameters for a move arc activity
              */
-            export type MoveArcConfig = {
+            export type MoveArcActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -1052,19 +1049,19 @@ export * from "./gbc_extra"
                         arc?:ArcsConfig;
             }
             /** @ignore */
-            export type MoveArcStatus = {
+            export type MoveArcActivityStatus = {
             
             }
             /** 
-            Command parameters for moveArc
+            Command for a running move arc activity
              */
-            export type MoveArcCommand = {
+            export type MoveArcActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed moveArc
+            Parameters for a streamed move arc activity
              */
             export type MoveArcStream = {
             
@@ -1078,9 +1075,9 @@ export * from "./gbc_extra"
                         superimposedIndex?:number;
             }
             /** 
-            Configuration parameters for moveToPosition
+            Parameters for a move to position activity
              */
-            export type MoveToPositionConfig = {
+            export type MoveToPositionActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -1090,19 +1087,19 @@ export * from "./gbc_extra"
                         cartesianPosition?:CartesianPositionsConfig;
             }
             /** @ignore */
-            export type MoveToPositionStatus = {
+            export type MoveToPositionActivityStatus = {
             
             }
             /** 
-            Command parameters for moveToPosition
+            Command for a running move to position activity
              */
-            export type MoveToPositionCommand = {
+            export type MoveToPositionActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Parameters for streamed moveToPosition
+            Parameters for a streamed move to position activity
              */
             export type MoveToPositionStream = {
             
@@ -1113,8 +1110,10 @@ export * from "./gbc_extra"
                         
                         cartesianPosition?:CartesianPositionsConfig;
             }
-            
-            export type SetDoutConfig = {
+            /** 
+            Parameters for a set digital output activity
+             */
+            export type SetDoutActivityParams = {
             
                         /**  The index of the digital output to set */
                         doutToSet?:number;
@@ -1122,15 +1121,17 @@ export * from "./gbc_extra"
                         valueToSet?:boolean;
             }
             /** @ignore */
-            export type SetDoutStatus = {
+            export type SetDoutActivityStatus = {
             
             }
             /** @ignore */
-            export type SetDoutCommand = {
+            export type SetDoutActivityCommand = {
             
             }
-            
-            export type SetAoutConfig = {
+            /** 
+            Parameters for a set analog output activity
+             */
+            export type SetAoutActivityParams = {
             
                         /**  The index of the analog output to set */
                         aoutToSet?:number;
@@ -1138,15 +1139,17 @@ export * from "./gbc_extra"
                         valueToSet?:number;
             }
             /** @ignore */
-            export type SetAoutStatus = {
+            export type SetAoutActivityStatus = {
             
             }
             /** @ignore */
-            export type SetAoutCommand = {
+            export type SetAoutActivityCommand = {
             
             }
-            
-            export type SetIoutConfig = {
+            /** 
+            Parameters for a set integer output activity
+             */
+            export type SetIoutActivityParams = {
             
                         /**  The index of the integer output to set */
                         ioutToSet?:number;
@@ -1154,35 +1157,35 @@ export * from "./gbc_extra"
                         valueToSet?:number;
             }
             /** @ignore */
-            export type SetIoutStatus = {
+            export type SetIoutActivityStatus = {
             
             }
             /** @ignore */
-            export type SetIoutCommand = {
+            export type SetIoutActivityCommand = {
             
             }
             /** 
-            Configuration parameters for dwell
+            Parameters for a dwell activity
              */
-            export type DwellConfig = {
+            export type DwellActivityParams = {
             
                         /**  Number of ticks that you want to wait for */
                         ticksToDwell?:number;
             }
             /** @ignore */
-            export type DwellStatus = {
+            export type DwellActivityStatus = {
             
             }
             /** 
-            Command parameters for dwell
+            Command for a running dwell activity
              */
-            export type DwellCommand = {
+            export type DwellActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Configuration parameters for spindle
+            Configuration for a spindle
              */
             export type SpindleConfig = {
             
@@ -1199,9 +1202,9 @@ export * from "./gbc_extra"
                         speedAnalogOutIndex?:number;
             }
             /** 
-            Configuration parameters for spindle
+            Parameters for a spindle activity
              */
-            export type SpindleActivityConfig = {
+            export type SpindleActivityParams = {
             
                         /**  Index of the spindle in the configuration */
                         spindleIndex?:number;
@@ -1217,29 +1220,15 @@ export * from "./gbc_extra"
             
             }
             /** 
-            Command parameters for spindle
+            @ignore Command parameters for spindle
              */
             export type SpindleActivityCommand = {
             
             }
             /** 
-            Parameters for streamed spindle activity
+            Parameters for a wait on digital input activity
              */
-            export type SpindleStream = {
-            
-                        /**  Index of the spindle in the configuration */
-                        spindleIndex?:number;
-                        /**  Whether to enable or disable the spindle */
-                        enable?:boolean;
-                        /**  Direction of the spindle */
-                        direction?:SPINDLEDIRECTION;
-                        /**  Speed of the spindle */
-                        speed?:number;
-            }
-            /** 
-            Configuration parameters for waitOnDigitalInput
-             */
-            export type WaitOnDigitalInputConfig = {
+            export type WaitOnDigitalInputActivityParams = {
             
                         /**  Index of the digital input */
                         index?:number;
@@ -1247,23 +1236,23 @@ export * from "./gbc_extra"
                         triggerType?:TRIGGERTYPE;
             }
             /** @ignore */
-            export type WaitOnDigitalInputStatus = {
+            export type WaitOnDigitalInputActivityStatus = {
             
                         /**  Signals the waitOnDigitalInput is in waiting state */
                         waiting?:boolean;
             }
             /** 
-            Command parameters for waitOnDigitalInput
+            Command for a running wait on digital input activity
              */
-            export type WaitOnDigitalInputCommand = {
+            export type WaitOnDigitalInputActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Configuration parameters for waitOnIntegerInput
+            Parameters for a wait on integer input activity
              */
-            export type WaitOnIntegerInputConfig = {
+            export type WaitOnIntegerInputActivityParams = {
             
                         /**  Index of the integer input */
                         index?:number;
@@ -1273,23 +1262,23 @@ export * from "./gbc_extra"
                         condition?:GTLT;
             }
             /** @ignore */
-            export type WaitOnIntegerInputStatus = {
+            export type WaitOnIntegerInputActivityStatus = {
             
                         /**  Signals the waitOnIntegerInput is in waiting state */
                         waiting?:boolean;
             }
             /** 
-            Command parameters for waitOnIntegerInput
+            Command for a running wait on integer input activity
              */
-            export type WaitOnIntegerInputCommand = {
+            export type WaitOnIntegerInputActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Configuration parameters for waitOnAnalogInput
+            Parameters for a wait on analog input activity
              */
-            export type WaitOnAnalogInputConfig = {
+            export type WaitOnAnalogInputActivityParams = {
             
                         /**  Index of the analog input */
                         index?:number;
@@ -1299,23 +1288,23 @@ export * from "./gbc_extra"
                         condition?:GTLT;
             }
             /** @ignore */
-            export type WaitOnAnalogInputStatus = {
+            export type WaitOnAnalogInputActivityStatus = {
             
                         /**  Signals the waitOnAnalogInput is in waiting state */
                         waiting?:boolean;
             }
             /** 
-            Command parameters for waitOnAnalogInput
+            Command for a running wait on analog input activity
              */
-            export type WaitOnAnalogInputCommand = {
+            export type WaitOnAnalogInputActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** 
-            Configuration parameters for tool offset
+            Parameters for a change of tool offset activity
              */
-            export type ToolOffsetConfig = {
+            export type ToolOffsetActivityParams = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
@@ -1323,7 +1312,7 @@ export * from "./gbc_extra"
                         toolIndex?:number;
             }
             /** @ignore */
-            export type LatchPosConfig = {
+            export type LatchPosActivityParams = {
             
                         
                         cartesianLatch?:boolean;
@@ -1335,7 +1324,7 @@ export * from "./gbc_extra"
                         latchTriggerIndex?:number;
             }
             /** @ignore */
-            export type LatchPosStatus = {
+            export type LatchPosActivityStatus = {
             
                         
                         latched?:boolean;
@@ -1345,13 +1334,13 @@ export * from "./gbc_extra"
                         latchedJointArray?:JointPosition[];
             }
             /** @ignore */
-            export type LatchPosCommand = {
+            export type LatchPosActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
             /** @ignore */
-            export type GearInVeloConfig = {
+            export type GearInVeloActivityParams = {
             
                         /**  Kinematics configuration to use for the master */
                         masterKinematicsConfigurationIndex?:number;
@@ -1365,7 +1354,7 @@ export * from "./gbc_extra"
                         syncActivationDelay?:number;
             }
             /** @ignore */
-            export type GearInVeloStatus = {
+            export type GearInVeloActivityStatus = {
             
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
@@ -1375,7 +1364,7 @@ export * from "./gbc_extra"
                         gearedIn?:boolean;
             }
             /** @ignore */
-            export type GearInVeloCommand = {
+            export type GearInVeloActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
@@ -1385,7 +1374,7 @@ export * from "./gbc_extra"
                         updateRation?:boolean;
             }
             /** @ignore */
-            export type GearInPosConfig = {
+            export type GearInPosActivityParams = {
             
                         /**  Kinematics configuration to use for the master */
                         masterKinematicsConfigurationIndex?:number;
@@ -1409,7 +1398,7 @@ export * from "./gbc_extra"
                         syncActivationDelay?:number;
             }
             /** @ignore */
-            export type GearInPosStatus = {
+            export type GearInPosActivityStatus = {
             
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
@@ -1419,7 +1408,7 @@ export * from "./gbc_extra"
                         gearedIn?:boolean;
             }
             /** @ignore */
-            export type GearInPosCommand = {
+            export type GearInPosActivityCommand = {
             
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
@@ -1433,19 +1422,19 @@ export * from "./gbc_extra"
                         updatedSlaveSyncPosition?:CartesianPosition;
             }
             /** @ignore */
-            export type StressTestConfig = {
+            export type StressTestActivityParams = {
             
             }
             /** @ignore */
-            export type StressTestStatus = {
+            export type StressTestActivityStatus = {
             
             }
             /** @ignore */
-            export type StressTestCommand = {
+            export type StressTestActivityCommand = {
             
             }
             /** @ignore */
-            export type StressTestStream = {
+            export type StressTestActivityStream = {
             
             }
             /** 
@@ -1464,39 +1453,39 @@ export * from "./gbc_extra"
                         skipToNextTriggerType?:TRIGGERTYPE;
     //              Start of Union
                         /**  Configuration parameters for move joints activity */
-                         moveJoints?: MoveJointsConfig,
+                         moveJoints?: MoveJointsActivityParams,
                         /**  Configuration parameters for move joints at velocity activity */
-                         moveJointsAtVelocity?: MoveJointsAtVelocityConfig,
+                         moveJointsAtVelocity?: MoveJointsAtVelocityActivityParams,
                         /**  Configuration parameters for move line activity */
-                         moveLine?: MoveLineConfig,
+                         moveLine?: MoveLineActivityParams,
                         /**  Configuration parameters for move line at velocity activity */
-                         moveVectorAtVelocity?: MoveVectorAtVelocityConfig,
+                         moveVectorAtVelocity?: MoveVectorAtVelocityActivityParams,
                         /**  Configuration parameters for move arc activity */
-                         moveArc?: MoveArcConfig,
+                         moveArc?: MoveArcActivityParams,
                         /**  Configuration parameters for move to position activity */
-                         moveToPosition?: MoveToPositionConfig,
-                        /**  Configuration parameters for gear in position activity */
-                         gearInPos?: GearInPosConfig,
-                        /**  Configuration parameters for gear in velocity activity */
-                         gearInVelo?: GearInVeloConfig,
+                         moveToPosition?: MoveToPositionActivityParams,
+                        /**  @ignore Configuration parameters for gear in position activity */
+                         gearInPos?: GearInPosActivityParams,
+                        /**  @ignore Configuration parameters for gear in velocity activity */
+                         gearInVelo?: GearInVeloActivityParams,
                         /**  Configuration parameters for set dout activity */
-                         setDout?: SetDoutConfig,
+                         setDout?: SetDoutActivityParams,
                         /**  Configuration parameters for set aout activity */
-                         setAout?: SetAoutConfig,
+                         setAout?: SetAoutActivityParams,
                         /**  Configuration parameters for set aout activity */
-                         setIout?: SetIoutConfig,
+                         setIout?: SetIoutActivityParams,
                         /**  Configuration parameters for dwell activity */
-                         dwell?: DwellConfig,
+                         dwell?: DwellActivityParams,
                         /**  Configuration parameters for spindle activity */
-                         spindle?: SpindleActivityConfig,
+                         spindle?: SpindleActivityParams,
                         /**  Configuration parameters for wait on digital input activity */
-                         waitOnDigitalInput?: WaitOnDigitalInputConfig,
+                         waitOnDigitalInput?: WaitOnDigitalInputActivityParams,
                         /**  Configuration parameters for wait on integer input activity */
-                         waitOnIntegerInput?: WaitOnIntegerInputConfig,
+                         waitOnIntegerInput?: WaitOnIntegerInputActivityParams,
                         /**  Configuration parameters for wait on analog input activity */
-                         waitOnAnalogInput?: WaitOnAnalogInputConfig,
+                         waitOnAnalogInput?: WaitOnAnalogInputActivityParams,
                         /**  Configuration parameters for stress test activity */
-                         stressTest?: StressTestConfig,
+                         stressTest?: StressTestActivityParams,
     //              End of Union
             }
             /** Status of an activity */
@@ -1508,39 +1497,39 @@ export * from "./gbc_extra"
                         tag?:number;
     //              Start of Union
                         /**  @ignore */
-                         moveJoints?: MoveJointsStatus,
+                         moveJoints?: MoveJointsActivityStatus,
                         /**  @ignore */
-                         moveJointsAtVelocity?: MoveJointsAtVelocityStatus,
+                         moveJointsAtVelocity?: MoveJointsAtVelocityActivityStatus,
                         /**  @ignore */
-                         moveLine?: MoveLineStatus,
+                         moveLine?: MoveLineActivityStatus,
                         /**  @ignore */
-                         moveVectorAtVelocity?: MoveVectorAtVelocityStatus,
+                         moveVectorAtVelocity?: MoveVectorAtVelocityActivityStatus,
                         /**  @ignore */
-                         moveArc?: MoveArcStatus,
+                         moveArc?: MoveArcActivityStatus,
                         /**  @ignore */
-                         moveToPosition?: MoveToPositionStatus,
+                         moveToPosition?: MoveToPositionActivityStatus,
                         /**  @ignore */
-                         gearInPos?: GearInPosStatus,
+                         gearInPos?: GearInPosActivityStatus,
                         /**  @ignore */
-                         gearInVelo?: GearInVeloStatus,
+                         gearInVelo?: GearInVeloActivityStatus,
                         /**  @ignore */
-                         setDout?: SetDoutStatus,
+                         setDout?: SetDoutActivityStatus,
                         /**  @ignore */
-                         setAout?: SetAoutStatus,
+                         setAout?: SetAoutActivityStatus,
                         /**  @ignore */
-                         setIout?: SetIoutStatus,
+                         setIout?: SetIoutActivityStatus,
                         /**  @ignore */
-                         dwell?: DwellStatus,
+                         dwell?: DwellActivityStatus,
                         /**  @ignore */
                          spindle?: SpindleActivityStatus,
                         /**  @ignore */
-                         waitOnDigitalInput?: WaitOnDigitalInputStatus,
+                         waitOnDigitalInput?: WaitOnDigitalInputActivityStatus,
                         /**  @ignore */
-                         waitOnIntegerInput?: WaitOnIntegerInputStatus,
+                         waitOnIntegerInput?: WaitOnIntegerInputActivityStatus,
                         /**  @ignore */
-                         waitOnAnalogInput?: WaitOnAnalogInputStatus,
+                         waitOnAnalogInput?: WaitOnAnalogInputActivityStatus,
                         /**  @ignore */
-                         stressTest?: StressTestStatus,
+                         stressTest?: StressTestActivityStatus,
     //              End of Union
             }
             /** 
@@ -1550,39 +1539,39 @@ export * from "./gbc_extra"
             
     //              Start of Union
                         /**  Move joints command object for activity */
-                         moveJoints?: MoveJointsCommand,
+                         moveJoints?: MoveJointsActivityCommand,
                         /**  Move joints at velocity command object for activity */
-                         moveJointsAtVelocity?: MoveJointsAtVelocityCommand,
+                         moveJointsAtVelocity?: MoveJointsAtVelocityActivityCommand,
                         /**  Move line command object for activity */
-                         moveLine?: MoveLineCommand,
+                         moveLine?: MoveLineActivityCommand,
                         /**  Move line at velocity command object for activity */
-                         moveVectorAtVelocity?: MoveVectorAtVelocityCommand,
+                         moveVectorAtVelocity?: MoveVectorAtVelocityActivityCommand,
                         /**  Move arc command object for activity */
-                         moveArc?: MoveArcCommand,
+                         moveArc?: MoveArcActivityCommand,
                         /**  Move to position command object for activity */
-                         moveToPosition?: MoveToPositionCommand,
+                         moveToPosition?: MoveToPositionActivityCommand,
                         /**  Gear in position command object for activity */
-                         gearInPos?: GearInPosCommand,
+                         gearInPos?: GearInPosActivityCommand,
                         /**  Gear in velocity command object for activity */
-                         gearInVelo?: GearInVeloCommand,
+                         gearInVelo?: GearInVeloActivityCommand,
                         /**  @ignore - no command properties */
-                         setDout?: SetDoutCommand,
+                         setDout?: SetDoutActivityCommand,
                         /**  @ignore - no command properties */
-                         setAout?: SetAoutCommand,
+                         setAout?: SetAoutActivityCommand,
                         /**  @ignore - no command properties */
-                         setIout?: SetIoutCommand,
+                         setIout?: SetIoutActivityCommand,
                         /**  Set dwell command object for activity */
-                         dwell?: DwellCommand,
+                         dwell?: DwellActivityCommand,
                         /**  Set spindle command object for activity */
                          spindle?: SpindleActivityCommand,
                         /**  Set wait on digital input command object for activity */
-                         waitOnDigitalInput?: WaitOnDigitalInputCommand,
+                         waitOnDigitalInput?: WaitOnDigitalInputActivityCommand,
                         /**  Set wait on integer input command object for activity */
-                         waitOnIntegerInput?: WaitOnIntegerInputCommand,
+                         waitOnIntegerInput?: WaitOnIntegerInputActivityCommand,
                         /**  Set wait on analog input command object for activity */
-                         waitOnAnalogInput?: WaitOnAnalogInputCommand,
+                         waitOnAnalogInput?: WaitOnAnalogInputActivityCommand,
                         /**  Set stress test command object for activity */
-                         stressTest?: StressTestCommand,
+                         stressTest?: StressTestActivityCommand,
     //              End of Union
                         /**  Trigger a skip to next on the activity */
                         skipToNext?:boolean;
@@ -1610,25 +1599,25 @@ export * from "./gbc_extra"
                         /**  Parameters for a streamed move to position */
                          moveToPosition?: MoveToPositionStream,
                         /**  Parameters for a streamed set dout */
-                         setDout?: SetDoutStream,
+                         setDout?: SetDoutActivityParams,
                         /**  Parameters for a streamed set aout */
-                         setAout?: SetAoutStream,
+                         setAout?: SetAoutActivityParams,
                         /**  Parameters for a streamed set iout */
-                         setIout?: SetIoutStream,
+                         setIout?: SetIoutActivityParams,
                         /**  Parameters for a streamed dwell */
-                         dwell?: DwellConfig,
+                         dwell?: DwellActivityParams,
                         /**  Parameters for a streamed spindle change */
-                         spindle?: SpindleStream,
+                         spindle?: SpindleActivityParams,
                         /**  Parameters for a streamed setting of tool offset */
-                         setToolOffset?: ToolOffsetConfig,
+                         setToolOffset?: ToolOffsetActivityParams,
                         /**  Parameters for a streamed wait on digital input */
-                         waitOnDigitalInput?: WaitOnDigitalInputConfig,
+                         waitOnDigitalInput?: WaitOnDigitalInputActivityParams,
                         /**  Parameters for a streamed wait on integer input */
-                         waitOnIntegerInput?: WaitOnIntegerInputConfig,
+                         waitOnIntegerInput?: WaitOnIntegerInputActivityParams,
                         /**  Parameters for a streamed wait on analog input */
-                         waitOnAnalogInput?: WaitOnAnalogInputConfig,
+                         waitOnAnalogInput?: WaitOnAnalogInputActivityParams,
                         /**  Parameters for a streamed stress test */
-                         stressTest?: StressTestStream,
+                         stressTest?: StressTestActivityStream,
     //              End of Union
             }
             
@@ -1669,7 +1658,7 @@ export * from "./gbc_extra"
                         /**  Should the frame's value be overridden */
                         override?:boolean;
             }
-            
+            /** @ignore */
             export type FramesStatus = {
             
             }

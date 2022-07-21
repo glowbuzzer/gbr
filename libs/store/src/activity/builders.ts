@@ -8,26 +8,26 @@ import {
     ArcsConfig,
     ARCTYPE,
     CartesianPosition,
-    DwellConfig,
+    DwellActivityParams,
     GTLT,
     MoveJointsAtVelocityStream,
     MoveJointsStream,
-    MoveVectorAtVelocityStream,
     MoveLineStream,
     MoveParametersConfig,
     MoveToPositionStream,
+    MoveVectorAtVelocityStream,
     POSITIONREFERENCE,
     Quat,
-    SetAoutCommand,
-    SetDoutCommand,
-    SetIoutCommand,
+    SetAoutActivityParams,
+    SetDoutActivityParams,
+    SetIoutActivityParams,
+    SpindleActivityParams,
     SPINDLEDIRECTION,
-    SpindleStream,
     TRIGGERTYPE,
     Vector3,
-    WaitOnAnalogInputConfig,
-    WaitOnDigitalInputConfig,
-    WaitOnIntegerInputConfig
+    WaitOnAnalogInputActivityParams,
+    WaitOnDigitalInputActivityParams,
+    WaitOnIntegerInputActivityParams
 } from "../gbc"
 import { Euler, Quaternion } from "three"
 
@@ -121,7 +121,7 @@ export class DwellActivityBuilder extends ActivityBuilder {
         return this
     }
 
-    protected build(): DwellConfig {
+    protected build(): DwellActivityParams {
         return {
             ticksToDwell: this._ticksToDwell
         }
@@ -156,7 +156,7 @@ export class SpindleActivityBuilder extends ActivityBuilder {
         return this
     }
 
-    protected build(): SpindleStream {
+    protected build(): SpindleActivityParams {
         return {
             spindleIndex: this._spindleIndex,
             speed: this._speed,
@@ -185,7 +185,7 @@ export class WaitOnDigitalInputBuilder extends WaitOnBuilder {
         return this
     }
 
-    protected build(): WaitOnDigitalInputConfig {
+    protected build(): WaitOnDigitalInputActivityParams {
         return {
             index: this._index,
             triggerType: this._triggerType
@@ -219,7 +219,7 @@ export class WaitOnIntegerInputBuilder extends WaitOnNumericBuilder {
     protected commandName = "waitOnIntegerInput"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_WAITON_IIN
 
-    protected build(): WaitOnIntegerInputConfig {
+    protected build(): WaitOnIntegerInputActivityParams {
         return {
             index: this._index,
             ...super.build()
@@ -231,7 +231,7 @@ export class WaitOnAnalogInputBuilder extends WaitOnNumericBuilder {
     protected commandName = "waitOnAnalogInput"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_WAITON_AIN
 
-    protected build(): WaitOnAnalogInputConfig {
+    protected build(): WaitOnAnalogInputActivityParams {
         return {
             index: this._index,
             ...super.build()
@@ -509,7 +509,7 @@ export class DoutBuilder extends SetOutputBuilder {
         return this
     }
 
-    protected build(): SetDoutCommand {
+    protected build(): SetDoutActivityParams {
         return {
             doutToSet: this._doutToSet,
             ...super.build()
@@ -528,7 +528,7 @@ export class AoutBuilder extends SetOutputBuilder {
         return this
     }
 
-    protected build(): SetAoutCommand {
+    protected build(): SetAoutActivityParams {
         return {
             aoutToSet: this._aoutToSet,
             ...super.build()
@@ -547,7 +547,7 @@ export class IoutBuilder extends SetOutputBuilder {
         return this
     }
 
-    protected build(): SetIoutCommand {
+    protected build(): SetIoutActivityParams {
         return {
             ioutToSet: this._ioutToSet,
             ...super.build()
