@@ -21,10 +21,10 @@ jobs:
         steps:
             -   uses: actions/checkout@v1
 
-            -   uses: actions/setup-node@v1
+            -   uses: actions/setup-node@v3
                 with:
-                    node-version: "14.x"
-                    cache: "pnpm"
+                    node-version: 16
+                    cache: pnpm
 
             #            -   uses: pnpm/action-setup@v2.0.1
             #                with:
