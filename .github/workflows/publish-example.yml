@@ -1,0 +1,43 @@
+name: Publish examples/generic
+on:
+    workflow_call:
+        inputs:
+            example:
+                # which example to build/publish
+                required: true
+                type: string
+            site:
+                # website address
+                required: true
+                type: string
+            distribution:
+                # cloudfront distribution id
+                required: true
+                type: string
+
+jobs:
+    deploy:
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/checkout@v1
+
+            -   uses: actions/setup-node@v1
+                with:
+                    node-version: "14.x"
+                    cache: "pnpm"
+
+            #            -   uses: pnpm/action-setup@v2.0.1
+            #                with:
+            #                    version: 6.13.0
+
+            -   name: Install packages
+                run: pnpm install
+
+            -   name: Build app
+                run: ./node_modules/.bin/nx build ${{ inputs.example }} --baseHref=/examples/${{ inputs.example }}/
+
+            -   name: Deploy site
+                run: ./examples/deploy-example.sh generic ${{ inputs.site }} ${{ inputs.distribution }}
+                env:
+                    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

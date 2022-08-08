@@ -10,36 +10,10 @@ on:
             - "examples/generic/**"
 
 jobs:
-    deploy:
-        runs-on: ubuntu-18.04
-        steps:
-            -   uses: actions/checkout@v1
-
-            -   name: Cache pnpm modules
-                uses: actions/cache@v2
-                with:
-                    path: ~/.pnpm-store
-                    key: ${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
-                    restore-keys: |
-                        ${{ runner.os }}-
-
-            -   uses: actions/setup-node@v1
-                with:
-                    node-version: "14.x"
-
-            -   uses: pnpm/action-setup@v2.0.1
-                with:
-                    version: 6.13.0
-
-            -   name: Install packages
-                run: pnpm install
-
-            -   name: Build app
-                run: ./node_modules/.bin/nx build generic --baseHref=/examples/generic/
-
-            -   name: Deploy site
-                run: ./examples/deploy-example.sh generic preview.glowbuzzer.com E284GBH6OG76DV
-                env:
-                    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-                    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#                    BUILD_NUM: 1.${{ github.run_number }}
+    publish:
+        uses: ./.github/workflows/publish-example.yml
+        with:
+            example: generic
+            site: www.glowbuzzer.com
+            distribution: E284GBH6OG76DV
+        secrets: inherit

@@ -1,6 +1,8 @@
-# Glowbuzzer React Generic Example
+# Glowbuzzer React Staubli Example
 
-This example demonstrates a robot application using the Glowbuzzer React framework. The application has a single robot kinematics configuration using Stauble TX40 robot kinematics. It also shows how a graphical robot model can be added to the tool path display. 
+This example demonstrates a robot application using the Glowbuzzer React framework. 
+The application has a single robot kinematics configuration using Stauble TX40 robot kinematics. 
+It also shows how a graphical robot model can be added to the tool path display. 
 
 To run this example:
 
