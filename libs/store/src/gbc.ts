@@ -86,7 +86,7 @@ export * from "./gbc_extra"
   ACTIVITYTYPE_MOVEVECTORATVELOCITY ,
         /**  Move a kinematics configuration&#x27;s tool along an arc in cartesian space to a given position (with orientation) */
   ACTIVITYTYPE_MOVEARC ,
-        /**  Reserved for future use */
+        /**  @ignore Reserved for future use */
   ACTIVITYTYPE_RESERVED1 ,
         /**  Move a kinematics configuration&#x27;s tool to given position (with orientation) in joint space */
   ACTIVITYTYPE_MOVETOPOSITION ,
@@ -106,17 +106,17 @@ export * from "./gbc_extra"
   ACTIVITYTYPE_WAITON_IIN ,
         /**  Wait for an analog input */
   ACTIVITYTYPE_WAITON_AIN ,
-        /**  Gear in a master and slave specifying position */
+        /**  @ignore Gear in a master and slave specifying position */
   ACTIVITYTYPE_GEARINPOS ,
-        /**  Gear in a master and slave specifying velocity */
+        /**  @ignore Gear in a master and slave specifying velocity */
   ACTIVITYTYPE_GEARINVELO ,
-        /**  Switch a robot&#x27;s configuration */
+        /**  @ignore Switch a robot&#x27;s configuration */
   ACTIVITYTYPE_SWITCHPOSE ,
         /**  Set tool offset */
   ACTIVITYTYPE_TOOLOFFSET ,
-        /**  Latch the value of a position */
+        /**  @ignore Latch the value of a position */
   ACTIVITYTYPE_LATCH ,
-        /**  Internal stress test activity */
+        /**  @ignore Internal stress test activity */
   ACTIVITYTYPE_STRESSTEST ,
     }
     export enum ACTIVITYSTATE {
@@ -132,10 +132,14 @@ export * from "./gbc_extra"
   ACTIVITY_CANCELLED ,
     }
     export enum STRATEGYGEARINPOS {
-        PHASESHIFT,
-        EARLY,
-        LATE,
-        SLOW,
+        /**  @ignore */
+  PHASESHIFT ,
+        /**  @ignore */
+  EARLY ,
+        /**  @ignore */
+  LATE ,
+        /**  @ignore */
+  SLOW ,
     }
     export enum TRIGGERTYPE {
         /**  Rising edge trigger (activates on the rising edge of a signal 0-&gt;1 */

@@ -50,8 +50,8 @@ export abstract class ActivityBuilder {
         this.tag = controller.nextTag
     }
 
-    /** @ignore */
-    get command() {
+    /** Builds the activity and returns an object that can be serialised and sent to GBC */
+    get command(): any {
         const command = {
             activityType: this.activityType,
             tag: this.tag
@@ -73,10 +73,16 @@ export abstract class ActivityBuilder {
         }
     }
 
+    /** The name of the command. */
     protected abstract get commandName(): string
 
+    /** The type of activity. */
     protected abstract get activityType(): ACTIVITYTYPE
 
+    /**
+     * Build the activity parameters
+     * @return An object containing any parameters that will be sent for the activity.
+     */
     protected abstract build()
 }
 
