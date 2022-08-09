@@ -4,7 +4,7 @@ on:
         branches:
             - main
         paths:
-            - ".github/workflows/publish-examples-generic.yml"
+            - ".github/workflows/publish-example-preview-generic.yml"
             - ".github/workflows/publish-example.yml"
             - "package.json"
             - "libs/**"
@@ -15,6 +15,6 @@ jobs:
         uses: ./.github/workflows/publish-example.yml
         with:
             example: generic
-            site: www.glowbuzzer.com
+            site: preview.glowbuzzer.com
             distribution: E284GBH6OG76DV
         secrets: inherit

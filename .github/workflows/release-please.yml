@@ -1,0 +1,70 @@
+name: gbc-rp
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  release-please:
+    runs-on: ubuntu-22.04
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          release-type: node
+          package-name: gbr
+#          changelog-types: '[ { "type": "feat", "section": "Feature" }, { "type": "fix", "section": "Bug Fix" }, { "type": "docs", "section": "Documentation" }, { "type": "enh", "section": "Enhancement" }, { "type": "chore", "section": "Chore" } ]'
+
+  rpi:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.GH_PAT }}
+          submodules: true
+
+      - name: Generate changelog
+        run: npm install && npm run changelog
+
+      - name: Cross compile
+        uses: ./.ci/rpi/gbc # Dockerfile
+
+      - name: Copy binary
+        run: mkdir /tmp/gbc && cp ./GBC /tmp/gbc
+
+      - name: Deploy to S3
+        run: sh ./gbc-release.sh downloads.glowbuzzer.com rpi E36QR0RH2CR6EK
+        env:
+          GBC_VERSION: ${{ needs.release-please.outputs.tag_name }}
+
+
+  linux-amd64:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          token: ${{ secrets.GH_PAT }}
+          submodules: true
+
+      - name: Generate changelog
+        run: npm install && npm run changelog
+
+      - name: Compile
+        run: sh ./.ci/linux-amd64/gbc/build.sh GBC
+
+      - name: Deploy to S3
+        run: sh ./gbc-release.sh downloads.glowbuzzer.com linux-amd64 E36QR0RH2CR6EK
+        env:
+          GBC_VERSION: ${{ needs.release-please.outputs.tag_name }}

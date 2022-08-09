@@ -1,4 +1,4 @@
-name: Publish examples/generic
+name: Publish app example
 on:
     workflow_call:
         inputs:
@@ -37,7 +37,7 @@ jobs:
                 run: ./node_modules/.bin/nx build ${{ inputs.example }} --baseHref=/examples/${{ inputs.example }}/
 
             -   name: Deploy site
-                run: ./examples/deploy-example.sh generic ${{ inputs.site }} ${{ inputs.distribution }}
+                run: ./examples/deploy-example.sh ${{ inputs.example }} ${{ inputs.site }} ${{ inputs.distribution }}
                 env:
                     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
