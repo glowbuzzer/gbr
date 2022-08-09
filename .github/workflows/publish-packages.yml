@@ -12,7 +12,7 @@ on:
                 type: string
             access:
                 # type of access 'restricted' or 'public'
-                required: true
+                required: false
                 type: string
                 default: restricted
 

@@ -1,4 +1,4 @@
-name: gbc-rp
+name: gbr-release
 
 on:
     push:
@@ -30,6 +30,7 @@ jobs:
         with:
             tag: latest
             version: ${{ needs.release-please.outputs.major }}.${{ needs.release-please.outputs.minor }}.${{ needs.release-please.outputs.patch }}
+            access: public
         secrets: inherit
 
     publish-example-generic:
