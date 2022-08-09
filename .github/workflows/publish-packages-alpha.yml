@@ -35,17 +35,17 @@ jobs:
                 run: pnpm install
 
             -   name: Package libs
-                run: node build.mjs controls,store alpha-${{ github.ref }}
+                run: node build.mjs controls,store 1.0.1.alpha-${{ github.ref }}
 
             -   name: Generate react component docs
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
 
             -   name: Publish dist/controls
-                run: npm publish --tag alpha dist/controls
+                run: npm publish dist/controls
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             -   name: Publish dist/store
-                run: npm publish --tag alpha dist/store
+                run: npm publish dist/store
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
