@@ -36,11 +36,11 @@ jobs:
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
 
             -   name: Publish dist/controls
-                run: npm publish --tag ${{ inputs.tag }} dist/controls
+                run: npm publish --tag ${{ inputs.tag }} dist/controls/
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             -   name: Publish dist/store
-                run: npm publish --tag ${{ inputs.tag }} dist/store
+                run: npm publish --tag ${{ inputs.tag }} dist/store/
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
