@@ -5,14 +5,47 @@ on:
             - main
         paths:
             - ".github/workflows/publish-packages.yml"
+            - ".github/workflows/publish-packages-alpha.yml"
             - "package.json"
             - "libs/**"
             - "build.mjs"
 
 jobs:
+#    publish:
+#        uses: ./.github/workflows/publish-packages.yml
+#        with:
+#            tag: alpha
+#            version: alpha-${{ github.ref }}
+#        secrets: inherit
     publish:
-        uses: ./.github/workflows/publish-packages.yml
-        with:
-            tag: alpha
-            version: alpha-${{ github.ref }}
-        secrets: inherit
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/checkout@v1
+
+            -   uses: pnpm/action-setup@v2.2.2
+                with:
+                    version: 6
+
+            -   uses: actions/setup-node@v3
+                with:
+                    node-version: 16
+                    cache: pnpm
+
+            -   name: Install packages
+                run: pnpm install
+
+            -   name: Package libs
+                run: node build.mjs controls,store alpha-${{ github.ref }}
+
+            -   name: Generate react component docs
+                run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
+
+            -   name: Publish dist/controls
+                run: npm publish --tag alpha dist/controls
+                env:
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+            -   name: Publish dist/store
+                run: npm publish --tag alpha dist/store
+                env:
+                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

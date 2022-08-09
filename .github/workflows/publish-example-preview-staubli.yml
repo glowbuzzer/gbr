@@ -5,6 +5,7 @@ on:
             - main
         paths:
             - ".github/workflows/publish-example-preview-staubli.yml"
+            - ".github/workflows/publish-example.yml"
             - "package.json"
             - "libs/**"
             - "examples/staubli/**"
