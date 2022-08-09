@@ -14,14 +14,14 @@ jobs:
         runs-on: ubuntu-22.04
         outputs:
             release_created: ${{ steps.release.outputs.release_created }}
-            tag_name: ${{ steps.release.outputs.tag_name }}
+            version: ${{ steps.release.outputs.major }}.${{ steps.release.outputs.minor }}.${{ steps.release.outputs.patch }}
         steps:
             -   uses: google-github-actions/release-please-action@v3
                 id: release
                 with:
                     release-type: node
                     package-name: gbr
-    #          changelog-types: '[ { "type": "feat", "section": "Feature" }, { "type": "fix", "section": "Bug Fix" }, { "type": "docs", "section": "Documentation" }, { "type": "enh", "section": "Enhancement" }, { "type": "chore", "section": "Chore" } ]'
+                    changelog-types: '[ { "type": "feat", "section": "Feature" }, { "type": "fix", "section": "Bug Fix" }, { "type": "docs", "section": "Documentation" }, { "type": "enh", "section": "Enhancement" }, { "type": "chore", "section": "Chore" } ]'
 
     publish-npm-packages:
         needs: release-please
@@ -29,7 +29,7 @@ jobs:
         uses: ./.github/workflows/publish-packages.yml
         with:
             tag: latest
-            version: ${{ needs.release-please.outputs.major }}.${{ needs.release-please.outputs.minor }}.${{ needs.release-please.outputs.patch }}
+            version: ${{ needs.release-please.outputs.version }}
             access: public
         secrets: inherit
 
@@ -41,6 +41,7 @@ jobs:
             example: generic
             site: www.glowbuzzer.com
             distribution: EOLCC9H61HP6F
+        secrets: inherit
 
     publish-example-staubli:
         needs: release-please
@@ -50,3 +51,4 @@ jobs:
             example: staubli
             site: www.glowbuzzer.com
             distribution: EOLCC9H61HP6F
+        secrets: inherit
