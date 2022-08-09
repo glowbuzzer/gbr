@@ -1,3 +1,6 @@
+# Reusable workflow to publish example app to preview or www.glowbuzzer.com
+# used by publish-example-generic and publish-example-staubli, and release-please
+
 name: Publish app example
 on:
     workflow_call:

@@ -10,6 +10,11 @@ on:
                 # npm version
                 required: true
                 type: string
+            access:
+                # type of access 'restricted' or 'public'
+                required: true
+                type: string
+                default: restricted
 
 jobs:
     publish:
@@ -36,11 +41,11 @@ jobs:
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
 
             -   name: Publish dist/controls
-                run: npm publish --tag ${{ inputs.tag }} dist/controls/
+                run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/controls/
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             -   name: Publish dist/store
-                run: npm publish --tag ${{ inputs.tag }} dist/store/
+                run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/store/
                 env:
                     NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

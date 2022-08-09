@@ -2,7 +2,9 @@ name: Publish alpha npm packages
 on:
     push:
         branches:
-            - main
+            # we don't publish on every commit any more
+            #            - main
+            - not_currently_activated
         paths:
             - ".github/workflows/publish-packages.yml"
             - ".github/workflows/publish-packages-alpha.yml"
@@ -15,5 +17,5 @@ jobs:
         uses: ./.github/workflows/publish-packages.yml
         with:
             tag: alpha
-            version: alpha-${{ github.run_number }}
+            version: 0.0.0-alpha.${{ github.run_number }}
         secrets: inherit
