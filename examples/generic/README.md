@@ -4,7 +4,9 @@ This example demonstrates a generic application using the Glowbuzzer React frame
 
 To run this example:
 
-1. Copy `config/config.json` to the working directory where you will run GBC
-2. Run GBC. Check in the startup log that `config.json` was loaded (not `default.json`)
-3. Start the React app using `nx serve generic`
-4. Open the app in your browser 
+1. Run GBC:
+    ```bash
+    gbc --config <path_to_configs>/config_generic.json
+    ```
+1. Start the React app using `nx serve generic`
+1. Open the app in your browser 

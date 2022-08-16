@@ -229,7 +229,10 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
     const { frameIndex, participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
     const { position, offset } = state
     const { translation, rotation } = position
-    const jointPositions = participatingJoints.map(j => rawJointPositions[j])
+    const jointPositions = useMemo(
+        () => participatingJoints.map(j => rawJointPositions[j]),
+        [rawJointPositions, participatingJoints]
+    )
 
     return {
         /** The current robot configuration */

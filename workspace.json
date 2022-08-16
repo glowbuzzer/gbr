@@ -200,6 +200,38 @@
                 }
             }
         },
+        "igus": {
+            "root": "examples/igus",
+            "sourceRoot": "examples/igus/src",
+            "projectType": "application",
+            "architect": {
+                "build": {
+                    "builder": "@nrwl/web:build",
+                    "outputs": [
+                        "{options.outputPath}"
+                    ],
+                    "options": {
+                        "outputPath": "dist/examples/igus",
+                        "index": "examples/igus/src/index.html",
+                        "main": "examples/igus/src/main.tsx",
+                        "tsConfig": "examples/igus/tsconfig.json",
+                        "assets": [
+                            "examples/igus/src/assets"
+                        ],
+                        "styles": [],
+                        "scripts": [],
+                        "webpackConfig": "@nrwl/react/plugins/webpack"
+                    }
+                },
+                "serve": {
+                    "builder": "@nrwl/web:dev-server",
+                    "options": {
+                        "buildTarget": "igus:build",
+                        "hmr": true
+                    }
+                }
+            }
+        },
         "store": {
             "root": "libs/store",
             "sourceRoot": "libs/store/src",

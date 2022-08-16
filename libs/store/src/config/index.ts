@@ -82,8 +82,12 @@ const EMPTY_TOOL: ToolConfig = {
  * @param toolIndex The tool index
  */
 export function useToolConfig(toolIndex: number): ToolConfig {
-    return useSelector((state: RootState) =>
-        state.config.value.tool ? Object.values(state?.config?.value?.tool)[toolIndex] : EMPTY_TOOL
+    return useSelector(
+        (state: RootState) =>
+            state.config.value.tool
+                ? Object.values(state?.config?.value?.tool)[toolIndex]
+                : EMPTY_TOOL,
+        deepEqual
     )
 }
 

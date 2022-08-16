@@ -168,7 +168,7 @@ export const ToolPathTile = ({ model, children }: ToolPathTileProps) => {
                             position={position as unknown as Vector3}
                             intensity={1}
                             distance={1000}
-                            color={"yellow"}
+                            // color={"yellow"}
                         />
                     ))}
                     <gridHelper

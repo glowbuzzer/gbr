@@ -38,21 +38,19 @@ function add_triad(group: THREE.Group) {
     group.add(...arrows)
 }
 
-function add_next(group: THREE.Group, config, triad) {
+function add_next(name: string, group: THREE.Group, config, triad) {
     if (triad) {
         add_triad(group)
     }
     const mount = new THREE.Group()
+    group.name = name
     group.add(mount)
 
-    if (config) {
-        const { offset: translateZ, alpha: rotateX, link_length: translateX } = config
-        mount.translateZ(translateZ || 0)
-        mount.rotateX(rotateX || 0)
-        mount.translateX(translateX || 0)
-    }
+    const { offset: translateZ, alpha: rotateX, link_length: translateX } = config || {}
+    mount.translateZ(translateZ || 0)
+    mount.rotateX(rotateX || 0)
+    mount.translateX(translateX || 0)
 
-    // group.add(mount);
     return mount
 }
 
@@ -87,7 +85,12 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
                         const model = models[model_index++].scene
                         current.add(model)
                     }
-                    const next = add_next(current, model.config[index - 1], false)
+                    const next = add_next(
+                        `L${index}${c.skip_link ? " (skip)" : ""}`,
+                        current,
+                        model.config[index - 1],
+                        false
+                    )
                     // current.rotation.z = joints[model_index]
                     const last = current
                     current = next
@@ -128,16 +131,27 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
     }, [model, toolConfig])
 
     useEffect(() => {
-        function adjustForTeta(index: number, a: number) {
-            return a + (model.config[index].teta || 0) // take into account the dreaded tetas!
+        function adjustForTeta(a: number, index: number) {
+            return a + (model.config[index]?.teta || 0) // take into account the dreaded tetas!
         }
 
         if (robotModels?.length) {
-            joints.forEach((value, index) => {
-                if (robotModels[index]) {
-                    const theta = value || 0
-                    robotModels[index + 1].rotation.z = adjustForTeta(index, theta)
-                }
+            // create a mapping from model index to joint index
+            const map1 = [...model.config, {}].slice(1).map((c, index) => ({ c, index: index + 1 }))
+            const filtered = map1.filter(({ c }) => !c.skip_link)
+            const entries = filtered.map(({ c, index }, jointNum) => [index - 1, jointNum])
+
+            const map = Object.fromEntries(entries)
+            // console.log(
+            //     "CONFIG",
+            //     model.config.map((c, index) => `${index}: ${c.skip_link}`)
+            // )
+            // console.log("MAP", entries)
+
+            robotModels.slice(1).forEach((group, index) => {
+                const jointNum = map[index]
+                const jointPos = joints[jointNum] || 0
+                group.rotation.z = adjustForTeta(jointPos, index)
             })
         }
     }, [robotModels, joints, model.config])
