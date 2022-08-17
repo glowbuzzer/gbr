@@ -35,18 +35,18 @@ export const activitySlice: Slice<
  *
  * Each KC can have at most one solo activity executing at any time. For more information see {@link SoloActivityApi}.
  *
- * @param index The kinematics configuration index the solo activity API will execute against
+ * @param kinematicsConfigurationIndex The kinematics configuration index the solo activity API will execute against
  */
-export function useSoloActivity(index = 0): SoloActivityApi {
+export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityApi {
     const connection = useConnection()
     const status = useSelector(
-        ({ activity }: RootState) => activity[index],
+        ({ activity }: RootState) => activity[kinematicsConfigurationIndex],
         deepEqual
     ) as ActivityStatus
 
     const api = useMemo(() => {
-        return new ActivityApiImpl(index, connection.send)
-    }, [index, connection.send])
+        return new ActivityApiImpl(kinematicsConfigurationIndex, connection.send)
+    }, [kinematicsConfigurationIndex, connection.send])
 
     useEffect(() => {
         if (!status) {

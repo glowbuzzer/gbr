@@ -146,16 +146,14 @@ export const JointDro = ({
     jointsToDisplay?: number[]
     warningThreshold: number
 }) => {
-    // const joint_config = useJointConfig()
     const count = useJointCount()
+    const joints = jointsToDisplay ? jointsToDisplay : Array.from(Array(count).keys())
 
     return (
         <div>
-            {Array.from({ length: count })
-                .filter((_, index) => !jointsToDisplay || jointsToDisplay.includes(index))
-                .map((_, index) => (
-                    <JointDroItem key={index} index={index} warningThreshold={warningThreshold} />
-                ))}
+            {joints.map(j => (
+                <JointDroItem key={j} index={j} warningThreshold={warningThreshold} />
+            ))}
         </div>
     )
 }
