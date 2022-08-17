@@ -21,9 +21,10 @@ import styled from "styled-components"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import { Vector3 } from "three"
+import { Euler, Vector3 } from "three"
 import { useConfig } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
+import { DemoMoveTile } from "./DemoMoveTile"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -136,10 +137,19 @@ export function App() {
                                 <meshStandardMaterial color={colour} />
                             </mesh>
                         ))}
+                        <mesh position={[600, 0, 500]}>
+                            <boxGeometry args={[150, 150, 150]} />
+                            <meshStandardMaterial color={"hotpink"} />
+                        </mesh>
+                        <mesh position={[500, 500, 500]} rotation={new Euler(0, 0, Math.PI / 4)}>
+                            <boxGeometry args={[150, 150, 150]} />
+                            <meshStandardMaterial color={"yellow"} />
+                        </mesh>
                     </ToolPathTile>
                 </section>
                 <nav className="right">
                     <FeedRateTile />
+                    <DemoMoveTile />
                     <GCodeTile />
                 </nav>
             </StyledApp>
