@@ -58,8 +58,8 @@ export const DemoMoveTile = () => {
             .promise()
 
         // TODO: moveLine doesn't work correctly!
-        // await api.moveLine(525, 0, 500).promise()
-        await api.moveToPosition(525, 0, 500).configuration(0).promise()
+        await api.moveLine(525, 0, 500).promise()
+        // await api.moveToPosition(525, 0, 500).configuration(0).promise()
     }
 
     async function move_yellow() {
