@@ -5,7 +5,9 @@
 import { Tile } from "@glowbuzzer/controls"
 import { Button, Space } from "antd"
 import { useSoloActivity } from "@glowbuzzer/store"
-import { Euler, Quaternion, Vector3 } from "three"
+import { Euler, Quaternion } from "three"
+
+export const HIGH_BLOCK_Z = 600
 
 export const DemoMoveTile = () => {
     const api = useSoloActivity(0)
@@ -19,47 +21,34 @@ export const DemoMoveTile = () => {
     }
 
     async function move_red() {
-        await api
-            .moveToPosition(500, -200, 200)
-            .configuration(0)
-            .rotationEuler(0, Math.PI, 0)
-            .promise()
-
-        await api.moveLine(500, -200, 150).promise()
+        return api.sequence(
+            api.moveToPosition(500, -200, 200).configuration(0).rotationEuler(0, Math.PI, 0),
+            api.moveLine(500, -200, 150).rotationEuler(0, Math.PI, Math.PI)
+        )
     }
 
     async function move_green() {
-        await api
-            .moveToPosition(500, 0, 200)
-            .configuration(0)
-            .rotationEuler(0, Math.PI, 0)
-            .promise()
-
-        // TODO: moveLine doesn't work correctly!
-        // await api.moveLine(500, 0, 150).promise()
-        await api.moveToPosition(500, 0, 150).configuration(0).promise()
+        return api.sequence(
+            api.moveToPosition(500, 0, 250).configuration(0).rotationEuler(0, Math.PI, 0),
+            api.moveLine(500, 0, 150)
+        )
     }
 
     async function move_blue() {
-        await api
-            .moveToPosition(500, 200, 200)
-            .configuration(0)
-            .rotationEuler(0, Math.PI, 0)
-            .promise()
-
-        await api.moveLine(500, 200, 150).promise()
+        return api.sequence(
+            api.moveToPosition(500, 200, 200).configuration(0).rotationEuler(0, Math.PI, 0),
+            api.moveLine(500, 200, 150)
+        )
     }
 
     async function move_pink() {
-        await api
-            .moveToPosition(325, 0, 500)
-            .configuration(0)
-            .rotationEuler(0, Math.PI / 2, 0)
-            .promise()
-
-        // TODO: moveLine doesn't work correctly!
-        await api.moveLine(525, 0, 500).promise()
-        // await api.moveToPosition(525, 0, 500).configuration(0).promise()
+        return api.sequence(
+            api
+                .moveToPosition(425, 0, HIGH_BLOCK_Z)
+                .configuration(0)
+                .rotationEuler(0, Math.PI / 2, 0),
+            api.moveLine(525, 0, HIGH_BLOCK_Z).rotationEuler(0, Math.PI / 2, Math.PI)
+        )
     }
 
     async function move_yellow() {
@@ -68,8 +57,11 @@ export const DemoMoveTile = () => {
         const euler = new Euler(-Math.PI / 4, Math.PI / 2, 0, "ZYX")
 
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
-        await api.moveToPosition(p1, p1, 500).configuration(0).rotation(x, y, z, w).promise()
-        await api.moveLine(p2, p2, 500).promise()
+
+        return api.sequence(
+            api.moveToPosition(p1, p1, HIGH_BLOCK_Z).configuration(0).rotation(x, y, z, w),
+            api.moveLine(p2, p2, HIGH_BLOCK_Z)
+        )
     }
 
     return (

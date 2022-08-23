@@ -24,7 +24,7 @@ import "dseg/css/dseg.css"
 import { Euler, Vector3 } from "three"
 import { useConfig } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
-import { DemoMoveTile } from "./DemoMoveTile"
+import { DemoMoveTile, HIGH_BLOCK_Z } from "./DemoMoveTile"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -130,18 +130,21 @@ export function App() {
                     <ToolsTile />
                 </nav>
                 <section>
-                    <ToolPathTile model={showRobot && IGUS_MODEL}>
+                    <ToolPathTile model={showRobot && IGUS_MODEL} hideTrace hidePreview>
                         {["red", "green", "blue"].map((colour, index) => (
                             <mesh position={[500, (index - 1) * 200, 75]}>
                                 <boxGeometry args={[150, 150, 150]} />
                                 <meshStandardMaterial color={colour} />
                             </mesh>
                         ))}
-                        <mesh position={[600, 0, 500]}>
+                        <mesh position={[600, 0, HIGH_BLOCK_Z]}>
                             <boxGeometry args={[150, 150, 150]} />
                             <meshStandardMaterial color={"hotpink"} />
                         </mesh>
-                        <mesh position={[500, 500, 500]} rotation={new Euler(0, 0, Math.PI / 4)}>
+                        <mesh
+                            position={[500, 500, HIGH_BLOCK_Z]}
+                            rotation={new Euler(0, 0, Math.PI / 4)}
+                        >
                             <boxGeometry args={[150, 150, 150]} />
                             <meshStandardMaterial color={"yellow"} />
                         </mesh>
@@ -150,7 +153,6 @@ export function App() {
                 <nav className="right">
                     <FeedRateTile />
                     <DemoMoveTile />
-                    <GCodeTile />
                 </nav>
             </StyledApp>
         </>
