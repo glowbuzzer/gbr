@@ -94,18 +94,22 @@ const ToolPathSettings = () => {
     )
 }
 
-const LD = 500
+const LD = 1000
 
 const lighting = [
-    [-LD, -LD, LD],
+    [0, -LD, LD],
     [LD, -LD, LD],
-    [-LD, LD, LD],
-    [LD, LD, LD]
+    [-LD, LD, LD]
+    // [LD, LD, -LD / 2]
 ]
 
 type ToolPathTileProps = {
     /** Optional robot model information */
     model?: RobotModel
+    /** If true, trace of tool path will not be shown */
+    hideTrace?: boolean
+    /** If true, preview of tool path will not be shown */
+    hidePreview?: boolean
     /** Optional react-three-fiber children to render */
     children?: React.ReactNode
 }
@@ -119,7 +123,7 @@ type ToolPathTileProps = {
  * physical joints on the machine. For an example of this in practice, refer to the
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
-export const ToolPathTile = ({ model, children }: ToolPathTileProps) => {
+export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPathTileProps) => {
     const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)
     const toolConfig = useToolConfig(toolIndex)
@@ -157,18 +161,18 @@ export const ToolPathTile = ({ model, children }: ToolPathTileProps) => {
         <Tile
             title={"Toolpath"}
             help={help}
-            footer={<Button onClick={reset}>Reset</Button>}
+            footer={hideTrace ? null : <Button onClick={reset}>Clear Trace</Button>}
             settings={<ToolPathSettings />}
         >
             <Canvas>
                 <ToolPathAutoSize extent={extent}>
+                    <ambientLight color={"grey"} />
                     {lighting.map((position, index) => (
                         <pointLight
                             key={index}
                             position={position as unknown as Vector3}
-                            intensity={1}
-                            distance={1000}
-                            // color={"yellow"}
+                            intensity={0.1}
+                            distance={10000}
                         />
                     ))}
                     <gridHelper
@@ -180,11 +184,11 @@ export const ToolPathTile = ({ model, children }: ToolPathTileProps) => {
                         position={new Vector3((-extent * 11) / 10, -extent / 10, 0)}
                     />
 
-                    <WorkspaceDimensions extent={extent} />
+                    {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
 
-                    <ToolPath path={path} />
+                    {hideTrace ? null : <ToolPath path={path} />}
 
-                    {disabled ? null : (
+                    {disabled || hidePreview ? null : (
                         <PreviewPath
                             preview={segments}
                             scale={extent}
