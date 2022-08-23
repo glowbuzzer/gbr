@@ -44,3 +44,19 @@ export function assertNear(x, y, z, a, b, c) {
     gbc.assert.near(az, q.z, 0.01, true)
 }
 
+export async function do_cancel(activity, cancel_cycles = 5, rejection_cycles = 50) {
+    // we don't expect the move to be complete after 10 cycles
+    await activity.start().iterations(10).assertNotResolved()
+
+    // we issue cancellation (activity type 0)
+    const cancel = gbc.wrap(gbc.activity.cancel().promise)
+
+    // we don't expect the cancel to be complete immediately (eg. move ramping down)
+    await cancel.start().iterations(cancel_cycles).assertNotResolved()
+
+    // we expect the move/activity to terminate (with rejection) after the given number of cycles
+    await activity.iterations(rejection_cycles).assertCancelled()
+
+    // and we expect the cancel to be complete too
+    await cancel.assertCompleted()
+}

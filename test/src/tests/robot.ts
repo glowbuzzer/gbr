@@ -5,7 +5,7 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { ACTIVITYSTATE, BLENDTYPE } from "../../../libs/store/src"
-import { assertNear } from "../util"
+import { assertNear, do_cancel } from "../util"
 
 const test = uvu.suite("robot")
 
@@ -115,6 +115,35 @@ test("move line with change in orientation", async () => {
 
     gbc.assert.selector(config, INITIAL_CONFIG)
     assertNear(100, 100, 100, Math.PI, 0, Math.PI / 4)
+})
+
+test("can cancel move line with change in orientation", async () => {
+    // we need to make sure both translation and orientation trajectories are terminated in sync
+    init_robot_test()
+    try {
+        const move = gbc.wrap(
+            gbc.activity.moveLine(100, 100, 100).rotationEuler(Math.PI, 0, Math.PI / 4).promise
+        )
+        await move.start().iterations(30).assertNotResolved()
+        await do_cancel(move)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move line with no change in position but change in orientation", async () => {
+    // testing that a zero distance move with orientation change doesn't cause issues
+    init_robot_test()
+    try {
+        const move = gbc.wrap(
+            gbc.activity.moveLine(null, null, null).rotationEuler(Math.PI, 0, Math.PI / 4).promise
+        )
+        await move.start().iterations(50).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
+
+    gbc.assert.selector(config, INITIAL_CONFIG)
 })
 
 test("move to position with change in orientation", async () => {

@@ -5,26 +5,9 @@
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
 import { ARCDIRECTION } from "../../../libs/store/src"
-import { assertNear } from "../util"
+import { assertNear, do_cancel } from "../util"
 
 const test = uvu.suite("activity")
-
-async function do_cancel(activity, cancel_cycles = 5, rejection_cycles = 50) {
-    // we don't expect the move to be complete after 10 cycles
-    await activity.start().iterations(10).assertNotResolved()
-
-    // we issue cancellation (activity type 0)
-    const cancel = gbc.wrap(gbc.activity.cancel().promise)
-
-    // we don't expect the cancel to be complete immediately (eg. move ramping down)
-    await cancel.start().iterations(cancel_cycles).assertNotResolved()
-
-    // we expect the move/activity to terminate (with rejection) after the given number of cycles
-    await activity.iterations(rejection_cycles).assertCancelled()
-
-    // and we expect the cancel to be complete too
-    await cancel.assertCompleted()
-}
 
 test.before.each(ctx => {
     console.log(ctx.__test__)
@@ -263,6 +246,15 @@ test("can run move to position with different frame", async () => {
 test("can cancel move to position", async () => {
     const move = gbc.wrap(gbc.activity.moveToPosition(100, 0, 0).promise)
     await do_cancel(move)
+})
+
+test.skip("can interrupt move to position with move line", async () => {
+    const move_to_position = gbc.wrap(gbc.activity.moveToPosition(100, 0, 0).promise)
+    await move_to_position.start().iterations(10).assertNotResolved()
+
+    const move_line = gbc.wrap(gbc.activity.moveLine(0, 100, 0).promise)
+    await move_line.start().iterations(10).assertNotResolved()
+    await move_line.iterations(50).assertCompleted()
 })
 
 test("can run cartesian move followed by move to position", async () => {

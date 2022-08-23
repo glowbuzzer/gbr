@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { assertNear } from "../util"
+import { assertNear, do_cancel } from "../util"
 import { STREAMSTATE } from "../../../libs/store/src"
 
 const test = uvu.suite("frames simple")
@@ -12,23 +12,6 @@ const test = uvu.suite("frames simple")
 const px = state => state.status.kc[0].position.translation.x
 const py = state => state.status.kc[0].position.translation.y
 const pz = state => state.status.kc[0].position.translation.z
-
-async function do_cancel(activity, cancel_cycles = 5, rejection_cycles = 50) {
-    // we don't expect the move to be complete after 10 cycles
-    await activity.start().iterations(10).assertNotResolved()
-
-    // we issue cancellation (activity type 0)
-    const cancel = gbc.wrap(gbc.activity.cancel().promise)
-
-    // we don't expect the cancel to be complete immediately (eg. move ramping down)
-    await cancel.start().iterations(cancel_cycles).assertNotResolved()
-
-    // we expect the move/activity to terminate (with rejection) after the given number of cycles
-    await activity.iterations(rejection_cycles).assertCancelled()
-
-    // and we expect the cancel to be complete too
-    await cancel.assertCompleted()
-}
 
 /**
  * These tests check that frame handling for moves is working properly
