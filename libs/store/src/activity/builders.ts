@@ -67,7 +67,7 @@ export abstract class ActivityBuilder {
     /**
      * Executes the activity and returns a promise that will be resolved when the activity is complete.
      */
-    get promise(): () => Promise<void> {
+    get promise(): () => Promise<{ tag: number; completed: boolean }> {
         return () => {
             return this.controller.execute(this.command)
         }

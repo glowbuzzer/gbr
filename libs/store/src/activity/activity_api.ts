@@ -22,7 +22,8 @@ import {
     ToolOffsetBuilder,
     WaitOnAnalogInputBuilder,
     WaitOnDigitalInputBuilder,
-    WaitOnIntegerInputBuilder
+    WaitOnIntegerInputBuilder,
+    ActivityBuilder
 } from "./builders"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
@@ -151,6 +152,15 @@ export interface SoloActivityApi {
     endProgram(): EndProgramBuilder
 
     pauseProgram(): PauseProgramBuilder
+
+    /**
+     * Run activities in sequence. The activities provided will be executed in order.
+     *
+     * If any activity is cancelled, the rest of the sequence will be cancelled.
+     *
+     * @param builders The array of builders to execute
+     */
+    sequence(...builders: ActivityBuilder[]): Promise<void>
 }
 
 export abstract class ActivityApiBase implements SoloActivityApi, ActivityController {
@@ -244,6 +254,15 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
 
     pauseProgram() {
         return new PauseProgramBuilder(this)
+    }
+
+    async sequence(...builders: ActivityBuilder[]): Promise<void> {
+        for (const b of builders) {
+            const r = await b.promise()
+            if (!r.completed) {
+                break
+            }
+        }
     }
 }
 
