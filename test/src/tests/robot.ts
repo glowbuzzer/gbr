@@ -194,10 +194,25 @@ test("move to position without configuration specified", async () => {
 
 test("move to position with change in configuration", async () => {
     init_robot_test()
-    // if target configuration not specified, it should stay in the current configuration
     try {
         const move = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).configuration(2).promise)
         await move.start().iterations(200).assertCompleted()
+        gbc.assert.selector(config, 2)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move to position with change in configuration followed by another move with no configuration given", async () => {
+    // should remain in the configuration given by the first move when executing the second move
+    init_robot_test()
+    try {
+        const move1 = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).configuration(2).promise)
+        await move1.start().iterations(200).assertCompleted()
+        gbc.assert.selector(config, 2)
+
+        const move2 = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).promise)
+        await move2.start().iterations(100).assertCompleted()
         gbc.assert.selector(config, 2)
     } finally {
         gbc.plot("test")
