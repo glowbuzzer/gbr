@@ -10,6 +10,7 @@ import { ActivityApiImpl, SoloActivityApi } from "./activity_api"
 import { ACTIVITYSTATE } from "../gbc"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
+import { useDefaultMoveParameters } from "../config"
 
 type ActivityStatus = {
     tag: number
@@ -39,14 +40,22 @@ export const activitySlice: Slice<
  */
 export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityApi {
     const connection = useConnection()
+    const defaultMoveParameters = useDefaultMoveParameters()
+
+    // console.log("DEFAULT MOVE PARAMS", defaultMoveParameters)
+
     const status = useSelector(
         ({ activity }: RootState) => activity[kinematicsConfigurationIndex],
         deepEqual
     ) as ActivityStatus
 
     const api = useMemo(() => {
-        return new ActivityApiImpl(kinematicsConfigurationIndex, connection.send)
-    }, [kinematicsConfigurationIndex, connection.send])
+        return new ActivityApiImpl(
+            kinematicsConfigurationIndex,
+            defaultMoveParameters,
+            connection.send
+        )
+    }, [kinematicsConfigurationIndex, defaultMoveParameters, connection.send])
 
     useEffect(() => {
         if (!status) {

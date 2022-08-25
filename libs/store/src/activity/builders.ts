@@ -250,9 +250,12 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
 
     /** The move parameters. */
     params(params: MoveParametersConfig) {
-        this._params = {
-            ...this._params,
-            ...params
+        // guard against null/undefined params
+        if (params) {
+            this._params = {
+                ...this._params,
+                ...params
+            }
         }
         return this
     }

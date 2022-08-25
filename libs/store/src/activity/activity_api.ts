@@ -165,9 +165,14 @@ export interface SoloActivityApi {
 
 export abstract class ActivityApiBase implements SoloActivityApi, ActivityController {
     public readonly kinematicsConfigurationIndex: number
+    private readonly defaultMoveParameters: MoveParametersConfig
 
-    protected constructor(kinematicsConfigurationIndex: number) {
+    protected constructor(
+        kinematicsConfigurationIndex: number,
+        defaultMoveParameters: MoveParametersConfig
+    ) {
         this.kinematicsConfigurationIndex = kinematicsConfigurationIndex
+        this.defaultMoveParameters = defaultMoveParameters
     }
 
     abstract get nextTag(): number
@@ -196,27 +201,40 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
     }
 
     moveArc(x?: number, y?: number, z?: number) {
-        return new MoveArcBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+        return new MoveArcBuilder(this)
+            .params(this.defaultMoveParameters)
+            .translation(nullify(x), nullify(y), nullify(z))
     }
 
     moveJoints(jointPositionArray: number[]) {
-        return new MoveJointsBuilder(this).joints(jointPositionArray)
+        return new MoveJointsBuilder(this)
+            .params(this.defaultMoveParameters)
+            .joints(jointPositionArray)
     }
 
     moveJointsAtVelocity(jointVelocityArray: number[], moveParams: MoveParametersConfig = {}) {
-        return new MoveJointsAtVelocityBuilder(this).velocities(jointVelocityArray)
+        return new MoveJointsAtVelocityBuilder(this)
+            .params(this.defaultMoveParameters)
+            .velocities(jointVelocityArray)
     }
 
     moveLine(x?: number, y?: number, z?: number) {
-        return new MoveLineBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+        return new MoveLineBuilder(this)
+            .params(this.defaultMoveParameters)
+            .translation(nullify(x), nullify(y), nullify(z))
     }
 
     moveVectorAtVelocity(x: number, y: number, z: number) {
-        return new MoveVectorAtVelocityBuilder(this).vector(x, y, z)
+        return new MoveVectorAtVelocityBuilder(this)
+            .params(this.defaultMoveParameters)
+            .vector(x, y, z)
     }
 
     moveToPosition(x?: number, y?: number, z?: number) {
-        return new MoveToPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
+        console.log("MOVE PARAMS", this.defaultMoveParameters)
+        return new MoveToPositionBuilder(this)
+            .params(this.defaultMoveParameters)
+            .translation(nullify(x), nullify(y), nullify(z))
     }
 
     setDout(index: number, value: boolean) {
@@ -275,8 +293,12 @@ export class ActivityApiImpl
     private currentTag = 0
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
-    constructor(index: number, send: (msg: string) => void) {
-        super(index)
+    constructor(
+        index: number,
+        defaultMoveParameters: MoveParametersConfig,
+        send: (msg: string) => void
+    ) {
+        super(index, defaultMoveParameters)
         this.index = index
         this._send = send
     }

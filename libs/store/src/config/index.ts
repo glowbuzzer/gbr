@@ -4,7 +4,7 @@
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { GlowbuzzerConfig, ToolConfig } from "../gbc"
+import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 
@@ -96,4 +96,16 @@ export function useToolConfig(toolIndex: number): ToolConfig {
  */
 export function useToolList(): ToolConfig[] {
     return useSelector((state: RootState) => state.config.value.tool, deepEqual)
+}
+
+/**
+ * Returns the default move parameters. This is the first move parameters entry, if configured
+ */
+export function useDefaultMoveParameters(): MoveParametersConfig {
+    return useSelector((state: RootState) => {
+        const v = state.config?.value?.moveParameters?.[0] || {}
+        // strip the name from move params as it's not valid in websocket message to gbc
+        const { name, ...props } = v
+        return props
+    }, deepEqual)
 }

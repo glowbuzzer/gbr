@@ -237,7 +237,7 @@ export class GbcTest {
             reducer: rootReducer
         })
 
-        this.activity_api = new ActivityApiImpl(0, this.gbc.send)
+        this.activity_api = new ActivityApiImpl(0, null, this.gbc.send)
         this.capture_state = undefined
         this.check_limits = true
 
