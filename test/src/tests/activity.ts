@@ -264,6 +264,15 @@ test("can run cartesian move followed by move to position", async () => {
     await move2.start().iterations(100).assertCompleted()
 })
 
+test("can run move joints followed by move to position", async () => {
+    const move1 = gbc.wrap(gbc.activity.moveJoints([1, 0, 0]).relative(true).promise)
+    await move1.start().iterations(100).assertCompleted()
+    assertNear(1, 0, 0, 0, 0, 0)
+    const move2 = gbc.wrap(gbc.activity.moveToPosition(1, 1, 0).promise)
+    await move2.start().iterations(100).assertCompleted()
+    assertNear(1, 1, 0, 0, 0, 0)
+})
+
 test("can run dwell", async () => {
     const dwell = gbc.wrap(gbc.activity.dwell(100).promise)
     await dwell.start().iterations(50).assertNotResolved()

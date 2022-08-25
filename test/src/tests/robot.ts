@@ -219,6 +219,15 @@ test("move to position with change in configuration followed by another move wit
     }
 })
 
+test("can run move joints followed by move to position", async () => {
+    init_robot_test()
+    const move1 = gbc.wrap(gbc.activity.moveJoints([1, 1, 1, 1, 1, 1]).promise)
+    await move1.start().iterations(200).assertCompleted()
+    const move2 = gbc.wrap(gbc.activity.moveToPosition(1, 1, 0).rotationEuler(0, 0, 0).promise)
+    await move2.start().iterations(200).assertCompleted()
+    // assertNear(1, 1, 0, 0, 0, 0)
+})
+
 test("move to position changing configuration but not position", async () => {
     init_robot_test()
     // if target configuration not specified, it should stay in the current configuration

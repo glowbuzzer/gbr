@@ -34,7 +34,7 @@ test("can start and stop spindle", async () => {
 
     gbc.assert.doutPdo(0, false)
     gbc.assert.doutPdo(1, true) // remains default clockwise
-    gbc.assert.aoutPdo(0, 1.0) // we didn't set spindle speed so it's kept from previous
+    gbc.assert.aoutPdo(0, 0) // defaults to zero (union reset!)
 })
 
 test("can start and stop spindle from gcode", async () => {
