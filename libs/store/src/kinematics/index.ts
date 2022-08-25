@@ -345,12 +345,12 @@ export function useJointPositions(kinematicsConfigurationIndex: number) {
  * @param kinematicsConfigurationIndex The kinematics configuration index
  */
 export function useFeedRate(kinematicsConfigurationIndex: number) {
-    const froActual = useSelector(
-        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.froActual,
-        shallowEqual
-    )
-    const dispatch = useDispatch()
     const connection = useConnection()
+
+    const { froActual, froTarget } = useSelector(({ kinematics }: RootState) => {
+        const { froActual, froTarget } = kinematics[kinematicsConfigurationIndex] || {}
+        return { froActual, froTarget }
+    }, deepEqual)
 
     return {
         setFeedRatePercentage(value: number) {
@@ -359,11 +359,10 @@ export function useFeedRate(kinematicsConfigurationIndex: number) {
                 `kinematics.${kinematicsConfigurationIndex}.fro`,
                 JSON.stringify(value)
             )
-            // dispatch(() => {
             connection.send(updateFroMsg(kinematicsConfigurationIndex, value))
-            // })
         },
-        froActual
+        froActual,
+        froTarget
     }
 }
 

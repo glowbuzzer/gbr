@@ -3,14 +3,14 @@
  */
 
 import React, { useEffect } from "react"
-import { Tile, TileEmptyMessage } from "../tiles"
+import { Tile } from "../tiles"
 import {
     KC_KINEMATICSCONFIGURATIONTYPE,
     useConfig,
     useKinematicsConfigurationList
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { Radio, Select, Slider } from "antd"
+import { Radio } from "antd"
 import { StyledControls } from "../util/styled"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogGotoCartesian } from "./JogGotoCartesian"
@@ -18,8 +18,8 @@ import { JogGotoJoint } from "./JogGotoJoint"
 import { JogArrowsCartesian } from "./JogArrowsCartesian"
 import { JogArrowsJoint } from "./JogArrowsJoint"
 import { JogMode } from "./types"
-import { JogLimitsCheckbox } from "./JogLimitsCheckbox"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
+import { JogLimitsCheckbox } from "./JogLimitsCheckbox"
 
 const help = (
     <div>
@@ -143,6 +143,7 @@ const CartesianNotSupported = styled.div`
     .message {
         font-weight: bold;
     }
+
     //font-weight: bold;
 `
 
@@ -223,7 +224,7 @@ const JogPanel = ({
  *
  * Jog speed
  *
- * : Jogging limits can be set separately in the configuration and you can dial these down further.
+ * : Jogging speed is controled using the feed rate on the kinematics configuration. See {@link FeedRateTile}.
  *
  * Disable limit checking
  *
@@ -233,7 +234,6 @@ const JogPanel = ({
  *
  */
 export const JogTile = () => {
-    const [jogSpeed, setJogSpeed] = useLocalStorage("jog.speedPercentage", 100)
     const [jogMoveMode, setJogMoveMode] = useLocalStorage<JogMoveMode>(
         "jog.move",
         JogMoveMode.CARTESIAN
@@ -249,10 +249,6 @@ export const JogTile = () => {
             setSelectedKc(0)
         }
     }, [kcs, selectedKc, setSelectedKc])
-
-    function update_kc(value: number) {
-        setSelectedKc(value)
-    }
 
     function updateJogStepMode(e) {
         setJogMode(e.target.value)
@@ -282,11 +278,7 @@ export const JogTile = () => {
             }
             footer={
                 <>
-                    <div>
-                        Jog Speed (%)
-                        <JogLimitsCheckbox kinematicsConfigurationIndex={selectedKc} />
-                    </div>
-                    <Slider value={jogSpeed} min={1} max={100} onChange={setJogSpeed} />
+                    <JogLimitsCheckbox kinematicsConfigurationIndex={selectedKc} />
                 </>
             }
         >
@@ -296,7 +288,7 @@ export const JogTile = () => {
                     onChangeKinematicsConfigurationIndex={setSelectedKc}
                     jogMoveMode={jogMoveMode}
                     jogMode={jogMode}
-                    jogSpeed={jogSpeed}
+                    jogSpeed={100}
                 />
             </TileInner>
         </Tile>

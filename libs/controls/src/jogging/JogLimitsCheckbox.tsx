@@ -26,7 +26,7 @@ export const JogLimitsCheckbox = ({ kinematicsConfigurationIndex }) => {
             disabled={!connection.connected}
             onClick={toggle_disable_limits}
         >
-            Enable limits
+            Enable joint travel limits
         </Checkbox>
     )
 }

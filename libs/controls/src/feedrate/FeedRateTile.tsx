@@ -5,8 +5,9 @@
 import React, { useEffect, useRef, useState } from "react"
 import { Tile } from "../tiles"
 import { useConfig, useFeedRate } from "@glowbuzzer/store"
-import { Select, Slider } from "antd"
+import { Button, Select, Slider } from "antd"
 import { useLocalStorage } from "../util/LocalStorageHook"
+import { CaretRightFilled, PauseOutlined } from "@ant-design/icons"
 
 const help = (
     <div>
@@ -22,7 +23,6 @@ const help = (
     </div>
 )
 
-
 /**
  * The feed rate tile provides a simple way to adjust the feedrate for a kinematics configuration.
  *
@@ -30,40 +30,57 @@ const help = (
  * them.
  *
  * The feedrate set affects all moves on the kinematics configuration.
+ *
+ * The feed hold button will set the feed rate to zero and give the option to unhold, setting the
+ * feed rate to the previous value. Note that when GBC starts or restarts, it sets the feed rate to 100%.
+ *
  */
 export const FeedRateTile = () => {
     const [selectedKc, setSelectedKc] = useLocalStorage("feedrate.kc", 0)
 
     const [value, setValueInternal] = useState(0)
+    const [feedRestoreValue, setFeedRestoreValue] = useState(null)
+
     const timer = useRef(null)
 
-    const { kinematicsConfiguration } = useConfig() || {}
-    const kcNames = Object.keys(kinematicsConfiguration)
+    const { kinematicsConfiguration } = useConfig()
 
-    const options = kcNames.map((label, index) => ({
-        label,
+    const options = kinematicsConfiguration.map((kc, index) => ({
+        label: kc.name,
         value: index
     }))
 
-    const selectedIndex = Math.min(selectedKc, options.length)
+    // ensure selected index from local storage is value for the current config
+    const selectedIndex = Math.min(selectedKc, options.length - 1)
 
-    const kinematics = useFeedRate(selectedIndex)
+    const { froActual, froTarget, setFeedRatePercentage } = useFeedRate(selectedIndex)
 
-    const fro = kinematics.froActual
     useEffect(() => {
+        // debounce changes to actual fro to avoid confusing behaviour
+        // when interacting with the slider
         timer.current = setTimeout(() => {
-            setValueInternal(fro)
-        }, 500)
+            setValueInternal(froActual)
+        }, 250)
         return () => clearTimeout(timer.current)
-    }, [fro])
+    }, [froActual])
 
     function setValue(value) {
-        kinematics.setFeedRatePercentage(value)
+        setFeedRatePercentage(value)
         setValueInternal(value)
     }
 
     function update_selected_kc(index) {
         setSelectedKc(index)
+    }
+
+    function feed_hold() {
+        setFeedRestoreValue(froTarget)
+        setFeedRatePercentage(0)
+    }
+
+    function feed_resume() {
+        setFeedRatePercentage(feedRestoreValue)
+        setFeedRestoreValue(null)
     }
 
     return (
@@ -72,7 +89,7 @@ export const FeedRateTile = () => {
             help={help}
             fullHeight={false}
             settings={
-                options.length > 0 ? (
+                options.length > 1 ? (
                     <Select
                         value={selectedIndex}
                         onChange={update_selected_kc}
@@ -81,8 +98,20 @@ export const FeedRateTile = () => {
                     />
                 ) : undefined
             }
+            footer={
+                feedRestoreValue === null ? (
+                    <Button size="small" icon={<PauseOutlined />} onClick={feed_hold}>
+                        Feed Hold
+                    </Button>
+                ) : (
+                    <Button size="small" icon={<CaretRightFilled />} onClick={feed_resume}>
+                        Resume
+                    </Button>
+                )
+            }
         >
             <Slider
+                disabled={feedRestoreValue !== null}
                 min={0}
                 max={2}
                 value={value}
