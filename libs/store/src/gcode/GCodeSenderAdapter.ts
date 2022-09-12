@@ -54,8 +54,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             positionReference: POSITIONREFERENCE.ABSOLUTE,
             frameIndex: 0
         })
-        this.api = new GCodeActivityProvider(0 /* TODO: allow different kcs */, this.buffer)
         this.buffer = buffer
+        this.api = new GCodeActivityProvider(0 /* TODO: allow different kcs */, buffer)
         this.vmax = vmax
         this.context = context
         this.simplifyTolerance = simplifyTolerance
