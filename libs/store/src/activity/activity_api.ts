@@ -2,8 +2,9 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, TRIGGERTYPE } from "../gbc"
+import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION } from "../gbc"
 import {
+    ActivityBuilder,
     ActivityController,
     AoutBuilder,
     CancelActivityBuilder,
@@ -14,16 +15,12 @@ import {
     MoveArcBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
-    MoveVectorAtVelocityBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
+    MoveVectorAtVelocityBuilder,
     PauseProgramBuilder,
     SpindleActivityBuilder,
-    ToolOffsetBuilder,
-    WaitOnAnalogInputBuilder,
-    WaitOnDigitalInputBuilder,
-    WaitOnIntegerInputBuilder,
-    ActivityBuilder
+    ToolOffsetBuilder
 } from "./builders"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
@@ -186,18 +183,6 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
 
     dwell(ticksToDwell: number) {
         return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
-    }
-
-    waitOnDigitalInput(index: number, type: TRIGGERTYPE) {
-        return new WaitOnDigitalInputBuilder(this).index(index).triggerType(type)
-    }
-
-    waitOnIntegerInput(index: number) {
-        return new WaitOnIntegerInputBuilder(this).index(index)
-    }
-
-    waitOnAnalogInput(index: number) {
-        return new WaitOnAnalogInputBuilder(this).index(index)
     }
 
     moveArc(x?: number, y?: number, z?: number) {
