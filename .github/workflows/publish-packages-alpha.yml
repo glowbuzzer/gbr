@@ -1,5 +1,7 @@
 name: Publish alpha npm packages
 on:
+    workflow_dispatch:
+
     push:
         branches:
             # we don't publish on every commit any more
