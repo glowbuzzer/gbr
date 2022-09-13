@@ -82,11 +82,11 @@ test("can fill the m4 buffer", async () => {
         .assert.selector(writeCount, number_to_stream)
 
     gbc.exec(1) // give m7 opportunity to read from shared buffer
-        .assert.selector(capacity, gbc.m7_stream_total_cap + 1)
+        .assert.selector(capacity, gbc.m7_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         // should have taken all items from stream (capacity not reached)
-        .assert.selector(readCount, gbc.m7_stream_total_cap) // items read to m7 capacity
+        .assert.selector(readCount, number_to_stream) // items read to m7 capacity
         .assert.selector(writeCount, number_to_stream)
 
     const end_program = gbc.activity.endProgram().command
@@ -94,7 +94,7 @@ test("can fill the m4 buffer", async () => {
         .exec(5) // kick off
         .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
-        .assert.selector(tag, 5)
+        .assert.selector(tag, 4)
         // should have taken all items from stream (capacity not reached)
         .assert.selector(readCount, number_to_stream + 1)
         .assert.selector(writeCount, number_to_stream + 1)

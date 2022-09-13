@@ -231,7 +231,6 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
     }
 
     moveToPosition(x?: number, y?: number, z?: number) {
-        console.log("MOVE PARAMS", this.defaultMoveParameters)
         return new MoveToPositionBuilder(this)
             .params(this.defaultMoveParameters)
             .translation(nullify(x), nullify(y), nullify(z))
@@ -325,6 +324,14 @@ export class ActivityApiImpl
     }
 
     update(tag: number, state: ACTIVITYSTATE) {
+        // console.log(
+        //     "UPDATE INCOMING TAG=",
+        //     tag,
+        //     "CURRENT=",
+        //     this.currentTag,
+        //     "STATE=",
+        //     ACTIVITYSTATE[state]
+        // )
         if (!this.currentTag) {
             this.currentTag = tag + 1
         }

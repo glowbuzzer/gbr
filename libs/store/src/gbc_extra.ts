@@ -36,7 +36,6 @@ import {
     TaskConfig,
     TaskStatus,
     ToolConfig,
-    TriggerOnConfig,
     Vector3
 } from "./gbc"
 
@@ -80,7 +79,6 @@ export type GlowbuzzerConfig = {
     fieldbus?: FieldbusConfig[]
     spindle?: SpindleConfig[]
     tool?: ToolConfig[]
-    triggerOn?: TriggerOnConfig[]
 }
 
 export type GlowbuzzerStatus = {

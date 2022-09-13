@@ -13,6 +13,8 @@ import {
     ActivityApiImpl,
     ACTIVITYSTATE,
     MACHINETARGET,
+    TASK_COMMAND,
+    TASK_STATE,
     updateMachineControlWordMsg,
     updateMachineTargetMsg
 } from "../../libs/store/src/api"
@@ -136,6 +138,18 @@ export class GbcTest {
                 assert.equal(actual, expected)
                 return this
             },
+            task: (taskNum: number, expected: TASK_STATE) => {
+                const actual = this.status_msg.status.tasks[taskNum]?.taskState
+                if (actual !== expected) {
+                    console.log(
+                        "Selector mismatch: expected",
+                        TASK_STATE[expected],
+                        "actual",
+                        TASK_STATE[actual]
+                    )
+                }
+                assert.equal(actual, expected)
+            },
             near: (selector, expected, tolerance = 0.001, allowNeg = false) => {
                 const actual = selector(this.status_msg)
                 test_near(actual, expected, tolerance, allowNeg)
@@ -248,6 +262,10 @@ export class GbcTest {
         return this
     }
 
+    destroy() {
+        this.gbc.teardown()
+    }
+
     send(msg) {
         this.gbc.send(msg)
     }
@@ -349,14 +367,12 @@ export class GbcTest {
 
             resolve(value) {
                 this.resolution = value
-                // console.log("RESOLVE!!!", tag)
-                // this.state = true
+                // console.log("RESOLVE!!!", value)
             }
 
             reject(value) {
                 this.resolution = value
-                // console.log("REJECT!!!", tag)
-                // this.state = false
+                // console.log("REJECT!!!", value)
             }
 
             start() {
@@ -425,6 +441,23 @@ export class GbcTest {
 
     private capture(enabled) {
         this.capture_state = enabled ? [] : undefined
+        return this
+    }
+
+    task(taskIndex: number, taskCommand: TASK_COMMAND) {
+        this.send(
+            JSON.stringify({
+                command: {
+                    task: {
+                        [taskIndex]: {
+                            command: {
+                                taskCommand
+                            }
+                        }
+                    }
+                }
+            })
+        )
         return this
     }
 }

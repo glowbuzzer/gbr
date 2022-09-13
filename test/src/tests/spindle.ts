@@ -22,7 +22,7 @@ test("can start and stop spindle", async () => {
     await gbc
         .wrap(gbc.activity.spindle(0, true, 1.0).promise)
         .start()
-        .iterations(1)
+        .iterations(2)
         .assertCompleted()
 
     gbc.assert.doutPdo(0, true)

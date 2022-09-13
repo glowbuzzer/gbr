@@ -100,18 +100,18 @@ export * from "./gbc_extra"
   ACTIVITYTYPE_DWELL ,
         /**  Start/stop spindle */
   ACTIVITYTYPE_SPINDLE ,
-        /**  Wait for a digital input */
-  ACTIVITYTYPE_WAITON_DIN ,
-        /**  Wait for an integer input */
-  ACTIVITYTYPE_WAITON_IIN ,
-        /**  Wait for an analog input */
-  ACTIVITYTYPE_WAITON_AIN ,
+        /**  @ignore Reserved for future use */
+  ACTIVITYTYPE_RESERVED2 ,
+        /**  @ignore Reserved for future use */
+  ACTIVITYTYPE_RESERVED3 ,
+        /**  @ignore Reserved for future use */
+  ACTIVITYTYPE_RESERVED4 ,
         /**  @ignore Gear in a master and slave specifying position */
   ACTIVITYTYPE_GEARINPOS ,
         /**  @ignore Gear in a master and slave specifying velocity */
   ACTIVITYTYPE_GEARINVELO ,
         /**  @ignore Switch a robot&#x27;s configuration */
-  ACTIVITYTYPE_SWITCHPOSE ,
+  ACTIVITYTYPE_RESERVED5 ,
         /**  Set tool offset */
   ACTIVITYTYPE_TOOLOFFSET ,
         /**  @ignore Latch the value of a position */
@@ -192,6 +192,8 @@ export * from "./gbc_extra"
   KC_CARTESIAN ,
         /**  The kinematics configuration will have the CARTESIAN_SLAVED kinematics model (algorithm) applied */
   KC_CARTESIAN_SLAVED ,
+        /**  The kinematics configuration will have the TWO_LINK kinematics model (algorithm) applied */
+  KC_TWO_LINK ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
@@ -244,6 +246,18 @@ export * from "./gbc_extra"
   STREAMSTATE_STOPPING ,
         /**  Stream state is stopped */
   STREAMSTATE_STOPPED ,
+    }
+    export enum TRIGGERON {
+        TRIGGERON_NONE,
+        TRIGGERON_ANALOG_INPUT,
+        TRIGGERON_DIGITAL_INPUT,
+        TRIGGERON_INTEGER_INPUT,
+        TRIGGERON_TIMER,
+    }
+    export enum TRIGGERACTION {
+        TRIGGERACTION_NONE,
+        TRIGGERACTION_CANCEL,
+        TRIGGERACTION_START,
     }
 
 
@@ -549,6 +563,58 @@ export * from "./gbc_extra"
                         /**  The robot configuration (waist/elbow/wrist), if applicable */
                         configuration?:number;
             }
+            
+            export type TriggerOnAnalogInput = {
+            
+                        
+                        input?:number;
+                        
+                        when?:GTLT;
+                        
+                        value?:number;
+            }
+            
+            export type TriggerOnDigitalInput = {
+            
+                        
+                        input?:number;
+                        
+                        when?:TRIGGERTYPE;
+            }
+            
+            export type TriggerOnIntegerInput = {
+            
+                        
+                        input?:number;
+                        
+                        when?:GTLT;
+                        
+                        value?:number;
+            }
+            
+            export type TriggerOnTimer = {
+            
+                        
+                        delay?:number;
+            }
+            
+            export type TriggerParams = {
+            
+                        
+                        type?:TRIGGERON;
+                        
+                        action?:TRIGGERACTION;
+    //              Start of Union
+                        
+                         analog?: TriggerOnAnalogInput,
+                        
+                         digital?: TriggerOnDigitalInput,
+                        
+                         integer?: TriggerOnIntegerInput,
+                        
+                         timer?: TriggerOnTimer,
+    //              End of Union
+            }
             /** 
             Config parameters for Tasks
              */
@@ -561,10 +627,8 @@ export * from "./gbc_extra"
                         activityCount?:number;
                         /**  First activity in this task  */
                         firstActivityIndex?:number;
-                        /**  Link to trigger to cancel task */
-                        cancelTriggerOnIndex?:number;
-                        /**  Link to trigger to start task */
-                        startTriggerOnIndex?:number;
+                        
+                        triggers?:TriggerParams[];
             }
             /** 
             Status parameters for Tasks
@@ -1230,82 +1294,6 @@ export * from "./gbc_extra"
             
             }
             /** 
-            Parameters for a wait on digital input activity
-             */
-            export type WaitOnDigitalInputActivityParams = {
-            
-                        /**  Index of the digital input */
-                        index?:number;
-                        /**  Whether to continue on rising or falling edge */
-                        triggerType?:TRIGGERTYPE;
-            }
-            /** @ignore */
-            export type WaitOnDigitalInputActivityStatus = {
-            
-                        /**  Signals the waitOnDigitalInput is in waiting state */
-                        waiting?:boolean;
-            }
-            /** 
-            Command for a running wait on digital input activity
-             */
-            export type WaitOnDigitalInputActivityCommand = {
-            
-                        /**  Triggers the activity to stop and skip to the next in a task */
-                        skipToNext?:boolean;
-            }
-            /** 
-            Parameters for a wait on integer input activity
-             */
-            export type WaitOnIntegerInputActivityParams = {
-            
-                        /**  Index of the integer input */
-                        index?:number;
-                        /**  Continue if current integer value matches this value and condition */
-                        value?:number;
-                        /**  Continue if current integer value matches this condition and value */
-                        condition?:GTLT;
-            }
-            /** @ignore */
-            export type WaitOnIntegerInputActivityStatus = {
-            
-                        /**  Signals the waitOnIntegerInput is in waiting state */
-                        waiting?:boolean;
-            }
-            /** 
-            Command for a running wait on integer input activity
-             */
-            export type WaitOnIntegerInputActivityCommand = {
-            
-                        /**  Triggers the activity to stop and skip to the next in a task */
-                        skipToNext?:boolean;
-            }
-            /** 
-            Parameters for a wait on analog input activity
-             */
-            export type WaitOnAnalogInputActivityParams = {
-            
-                        /**  Index of the analog input */
-                        index?:number;
-                        /**  Continue if current analog value matches this value and condition */
-                        value?:number;
-                        /**  Continue if current analog value matches this condition and value */
-                        condition?:GTLT;
-            }
-            /** @ignore */
-            export type WaitOnAnalogInputActivityStatus = {
-            
-                        /**  Signals the waitOnAnalogInput is in waiting state */
-                        waiting?:boolean;
-            }
-            /** 
-            Command for a running wait on analog input activity
-             */
-            export type WaitOnAnalogInputActivityCommand = {
-            
-                        /**  Triggers the activity to stop and skip to the next in a task */
-                        skipToNext?:boolean;
-            }
-            /** 
             Parameters for a change of tool offset activity
              */
             export type ToolOffsetActivityParams = {
@@ -1451,10 +1439,8 @@ export * from "./gbc_extra"
             
                         /**  IMPORTANT: This is the discriminator for the union */
                         activityType?:ACTIVITYTYPE;
-                        /**  Index of trigger for skip-to-next */
-                        skipToNextTriggerIndex?:number;
-                        /**  Type of trigger for skip to next  */
-                        skipToNextTriggerType?:TRIGGERTYPE;
+                        
+                        triggers?:TriggerParams[];
     //              Start of Union
                         /**  Configuration parameters for move joints activity */
                          moveJoints?: MoveJointsActivityParams,
@@ -1482,12 +1468,6 @@ export * from "./gbc_extra"
                          dwell?: DwellActivityParams,
                         /**  Configuration parameters for spindle activity */
                          spindle?: SpindleActivityParams,
-                        /**  Configuration parameters for wait on digital input activity */
-                         waitOnDigitalInput?: WaitOnDigitalInputActivityParams,
-                        /**  Configuration parameters for wait on integer input activity */
-                         waitOnIntegerInput?: WaitOnIntegerInputActivityParams,
-                        /**  Configuration parameters for wait on analog input activity */
-                         waitOnAnalogInput?: WaitOnAnalogInputActivityParams,
                         /**  Configuration parameters for stress test activity */
                          stressTest?: StressTestActivityParams,
     //              End of Union
@@ -1527,12 +1507,6 @@ export * from "./gbc_extra"
                         /**  @ignore */
                          spindle?: SpindleActivityStatus,
                         /**  @ignore */
-                         waitOnDigitalInput?: WaitOnDigitalInputActivityStatus,
-                        /**  @ignore */
-                         waitOnIntegerInput?: WaitOnIntegerInputActivityStatus,
-                        /**  @ignore */
-                         waitOnAnalogInput?: WaitOnAnalogInputActivityStatus,
-                        /**  @ignore */
                          stressTest?: StressTestActivityStatus,
     //              End of Union
             }
@@ -1568,17 +1542,9 @@ export * from "./gbc_extra"
                          dwell?: DwellActivityCommand,
                         /**  Set spindle command object for activity */
                          spindle?: SpindleActivityCommand,
-                        /**  Set wait on digital input command object for activity */
-                         waitOnDigitalInput?: WaitOnDigitalInputActivityCommand,
-                        /**  Set wait on integer input command object for activity */
-                         waitOnIntegerInput?: WaitOnIntegerInputActivityCommand,
-                        /**  Set wait on analog input command object for activity */
-                         waitOnAnalogInput?: WaitOnAnalogInputActivityCommand,
                         /**  Set stress test command object for activity */
                          stressTest?: StressTestActivityCommand,
     //              End of Union
-                        /**  Trigger a skip to next on the activity */
-                        skipToNext?:boolean;
             }
             /** 
             This is a union
@@ -1589,6 +1555,8 @@ export * from "./gbc_extra"
                         activityType?:ACTIVITYTYPE;
                         /**  User defined. Used by Glowbuzzer React to track gcode line */
                         tag?:number;
+                        
+                        triggers?:TriggerParams[];
     //              Start of Union
                         /**  Parameters for a streamed move joints */
                          moveJoints?: MoveJointsStream,
@@ -1614,12 +1582,6 @@ export * from "./gbc_extra"
                          spindle?: SpindleActivityParams,
                         /**  Parameters for a streamed setting of tool offset */
                          setToolOffset?: ToolOffsetActivityParams,
-                        /**  Parameters for a streamed wait on digital input */
-                         waitOnDigitalInput?: WaitOnDigitalInputActivityParams,
-                        /**  Parameters for a streamed wait on integer input */
-                         waitOnIntegerInput?: WaitOnIntegerInputActivityParams,
-                        /**  Parameters for a streamed wait on analog input */
-                         waitOnAnalogInput?: WaitOnAnalogInputActivityParams,
                         /**  Parameters for a streamed stress test */
                          stressTest?: StressTestActivityStream,
     //              End of Union
@@ -1680,25 +1642,6 @@ export * from "./gbc_extra"
                         rotation?:Quat;
                         /**  Diameter of the tool */
                         diameter?:number;
-            }
-            
-            export type TriggerOnConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
-            
-                        /**  Index of analog input to act as a trigger */
-                        aiIndex?:number;
-                        /**  Threshold for analog in at which trigger occurs */
-                        threshold?:number;
-                        /**  Trigger occurs at threshold greater or less than */
-                        aiThreholdGreaterLessThan?:GTLT;
-                        /**  Index of digital input to act as a trigger */
-                        diIndex?:number;
-                        /**  State that triggers */
-                        diTriggerState?:ONOFF;
-                        /**  Filter for trigger */
-                        numberofTicksBeforeTrigger?:number;
             }
 
 // TS-ONLY STRUCTS

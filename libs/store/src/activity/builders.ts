@@ -23,6 +23,8 @@ import {
     SetIoutActivityParams,
     SpindleActivityParams,
     SPINDLEDIRECTION,
+    TRIGGERACTION,
+    TriggerParams,
     TRIGGERTYPE,
     Vector3,
     WaitOnAnalogInputActivityParams,
@@ -43,6 +45,7 @@ export abstract class ActivityBuilder {
     /** @ignore */
     tag: number
     protected readonly controller: ActivityController
+    triggers: TriggerParams[] = []
 
     /** @ignore */
     constructor(controller: ActivityController) {
@@ -61,7 +64,12 @@ export abstract class ActivityBuilder {
             command[this.commandName] = params
         }
 
-        return command
+        return this.triggers.length ? { ...command, triggers: this.triggers } : command
+    }
+
+    addTrigger(trigger: TriggerParams) {
+        this.triggers.push(trigger)
+        return this
     }
 
     /**
