@@ -20,4 +20,5 @@ jobs:
         with:
             tag: alpha
             version: 0.0.0-alpha.${{ github.run_number }}
+            access: public
         secrets: inherit
