@@ -252,7 +252,7 @@ export const ConnectTile = () => {
                                 .filter((k: number) => machine.activeFault & k)
                                 .map(k => (
                                     <Tag key={k} color="red">
-                                        {FaultCode[k].substr("FAULT_CAUSE_".length)}
+                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
                                     </Tag>
                                 ))}
                         </div>
@@ -266,7 +266,9 @@ export const ConnectTile = () => {
                                 .filter(k => typeof k === "number")
                                 .filter((k: number) => machine.faultHistory & k)
                                 .map(k => (
-                                    <Tag key={k}>{FaultCode[k].substr("FAULT_CAUSE_".length)}</Tag>
+                                    <Tag key={k}>
+                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
+                                    </Tag>
                                 ))}
                         </div>
                     </div>
