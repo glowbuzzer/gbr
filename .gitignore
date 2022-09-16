@@ -45,3 +45,4 @@ Thumbs.db
 /apps/glowsite/node_modules
 /apps/glowsite/public
 /apps/glowsite/.cache
+dist
