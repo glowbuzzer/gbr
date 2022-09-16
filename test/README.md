@@ -11,8 +11,7 @@ Running the tests is a bit convoluted...
 
    This will compile and watch the Typescript sources using `esbuild`. The output is placed in `gbc/libs/gbc-node/build`
 
-
-3. In the `gbc` project, cd to `libs/gbc-node` and run `pnpm i` to install node modules. You should now be able to run
+1. In the `gbc` project, cd to `libs/gbc-node` and run `pnpm i` to install node modules. You should now be able to run
    the tests. If available, use the `gbc-node (tests)` run configuration. This has the following settings:
 
 ```

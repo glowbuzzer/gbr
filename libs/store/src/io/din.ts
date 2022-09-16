@@ -3,7 +3,7 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
@@ -49,4 +49,11 @@ export function useDigitalInputBits() {
         }
         return acc
     }, 0)
+}
+
+/**
+ * Returns a list with the current state of each digital input as `true` or `false`
+ */
+export function useDigitalInputs(): boolean[] {
+    return useSelector((state: RootState) => state.din)
 }

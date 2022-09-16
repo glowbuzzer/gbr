@@ -10,5 +10,5 @@ To run this example:
     ```bash
     gbc --config <path_to_configs>/config_igus.json
     ```
-1. Start the React app using `nx serve igus`
+1. Start the React app using `vite examples/igus`
 1. Open the app in your browser 

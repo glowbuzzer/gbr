@@ -1,5 +1,8 @@
 /*
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ *
+ * This script packages libs/store and libs/controls using esbuild ready to be published to npm.
+ *
  */
 
 import {build} from 'esbuild';

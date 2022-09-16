@@ -1,6 +1,0 @@
-{
-    "extends": "../../.babelrc",
-    "presets": [
-        "@nrwl/react/babel"
-    ]
-}

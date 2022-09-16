@@ -10,5 +10,5 @@ To run this example:
     ```bash
     gbc --config <path_to_configs>/config_staubli.json
     ```
-1. Start the React app using `nx serve staubli`
+1. Start the React app using `vite examples/staubli`
 1. Open the app in your browser 

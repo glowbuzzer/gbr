@@ -29,7 +29,7 @@ const PrefsButton = () => {
 
 export function App() {
     return (
-        <GlowbuzzerApp minWidth={"1080px"} storeEnhancers={[digitalInputEnhancer]}>
+        <GlowbuzzerApp storeEnhancers={[digitalInputEnhancer]}>
             <DigitalInputMockProvider>
                 <AppContextProvider>
                     <BrowserRouter>

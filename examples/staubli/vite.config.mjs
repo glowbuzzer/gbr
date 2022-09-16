@@ -1,20 +1,11 @@
-import {defineConfig, loadEnv} from "vite"
-import react from "@vitejs/plugin-react"
-import {resolve} from "path";
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
+import {defineConfig} from "vite"
+import {DEFAULT_VITE_CONFIG} from "../../vite.shared.mjs";
 
 /**
  * @type {import('vite').UserConfig}
  */
-export default defineConfig(({mode}) => {
-    const env = loadEnv(mode, process.cwd())
-
-    return {
-        plugins: [react()],
-        resolve: {
-            alias: {
-                "@glowbuzzer/controls": resolve(__dirname, "../../libs/controls/src/index.ts"),
-                "@glowbuzzer/store": resolve(__dirname, "../../libs/store/src/index.ts")
-            }
-        }
-    }
-})
+export default defineConfig(() => DEFAULT_VITE_CONFIG)

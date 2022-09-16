@@ -10,7 +10,6 @@ import {
     useStateMachine
 } from "@glowbuzzer/store"
 import { appContext } from "./AppContextType"
-import ColorThief from "colorthief"
 
 enum ImageType {
     TYPE1,
@@ -115,48 +114,52 @@ export const AppContextProvider = ({ children }) => {
                     setDoutCamera(false)
                     await delay(null, 3000)
 
-                    const { image_type, base64 } = await new Promise(resolve => {
-                        function randomise() {
-                            console.log("IMAGE LOAD ERROR - REVERTING TO RANDOM SELECTION")
-                            setTimeout(() => {
-                                const image_type =
-                                    Math.random() > 0.5 ? ImageType.TYPE1 : ImageType.TYPE2
-                                resolve({ image_type, base64: null })
-                            }, 500)
-                        }
+                    const { image_type, base64 } = await new Promise<{ image_type; base64 }>(
+                        resolve => {
+                            function randomise() {
+                                console.log("IMAGE LOAD ERROR - REVERTING TO RANDOM SELECTION")
+                                setTimeout(() => {
+                                    const image_type =
+                                        Math.random() > 0.5 ? ImageType.TYPE1 : ImageType.TYPE2
+                                    resolve({ image_type, base64: null })
+                                }, 500)
+                            }
 
-                        const image = new Image()
-                        image.onload = () => {
-                            try {
-                                const ct = new ColorThief()
-                                // TODO: passing wrong type?
-                                const [r, g, b] = ct.getColor(image)
-                                const hue = toHue(r, g, b)
-                                console.log("LOADED IMAGE, HUE ==", hue, "RGB ==", r, g, b)
-
-                                const c = document.createElement("canvas")
-                                c.height = image.naturalHeight
-                                c.width = image.naturalWidth
-                                const ctx = c.getContext("2d")
-
-                                ctx.drawImage(image, 0, 0, c.width, c.height)
-                                const base64 = c.toDataURL()
-
-                                resolve({
-                                    image_type: hue < 220 ? ImageType.TYPE1 : ImageType.TYPE2,
-                                    base64
-                                })
-                            } catch (e) {
+                            const image = new Image()
+                            image.onload = () => {
+                                // TODO: ColorThief uses deprecated package 'request'
+                                // Possible alternative approach: https://stackoverflow.com/a/49837149/2824661
+                                // try {
+                                //     const ct = new ColorThief()
+                                //     // TODO: passing wrong type?
+                                //     const [r, g, b] = ct.getColor(image)
+                                //     const hue = toHue(r, g, b)
+                                //     console.log("LOADED IMAGE, HUE ==", hue, "RGB ==", r, g, b)
+                                //
+                                //     const c = document.createElement("canvas")
+                                //     c.height = image.naturalHeight
+                                //     c.width = image.naturalWidth
+                                //     const ctx = c.getContext("2d")
+                                //
+                                //     ctx.drawImage(image, 0, 0, c.width, c.height)
+                                //     const base64 = c.toDataURL()
+                                //
+                                //     resolve({
+                                //         image_type: hue < 220 ? ImageType.TYPE1 : ImageType.TYPE2,
+                                //         base64
+                                //     })
+                                // } catch (e) {
+                                randomise()
+                                // }
+                            }
+                            image.onerror = () => {
+                                console.log("IMAGE ONERROR TRIGGERED")
                                 randomise()
                             }
+                            image.crossOrigin = "Anonymous"
+                            image.src = "http://rpi-camera/camera_image.png?" + Math.random()
                         }
-                        image.onerror = () => {
-                            console.log("IMAGE ONERROR TRIGGERED")
-                            randomise()
-                        }
-                        image.crossOrigin = "Anonymous"
-                        image.src = "http://rpi-camera/camera_image.png?" + Math.random()
-                    })
+                    )
                     return {
                         state: image_type === ImageType.TYPE1 ? "eject_type1" : "advance_type2",
                         data: base64
