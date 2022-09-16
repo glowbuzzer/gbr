@@ -37,7 +37,7 @@ jobs:
                 run: pnpm install
 
             -   name: Build app
-                run: ./node_modules/.bin/vite build ${{ inputs.example }} --base=/examples/${{ inputs.example }}/
+                run: ./node_modules/.bin/vite build examples/${{ inputs.example }} --base=/examples/${{ inputs.example }}/
 
             -   name: Deploy site
                 run: ./examples/deploy-example.sh ${{ inputs.example }} ${{ inputs.site }} ${{ inputs.distribution }}
