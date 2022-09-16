@@ -9,6 +9,7 @@ on:
             - "package.json"
             - "libs/**"
             - "examples/staubli/**"
+            - "examples/deploy-example.sh"
 
 jobs:
     publish:
