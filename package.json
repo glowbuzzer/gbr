@@ -68,10 +68,5 @@
         "uvu": "^0.5.6",
         "vite": "^3.1.1"
     },
-    "pnpm": {
-        "overrides": {
-            "@editor-kit/core": "3.37.0-rc.0"
-        }
-    },
     "version": "1.2.1"
 }
