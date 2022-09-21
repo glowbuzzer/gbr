@@ -10,4 +10,5 @@ jobs:
         with:
             tag: alpha
             version: ${GITHUB_REF#refs/tags/v}
+            access: public
         secrets: inherit
