@@ -1,8 +1,5 @@
 lockfileVersion: 5.3
 
-overrides:
-  '@editor-kit/core': 3.37.0-rc.0
-
 specifiers:
   '@ant-design/icons': ^4.7.0
   '@babel/core': ^7.18.2
