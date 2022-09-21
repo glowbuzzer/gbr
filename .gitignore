@@ -46,3 +46,5 @@ Thumbs.db
 /apps/glowsite/public
 /apps/glowsite/.cache
 dist
+/create-react-app/cra-template-glowbuzzer-typescript/template.json
+/create-react-app/cra-template-glowbuzzer-typescript/package.json

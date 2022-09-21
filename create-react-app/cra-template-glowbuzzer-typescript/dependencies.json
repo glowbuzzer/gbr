@@ -1,0 +1,23 @@
+{
+    "@babel/core": "detect",
+    "@babel/plugin-syntax-flow": "^7.17.12",
+    "@babel/plugin-transform-react-jsx": "^7.17.12",
+    "@glowbuzzer/controls": "detect",
+    "@glowbuzzer/store": "detect",
+    "@react-three/drei": "detect",
+    "@react-three/fiber": "detect",
+    "@types/node": "detect",
+    "@types/react": "detect",
+    "@types/react-dom": "detect",
+    "@types/styled-components": "detect",
+    "@types/three": "detect",
+    "ace-builds": "detect",
+    "d3": "detect",
+    "dseg": "detect",
+    "react-ace": "detect",
+    "react-dom": "detect",
+    "react-is": "detect",
+    "react-scripts": "5.0.1",
+    "three-stdlib": "detect",
+    "typescript": "detect"
+}
