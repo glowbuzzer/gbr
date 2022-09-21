@@ -10,7 +10,7 @@ import {
 } from "@glowbuzzer/store"
 
 // CHANGE THE CONNECT URL WITH ADDRESS WHERE GBC IS RUNNING
-const CONNECT_URL = "ws://192.168.1.199:9001/ws"
+const CONNECT_URL = "ws://192.168.1.141:9001/ws"
 
 export const SimpleConnectView = () => {
     const connection = useConnection()

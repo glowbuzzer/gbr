@@ -9,7 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@glowbuzzer/store": "1.2.1",
+    "@glowbuzzer/store": "1.3.0",
     "expo": "~46.0.9",
     "expo-status-bar": "~1.4.0",
     "react-native": "0.69.5",
