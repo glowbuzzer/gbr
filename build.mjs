@@ -32,7 +32,7 @@ console.log("Packaging the following projects:", projects.join(","))
 console.log("Setting all versions to:", version)
 
 for (const project of projects) {
-    console.log("Processing", project)
+    console.log(`Processing @glowbuzzer/${project}`)
     const pkg = JSON.parse(fs.readFileSync(`./libs/${project}/package.json`).toString());
     if (!pkg.exports) {
         throw new Error('Failed to find \'exports\' property in package.json');
@@ -129,7 +129,7 @@ for (const project of projects) {
     })).then(() => {
         execSync(`tsc --build libs/${project}/tsconfig.lib.json`)
         execSync(`mv dist/types/libs/${project}/src dist/${project}/types`)
-
+        execSync(`cp libs/${project}/README.md dist/${project}`)
         // re-write dependencies between included packages so everything uses new version
         for (const dep of projects) {
             const key = `@glowbuzzer/${dep}`;
