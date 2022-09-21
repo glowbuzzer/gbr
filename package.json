@@ -1,8 +1,7 @@
 {
     "name": "gbr",
     "license": "MIT",
-    "scripts": {
-    },
+    "scripts": {},
     "private": true,
     "optionalDependencies": {
         "fsevents": "^2.3.2"
@@ -68,5 +67,5 @@
         "uvu": "^0.5.6",
         "vite": "^3.1.1"
     },
-    "version": "1.2.1"
+    "version": "1.3.0"
 }
