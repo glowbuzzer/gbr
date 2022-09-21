@@ -40,21 +40,21 @@ jobs:
             -   name: Generate react component docs
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
 
-            -   name: Publish dist/store
-                #run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/store/
-                env:
-                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+#            -   name: Publish dist/store
+#                run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/store/
+#                env:
+#                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-            -   name: Publish dist/controls
-                #run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/controls/
-                env:
-                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+#            -   name: Publish dist/controls
+#                run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/controls/
+#                env:
+#                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
             -   name: Package cra-template-glowbuzzer-typescript
                 run: node build.mjs cra-template-glowbuzzer-typescript ${{ inputs.version }}
                 working-directory: create-react-app
 
-            -   name: Publish cra-template-glowbuzzer-typescript
-                #run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} create-react-app/cra-template-glowbuzzer-typescript/
-                env:
-                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+#            -   name: Publish cra-template-glowbuzzer-typescript
+#                run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} create-react-app/cra-template-glowbuzzer-typescript/
+#                env:
+#                    NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
