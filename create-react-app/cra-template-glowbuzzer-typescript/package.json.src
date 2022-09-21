@@ -9,7 +9,7 @@
     "template",
     "typescript"
   ],
-  "description": "The base TypeScript template for Glowbuzzer React applications",
+  "description": "The base TypeScript template for glowbuzzer React (GBR) applications",
   "repository": {
     "type": "git",
     "url": "https://github.com/glowbuzzer/gbr.git",
@@ -24,6 +24,6 @@
   },
   "files": [
     "template",
-      "dependencies.json"
+    "template.json"
   ]
 }
