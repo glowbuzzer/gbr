@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar"
-import { StyleSheet, View } from "react-native"
+import { Image, StyleSheet, View } from "react-native"
 import { configureStore } from "@reduxjs/toolkit"
 import { Provider } from "react-redux"
 import { rootReducer } from "@glowbuzzer/store"
@@ -28,6 +28,7 @@ export default function App() {
     return (
         <Provider store={store}>
             <View style={style.container}>
+                <Image source={require("./assets/react-icon.png")} />
                 <SimpleConnectView />
                 <SimpleMoveView />
                 <StatusBar style="auto" />
