@@ -117,6 +117,22 @@ test("move line with change in orientation", async () => {
     assertNear(100, 100, 100, Math.PI, 0, Math.PI / 4)
 })
 
+test("move to position with change in orientation", async () => {
+    init_robot_test()
+    try {
+        const builder = gbc.activity.moveToPosition().rotationEuler(Math.PI, 0, Math.PI / 4)
+        const move = gbc.wrap(builder.promise)
+        await move.start().iterations(300).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
+
+    gbc.assert.selector(config, INITIAL_CONFIG)
+    assertNear(270.962, 35, 179.038, Math.PI, 0, Math.PI / 4)
+
+    // assertNear(0, 35, 0, Math.PI, 0, Math.PI / 4)
+})
+
 test("can cancel move line with change in orientation", async () => {
     // we need to make sure both translation and orientation trajectories are terminated in sync
     init_robot_test()

@@ -25,7 +25,7 @@ import {
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
 function nullify(v?: number) {
-    return v === null || Number.isNaN(v /* null is not NaN */) ? null : v
+    return v === null || isNaN(v /* null is not NaN */) ? null : v
 }
 
 /**
