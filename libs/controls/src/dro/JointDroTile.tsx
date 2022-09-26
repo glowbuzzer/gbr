@@ -44,8 +44,6 @@ export const JointDroTile = () => {
         ? kcs[Number(selectedKc)].participatingJoints
         : undefined
 
-    console.log("JOINTS", jointsToDisplay)
-
     return (
         <Tile title="Joint DRO" help={help}>
             Kinematics:{" "}
