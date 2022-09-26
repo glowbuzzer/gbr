@@ -26,6 +26,7 @@ import { PreviewPath } from "./PreviewPath"
 import { RobotModel } from "./robots"
 import { TcpRobot } from "./TcpRobot"
 import { TcpFulcrum } from "./TcpFulcrum"
+import { TriadHelper } from "./TriadHelper"
 
 const help = (
     <div>
@@ -179,10 +180,9 @@ export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPa
                         args={[2 * extent, 20, undefined, 0xd0d0d0]}
                         rotation={new Euler(Math.PI / 2)}
                     />
-                    <axesHelper
-                        args={[extent / 4]}
-                        position={new Vector3((-extent * 11) / 10, -extent / 10, 0)}
-                    />
+                    <group position={new Vector3((-extent * 11) / 10, -extent / 5, 0)}>
+                        <TriadHelper size={extent / 4} />
+                    </group>
 
                     {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
 

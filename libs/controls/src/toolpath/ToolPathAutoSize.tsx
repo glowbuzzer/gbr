@@ -49,7 +49,7 @@ export const ToolPathAutoSize = ({ extent, children }) => {
                 near={0.01}
                 up={[0, 0, 1]}
             />
-            <OrbitControls camera={camera} enableDamping={false} />
+            <OrbitControls camera={camera} enableDamping={false} makeDefault />
             <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
                 <GizmoViewcube
                     {...{

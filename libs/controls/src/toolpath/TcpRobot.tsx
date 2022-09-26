@@ -9,6 +9,7 @@ import { DRACOLoader, GLTF, GLTFLoader } from "three-stdlib"
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { ToolConfig } from "@glowbuzzer/store"
+import { triadArrowColors, triadArrowVectors } from "./TriadHelper"
 
 const loader = new GLTFLoader()
 loader.setPath(new URL("./assets", window.location.href).href)
@@ -16,21 +17,14 @@ const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.4.0/")
 loader.setDRACOLoader(dracoLoader)
 
-const arrowVectors = [
-    new THREE.Vector3(1, 0, 0),
-    new THREE.Vector3(0, 1, 0),
-    new THREE.Vector3(0, 0, 1)
-]
-const arrowColors = [0xff0000, 0x00ff00, 0x0000ff]
-
 function add_triad(group: THREE.Group) {
     const arrows = [0, 1, 2].map(
         i =>
             new THREE.ArrowHelper(
-                arrowVectors[i],
+                triadArrowVectors[i],
                 undefined,
                 0.25,
-                arrowColors[i],
+                triadArrowColors[i],
                 undefined,
                 0.025
             )
