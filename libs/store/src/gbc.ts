@@ -305,6 +305,8 @@ export * from "./gbc_extra"
                         target?:MACHINETARGET;
                         /**  Number of times we have tried to connect to the target */
                         targetConnectRetryCnt?:number;
+                        /**  @ignore Reserved for internal use */
+                        message?:string[];
             }
             
             export type MachineCommand = {

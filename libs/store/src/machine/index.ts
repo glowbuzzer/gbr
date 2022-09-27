@@ -10,10 +10,9 @@ import {
     handleMachineState,
     MachineState
 } from "./MachineStateHandler"
-import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
-import { MACHINETARGET } from "../gbc"
+import { GlowbuzzerMachineStatus, MACHINETARGET } from "../gbc"
 import { useConfig } from "../config"
 
 // noinspection JSUnusedGlobalSymbols
@@ -38,33 +37,35 @@ export enum FaultCode {
 }
 
 // this is the data coming back from GBC in status.machine
-type MachineStatus = {
-    statusWord: number
-    controlWord: number
-    activeFault: number
-    faultHistory: number
-    requestedTarget: MACHINETARGET
-    actualTarget: MACHINETARGET
-    targetConnectRetryCnt: number
-    heartbeat?: number
-    heartbeatReceived: boolean
-}
+// type MachineStatus = {
+//     statusWord: number
+//     controlWord: number
+//     activeFault: number
+//     faultHistory: number
+//     requestedTarget: MACHINETARGET
+//     actualTarget: MACHINETARGET
+//     targetConnectRetryCnt: number
+//     heartbeat?: number
+//     heartbeatReceived: boolean
+// }
 
 // this is transitory app state
 type MachineStateHandling = {
-    currentState: MachineState
+    currentState?: MachineState
     desiredState: DesiredState
-    nextControlWord: number | void
+    nextControlWord?: number | void
+    requestedTarget: MACHINETARGET
+    heartbeatReceived?: boolean
 }
 
-type MachineSliceType = MachineStatus & MachineStateHandling
+type MachineSliceType = GlowbuzzerMachineStatus & MachineStateHandling
 
 // createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
 export const machineSlice: Slice<MachineSliceType> = createSlice({
     name: "machine",
     initialState: {
         requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
-        actualTarget: undefined,
+        target: undefined,
         desiredState: DesiredState.OPERATIONAL,
         heartbeatReceived: true
     } as MachineSliceType,
@@ -77,14 +78,16 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
                 activeFault,
                 faultHistory,
                 target,
-                targetConnectRetryCnt
+                targetConnectRetryCnt,
+                message
             } = action.payload
             state.statusWord = statusWord
             state.controlWord = controlWord
             state.activeFault = activeFault
             state.faultHistory = faultHistory
-            state.actualTarget = target
+            state.target = target
             state.targetConnectRetryCnt = targetConnectRetryCnt
+            state.message = message
 
             // check if the heartbeat has changed
             state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
@@ -104,7 +107,7 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
             }
         },
         setRequestedTarget: (state, action) => {
-            state.actualTarget = MACHINETARGET.MACHINETARGET_NONE // set to none until we get update
+            state.target = MACHINETARGET.MACHINETARGET_NONE // set to none until we get update
             state.requestedTarget = action.payload
         },
         setDesiredState: (state, action) => {
@@ -124,26 +127,30 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
 export function useMachine(): {
     /** The name of the machine */
     name: string
+    /** Indicates if an error has occurred. */
+    error?: boolean
+    /** The error message if an error has occurred. */
+    message?: string
     /** The current CIA 402 status word */
-    statusWord: number
+    statusWord?: number
     /** The CIA 402 control word sent */
-    controlWord: number
+    controlWord?: number
     /** The active fault, a bitwise union of {@link FaultCode}. Populated if machine state is `FAULT_REACTION_ACTIVE` */
-    activeFault: number
+    activeFault?: number
     /** The last registered fault prior to fault reset, a bitwise union of {@link FaultCode} */
-    faultHistory: number
+    faultHistory?: number
     /** The requested backend target, simulation of fieldbus */
-    requestedTarget: MACHINETARGET
+    requestedTarget?: MACHINETARGET
     /** The current backend target. Can be different to the requested target if the machine is in the process of switching targets */
-    actualTarget: MACHINETARGET
+    target?: MACHINETARGET
     /** The number of times connection to the requested target has been attempted */
-    targetConnectRetryCnt: number
+    targetConnectRetryCnt?: number
     /** Incrementing integer heartbeat */
     heartbeat?: number
     /** Indicates if the heartbeat is being received in a timely manner */
-    heartbeatReceived: boolean
+    heartbeatReceived?: boolean
     /** Current CIA 402 machine state */
-    currentState: MachineState
+    currentState?: MachineState
     /** Whether the desired state of the machine is operational (enabled) or standby (disabled) */
     desiredState: DesiredState
     /** Sets the desired backend target */
@@ -153,8 +160,7 @@ export function useMachine(): {
     /** Sets the low level CIA 402 machine control word */
     setMachineControlWord(controlWord: number): void
 } {
-    // by using a selector, components using this hook will only render when machine state changes (not the whole state)
-    const machine = useSelector(({ machine }: RootState) => machine, shallowEqual)
+    const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
     const config = useConfig()
 
     // this is our hook giving access to the underlying websocket connection
@@ -164,8 +170,8 @@ export function useMachine(): {
     const dispatch = useDispatch()
 
     return {
-        name: config?.machine?.[0]?.name,
         ...machine,
+        name: config?.machine?.[0]?.name,
         setDesiredMachineTarget(target: MACHINETARGET) {
             dispatch(machineSlice.actions.setRequestedTarget(target))
             // dispatch(() => {

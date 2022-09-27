@@ -13,10 +13,11 @@ program
     .option("-l, --lib <gbc_lib_path>", "path to gbc node add-in")
 
 program.parse(process.argv)
-const { suite } = program.opts()
+const { suite: suites } = program.opts()
+const suites_to_run = suites ? suites.split(",").map(s => s.trim()) : Object.keys(all_suites)
 
 for (const [name, runner] of Object.entries(all_suites)) {
-    if (!suite || suite === name) {
+    if (suites_to_run.includes(name)) {
         runner.run()
     }
 }

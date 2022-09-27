@@ -425,12 +425,38 @@ export class GbcTest {
         }
         const { statusWord } = this.status_msg.status.machine
         const currentState = determine_machine_state(statusWord)
-        assert.equal(
-            currentState,
-            desired === DesiredState.OPERATIONAL
+
+        const equal =
+            currentState ===
+            (desired === DesiredState.OPERATIONAL
                 ? MachineState.OPERATION_ENABLED
-                : MachineState.SWITCH_ON_DISABLED
-        )
+                : MachineState.SWITCH_ON_DISABLED)
+
+        if (!equal) {
+            // convert status to binary string
+            const statusStr = statusWord.toString(2).padStart(16, "0")
+
+            console.log("MACHINE STATUS", JSON.stringify(this.status_msg.status.machine, null, 2))
+
+            console.log(
+                "STATE MISMATCH, DESIRED=",
+                DesiredState[desired],
+                "CURRENT=",
+                DesiredState[currentState],
+                "=",
+                currentState,
+                "BIN",
+                statusStr
+            )
+            process.exit(1)
+        }
+
+        // assert.equal(
+        //     currentState,
+        //     desired === DesiredState.OPERATIONAL
+        //         ? MachineState.OPERATION_ENABLED
+        //         : MachineState.SWITCH_ON_DISABLED
+        // )
         return this
     }
 

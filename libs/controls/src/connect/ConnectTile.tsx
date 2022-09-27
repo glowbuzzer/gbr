@@ -100,6 +100,9 @@ const StyledDiv = styled.div`
             }
         }
     }
+    .machine-message {
+        text-align: center;
+    }
 `
 
 /**
@@ -135,7 +138,7 @@ export const ConnectTile = () => {
     const connected = connection.connected && connection.statusReceived
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
-    const target_not_acquired = machine.actualTarget !== machine.requestedTarget
+    const target_not_acquired = machine.target !== machine.requestedTarget
 
     function determine_traffic_light_color() {
         if (!connected) {
@@ -188,7 +191,7 @@ export const ConnectTile = () => {
                         <Radio.Group
                             disabled={connection.state !== ConnectionState.CONNECTED}
                             size={"small"}
-                            value={machine.actualTarget}
+                            value={machine.target}
                             onChange={change_target}
                         >
                             <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>
@@ -274,6 +277,9 @@ export const ConnectTile = () => {
                     </div>
                 )}
 
+                {machine.message?.length > 0 && (
+                    <div className="machine-message">{machine.message}</div>
+                )}
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
             </StyledDiv>

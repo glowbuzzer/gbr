@@ -81,6 +81,15 @@ export type GlowbuzzerConfig = {
     tool?: ToolConfig[]
 }
 
+export type GlowbuzzerMachineStatus = MachineStatus & {
+    /** Indicates if an error has occurred. */
+    error?: boolean
+    /** The error message if an error has occurred. */
+    message?: string
+
+    controlWord?: number
+}
+
 export type GlowbuzzerStatus = {
     /**
      * Provides information about activities that are being streamed to GBC.
@@ -110,9 +119,7 @@ export type GlowbuzzerStatus = {
      */
     status: {
         /** The current state of the machine. */
-        machine: MachineStatus & {
-            controlWord: number
-        }
+        machine: GlowbuzzerMachineStatus
         /** The current state of solo activities. */
         activity: ActivityStatus[]
         /** The current state of all joints. */

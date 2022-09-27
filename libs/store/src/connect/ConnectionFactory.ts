@@ -69,7 +69,7 @@ class StatusProcessor extends ProcessorBase {
         msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
 
         // this is after the status update on slices above, so state now has latest from GBC
-        const { actualTarget, requestedTarget, nextControlWord, heartbeat } = getState().machine
+        const { target, requestedTarget, nextControlWord, heartbeat } = getState().machine
 
         // do initial connection handling
         if (first) {
@@ -78,7 +78,7 @@ class StatusProcessor extends ProcessorBase {
             dispatch(toolPathSlice.actions.reset(0)) // clear tool path on connect
             dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
 
-            if (actualTarget !== requestedTarget) {
+            if (target !== requestedTarget) {
                 ws.send(updateMachineTargetMsg(requestedTarget))
             }
             if (!msg.status.kc) {
