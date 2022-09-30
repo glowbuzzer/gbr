@@ -277,8 +277,8 @@ export const ConnectTile = () => {
                     </div>
                 )}
 
-                {machine.message?.length > 0 && (
-                    <div className="machine-message">{machine.message}</div>
+                {machine.operationErrorMessage?.length > 0 && (
+                    <div className="machine-message">{machine.operationErrorMessage}</div>
                 )}
                 {connection.statusReceived || <h3>No status received</h3>}
                 {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}

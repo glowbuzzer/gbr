@@ -12,6 +12,7 @@ import * as assert from "uvu/assert"
 import {
     ActivityApiImpl,
     ACTIVITYSTATE,
+    GlowbuzzerStatus,
     MACHINETARGET,
     TASK_COMMAND,
     TASK_STATE,
@@ -19,7 +20,7 @@ import {
     updateMachineTargetMsg
 } from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, gcodeSlice, jointsSlice } from "../../libs/store/src"
+import { activitySlice, FaultCode, gcodeSlice, jointsSlice } from "../../libs/store/src"
 import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
@@ -75,7 +76,7 @@ export class GbcTest {
         return this.status_msg.status
     }
 
-    get assert(): any {
+    get assert() {
         function test_near(actual, expected, tolerance, allowNeg = false) {
             if (allowNeg) {
                 actual = Math.abs(actual)
@@ -195,6 +196,16 @@ export class GbcTest {
                     }
                 }
                 return this
+            },
+            faultReactionActive: (code: FaultCode) => {
+                const active = this.status_msg.status.machine.activeFault & code
+                assert.ok(active, "Fault not found (active fault): " + FaultCode[code])
+                return this
+            },
+            fault: (code: FaultCode) => {
+                const active = this.status_msg.status.machine.faultHistory & code
+                assert.ok(active, "Fault not found (fault history): " + FaultCode[code])
+                return this
             }
         }
     }
@@ -221,7 +232,7 @@ export class GbcTest {
         }
     }
 
-    private get status_msg() {
+    private get status_msg(): GlowbuzzerStatus {
         return JSON.parse(this.gbc.status())
     }
 

@@ -12,7 +12,7 @@ import {
 } from "./MachineStateHandler"
 import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
-import { GlowbuzzerMachineStatus, MACHINETARGET } from "../gbc"
+import { GlowbuzzerMachineStatus, MACHINETARGET, OPERATION_ERROR } from "../gbc"
 import { useConfig } from "../config"
 
 // noinspection JSUnusedGlobalSymbols
@@ -79,7 +79,8 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
                 faultHistory,
                 target,
                 targetConnectRetryCnt,
-                message
+                operationError,
+                operationErrorMessage
             } = action.payload
             state.statusWord = statusWord
             state.controlWord = controlWord
@@ -87,7 +88,8 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
             state.faultHistory = faultHistory
             state.target = target
             state.targetConnectRetryCnt = targetConnectRetryCnt
-            state.message = message
+            state.operationError = operationError || OPERATION_ERROR.OPERATION_ERROR_NONE
+            state.operationErrorMessage = operationErrorMessage
 
             // check if the heartbeat has changed
             state.heartbeatReceived = state.heartbeat !== action.payload.heartbeat // any change signals healthy heartbeat
@@ -127,10 +129,10 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
 export function useMachine(): {
     /** The name of the machine */
     name: string
-    /** Indicates if an error has occurred. */
-    error?: boolean
+    /** Indicates if a processing error has occurred. */
+    operationError?: OPERATION_ERROR
     /** The error message if an error has occurred. */
-    message?: string
+    operationErrorMessage?: string
     /** The current CIA 402 status word */
     statusWord?: number
     /** The CIA 402 control word sent */

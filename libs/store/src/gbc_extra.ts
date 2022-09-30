@@ -82,10 +82,8 @@ export type GlowbuzzerConfig = {
 }
 
 export type GlowbuzzerMachineStatus = MachineStatus & {
-    /** Indicates if an error has occurred. */
-    error?: boolean
     /** The error message if an error has occurred. */
-    message?: string
+    operationErrorMessage?: string // hack to override string array from codegen
 
     controlWord?: number
 }

@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { DesiredState } from "../../../libs/store/src"
+import { DesiredState, FaultCode } from "../../../libs/store/src"
 
 const test = uvu.suite("core")
 
@@ -18,6 +18,16 @@ test("can transition to OPERATION_ENABLED", () => {
 
 test("can transition from OPERATION_ENABLED to STANDBY", () => {
     gbc.enable_operation().transition_to(DesiredState.STANDBY)
+})
+
+test("can trigger an error when move not enabled", () => {
+    gbc.wrap(gbc.activity.moveLine(10, 10).promise).start().iterations(2)
+    gbc.assert.faultReactionActive(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
+    gbc.exec(1)
+    gbc.assert.fault(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
+    gbc.exec(5)
+    // fault should persist in history
+    gbc.assert.fault(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
 })
 
 test.skip("can error and will give a message in status", async () => {

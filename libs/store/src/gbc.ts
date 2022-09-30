@@ -21,6 +21,13 @@ export * from "./gbc_extra"
         MACHINETARGET_FIELDBUS,
         MACHINETARGET_SIMULATION,
     }
+    export enum OPERATION_ERROR {
+        OPERATION_ERROR_NONE,
+        OPERATION_ERROR_OPERATION_NOT_ENABLED,
+        OPERATION_ERROR_INVALID_ARC,
+        OPERATION_ERROR_TOOL_INDEX_OUT_OF_RANGE,
+        OPERATION_ERROR_JOINT_LIMIT_EXCEEDED,
+    }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
   ABSOLUTE ,
@@ -305,8 +312,10 @@ export * from "./gbc_extra"
                         target?:MACHINETARGET;
                         /**  Number of times we have tried to connect to the target */
                         targetConnectRetryCnt?:number;
+                        /**  Indicates an operation error in GBC that is recoverable */
+                        operationError?:OPERATION_ERROR;
                         /**  @ignore Reserved for internal use */
-                        message?:string[];
+                        operationErrorMessage?:string[];
             }
             
             export type MachineCommand = {
