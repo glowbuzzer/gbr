@@ -9,15 +9,17 @@ import { UnitSelector } from "./UnitSelector"
 
 type PreferencesDialogProps = {
     /** Whether the preferences dialog is visible */
-    visible: boolean
+    open: boolean
     /** Invoked when the dialog is closed */
     onClose: () => void
 }
 
 /**
  * Provides a simple dialog that can be used to set user preferences such as display units.
+ * @param open Whether the dialog is open
+ * @param onClose Callback to close the dialog
  */
-export const PreferencesDialog = ({ visible, onClose }: PreferencesDialogProps) => {
+export const PreferencesDialog = ({ open, onClose }: PreferencesDialogProps) => {
     const prefs = usePrefs()
 
     const labelCol = { span: 6 }
@@ -30,7 +32,7 @@ export const PreferencesDialog = ({ visible, onClose }: PreferencesDialogProps) 
     return (
         <Modal
             title="Preferences"
-            visible={visible}
+            visible={open}
             onCancel={onClose}
             footer={[<Button onClick={onClose}>Close</Button>]}
         >

@@ -4,7 +4,6 @@
 
 import * as React from "react"
 import { FC, ReactNode, useEffect, useRef } from "react"
-import { Provider } from "react-redux"
 import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
 import {
     ConfigState,
@@ -16,6 +15,7 @@ import {
 import styled, { css, ThemeProvider } from "styled-components"
 import { Button } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
+import { Provider } from "react-redux"
 
 const theme = {
     colors: {

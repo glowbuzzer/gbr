@@ -19,7 +19,7 @@ export const TriadHelper = ({ size }) => {
         <>
             {triadArrowVectors.map((v, i) => (
                 <arrowHelper
-                    key={i}
+                    key={i + ":" + size}
                     args={[v, undefined, size, triadArrowColors[i], undefined, size / 10]}
                 />
             ))}

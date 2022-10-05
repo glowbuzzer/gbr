@@ -2,90 +2,38 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import * as ReactDOM from "react-dom"
-import React, { StrictMode, useState } from "react"
+import React, { StrictMode } from "react"
 
 import {
     AnalogInputsTile,
     AnalogOutputsTile,
     CartesianDroTile,
     ConnectTile,
-    StateMachineToolsTile,
     DigitalInputsTile,
     DigitalOutputsTile,
     FeedRateTile,
-    FrameOverrideDialog,
     GCodeTile,
     GlowbuzzerApp,
     IntegerInputsTile,
     IntegerOutputsTile,
     JogTile,
     JointDroTile,
-    PreferencesDialog,
     SimpleTileDefinition,
     SimpleTileLayout,
+    StateMachineToolsTile,
     ToolPathTile,
     ToolsTile
 } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-
-import { Button, Modal, Space } from "antd"
 import { JointSpinnersTile } from "./JointSpinnersTile"
 
 import "react-grid-layout/css/styles.css"
-import { GCodeContextProvider, SoloActivityApi, useConfig } from "@glowbuzzer/store"
-import styled from "styled-components"
+import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 import { SpindleTile } from "../../../libs/controls/src/spindle/SpindleTile"
-
-const PrefsButton = () => {
-    const [visible, setVisible] = useState(false)
-
-    return (
-        <>
-            <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
-        </>
-    )
-}
-
-const FrameOverridesButton = () => {
-    const [visible, setVisible] = useState(false)
-
-    return (
-        <>
-            <Button onClick={() => setVisible(true)}>Frame Overrides</Button>
-            <FrameOverrideDialog visible={visible} onClose={() => setVisible(false)} />
-        </>
-    )
-}
-
-const StyledModal = styled(Modal)`
-    pre {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-`
-const ConfigButton = () => {
-    const [visible, setVisible] = useState(false)
-    const config = useConfig()
-
-    return (
-        <div>
-            <Button onClick={() => setVisible(true)}>View Config</Button>
-            <StyledModal
-                title="Configuration"
-                visible={visible}
-                onCancel={() => setVisible(false)}
-                footer={[<Button onClick={() => setVisible(false)}>Close</Button>]}
-            >
-                <pre>{JSON.stringify(config, null, 2)}</pre>
-            </StyledModal>
-        </div>
-    )
-}
+import { StandardButtons } from "../../util/StandardButtons"
 
 function App() {
     const tiles: SimpleTileDefinition[][] = [
@@ -130,11 +78,7 @@ function App() {
 
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
-            <Space>
-                <PrefsButton />
-                <FrameOverridesButton />
-                <ConfigButton />
-            </Space>
+            <StandardButtons />
             <SimpleTileLayout appId="generic" tiles={tiles} widths={[2, 4, 2]} />
         </GCodeContextProvider>
     )

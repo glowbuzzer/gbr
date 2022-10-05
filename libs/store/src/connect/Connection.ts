@@ -2,8 +2,8 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {Action, ThunkAction} from "@reduxjs/toolkit"
-import {RootState} from "../root"
+import { Action, ThunkAction } from "@reduxjs/toolkit"
+import { RootState } from "../root"
 
 /**
  * We put these here to avoid circular dependencies between modules
@@ -15,6 +15,8 @@ export interface Connection {
     connect(url): AppThunk
 
     send(msg): AppThunk
+
+    request(type, body): AppThunk
 
     disconnect(): AppThunk
 }

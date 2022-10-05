@@ -7,6 +7,7 @@ import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit
 import { RootState } from "../root"
 import { usePrefs } from "../prefs"
 import { useMemo } from "react"
+import { MessageResponse } from "./ConnectionFactory"
 
 export enum ConnectionState {
     DISCONNECTED = "DISCONNECTED",
@@ -81,6 +82,8 @@ export const useConnection = (): {
     disconnect(): void
     /** Send a message over websocket. See GBC schema docs for format */
     send(message): void
+    /** Make a request over websocket. See GBC schema docs for format */
+    request(type, body): Promise<MessageResponse>
     /** Set whether connection should be re-established automatically after unexpected disconnects */
     setAutoConnect(value: boolean): void
 } => {
@@ -112,6 +115,9 @@ export const useConnection = (): {
             },
             send(msg) {
                 dispatch<any>(window.connection.send(msg))
+            },
+            request(type, body) {
+                return dispatch<any>(window.connection.request(type, body))
             },
             setAutoConnect(value: boolean) {
                 dispatch(connectionSlice.actions.autoConnect(value))

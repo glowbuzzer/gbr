@@ -2,29 +2,27 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import ReactDOM from "react-dom"
-import React, { StrictMode, useState } from "react"
+import React, {StrictMode, useState} from "react"
 import {
     CartesianDroTile,
     ConnectTile,
+    FeedRateTile,
     GCodeTile,
     GlowbuzzerApp,
     JogTile,
     JointDroTile,
-    PreferencesDialog,
     RobotModel,
-    ToolsTile,
     ToolPathTile,
-    FeedRateTile
+    ToolsTile
 } from "@glowbuzzer/controls"
-import { Button, Modal, Space, Switch } from "antd"
+import {Space, Switch} from "antd"
 import styled from "styled-components"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import { Vector3 } from "three"
-import { useConfig } from "@glowbuzzer/store"
-import { createRoot } from "react-dom/client"
+import {Vector3} from "three"
+import {createRoot} from "react-dom/client"
+import {StandardButtons} from "../../util/StandardButtons"
 
 const StyledApp = styled.div`
     padding: 20px;
@@ -52,43 +50,6 @@ const StyledApp = styled.div`
         flex-grow: 1;
     }
 `
-
-const PrefsButton = () => {
-    const [visible, setVisible] = useState(false)
-
-    return (
-        <div>
-            <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
-        </div>
-    )
-}
-
-const StyledModal = styled(Modal)`
-    pre {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-`
-const ConfigButton = () => {
-    const [visible, setVisible] = useState(false)
-    const config = useConfig()
-
-    return (
-        <div>
-            <Button onClick={() => setVisible(true)}>View Config</Button>
-            <StyledModal
-                title="Configuration"
-                visible={visible}
-                onCancel={() => setVisible(false)}
-                footer={[<Button onClick={() => setVisible(false)}>Close</Button>]}
-            >
-                <pre>{JSON.stringify(config, null, 2)}</pre>
-            </StyledModal>
-        </div>
-    )
-}
-
 const DEG90 = Math.PI / 2
 
 const TX40_MODEL: RobotModel = {
@@ -110,14 +71,12 @@ export function App() {
 
     return (
         <>
-            <Space>
-                <PrefsButton />
-                <ConfigButton />
+            <StandardButtons>
                 <Space>
                     <Switch defaultChecked={true} onChange={setShowRobot} />
                     <div>Show robot</div>
                 </Space>
-            </Space>
+            </StandardButtons>
             <StyledApp>
                 <nav className="left">
                     <ConnectTile />

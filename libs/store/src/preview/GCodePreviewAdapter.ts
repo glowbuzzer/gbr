@@ -96,19 +96,19 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         const [cx, cy] = [x1 + x_offset, y1 + y_offset]
 
         const r = Math.hypot(x1 - cx, y1 - cy)
-        const r_check = Math.hypot(x2 - cx, y2 - cy)
-        const delta = Math.abs(r - r_check)
-        if (delta > 0.001) {
-            // TODO: error handling
-            console.error(
-                "Invalid arc - points not equidistant from centre!",
-                delta,
-                x1,
-                y1,
-                x2,
-                y2
-            )
-        }
+        // const r_check = Math.hypot(x2 - cx, y2 - cy)
+        // const delta = Math.abs(r - r_check)
+        // if (delta > 0.001) {
+        //     // TODO: error handling
+        //     console.error(
+        //         "Invalid arc - points not equidistant from centre!",
+        //         delta,
+        //         x1,
+        //         y1,
+        //         x2,
+        //         y2
+        //     )
+        // }
         const startAngle = Math.atan2(y1 - cy, x1 - cx)
         const endAngle = Math.atan2(y2 - cy, x2 - cx)
         const arc = new EllipseCurve(

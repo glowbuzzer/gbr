@@ -44,7 +44,7 @@ const PrefsButton = () => {
     return (
         <div>
             <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
+            <PreferencesDialog open={visible} onClose={() => setVisible(false)} />
         </div>
     )
 }

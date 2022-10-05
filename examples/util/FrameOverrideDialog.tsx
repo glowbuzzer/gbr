@@ -20,7 +20,6 @@ const FrameOverride = ({ selected }) => {
     const frames = useFrames()
     const frame = frames.asList.find(f => f.index === selected)
     const parentIndex = frame.parentIndex // could be undefined = world
-    // console.log("PARENT INDEX", parentIndex)
     // we want position relative to the parent frame, if relative
     const kc = useKinematics(0)
     const { translation } = frames.convertToFrame(
@@ -56,7 +55,6 @@ const FrameOverride = ({ selected }) => {
     function update_from_current() {
         const { x, y, z } = translation
         const arr = [x, y, z]
-        console.log("SET FROM CURRENT", arr)
         frames.setOverride(selected, arr)
     }
 
@@ -106,7 +104,7 @@ const StyledModal = styled.div`
 /**
  * @ignore - internal
  */
-export const FrameOverrideDialog = ({ visible, onClose }) => {
+export const FrameOverrideDialog = ({ open, onClose }) => {
     const [selected, setSelected] = useState([])
     const frames = useFrames()
     const connection = useConnection()
@@ -118,7 +116,7 @@ export const FrameOverrideDialog = ({ visible, onClose }) => {
     return (
         <Modal
             title="Work Offsets"
-            visible={visible}
+            visible={open}
             onCancel={onClose}
             footer={[<Button onClick={onClose}>Close</Button>]}
         >

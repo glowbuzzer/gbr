@@ -4,6 +4,11 @@
 export * from "./gbc_extra"
 
 // ENUMS
+    export enum CONFIG_STATUS {
+        CONFIG_STATUS_NONE,
+        CONFIG_STATUS_PREPARED,
+        CONFIG_STATUS_LOADED,
+    }
     export enum ONOFF {
         OFF,
         ON,
@@ -271,6 +276,12 @@ export * from "./gbc_extra"
 
 // STRUCTS
             
+            export type SharedMemHeader = {
+            
+                        
+                        status?:CONFIG_STATUS;
+            }
+            
             export type LimitConfiguration = {
             
                         /**  Velocity limit */
@@ -279,12 +290,6 @@ export * from "./gbc_extra"
                         amax?:number;
                         /**  Jerk limit */
                         jmax?:number;
-            }
-            
-            export type Header = {
-            
-                        /**  Flags if the shared memory data has been updated */
-                        updated?:boolean;
             }
             
             export type MachineConfig = {
@@ -529,24 +534,6 @@ export * from "./gbc_extra"
                         value?:number;
             }
             /** 
-            Parameters for a joint position
-             */
-            export type JointPosition = {
-            
-                        
-                        positionReference?:POSITIONREFERENCE;
-                        
-                        value?:number;
-            }
-            /** 
-            Configuration parameters for lines
-             */
-            export type LinesConfig = {
-            
-                        /**  Destination of the line */
-                        destination?:CartesianPosition;
-            }
-            /** 
             Configuration parameters for arcs
              */
             export type ArcsConfig = {
@@ -713,36 +700,6 @@ export * from "./gbc_extra"
             
                         /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
                         controlWord?:number;
-            }
-            
-            export type SixDofJointConfiguration = {
-            
-                        
-                        shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                        
-                        elbowConfiguration?:KC_ELBOWCONFIGURATION;
-                        
-                        wristConfiguration?:KC_WRISTCONFIGURATION;
-            }
-            
-            export type ScaraJointConfiguration = {
-            
-                        
-                        shoulderConfiguration?:KC_SHOULDERCONFIGURATION;
-                        
-                        elbowConfiguration?:KC_ELBOWCONFIGURATION;
-            }
-            
-            export type JointConfiguration = {
-            
-                        
-                        kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
-    //              Start of Union
-                        
-                         sixDofConfiguration?: SixDofJointConfiguration,
-                        
-                         scaraConfiguration?: ScaraJointConfiguration,
-    //              End of Union
             }
             
             export type MatrixInstanceDouble = {
@@ -1313,34 +1270,6 @@ export * from "./gbc_extra"
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the tool */
                         toolIndex?:number;
-            }
-            /** @ignore */
-            export type LatchPosActivityParams = {
-            
-                        
-                        cartesianLatch?:boolean;
-                        /**  Index of the Kinematics Configuration (KC) to use */
-                        kinematicsConfigurationIndex?:number;
-                        
-                        jointLatch?:boolean;
-                        
-                        latchTriggerIndex?:number;
-            }
-            /** @ignore */
-            export type LatchPosActivityStatus = {
-            
-                        
-                        latched?:boolean;
-                        
-                        latchedCartesianPosition?:CartesianPosition;
-                        
-                        latchedJointArray?:JointPosition[];
-            }
-            /** @ignore */
-            export type LatchPosActivityCommand = {
-            
-                        /**  Triggers the activity to stop and skip to the next in a task */
-                        skipToNext?:boolean;
             }
             /** @ignore */
             export type GearInVeloActivityParams = {

@@ -25,36 +25,19 @@ import {
     updateMachineControlWordMsg,
     updateMachineTargetMsg
 } from "../machine/machine_api"
-import { RootState } from "../root"
 import { framesSlice } from "../frames"
 import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
-
-abstract class ProcessorBase {
-    protected first = true
-
-    protected abstract process_internal(
-        msg,
-        dispatch,
-        ws: WebSocket,
-        getState: () => RootState,
-        first: boolean
-    )
-
-    process(msg, dispatch, ws: WebSocket, getState: () => RootState) {
-        this.process_internal(msg, dispatch, ws, getState, this.first)
-        this.first = false
-    }
-}
 
 /**
  * This class handles status messages from GBC and updates the redux store. It also handles
  * startup behaviour on initial connection to GBC and the transition of GBC into the desired
  * state in the state machine.
  */
-class StatusProcessor extends ProcessorBase {
+class StatusProcessor {
+    private first = true
     private tick: number
 
-    process_internal(msg, dispatch, ws, getState, first) {
+    process(msg, dispatch, ws, getState) {
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
         msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
@@ -72,7 +55,8 @@ class StatusProcessor extends ProcessorBase {
         const { target, requestedTarget, nextControlWord, heartbeat } = getState().machine
 
         // do initial connection handling
-        if (first) {
+        if (this.first) {
+            this.first = false
             this.tick = 0
 
             dispatch(toolPathSlice.actions.reset(0)) // clear tool path on connect
@@ -81,9 +65,7 @@ class StatusProcessor extends ProcessorBase {
             if (target !== requestedTarget) {
                 ws.send(updateMachineTargetMsg(requestedTarget))
             }
-            if (!msg.status.kc) {
-                console.error("First status message did not contain 'kc' info!")
-            } else {
+            if (msg.status.kc?.length) {
                 // update current position within gcode slice with status
                 dispatch(gcodeSlice.actions.init(msg.status.kc))
 
@@ -119,10 +101,54 @@ class StatusProcessor extends ProcessorBase {
     }
 }
 
-class ResponseProcessor extends ProcessorBase {
-    process_internal(msg, dispatch, ws, getState, first) {
-        if (msg.response.get_config_response) {
-            dispatch(configSlice.actions.setConfig(msg.response.get_config_response))
+export type MessageResponse = {
+    requestId?: string
+    requestType: string
+    [index: string]: any
+} & ({ error: false } | { error: true; message: string })
+
+class RequestResponseHandler {
+    private requests: {
+        [index: string]: {
+            resolve: (value: MessageResponse) => void
+            reject: (reason: any) => void
+        }
+    } = {}
+
+    request(ws, requestType, args?): Promise<MessageResponse> {
+        const requestId = Math.random().toString(36).substring(2, 15)
+        return new Promise<MessageResponse>((resolve, reject) => {
+            this.requests[requestId] = { resolve, reject }
+            ws.send(
+                JSON.stringify({
+                    request: {
+                        requestId,
+                        requestType,
+                        ...args
+                    }
+                })
+            )
+            setTimeout(() => {
+                if (this.requests[requestId]) {
+                    reject("Timeout waiting for response: " + requestId)
+                }
+            }, 5000)
+        })
+    }
+
+    response(msg) {
+        const { requestId, requestType, error, message, ...body } = msg
+        if (!this.requests[requestId]) {
+            // already resolved, ignore
+            return
+        }
+        const { resolve, reject } = this.requests[requestId]
+        delete this.requests[requestId]
+
+        if (error) {
+            reject(message)
+        } else {
+            resolve(body)
         }
     }
 }
@@ -134,12 +160,12 @@ if (typeof window !== "undefined") {
     window.connection = ((): Connection => {
         let ws: WebSocket = null
         let statusTimeout = null
+        const requestResponseHandler = new RequestResponseHandler()
 
         return {
             connect(url): AppThunk {
                 return async (dispatch, getState) => {
                     const statusProcessor = new StatusProcessor()
-                    const responseProcessor = new ResponseProcessor()
 
                     function no_status_handler() {
                         dispatch(connectionSlice.actions.statusReceived(false))
@@ -161,13 +187,9 @@ if (typeof window !== "undefined") {
                         // websocket is open, so start expecting status messages
                         start_status_timeout()
                         // and send a request to get the current config
-                        ws.send(
-                            JSON.stringify({
-                                request: {
-                                    get_config: true
-                                }
-                            })
-                        )
+                        requestResponseHandler.request(ws, "get config").then(response => {
+                            dispatch(configSlice.actions.setConfig(response.config))
+                        })
                         dispatch(connectionSlice.actions.connected())
                     }
                     ws.onclose = () => {
@@ -218,10 +240,8 @@ if (typeof window !== "undefined") {
                                     }
                                 )
                             }
-                            if (msg.response) {
-                                // responses to request we have sent, eg. request for config
-                                responseProcessor.process(msg, dispatch, ws, getState)
-                            }
+                            // handle any responses to specific requests
+                            msg.response && requestResponseHandler.response(msg.response)
                         } catch (e) {
                             console.error(e)
                         }
@@ -230,6 +250,9 @@ if (typeof window !== "undefined") {
             },
             send(msg): AppThunk {
                 return () => ws?.send(msg)
+            },
+            request(type, body): AppThunk {
+                return () => requestResponseHandler.request(ws, type, body)
             },
             disconnect(): AppThunk {
                 return () => {

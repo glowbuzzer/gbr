@@ -1,5 +1,5 @@
 import * as React from "react"
-import {useState} from "react"
+import { useState } from "react"
 
 import {
     AnalogInputsTile,
@@ -18,11 +18,11 @@ import {
     ToolPathTile
 } from "@glowbuzzer/controls"
 
-import {Button} from "antd"
+import { Button } from "antd"
 
 import "antd/dist/antd.min.css"
 import "dseg/css/dseg.css"
-import styled from "styled-components";
+import styled from "styled-components"
 
 const PrefsButton = () => {
     const [visible, setVisible] = useState(false)
@@ -30,85 +30,85 @@ const PrefsButton = () => {
     return (
         <div>
             <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog visible={visible} onClose={() => setVisible(false)}/>
+            <PreferencesDialog open={visible} onClose={() => setVisible(false)} />
         </div>
     )
 }
 
 const StyledApp = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background: rgba(128, 128, 128, 0.05);
-
-  * {
-    // ensure flex elements can shrink when needed
-    min-width: 0;
-    min-height: 0;
-  }
-
-  .body {
-    padding: 20px;
-    flex-grow: 1;
     display: flex;
-    gap: 20px;
+    flex-direction: column;
+    height: 100vh;
+    background: rgba(128, 128, 128, 0.05);
 
-    nav,
-    section {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-
-      > div {
-        background: white;
-      }
+    * {
+        // ensure flex elements can shrink when needed
+        min-width: 0;
+        min-height: 0;
     }
 
-    nav {
-      > div {
-        height: inherit;
-        min-height: 100px;
-      }
-    }
+    .body {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        gap: 20px;
 
-    section {
-      flex-grow: 1;
+        nav,
+        section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
 
-      > div:nth-child(2) {
-        max-height: 30vh;
-      }
+            > div {
+                background: white;
+            }
+        }
+
+        nav {
+            > div {
+                height: inherit;
+                min-height: 100px;
+            }
+        }
+
+        section {
+            flex-grow: 1;
+
+            > div:nth-child(2) {
+                max-height: 30vh;
+            }
+        }
     }
-  }
 `
 
 function App() {
     return (
         <GlowbuzzerApp>
             <StyledApp>
-                <PrefsButton/>
+                <PrefsButton />
                 <div className="body">
                     <nav>
-                        <ConnectTile/>
-                        <JogTile/>
-                        <CartesianDroTile/>
-                        <FeedRateTile/>
+                        <ConnectTile />
+                        <JogTile />
+                        <CartesianDroTile />
+                        <FeedRateTile />
                     </nav>
                     <section>
-                        <ToolPathTile/>
-                        <GCodeTile/>
+                        <ToolPathTile />
+                        <GCodeTile />
                     </section>
                     <nav>
-                        <DigitalOutputsTile/>
-                        <DigitalInputsTile/>
-                        <AnalogOutputsTile/>
-                        <AnalogInputsTile/>
-                        <IntegerOutputsTile/>
-                        <IntegerInputsTile/>
+                        <DigitalOutputsTile />
+                        <DigitalInputsTile />
+                        <AnalogOutputsTile />
+                        <AnalogInputsTile />
+                        <IntegerOutputsTile />
+                        <IntegerInputsTile />
                     </nav>
                 </div>
             </StyledApp>
         </GlowbuzzerApp>
-    );
+    )
 }
 
-export default App;
+export default App

@@ -22,7 +22,7 @@ const PrefsButton = () => {
     return (
         <div>
             <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog visible={visible} onClose={() => setVisible(false)} />
+            <PreferencesDialog open={visible} onClose={() => setVisible(false)} />
         </div>
     )
 }
@@ -44,8 +44,8 @@ export function App() {
 
                             <PrefsButton />
                         </Menu>
-                        <Route path="/" exact={true} component={CommissioningUi} />
-                        <Route path="/devel" exact={true} component={DevelopmentUi} />
+                        <Route path="/" element={<CommissioningUi />} />
+                        <Route path="/devel" element={<DevelopmentUi />} />
                     </BrowserRouter>
                 </AppContextProvider>
             </DigitalInputMockProvider>
