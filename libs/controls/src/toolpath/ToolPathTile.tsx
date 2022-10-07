@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { useMemo, useState } from "react"
+import { useContext, useMemo, useRef, useState } from "react"
 import { Tile, TileSettings } from "../tiles"
 import { Button, Checkbox, Form, Input } from "antd"
 import {
@@ -27,6 +27,7 @@ import { RobotModel } from "./robots"
 import { TcpRobot } from "./TcpRobot"
 import { TcpFulcrum } from "./TcpFulcrum"
 import { TriadHelper } from "./TriadHelper"
+import { DockContextType, TabData } from "rc-dock"
 
 const help = (
     <div>
@@ -125,9 +126,14 @@ type ToolPathTileProps = {
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
 export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPathTileProps) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [showFrames, setShowFrames] = useState(false)
+
     const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)
     const toolConfig = useToolConfig(toolIndex)
+
+    const dockContext = useContext(DockContextType)
 
     const { jointPositions, translation, rotation, frameIndex } = useKinematics(0)
     const { convertToFrame } = useFrames()
@@ -158,14 +164,35 @@ export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPa
         )
     }, [extentsX, extentsY, extentsZ, settings])
 
+    function toggle_frames() {
+        const frames = dockContext.find("frames") as TabData
+        if (!frames) {
+            alert("Could not find frame!")
+            return
+        }
+        setShowFrames(current => {
+            if (current) {
+                dockContext.dockMove(frames, null, "remove")
+            } else {
+                const parentRect = dockContext.getRootElement().getBoundingClientRect()
+                const rect = canvasRef.current.getBoundingClientRect()
+                const left = rect.left - parentRect.left
+                const top = rect.top - parentRect.top
+                dockContext.dockMove(frames, null, "float", { left, top, width: 200, height: 300 })
+            }
+            return !current
+        })
+    }
+
     return (
         <Tile
             title={"Toolpath"}
             help={help}
             footer={hideTrace ? null : <Button onClick={reset}>Clear Trace</Button>}
+            controls={<Button onClick={toggle_frames}>Toggle Frames</Button>}
             settings={<ToolPathSettings />}
         >
-            <Canvas>
+            <Canvas ref={canvasRef}>
                 <ToolPathAutoSize extent={extent}>
                     <ambientLight color={"grey"} />
                     {lighting.map((position, index) => (
