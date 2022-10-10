@@ -33,7 +33,7 @@ type GlowbuzzerDockPlacement = {
     row: number
 }
 
-interface GlowbuzzerDockComponentDefinition extends IJsonTabNode {
+export interface GlowbuzzerDockComponentDefinition extends IJsonTabNode {
     id: string
 
     factory(): ReactNode
@@ -50,6 +50,10 @@ export enum GlowbuzzerDockComponent {
     ANALOG_INPUTS = "analog-inputs",
     INTEGER_INPUTS = "integer-inputs",
     CARTESIAN_DRO = "cartesian-dro"
+}
+
+export enum GlowbuzzerDockComponentSet {
+    ALL = "$all"
 }
 
 const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
@@ -163,6 +167,7 @@ const DEFAULT_MODEL: IJsonModel = {
 
 type GlowbuzzerDockLayoutProps = {
     components?: (Partial<GlowbuzzerDockComponentDefinition> & { id: string })[]
+    include?: GlowbuzzerDockComponent[] | GlowbuzzerDockComponentSet
     exclude?: string[]
     children: ReactNode
 }
@@ -185,9 +190,22 @@ const StyledDiv = styled.div`
 `
 
 function add_component(modelJson, component) {
-    const { column, row } = component.defaultPlacement
+    const { column, row } = component.defaultPlacement ?? { column: 2, row: 0 }
 
-    const col = modelJson.layout.children[column]
+    const layout = modelJson.layout
+    while (layout.children.length <= column) {
+        layout.children.push({
+            type: "row",
+            children: [
+                {
+                    type: "tabset",
+                    children: []
+                }
+            ]
+        })
+    }
+
+    const col = layout.children[column]
 
     if (col.type === "tabset") {
         // only one tabset in the column
@@ -211,13 +229,27 @@ function add_component(modelJson, component) {
 
 export const GlowbuzzerDockLayoutProvider = ({
     components: configuredComponents,
+    include,
     exclude,
     children
 }: GlowbuzzerDockLayoutProps) => {
     const { model: defaultModel, components } = useMemo(() => {
         // take the components passed in and merge with defaults from the standard components
+        const merged = [
+            ...(configuredComponents ?? []),
+            ...(include
+                ? GLOWBUZZER_COMPONENTS.filter(c =>
+                      include === GlowbuzzerDockComponentSet.ALL
+                          ? true
+                          : include.includes(c.id as GlowbuzzerDockComponent)
+                  )
+                : [
+                      /* don't include any stnadard components */
+                  ])
+        ]
         const components = Object.fromEntries(
-            (configuredComponents ?? Object.values(GLOWBUZZER_COMPONENTS))
+            merged
+                .filter((c, i, a) => a.findIndex(c2 => c2.id === c.id) === i) // distinct
                 .filter(c => !exclude?.includes(c.id)) // remove excluded components
                 .map(c => [
                     c.id,
@@ -227,18 +259,21 @@ export const GlowbuzzerDockLayoutProvider = ({
                     }
                 ])
         )
+
         const { connect: configuredConnect, ...otherComponents } = components
         // we insist there is a connect tile
-        const connect =
-            configuredConnect ??
-            GLOWBUZZER_COMPONENTS.find(c => c.id === GlowbuzzerDockComponent.CONNECT)
+        if (!configuredConnect) {
+            components.connect = GLOWBUZZER_COMPONENTS.find(
+                c => c.id === GlowbuzzerDockComponent.CONNECT
+            )
+        }
 
         // take a copy for modification
         const modelJson = JSON.parse(JSON.stringify(DEFAULT_MODEL))
         // add the solo connect tile to the first column
         modelJson.layout.children[0].children[0].children.push({
             type: "tab",
-            ...connect
+            ...components.connect
         })
 
         for (const component of Object.values(otherComponents)) {
@@ -254,7 +289,7 @@ export const GlowbuzzerDockLayoutProvider = ({
         model,
         factory: (node: TabNode) => {
             const component = components[node.getId()]
-            return component.factory()
+            return component?.factory()
         },
         updateModel: new_model => {
             // model object is not changed, so we need to force a re-render
