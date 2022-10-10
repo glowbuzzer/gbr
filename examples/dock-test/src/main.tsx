@@ -14,17 +14,14 @@ import styled from "styled-components"
 import { Button, Checkbox } from "antd"
 
 import {
-    IJsonModel,
-    Layout,
-    Model,
-    TabNode,
-    Node,
     Actions,
     DockLocation,
-    IJsonTabNode
+    IJsonModel,
+    IJsonTabNode,
+    Layout,
+    Model,
+    TabNode
 } from "flexlayout-react"
-import { useLocalStorage } from "../../../libs/controls/src/util/LocalStorageHook"
-import { DockLayout } from "rc-dock"
 
 function id() {
     return Math.random().toString(36).substring(2, 9)
@@ -32,18 +29,17 @@ function id() {
 
 const JOGGING_TAB: IJsonTabNode = {
     type: "tab",
-    id: id(),
-    name: "Jogging",
-    component: "jogging"
+    id: "jogging",
+    name: "Jogging"
 }
 
 const TOOLPATH_TAB: IJsonTabNode = {
     type: "tab",
-    id: id(),
-    name: "Toolpath",
-    component: "toolpath"
+    id: "toolpath",
+    name: "Toolpath"
 }
 
+// used to add nodes back into the layout after they've been closed
 const COMPONENT_TAB_LOOKUP = {
     jogging: JOGGING_TAB,
     toolpath: TOOLPATH_TAB
@@ -65,16 +61,14 @@ const DEFAULT_MODEL: IJsonModel = {
                     {
                         type: "tabset",
                         id: "connect-solo",
-                        weight: 31.723315444245678,
-                        enableDrop: false,
+                        enableDrop: false, // don't allow tabs to be added here
                         children: [
                             {
                                 type: "tab",
-                                id: id(),
+                                id: "connect",
                                 name: "Connect",
-                                enableDrag: false,
-                                enableClose: false,
-                                component: "connect"
+                                enableDrag: false, // don't allow connect tile to be moved
+                                enableClose: false // or closed!
                             }
                         ],
                         active: true
@@ -82,7 +76,6 @@ const DEFAULT_MODEL: IJsonModel = {
                     {
                         type: "tabset",
                         id: id(),
-                        weight: 31.723315444245678,
                         children: [JOGGING_TAB],
                         active: true
                     }
@@ -128,7 +121,7 @@ export function App() {
     }
 
     function factory(node: TabNode) {
-        switch (node.getComponent()) {
+        switch (node.getId()) {
             case "connect":
                 return <ConnectTile />
             case "jogging":
@@ -138,22 +131,9 @@ export function App() {
         }
     }
 
-    function find_component(node: Node, component: string) {
-        // depth first search
-        if (node instanceof TabNode && node.getComponent() === component) {
-            return node
-        }
-        for (const child of node.getChildren()) {
-            const found = find_component(child, component)
-            if (found) {
-                return found
-            }
-        }
-    }
-
-    function toggle_tab(component: string, visible: boolean) {
+    function toggle_tab(id: string, visible: boolean) {
         function determine_parent_id() {
-            switch (component) {
+            switch (id) {
                 case "toolpath":
                     return { id: "main", created: false }
                 default:
@@ -179,12 +159,11 @@ export function App() {
         }
 
         if (visible) {
-            const node: TabNode = find_component(model.getRoot(), component)
-            model.doAction(Actions.deleteTab(node.getId()))
+            model.doAction(Actions.deleteTab(id))
         } else {
             const { id: parent_id, created } = determine_parent_id()
             model.doAction(
-                Actions.addNode(COMPONENT_TAB_LOOKUP[component], parent_id, DockLocation.CENTER, -1)
+                Actions.addNode(COMPONENT_TAB_LOOKUP[id], parent_id, DockLocation.CENTER, -1)
             )
             if (created) {
                 // remove the empty tab that was added when tabset was added!
@@ -199,8 +178,7 @@ export function App() {
             <div>
                 <Button>MENU GOES HERE</Button>
                 {["jogging", "toolpath"].map(id => {
-                    const node: TabNode = find_component(model.getRoot(), id)
-                    const visible = !!node
+                    const visible = !!model.getNodeById(id)
                     return (
                         <Checkbox
                             key={id}
