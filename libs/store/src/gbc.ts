@@ -206,6 +206,8 @@ export * from "./gbc_extra"
   KC_CARTESIAN_SLAVED ,
         /**  The kinematics configuration will have the TWO_LINK kinematics model (algorithm) applied */
   KC_TWO_LINK ,
+        /**  The kinematics configuration will use a custom user supplied c function */
+  KC_CUSTOM ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
