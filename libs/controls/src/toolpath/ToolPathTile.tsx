@@ -164,32 +164,11 @@ export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPa
         )
     }, [extentsX, extentsY, extentsZ, settings])
 
-    function toggle_frames() {
-        const frames = dockContext.find("frames") as TabData
-        if (!frames) {
-            alert("Could not find frame!")
-            return
-        }
-        setShowFrames(current => {
-            if (current) {
-                dockContext.dockMove(frames, null, "remove")
-            } else {
-                const parentRect = dockContext.getRootElement().getBoundingClientRect()
-                const rect = canvasRef.current.getBoundingClientRect()
-                const left = rect.left - parentRect.left
-                const top = rect.top - parentRect.top
-                dockContext.dockMove(frames, null, "float", { left, top, width: 200, height: 300 })
-            }
-            return !current
-        })
-    }
-
     return (
         <Tile
             title={"Toolpath"}
             help={help}
             footer={hideTrace ? null : <Button onClick={reset}>Clear Trace</Button>}
-            controls={<Button onClick={toggle_frames}>Toggle Frames</Button>}
             settings={<ToolPathSettings />}
         >
             <Canvas ref={canvasRef}>
