@@ -17,10 +17,13 @@ import {
 import { SpindleTile } from "../../../../libs/controls/src/spindle/SpindleTile"
 import styled from "styled-components"
 import { TabNode } from "flexlayout-react/src/model/TabNode"
+import { Button } from "antd"
 
 type GlowbuzzerDockLayoutContextType = {
     model: Model
     factory: (node: TabNode) => React.ReactNode
+    settingsFactory: (node: TabNode) => React.ReactNode
+    headerFactory: (node: TabNode) => React.ReactNode
     components: { [index: string]: Partial<GlowbuzzerDockComponentDefinition> }
     updateModel(model: Model): void
     showComponent(id: string, show: boolean): void
@@ -37,6 +40,10 @@ export interface GlowbuzzerDockComponentDefinition extends IJsonTabNode {
     id: string
 
     factory(): ReactNode
+
+    settingsFactory?(): ReactNode
+
+    headerFactory?(): ReactNode
 
     defaultPlacement?: GlowbuzzerDockPlacement
 }
@@ -59,10 +66,17 @@ export enum GlowbuzzerDockComponentSet {
 const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
     {
         id: GlowbuzzerDockComponent.CONNECT,
-        name: "Connect",
+        name: "Connection",
         enableDrag: false, // don't allow connect tile to be moved
         enableClose: false, // or closed!
-        factory: () => <ConnectTile />
+        factory: () => <ConnectTile />,
+        headerFactory: () => (
+            <>
+                <Button size="small" onClick={() => alert("CLICKED!")}>
+                    Connect
+                </Button>
+            </>
+        )
     },
     {
         id: GlowbuzzerDockComponent.JOGGING,
@@ -81,7 +95,8 @@ const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
             column: 1,
             row: 0
         },
-        factory: () => <ToolPathTile />
+        factory: () => <ToolPathTile />,
+        settingsFactory: () => <div>TOOLPATH SETTINGS GO HERE!</div>
     },
     {
         id: GlowbuzzerDockComponent.CARTESIAN_DRO,
@@ -132,7 +147,7 @@ const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
 
 const DEFAULT_MODEL: IJsonModel = {
     global: {
-        tabSetEnableMaximize: false
+        tabSetEnableMaximize: true
     },
     borders: [],
     layout: {
@@ -150,16 +165,7 @@ const DEFAULT_MODEL: IJsonModel = {
                         children: []
                     }
                 ]
-            },
-            {
-                type: "row",
-                weight: 50,
-                children: []
-            },
-            {
-                type: "row",
-                weight: 25,
-                children: []
+                // additional "rows" for cols created automatically
             }
         ]
     }
@@ -192,10 +198,15 @@ const StyledDiv = styled.div`
 function add_component(modelJson, component) {
     const { column, row } = component.defaultPlacement ?? { column: 2, row: 0 }
 
+    const WEIGHTS = [10, 50, 25]
     const layout = modelJson.layout
+
+    // console.log("ADD COMPONENT", column, weight, component.id, layout.children.length)
     while (layout.children.length <= column) {
+        const weight = WEIGHTS[layout.children.length]
         layout.children.push({
             type: "row",
+            weight,
             children: [
                 {
                     type: "tabset",
@@ -290,6 +301,14 @@ export const GlowbuzzerDockLayoutProvider = ({
         factory: (node: TabNode) => {
             const component = components[node.getId()]
             return component?.factory()
+        },
+        settingsFactory: (node: TabNode) => {
+            const component = components[node.getId()]
+            return component?.settingsFactory?.()
+        },
+        headerFactory: (node: TabNode) => {
+            const component = components[node.getId()]
+            return component?.headerFactory?.()
         },
         updateModel: new_model => {
             // model object is not changed, so we need to force a re-render

@@ -56,7 +56,7 @@ const help = (
     </div>
 )
 
-const ToolPathSettings = () => {
+export const ToolPathSettings = () => {
     const { settings: initialSettings, setSettings } = useToolPathSettings()
     const [settings, saveSettings] = useState(initialSettings)
 
