@@ -23,9 +23,8 @@ const SettingsModal = ({ children, title }) => {
 }
 
 export const GlowbuzzerDockLayout = () => {
-    const { model, factory, settingsFactory, headerFactory, updateModel } = useContext(
-        GlowbuzzerDockLayoutContext
-    )
+    const { model, factory, buttonsFactory, settingsFactory, headerFactory, updateModel } =
+        useContext(GlowbuzzerDockLayoutContext)
 
     return (
         <Layout
@@ -40,6 +39,11 @@ export const GlowbuzzerDockLayout = () => {
                 if (selectedNode.getType() === "tab") {
                     const tab = selectedNode as TabNode
                     const settings = settingsFactory(tab)
+                    const buttons = buttonsFactory(tab)
+                    if (buttons) {
+                        renderValues.buttons.push(<span>{buttons}</span>)
+                    }
+
                     if (settings) {
                         renderValues.buttons.push(
                             <SettingsModal

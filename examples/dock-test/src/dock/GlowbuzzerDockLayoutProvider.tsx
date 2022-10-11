@@ -18,12 +18,14 @@ import { SpindleTile } from "../../../../libs/controls/src/spindle/SpindleTile"
 import styled from "styled-components"
 import { TabNode } from "flexlayout-react/src/model/TabNode"
 import { Button } from "antd"
+import { ShowFramesButton } from "../ShowFramesButton"
 
 type GlowbuzzerDockLayoutContextType = {
     model: Model
     factory: (node: TabNode) => React.ReactNode
     settingsFactory: (node: TabNode) => React.ReactNode
     headerFactory: (node: TabNode) => React.ReactNode
+    buttonsFactory: (node: TabNode) => React.ReactNode
     components: { [index: string]: Partial<GlowbuzzerDockComponentDefinition> }
     updateModel(model: Model): void
     showComponent(id: string, show: boolean): void
@@ -45,6 +47,8 @@ export interface GlowbuzzerDockComponentDefinition extends IJsonTabNode {
 
     headerFactory?(): ReactNode
 
+    buttonsFactory?(): ReactNode
+
     defaultPlacement?: GlowbuzzerDockPlacement
 }
 
@@ -56,7 +60,8 @@ export enum GlowbuzzerDockComponent {
     DIGITAL_INPUTS = "digital-inputs",
     ANALOG_INPUTS = "analog-inputs",
     INTEGER_INPUTS = "integer-inputs",
-    CARTESIAN_DRO = "cartesian-dro"
+    CARTESIAN_DRO = "cartesian-dro",
+    FRAMES = "frames"
 }
 
 export enum GlowbuzzerDockComponentSet {
@@ -96,7 +101,17 @@ const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
             row: 0
         },
         factory: () => <ToolPathTile />,
-        settingsFactory: () => <div>TOOLPATH SETTINGS GO HERE!</div>
+        settingsFactory: () => <div>TOOLPATH SETTINGS GO HERE!</div>,
+        buttonsFactory: () => <ShowFramesButton />
+    },
+    {
+        id: GlowbuzzerDockComponent.FRAMES,
+        name: "Frames",
+        defaultPlacement: {
+            column: 2,
+            row: 0
+        },
+        factory: () => <div>FRAMES GO HERE!</div>
     },
     {
         id: GlowbuzzerDockComponent.CARTESIAN_DRO,
@@ -147,7 +162,7 @@ const GLOWBUZZER_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
 
 const DEFAULT_MODEL: IJsonModel = {
     global: {
-        tabSetEnableMaximize: true
+        tabSetEnableMaximize: false
     },
     borders: [],
     layout: {
@@ -310,6 +325,10 @@ export const GlowbuzzerDockLayoutProvider = ({
             const component = components[node.getId()]
             return component?.headerFactory?.()
         },
+        buttonsFactory: (node: TabNode) => {
+            const component = components[node.getId()]
+            return component?.buttonsFactory?.()
+        },
         updateModel: new_model => {
             // model object is not changed, so we need to force a re-render
             updateModel(Model.fromJson(new_model.toJson()))
@@ -319,15 +338,21 @@ export const GlowbuzzerDockLayoutProvider = ({
             if (!show) {
                 model.doAction(Actions.deleteTab(id))
             } else {
-                const component = components[id]
-                if (!component) {
-                    throw new Error(`No component with id ${id}`)
+                const existing = model.getNodeById(id)
+                if (existing) {
+                    model.doAction(Actions.selectTab(id))
+                } else {
+                    // tab was closed so we need to add it back in
+                    const component = components[id]
+                    if (!component) {
+                        throw new Error(`No component with id ${id}`)
+                    }
+                    const modelJson = model.toJson()
+                    add_component(modelJson, component)
+                    const new_model = Model.fromJson(modelJson)
+                    new_model.doAction(Actions.selectTab(id))
+                    updateModel(new_model)
                 }
-                const modelJson = model.toJson()
-                add_component(modelJson, component)
-                const new_model = Model.fromJson(modelJson)
-                new_model.doAction(Actions.selectTab(id))
-                updateModel(new_model)
             }
         }
     }
