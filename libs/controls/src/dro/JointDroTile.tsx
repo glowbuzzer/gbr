@@ -53,8 +53,8 @@ export const JointDroTile = () => {
                 onChange={setSelectedKc}
                 style={{ width: 120 }}
                 options={[
-                    { label: "All joints", value: "all" },
-                    ...kcs.map((kc, index) => ({ label: kc.name, value: index }))
+                    { title: "All joints", value: "all" },
+                    ...kcs.map((kc, index) => ({ title: kc.name, value: index }))
                 ]}
             />
             <JointDro warningThreshold={0.05} jointsToDisplay={jointsToDisplay} />

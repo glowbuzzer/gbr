@@ -20,6 +20,7 @@ export {
 export { useConfig, configSlice } from "./config"
 export * from "./prefs"
 export * from "./frames"
+export * from "./points"
 export * from "./tasks"
 export * from "./activity"
 export * from "./gcode"

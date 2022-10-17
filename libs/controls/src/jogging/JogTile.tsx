@@ -70,7 +70,7 @@ const TileInner = styled.div`
     height: 100%;
 `
 
-const JogCartesianPanel = ({
+export const JogCartesianPanel = ({
     jogMode,
     jogSpeed,
     kinematicsConfigurationIndex,
@@ -103,7 +103,7 @@ const JogCartesianPanel = ({
     }
 }
 
-const JogJointsPanel = ({
+export const JogJointsPanel = ({
     jogMode,
     jogSpeed,
     kinematicsConfigurationIndex,

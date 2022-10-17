@@ -46,7 +46,7 @@ export const FeedRateTile = () => {
     const { kinematicsConfiguration } = useConfig()
 
     const options = kinematicsConfiguration.map((kc, index) => ({
-        label: kc.name,
+        title: kc.name,
         value: index
     }))
 

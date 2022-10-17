@@ -51,7 +51,7 @@ export const JogGotoJoint = ({
                 const j = jointConfig[physicalJointIndex]
                 return {
                     type: j.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear",
-                    label: j.name,
+                    title: j.name,
                     key: index
                 }
             }),

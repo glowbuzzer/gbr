@@ -7,11 +7,11 @@ import {
     GlowbuzzerDockComponent,
     GlowbuzzerDockComponentDefinition,
     GlowbuzzerDockComponentSet,
+    GlowbuzzerDockViewMenu,
+    GlowbuzzerDockLayout,
     GlowbuzzerDockLayoutProvider
-} from "./dock/GlowbuzzerDockLayoutProvider"
+} from "@glowbuzzer/controls"
 import { Button, Space } from "antd"
-import { GlowbuzzerDockLayout } from "./dock/GlowbuzzerDockLayout"
-import { GlowbuzzerDockComponentsMenu } from "./dock/GlowbuzzerDockComponentsMenu"
 
 const CUSTOM_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
     {
@@ -26,14 +26,14 @@ const CUSTOM_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
 export const App = () => {
     return (
         <GlowbuzzerDockLayoutProvider
+            appName="dock-test"
             components={CUSTOM_COMPONENTS}
-            include={GlowbuzzerDockComponentSet.ALL}
             exclude={[GlowbuzzerDockComponent.ANALOG_INPUTS]}
         >
             <div>
                 <Space>
                     <Button>OTHER MENUS HERE</Button>
-                    <GlowbuzzerDockComponentsMenu />
+                    <GlowbuzzerDockViewMenu />
                 </Space>
             </div>
             <GlowbuzzerDockLayout />

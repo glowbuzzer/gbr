@@ -3,9 +3,9 @@
  */
 
 import * as React from "react"
-import { useContext, useMemo, useRef, useState } from "react"
-import { Tile, TileSettings } from "../tiles"
-import { Button, Checkbox, Form, Input } from "antd"
+import { useMemo, useRef, useState } from "react"
+import { TileSettings } from "../tiles"
+import { Checkbox, Form, Input } from "antd"
 import {
     ToolPathSettingsType,
     useConfig,
@@ -27,7 +27,12 @@ import { RobotModel } from "./robots"
 import { TcpRobot } from "./TcpRobot"
 import { TcpFulcrum } from "./TcpFulcrum"
 import { TriadHelper } from "./TriadHelper"
-import { DockContextType, TabData } from "rc-dock"
+import { ToolpathShowFramesButton } from "./ToolpathShowFramesButton"
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/block.svg"
+import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
+import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 
 const help = (
     <div>
@@ -125,15 +130,19 @@ type ToolPathTileProps = {
  * physical joints on the machine. For an example of this in practice, refer to the
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
-export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPathTileProps) => {
+export const ToolPathTile = ({
+    model,
+    hideTrace: defaultHideTrace,
+    hidePreview: defaultHidePreview,
+    children
+}: ToolPathTileProps) => {
     const canvasRef = useRef<HTMLCanvasElement>(null)
-    const [showFrames, setShowFrames] = useState(false)
+    const [hideTrace, setHideTrace] = useState(defaultHideTrace || false)
+    const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
 
     const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)
     const toolConfig = useToolConfig(toolIndex)
-
-    const dockContext = useContext(DockContextType)
 
     const { jointPositions, translation, rotation, frameIndex } = useKinematics(0)
     const { convertToFrame } = useFrames()
@@ -164,13 +173,16 @@ export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPa
         )
     }, [extentsX, extentsY, extentsZ, settings])
 
+    function toggle_preview() {
+        setHidePreview(current => !current)
+    }
+
+    function toggle_trace() {
+        setHideTrace(current => !current)
+    }
+
     return (
-        <Tile
-            title={"Toolpath"}
-            help={help}
-            footer={hideTrace ? null : <Button onClick={reset}>Clear Trace</Button>}
-            settings={<ToolPathSettings />}
-        >
+        <>
             <Canvas ref={canvasRef}>
                 <ToolPathAutoSize extent={extent}>
                     <ambientLight color={"grey"} />
@@ -212,6 +224,30 @@ export const ToolPathTile = ({ model, hideTrace, hidePreview, children }: ToolPa
                     {children}
                 </ToolPathAutoSize>
             </Canvas>
-        </Tile>
+            <DockToolbar floating>
+                <DockToolbarButtonGroup>
+                    <ToolpathShowFramesButton />
+                </DockToolbarButtonGroup>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        Icon={ShowChartIcon}
+                        button
+                        title="Show/hide Preview"
+                        onClick={toggle_preview}
+                        checked={!hidePreview}
+                    />
+                </DockToolbarButtonGroup>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
+                    <GlowbuzzerIcon
+                        Icon={AutoGraphIcon}
+                        button
+                        title="Toggle Trace"
+                        onClick={toggle_trace}
+                        checked={!hideTrace}
+                    />
+                </DockToolbarButtonGroup>
+            </DockToolbar>
+        </>
     )
 }

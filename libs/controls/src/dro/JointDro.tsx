@@ -111,7 +111,7 @@ const JointDroItem = ({ index, warningThreshold }) => {
 
     return (
         <StyledRow key={index}>
-            <Col style={styles.label}>{name}</Col>
+            <Col style={styles.title}>{name}</Col>
             <Col style={styles.dro}>
                 <SegmentDisplay value={current} toFixed={4} width={12} error={warn} />
                 {units}

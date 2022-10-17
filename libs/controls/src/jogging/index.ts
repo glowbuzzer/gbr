@@ -3,3 +3,5 @@
  */
 
 export * from "./JogTile"
+export * from "./JogCartesianTile"
+export * from "./JogJointsTile"

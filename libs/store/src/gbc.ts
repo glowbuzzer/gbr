@@ -206,6 +206,8 @@ export * from "./gbc_extra"
   KC_CARTESIAN_SLAVED ,
         /**  The kinematics configuration will have the TWO_LINK kinematics model (algorithm) applied */
   KC_TWO_LINK ,
+        /**  The kinematics configuration will use a custom user supplied c function */
+  KC_CUSTOM ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
@@ -1567,6 +1569,21 @@ export * from "./gbc_extra"
             /** @ignore */
             export type FramesStatus = {
             
+            }
+            /** 
+            Configuration parameters for point
+             */
+            export type PointsConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Translation (location) of the point */
+                        translation?:Vector3;
+                        /**  Rotation of the point */
+                        rotation?:Quat;
+                        /**  Robot configuration (waist, elbow, wrist) */
+                        configuration?:number;
             }
             /** 
             Configuration parameters for a tool

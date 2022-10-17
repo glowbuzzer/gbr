@@ -60,6 +60,8 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     }
 `
 
+const GlowbuzzerMainStyle = styled.div``
+
 type GlowbuzzerContainerProps = {
     init?(connection)
     children: ReactNode
@@ -128,7 +130,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
                     </div>
                 </div>
             </GlowbuzzerDimmerStyle>
-            {children}
+            <GlowbuzzerMainStyle>{children}</GlowbuzzerMainStyle>
         </div>
     )
 }

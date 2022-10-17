@@ -28,6 +28,8 @@ import {
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 import { JogTileItem } from "./util"
+import { DockIconSelect, DockToolbar } from "../dock/DockToolbar"
+import { FramesIcon } from "../frames/FramesIcon"
 
 const JointSliderDiv = styled.div`
     display: flex;

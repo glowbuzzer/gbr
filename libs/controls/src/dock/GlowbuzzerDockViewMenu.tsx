@@ -3,15 +3,16 @@
  */
 
 import { Button, Dropdown, Menu } from "antd"
-import { useGlowbuzzerDock, useGlowbuzzerDockComponents } from "./GlowbuzzerDockLayoutProvider"
 import { CheckOutlined } from "@ant-design/icons"
+import { useGlowbuzzerDock, useGlowbuzzerDockComponents } from "./hooks"
+import { ItemType } from "antd/es/menu/hooks/useItems"
 
-export const GlowbuzzerDockComponentsMenu = () => {
+export const GlowbuzzerDockViewMenu = () => {
     // render antd menu which toggles visibility of the dock components
     const components = useGlowbuzzerDockComponents()
-    const { showComponent } = useGlowbuzzerDock()
+    const { showComponent, resetLayout } = useGlowbuzzerDock()
 
-    const items = components
+    const items: ItemType[] = components
         .filter(c => c.enableClose !== false)
         .map(component => ({
             key: component.id,
@@ -22,9 +23,15 @@ export const GlowbuzzerDockComponentsMenu = () => {
             )
         }))
 
+    items.push({ type: "divider" })
+    items.push({
+        key: "reset",
+        label: <span onClick={resetLayout}>Reset Layout</span>
+    })
+
     return (
-        <Dropdown overlay={<Menu items={items}></Menu>}>
-            <Button>Tiles</Button>
+        <Dropdown overlay={<Menu items={items} />}>
+            <Button>View</Button>
         </Dropdown>
     )
 }

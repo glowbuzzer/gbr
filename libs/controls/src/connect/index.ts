@@ -3,3 +3,4 @@
  */
 
 export * from "./ConnectTile"
+export * from "./ConnectTabButtons"

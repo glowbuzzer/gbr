@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+export * from "./dock"
 export * from "./dro"
 export * from "./tasks"
 export * from "./io"

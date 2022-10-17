@@ -4,11 +4,12 @@
 
 import react from "@vitejs/plugin-react";
 import {resolve} from "path";
+import svgr from "@svgr/rollup"
 
 const dir=process.cwd()
 
 export const DEFAULT_VITE_CONFIG = {
-    plugins: [react()],
+    plugins: [react(), svgr()],
     resolve: {
         alias: {
             "@glowbuzzer/controls": resolve(dir, "./libs/controls/src/index.ts"),
