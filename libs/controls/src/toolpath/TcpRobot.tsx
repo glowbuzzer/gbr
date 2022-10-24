@@ -77,6 +77,11 @@ export const TcpRobot = ({ model, joints, toolConfig }: TcpRobotProps) => {
                 const links = [...model.config, {}].map((c, index) => {
                     if (c && !c.skip_link) {
                         const model = models[model_index++].scene
+                        model.traverse(function(child) {
+                            // if (child.isMesh) {
+                                child.castShadow = true;
+                            // }
+                        })
                         current.add(model)
                     }
                     const next = add_next(
