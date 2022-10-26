@@ -4,10 +4,7 @@
 
 import * as React from "react"
 import { useMemo, useRef, useState } from "react"
-import { TileSettings } from "../tiles"
-import { Checkbox, Form, Input } from "antd"
 import {
-    ToolPathSettingsType,
     useConfig,
     useFrames,
     useKinematics,
@@ -34,7 +31,7 @@ import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/
 import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
 import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 
-const help = (
+export const ToolPathTileHelp = () => (
     <div>
         <h4>Toolpath Tile</h4>
         <p>The Toolpath Tile performs a number of functions. These are:</p>
@@ -60,46 +57,6 @@ const help = (
         </p>
     </div>
 )
-
-export const ToolPathSettings = () => {
-    const { settings: initialSettings, setSettings } = useToolPathSettings()
-    const [settings, saveSettings] = useState(initialSettings)
-
-    function save() {
-        setSettings(settings)
-    }
-
-    function onChange(change: Partial<ToolPathSettingsType>) {
-        saveSettings(settings => ({ ...settings, ...change }))
-    }
-
-    return (
-        <TileSettings
-            title="Tool Path Settings"
-            onConfirm={save}
-            onReset={() => saveSettings(initialSettings)}
-        >
-            <Form>
-                <Form.Item label="Override Configuration">
-                    <Checkbox
-                        checked={settings.overrideWorkspace}
-                        onChange={event => {
-                            onChange({ overrideWorkspace: event.target.checked })
-                        }}
-                    />
-                </Form.Item>
-                <Form.Item label="Extent">
-                    <Input
-                        value={settings.extent}
-                        onChange={event => {
-                            onChange({ extent: Number(event.target.value) || 100 })
-                        }}
-                    />
-                </Form.Item>
-            </Form>
-        </TileSettings>
-    )
-}
 
 const LD = 1000
 

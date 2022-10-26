@@ -5,7 +5,7 @@
 import { Frame, useFrames } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
-import { DockToolbar } from "../dock/DockToolbar"
+import { DockTileWithToolbar, DockToolbar } from "../dock/DockToolbar"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { StyledTable } from "../util/styles/StyledTable"
@@ -77,10 +77,9 @@ export const FramesTile = () => {
     }
 
     return (
-        <>
-            <DockToolbar>
-                <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
-            </DockToolbar>
+        <DockTileWithToolbar
+            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
+        >
             <StyledTable
                 dataSource={treeData}
                 columns={columns}
@@ -91,6 +90,6 @@ export const FramesTile = () => {
                     expandIcon: expand_icon
                 }}
             />
-        </>
+        </DockTileWithToolbar>
     )
 }

@@ -64,8 +64,8 @@ for (const project of projects) {
                 'react-redux', '@reduxjs/toolkit',
                 'antd', '@ant-design/icons',
                 'styled-components',
-                // currently core but am not a huge fan
-                'react-grid-layout',
+                // dock layout
+                'flexlayout-react',
                 // required for robot and toolpath display
                 'three', 'three-stdlib', '@react-three/fiber', '@react-three/drei',
                 // required for telemetry tile

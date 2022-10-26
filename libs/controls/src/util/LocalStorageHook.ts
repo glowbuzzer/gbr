@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 function parseJSON<T>(value: string | null): T | undefined {
     try {
@@ -77,7 +77,9 @@ export function useLocalStorage<T>(
     useEffect(() => {
         setStoredValue(readValue())
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [appkey])
+    }, [readValue])
 
-    return [storedValue, setValue]
+    const currentValue = useMemo(readValue, [storedValue, appkey])
+
+    return [currentValue, setValue]
 }

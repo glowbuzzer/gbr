@@ -5,7 +5,7 @@
 import styled from "styled-components"
 import { Table } from "antd"
 
-export const StyledTable = styled(Table)`
+export const StyledTable = styled(Table as any /* avoid TS4023 */)`
     white-space: nowrap;
 
     .ant-table-tbody > tr > td {

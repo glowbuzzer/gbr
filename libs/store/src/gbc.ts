@@ -1578,6 +1578,8 @@ export * from "./gbc_extra"
                     /** Name for this configuration item */
                     name?: string
             
+                        /**  Frame for point */
+                        frameIndex?:number;
                         /**  Translation (location) of the point */
                         translation?:Vector3;
                         /**  Rotation of the point */

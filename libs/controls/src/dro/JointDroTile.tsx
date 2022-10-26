@@ -2,14 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Tile } from "../tiles"
 import * as React from "react"
 import { JointDro } from "./JointDro"
 import { Select } from "antd"
-import { useKinematicsConfigurationList } from "@glowbuzzer/store"
+import { useKinematicsConfiguration, useKinematicsConfigurationList } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
+import { DockTileWithToolbar } from "../dock/DockToolbar"
+import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 
-const help = (
+export const JointDroTileHelp = () => (
     <div>
         <h4>Joint DRO Tile</h4>
         <p>
@@ -37,15 +38,16 @@ const help = (
  * value will be highlighted in red.
  */
 export const JointDroTile = () => {
-    const [selectedKc, setSelectedKc] = useLocalStorage("dro.joint.kc", "all")
+    const [selectedKc, setSelectedKc] = useLocalStorage("dro.joint.kc", 0)
 
-    const kcs = useKinematicsConfigurationList()
-    const jointsToDisplay = kcs[selectedKc]
-        ? kcs[Number(selectedKc)].participatingJoints
-        : undefined
+    const kc = useKinematicsConfiguration(selectedKc)
+    const jointsToDisplay = kc.participatingJoints
 
     return (
-        <Tile title="Joint DRO" help={help}>
+        <DockTileWithToolbar
+            toolbar={<KinematicsDropdown value={selectedKc} onChange={setSelectedKc} />}
+        >
+            {/*
             Kinematics:{" "}
             <Select
                 size="small"
@@ -57,7 +59,8 @@ export const JointDroTile = () => {
                     ...kcs.map((kc, index) => ({ title: kc.name, value: index }))
                 ]}
             />
+*/}
             <JointDro warningThreshold={0.05} jointsToDisplay={jointsToDisplay} />
-        </Tile>
+        </DockTileWithToolbar>
     )
 }

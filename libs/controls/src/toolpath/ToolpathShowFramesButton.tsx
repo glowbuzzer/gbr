@@ -3,15 +3,15 @@
  */
 
 import React from "react"
-import { useGlowbuzzerDock } from "../dock/hooks"
-import { GlowbuzzerDockComponent } from "@glowbuzzer/controls"
+import { useDockLayoutContext } from "../dock/hooks"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileDefinitions"
 
 export const ToolpathShowFramesButton = () => {
-    const { showComponent, components } = useGlowbuzzerDock()
+    const { showTile, tiles } = useDockLayoutContext()
 
-    if (!components[GlowbuzzerDockComponent.FRAMES]) {
+    if (!tiles[GlowbuzzerTileIdentifiers.FRAMES]) {
         return null
     }
 
@@ -21,7 +21,7 @@ export const ToolpathShowFramesButton = () => {
             Icon={FramesIcon}
             button
             title="Show frames"
-            onClick={() => showComponent(GlowbuzzerDockComponent.FRAMES, true)}
+            onClick={() => showTile(GlowbuzzerTileIdentifiers.FRAMES, true)}
         />
     )
 }

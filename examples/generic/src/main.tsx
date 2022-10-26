@@ -5,37 +5,21 @@
 import React, { StrictMode } from "react"
 
 import {
+    DockLayout,
+    DockLayoutProvider,
     GlowbuzzerApp,
-    GlowbuzzerDockComponent,
-    GlowbuzzerDockComponentDefinition,
-    GlowbuzzerDockLayout,
-    GlowbuzzerDockLayoutProvider,
-    GlowbuzzerDockViewMenu
+    GlowbuzzerTileDefinitionList
 } from "@glowbuzzer/controls"
+
+import { JointSpinnersTileDefinition } from "./JointSpinnersTile"
+import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
+import { createRoot } from "react-dom/client"
+
+import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import { JointSpinnersTile } from "./JointSpinnersTile"
-
-import "react-grid-layout/css/styles.css"
 import "flexlayout-react/style/light.css"
-
-import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
-import { createRoot } from "react-dom/client"
-import { Button, Space } from "antd"
-
-const CUSTOM_COMPONENTS: GlowbuzzerDockComponentDefinition[] = [
-    {
-        id: "spinners",
-        name: "Joint Spinners",
-        factory: () => <JointSpinnersTile />,
-        defaultPlacement: {
-            // underneath toolpath tile
-            column: 1,
-            row: 1
-        }
-    }
-]
 
 function App() {
     function handleToolChange(
@@ -49,19 +33,16 @@ function App() {
 
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
-            <GlowbuzzerDockLayoutProvider
+            <DockLayoutProvider
                 appName="generic"
-                components={CUSTOM_COMPONENTS}
-                exclude={[GlowbuzzerDockComponent.ANALOG_INPUTS]}
+                tiles={[
+                    ...GlowbuzzerTileDefinitionList, // standard components
+                    JointSpinnersTileDefinition
+                ]}
             >
-                <div>
-                    <Space>
-                        <Button>OTHER MENUS HERE</Button>
-                        <GlowbuzzerDockViewMenu />
-                    </Space>
-                </div>
-                <GlowbuzzerDockLayout />
-            </GlowbuzzerDockLayoutProvider>
+                <ExampleAppMenu />
+                <DockLayout />
+            </DockLayoutProvider>
         </GCodeContextProvider>
     )
 }

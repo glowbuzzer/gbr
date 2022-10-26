@@ -14,15 +14,12 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { WaypointsCartesian } from "./WaypointsCartesian"
 import { JogTileItem, StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
-import { JogCartesianToolbar } from "./JogCartesianToolbar"
 
 enum Mode {
     POSITION,
-    ORIENTATION,
-    WAYPOINT
+    ORIENTATION
 }
 
 const Tab = ({ value, children, mode }) => (
@@ -43,23 +40,20 @@ const abcItems: JogGotoItem[] = [
 
 /** @ignore - internal to the jog tile */
 export const JogGotoCartesian = ({
-    jogMode,
     jogSpeed,
-    onChangeJogMode,
+    kinematicsConfigurationIndex,
+    frameIndex,
     showRobotConfiguration
 }) => {
     const [mode, setMode] = useState(Mode.POSITION)
-
-    const [selectedKc, setSelectedKc] = useState(0)
-    const [selectedFrame, setSelectedFrame] = useState(0)
 
     const [robotConfiguration, setRobotConfiguration] = useLocalStorage(
         "jog.robot.configuration",
         0
     )
 
-    const motion = useSoloActivity(selectedKc)
-    const waypoint = useKinematicsCartesianPosition(selectedKc)
+    const motion = useSoloActivity(kinematicsConfigurationIndex)
+    const waypoint = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
 
     const preview = usePreview()
 
@@ -86,20 +80,8 @@ export const JogGotoCartesian = ({
 
     function goto(move: MoveToPositionBuilder) {
         preview.disable()
-        move.frameIndex(selectedFrame)
+        move.frameIndex(frameIndex)
             .configuration(robotConfiguration)
-            .params(move_params)
-            .promise()
-            .finally(preview.enable)
-    }
-
-    function goto_waypoint(w) {
-        preview.disable()
-        console.log("MOVE TO WAYPOINT", w)
-        return motion
-            .moveToPosition()
-            .setFromCartesianPosition(w.position)
-            .configuration(w.configuration)
             .params(move_params)
             .promise()
             .finally(preview.enable)
@@ -137,19 +119,10 @@ export const JogGotoCartesian = ({
 
     return (
         <StyledJogDiv>
-            <JogCartesianToolbar
-                jogMode={jogMode}
-                kinematicsConfigurationIndex={selectedKc}
-                frameIndex={selectedFrame}
-                onChangeJogMode={onChangeJogMode}
-                onChangeKc={setSelectedKc}
-                onChangeFrame={setSelectedFrame}
-            />
             <JogTileItem>
                 <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
                     <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
                     <Radio.Button value={Mode.ORIENTATION}>Orientation</Radio.Button>
-                    <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
                 </Radio.Group>
             </JogTileItem>
             <div>
@@ -167,13 +140,6 @@ export const JogGotoCartesian = ({
                         items={abcItems}
                         onGoto={goto_orient}
                         onGotoAll={goto_orient_all}
-                    />
-                </Tab>
-                <Tab value={Mode.WAYPOINT} mode={mode}>
-                    <WaypointsCartesian
-                        kinematicsConfigurationIndex={selectedKc}
-                        position={waypoint}
-                        onSelect={goto_waypoint}
                     />
                 </Tab>
             </div>

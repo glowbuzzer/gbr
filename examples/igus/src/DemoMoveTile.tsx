@@ -2,10 +2,10 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Tile } from "@glowbuzzer/controls"
 import { Button, Space } from "antd"
 import { useSoloActivity } from "@glowbuzzer/store"
 import { Euler, Quaternion } from "three"
+import { StyledTileContent } from "../../../libs/controls/src/util/styles/StyledTileContent"
 
 export const HIGH_BLOCK_Z = 600
 
@@ -65,7 +65,7 @@ export const DemoMoveTile = () => {
     }
 
     return (
-        <Tile title={"Move"}>
+        <StyledTileContent>
             <Space>
                 <Button onClick={move_start}>Move Start</Button>
                 <Button onClick={move_red}>Move Red</Button>
@@ -76,6 +76,6 @@ export const DemoMoveTile = () => {
                 <Button onClick={move_pink}>Move Pink</Button>
                 <Button onClick={move_yellow}>Move Yellow</Button>
             </Space>
-        </Tile>
+        </StyledTileContent>
     )
 }

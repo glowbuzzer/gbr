@@ -10,6 +10,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
+import { FramesConfig } from "../gbc"
 
 const { load, save } = settings("frames")
 
@@ -109,4 +110,8 @@ export const useFrames = () => {
             dispatch(framesSlice.actions.setActiveFrame(index))
         }
     }
+}
+
+export function useFramesList(): FramesConfig[] {
+    return useConfig().frames
 }

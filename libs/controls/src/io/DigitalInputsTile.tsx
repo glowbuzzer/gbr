@@ -3,11 +3,11 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import { BitFieldDisplay } from "../dro"
 import { useDigitalInputBits, useDigitalInputList } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const DigitalInputsTileHelp = () => (
     <div>
         <h4>Digital Inputs Tile</h4>
         <p>The Digital Inputs Tile shows the "live" value of all of the digital inputs</p>
@@ -34,10 +34,10 @@ export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
     )
 
     return (
-        <Tile title="Digital Inputs" help={help}>
+        <StyledTileContent>
             {dins && (
                 <BitFieldDisplay bitCount={dins.length} value={bits} labels={normalised_labels} />
             )}
-        </Tile>
+        </StyledTileContent>
     )
 }

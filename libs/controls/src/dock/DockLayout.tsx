@@ -4,17 +4,16 @@
 
 import * as React from "react"
 import { useContext, useState } from "react"
-import { Modal, Popover } from "antd"
-import { GlowbuzzerDockLayoutContext } from "./GlowbuzzerDockLayoutContext"
+import { Popover } from "antd"
+import { DockLayoutContext } from "./DockLayoutContext"
 import { TabNode } from "flexlayout-react/src/model/TabNode"
 import { Layout } from "flexlayout-react"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { ReactComponent as SettingsIcon } from "@material-symbols/svg-400/outlined/settings.svg"
-import styled from "styled-components"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { useConnection } from "@glowbuzzer/store"
 
-const GlowbuzzerDockSettingsModal = ({ children, title }) => {
+const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
 
     return (
@@ -26,14 +25,14 @@ const GlowbuzzerDockSettingsModal = ({ children, title }) => {
                 title="Settings"
                 onClick={() => setVisible(true)}
             />
-            <Modal visible={visible} onCancel={() => setVisible(false)} title={title}>
-                {children}
-            </Modal>
+            <Component open={visible} onClose={() => setVisible(false)} />
         </>
     )
 }
 
-export const GlowbuzzerDockLayout = () => {
+const ButtonsWrapper = ({ children }) => <>{children}</>
+
+export const DockLayout = () => {
     const {
         model,
         factory,
@@ -42,18 +41,18 @@ export const GlowbuzzerDockLayout = () => {
         helpFactory,
         headerFactory,
         updateModel
-    } = useContext(GlowbuzzerDockLayoutContext)
+    } = useContext(DockLayoutContext)
 
     const connection = useConnection()
 
     function connection_aware_factory(node: TabNode) {
-        const component = factory(node)
+        const tile = factory(node)
         if (connection.connected || node.getConfig()?.enableWithoutConnection) {
-            return component
+            return tile
         }
         return (
             <>
-                {component}
+                {tile}
                 <div
                     style={{
                         position: "absolute",
@@ -78,16 +77,13 @@ export const GlowbuzzerDockLayout = () => {
             const tab = selectedNode as TabNode
 
             const buttons = buttonsFactory(tab)
-            buttons && renderValues.buttons.push(<>{buttons}</>)
+            buttons &&
+                renderValues.buttons.push(<ButtonsWrapper key="buttons">{buttons}</ButtonsWrapper>)
 
             const settings = settingsFactory(tab)
             settings &&
                 renderValues.buttons.push(
-                    <GlowbuzzerDockSettingsModal
-                        key={tab.getId()}
-                        children={settings}
-                        title={tab.getName() + " Settings"}
-                    />
+                    <DockTileSettingsModal key={tab.getId() + "-settings"} Component={settings} />
                 )
 
             const help = helpFactory(tab)
@@ -95,7 +91,7 @@ export const GlowbuzzerDockLayout = () => {
                 renderValues.stickyButtons.push(
                     <Popover
                         className="help-popover"
-                        key={tab.getId()}
+                        key={tab.getId() + "-help"}
                         trigger="click"
                         content={help}
                         placement="bottomRight"
@@ -107,6 +103,10 @@ export const GlowbuzzerDockLayout = () => {
             const header = headerFactory(tab)
             header && renderValues.stickyButtons.push(<span key={tab.getId()}>{header}</span>)
         }
+    }
+
+    if (!model) {
+        return null
     }
 
     return (

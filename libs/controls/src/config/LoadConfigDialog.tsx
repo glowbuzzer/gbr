@@ -50,7 +50,7 @@ export const LoadConfigDialog = ({ open, onClose }) => {
     return (
         <StyledModal
             title="Load Configuration"
-            visible={open}
+            open={open}
             onCancel={onClose}
             footer={[
                 <Button key="load" onClick={send} type="primary" disabled={!json}>

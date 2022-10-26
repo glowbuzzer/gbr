@@ -10,18 +10,20 @@ type GlowbuzzerDockPlacement = {
     row: number
 }
 
-export interface GlowbuzzerDockComponentDefinition extends IJsonTabNode {
+export interface DockTileDefinition extends IJsonTabNode {
     id: string
 
-    factory(): ReactNode
+    render(): ReactNode
 
-    settingsFactory?(): ReactNode
+    renderSettings?()
 
-    headerFactory?(): ReactNode
+    renderHeader?(): ReactNode
 
-    buttonsFactory?(): ReactNode
+    renderButtons?(): ReactNode
 
-    helpFactory?(): ReactNode
+    renderHelp?(): ReactNode
 
     defaultPlacement?: GlowbuzzerDockPlacement
+
+    excludeByDefault?: boolean
 }

@@ -8,8 +8,10 @@ import { usePrefs, useSoloActivity, useToolIndex, useToolList } from "@glowbuzze
 import { Button, Tag } from "antd"
 import styled from "styled-components"
 import { RightOutlined } from "@ant-design/icons"
+import { DockTileWithToolbar } from "../dock/DockToolbar"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const ToolsTileHelp = () => (
     <div>
         <h4>Tools Tile</h4>
         <p>
@@ -54,7 +56,7 @@ export const ToolsTile = () => {
     }
 
     return (
-        <Tile title={"Tools"} help={help}>
+        <StyledTileContent>
             {tools?.map((config, index) => (
                 <StyledDiv key={index}>
                     <div className="name">{config.name}</div>
@@ -84,6 +86,6 @@ export const ToolsTile = () => {
                 </StyledDiv>
             ))}
             {!tools?.length && <TileEmptyMessage>No tools configured</TileEmptyMessage>}
-        </Tile>
+        </StyledTileContent>
     )
 }

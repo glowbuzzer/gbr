@@ -283,6 +283,7 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
     }
 
     setFromPoint(point: PointsConfig) {
+        this._frameIndex = point.frameIndex
         this._translation = point.translation
         this._rotation = point.rotation
         this._configuration = point.configuration

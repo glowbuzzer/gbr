@@ -5,35 +5,44 @@
 import * as React from "react"
 import { useMemo, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
-import { Tile, TileSettings } from "../tiles"
 import styled from "styled-components"
-import { Button, Checkbox, Col, InputNumber, Row } from "antd"
+import { Button, Checkbox, Col, InputNumber, Modal, Row } from "antd"
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import {
     CaptureState,
     TelemetrySettingsType,
     telemetrySlice,
     useConfig,
+    useKinematicsConfiguration,
     useTelemetryControls,
     useTelemetryData,
     useTelemetrySettings
 } from "@glowbuzzer/store"
 import { useDispatch } from "react-redux"
+import { DockTileWithToolbar } from "../dock/DockToolbar"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledSettings = styled.div``
 const Selection = styled.div`
-    .ant-checkbox-wrapper {
-        display: block;
+    .item {
         margin-left: 24px;
     }
 `
 
-type TelemetrySettingsDialogProps = {
-    settings: TelemetrySettingsType
-    onChange(settings: Partial<TelemetrySettingsType>): void
-}
+export const TelemetryTileSettings = ({ open, onClose }) => {
+    const initialSettings = useTelemetrySettings()
+    const [settings, saveSettings] = useState<TelemetrySettingsType>(initialSettings)
+    const dispatch = useDispatch()
 
-const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialogProps) => {
+    function save() {
+        dispatch(telemetrySlice.actions.settings(settings))
+        onClose()
+    }
+
+    function update_settings(change: Partial<TelemetrySettingsType>) {
+        saveSettings(settings => ({ ...settings, ...change }))
+    }
+
     const { cartesianAxes, joints, cartesianEnabled, queueEnabled } = settings
 
     function update_cartesian(event: CheckboxChangeEvent) {
@@ -41,7 +50,7 @@ const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialog
         const index = ["x", "y", "z"].indexOf(name)
         const update = [...cartesianAxes]
         update[index] = checked
-        onChange({
+        update_settings({
             cartesianAxes: update
         })
     }
@@ -50,175 +59,175 @@ const TelemetrySettingsDialog = ({ settings, onChange }: TelemetrySettingsDialog
         const { name, checked } = event.target
         const update = [...joints]
         update[Number(name)] = checked
-        onChange({
+        update_settings({
             joints: update
         })
     }
 
     function update_display(event: CheckboxChangeEvent) {
         const { name, checked } = event.target
-        onChange({
+        update_settings({
             [name]: checked
         })
     }
 
     return (
-        <StyledSettings>
-            <Row>
-                <Col span={8}>
-                    <Checkbox
-                        checked={cartesianEnabled}
-                        onChange={event => {
-                            onChange({ cartesianEnabled: event.target.checked })
-                        }}
-                    >
-                        Cartesian
-                    </Checkbox>
-                    <Selection>
+        <Modal title="Telemetry Settings" open={open} onCancel={onClose} onOk={save}>
+            <StyledSettings>
+                <Row>
+                    <Col span={8}>
                         <Checkbox
-                            name="x"
-                            checked={cartesianAxes[0]}
-                            onChange={update_cartesian}
-                            disabled={!settings.cartesianEnabled}
+                            checked={cartesianEnabled}
+                            onChange={event => {
+                                update_settings({ cartesianEnabled: event.target.checked })
+                            }}
                         >
-                            X
+                            Cartesian
+                        </Checkbox>
+                        <Selection>
+                            <div className="item">
+                                <Checkbox
+                                    name="x"
+                                    checked={cartesianAxes[0]}
+                                    onChange={update_cartesian}
+                                    disabled={!settings.cartesianEnabled}
+                                >
+                                    X
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="y"
+                                    checked={cartesianAxes[1]}
+                                    onChange={update_cartesian}
+                                    disabled={!settings.cartesianEnabled}
+                                >
+                                    Y
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="z"
+                                    checked={cartesianAxes[2]}
+                                    onChange={update_cartesian}
+                                    disabled={!settings.cartesianEnabled}
+                                >
+                                    Z
+                                </Checkbox>
+                            </div>
+                        </Selection>
+                    </Col>
+                    <Col span={8}>
+                        <Checkbox
+                            checked={settings.jointsEnabled}
+                            onChange={event => {
+                                update_settings({ jointsEnabled: event.target.checked })
+                            }}
+                        >
+                            Joint
+                        </Checkbox>
+                        <Selection>
+                            <div className="item">
+                                <Checkbox
+                                    name="0"
+                                    checked={joints[0]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 1
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="1"
+                                    checked={joints[1]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 2
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="2"
+                                    checked={joints[2]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 3
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="3"
+                                    checked={joints[3]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 4
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="4"
+                                    checked={joints[4]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 5
+                                </Checkbox>
+                            </div>
+                            <div className="item">
+                                <Checkbox
+                                    name="5"
+                                    checked={joints[5]}
+                                    onChange={update_joint}
+                                    disabled={!settings.jointsEnabled}
+                                >
+                                    Joint 6
+                                </Checkbox>
+                            </div>
+                        </Selection>
+                    </Col>
+                    <Col span={8}>
+                        <Checkbox
+                            checked={queueEnabled}
+                            onChange={event => {
+                                update_settings({ queueEnabled: event.target.checked })
+                            }}
+                        >
+                            Queue Info
+                        </Checkbox>
+                    </Col>
+                </Row>
+                <div>
+                    Show
+                    <p>
+                        <Checkbox
+                            name="posEnabled"
+                            checked={settings.posEnabled}
+                            onChange={update_display}
+                        >
+                            Position
                         </Checkbox>
                         <Checkbox
-                            name="y"
-                            checked={cartesianAxes[1]}
-                            onChange={update_cartesian}
-                            disabled={!settings.cartesianEnabled}
+                            name="velEnabled"
+                            checked={settings.velEnabled}
+                            onChange={update_display}
                         >
-                            Y
+                            Velocity
                         </Checkbox>
                         <Checkbox
-                            name="z"
-                            checked={cartesianAxes[2]}
-                            onChange={update_cartesian}
-                            disabled={!settings.cartesianEnabled}
+                            name="accEnabled"
+                            checked={settings.accEnabled}
+                            onChange={update_display}
                         >
-                            Z
+                            Acceleration
                         </Checkbox>
-                    </Selection>
-                </Col>
-                <Col span={8}>
-                    <Checkbox
-                        checked={settings.jointsEnabled}
-                        onChange={event => {
-                            onChange({ jointsEnabled: event.target.checked })
-                        }}
-                    >
-                        Joint
-                    </Checkbox>
-                    <Selection>
-                        <Checkbox
-                            name="0"
-                            checked={joints[0]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 1
-                        </Checkbox>
-                        <Checkbox
-                            name="1"
-                            checked={joints[1]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 2
-                        </Checkbox>
-                        <Checkbox
-                            name="2"
-                            checked={joints[2]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 3
-                        </Checkbox>
-                        <Checkbox
-                            name="3"
-                            checked={joints[3]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 4
-                        </Checkbox>
-                        <Checkbox
-                            name="4"
-                            checked={joints[4]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 5
-                        </Checkbox>
-                        <Checkbox
-                            name="5"
-                            checked={joints[5]}
-                            onChange={update_joint}
-                            disabled={!settings.jointsEnabled}
-                        >
-                            Joint 6
-                        </Checkbox>
-                    </Selection>
-                </Col>
-                <Col span={8}>
-                    <Checkbox
-                        checked={queueEnabled}
-                        onChange={event => {
-                            onChange({ queueEnabled: event.target.checked })
-                        }}
-                    >
-                        Queue Info
-                    </Checkbox>
-                </Col>
-            </Row>
-            <div>
-                Show
-                <p>
-                    <Checkbox
-                        name="posEnabled"
-                        checked={settings.posEnabled}
-                        onChange={update_display}
-                    >
-                        Position
-                    </Checkbox>
-                    <Checkbox
-                        name="velEnabled"
-                        checked={settings.velEnabled}
-                        onChange={update_display}
-                    >
-                        Velocity
-                    </Checkbox>
-                    <Checkbox
-                        name="accEnabled"
-                        checked={settings.accEnabled}
-                        onChange={update_display}
-                    >
-                        Acceleration
-                    </Checkbox>
-                </p>
-            </div>
-        </StyledSettings>
-    )
-}
-
-const TelemetrySettings = () => {
-    const initialSettings = useTelemetrySettings()
-    const [settings, saveSettings] = useState<TelemetrySettingsType>(initialSettings)
-    const dispatch = useDispatch()
-
-    function save() {
-        dispatch(telemetrySlice.actions.settings(settings))
-    }
-
-    function update_settings(change: Partial<TelemetrySettingsType>) {
-        saveSettings(settings => ({ ...settings, ...change }))
-    }
-
-    return (
-        <TileSettings onConfirm={save}>
-            <TelemetrySettingsDialog settings={settings} onChange={update_settings} />
-        </TileSettings>
+                    </p>
+                </div>
+            </StyledSettings>
+        </Modal>
     )
 }
 
@@ -228,21 +237,21 @@ const axis_keys = ["x", "y", "z"]
 const SparklineCartesian = () => {
     const telemetry = useTelemetryData()
     const settings = useTelemetrySettings()
-    const config = useConfig()
-
-    const kparams = config.kinematicsConfiguration[Object.keys(config.kinematicsConfiguration)[0]]
+    const kc = useKinematicsConfiguration(0)
 
     const pos_domain = useMemo(() => {
         // pick the first kinematics parameters
-        const { extentsX, extentsY, extentsZ } = kparams
+        const { extentsX, extentsY, extentsZ } = kc
         // produce overall [min, max] from individual x, y, z [min, max]
         return [extentsX, extentsY, extentsZ].reduce(
             ([min, max], xyz) => [Math.min(min, xyz?.[0]), Math.max(max, xyz?.[1])],
             [0, 0]
         )
-    }, [kparams])
+    }, [kc])
 
-    const { vmax, amax } = useMemo(() => kparams.linearLimits[0], [kparams])
+    console.log("KC", kc)
+
+    const { vmax, amax } = useMemo(() => kc.linearLimits[0], [kc])
     const options = useMemo(
         () =>
             settings.cartesianAxes
@@ -291,7 +300,7 @@ const SparklineJoints = () => {
 
     const pos_domain = useMemo(() => {
         // produce overall [min, max] from joint min and max settings
-        return Object.keys(config.joint).reduce(
+        return config.joint.reduce(
             ([min, max], key, index) => {
                 if (!settings.joints[index]) {
                     return [min, max]
@@ -306,28 +315,22 @@ const SparklineJoints = () => {
         )
     }, [config.joint, settings.joints, telemetry])
 
-    const vel_domain = Object.keys(config.joint).reduce(
-        ([min, max], key, index) => {
+    const vel_domain = config.joint.reduce(
+        ([min, max], joint, index) => {
             if (!settings.joints[index]) {
                 return [min, max]
             }
-            return [
-                Math.min(min, -config.joint[key].limits[0].vmax),
-                Math.max(max, config.joint[key].limits[0].vmax)
-            ]
+            return [Math.min(min, -joint.limits[0].vmax), Math.max(max, joint.limits[0].vmax)]
         },
         [0, 0]
     )
 
-    const acc_domain = Object.keys(config.joint).reduce(
-        ([min, max], key, index) => {
+    const acc_domain = config.joint.reduce(
+        ([min, max], joint, index) => {
             if (!settings.joints[index]) {
                 return [min, max]
             }
-            return [
-                Math.min(min, -config.joint[key].limits[0].amax),
-                Math.max(max, config.joint[key].limits[0].amax)
-            ]
+            return [Math.min(min, -joint.limits[0].amax), Math.max(max, joint.limits[0].amax)]
         },
         [0, 0]
     )
@@ -476,10 +479,12 @@ const TelemetryControls = () => {
  */
 export const TelemetryTile = () => {
     return (
-        <Tile title="Telemetry" settings={<TelemetrySettings />} footer={<TelemetryControls />}>
-            <SparklineQueue />
-            <SparklineCartesian />
-            <SparklineJoints />
-        </Tile>
+        <DockTileWithToolbar toolbar={<TelemetryControls />}>
+            <StyledTileContent>
+                <SparklineQueue />
+                <SparklineCartesian />
+                <SparklineJoints />
+            </StyledTileContent>
+        </DockTileWithToolbar>
     )
 }

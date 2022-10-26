@@ -2,16 +2,36 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { JogCartesianPanel, JogJointsPanel } from "@glowbuzzer/controls"
 import { JogMode } from "./types"
+import React, { useState } from "react"
+import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { JogModeRadioButtons } from "./JogModeRadioButtons"
+import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
+import { JogJointsPanel } from "./JogJointsPanel"
 
 export const JogJointsTile = () => {
+    const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
+    const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
+
     return (
-        <JogJointsPanel
-            jogMode={JogMode.CONTINUOUS}
-            jogSpeed={100}
-            kinematicsConfigurationIndex={0}
-            onChangeKinematicsConfigurationIndex={() => {}}
-        />
+        <DockTileWithToolbar
+            toolbar={
+                <>
+                    <JogModeRadioButtons mode={jogMode} onChange={setJogMode} />
+                    <DockToolbarButtonGroup>
+                        <KinematicsDropdown
+                            value={kinematicsConfigurationIndex}
+                            onChange={setKinematicsConfigurationIndex}
+                        />
+                    </DockToolbarButtonGroup>
+                </>
+            }
+        >
+            <JogJointsPanel
+                jogMode={jogMode}
+                jogSpeed={100}
+                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+            />
+        </DockTileWithToolbar>
     )
 }

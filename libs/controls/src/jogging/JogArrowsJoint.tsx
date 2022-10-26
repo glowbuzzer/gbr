@@ -8,9 +8,9 @@ import {
     JointConfig,
     LIMITPROFILE,
     MoveParametersConfig,
-    useConfig,
     useJoint,
     useJointConfig,
+    useKinematicsConfigurationList,
     usePrefs,
     usePreview,
     useSoloActivity
@@ -26,10 +26,6 @@ import {
     DoubleRightOutlined
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
-import { JogTileItem } from "./util"
-import { DockIconSelect, DockToolbar } from "../dock/DockToolbar"
-import { FramesIcon } from "../frames/FramesIcon"
 
 const JointSliderDiv = styled.div`
     display: flex;
@@ -47,6 +43,7 @@ const JointSliderDiv = styled.div`
 
 const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) => {
     const joint = useJoint(index)
+
     const [min, max] =
         jc.jointType === JOINT_TYPE.JOINT_REVOLUTE
             ? // TODO: limits in config are in degrees (but shouldn't really be!)
@@ -65,12 +62,7 @@ const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) 
     )
 }
 
-const JogArrowsJointContinuous = ({
-    joints,
-    kinematicsConfigurationIndex,
-    onChangeKinematicsConfigurationIndex,
-    moveParams
-}) => {
+const JogArrowsJointContinuous = ({ joints, kinematicsConfigurationIndex, moveParams }) => {
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
@@ -108,15 +100,6 @@ const JogArrowsJointContinuous = ({
 
     return (
         <>
-            <JogTileItem>
-                <div>
-                    Kinematics:{" "}
-                    <KinematicsConfigurationSelector
-                        onChange={onChangeKinematicsConfigurationIndex}
-                        value={kinematicsConfigurationIndex}
-                    />
-                </div>
-            </JogTileItem>
             {joints.map(({ config, index: physical_index }, logical_index) => (
                 <JointSliderDiv key={logical_index}>
                     <JogButton index={logical_index} direction={JogDirection.NEGATIVE}>
@@ -135,14 +118,12 @@ const JogArrowsJointContinuous = ({
 type JogArrowsJointStepProps = {
     joints: { index: number; config: JointConfig & { name: string } }[]
     kinematicsConfigurationIndex: number
-    onChangeKinematicsConfigurationIndex: (number) => void
     moveParams: MoveParametersConfig
 }
 
 const JogArrowsJointStep = ({
     joints,
     kinematicsConfigurationIndex,
-    onChangeKinematicsConfigurationIndex,
     moveParams
 }: JogArrowsJointStepProps) => {
     const { getUnits, toSI } = usePrefs()
@@ -175,15 +156,6 @@ const JogArrowsJointStep = ({
 
     return (
         <div>
-            <JogTileItem>
-                <div>
-                    Kinematics:{" "}
-                    <KinematicsConfigurationSelector
-                        onChange={onChangeKinematicsConfigurationIndex}
-                        value={kinematicsConfigurationIndex}
-                    />
-                </div>
-            </JogTileItem>
             {joints.map(({ config, index: physical_index }, logical_index) => (
                 <JointSliderDiv key={logical_index}>
                     <Button onClick={() => jogStep(logical_index, -steps[logical_index])}>
@@ -209,7 +181,6 @@ const JogArrowsJointStep = ({
 type JogArrowsJointProps = {
     jogMode: JogMode
     kinematicsConfigurationIndex: number
-    onChangeKinematicsConfigurationIndex: (index: number) => void
     jogSpeed: number
 }
 
@@ -217,12 +188,11 @@ type JogArrowsJointProps = {
 export const JogArrowsJoint = ({
     jogMode,
     kinematicsConfigurationIndex,
-    onChangeKinematicsConfigurationIndex,
     jogSpeed
 }: JogArrowsJointProps) => {
-    const config = useConfig()
+    const kcs = useKinematicsConfigurationList()
 
-    const kcConfig = Object.values(config.kinematicsConfiguration)[kinematicsConfigurationIndex]
+    const kcConfig = kcs[kinematicsConfigurationIndex] || kcs[0]
 
     const joint_config = useJointConfig()
     const joints = kcConfig.participatingJoints.map(jointNum => ({
@@ -242,14 +212,12 @@ export const JogArrowsJoint = ({
             joints={joints}
             moveParams={moveParams}
             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-            onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
         />
     ) : (
         <JogArrowsJointStep
             joints={joints}
             moveParams={moveParams}
             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-            onChangeKinematicsConfigurationIndex={onChangeKinematicsConfigurationIndex}
         />
     )
 }

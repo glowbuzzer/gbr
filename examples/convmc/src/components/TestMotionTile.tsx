@@ -2,7 +2,6 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Tile } from "@glowbuzzer/controls"
 import React, { useState } from "react"
 import { Button } from "antd"
 import { useSoloActivity } from "@glowbuzzer/store"
@@ -21,9 +20,9 @@ export const TestMotionTile = () => {
     }
 
     return (
-        <Tile title="Test Motion">
+        <div style={{ padding: "10px" }}>
             <Button onClick={do_promise}>DO MOVE</Button>
             {complete ? "OPERATION COMPLETE" : ""}
-        </Tile>
+        </div>
     )
 }

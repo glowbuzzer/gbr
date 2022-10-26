@@ -2,13 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-export function add_component(modelJson, component) {
-    const { column, row } = component.defaultPlacement ?? { column: 2, row: 0 }
+export function add_tile(modelJson, tile) {
+    const { column, row } = tile.defaultPlacement ?? { column: 2, row: 0 }
 
     const WEIGHTS = [10, 50, 25]
     const layout = modelJson.layout
 
-    // console.log("ADD COMPONENT", column, weight, component.id, layout.children.length)
     while (layout.children.length <= column) {
         const weight = WEIGHTS[layout.children.length]
         layout.children.push({
@@ -29,7 +28,7 @@ export function add_component(modelJson, component) {
         // only one tabset in the column
         col.children.push({
             type: "tab",
-            ...component
+            ...tile
         })
     } else {
         while (col.children.length <= row) {
@@ -40,7 +39,7 @@ export function add_component(modelJson, component) {
         }
         col.children[row].children.push({
             type: "tab",
-            ...component
+            ...tile
         })
     }
 }

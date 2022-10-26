@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Button, Radio, Spin, Tag } from "antd"
+import { Button, Form, Input, Modal, Radio, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -13,7 +13,8 @@ import {
     MACHINETARGET,
     possible_transitions,
     useConnection,
-    useMachine
+    useMachine,
+    usePrefs
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
@@ -39,6 +40,26 @@ export const ConnectTileHelp = () => (
         </p>
     </div>
 )
+
+export const ConnectSettings = ({ open, onClose }) => {
+    const prefs = usePrefs()
+
+    const labelCol = { span: 6 }
+
+    function update_url(e) {
+        prefs.update("url", e.target.value)
+    }
+
+    return (
+        <Modal open={open} onCancel={onClose} footer={[<Button onClick={onClose}>Close</Button>]}>
+            <Form>
+                <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 16 }}>
+                    <Input defaultValue={prefs.current.url} onChange={update_url} />
+                </Form.Item>
+            </Form>
+        </Modal>
+    )
+}
 
 const StyledDiv = styled.div`
     padding: 5px;

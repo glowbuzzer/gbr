@@ -8,7 +8,6 @@
  * See `useDigitalInputOverrides` in @glowbuzzer/store for more information.
  */
 import React from "react"
-import { Tile } from "@glowbuzzer/controls"
 import { useDigitalInputOverrides, useDigitalInputs } from "@glowbuzzer/store"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
@@ -71,24 +70,22 @@ export const DigitalInputOverrideTile = ({ labels }) => {
     const digitalInputOverrides = useDigitalInputOverrides()
 
     return (
-        <Tile title="Digital Input Overrides">
-            <StyledDiv>
-                {dins.map((di, index) => {
-                    const item = {
-                        actState: di,
-                        state: digitalInputOverrides.get(index),
-                        override: digitalInputOverrides.isOverridden(index)
-                    }
-                    return (
-                        <DigitalInputOverrideItem
-                            key={index}
-                            index={index}
-                            label={labels[index]}
-                            item={item}
-                        />
-                    )
-                })}
-            </StyledDiv>
-        </Tile>
+        <StyledDiv>
+            {dins.map((di, index) => {
+                const item = {
+                    actState: di,
+                    state: digitalInputOverrides.get(index),
+                    override: digitalInputOverrides.isOverridden(index)
+                }
+                return (
+                    <DigitalInputOverrideItem
+                        key={index}
+                        index={index}
+                        label={labels[index]}
+                        item={item}
+                    />
+                )
+            })}
+        </StyledDiv>
     )
 }

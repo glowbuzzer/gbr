@@ -3,14 +3,22 @@
  */
 
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { PointsConfig, usePoints } from "@glowbuzzer/store"
+import { PointsConfig, useFramesList, usePoints } from "@glowbuzzer/store"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
-import { DockToolbar } from "../dock/DockToolbar"
+import { DockTileWithToolbar, DockToolbar } from "../dock/DockToolbar"
 import { StyledTable } from "../util/styles/StyledTable"
+import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
+import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
+import styled from "styled-components"
+
+const StyledDiv = styled.div`
+    ${CssPointNameWithFrame}
+`
 
 export const PointsTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
     const points = usePoints()
+    const frames = useFramesList()
 
     const columns = [
         {
@@ -38,13 +46,28 @@ export const PointsTile = () => {
 
     function transform_point(point: PointsConfig, index: number) {
         {
-            const { name, translation, rotation } = point
+            const { name, frameIndex, translation, rotation } = point
             const { x, y, z } = translation ?? { x: 0, y: 0, z: 0 }
             const { w, x: qx, y: qy, z: qz } = rotation ?? { x: 0, y: 0, z: 0, w: 1 }
 
             return {
                 key: index.toString(),
-                name: name,
+                name: (
+                    <div className="point-name">
+                        <div className="name">{name}</div>
+                        {frames[frameIndex] && (
+                            <div className="frame">
+                                <FramesIcon
+                                    width={13}
+                                    height={13}
+                                    viewBox="0 0 48 48"
+                                    transform="translate(0,2)"
+                                />{" "}
+                                {frames[frameIndex].name}
+                            </div>
+                        )}
+                    </div>
+                ),
                 x: x.toFixed(precision),
                 y: y.toFixed(precision),
                 z: z.toFixed(precision),
@@ -59,11 +82,17 @@ export const PointsTile = () => {
     const tableData = points?.map(transform_point)
 
     return (
-        <>
-            <DockToolbar>
-                <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
-            </DockToolbar>
-            <StyledTable columns={columns} dataSource={tableData} pagination={false} size="small" />
-        </>
+        <DockTileWithToolbar
+            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
+        >
+            <StyledDiv>
+                <StyledTable
+                    columns={columns}
+                    dataSource={tableData}
+                    pagination={false}
+                    size="small"
+                />
+            </StyledDiv>
+        </DockTileWithToolbar>
     )
 }

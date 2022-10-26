@@ -12,7 +12,6 @@ import { ReactComponent as FileOpenIcon } from "@material-symbols/svg-400/outlin
 import { ReactComponent as ResetConfigIcon } from "@material-symbols/svg-400/outlined/restart_alt.svg"
 import { ReactComponent as FormatConfigIcon } from "@material-symbols/svg-400/outlined/format_align_left.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { LoadConfigDialog } from "@glowbuzzer/controls"
 import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
@@ -41,7 +40,6 @@ export const ConfigEditTile = () => {
     const dispatch = useDispatch()
 
     const [editedConfig, setEditedConfig] = useState(JSON.stringify(config, null, 4))
-    const [showLoadConfigDialog, setShowLoadConfigDialog] = useState(false)
     const [error, setError] = useState(null)
 
     function update_edited_config(e) {
@@ -83,10 +81,6 @@ export const ConfigEditTile = () => {
 
     return (
         <StyledDiv>
-            <LoadConfigDialog
-                open={showLoadConfigDialog}
-                onClose={() => setShowLoadConfigDialog(false)}
-            />
             <DockToolbar>
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon

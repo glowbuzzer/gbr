@@ -3,12 +3,12 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import { useIntegerOutputList, useIntegerOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const IntegerOutputsTileHelp = () => (
     <div>
         <h4>Integer Outputs Tile</h4>
         <p>The Integer Outputs Tile allows you to control analog outputs on your machine.</p>
@@ -65,7 +65,7 @@ export const IntegerOutputsTile = ({ labels = [] }: IntegerOutputsTileProps) => 
     const aouts = useIntegerOutputList()
 
     return (
-        <Tile title={"Integer Outputs"} help={help}>
+        <StyledTileContent>
             <StyledDiv>
                 {aouts?.map(({ name }, index) => (
                     <IntegerOutputItem
@@ -75,6 +75,6 @@ export const IntegerOutputsTile = ({ labels = [] }: IntegerOutputsTileProps) => 
                     />
                 ))}
             </StyledDiv>
-        </Tile>
+        </StyledTileContent>
     )
 }

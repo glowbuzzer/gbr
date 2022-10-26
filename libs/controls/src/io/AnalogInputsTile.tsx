@@ -3,12 +3,12 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
 import { useAnalogInputList, useAnalogInputState } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const AnalogInputsTileHelp = () => (
     <div>
         <h4>Analog Inputs Tile</h4>
         <p>The Analog Inputs Tile shows the "live" value of all of the analog inputs</p>
@@ -47,7 +47,7 @@ export const AnalogInputsTile = ({ labels = [] }: AnalogInputsTileProps) => {
     const ain = useAnalogInputList()
 
     return (
-        <Tile title="Analog Inputs" help={help}>
+        <StyledTileContent>
             {ain?.map((config, index) => (
                 <AnalogInputItem
                     key={index}
@@ -55,6 +55,6 @@ export const AnalogInputsTile = ({ labels = [] }: AnalogInputsTileProps) => {
                     label={labels[index] || config.name || index}
                 />
             ))}
-        </Tile>
+        </StyledTileContent>
     )
 }

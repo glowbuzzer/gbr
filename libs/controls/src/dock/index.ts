@@ -2,10 +2,10 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-export * from "./GlowbuzzerDockLayoutProvider"
-export * from "./GlowbuzzerDockLayout"
-export * from "./GlowbuzzerDockViewMenu"
-export * from "./GlowbuzzerDockComponentSet"
-export * from "./GlowbuzzerDockStandardComponentList"
-export * from "./GlowbuzzerDockComponentDefinition"
+export * from "./DockLayoutProvider"
+export * from "./DockLayout"
+export * from "./DockViewMenu"
+export * from "./DockTileDefinition"
+export * from "./DockTileDefinitionBuilder"
 export * from "./hooks"
+export * from "./types"

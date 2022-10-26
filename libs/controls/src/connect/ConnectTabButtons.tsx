@@ -40,10 +40,10 @@ export const ConnectTabButtons = () => {
 
     return (
         <>
-            <DockButton onClick={toggle_connection}>
+            <DockButton key="connect-button" onClick={toggle_connection}>
                 {connection.connected ? "Disconnect" : "Connect"}
             </DockButton>
-            <ConnectIndicator className={className}>
+            <ConnectIndicator key="connect-indicator" className={className}>
                 <ContactlessIcon viewBox="0 0 48 48" />
             </ConnectIndicator>
         </>
