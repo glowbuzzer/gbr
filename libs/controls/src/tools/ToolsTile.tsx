@@ -3,13 +3,12 @@
  */
 
 import * as React from "react"
-import { Tile, TileEmptyMessage } from "@glowbuzzer/controls"
-import { usePrefs, useSoloActivity, useToolIndex, useToolList } from "@glowbuzzer/store"
-import { Button, Tag } from "antd"
+import {TileEmptyMessage} from "@glowbuzzer/controls"
+import {usePrefs, useSoloActivity, useToolIndex, useToolList} from "@glowbuzzer/store"
+import {Button, Tag} from "antd"
 import styled from "styled-components"
-import { RightOutlined } from "@ant-design/icons"
-import { DockTileWithToolbar } from "../dock/DockToolbar"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
+import {RightOutlined} from "@ant-design/icons"
+import {StyledTileContent} from "../util/styles/StyledTileContent"
 
 export const ToolsTileHelp = () => (
     <div>
