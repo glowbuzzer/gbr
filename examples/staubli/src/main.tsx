@@ -15,11 +15,11 @@ import {
 
 import { Vector3 } from "three"
 import { createRoot } from "react-dom/client"
+import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 const DEG90 = Math.PI / 2
 
