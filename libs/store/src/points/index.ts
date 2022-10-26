@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { useConfig } from "@glowbuzzer/store"
+import { useConfig } from "../config"
 
 export function usePoints() {
     const config = useConfig()
