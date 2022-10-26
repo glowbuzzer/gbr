@@ -5,7 +5,7 @@
 import { IJsonTabNode } from "flexlayout-react"
 import { ReactNode } from "react"
 
-type GlowbuzzerDockPlacement = {
+type DockTilePlacement = {
     column: number
     row: number
 }
@@ -23,7 +23,7 @@ export interface DockTileDefinition extends IJsonTabNode {
 
     renderHelp?(): ReactNode
 
-    defaultPlacement?: GlowbuzzerDockPlacement
+    defaultPlacement?: DockTilePlacement
 
     excludeByDefault?: boolean
 }
