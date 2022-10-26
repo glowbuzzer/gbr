@@ -2,20 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
-
-// function get_value(key, initialValue) {
-//     try {
-//         // Get from local storage by key
-//         const item = window.localStorage.getItem(key)
-//         // Parse stored json or if none return initialValue
-//         return item ? JSON.parse(item) : initialValue
-//     } catch (error) {
-//         // If error also return initialValue
-//         console.log(error)
-//         return initialValue
-//     }
-// }
+import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 function parseJSON<T>(value: string | null): T | undefined {
     try {
@@ -28,7 +15,13 @@ function parseJSON<T>(value: string | null): T | undefined {
 
 type SetValue<T> = Dispatch<SetStateAction<T>>
 
-export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
+export function useLocalStorage<T>(
+    key: string,
+    initialValue: T,
+    appName?: string
+): [T, SetValue<T>] {
+    const appkey = appName ? `${appName}-${key}` : key
+
     // Get from local storage then
     // parse stored json or return initialValue
     const readValue = useCallback((): T => {
@@ -38,13 +31,13 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
         }
 
         try {
-            const item = window.localStorage.getItem(key)
+            const item = window.localStorage.getItem(appkey)
             return item ? (parseJSON(item) as T) : initialValue
         } catch (error) {
-            console.warn(`Error reading localStorage key “${key}”:`, error)
+            console.warn(`Error reading localStorage key “${appkey}”:`, error)
             return initialValue
         }
-    }, [initialValue, key])
+    }, [initialValue, appkey])
 
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
@@ -56,7 +49,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
         // Prevent build error "window is undefined" but keeps working
         if (typeof window == "undefined") {
             console.warn(
-                `Tried setting localStorage key “${key}” even though environment is not a client`
+                `Tried setting localStorage key “${appkey}” even though environment is not a client`
             )
         }
 
@@ -65,7 +58,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
             const newValue = value instanceof Function ? value(storedValue) : value
 
             // Save to local storage
-            window.localStorage.setItem(key, JSON.stringify(newValue))
+            window.localStorage.setItem(appkey, JSON.stringify(newValue))
 
             // Save state
             setStoredValue(newValue)
@@ -73,7 +66,7 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
             // We dispatch a custom event so every useLocalStorage hook are notified
             window.dispatchEvent(new Event("local-storage"))
         } catch (error) {
-            console.warn(`Error setting localStorage key “${key}”:`, error)
+            console.warn(`Error setting localStorage key “${appkey}”:`, error)
         }
     }
 
@@ -84,60 +77,9 @@ export function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T
     useEffect(() => {
         setStoredValue(readValue())
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [key])
+    }, [readValue])
 
-    // const handleStorageChange = useCallback(() => {
-    //     setStoredValue(readValue())
-    // }, [readValue])
+    const currentValue = useMemo(readValue, [storedValue, appkey])
 
-    // this only works for other documents, not the current one
-    // useEventListener("storage", handleStorageChange)
-    //
-    // // this is a custom event, triggered in writeValueToLocalStorage
-    // // See: useLocalStorage()
-    // useEventListener("local-storage", handleStorageChange)
-
-    return [storedValue, setValue]
+    return [currentValue, setValue]
 }
-
-// export function useLocalStorage<T>(
-//     key: string,
-//     initialValue: T
-// ): [T, (value: T | ((val: T) => T)) => void] {
-//     const [valueInternal, setValueInternal] = useState(initialValue)
-//
-//     const item = window.localStorage.getItem(key)
-//     const itemString = item?.toString()
-//
-//     const currentValue = useMemo(() => {
-//         console.log("ITEM OR INITIAL VALUE CHANGED", key, itemString, initialValue)
-//         try {
-//             return itemString ? JSON.parse(itemString) : initialValue
-//         } catch (e) {
-//             console.log(e)
-//             return initialValue
-//         }
-//     }, [key, itemString, initialValue])
-//
-//     useEffect(() => {
-//         // setValueInternal(currentValue)
-//     }, [currentValue])
-//
-//     // Return a wrapped version of useState's setter function that ...
-//     // ... persists the new value to localStorage.
-//     const setValue = useMemo(() => {
-//         return (value: T | ((val: T) => T)) => {
-//             try {
-//                 setValueInternal(() => {
-//                     const valueToStore = value instanceof Function ? value(currentValue) : value
-//                     window.localStorage.setItem(key, JSON.stringify(valueToStore))
-//                     return valueToStore
-//                 })
-//             } catch (error) {
-//                 console.log(error)
-//             }
-//         }
-//     }, [currentValue, key])
-//
-//     return [valueInternal, setValue]
-// }

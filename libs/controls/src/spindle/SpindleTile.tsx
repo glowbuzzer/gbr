@@ -4,7 +4,6 @@
 
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { Tile } from "@glowbuzzer/controls"
 import {
     SpindleConfig,
     useAnalogOutputState,
@@ -15,22 +14,26 @@ import { Button, Checkbox, Input, Radio, Space } from "antd"
 import styled from "styled-components"
 
 const StyledDiv = styled.div`
-    padding-bottom: 10px;
+    padding: 10px;
 
-    .title {
-        font-weight: bold;
-        padding-bottom: 4px;
-    }
+    .spindle-item {
+        padding-bottom: 10px;
 
-    .form {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
+        .title {
+            font-weight: bold;
+            padding-bottom: 4px;
+        }
 
-    .ant-input.updated {
-        color: green;
-        border-color: green;
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .ant-input.updated {
+            color: green;
+            border-color: green;
+        }
     }
 `
 
@@ -67,7 +70,7 @@ const SpindleItem = ({ spindleConfig, index }: { spindleConfig: SpindleConfig; i
     }
 
     return (
-        <StyledDiv>
+        <div className="spindle-item">
             <div className="title">{spindleConfig.name}</div>
             <div className="form">
                 <div>
@@ -115,7 +118,7 @@ const SpindleItem = ({ spindleConfig, index }: { spindleConfig: SpindleConfig; i
                     </Space>
                 </div>
             </div>
-        </StyledDiv>
+        </div>
     )
 }
 
@@ -128,10 +131,10 @@ export const SpindleTile = () => {
     const spindles = useConfig().spindle
 
     return (
-        <Tile title={"Spindle"}>
+        <StyledDiv>
             {spindles?.map((spindleConfig, index) => (
                 <SpindleItem key={index} spindleConfig={spindleConfig} index={index} />
             ))}
-        </Tile>
+        </StyledDiv>
     )
 }

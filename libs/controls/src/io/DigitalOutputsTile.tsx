@@ -3,12 +3,12 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import { Select, Switch, Tag } from "antd"
 import styled from "styled-components"
 import { useDigitalOutputList, useDigitalOutputState } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const DigitalOutputsTileHelp = () => (
     <div>
         <h4>Digital Outputs Tile</h4>
         <p>The Digital Outputs Tile allows you to control analog outputs on your machine.</p>
@@ -101,7 +101,7 @@ export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => 
     const douts = useDigitalOutputList()
 
     return (
-        <Tile title={"Digital Outputs"} help={help}>
+        <StyledTileContent>
             <StyledDiv>
                 {douts?.map((config, index) => (
                     <DigitalOutputItem
@@ -111,6 +111,6 @@ export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => 
                     />
                 ))}
             </StyledDiv>
-        </Tile>
+        </StyledTileContent>
     )
 }

@@ -8,9 +8,9 @@ import { TASK_STATE, TaskStatus, useTask, useTaskStatus } from "@glowbuzzer/stor
 import styled from "styled-components"
 import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
-import { Tile } from "../tiles"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const TasksTileHelp = () => (
     <div>
         <h4>Tasks Tile</h4>
         <p>The Tasks Tile shows the configured tasks and allows the user to start and stop them.</p>
@@ -39,12 +39,12 @@ const StyledTaskItem = styled.div`
     }
 `
 
-const TaskItem = ({ status, index }: { status: TaskStatus; index: number }) => {
+const TaskItem = ({ name, status, index }: { name: string; status: TaskStatus; index: number }) => {
     const task = useTask(index)
 
     return (
         <StyledTaskItem>
-            <div>{task.name}</div>
+            <div>{name}</div>
             <div>
                 <Tag>{TASK_STATE[status.taskState]}</Tag>
             </div>
@@ -76,10 +76,10 @@ const TaskItem = ({ status, index }: { status: TaskStatus; index: number }) => {
 export const TasksTile = () => {
     const status = useTaskStatus()
     return (
-        <Tile title={"Tasks"} help={help}>
+        <StyledTileContent>
             {status.map((t, index) => (
-                <TaskItem key={t.name} status={t.status} index={index} />
+                <TaskItem key={t.name} name={t.name} status={t.status} index={index} />
             ))}
-        </Tile>
+        </StyledTileContent>
     )
 }

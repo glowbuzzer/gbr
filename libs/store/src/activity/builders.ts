@@ -16,6 +16,7 @@ import {
     MoveParametersConfig,
     MoveToPositionStream,
     MoveVectorAtVelocityStream,
+    PointsConfig,
     POSITIONREFERENCE,
     Quat,
     SetAoutActivityParams,
@@ -278,6 +279,14 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
     /** The configuration (waist, elbow, wrist) for the target position. */
     configuration(c: number) {
         this._configuration = c
+        return this
+    }
+
+    setFromPoint(point: PointsConfig) {
+        this._frameIndex = point.frameIndex
+        this._translation = point.translation
+        this._rotation = point.rotation
+        this._configuration = point.configuration
         return this
     }
 

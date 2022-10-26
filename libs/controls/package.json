@@ -5,8 +5,8 @@
         "@glowbuzzer/store": "latest",
         "@ant-design/icons": "auto",
         "antd": "auto",
-        "react-grid-layout": "auto",
-        "styled-components": "auto"
+        "styled-components": "auto",
+        "flexlayout-react": "auto"
     },
     "exports": {
         ".": {
@@ -34,8 +34,6 @@
         "./feedrate": {
         },
         "./jogging": {
-        },
-        "./frames": {
         },
         "./dro": {
         }

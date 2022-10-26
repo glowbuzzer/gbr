@@ -8,6 +8,7 @@ import { TASK_COMMAND, TaskStatus } from "../gbc"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
+import deepEqual from "fast-deep-equal"
 
 export const tasksSlice: Slice<TaskStatus[]> = createSlice({
     name: "tasks",
@@ -25,12 +26,14 @@ export function useTaskStatus(): {
     status: TaskStatus
 }[] {
     const config = useConfig()
-    const status = useSelector(({ tasks }: RootState) => tasks, shallowEqual)
+    const status = useSelector(({ tasks }: RootState) => tasks, deepEqual)
 
-    return Object.keys(config.task).map((k, index) => ({
-        name: k,
-        status: status[index] || { taskState: 0, currentActivityIndex: 0 }
-    }))
+    return (
+        config.task?.map((k, index) => ({
+            name: k.name,
+            status: status[index] || { taskState: 0, currentActivityIndex: 0 }
+        })) || []
+    )
 }
 
 /**
@@ -41,8 +44,6 @@ export function useTaskStatus(): {
  * @param taskIndex The index of the task in the configuration
  */
 export function useTask(taskIndex: number): {
-    /** The name of the task */
-    name: string
     /** Run the task */
     run(): void
     /** Cancel a running task */
@@ -90,24 +91,18 @@ export function useTask(taskIndex: number): {
         )
     }
 
-    // here we need to reconstruct the activityCount and firstActivityIndex for each task
-    let abs_activity_index = 0
-    const tasks = Object.keys(config.task).map(k => {
-        const task = config.task[k]
-        const activity_names = Object.keys(task)
+    const tasks = config.task.map(task => {
+        const activities = Array.from({ length: task.activityCount }).map((_, index) => {
+            const activityIndex = task.firstActivityIndex + index
 
-        const activities = activity_names.map(a => {
             return {
-                name: a,
-                sendCommand: (
-                    index => command =>
-                        sendActivityCommand(index, command)
-                )(abs_activity_index++)
+                name: config.activity[activityIndex].name,
+                sendCommand: command => sendActivityCommand(activityIndex, command)
             }
         })
 
         return {
-            name: k,
+            name: task.name,
             activities
         }
     })

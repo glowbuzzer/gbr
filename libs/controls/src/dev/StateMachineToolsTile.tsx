@@ -3,7 +3,6 @@
  */
 
 import * as React from "react"
-import { Tile } from "../tiles"
 import { Button, Tag } from "antd"
 import {
     determine_machine_state,
@@ -12,18 +11,26 @@ import {
     useMachine
 } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const StateMachineToolsTileHelp = () => (
     <div>
         <h4>StateMachine Tools Tile</h4>
-        <p>The StateMachine Tools Tile allows the user to interact with the statemachine that exists on the PLC (GBEM/GBSM).</p>
-        <p>It is not usually necessary to use this tile but it is useful for development where you want to</p>
+        <p>
+            The StateMachine Tools Tile allows the user to interact with the statemachine that
+            exists on the PLC (GBEM/GBSM).
+        </p>
+        <p>
+            It is not usually necessary to use this tile but it is useful for development where you
+            want to
+        </p>
         <p>force the statemachine into a specfic state.</p>
         <p>Usually you can use the Connect Tile's "Disabled" and "Enabled"</p>
-        <p>buttons to jump from <code>SWITCH_ON_DISABLED</code> to <code>OPERATION_ENABLED</code>.</p>
+        <p>
+            buttons to jump from <code>SWITCH_ON_DISABLED</code> to <code>OPERATION_ENABLED</code>.
+        </p>
     </div>
 )
-
 
 const CurrentMachineState = styled.div`
     display: flex;
@@ -98,25 +105,12 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
  * @ignore
  */
 export const StateMachineToolsTile = () => {
-    // const devtools = useDevTools()
     const machine = useMachine()
 
     const currentMachineState = determine_machine_state(machine.statusWord)
 
-    /*
-    const [frequency, setFrequency] = useState(devtools.statusFrequency)
-
-    useEffect(() => {
-        setFrequency(devtools.statusFrequency)
-    }, [devtools.statusFrequency])
-
-    function send_frequency(v) {
-        devtools.setStatusFrequency(v)
-    }
-*/
-
     return (
-        <Tile title={"State Machine Tools"} help={help}>
+        <StyledTileContent>
             <CurrentMachineState>
                 <div>Current Machine State</div>
                 <Tag
@@ -128,6 +122,6 @@ export const StateMachineToolsTile = () => {
                 </Tag>
             </CurrentMachineState>
             <MachineTransitions state={currentMachineState} />
-        </Tile>
+        </StyledTileContent>
     )
 }

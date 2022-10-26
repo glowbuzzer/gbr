@@ -3,11 +3,9 @@
  */
 
 import * as React from "react"
-import { Euler, Quaternion, Vector3 } from "three"
-import { FrameSelector } from "../misc"
+import { Euler } from "three"
 import { apply_offset, useConfig, useFrames, useKinematics } from "@glowbuzzer/store"
 import { DroItem } from "./DroItem"
-import { Button, Space } from "antd"
 
 type CartesianDisplayProps = {
     /**
@@ -16,9 +14,9 @@ type CartesianDisplayProps = {
     kinematicsConfigurationIndex: number
 
     /**
-     * Hide frame selection control. If `true`, values will be displayed in local coordinates.
+     * The index of the frame.
      */
-    hideFrameSelect?: boolean
+    frameIndex: number
 
     /**
      * Optional comma-separated list of axes to display
@@ -44,13 +42,17 @@ const types = {
 /**
  * Displays position and orientation given a kinematics configuration index.
  */
-export const CartesianDro = (props: CartesianDisplayProps) => {
-    const kinematics = useKinematics(0)
-    const [frameIndex, setFrameIndex] = React.useState<number>(kinematics.frameIndex)
+export const CartesianDro = ({
+    kinematicsConfigurationIndex,
+    frameIndex,
+    select,
+    warningThreshold
+}: CartesianDisplayProps) => {
+    const kinematics = useKinematics(kinematicsConfigurationIndex)
     const config = useConfig()
     const { convertToFrame } = useFrames()
 
-    const kc = Object.values(config.kinematicsConfiguration)[0]
+    const kc = config.kinematicsConfiguration[kinematicsConfigurationIndex]
 
     const p = convertToFrame(
         kinematics.translation,
@@ -90,38 +92,10 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
         z: kc.extentsZ
     }
 
-    const display = props.select ? props.select.split(",").map(s => s.trim()) : Object.keys(pos)
-
-    function zero_dro() {
-        kinematics.setOffset(kinematics.translation, new Quaternion().identity())
-    }
-
-    function reset_dro() {
-        kinematics.setOffset(new Vector3(0, 0, 0), new Quaternion().identity())
-    }
+    const display = select ? select.split(",").map(s => s.trim()) : Object.keys(pos)
 
     return (
         <div>
-            <Space>
-                {props.hideFrameSelect || (
-                    <div>
-                        Frame:{" "}
-                        <FrameSelector
-                            value={frameIndex}
-                            defaultFrame={kinematics.frameIndex}
-                            onChange={setFrameIndex}
-                        />
-                    </div>
-                )}
-                <div>
-                    <Button onClick={zero_dro} size="small">
-                        Zero DRO
-                    </Button>
-                    <Button onClick={reset_dro} size="small">
-                        Reset DRO
-                    </Button>
-                </div>
-            </Space>
             {display.map(k => {
                 const axis_extents = extents[k]
 
@@ -129,7 +103,7 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
                     const value = local_translation[k]
                     if (axis_extents) {
                         const [min, max] = axis_extents
-                        const tolerance = (max - min) * props.warningThreshold
+                        const tolerance = (max - min) * warningThreshold
                         return value < min + tolerance || value > max - tolerance
                     }
                 }
@@ -146,12 +120,4 @@ export const CartesianDro = (props: CartesianDisplayProps) => {
             })}
         </div>
     )
-}
-
-export enum CartesianDroClipboardOption {
-    POSITION,
-    POSITION_EULER,
-    POSITION_QUATERNION,
-    MOVE_LINE,
-    MOVE_TO_POSITION
 }

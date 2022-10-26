@@ -3,7 +3,6 @@
  */
 
 import { Radio } from "antd"
-import { FrameSelector } from "../misc"
 import React, { useState } from "react"
 import { Euler, Quaternion } from "three"
 import { useLocalStorage } from "../util/LocalStorageHook"
@@ -15,16 +14,12 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
-import { WaypointsCartesian } from "./WaypointsCartesian"
 import { JogTileItem, StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
-import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
 
 enum Mode {
     POSITION,
-    ORIENTATION,
-    WAYPOINT
+    ORIENTATION
 }
 
 const Tab = ({ value, children, mode }) => (
@@ -45,15 +40,12 @@ const abcItems: JogGotoItem[] = [
 
 /** @ignore - internal to the jog tile */
 export const JogGotoCartesian = ({
-    kinematicsConfigurationIndex,
     jogSpeed,
-    defaultFrameIndex,
-    showRobotConfiguration,
-    onChangeKinematicsConfigurationIndex
+    kinematicsConfigurationIndex,
+    frameIndex,
+    showRobotConfiguration
 }) => {
     const [mode, setMode] = useState(Mode.POSITION)
-
-    const [selectedFrame, setSelectedFrame] = useState(0)
 
     const [robotConfiguration, setRobotConfiguration] = useLocalStorage(
         "jog.robot.configuration",
@@ -88,20 +80,8 @@ export const JogGotoCartesian = ({
 
     function goto(move: MoveToPositionBuilder) {
         preview.disable()
-        move.frameIndex(selectedFrame)
+        move.frameIndex(frameIndex)
             .configuration(robotConfiguration)
-            .params(move_params)
-            .promise()
-            .finally(preview.enable)
-    }
-
-    function goto_waypoint(w) {
-        preview.disable()
-        console.log("MOVE TO WAYPOINT", w)
-        return motion
-            .moveToPosition()
-            .setFromCartesianPosition(w.position)
-            .configuration(w.configuration)
             .params(move_params)
             .promise()
             .finally(preview.enable)
@@ -120,26 +100,6 @@ export const JogGotoCartesian = ({
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
         return goto(motion.moveToPosition().rotation(x, y, z, w))
     }
-
-    const Selectors = () => (
-        <div className="selectors">
-            <div className="frame">
-                Frame:{" "}
-                <FrameSelector
-                    onChange={setSelectedFrame}
-                    value={selectedFrame}
-                    defaultFrame={defaultFrameIndex}
-                    hideWorld
-                />
-            </div>
-            {showRobotConfiguration && (
-                <RobotConfigurationSelector
-                    value={robotConfiguration}
-                    onChange={setRobotConfiguration}
-                />
-            )}
-        </div>
-    )
 
     const goto_position = (index, value) => {
         switch (index) {
@@ -160,23 +120,13 @@ export const JogGotoCartesian = ({
     return (
         <StyledJogDiv>
             <JogTileItem>
-                <div>
-                    Kinematics:{" "}
-                    <KinematicsConfigurationSelector
-                        onChange={onChangeKinematicsConfigurationIndex}
-                        value={kinematicsConfigurationIndex}
-                    />
-                </div>
                 <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
                     <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
                     <Radio.Button value={Mode.ORIENTATION}>Orientation</Radio.Button>
-                    <Radio.Button value={Mode.WAYPOINT}>Waypoint</Radio.Button>
                 </Radio.Group>
             </JogTileItem>
             <div>
                 <Tab value={Mode.POSITION} mode={mode}>
-                    <Selectors />
-
                     <JogGotoInputPanel
                         localStorageKey={"jog.position"}
                         items={xyzItems}
@@ -185,20 +135,11 @@ export const JogGotoCartesian = ({
                     />
                 </Tab>
                 <Tab value={Mode.ORIENTATION} mode={mode}>
-                    <Selectors />
-
                     <JogGotoInputPanel
                         localStorageKey={"jog.orientation"}
                         items={abcItems}
                         onGoto={goto_orient}
                         onGotoAll={goto_orient_all}
-                    />
-                </Tab>
-                <Tab value={Mode.WAYPOINT} mode={mode}>
-                    <WaypointsCartesian
-                        kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                        position={waypoint}
-                        onSelect={goto_waypoint}
                     />
                 </Tab>
             </div>

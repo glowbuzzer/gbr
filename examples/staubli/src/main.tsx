@@ -2,54 +2,25 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, {StrictMode, useState} from "react"
+import React, { StrictMode } from "react"
 import {
-    CartesianDroTile,
-    ConnectTile,
-    FeedRateTile,
-    GCodeTile,
+    DockLayout,
+    DockLayoutProvider,
+    DockTileDefinitionBuilder,
     GlowbuzzerApp,
-    JogTile,
-    JointDroTile,
+    GlowbuzzerTileDefinitions,
     RobotModel,
-    ToolPathTile,
-    ToolsTile
+    ToolPathTile
 } from "@glowbuzzer/controls"
-import {Space, Switch} from "antd"
-import styled from "styled-components"
+
+import { Vector3 } from "three"
+import { createRoot } from "react-dom/client"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import {Vector3} from "three"
-import {createRoot} from "react-dom/client"
-import {StandardButtons} from "../../util/StandardButtons"
+import "flexlayout-react/style/light.css"
+import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
-const StyledApp = styled.div`
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    gap: 20px;
-
-    nav.left {
-        flex-basis: 450px;
-    }
-
-    nav.right {
-        flex-basis: 500px;
-    }
-
-    nav,
-    section {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    section {
-        flex-grow: 1;
-    }
-`
 const DEG90 = Math.PI / 2
 
 const TX40_MODEL: RobotModel = {
@@ -66,49 +37,38 @@ const TX40_MODEL: RobotModel = {
     scale: 1000
 }
 
-export function App() {
-    const [showRobot, setShowRobot] = useState(true)
-
-    return (
-        <>
-            <StandardButtons>
-                <Space>
-                    <Switch defaultChecked={true} onChange={setShowRobot} />
-                    <div>Show robot</div>
-                </Space>
-            </StandardButtons>
-            <StyledApp>
-                <nav className="left">
-                    <ConnectTile />
-                    <JogTile />
-                    <CartesianDroTile clipboardMode={true} />
-                    <JointDroTile />
-                    <ToolsTile />
-                </nav>
-                <section>
-                    <ToolPathTile model={showRobot && TX40_MODEL}>
-                        {["red", "green", "blue"].map((colour, index) => (
-                            <mesh position={[500, (index - 1) * 200, 75]}>
-                                <boxGeometry args={[150, 150, 150]} />
-                                <meshStandardMaterial color={colour} />
-                            </mesh>
-                        ))}
-                    </ToolPathTile>
-                </section>
-                <nav className="right">
-                    <FeedRateTile />
-                    <GCodeTile />
-                </nav>
-            </StyledApp>
-        </>
-    )
-}
+const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
+    .render(() => (
+        <ToolPathTile model={TX40_MODEL}>
+            {["red", "green", "blue"].map((colour, index) => (
+                <mesh position={[500, (index - 1) * 200, 75]}>
+                    <boxGeometry args={[150, 150, 150]} />
+                    <meshStandardMaterial color={colour} />
+                </mesh>
+            ))}
+        </ToolPathTile>
+    ))
+    .build()
 
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
         <GlowbuzzerApp>
-            <App />
+            <DockLayoutProvider
+                appName={"staubli"}
+                tiles={[
+                    GlowbuzzerTileDefinitions.CONNECT,
+                    GlowbuzzerTileDefinitions.CARTESIAN_JOG,
+                    GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                    GlowbuzzerTileDefinitions.JOINT_JOG,
+                    GlowbuzzerTileDefinitions.JOINT_DRO,
+                    GlowbuzzerTileDefinitions.TOOLS,
+                    CustomSceneTile
+                ]}
+            >
+                <ExampleAppMenu title="Staubli TX40" />
+                <DockLayout />
+            </DockLayoutProvider>
         </GlowbuzzerApp>
     </StrictMode>
 )

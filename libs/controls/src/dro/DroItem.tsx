@@ -42,7 +42,7 @@ export const DroItem = ({ label, value, type, error }: DroItemProps) => {
 
     return (
         <Row gutter={0}>
-            <Col style={styles.label}>{label}</Col>
+            <Col style={styles.title}>{label}</Col>
             <Col style={styles.dro}>
                 <SegmentDisplay
                     value={prefs.fromSI(value, type)}

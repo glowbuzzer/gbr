@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
+import { IJsonTabNode } from "flexlayout-react"
+import { ReactNode } from "react"
+
+type GlowbuzzerDockPlacement = {
+    column: number
+    row: number
+}
+
+export interface DockTileDefinition extends IJsonTabNode {
+    id: string
+
+    render(): ReactNode
+
+    renderSettings?()
+
+    renderHeader?(): ReactNode
+
+    renderButtons?(): ReactNode
+
+    renderHelp?(): ReactNode
+
+    defaultPlacement?: GlowbuzzerDockPlacement
+
+    excludeByDefault?: boolean
+}

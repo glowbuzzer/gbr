@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Button, Radio, Spin, Tag } from "antd"
+import { Button, Form, Input, Modal, Radio, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -13,13 +13,12 @@ import {
     MACHINETARGET,
     possible_transitions,
     useConnection,
-    useMachine
+    useMachine,
+    usePrefs
 } from "@glowbuzzer/store"
-import { Tile } from "../tiles"
 import styled from "styled-components"
-import { TrafficLight } from "./TrafficLight"
 
-const help = (
+export const ConnectTileHelp = () => (
     <div>
         <h4>Connection Tile</h4>
         <p>
@@ -42,13 +41,29 @@ const help = (
     </div>
 )
 
-const FlexCentered = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 4px;
-`
+export const ConnectSettings = ({ open, onClose }) => {
+    const prefs = usePrefs()
+
+    const labelCol = { span: 6 }
+
+    function update_url(e) {
+        prefs.update("url", e.target.value)
+    }
+
+    return (
+        <Modal open={open} onCancel={onClose} footer={[<Button onClick={onClose}>Close</Button>]}>
+            <Form>
+                <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 16 }}>
+                    <Input defaultValue={prefs.current.url} onChange={update_url} />
+                </Form.Item>
+            </Form>
+        </Modal>
+    )
+}
 
 const StyledDiv = styled.div`
+    padding: 5px;
+
     .row {
         &.padded {
             padding: 12px 0;
@@ -100,6 +115,7 @@ const StyledDiv = styled.div`
             }
         }
     }
+
     .machine-message {
         text-align: center;
     }
@@ -154,135 +170,111 @@ export const ConnectTile = () => {
         machine.setMachineControlWord(possible_transitions.FaultReset())
     }
 
-    const traffic_light_color = determine_traffic_light_color()
-
     return (
-        <Tile
-            title="Connection"
-            help={help}
-            controls={
-                <FlexCentered>
-                    {connection.connected && (
-                        <Button size="small" onClick={disconnect}>
-                            Disconnect
-                        </Button>
-                    )}
-                    {!connection.connected && !connection.autoConnect && (
-                        <Button size="small" onClick={connect}>
-                            Connect
-                        </Button>
-                    )}
-                    <TrafficLight width={20} color={traffic_light_color} />
-                </FlexCentered>
-            }
-        >
-            <StyledDiv>
-                <div className="row">
-                    <div className="label">Machine</div>
-                    <div className="controls">
-                        <Tag color={connected ? undefined : "red"}>
-                            {connected ? machine.name || "Unknown" : "Not Connected"}
-                        </Tag>
-                    </div>
+        <StyledDiv>
+            <div className="row">
+                <div className="label">Machine</div>
+                <div className="controls">
+                    <Tag color={connected ? undefined : "red"}>
+                        {connected ? machine.name || "Unknown" : "Not Connected"}
+                    </Tag>
                 </div>
-                <div className="row">
-                    <div className="label">Change mode</div>
-                    <div className="controls">
-                        <Radio.Group
-                            disabled={connection.state !== ConnectionState.CONNECTED}
-                            size={"small"}
-                            value={machine.target}
-                            onChange={change_target}
+            </div>
+            <div className="row">
+                <div className="label">Change mode</div>
+                <div className="controls">
+                    <Radio.Group
+                        disabled={connection.state !== ConnectionState.CONNECTED}
+                        size={"small"}
+                        value={machine.target}
+                        onChange={change_target}
+                    >
+                        <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>
+                            Simulate
+                        </Radio.Button>
+                        <Radio.Button
+                            className="danger"
+                            value={MACHINETARGET.MACHINETARGET_FIELDBUS}
                         >
-                            <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>
-                                Simulate
-                            </Radio.Button>
-                            <Radio.Button
-                                className="danger"
-                                value={MACHINETARGET.MACHINETARGET_FIELDBUS}
-                            >
-                                {target_not_acquired &&
-                                machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
-                                    <span>
-                                        <Spin size="small" />{" "}
-                                    </span>
-                                ) : null}
-                                Live
-                            </Radio.Button>
-                        </Radio.Group>
-                    </div>
+                            {target_not_acquired &&
+                            machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
+                                <span>
+                                    <Spin size="small" />{" "}
+                                </span>
+                            ) : null}
+                            Live
+                        </Radio.Button>
+                    </Radio.Group>
                 </div>
+            </div>
+            <div className="row">
+                <div className="label">Machine operation</div>
+                <div className="controls">
+                    <Radio.Group
+                        disabled={!connected || fault || fault_active || target_not_acquired}
+                        size={"small"}
+                        value={
+                            state === MachineState.OPERATION_ENABLED
+                                ? DesiredState.OPERATIONAL
+                                : DesiredState.STANDBY
+                        }
+                        onChange={change_desired_state}
+                    >
+                        <Radio.Button value={DesiredState.STANDBY}>Disabled</Radio.Button>
+                        <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
+                            Enabled
+                        </Radio.Button>
+                    </Radio.Group>
+                </div>
+            </div>
+            <div className="row">
+                <div className="label">Current state</div>
+                <div className="controls">
+                    <Tag>{connected ? MachineState[machine.currentState] : "None"}</Tag>
+                </div>
+            </div>
+            {connected && fault && (
                 <div className="row">
-                    <div className="label">Machine operation</div>
+                    <div className="label" />
                     <div className="controls">
-                        <Radio.Group
-                            disabled={!connected || fault || fault_active || target_not_acquired}
-                            size={"small"}
-                            value={
-                                state === MachineState.OPERATION_ENABLED
-                                    ? DesiredState.OPERATIONAL
-                                    : DesiredState.STANDBY
-                            }
-                            onChange={change_desired_state}
-                        >
-                            <Radio.Button value={DesiredState.STANDBY}>Disabled</Radio.Button>
-                            <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
-                                Enabled
-                            </Radio.Button>
-                        </Radio.Group>
+                        <Button onClick={issue_reset}>Reset Fault</Button>
                     </div>
                 </div>
+            )}
+            {fault_active && (
                 <div className="row">
-                    <div className="label">Current state</div>
+                    <div className="label">Fault cause</div>
                     <div className="controls">
-                        <Tag>{connected ? MachineState[machine.currentState] : "None"}</Tag>
+                        {Object.values(FaultCode)
+                            .filter(k => typeof k === "number")
+                            .filter((k: number) => machine.activeFault & k)
+                            .map(k => (
+                                <Tag key={k} color="red">
+                                    {FaultCode[k].substring("FAULT_CAUSE_".length)}
+                                </Tag>
+                            ))}
                     </div>
                 </div>
-                {connected && fault && (
-                    <div className="row">
-                        <div className="label" />
-                        <div className="controls">
-                            <Button onClick={issue_reset}>Reset Fault</Button>
-                        </div>
+            )}
+            {connected && fault && machine.faultHistory > 0 && (
+                <div className="row padded">
+                    <div className="label">Fault history</div>
+                    <div className="controls">
+                        {Object.values(FaultCode)
+                            .filter(k => typeof k === "number")
+                            .filter((k: number) => machine.faultHistory & k)
+                            .map(k => (
+                                <Tag key={k}>{FaultCode[k].substring("FAULT_CAUSE_".length)}</Tag>
+                            ))}
                     </div>
-                )}
-                {fault_active && (
-                    <div className="row">
-                        <div className="label">Fault cause</div>
-                        <div className="controls">
-                            {Object.values(FaultCode)
-                                .filter(k => typeof k === "number")
-                                .filter((k: number) => machine.activeFault & k)
-                                .map(k => (
-                                    <Tag key={k} color="red">
-                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
-                                    </Tag>
-                                ))}
-                        </div>
-                    </div>
-                )}
-                {connected && fault && machine.faultHistory > 0 && (
-                    <div className="row padded">
-                        <div className="label">Fault history</div>
-                        <div className="controls">
-                            {Object.values(FaultCode)
-                                .filter(k => typeof k === "number")
-                                .filter((k: number) => machine.faultHistory & k)
-                                .map(k => (
-                                    <Tag key={k}>
-                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
-                                    </Tag>
-                                ))}
-                        </div>
-                    </div>
-                )}
+                </div>
+            )}
 
-                {machine.operationErrorMessage?.length > 0 && (
-                    <div className="machine-message">{machine.operationErrorMessage}</div>
-                )}
-                {connection.statusReceived || <h3>No status received</h3>}
-                {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
-            </StyledDiv>
-        </Tile>
+            {machine.operationErrorMessage?.length > 0 && (
+                <div className="machine-message">{machine.operationErrorMessage}</div>
+            )}
+            {connection.statusReceived || <h3>No status received</h3>}
+            {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
+        </StyledDiv>
     )
 }

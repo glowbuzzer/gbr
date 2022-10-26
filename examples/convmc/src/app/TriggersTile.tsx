@@ -3,7 +3,6 @@
  */
 
 import React from "react"
-import { Tile } from "@glowbuzzer/controls"
 import { Checkbox, Radio, Space } from "antd"
 import { useDigitalInputOverrides, useDigitalInputs } from "@glowbuzzer/store"
 
@@ -31,7 +30,7 @@ export const TriggersTile = () => {
     const value = extended ? 1 : retracted ? 2 : undefined
 
     return (
-        <Tile title="Manual Triggers">
+        <div style={{ padding: "10px" }}>
             <Space direction="vertical">
                 <Space>
                     Cylinder
@@ -46,6 +45,6 @@ export const TriggersTile = () => {
                     </Checkbox>
                 </Space>
             </Space>
-        </Tile>
+        </div>
     )
 }

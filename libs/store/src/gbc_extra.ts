@@ -31,6 +31,7 @@ import {
     MachineConfig,
     MachineStatus,
     MoveParametersConfig,
+    PointsConfig,
     SpindleConfig,
     STREAMSTATE,
     TaskConfig,
@@ -68,6 +69,7 @@ export type GlowbuzzerConfig = {
     moveParameters?: MoveParametersConfig[]
     joint?: JointConfig[]
     frames?: FramesConfig[]
+    points?: PointsConfig[]
     task?: TaskConfig[]
     activity?: ActivityConfig[]
     dout?: DoutConfig[]

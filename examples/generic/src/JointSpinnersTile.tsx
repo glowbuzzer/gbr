@@ -3,15 +3,21 @@
  */
 
 import { useJoint, useJointCount } from "@glowbuzzer/store"
-import { Tile } from "@glowbuzzer/controls"
-import { MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
+import { DockTileDefinitionBuilder, MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
 import React from "react"
 import styled from "styled-components"
 
-const help = (
+export const StyledPanel = styled.div`
+    padding: 10px;
+`
+
+const JointSpinnersTileHelp = () => (
     <div>
         <h4>JointSpinners Tile</h4>
-        <p>The Joint Spinners tile shows all joints configured with a graphical representation of their position.</p>
+        <p>
+            The Joint Spinners tile shows all joints configured with a graphical representation of
+            their position.
+        </p>
     </div>
 )
 
@@ -37,16 +43,23 @@ const JointSpinnerItem = ({ index }) => {
     )
 }
 
-export const JointSpinnersTile = () => {
+const JointSpinnersTile = () => {
     const count = useJointCount()
 
     return (
-        <Tile title={"Joints"} help={help}>
+        <StyledPanel>
             <StyledDiv>
                 {Array.from({ length: count }).map((_, index) => (
                     <JointSpinnerItem key={index} index={index} />
                 ))}
             </StyledDiv>
-        </Tile>
+        </StyledPanel>
     )
 }
+
+export const JointSpinnersTileDefinition = DockTileDefinitionBuilder()
+    .id("joint-spinners")
+    .name("Joint Spinners")
+    .placement(1, 1)
+    .render(JointSpinnersTile, JointSpinnersTileHelp)
+    .build()

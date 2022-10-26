@@ -3,11 +3,8 @@
  */
 
 import * as React from "react"
-import {useMemo, useState, useRef} from "react"
-import {Tile, TileSettings} from "../tiles"
-import {Button, Checkbox, Form, Input} from "antd"
+import { useMemo, useRef, useState } from "react"
 import {
-    ToolPathSettingsType,
     useConfig,
     useFrames,
     useKinematics,
@@ -28,8 +25,14 @@ import {RobotModel} from "./robots"
 import {TcpRobot} from "./TcpRobot"
 import {TcpFulcrum} from "./TcpFulcrum"
 import {TriadHelper} from "./TriadHelper"
+import { ToolpathShowFramesButton } from "./ToolpathShowFramesButton"
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/block.svg"
+import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
+import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 
-const help = (
+export const ToolPathTileHelp = () => (
     <div>
         <h4>Toolpath Tile</h4>
         <p>The Toolpath Tile performs a number of functions. These are:</p>
@@ -55,46 +58,6 @@ const help = (
         </p>
     </div>
 )
-
-const ToolPathSettings = () => {
-    const {settings: initialSettings, setSettings} = useToolPathSettings()
-    const [settings, saveSettings] = useState(initialSettings)
-
-    function save() {
-        setSettings(settings)
-    }
-
-    function onChange(change: Partial<ToolPathSettingsType>) {
-        saveSettings(settings => ({...settings, ...change}))
-    }
-
-    return (
-        <TileSettings
-            title="Tool Path Settings"
-            onConfirm={save}
-            onReset={() => saveSettings(initialSettings)}
-        >
-            <Form>
-                <Form.Item label="Override Configuration">
-                    <Checkbox
-                        checked={settings.overrideWorkspace}
-                        onChange={event => {
-                            onChange({overrideWorkspace: event.target.checked})
-                        }}
-                    />
-                </Form.Item>
-                <Form.Item label="Extent">
-                    <Input
-                        value={settings.extent}
-                        onChange={event => {
-                            onChange({extent: Number(event.target.value) || 100})
-                        }}
-                    />
-                </Form.Item>
-            </Form>
-        </TileSettings>
-    )
-}
 
 // const LD = 1000
 //
@@ -164,21 +127,21 @@ const defaultGetExtentFunc = (val) => {
  * physical joints on the machine. For an example of this in practice, refer to the
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
-export const ToolPathTile = ({
-                                 model,
-                                 hideTrace,
-                                 hidePreview,
+export const ToolPathTile = ({ model,
                                  noLighting = false,
                                  noCamera = false,
                                  noControls = false,
                                  noGridHelper = false,
                                  noViewCube = false,
                                  getExtent = defaultGetExtentFunc,
-                                 children
-                             }: ToolPathTileProps) => {
-    const {path, reset} = useToolPath(0)
+                                 hideTrace: defaultHideTrace, hidePreview: defaultHidePreview, children }: ToolPathTileProps) => {
+    const { path, reset } = useToolPath(0)
     const toolIndex = useToolIndex(0)
     const toolConfig = useToolConfig(toolIndex)
+
+    const canvasRef = useRef<HTMLCanvasElement>(null)
+    const [hideTrace, setHideTrace] = useState(defaultHideTrace || false)
+    const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
 
 
     const {jointPositions, translation, rotation, frameIndex} = useKinematics(0)
@@ -210,20 +173,20 @@ export const ToolPathTile = ({
         )
     }, [extentsX, extentsY, extentsZ, settings])
 
+    function toggle_preview() {
+        setHidePreview(current => !current)
+    }
+
+    function toggle_trace() {
+        setHideTrace(current => !current)
+    }
+
     getExtent(extent)
 
-
     return (
-        <Tile
-            title={"Toolpath"}
-            help={help}
-            footer={hideTrace ? null : <Button onClick={reset}>Clear Trace</Button>}
-            settings={<ToolPathSettings/>}
-        >
-            <Canvas shadows>
-
-                <ToolPathAutoSize extent={extent} noControls={noControls} noCamera={noCamera} noViewCube={noViewCube}>
-
+        <>
+            <Canvas shadows  ref={canvasRef}>
+                <ToolPathAutoSize extent={extent}  noControls={noControls} noCamera={noCamera} noViewCube={noViewCube}>
                     {!noLighting &&
                         <>
                             <ToolPathLighting distance={extent * 2}/>
@@ -249,7 +212,8 @@ export const ToolPathTile = ({
                             </group>
                         </>
                     }
-                    {hidePreview ? null : <WorkspaceDimensions extent={extent}/>}
+
+                    {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
 
                     {hideTrace ? null : <ToolPath path={path}/>}
 
@@ -271,6 +235,30 @@ export const ToolPathTile = ({
                     {children}
                 </ToolPathAutoSize>
             </Canvas>
-        </Tile>
+            <DockToolbar floating>
+                <DockToolbarButtonGroup>
+                    <ToolpathShowFramesButton />
+                </DockToolbarButtonGroup>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        Icon={ShowChartIcon}
+                        button
+                        title="Show/hide Preview"
+                        onClick={toggle_preview}
+                        checked={!hidePreview}
+                    />
+                </DockToolbarButtonGroup>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
+                    <GlowbuzzerIcon
+                        Icon={AutoGraphIcon}
+                        button
+                        title="Toggle Trace"
+                        onClick={toggle_trace}
+                        checked={!hideTrace}
+                    />
+                </DockToolbarButtonGroup>
+            </DockToolbar>
+        </>
     )
 }

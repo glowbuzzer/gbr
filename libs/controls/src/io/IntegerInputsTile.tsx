@@ -3,12 +3,12 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import { Tag } from "antd"
 import styled from "styled-components"
 import { useIntegerInputList, useIntegerInputState } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const IntegerInputsTileHelp = () => (
     <div>
         <h4>Integer Inputs Tile</h4>
         <p>The Integer Inputs Tile shows the "live" value of all of the integer inputs</p>
@@ -49,7 +49,7 @@ export const IntegerInputsTile = ({ labels = [] }: IntegerInputsTileProps) => {
     const iin = useIntegerInputList()
 
     return (
-        <Tile title="Integer Inputs" help={help}>
+        <StyledTileContent>
             {iin?.map(({ name }, index) => (
                 <IntegerInputItem
                     key={index}
@@ -57,6 +57,6 @@ export const IntegerInputsTile = ({ labels = [] }: IntegerInputsTileProps) => {
                     label={labels[index] || name || index}
                 />
             ))}
-        </Tile>
+        </StyledTileContent>
     )
 }

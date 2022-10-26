@@ -2,10 +2,10 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+export * from "./dock"
 export * from "./dro"
 export * from "./tasks"
 export * from "./io"
-export * from "./misc"
 export * from "./prefs"
 export * from "./toolpath"
 export * from "./telemetry"
@@ -18,3 +18,4 @@ export * from "./tools"
 export * from "./app"
 export * from "./tiles"
 export * from "./config"
+export * from "./GlowbuzzerTileDefinitions"

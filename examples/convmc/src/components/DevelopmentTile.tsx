@@ -2,20 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect } from "react"
-import { SimpleTileDefinition, SimpleTileLayout, Tile } from "@glowbuzzer/controls"
-import { ConnectTile, StateMachineToolsTile, TelemetryTile } from "@glowbuzzer/controls"
-import { Button, Space, Tag } from "antd"
 import { useDigitalInputs, useDigitalOutputState, useJoint } from "@glowbuzzer/store"
-import { DigitalInputOverrideTile } from "../components/DigitalInputOverrides"
-import { dinLabels } from "./labels"
-import { ConveyorsTile } from "../components/ConveyorsTile"
-import { TriggersTile } from "./TriggersTile"
-import { useApp } from "./AppContext"
-import { JobAnimation } from "./JobAnimation"
-import { ConveyorControlMotion } from "./ConveyorControlMotion"
+import { useApp } from "../app/AppContext"
+import { useEffect } from "react"
+import { Button, Space, Tag } from "antd"
+import { JobAnimation } from "../app/JobAnimation"
+import { ConveyorControlMotion } from "../app/ConveyorControlMotion"
 
-const DevelopmentUiTile = () => {
+export const DevelopmentTile = () => {
     const dins = useDigitalInputs()
     const [doutExtend, setDoutExtend] = useDigitalOutputState(8)
     const [doutRetract, setDoutRetract] = useDigitalOutputState(9)
@@ -41,7 +35,7 @@ const DevelopmentUiTile = () => {
     }, [app.running, extended, retracted, doutExtend, doutRetract, setDoutExtend, setDoutRetract])
 
     return (
-        <Tile title="Development UI">
+        <div style={{ padding: "10px" }}>
             <Space direction="vertical">
                 {/*
                 <TestAnimation c1={j1?.actPos} c2={j2?.actPos} />
@@ -85,28 +79,6 @@ const DevelopmentUiTile = () => {
                     </>
                 )}
             </Space>
-        </Tile>
+        </div>
     )
-}
-
-export const DevelopmentUi = () => {
-    const tiles: SimpleTileDefinition[][] = [
-        [
-            { render: <ConnectTile />, height: 4, title: "Connection" },
-            { render: <StateMachineToolsTile />, height: 4, title: "Dev Tools" },
-            {
-                render: <DigitalInputOverrideTile labels={dinLabels} />,
-                height: 4,
-                title: "Dev Tools"
-            }
-        ],
-        [
-            { render: <DevelopmentUiTile />, height: 4, title: "Development UI" },
-            { render: <TriggersTile />, height: 4, title: "Triggers" },
-            { render: <ConveyorsTile />, height: 4, title: "Conveyors" }
-            // { render: <TelemetryTile />, height: 4, title: "Telemetry" }
-        ]
-    ]
-
-    return <SimpleTileLayout appId="convmc-devel" tiles={tiles} widths={[2, 6]} />
 }

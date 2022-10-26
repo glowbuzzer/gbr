@@ -3,7 +3,7 @@
  */
 
 export const GlobalStyles = {
-    label: {
+    title: {
         size: "1.3em",
         fontWeight: "bold" as const,
         border: "1px solid black",

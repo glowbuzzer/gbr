@@ -1571,6 +1571,23 @@ export * from "./gbc_extra"
             
             }
             /** 
+            Configuration parameters for point
+             */
+            export type PointsConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
+            
+                        /**  Frame for point */
+                        frameIndex?:number;
+                        /**  Translation (location) of the point */
+                        translation?:Vector3;
+                        /**  Rotation of the point */
+                        rotation?:Quat;
+                        /**  Robot configuration (waist, elbow, wrist) */
+                        configuration?:number;
+            }
+            /** 
             Configuration parameters for a tool
              */
             export type ToolConfig = {

@@ -3,12 +3,12 @@
  */
 
 import React from "react"
-import { Tile } from "../tiles"
 import styled from "styled-components"
 import { useAnalogOutputList, useAnalogOutputState } from "@glowbuzzer/store"
 import { NumericOutputWidget } from "./NumericOutputWidget"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
-const help = (
+export const AnalogOutputsTileHelp = () => (
     <div>
         <h4>Analog Outputs Tile</h4>
         <p>The Analog Outputs Tile allows you to control analog outputs on your machine.</p>
@@ -65,7 +65,7 @@ export const AnalogOutputsTile = ({ labels = [] }: AnalogOutputsTileProps) => {
     const aouts = useAnalogOutputList()
 
     return (
-        <Tile title={"Analog Outputs"} help={help}>
+        <StyledTileContent>
             <StyledDiv>
                 {aouts?.map(({ name }, index) => (
                     <AnalogOutputItem
@@ -75,6 +75,6 @@ export const AnalogOutputsTile = ({ labels = [] }: AnalogOutputsTileProps) => {
                     />
                 ))}
             </StyledDiv>
-        </Tile>
+        </StyledTileContent>
     )
 }

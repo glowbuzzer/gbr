@@ -3,9 +3,8 @@
  */
 
 import * as React from "react"
-import { useState } from "react"
 import styled from "styled-components"
-import { Button, Input, Space } from "antd"
+import { Button, Input } from "antd"
 import {
     LIMITPROFILE,
     MoveParametersConfig,
@@ -19,11 +18,8 @@ import {
     ArrowRightOutlined,
     ArrowUpOutlined
 } from "@ant-design/icons"
-import { FrameSelector } from "@glowbuzzer/controls"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogDirection, JogMode } from "./types"
-import { KinematicsConfigurationSelector } from "../misc/KinematicsConfigurationSelector"
-import { JogTileItem } from "./util"
 
 const ArrowsDiv = styled.div`
     display: flex;
@@ -53,26 +49,24 @@ const StyledInput = styled(Input)`
 `
 
 type JogArrowsCartesianProps = {
-    kinematicsConfigurationIndex: number
     jogMode: JogMode
     jogSpeed: number
-    defaultFrameIndex: number
-    onChangeKinematicsConfigurationIndex: (index: number) => void
+    kinematicsConfigurationIndex: number
+    frameIndex: number
 }
 
 /** @ignore - internal to the jog tile */
 export const JogArrowsCartesian = ({
-    kinematicsConfigurationIndex,
     jogMode,
     jogSpeed,
-    defaultFrameIndex,
-    onChangeKinematicsConfigurationIndex
+    kinematicsConfigurationIndex,
+    frameIndex
 }: JogArrowsCartesianProps) => {
     const preview = usePreview()
-    const motion = useSoloActivity(kinematicsConfigurationIndex)
-    const [selectedFrame, setSelectedFrame] = useState(defaultFrameIndex)
-    const [jogStep, setJogStep] = useLocalStorage("jog.step", 100)
+    const [jogStep, setJogStep] = useLocalStorage("jog.cartesian.step", 100)
     const { getUnits, toSI } = usePrefs()
+
+    const motion = useSoloActivity(kinematicsConfigurationIndex)
 
     function updateJogStep(e) {
         setJogStep(e.target.value)
@@ -127,7 +121,7 @@ export const JogArrowsCartesian = ({
             preview.disable()
             return motion
                 .moveLine(x, y, z)
-                .frameIndex(selectedFrame)
+                .frameIndex(frameIndex)
                 .relative()
                 .params(move_params)
                 .promise()
@@ -150,24 +144,6 @@ export const JogArrowsCartesian = ({
 
     return (
         <>
-            <JogTileItem>
-                <div>
-                    Kinematics:{" "}
-                    <KinematicsConfigurationSelector
-                        onChange={onChangeKinematicsConfigurationIndex}
-                        value={kinematicsConfigurationIndex}
-                    />
-                </div>
-                <div className="frame">
-                    Frame:{" "}
-                    <FrameSelector
-                        onChange={setSelectedFrame}
-                        value={selectedFrame}
-                        defaultFrame={defaultFrameIndex}
-                        hideWorld
-                    />
-                </div>
-            </JogTileItem>
             <ArrowsDiv>
                 <ButtonLayoutDiv>
                     <div>

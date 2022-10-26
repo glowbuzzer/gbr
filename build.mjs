@@ -9,6 +9,7 @@ import {build} from 'esbuild';
 import fs from 'fs';
 import path from 'path';
 import {execSync} from 'child_process';
+import svgrPlugin from "esbuild-plugin-svgr";
 
 const GITHUB_TAG_PREFIX = "refs/tags/";
 
@@ -63,8 +64,8 @@ for (const project of projects) {
                 'react-redux', '@reduxjs/toolkit',
                 'antd', '@ant-design/icons',
                 'styled-components',
-                // currently core but am not a huge fan
-                'react-grid-layout',
+                // dock layout
+                'flexlayout-react',
                 // required for robot and toolpath display
                 'three', 'three-stdlib', '@react-three/fiber', '@react-three/drei',
                 // required for telemetry tile
@@ -115,7 +116,10 @@ for (const project of projects) {
             'require': `${sub_module}/index.js`,
             'import': `./esm/${sub_module === '.' ? '' : (sub_module.substr(2) + '/')}index.mjs`
         };
-        return Promise.all(sub_builds.map(options => build(options).then(r => {
+        return Promise.all(sub_builds.map(options => build({
+            ...options,
+            plugins: [svgrPlugin({namedExport: "ReactComponent", exportType: "named"})]
+        }).then(r => {
             const meta = r.metafile;
             const external_libs = Object.entries(meta.inputs).filter(l => !l[0].startsWith('libs'));
             external_libs.sort((a, b) => b[1].bytes - a[1].bytes);

@@ -12,10 +12,11 @@ export const DEFAULT_CONFIG: GlowbuzzerConfig = {
     frames: [{}],
     kinematicsConfiguration: [
         {
-            participatingJoints: [0]
+            linearLimits: [{}],
+            participatingJoints: []
         }
     ],
-    joint: [{}]
+    joint: []
 }
 
 export enum ConfigState {

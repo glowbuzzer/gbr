@@ -1,6 +1,8 @@
+// TODO: decide if we still need option to add end program and either put back in or remove completely
 /*
+/!*
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
- */
+ *!/
 
 import React, { useState } from "react"
 import { useDispatch } from "react-redux"
@@ -8,9 +10,9 @@ import { TileSettings } from "../tiles"
 import { GCodeSettingsType, gcodeSlice, useGCodeSettings } from "@glowbuzzer/store"
 import { Checkbox } from "antd"
 
-/**
+/!**
  * @ignore - internal to GCodeTile
- */
+ *!/
 export const GCodeSettings = () => {
     const initialSettings = useGCodeSettings()
     const dispatch = useDispatch()
@@ -35,3 +37,4 @@ export const GCodeSettings = () => {
         </TileSettings>
     )
 }
+*/

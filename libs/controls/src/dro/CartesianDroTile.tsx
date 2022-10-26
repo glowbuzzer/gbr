@@ -2,30 +2,65 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
+import { useKinematics, useKinematicsCartesianPosition } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { Button, Dropdown, Menu, message } from "antd"
-import { Euler, Quaternion } from "three"
-import { Tile } from "../tiles"
-import { CopyOutlined } from "@ant-design/icons"
+import { Dropdown, Menu, message, Space } from "antd"
+import { Euler, Quaternion, Vector3 } from "three"
+import { CopyOutlined, DownOutlined } from "@ant-design/icons"
 import * as React from "react"
-import { CartesianDro, CartesianDroClipboardOption } from "./CartesianDro"
+import { useState } from "react"
+import { CartesianDro } from "./CartesianDro"
+import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { ReactComponent as CopyIcon } from "@material-symbols/svg-400/outlined/content_copy.svg"
+import { ReactComponent as ZeroDRO } from "@material-symbols/svg-400/outlined/ads_click.svg"
+import { ReactComponent as ResetDRO } from "@material-symbols/svg-400/outlined/block.svg"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import styled from "styled-components"
+import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
+import { FramesDropdown } from "../frames/FramesDropdown"
 
-const help = (
+const StyledDownOutlined = styled(DownOutlined)`
+    display: inline-block;
+    transform: translate(0, -3px);
+    cursor: pointer;
+    color: #bfbfbf;
+`
+
+enum CartesianDroClipboardOption {
+    POSITION,
+    POSITION_EULER,
+    POSITION_QUATERNION,
+    MOVE_LINE,
+    MOVE_TO_POSITION
+}
+
+export const CartesianDroTileHelp = () => (
     <div>
         <h4>Cartesian DRO Tile</h4>
-        <p>The Cartesian DRO Tile shows the <em>cartesian</em> position of the tool of a machine.</p>
+        <p>
+            The Cartesian DRO Tile shows the <em>cartesian</em> position of the tool of a machine.
+        </p>
         <p>Using the dropdown menu, you can select different kinematics configurations (kcs).</p>
         <p>Each kc will have its own cartesian position.</p>
-        <p>Position is shown in terms of the x,y,z values in linear units and the orientation of the tool in Euler angles.</p>
-        <p>Using the Zero DRO button. When you zero the DRO, all subsequent moves will be translated such that the origin is the current tool position.</p>
+        <p>
+            Position is shown in terms of the x,y,z values in linear units and the orientation of
+            the tool in Euler angles.
+        </p>
+        <p>
+            Using the Zero DRO button. When you zero the DRO, all subsequent moves will be
+            translated such that the origin is the current tool position.
+        </p>
         <p>The reset button removes the temporary translation that was added by hitting the Zero DRO button.</p>
-        <p>The clipboard copy button (...) copys the value of the current position to the clipbaord for you to use in programs you write.</p>
-        <p>The clipboard mode property button (<CopyOutlined/>) gives options to let the user to copy the current position in various formats.</p>
+        <p>
+            The clipboard copy button (...) copys the value of the current position to the clipbaord
+            for you to use in programs you write.
+        </p>
+        <p>
+            The clipboard mode property button (<CopyOutlined />) gives options to let the user to
+            copy the current position in various formats.
+        </p>
     </div>
 )
-
-
 
 const CLIPBOARD_MODE_TITLES = {
     [CartesianDroClipboardOption.POSITION]: "Position",
@@ -36,7 +71,7 @@ const CLIPBOARD_MODE_TITLES = {
 }
 
 type CartesianDroTileProps = {
-    /** The kinematics configuration to display */
+    /** The kinematics configuration to display. If not specified a dropdown of kinematics configurations will be displayed */
     kinematicsConfigurationIndex?: number
     /** The clipboard mode to provide, if any */
     clipboardMode?: true | false | CartesianDroClipboardOption
@@ -79,12 +114,16 @@ type CartesianDroTileProps = {
  *
  */
 export const CartesianDroTile = ({
-    kinematicsConfigurationIndex: kcIndexMayBeUndefined,
+    kinematicsConfigurationIndex: fixedKinematicsConfigurationIndex = null,
     clipboardMode
 }: CartesianDroTileProps) => {
-    const kinematicsConfigurationIndex = kcIndexMayBeUndefined || 0
+    const [frameIndex, setFrameIndex] = useState(0)
+    const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(
+        fixedKinematicsConfigurationIndex || 0
+    )
 
     const position = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
+    const kinematics = useKinematics(kinematicsConfigurationIndex)
 
     const [selectedOption, setSelectedOption] = useLocalStorage<CartesianDroClipboardOption>(
         `dro.clipboard.mode.${kinematicsConfigurationIndex}`,
@@ -142,45 +181,92 @@ export const CartesianDroTile = ({
     }
 
     function copy_default_mode() {
-        console.log("COPY DEFAULT", selectedOption)
         copy_mode(selectedOption)
     }
 
+    function zero_dro() {
+        kinematics.setOffset(kinematics.translation, new Quaternion().identity())
+    }
+
+    function reset_dro() {
+        kinematics.setOffset(new Vector3(0, 0, 0), new Quaternion().identity())
+    }
+
+    const tooltip = `Copy ${CLIPBOARD_MODE_TITLES[selectedOption]} to clipboard`
+
     return (
-        <Tile
-            title="Cartesian DRO"
-            help={help}
-            settings={
-                clipboardMode === true ? (
-                    <Dropdown.Button
-                        size="small"
-                        onClick={copy_default_mode}
-                        overlay={
-                            <Menu
-                                selectedKeys={[selectedOption.toString()]}
-                                onClick={copy_selected_mode}
-                                items={Object.entries(CLIPBOARD_MODE_TITLES).map(
-                                    ([key, label]) => ({
-                                        key,
-                                        label
-                                    })
-                                )}
+        <DockTileWithToolbar
+            toolbar={
+                <>
+                    <DockToolbarButtonGroup>
+                        {fixedKinematicsConfigurationIndex === null && (
+                            <KinematicsDropdown
+                                value={kinematicsConfigurationIndex}
+                                onChange={setKinematicsConfigurationIndex}
                             />
-                        }
-                    >
-                        <CopyOutlined />
-                    </Dropdown.Button>
-                ) : clipboardMode === false || clipboardMode === undefined ? null : (
-                    <Button size="small" onClick={copy_default_mode}>
-                        <CopyOutlined />
-                    </Button>
-                )
+                        )}
+                        <FramesDropdown value={frameIndex} onChange={setFrameIndex} />
+                    </DockToolbarButtonGroup>
+
+                    <DockToolbarButtonGroup>
+                        <GlowbuzzerIcon
+                            Icon={ZeroDRO}
+                            button
+                            title={"Zero DRO"}
+                            onClick={zero_dro}
+                        />
+                        <GlowbuzzerIcon
+                            Icon={ResetDRO}
+                            button
+                            title={"Reset DRO"}
+                            onClick={reset_dro}
+                        />
+                    </DockToolbarButtonGroup>
+
+                    <DockToolbarButtonGroup>
+                        {clipboardMode === true ? (
+                            <>
+                                <GlowbuzzerIcon
+                                    title={tooltip}
+                                    Icon={CopyIcon}
+                                    button
+                                    onClick={copy_default_mode}
+                                />
+                                <Dropdown
+                                    trigger={["click"]}
+                                    overlay={
+                                        <Menu
+                                            selectedKeys={[selectedOption.toString()]}
+                                            onClick={copy_selected_mode}
+                                            items={Object.entries(CLIPBOARD_MODE_TITLES).map(
+                                                ([key, label]) => ({
+                                                    key,
+                                                    label
+                                                })
+                                            )}
+                                        />
+                                    }
+                                >
+                                    <StyledDownOutlined />
+                                </Dropdown>
+                            </>
+                        ) : clipboardMode === false || clipboardMode === undefined ? null : (
+                            <GlowbuzzerIcon
+                                title={tooltip}
+                                Icon={CopyIcon}
+                                button
+                                onClick={copy_default_mode}
+                            />
+                        )}
+                    </DockToolbarButtonGroup>
+                </>
             }
         >
             <CartesianDro
                 kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                frameIndex={frameIndex}
                 warningThreshold={0.05}
             />
-        </Tile>
+        </DockTileWithToolbar>
     )
 }
