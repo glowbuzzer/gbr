@@ -76,10 +76,10 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
         name: "Connection",
         enableDrag: false, // don't allow connect tile to be moved
         enableClose: false, // or closed!
-        render: ConnectTile,
+        render: () => ConnectTile(),
         renderSettings: () => ConnectSettings,
-        renderButtons: ConnectTabButtons,
-        renderHelp: ConnectTileHelp,
+        renderButtons: () => ConnectTabButtons(),
+        renderHelp: () => ConnectTileHelp(),
         defaultPlacement: {
             column: 0,
             row: 0
@@ -95,7 +95,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 1
         },
-        render: JogCartesianTile
+        render: () => JogCartesianTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.JOG_JOINT,
@@ -104,7 +104,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 1
         },
-        render: JogJointsTile
+        render: () => JogJointsTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.THREE_DIMENSIONAL_SCENE,
@@ -114,8 +114,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 1,
             row: 0
         },
-        render: ThreeDimensionalSceneTile,
-        renderHelp: ThreeDimensionalSceneTileHelp,
+        render: () => ThreeDimensionalSceneTile({}),
+        renderHelp: () => ThreeDimensionalSceneTileHelp(),
         config: {
             enableWithoutConnection: true
         }
@@ -127,8 +127,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 0
         },
-        render: FeedRateTile,
-        renderHelp: FeedRateTileHelp
+        render: () => FeedRateTile(),
+        renderHelp: () => FeedRateTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.GCODE,
@@ -137,8 +137,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 1,
             row: 1
         },
-        render: GCodeTile,
-        renderHelp: GCodeTileHelp
+        render: () => GCodeTile(),
+        renderHelp: () => GCodeTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.FRAMES,
@@ -147,7 +147,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 0
         },
-        render: FramesTile
+        render: () => FramesTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.POINTS,
@@ -156,7 +156,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 0
         },
-        render: PointsTile
+        render: () => PointsTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.CARTESIAN_DRO,
@@ -165,8 +165,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 2
         },
-        render: CartesianDroTile,
-        renderHelp: CartesianDroTileHelp
+        render: () => CartesianDroTile({}),
+        renderHelp: () => CartesianDroTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.JOINT_DRO,
@@ -175,8 +175,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 2
         },
-        render: JointDroTile,
-        renderHelp: JointDroTileHelp
+        render: () => JointDroTile(),
+        renderHelp: () => JointDroTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.CONFIG_EDIT,
@@ -185,7 +185,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 1
         },
-        render: ConfigEditTile
+        render: () => ConfigEditTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.SPINDLE,
@@ -194,7 +194,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 0
         },
-        render: SpindleTile
+        render: () => SpindleTile()
     },
     {
         id: GlowbuzzerTileIdentifiers.DIGITAL_INPUTS,
@@ -203,8 +203,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 1
         },
-        render: DigitalInputsTile,
-        renderHelp: DigitalInputsTileHelp
+        render: () => DigitalInputsTile({}),
+        renderHelp: () => DigitalInputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.INTEGER_INPUTS,
@@ -213,8 +213,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 1
         },
-        render: IntegerInputsTile,
-        renderHelp: IntegerInputsTileHelp
+        render: () => IntegerInputsTile({}),
+        renderHelp: () => IntegerInputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.ANALOG_INPUTS,
@@ -223,8 +223,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 1
         },
-        render: AnalogInputsTile,
-        renderHelp: AnalogInputsTileHelp
+        render: () => AnalogInputsTile({}),
+        renderHelp: () => AnalogInputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.DIGITAL_OUTPUTS,
@@ -233,8 +233,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 2
         },
-        render: DigitalOutputsTile,
-        renderHelp: DigitalOutputsTileHelp
+        render: () => DigitalOutputsTile({}),
+        renderHelp: () => DigitalOutputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.INTEGER_OUTPUTS,
@@ -243,8 +243,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 2
         },
-        render: IntegerOutputsTile,
-        renderHelp: IntegerOutputsTileHelp
+        render: () => IntegerOutputsTile({}),
+        renderHelp: () => IntegerOutputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.ANALOG_OUTPUTS,
@@ -253,8 +253,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 2
         },
-        render: AnalogOutputsTile,
-        renderHelp: AnalogOutputsTileHelp
+        render: () => AnalogOutputsTile({}),
+        renderHelp: () => AnalogOutputsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.TOOLS,
@@ -263,8 +263,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 2,
             row: 2
         },
-        render: ToolsTile,
-        renderHelp: ToolsTileHelp
+        render: () => ToolsTile(),
+        renderHelp: () => ToolsTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.TASKS,
@@ -273,8 +273,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 2
         },
-        render: TasksTile,
-        renderHelp: TasksTileHelp
+        render: () => TasksTile(),
+        renderHelp: () => TasksTileHelp()
     },
     {
         id: GlowbuzzerTileIdentifiers.STATE_MACHINE_TOOLS,
@@ -283,8 +283,8 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 2
         },
-        render: StateMachineToolsTile,
-        renderHelp: StateMachineToolsTileHelp,
+        render: () => StateMachineToolsTile(),
+        renderHelp: () => StateMachineToolsTileHelp(),
         excludeByDefault: true
     },
     {
@@ -294,7 +294,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 0,
             row: 2
         },
-        render: TelemetryTile,
+        render: () => TelemetryTile(),
         renderSettings: () => TelemetryTileSettings
     }
 ]

@@ -25,4 +25,5 @@ export type DockLayoutContextType = {
     resetLayout(): void
     showTile(id: string, show: boolean): void
 }
+
 export const DockLayoutContext = createContext<DockLayoutContextType>(null)
