@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { PointsConfig, useFramesList, usePoints } from "@glowbuzzer/store"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"

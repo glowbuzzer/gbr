@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { DockToolbarButtonGroup } from "../../dock/DockToolbar"
 import { ReactComponent as DecreaseDecimalPlaces } from "../icons/decrease-decimal-places.svg"
 import { ReactComponent as IncreaseDecimalPlaces } from "../icons/increase-decimal-places.svg"

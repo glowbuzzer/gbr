@@ -2,7 +2,8 @@
     "extends": "../../tsconfig.base.json",
     "compilerOptions": {
         "outDir": "../../dist/tsc/controls",
-        "jsx": "react-jsx",
+        "jsx": "react",
+//        "jsx": "react",
         "allowJs": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,

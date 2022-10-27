@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { Menu } from "antd"
 import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"

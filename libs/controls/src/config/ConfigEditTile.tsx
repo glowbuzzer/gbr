@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { Input, message, Upload } from "antd"
 import styled from "styled-components"
 import { configSlice, useConfig, useConnection } from "@glowbuzzer/store"

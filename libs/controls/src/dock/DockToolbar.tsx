@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import styled, { css } from "styled-components"
 
 const StyledDockToolbar = styled.div<{ floating: boolean }>`
@@ -23,10 +24,6 @@ const StyledDockToolbar = styled.div<{ floating: boolean }>`
 
     border-bottom: 1px solid rgb(227, 227, 227);
 `
-
-export const DockToolbar = ({ children, floating = false }) => {
-    return <StyledDockToolbar floating={floating}>{children}</StyledDockToolbar>
-}
 
 export const DockToolbarButtonGroup = styled.span`
     //margin: 0 4px;
@@ -53,3 +50,7 @@ export const DockToolbarButtonGroup = styled.span`
         }
     }
 `
+
+export const DockToolbar = ({ children, floating = false }) => {
+    return <StyledDockToolbar floating={floating}>{children}</StyledDockToolbar>
+}

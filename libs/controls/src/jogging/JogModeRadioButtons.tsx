@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { JogMode } from "./types"
 import { ReactComponent as JogModeContinuousIcon } from "@material-symbols/svg-400/outlined/zoom_out_map.svg"

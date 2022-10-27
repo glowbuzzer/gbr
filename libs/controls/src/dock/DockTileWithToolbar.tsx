@@ -2,6 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React from "react"
 import { ReactNode } from "react"
 import styled from "styled-components"
 import { DockToolbar } from "./DockToolbar"

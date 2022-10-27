@@ -201,7 +201,7 @@ export function useGCodeSettings() {
 export type GCodeContextType = {
     /**
      * Provide an implementation of this function to handle automated tool changes. Typically this function is supplied to
-     * {@see GCodeContextProvider}. The function you supply should return an array of activities which achieve the tool change.
+     * {@link GCodeContextProvider}. The function you supply should return an array of activities which achieve the tool change.
      * These activities will be inserted in place of the the M06 code and queued for processing. For example:
      * ```
      *    function handleToolChange(
