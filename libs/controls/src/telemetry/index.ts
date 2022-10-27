@@ -4,5 +4,3 @@
 
 export * from "./TelemetryTile"
 export { TelemetryTileSettings } from "./TelemetryTileSettings"
-export { Selection } from "./TelemetryTileSettings"
-export { StyledSettings } from "./TelemetryTileSettings"

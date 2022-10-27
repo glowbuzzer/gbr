@@ -11,11 +11,13 @@ import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { Checkbox, Col, Modal, Row } from "antd"
 
 const StyledSettings = styled.div``
+
 const Selection = styled.div`
     .item {
         margin-left: 24px;
     }
 `
+
 export const TelemetryTileSettings = ({ open, onClose }) => {
     const initialSettings = useTelemetrySettings()
     const [settings, saveSettings] = useState<TelemetrySettingsType>(initialSettings)
