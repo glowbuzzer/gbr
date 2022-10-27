@@ -37,6 +37,9 @@ jobs:
             -   name: Package libs
                 run: node build.mjs controls,store ${{ inputs.version }}
 
+            -   name: Verify react component docs
+                run: node react-docgen-verify.mjs
+
             -   name: Generate react component docs
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
 

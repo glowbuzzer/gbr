@@ -4,10 +4,11 @@
 
 import { JogMode } from "./types"
 import React, { useState } from "react"
-import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { JogModeRadioButtons } from "./JogModeRadioButtons"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { JogJointsPanel } from "./JogJointsPanel"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 export const JogJointsTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)

@@ -3,3 +3,4 @@
  */
 
 export * from "./FeedRateTile"
+export { FeedRateTileHelp } from "./FeedRateTileHelp"

@@ -5,10 +5,11 @@
 import { Frame, useFrames } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
-import { DockTileWithToolbar, DockToolbar } from "../dock/DockToolbar"
+import { DockToolbar } from "../dock/DockToolbar"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { StyledTable } from "../util/styles/StyledTable"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 export const FramesTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)

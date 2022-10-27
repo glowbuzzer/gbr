@@ -4,13 +4,13 @@
 
 import { useKinematics, useKinematicsCartesianPosition } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { Dropdown, Menu, message, Space } from "antd"
+import { Dropdown, Menu, message } from "antd"
 import { Euler, Quaternion, Vector3 } from "three"
-import { CopyOutlined, DownOutlined } from "@ant-design/icons"
+import { DownOutlined } from "@ant-design/icons"
 import * as React from "react"
 import { useState } from "react"
 import { CartesianDro } from "./CartesianDro"
-import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { ReactComponent as CopyIcon } from "@material-symbols/svg-400/outlined/content_copy.svg"
 import { ReactComponent as ZeroDRO } from "@material-symbols/svg-400/outlined/ads_click.svg"
 import { ReactComponent as ResetDRO } from "@material-symbols/svg-400/outlined/block.svg"
@@ -18,6 +18,7 @@ import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import styled from "styled-components"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 const StyledDownOutlined = styled(DownOutlined)`
     display: inline-block;
@@ -33,34 +34,6 @@ enum CartesianDroClipboardOption {
     MOVE_LINE,
     MOVE_TO_POSITION
 }
-
-export const CartesianDroTileHelp = () => (
-    <div>
-        <h4>Cartesian DRO Tile</h4>
-        <p>
-            The Cartesian DRO Tile shows the <em>cartesian</em> position of the tool of a machine.
-        </p>
-        <p>Using the dropdown menu, you can select different kinematics configurations (kcs).</p>
-        <p>Each kc will have its own cartesian position.</p>
-        <p>
-            Position is shown in terms of the x,y,z values in linear units and the orientation of
-            the tool in Euler angles.
-        </p>
-        <p>
-            Using the Zero DRO button. When you zero the DRO, all subsequent moves will be
-            translated such that the origin is the current tool position.
-        </p>
-        <p>The reset button removes the temporary translation that was added by hitting the Zero DRO button.</p>
-        <p>
-            The clipboard copy button (...) copys the value of the current position to the clipbaord
-            for you to use in programs you write.
-        </p>
-        <p>
-            The clipboard mode property button (<CopyOutlined />) gives options to let the user to
-            copy the current position in various formats.
-        </p>
-    </div>
-)
 
 const CLIPBOARD_MODE_TITLES = {
     [CartesianDroClipboardOption.POSITION]: "Position",

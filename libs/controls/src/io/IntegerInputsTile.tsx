@@ -3,18 +3,10 @@
  */
 
 import React from "react"
-import { Tag } from "antd"
+import {Tag} from "antd"
 import styled from "styled-components"
-import { useIntegerInputList, useIntegerInputState } from "@glowbuzzer/store"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
-
-export const IntegerInputsTileHelp = () => (
-    <div>
-        <h4>Integer Inputs Tile</h4>
-        <p>The Integer Inputs Tile shows the "live" value of all of the integer inputs</p>
-        <p>that have been configured for a machine.</p>
-    </div>
-)
+import {useIntegerInputList, useIntegerInputState} from "@glowbuzzer/store"
+import {StyledTileContent} from "../util/styles/StyledTileContent"
 
 const StyledDiv = styled.div`
     display: flex;

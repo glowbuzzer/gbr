@@ -3,3 +3,4 @@
  */
 
 export * from "./GCodeTile"
+export { GCodeTileHelp } from "./GCodeTileHelp"

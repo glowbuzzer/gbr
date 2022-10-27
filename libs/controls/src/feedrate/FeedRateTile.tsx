@@ -4,27 +4,14 @@
 
 import React, { useEffect, useRef, useState } from "react"
 import { useConfig, useFeedRate } from "@glowbuzzer/store"
-import { Button, Slider } from "antd"
+import { Slider } from "antd"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { CaretRightFilled, PauseOutlined } from "@ant-design/icons"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
-import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-
-export const FeedRateTileHelp = () => (
-    <div>
-        <h4>Feedrate Tile</h4>
-        <p>The Feedrate tile is used to override the default velocity of moves.</p>
-        <p>If the feed rate slider is set to more than 100% moves are sped up.</p>
-        <p>If the feed rate slider is set to less than 100% moves are slowed down.</p>
-        <p>An example of using is would be if you are executing a gcode program and you</p>
-        <p>feel you could safely increase the speed (velocity of the tool) then you would</p>
-        <p>override the feedate by say 150%.</p>
-        <p>Each kinematics configuration (kc) has its own feedrate override so there is a </p>
-        <p>drondown to select the kc.</p>
-    </div>
-)
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 /**
  * The feed rate tile provides a simple way to adjust the feedrate for a kinematics configuration.

@@ -3,11 +3,18 @@
  */
 
 import React from "react"
-import { DockButton } from "../dock/DockToolbar"
 import { ReactComponent as ContactlessIcon } from "@material-symbols/svg-400/outlined/contactless.svg"
 import styled from "styled-components"
 import { useConnection } from "@glowbuzzer/store"
 import { classes } from "../util/classes"
+import { Button } from "antd"
+
+const DockButton = styled(Button)`
+    padding: 1px 6px;
+    font-size: 11px;
+    height: inherit;
+    color: rgba(0, 0, 0, 0.7);
+`
 
 const ConnectIndicator = styled.span`
     svg {

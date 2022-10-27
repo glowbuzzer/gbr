@@ -8,10 +8,11 @@ import { JogArrowsCartesian } from "./JogArrowsCartesian"
 import { JogGotoCartesian } from "./JogGotoCartesian"
 import { JogCartesianPanel } from "./JogCartesianPanel"
 import { JogModeRadioButtons } from "./JogModeRadioButtons"
-import { DockTileWithToolbar, DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
 import { JogHomeSplitButton } from "./JogHomeSplitButton"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 export const JogCartesianTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)

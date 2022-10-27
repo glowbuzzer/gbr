@@ -3,19 +3,12 @@
  */
 
 import React from "react"
-import { Button, Tag } from "antd"
-import { TASK_STATE, TaskStatus, useTask, useTaskStatus } from "@glowbuzzer/store"
+import {Button, Tag} from "antd"
+import {TASK_STATE, TaskStatus, useTask, useTaskStatus} from "@glowbuzzer/store"
 import styled from "styled-components"
-import { CaretRightOutlined, ReloadOutlined } from "@ant-design/icons"
-import { StopIcon } from "../util/StopIcon"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
-
-export const TasksTileHelp = () => (
-    <div>
-        <h4>Tasks Tile</h4>
-        <p>The Tasks Tile shows the configured tasks and allows the user to start and stop them.</p>
-    </div>
-)
+import {CaretRightOutlined, ReloadOutlined} from "@ant-design/icons"
+import {StopIcon} from "../util/StopIcon"
+import {StyledTileContent} from "../util/styles/StyledTileContent"
 
 const StyledTaskItem = styled.div`
     padding: 4px 0;

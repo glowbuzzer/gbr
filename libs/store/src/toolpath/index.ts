@@ -5,17 +5,9 @@
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import deepEqual from "fast-deep-equal"
-import { settings } from "../util/settings"
 import { RootState } from "../root"
 import { useFrames } from "../frames"
 import { Quaternion, Vector3 } from "three"
-
-const { load, save } = settings("toolpath")
-
-export type ToolPathSettingsType = {
-    overrideWorkspace: boolean
-    extent: number
-}
 
 export type ToolPathElement = {
     x: number
@@ -33,17 +25,11 @@ type ToolPathForKinematicsConfiguration = {
 }
 
 type ToolPathSliceType = {
-    settings: ToolPathSettingsType
     paths: ToolPathForKinematicsConfiguration[]
 }
 export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
     name: "toolPath",
     initialState: {
-        settings: {
-            overrideWorkspace: false,
-            extent: 100,
-            ...load()
-        } as ToolPathSettingsType,
         paths: [] as ToolPathForKinematicsConfiguration[]
     },
     reducers: {
@@ -73,10 +59,6 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
                 // remove all but the last location
                 path_info.path.splice(0, path_info.path.length - 1)
             }
-        },
-        settings(state, action) {
-            state.settings = action.payload
-            save(action.payload)
         }
     }
 })
@@ -114,21 +96,6 @@ export const useToolPath = (kc: number) => {
         path: toolPath,
         reset() {
             dispatch(toolPathSlice.actions.reset(kc))
-        }
-    }
-}
-
-/**
- * @ignore - Internal to the ToolPathTile
- */
-export const useToolPathSettings = () => {
-    const settings = useSelector((state: RootState) => state.toolPath.settings, shallowEqual)
-    const dispatch = useDispatch()
-
-    return {
-        settings,
-        setSettings(settings: ToolPathSettingsType) {
-            dispatch(toolPathSlice.actions.settings(settings))
         }
     }
 }

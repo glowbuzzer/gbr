@@ -3,17 +3,9 @@
  */
 
 import React from "react"
-import { BitFieldDisplay } from "../dro"
-import { useDigitalInputBits, useDigitalInputList } from "@glowbuzzer/store"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
-
-export const DigitalInputsTileHelp = () => (
-    <div>
-        <h4>Digital Inputs Tile</h4>
-        <p>The Digital Inputs Tile shows the "live" value of all of the digital inputs</p>
-        <p>that have been configured for a machine.</p>
-    </div>
-)
+import {BitFieldDisplay} from "../dro"
+import {useDigitalInputBits, useDigitalInputList} from "@glowbuzzer/store"
+import {StyledTileContent} from "../util/styles/StyledTileContent"
 
 type DigitalInputsTileProps = {
     /**

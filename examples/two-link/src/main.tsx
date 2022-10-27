@@ -10,7 +10,7 @@ import {
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
     RobotModel,
-    ToolPathTile
+    ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.min.css"
@@ -45,7 +45,7 @@ const AppIntroTileDefinition = DockTileDefinitionBuilder()
     .build()
 
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
-    .render(() => <ToolPathTile model={TWOLINK_MODEL} />)
+    .render(() => <ThreeDimensionalSceneTile model={TWOLINK_MODEL} />)
     .build()
 
 const root = createRoot(document.getElementById("root"))

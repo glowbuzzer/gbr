@@ -8,7 +8,7 @@ import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileDefinitions"
 
-export const ToolpathShowFramesButton = () => {
+export const ThreeDimensionalSceneShowFramesButton = () => {
     const { showTile, tiles } = useDockLayoutContext()
 
     if (!tiles[GlowbuzzerTileIdentifiers.FRAMES]) {

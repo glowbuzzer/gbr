@@ -2,8 +2,8 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode } from "react"
-import { createRoot } from "react-dom/client"
+import React, {StrictMode} from "react"
+import {createRoot} from "react-dom/client"
 import {
     DockLayout,
     DockLayoutProvider,
@@ -25,7 +25,7 @@ root.render(
                     GlowbuzzerTileDefinitions.DIGITAL_OUTPUTS
                 ]}
             >
-                <DockLayout />
+                <DockLayout/>
             </DockLayoutProvider>
         </GlowbuzzerApp>
     </StrictMode>

@@ -12,7 +12,7 @@ import {
     DockLayoutProvider,
     GlowbuzzerApp,
     RobotModel,
-    ToolPathTile,
+    ThreeDimensionalSceneTile,
     DockTileDefinitionBuilder,
     DockTileDefinition
 } from "@glowbuzzer/controls"
@@ -54,7 +54,7 @@ const DEMO_MOVE_COMPONENT: DockTileDefinition = {
 
 const toolpathTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
     .render(() => (
-        <ToolPathTile model={IGUS_MODEL} hideTrace hidePreview>
+        <ThreeDimensionalSceneTile model={IGUS_MODEL} hideTrace hidePreview>
             {["red", "green", "blue"].map((colour, index) => (
                 <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
                     <boxGeometry args={[150, 150, 150]} />
@@ -69,7 +69,7 @@ const toolpathTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_D
                 <boxGeometry args={[150, 150, 150]} />
                 <meshStandardMaterial color={"yellow"} />
             </mesh>
-        </ToolPathTile>
+        </ThreeDimensionalSceneTile>
     ))
     .build()
 

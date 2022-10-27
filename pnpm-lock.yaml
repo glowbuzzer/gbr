@@ -46,7 +46,7 @@ specifiers:
   prop-types: ^15.8.1
   react: ^18.1.0
   react-ace: ^10.1.0
-  react-docgen: ^5.4.0
+  react-docgen: ^5.4.3
   react-dom: ^18.1.0
   react-is: ^18.1.0
   react-redux: ^8.0.2
@@ -109,7 +109,7 @@ dependencies:
   prop-types: 15.8.1
   react: 18.1.0
   react-ace: 10.1.0_ef5jwxihqo6n7gxfmzogljlgcm
-  react-docgen: 5.4.0
+  react-docgen: 5.4.3
   react-dom: 18.1.0_react@18.1.0
   react-is: 18.1.0
   react-redux: 8.0.2_nfqigfgwurfoimtkde74cji6ga
@@ -247,15 +247,6 @@ packages:
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /@babel/generator/7.15.8:
-    resolution: {integrity: sha512-ECmAKstXbp1cvpTTZciZCgfOt6iN64lR0d+euv3UZisU5awfRawOvg07Utn/qBGuH4bRIEZKrA/4LzZyXhZr8g==}
-    engines: {node: '>=6.9.0'}
-    dependencies:
-      '@babel/types': 7.19.0
-      jsesc: 2.5.2
-      source-map: 0.5.7
     dev: false
 
   /@babel/generator/7.18.2:
@@ -4618,7 +4609,7 @@ packages:
       foreground-child: 2.0.0
       istanbul-lib-coverage: 3.2.0
       istanbul-lib-report: 3.0.0
-      istanbul-reports: 3.0.5
+      istanbul-reports: 3.1.4
       rimraf: 3.0.2
       test-exclude: 6.0.0
       v8-to-istanbul: 8.1.0
@@ -6613,14 +6604,6 @@ packages:
       - supports-color
     dev: false
 
-  /istanbul-reports/3.0.5:
-    resolution: {integrity: sha512-5+19PlhnGabNWB7kOFnuxT8H3T/iIyQzIbQMxXsURmmvKg86P2sbkrGOT77VnHw0Qr0gc2XzRaRfMZYYbSQCJQ==}
-    engines: {node: '>=8'}
-    dependencies:
-      html-escaper: 2.0.2
-      istanbul-lib-report: 3.0.0
-    dev: false
-
   /istanbul-reports/3.1.4:
     resolution: {integrity: sha512-r1/DshN4KSE7xWEknZLLLLDn5CJybV3nw01VTkp6D5jzLuELlcbudfj/eSQFvrKsJuTVCGnePO7ho82Nw9zzfw==}
     engines: {node: '>=8'}
@@ -7375,7 +7358,7 @@ packages:
     dev: false
 
   /node-dir/0.1.17:
-    resolution: {integrity: sha1-X1Zl2TNRM1yqvvjxxVRRbPXx5OU=}
+    resolution: {integrity: sha512-tmPX422rYgofd4epzrNoOXiE8XFZYOcCq1vD7MAXCDO+O+zndlA2ztdKKMa+EeuBG5tHETpr4ml4RGgpqDCCAg==}
     engines: {node: '>= 0.10.5'}
     dependencies:
       minimatch: 3.1.2
@@ -8277,14 +8260,14 @@ packages:
       react: 18.1.0
     dev: false
 
-  /react-docgen/5.4.0:
-    resolution: {integrity: sha512-JBjVQ9cahmNlfjMGxWUxJg919xBBKAoy3hgDgKERbR+BcF4ANpDuzWAScC7j27hZfd8sJNmMPOLWo9+vB/XJEQ==}
+  /react-docgen/5.4.3:
+    resolution: {integrity: sha512-xlLJyOlnfr8lLEEeaDZ+X2J/KJoe6Nr9AzxnkdQWush5hz2ZSu66w6iLMOScMmxoSHWpWMn+k3v5ZiyCfcWsOA==}
     engines: {node: '>=8.10.0'}
     hasBin: true
     dependencies:
-      '@babel/core': 7.18.2
-      '@babel/generator': 7.15.8
-      '@babel/runtime': 7.15.4
+      '@babel/core': 7.19.1
+      '@babel/generator': 7.19.0
+      '@babel/runtime': 7.18.6
       ast-types: 0.14.2
       commander: 2.20.3
       doctrine: 3.0.0
@@ -8702,11 +8685,6 @@ packages:
     dependencies:
       buffer-from: 1.1.2
       source-map: 0.6.1
-    dev: false
-
-  /source-map/0.5.7:
-    resolution: {integrity: sha1-igOdLRAh0i0eoUyA2OpGi6LvP8w=}
-    engines: {node: '>=0.10.0'}
     dev: false
 
   /source-map/0.6.1:

@@ -10,7 +10,7 @@ import {
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
     RobotModel,
-    ToolPathTile
+    ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
 import { Vector3 } from "three"
@@ -39,14 +39,14 @@ const TX40_MODEL: RobotModel = {
 
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
     .render(() => (
-        <ToolPathTile model={TX40_MODEL}>
+        <ThreeDimensionalSceneTile model={TX40_MODEL}>
             {["red", "green", "blue"].map((colour, index) => (
                 <mesh position={[500, (index - 1) * 200, 75]}>
                     <boxGeometry args={[150, 150, 150]} />
                     <meshStandardMaterial color={colour} />
                 </mesh>
             ))}
-        </ToolPathTile>
+        </ThreeDimensionalSceneTile>
     ))
     .build()
 

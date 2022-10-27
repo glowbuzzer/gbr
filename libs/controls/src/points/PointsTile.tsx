@@ -5,11 +5,12 @@
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { PointsConfig, useFramesList, usePoints } from "@glowbuzzer/store"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
-import { DockTileWithToolbar, DockToolbar } from "../dock/DockToolbar"
+import { DockToolbar } from "../dock/DockToolbar"
 import { StyledTable } from "../util/styles/StyledTable"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import styled from "styled-components"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}

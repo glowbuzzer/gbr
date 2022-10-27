@@ -3,3 +3,4 @@
  */
 
 export * from "./ToolsTile"
+export { ToolsTileHelp } from "./ToolsTileHelp"

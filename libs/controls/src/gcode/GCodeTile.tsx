@@ -25,30 +25,9 @@ import {
 import styled, { css } from "styled-components"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
-import { DockTileWithToolbar } from "../dock/DockToolbar"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
-
-export const GCodeTileHelp = () => (
-    <div>
-        <h4>Gcode Tile</h4>
-        <p>The Gcode Tile is used to load and stream gcode programes to the machine.</p>
-        <p>A Gcode program can be types or pasted into the tile's body</p>
-        <p>
-            The <CaretRightOutlined /> button starts the gcode streaming to the machine and jobs can
-            be paused with the <PauseOutlined /> button.
-        </p>
-        <p>
-            {" "}
-            Jobs can be stopped with the <StopIcon /> button.
-        </p>
-        <p>
-            The gocde work offset (G54, G55 etc. which are set from frames in your config.json) file
-            can be applied before a job is run.
-        </p>
-        <p>The estimated job running time is shown on the tile's top bar.</p>
-    </div>
-)
 
 const { Option } = Select
 
@@ -80,7 +59,7 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 /**
  * The G-code tile provides an editor for G-code and the ability to stream programs to GBC.
  *
- * Changes you make to the G-code will be reflected by the preview in the {@link ToolPathTile}.
+ * Changes you make to the G-code will be reflected by the preview in the {@link ThreeDimensionalSceneTile}.
  *
  * You can execute, pause, resume and cancel jobs using the controls in the title bar of the tile.
  *

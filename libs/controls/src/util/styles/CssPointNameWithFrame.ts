@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import styled, { css } from "styled-components"
+import {css} from "styled-components"
 
 export const CssPointNameWithFrame = css`
     .point-name {

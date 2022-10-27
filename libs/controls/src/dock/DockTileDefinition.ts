@@ -13,7 +13,7 @@ type DockTilePlacement = {
 export interface DockTileDefinition extends IJsonTabNode {
     id: string
 
-    render(): ReactNode
+    render(props?): ReactNode
 
     renderSettings?()
 

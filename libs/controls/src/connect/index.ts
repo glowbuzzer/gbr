@@ -4,3 +4,5 @@
 
 export * from "./ConnectTile"
 export * from "./ConnectTabButtons"
+export { ConnectTileHelp } from "./ConnectTileHelp"
+export { ConnectSettings } from "./ConnectSettings"
