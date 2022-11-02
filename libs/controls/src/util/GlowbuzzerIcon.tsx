@@ -65,6 +65,7 @@ export const StyledIcon = styled.span`
     }
 `
 
+/** @ignore */
 export const GlowbuzzerIcon = (props: CustomIconProps) => {
     const { name, Icon, title } = props
     const classes = custom_icon_classes(props, name, "anticon")

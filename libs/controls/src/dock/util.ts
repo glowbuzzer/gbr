@@ -22,24 +22,27 @@ export function add_tile(modelJson, tile) {
         })
     }
 
+    const existing = layout.children[column]
+
+    if (existing.type === "tabset") {
+        // only one tabset in the column, so we want to replace it with a row
+        layout.children[column] = {
+            type: "row",
+            weight: existing.weight,
+            children: [existing]
+        }
+    }
+
     const col = layout.children[column]
 
-    if (col.type === "tabset") {
-        // only one tabset in the column
+    while (col.children.length <= row) {
         col.children.push({
-            type: "tab",
-            ...tile
-        })
-    } else {
-        while (col.children.length <= row) {
-            col.children.push({
-                type: "tabset",
-                children: []
-            })
-        }
-        col.children[row].children.push({
-            type: "tab",
-            ...tile
+            type: "tabset",
+            children: []
         })
     }
+    col.children[row].children.push({
+        type: "tab",
+        ...tile
+    })
 }

@@ -6,6 +6,9 @@ import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const GCodeTileHelp = () => (
     <div>
         <h4>Gcode Tile</h4>

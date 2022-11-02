@@ -4,6 +4,9 @@
 
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const ThreeDimensionalSceneTileHelp = () => (
     <div>
         <h4>3D Scene Tile</h4>

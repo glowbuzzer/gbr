@@ -4,6 +4,9 @@
 
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const ToolsTileHelp = () => (
     <div>
         <h4>Tools Tile</h4>

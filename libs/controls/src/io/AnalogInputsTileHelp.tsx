@@ -4,6 +4,9 @@
 
 import React from "react"
 
+/**
+ * @ignore
+ */
 export const AnalogInputsTileHelp = () => (
     <div>
         <h4>Analog Inputs Tile</h4>

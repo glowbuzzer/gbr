@@ -175,13 +175,11 @@ export const ThreeDimensionalSceneTile = ({
                                 faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
                             }}
                         />
-                        )
                     </GizmoHelper>
                 )}
                 {!noLighting && (
                     <>
                         <ThreeDimensionalSceneLighting distance={extent * 2} />
-                        /* Add a plane to receive shadows */
                         <Plane receiveShadow position={[0, -1, 0]} args={[2 * extent, 2 * extent]}>
                             <shadowMaterial attach="material" opacity={0.1} />
                         </Plane>
@@ -199,21 +197,16 @@ export const ThreeDimensionalSceneTile = ({
                         </group>
                     </>
                 )}
-
                 {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
-
                 {hideTrace ? null : <ToolPath path={path} />}
-
                 {disabled || hidePreview ? null : (
                     <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
                 )}
-
                 {model ? (
                     <TcpRobot model={model} joints={jointPositions} toolConfig={toolConfig} />
                 ) : (
                     <TcpFrustum scale={extent} position={world_translation} />
                 )}
-
                 {/* Render any react-three-fiber nodes supplied */}
                 {children}
             </Canvas>

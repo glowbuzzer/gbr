@@ -13,6 +13,7 @@ type JogCartesianPanelProps = {
     frameIndex: number
 }
 
+/** @ignore - internal to the jog tile */
 export const JogCartesianPanel = (props: JogCartesianPanelProps) => {
     const { jogMode, ...otherProps } = props
 

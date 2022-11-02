@@ -19,6 +19,9 @@ type FramesDropdownProps = {
     onChange: (frame: number) => void
 }
 
+/**
+ * @ignore
+ */
 export const FramesDropdown = ({ value, onChange }: FramesDropdownProps) => {
     const { asTree } = useFrames()
 

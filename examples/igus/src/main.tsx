@@ -10,17 +10,17 @@ import { DemoMoveTile, HIGH_BLOCK_Z } from "./DemoMoveTile"
 import {
     DockLayout,
     DockLayoutProvider,
-    GlowbuzzerApp,
-    RobotModel,
-    ThreeDimensionalSceneTile,
+    DockTileDefinition,
     DockTileDefinitionBuilder,
-    DockTileDefinition
+    GlowbuzzerApp,
+    GlowbuzzerTileDefinitions,
+    RobotModel,
+    ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { GlowbuzzerTileDefinitions } from "@glowbuzzer/controls"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 const DEG90 = Math.PI / 2
@@ -42,42 +42,54 @@ const IGUS_MODEL: RobotModel = {
     scale: 1000
 }
 
-const DEMO_MOVE_COMPONENT: DockTileDefinition = {
-    id: "demo-move",
-    name: "Demo Move",
-    render: DemoMoveTile,
-    defaultPlacement: {
-        column: 0,
-        row: 1
-    }
-}
-
-const toolpathTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
-    .render(() => (
-        <ThreeDimensionalSceneTile model={IGUS_MODEL} hideTrace hidePreview>
-            {["red", "green", "blue"].map((colour, index) => (
-                <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
-                    <boxGeometry args={[150, 150, 150]} />
-                    <meshStandardMaterial color={colour} />
-                </mesh>
-            ))}
-            <mesh position={[600, 0, HIGH_BLOCK_Z]}>
-                <boxGeometry args={[150, 150, 150]} />
-                <meshStandardMaterial color={"hotpink"} />
-            </mesh>
-            <mesh position={[500, 500, HIGH_BLOCK_Z]} rotation={new Euler(0, 0, Math.PI / 4)}>
-                <boxGeometry args={[150, 150, 150]} />
-                <meshStandardMaterial color={"yellow"} />
-            </mesh>
-        </ThreeDimensionalSceneTile>
-    ))
+const demoMoveTile: DockTileDefinition = DockTileDefinitionBuilder()
+    .id("demo-move")
+    .name("Demo Move")
+    .render(DemoMoveTile)
+    .placement(0, 1)
     .build()
 
-const AVAILABLE_COMPONENTS = [GlowbuzzerTileDefinitions.CONNECT, DEMO_MOVE_COMPONENT, toolpathTile]
+const threeDimensionalSceneTile = DockTileDefinitionBuilder(
+    GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE
+)
+    .render(() => {
+        return (
+            <ThreeDimensionalSceneTile
+                model={IGUS_MODEL}
+                hideTrace
+                hidePreview
+                // tool={
+                //     <mesh>
+                //         <boxGeometry args={[350, 350, 350]} />
+                //         <meshStandardMaterial color={"red"} />
+                //     </mesh>
+                // }
+            >
+                {["red", "green", "blue"].map((colour, index) => (
+                    <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
+                        <boxGeometry args={[150, 150, 150]} />
+                        <meshStandardMaterial color={colour} />
+                    </mesh>
+                ))}
+                <mesh position={[600, 0, HIGH_BLOCK_Z]}>
+                    <boxGeometry args={[150, 150, 150]} />
+                    <meshStandardMaterial color={"hotpink"} />
+                </mesh>
+                <mesh position={[500, 500, HIGH_BLOCK_Z]} rotation={new Euler(0, 0, Math.PI / 4)}>
+                    <boxGeometry args={[150, 150, 150]} />
+                    <meshStandardMaterial color={"yellow"} />
+                </mesh>
+            </ThreeDimensionalSceneTile>
+        )
+    })
+    .build()
 
 export function App() {
     return (
-        <DockLayoutProvider appName={"igus"} tiles={AVAILABLE_COMPONENTS}>
+        <DockLayoutProvider
+            appName={"igus"}
+            tiles={[GlowbuzzerTileDefinitions.CONNECT, demoMoveTile, threeDimensionalSceneTile]}
+        >
             <ExampleAppMenu />
             <DockLayout />
         </DockLayoutProvider>

@@ -3,10 +3,10 @@
  */
 
 import React from "react"
-import {Tag} from "antd"
+import { Tag } from "antd"
 import styled from "styled-components"
-import {useIntegerInputList, useIntegerInputState} from "@glowbuzzer/store"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { useIntegerInputList, useIntegerInputState } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -27,7 +27,7 @@ const IntegerInputItem = ({ label, index }) => {
 
 type IntegerInputsTileProps = {
     /**
-     * Labels to use for inputs, in the order given in the configuration
+     * Override labels to use for inputs, in the order given in the configuration
      */
     labels?: string[]
 }

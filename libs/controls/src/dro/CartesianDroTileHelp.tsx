@@ -5,6 +5,9 @@
 import { CopyOutlined } from "@ant-design/icons"
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const CartesianDroTileHelp = () => (
     <div>
         <h4>Cartesian DRO Tile</h4>

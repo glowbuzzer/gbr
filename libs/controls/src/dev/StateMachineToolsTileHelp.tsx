@@ -4,6 +4,9 @@
 
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const StateMachineToolsTileHelp = () => (
     <div>
         <h4>StateMachine Tools Tile</h4>

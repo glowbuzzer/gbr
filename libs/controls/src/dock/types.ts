@@ -2,26 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { DockTileDefinition } from "./DockTileDefinition"
-import { ReactNode } from "react"
-
+/**
+ * The definition of a perspective in the dock layout.
+ */
 export type DockPerspective = {
+    /** The id of the perspective. */
     id: string
+    /** The name of the perspective. Shown in the perspective menu. */
     name: string
+    /** A list of tile ids that should be visible by default. If not specified, all tiles are visible. */
     defaultVisible?: string[]
-}
-
-export type DockPerspectiveLayoutProviderProps = {
-    appName: string
-    tiles: DockTileDefinition[]
-    perspectives: DockPerspective[]
-    defaultPerspective: string
-    children: ReactNode
-}
-
-export type DockLayoutProviderProps = {
-    appName: string
-    tiles: DockTileDefinition[]
-    defaultVisible?: string[]
-    children: ReactNode
 }

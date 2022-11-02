@@ -9,7 +9,13 @@ import { JogModeRadioButtons } from "./JogModeRadioButtons"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { JogJointsPanel } from "./JogJointsPanel"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { StyledPanel } from "../../../../examples/generic/src/JointSpinnersTile"
 
+/**
+ * The jog joints tile displays all configured joints with jog controls. You can jog the joints in continuous or step mode,
+ * and there is also a goto mode where you can enter a target position for each joint. The kinematics configuration can be
+ * selected from a dropdown, and also the reference frame.
+ */
 export const JogJointsTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
@@ -28,11 +34,13 @@ export const JogJointsTile = () => {
                 </>
             }
         >
-            <JogJointsPanel
-                jogMode={jogMode}
-                jogSpeed={100}
-                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-            />
+            <StyledPanel>
+                <JogJointsPanel
+                    jogMode={jogMode}
+                    jogSpeed={100}
+                    kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                />
+            </StyledPanel>
         </DockTileWithToolbar>
     )
 }

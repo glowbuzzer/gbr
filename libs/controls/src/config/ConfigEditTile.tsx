@@ -35,6 +35,9 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * The configuration editor tile allows the user to edit the GBC configuration, load a configuration from disk and upload the new configuration.
+ */
 export const ConfigEditTile = () => {
     const config = useConfig()
     const connection = useConnection()

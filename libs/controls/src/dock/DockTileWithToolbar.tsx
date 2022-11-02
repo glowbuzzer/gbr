@@ -19,6 +19,8 @@ const StyledTileWithToolbar = styled.div`
         min-height: 0;
     }
 `
+
+/** @ignore - internal component */
 export const DockTileWithToolbar = ({
     children,
     toolbar

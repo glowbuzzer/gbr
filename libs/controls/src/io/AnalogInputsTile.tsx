@@ -27,7 +27,7 @@ const AnalogInputItem = ({ label, index }) => {
 
 type AnalogInputsTileProps = {
     /**
-     * Labels to use for inputs, in the order given in the configuration
+     * Override labels to use for inputs, in the order given in the configuration
      */
     labels?: string[]
 }

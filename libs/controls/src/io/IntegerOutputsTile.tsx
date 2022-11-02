@@ -3,10 +3,10 @@
  */
 
 import React from "react"
-import {useIntegerOutputList, useIntegerOutputState} from "@glowbuzzer/store"
-import {NumericOutputWidget} from "./NumericOutputWidget"
+import { useIntegerOutputList, useIntegerOutputState } from "@glowbuzzer/store"
+import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledDiv = styled.div`
     > div {
@@ -26,7 +26,7 @@ const IntegerOutputItem = ({ index, label }) => {
 
 type IntegerOutputsTileProps = {
     /**
-     * Labels to use for outputs, in the order given in the configuration
+     * Override labels to use for outputs, in the order given in the configuration
      */
     labels?: string[]
 }

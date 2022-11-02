@@ -63,7 +63,7 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
 
 type DigitalOutputsTileProps = {
     /**
-     * Labels to use for outputs, in the order given in the configuration
+     * Override labels to use for outputs, in the order given in the configuration
      */
     labels?: string[]
 }

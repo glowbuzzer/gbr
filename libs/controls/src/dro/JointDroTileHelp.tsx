@@ -4,6 +4,9 @@
 
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const JointDroTileHelp = () => (
     <div>
         <h4>Joint DRO Tile</h4>

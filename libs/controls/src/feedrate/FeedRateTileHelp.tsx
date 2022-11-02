@@ -4,6 +4,9 @@
 
 import React from "react"
 
+/**
+ * @ignore
+ */
 export const FeedRateTileHelp = () => (
     <div>
         <h4>Feedrate Tile</h4>

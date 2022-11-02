@@ -17,6 +17,9 @@ const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
 `
 
+/**
+ * The points tile shows a simple table of all configured points.
+ */
 export const PointsTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
     const points = usePoints()

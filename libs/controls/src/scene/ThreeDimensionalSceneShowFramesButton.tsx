@@ -8,10 +8,12 @@ import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileDefinitions"
 
+/** @ignore */
 export const ThreeDimensionalSceneShowFramesButton = () => {
     const { showTile, tiles } = useDockLayoutContext()
 
     if (!tiles[GlowbuzzerTileIdentifiers.FRAMES]) {
+        // TODO: this leaves a gap in the toolbar
         return null
     }
 

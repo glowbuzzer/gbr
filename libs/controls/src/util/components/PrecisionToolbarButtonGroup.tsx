@@ -8,6 +8,7 @@ import { ReactComponent as DecreaseDecimalPlaces } from "../icons/decrease-decim
 import { ReactComponent as IncreaseDecimalPlaces } from "../icons/increase-decimal-places.svg"
 import { GlowbuzzerIcon } from "../GlowbuzzerIcon"
 
+/** @ignore */
 export const PrecisionToolbarButtonGroup = ({ value, onChange }) => {
     function decrease() {
         onChange(Math.max(0, value - 1))

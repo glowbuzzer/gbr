@@ -20,6 +20,7 @@ type KinematicsDropdownProps = {
     onChange: (kinematicsConfigurationIndex: number) => void
 }
 
+/** @ignore */
 export const KinematicsDropdown = ({ value, onChange }: KinematicsDropdownProps) => {
     const kcs = useKinematicsConfigurationList()
 

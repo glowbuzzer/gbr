@@ -4,9 +4,9 @@
 
 import React from "react"
 import styled from "styled-components"
-import {useAnalogOutputList, useAnalogOutputState} from "@glowbuzzer/store"
-import {NumericOutputWidget} from "./NumericOutputWidget"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { useAnalogOutputList, useAnalogOutputState } from "@glowbuzzer/store"
+import { NumericOutputWidget } from "./NumericOutputWidget"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledDiv = styled.div`
     > div {
@@ -26,7 +26,7 @@ const AnalogOutputItem = ({ index, label }) => {
 
 type AnalogOutputsTileProps = {
     /**
-     * Labels to use for outputs, in the order given in the configuration
+     * Override labels to use for outputs, in the order given in the configuration
      */
     labels?: string[]
 }

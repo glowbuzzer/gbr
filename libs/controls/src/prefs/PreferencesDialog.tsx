@@ -27,7 +27,11 @@ export const PreferencesDialog = ({ open, onClose }: PreferencesDialogProps) => 
             title="Preferences"
             open={open}
             onCancel={onClose}
-            footer={[<Button onClick={onClose}>Close</Button>]}
+            footer={[
+                <Button key="close" onClick={onClose}>
+                    Close
+                </Button>
+            ]}
         >
             <Form>
                 <Form.Item label="Linear Units" labelCol={labelCol} wrapperCol={wrapperCol}>

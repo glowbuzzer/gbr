@@ -14,6 +14,11 @@ import { FramesDropdown } from "../frames/FramesDropdown"
 import { JogHomeSplitButton } from "./JogHomeSplitButton"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
+/**
+ * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
+ * and there is also a goto mode where you can enter a target position for each axis. The kinematics configuration and
+ * reference frame can be selected from a dropdown.
+ */
 export const JogCartesianTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)

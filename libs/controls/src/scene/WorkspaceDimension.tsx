@@ -16,7 +16,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
     const maxWidth = extent
     return (
         <>
-            {/* @ts-ignore */}
             <Text
                 position={new Vector3(-extent, -extent)}
                 color={"#f0f0f0"}
@@ -30,7 +29,6 @@ export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
             >
                 X {(extent * 2).toFixed(2)} mm
             </Text>
-            {/* @ts-ignore */}
             <Text
                 position={new Vector3(-extent, -extent)}
                 rotation={new Euler(0, 0, Math.PI / 2)}

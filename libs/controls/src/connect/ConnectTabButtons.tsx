@@ -31,6 +31,9 @@ const ConnectIndicator = styled.span`
     }
 `
 
+/**
+ * @ignore
+ */
 export const ConnectTabButtons = () => {
     const connection = useConnection()
 

@@ -51,6 +51,16 @@ export const DockToolbarButtonGroup = styled.span`
     }
 `
 
-export const DockToolbar = ({ children, floating = false }) => {
+/**
+ * The toolbar for a tile. This is a simple container for buttons and other controls. You can group buttons using the `DockToolbarButtonGroup` component.
+ */
+export const DockToolbar = ({
+    floating = false,
+    children
+}: {
+    /** Whether toolbar should float above the tile content */
+    floating?: boolean
+    children
+}) => {
     return <StyledDockToolbar floating={floating}>{children}</StyledDockToolbar>
 }

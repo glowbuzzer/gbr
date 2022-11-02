@@ -124,8 +124,6 @@ const SpindleItem = ({ spindleConfig, index }: { spindleConfig: SpindleConfig; i
 
 /**
  * The spindle tile allows you to view and control all spindles configured on a machine.
- *
- * @constructor
  */
 export const SpindleTile = () => {
     const spindles = useConfig().spindle

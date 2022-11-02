@@ -4,6 +4,9 @@
 
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const ConnectTileHelp = () => (
     <div>
         <h4>Connection Tile</h4>

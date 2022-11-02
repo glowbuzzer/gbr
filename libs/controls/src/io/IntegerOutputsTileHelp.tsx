@@ -4,6 +4,9 @@
 
 import React from "react"
 
+/**
+ * @ignore
+ */
 export const IntegerOutputsTileHelp = () => (
     <div>
         <h4>Integer Outputs Tile</h4>

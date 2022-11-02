@@ -8,6 +8,7 @@ import { useKinematicsConfiguration } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { StyledPanel } from "../../../../examples/generic/src/JointSpinnersTile"
 
 /**
  * The joint DRO tile displays all configured joints with joint position.
@@ -39,7 +40,9 @@ export const JointDroTile = () => {
                 ]}
             />
 */}
-            <JointDro warningThreshold={0.05} jointsToDisplay={jointsToDisplay} />
+            <StyledPanel>
+                <JointDro warningThreshold={0.05} jointsToDisplay={jointsToDisplay} />
+            </StyledPanel>
         </DockTileWithToolbar>
     )
 }

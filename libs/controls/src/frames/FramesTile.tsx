@@ -6,12 +6,14 @@ import React from "react"
 import { Frame, useFrames } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
-import { DockToolbar } from "../dock/DockToolbar"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { StyledTable } from "../util/styles/StyledTable"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 
+/**
+ * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
+ */
 export const FramesTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
     const { asTree } = useFrames()

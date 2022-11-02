@@ -10,6 +10,7 @@ import { ReactComponent as JogModeStepIcon } from "@material-symbols/svg-400/out
 import { ReactComponent as JogModeGotoIcon } from "@material-symbols/svg-400/outlined/ads_click.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 
+/** @ignore - internal to the jog tile */
 export const JogModeRadioButtons = ({ mode, onChange }) => {
     const options = [
         { mode: JogMode.CONTINUOUS, title: "Continuous Jog", icon: JogModeContinuousIcon },

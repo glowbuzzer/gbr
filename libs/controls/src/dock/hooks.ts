@@ -7,9 +7,10 @@ import { DockLayoutContext, DockLayoutContextType } from "./DockLayoutContext"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { add_tile } from "./util"
 import { Actions, IJsonModel, Model } from "flexlayout-react"
-import { DockPerspective, DockPerspectiveLayoutProviderProps } from "./types"
+import { DockPerspective } from "./types"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { TabNode } from "flexlayout-react/src/model/TabNode"
+import { DockPerspectiveLayoutProviderProps } from "./DockPerspectiveLayoutProvider"
 
 const DOCK_MODEL_TEMPLATE: IJsonModel = {
     global: {
@@ -181,6 +182,7 @@ export function useDockContext(
                 if (existing) {
                     model.doAction(Actions.selectTab(id))
                 } else {
+                    console.log("ADDING TILE", id)
                     // tab was closed so we need to add it back in
                     const modelJson = model.toJson()
                     add_tile(modelJson, tileFor(id))

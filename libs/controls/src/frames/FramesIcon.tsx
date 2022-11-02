@@ -6,6 +6,9 @@ import React from "react"
 import { ReactComponent as FramesIconIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 
+/**
+ * @ignore
+ */
 export const FramesIcon = props => (
     <GlowbuzzerIcon Icon={FramesIconIcon} name={"frames"} {...props} />
 )

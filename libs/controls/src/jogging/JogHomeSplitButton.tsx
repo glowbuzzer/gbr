@@ -23,6 +23,7 @@ const StyledDownOutlined = styled(DownOutlined)`
     color: #bfbfbf;
 `
 
+/** @ignore - internal to the jog tile */
 export const JogHomeSplitButton = ({ kinematicsConfigurationIndex }) => {
     const points = usePoints()
     const frames = useFramesList()

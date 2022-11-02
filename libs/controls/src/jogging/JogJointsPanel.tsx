@@ -7,6 +7,7 @@ import { JogArrowsJoint } from "./JogArrowsJoint"
 import { JogGotoJoint } from "./JogGotoJoint"
 import React from "react"
 
+/** @ignore - internal to the jog tile */
 export const JogJointsPanel = ({ jogMode, jogSpeed, kinematicsConfigurationIndex }) => {
     switch (jogMode) {
         case JogMode.CONTINUOUS:

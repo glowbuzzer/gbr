@@ -4,6 +4,9 @@
 
 import React from "react"
 
+/**
+ * @ignore
+ */
 export const TasksTileHelp = () => (
     <div>
         <h4>Tasks Tile</h4>

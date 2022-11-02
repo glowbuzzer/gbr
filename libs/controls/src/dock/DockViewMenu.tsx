@@ -8,6 +8,22 @@ import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"
 import { MenuItemType } from "antd/es/menu/hooks/useItems"
 
+/**
+ * This component renders a sub-menu containing available tiles and allows the user to show or hide them. It should be used in conjunction with
+ * a surrounding Ant Design menu as shown in the example below.
+ *
+ * ```jsx
+ * <Menu mode="horizontal" theme="light" selectedKeys={[]}>
+ *     <Menu.SubMenu title="File" key="file">
+ *         <Menu.Item key="file-preferences" onClick={() => setShowPrefs(true)}>
+ *             Preferences
+ *         </Menu.Item>
+ *     </Menu.SubMenu>
+ *     <!-- add the dock view menu -->
+ *     <DockViewMenu />
+ * </Menu>
+ * ```
+ */
 export const DockViewMenu = () => {
     // render antd menu which toggles visibility of the dock components
     const { showTile, resetLayout } = useDockLayoutContext()

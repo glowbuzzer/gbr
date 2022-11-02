@@ -32,6 +32,9 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
 
 const ButtonsWrapper = ({ children }) => <>{children}</>
 
+/**
+ * This component renders the current layout, as defined by the current layout context (see {@link DockLayoutProvider}).
+ */
 export const DockLayout = () => {
     const {
         model,

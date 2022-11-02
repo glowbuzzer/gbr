@@ -4,6 +4,9 @@
 
 import React from "react"
 
+/**
+ * @ignore
+ */
 export const DigitalOutputsTileHelp = () => (
     <div>
         <h4>Digital Outputs Tile</h4>

@@ -18,6 +18,7 @@ const Selection = styled.div`
     }
 `
 
+/** @ignore */
 export const TelemetryTileSettings = ({ open, onClose }) => {
     const initialSettings = useTelemetrySettings()
     const [settings, saveSettings] = useState<TelemetrySettingsType>(initialSettings)

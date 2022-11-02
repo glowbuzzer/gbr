@@ -3,13 +3,13 @@
  */
 
 import React from "react"
-import {BitFieldDisplay} from "../dro"
-import {useDigitalInputBits, useDigitalInputList} from "@glowbuzzer/store"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { BitFieldDisplay } from "../dro"
+import { useDigitalInputBits, useDigitalInputList } from "@glowbuzzer/store"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 type DigitalInputsTileProps = {
     /**
-     * Labels to use for inputs, in the order given in the configuration
+     * Override labels to use for inputs, in the order given in the configuration
      */
     labels?: string[]
 }

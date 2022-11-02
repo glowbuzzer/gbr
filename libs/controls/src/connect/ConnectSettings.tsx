@@ -6,6 +6,9 @@ import { usePrefs } from "@glowbuzzer/store"
 import { Button, Form, Input, Modal } from "antd"
 import * as React from "react"
 
+/**
+ * @ignore
+ */
 export const ConnectSettings = ({ open, onClose }) => {
     const prefs = usePrefs()
 
