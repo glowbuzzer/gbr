@@ -15,7 +15,7 @@ export interface DockTileDefinition extends IJsonTabNode {
 
     render(props?): ReactNode
 
-    renderSettings?()
+    renderSettings?(): ({ open, onClose }) => JSX.Element
 
     renderHeader?(): ReactNode
 
