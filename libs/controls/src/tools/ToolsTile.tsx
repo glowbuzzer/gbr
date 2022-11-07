@@ -3,12 +3,19 @@
  */
 
 import * as React from "react"
-import {TileEmptyMessage} from "@glowbuzzer/controls"
-import {usePrefs, useSoloActivity, useToolIndex, useToolList} from "@glowbuzzer/store"
-import {Button, Tag} from "antd"
+import { TileEmptyMessage } from "@glowbuzzer/controls"
+import {
+    MachineState,
+    useMachine,
+    usePrefs,
+    useSoloActivity,
+    useToolIndex,
+    useToolList
+} from "@glowbuzzer/store"
+import { Button, Tag } from "antd"
 import styled from "styled-components"
-import {RightOutlined} from "@ant-design/icons"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { RightOutlined } from "@ant-design/icons"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -30,6 +37,7 @@ export const ToolsTile = () => {
     const toolIndex = useToolIndex(0)
     const { fromSI, getUnits } = usePrefs()
     const api = useSoloActivity(0)
+    const { currentState } = useMachine()
 
     function select(index: number) {
         return api.setToolOffset(index).promise()
@@ -60,7 +68,11 @@ export const ToolsTile = () => {
                             {fromSI(config.diameter || 0, "linear").toFixed(2)} {getUnits("linear")}
                         </Tag>
                     )}
-                    <Button size="small" onClick={() => select(index)}>
+                    <Button
+                        size="small"
+                        onClick={() => select(index)}
+                        disabled={currentState !== MachineState.OPERATION_ENABLED}
+                    >
                         Select
                     </Button>
                 </StyledDiv>
