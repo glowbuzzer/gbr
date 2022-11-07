@@ -4,12 +4,13 @@
 
 import { JogMode } from "./types"
 import React, { useState } from "react"
-import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { JogModeRadioButtons } from "./JogModeRadioButtons"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { JogJointsPanel } from "./JogJointsPanel"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { StyledPanel } from "../../../../examples/generic/src/JointSpinnersTile"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
 
 /**
  * The jog joints tile displays all configured joints with jog controls. You can jog the joints in continuous or step mode,
@@ -30,17 +31,20 @@ export const JogJointsTile = () => {
                             value={kinematicsConfigurationIndex}
                             onChange={setKinematicsConfigurationIndex}
                         />
+                        <JogLimitsToolbarButton
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                        />
                     </DockToolbarButtonGroup>
                 </>
             }
         >
-            <StyledPanel>
+            <StyledTileContent>
                 <JogJointsPanel
                     jogMode={jogMode}
                     jogSpeed={100}
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                 />
-            </StyledPanel>
+            </StyledTileContent>
         </DockTileWithToolbar>
     )
 }

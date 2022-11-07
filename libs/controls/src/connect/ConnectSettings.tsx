@@ -19,7 +19,15 @@ export const ConnectSettings = ({ open, onClose }) => {
     }
 
     return (
-        <Modal open={open} onCancel={onClose} footer={[<Button onClick={onClose}>Close</Button>]}>
+        <Modal
+            open={open}
+            onCancel={onClose}
+            footer={[
+                <Button key="close" onClick={onClose}>
+                    Close
+                </Button>
+            ]}
+        >
             <Form>
                 <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 16 }}>
                     <Input defaultValue={prefs.current.url} onChange={update_url} />

@@ -387,16 +387,25 @@ export function useKinematicsOffset(kinematicsConfigurationIndex: number): {
 }
 
 /**
- * Returns whether kinematic limits are currently disabled.
+ * Returns whether kinematic limits are currently disabled, and a method to enable/disable them.
  *
  * Kinematics limits can be disabled to allow jogging when a machine has run beyond its soft limits.
  *
  * @param kinematicsConfigurationIndex The kinematics configuration index
  */
-export function useKinematicsLimitsDisabled(kinematicsConfigurationIndex: number) {
-    return useSelector(
+export function useKinematicsLimitsDisabled(
+    kinematicsConfigurationIndex: number
+): [boolean, (boolean) => void] {
+    const connection = useConnection()
+    const value = useSelector(
         ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.limitsDisabled
     )
+
+    function setValue(disabled: boolean) {
+        connection.send(updateDisableLimitsMsg(kinematicsConfigurationIndex, disabled))
+    }
+
+    return [value, setValue]
 }
 
 /**

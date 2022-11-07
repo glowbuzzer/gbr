@@ -24,6 +24,10 @@ type KinematicsDropdownProps = {
 export const KinematicsDropdown = ({ value, onChange }: KinematicsDropdownProps) => {
     const kcs = useKinematicsConfigurationList()
 
+    if (kcs.length < 2) {
+        return null
+    }
+
     const options = kcs.map((kc, index) => ({
         key: index,
         value: index,

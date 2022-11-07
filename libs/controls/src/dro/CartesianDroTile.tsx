@@ -19,7 +19,7 @@ import styled from "styled-components"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { StyledPanel } from "../../../../examples/generic/src/JointSpinnersTile"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const StyledDownOutlined = styled(DownOutlined)`
     display: inline-block;
@@ -236,13 +236,13 @@ export const CartesianDroTile = ({
                 </>
             }
         >
-            <StyledPanel>
+            <StyledTileContent>
                 <CartesianDro
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                     frameIndex={frameIndex}
                     warningThreshold={0.05}
                 />
-            </StyledPanel>
+            </StyledTileContent>
         </DockTileWithToolbar>
     )
 }
