@@ -3,7 +3,8 @@
  */
 
 import * as React from "react"
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef, useState, useContext } from "react"
+import { ReactReduxContext  } from "react-redux"
 import {
     useConfig,
     useFrames,
@@ -20,7 +21,8 @@ import {
     GizmoViewcube,
     OrbitControls,
     PerspectiveCamera,
-    Plane
+    Plane,
+    useContextBridge
 } from "@react-three/drei"
 import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
@@ -133,6 +135,9 @@ export const ThreeDimensionalSceneTile = ({
     const { segments, highlightLine, disabled } = usePreview()
     const config = useConfig()
 
+    const ContextBridge = useContextBridge(ReactReduxContext)
+
+
     const parameters = Object.values(config.kinematicsConfiguration)[0]
     const { extentsX, extentsY, extentsZ } = parameters
     const extent = useMemo(() => {
@@ -158,12 +163,13 @@ export const ThreeDimensionalSceneTile = ({
     return (
         <>
             <Canvas shadows>
+                <ContextBridge>
                 {!noCamera && (
                     <PerspectiveCamera
                         makeDefault
                         position={[0, 0, 3 * extent]}
                         far={10000}
-                        near={0.01}
+                        near={1}
                         up={[0, 0, 1]}
                     />
                 )}
@@ -209,6 +215,7 @@ export const ThreeDimensionalSceneTile = ({
                 )}
                 {/* Render any react-three-fiber nodes supplied */}
                 {children}
+                </ContextBridge>
             </Canvas>
             <DockToolbar floating>
                 <DockToolbarButtonGroup>
