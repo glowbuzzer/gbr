@@ -10,6 +10,7 @@ import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { JogJointsPanel } from "./JogJointsPanel"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
 
 /**
  * The jog joints tile displays all configured joints with jog controls. You can jog the joints in continuous or step mode,
@@ -29,6 +30,9 @@ export const JogJointsTile = () => {
                         <KinematicsDropdown
                             value={kinematicsConfigurationIndex}
                             onChange={setKinematicsConfigurationIndex}
+                        />
+                        <JogLimitsToolbarButton
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                         />
                     </DockToolbarButtonGroup>
                 </>

@@ -13,6 +13,7 @@ import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
 import { JogHomeSplitButton } from "./JogHomeSplitButton"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
 
 /**
  * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
@@ -38,6 +39,9 @@ export const JogCartesianTile = () => {
                             onChange={setKinematicsConfigurationIndex}
                         />
                         <FramesDropdown value={frameIndex} onChange={setFrameIndex} />
+                        <JogLimitsToolbarButton
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                        />
                     </DockToolbarButtonGroup>
                 </>
             }
