@@ -16,7 +16,8 @@ const linear_units = {
 
 const angular_units = {
     rad: "Radians",
-    deg: "Degrees"
+    deg: "Degrees",
+    rev: "Revolutions"
 }
 
 /** @ignore - internal to the preferences dialog */
