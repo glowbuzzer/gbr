@@ -134,6 +134,7 @@ for (const project of projects) {
         execSync(`tsc --build libs/${project}/tsconfig.lib.json`, {stdio: 'inherit'})
         execSync(`mv dist/types/libs/${project}/src dist/${project}/types`, {stdio: 'inherit'})
         execSync(`cp libs/${project}/README.md dist/${project}`,{stdio: 'inherit'})
+        execSync(`cp LICENSE dist/${project}`,{stdio: 'inherit'})
         // re-write dependencies between included packages so everything uses new version
         for (const dep of projects) {
             const key = `@glowbuzzer/${dep}`;
