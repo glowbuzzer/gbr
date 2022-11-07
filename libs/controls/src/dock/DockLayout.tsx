@@ -19,13 +19,14 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
     return (
         <>
             <GlowbuzzerIcon
+                key="settings-btn"
                 name="settings"
                 Icon={SettingsIcon}
                 button
                 title="Settings"
                 onClick={() => setVisible(true)}
             />
-            <Component open={visible} onClose={() => setVisible(false)} />
+            <Component key="settings" open={visible} onClose={() => setVisible(false)} />
         </>
     )
 }

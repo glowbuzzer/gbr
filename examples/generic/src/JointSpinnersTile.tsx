@@ -4,12 +4,10 @@
 
 import { useJoint, useJointCount } from "@glowbuzzer/store"
 import { DockTileDefinitionBuilder, MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
+import { ExampleTileContent } from "../../util/styles"
+
 import React from "react"
 import styled from "styled-components"
-
-export const StyledPanel = styled.div`
-    padding: 10px;
-`
 
 const JointSpinnersTileHelp = () => (
     <div>
@@ -47,13 +45,13 @@ const JointSpinnersTile = () => {
     const count = useJointCount()
 
     return (
-        <StyledPanel>
+        <ExampleTileContent>
             <StyledDiv>
                 {Array.from({ length: count }).map((_, index) => (
                     <JointSpinnerItem key={index} index={index} />
                 ))}
             </StyledDiv>
-        </StyledPanel>
+        </ExampleTileContent>
     )
 }
 
