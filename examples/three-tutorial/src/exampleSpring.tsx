@@ -15,7 +15,8 @@ import {
     PivotControls,
     meshBounds,
     Shadow,
-    Html
+    Html,
+    Text
 } from "@react-three/drei"
 import {useFrame, useThree} from "@react-three/fiber"
 // import {useSpring, a} from "@react-spring/web"
@@ -76,11 +77,18 @@ function Switch({ x, set }) {
                 <a.mesh receiveShadow castShadow raycast={meshBounds} rotation-x={rX} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
                     {/*<sphereGeometry args={[0.8, 64, 64]} />*/}
                     <cylinderGeometry args={[0.7, 0.7, 0.8, 64]} />
-                    <a.meshStandardMaterial roughness={0.5} map={texture} />
+                    <a.meshStandardMaterial roughness={0.5}  />
                 </a.mesh>
                 <a.pointLight intensity={100} distance={1.4} color={color} />
                 <Shadow renderOrder={-1000} position={[0, -1, 0]} rotation={[-Math.PI / 2, 0, 0]} scale={1.5} />
             </a.group>
+            <Text rotation={[-Math.PI/2,0,0]} position={[0,0,-1.2]} fontSize={0.5} color="green" anchorX="center" anchorY="middle">
+                ON
+            </Text>
+            <Text rotation={[-Math.PI/2,0,0]} position={[0,0,1.2]} fontSize={0.5} color="red" anchorX="center" anchorY="middle">
+                OFF
+            </Text>
+
         </group>
     )
 }
