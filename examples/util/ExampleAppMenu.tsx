@@ -76,7 +76,7 @@ export const ExampleAppMenu = ({ title = null }) => {
                         ))}
                     </Menu.SubMenu>
                 )}
-                <DockViewMenu />
+                <DockViewMenu/>
             </Menu>
         </StyledMenuBar>
     )

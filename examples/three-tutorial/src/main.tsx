@@ -1,8 +1,19 @@
 import * as React from "react"
-import { useState, StrictMode, useRef, useEffect, forwardRef, Ref } from "react"
-import { createRoot } from "react-dom/client"
-import * as THREE from "three"
-import { Switch, Space } from "antd"
+import {
+    useState,
+    StrictMode,
+    useRef,
+    useEffect,
+    useContext,
+    createContext,
+    Suspense,
+    forwardRef,
+    useLayoutEffect
+} from "react"
+import * as THREE from 'three'
+import {Switch, Space} from "antd"
+import {Physics, useBox, useSphere, usePlane} from "@react-three/cannon"
+
 import {
     OrbitControls,
     Line,
@@ -18,334 +29,217 @@ import {
     useTexture,
     useHelper,
     Stage,
-    Plane
+    Plane,
 } from "@react-three/drei"
 
-import { useLoader, useFrame, useThree } from "@react-three/fiber"
+import {useLoader, useFrame, useThree} from "@react-three/fiber"
+
 
 import {
-    AnalogInputsTile,
-    AnalogOutputsTile,
-    CartesianDroTile,
-    ConnectTile,
-    DigitalInputsTile,
-    DigitalOutputsTile,
-    FeedRateTile,
-    GCodeTile,
+    DockLayout,
+    DockLayoutProvider, DockTileDefinition,
+    DockTileDefinitionBuilder,
     GlowbuzzerApp,
-    IntegerInputsTile,
-    IntegerOutputsTile,
+    GlowbuzzerTileDefinitions, GlowbuzzerTileIdentifiers, JogJointsTile,
     RobotModel,
-    JogTile,
-    PreferencesDialog,
-    ThreeDimensionalSceneTile,
-    JointDroTile,
-    Tile
+    ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
-import { Button } from "antd"
 
-import "antd/dist/antd.min.css"
+import {Vector3} from "three"
+import {createRoot} from "react-dom/client"
+import {ExampleAppMenu} from "../../util/ExampleAppMenu"
+
+import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
-import styled from "styled-components"
-import { StandardButtons } from "../../util/StandardButtons"
+import "flexlayout-react/style/light.css"
+import {appContext} from "../../convmc/src/app/AppContextType";
 
-const PrefsButton = () => {
-    const [visible, setVisible] = useState(false)
+import {ChooseExample} from "./menuTile"
+import {ExampleSphere} from "./exampleSphere"
+import {ExampleTexture} from "./exampleTexture"
+import {ExampleSpotlightOnObject} from "./exampleSpotlightOnObject"
+import {ExamplePhysics} from "./examplePhysics"
+import {ExampleSprites} from "./exampleSprites"
+import {ExampleIndicators} from "./exampleIndicators"
+import {ExampleShowObjectCoordinates} from "./exampleShowObjectCoordinates"
+import {ExampleMoveObject} from "./exampleMoveObject";
+import {ExampleCollisionDetection} from "./exampleCollisionDetection"
+import {ExampleGripper} from "./exampleGripper"
+import {ExampleSpring} from "./exampleSpring"
+import {ExamplePendulum} from "./examplePendulum"
+import {ExampleUI} from "./ExampleUI";
+import {TriadPoints} from "./triadPoints"
 
-    return (
-        <div>
-            <Button onClick={() => setVisible(true)}>Preferences</Button>
-            <PreferencesDialog open={visible} onClose={() => setVisible(false)} />
-        </div>
-    )
-}
+import {ActiveExampleContext} from "./activeExampleContext";
 
-const ExampleSphere = () => {
-    return (
-        <Sphere position={[300, 300, 0]} scale={10}>
-            <meshBasicMaterial color="red" />
-        </Sphere>
-    )
-}
-
-const ExampleLighting = React.forwardRef<THREE.Mesh, any>((props, ref) => {
-    const spotRef = useRef(null)
-    const pointRef1 = useRef()
-    const { scene } = useThree()
-    useHelper(spotRef, THREE.SpotLightHelper, "cyan")
-    useHelper(pointRef1, THREE.PointLightHelper, 100, "magenta")
-
-    useEffect(() => {
-        if (ref && ref.current) {
-            spotRef.current.target = ref.current
-            console.log("ref: ", ref && ref.current)
-        }
-    }, [scene])
-
-    return (
-        <>
-            <ambientLight color={"white"} intensity={0.1} />
-            {/*<pointLight*/}
-            {/*    ref={pointRef1}*/}
-            {/*    position={[300, 0, 0]}*/}
-            {/*    intensity={0.5}*/}
-            {/*    castShadow*/}
-            {/*    shadow-mapSize-height={512}*/}
-            {/*    shadow-mapSize-width={512}*/}
-            {/*    shadow-radius={10}*/}
-            {/*    shadow-bias={-0.0001}*/}
-            {/*/>*/}
-            {/*<pointLight*/}
-            {/*    position={[150, 150, 150]}*/}
-            {/*    intensity={0.5}*/}
-            {/*    castShadow={true}*/}
-            {/*    shadow-mapSize-height={512}*/}
-            {/*    shadow-mapSize-width={512}*/}
-            {/*    shadow-radius={10}*/}
-            {/*    shadow-bias={-0.0001}*/}
-            {/*/>*/}
-
-            <spotLight
-                ref={spotRef}
-                angle={(12 * Math.PI) / 180}
-                position={[0, 0, 1000]}
-                color={"red"}
-                castShadow
-            />
-            {/*<pointLight*/}
-            {/*    position={[0, 0, 200]}*/}
-            {/*    intensity={1}*/}
-            {/*    castShadow={true}*/}
-            {/*    shadow-mapSize-height={1024}*/}
-            {/*    shadow-mapSize-width={1024}*/}
-            {/*    shadow-radius={20}*/}
-            {/*    shadow-bias={-0.0001}*/}
-            {/*/>*/}
-        </>
-    )
-})
-
-const ExampleBox = () => {
-    const steelblue = new THREE.Color(0x4682b4)
-    // const boxRef = useRef<THREE.Mesh>()
-    const boxRef = useRef(null)
-
-    // const props = useTexture({
-    //     metalnessMap: "/textures/Metal030/Metal030_1K_Metalness.jpg",
-    //     map: "/textures/Metal030/Metal030_1K_Color.jpg",
-    //     roughnessMap: "/textures/Metal030/Metal030_1K_Roughness.jpg",
-    //     normalMap: "/textures/Metal030/Metal030_1K_NormalGL.jpg",
-    // })
-
-    const props = useTexture({
-        metalnessMap: "/textures/Metal024/Metal024_1K_Metalness.jpg",
-        map: "/textures/Metal024/Metal024_1K_Color.jpg",
-        roughnessMap: "/textures/Metal024/Metal024_1K_Roughness.jpg",
-        normalMap: "/textures/Metal024/Metal024_1K_NormalGL.jpg"
-        // displacementMap: "/textures/Metal024/Metal024_1K_Displacement.jpg",
-    })
-
-    useFrame(({ clock }) => {
-        boxRef.current.rotation.x = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        boxRef.current.rotation.y = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        boxRef.current.rotation.z = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        boxRef.current.position.x = Math.sin(clock.elapsedTime) * 300
-        boxRef.current.position.z = Math.sin(clock.elapsedTime) + 200
-    })
-
-    return (
-        <>
-            <mesh ref={boxRef} scale={200} position={[0, 0, 0]} castShadow>
-                <boxGeometry attach="geometry" />
-                <meshStandardMaterial attach="material" color="black" />
-            </mesh>
-            {/*<Box ref={boxRef} position={[0, 0, 0]} scale={200} castShadow={true}>*/}
-            {/*    <meshStandardMaterial  {...props}*/}
-            {/*    />*/}
-            {/*</Box>*/}
-            {/*    <ExampleLighting ref={boxRef}/>*/}
-        </>
-    )
-}
-
-const StyledApp = styled.div`
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    background: rgba(128, 128, 128, 0.05);
-
-    * {
-        // ensure flex elements can shrink when needed
-        min-width: 0;
-        min-height: 0;
+const ChooseExampleTileDefinition: DockTileDefinition =
+    {
+        id: "chooseExample",
+        name: "Choose Example",
+        defaultPlacement: {
+            column: 2,
+            row: 0,
+        },
+        excludeByDefault: false,
+        config: {
+            enableWithoutConnection: true
+        },
+        render: () => <ChooseExample/>
     }
 
-    .body {
-        padding: 20px;
-        flex-grow: 1;
-        display: flex;
-        gap: 20px;
-
-        nav,
-        section {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-
-            > div {
-                background: white;
-            }
-        }
-
-        nav {
-            > div {
-                height: inherit;
-                min-height: 100px;
-            }
-        }
-
-        section {
-            flex-grow: 1;
-
-            > div:nth-child(2) {
-                max-height: 30vh;
-            }
-        }
-    }
-`
 
 const DEG90 = Math.PI / 2
 
 const TX40_MODEL: RobotModel = {
     name: "tx40",
     config: [
-        { alpha: -DEG90, limits: [-270, 270] },
-        { alpha: 0, link_length: 0.225, teta: -DEG90, limits: [-270, 270] },
-        { alpha: DEG90, offset: 0.035, teta: DEG90, limits: [-270, 270] },
-        { alpha: -DEG90, offset: 0.225, limits: [-270, 270] },
-        { alpha: DEG90, limits: [-270, 270] },
-        { offset: 0.065, limits: [-270, 270] }
+        {alpha: -DEG90, limits: [-270, 270]},
+        {alpha: 0, link_length: 0.225, teta: -DEG90, limits: [-270, 270]},
+        {alpha: DEG90, offset: 0.035, teta: DEG90, limits: [-270, 270]},
+        {alpha: -DEG90, offset: 0.225, limits: [-270, 270]},
+        {alpha: DEG90, limits: [-270, 270]},
+        {offset: 0.065, limits: [-270, 270]}
     ],
     offset: new THREE.Vector3(0, 0, 325),
     scale: 1000
 }
 
-function Scene() {
-    const { scene } = useThree()
-    const mesh = useRef()
-    const spotLight = useRef()
+const ThreeTutorial = () => {
 
-    useFrame(({ clock }) => {
-        mesh.current.rotation.x = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        mesh.current.rotation.y = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        mesh.current.rotation.z = (Math.sin(clock.elapsedTime) * Math.PI) / 4
-        mesh.current.position.x = Math.sin(clock.elapsedTime) * 500
-        mesh.current.position.z = Math.sin(clock.elapsedTime) + 300
-    })
-
-    useEffect(() => (spotLight.current.target = mesh.current), [scene])
-    useHelper(spotLight, THREE.SpotLightHelper, "teal")
-
-    return (
-        <>
-            <spotLight
-                castShadow
-                position={[0, 0, 1000]}
-                ref={spotLight}
-                angle={0.5}
-                color={"yellow"}
-                distance={1200}
-            />
-            <mesh ref={mesh} position={[0, 0, 0]} scale={200} castShadow>
-                <boxGeometry attach="geometry" />
-                <meshStandardMaterial attach="material" color="lightblue" />
-            </mesh>
-            <mesh receiveShadow>
-                <planeBufferGeometry args={[2000, 2000]} attach="geometry" />
-                <shadowMaterial attach="material" opacity={0.5} />
-            </mesh>
-            <gridHelper args={[30, 30, 30]} />
-        </>
-    )
-}
-
-export function App() {
-    const [showRobot, setShowRobot] = useState(true)
-    const maxExtent = val => {
-        console.log(val)
+    // const [showRobot, setShowRobot] = useState(true)
+    const maxExtent = (val) => {
+        // console.log(val);
     }
 
+    // const position = useKinematicsCartesianPosition(0).position.translation
+    // const orientation = useKinematicsCartesianPosition(0).position.rotation
+    // console.log(position)
+
+    const {activeExample, setActiveExample} = useContext(ActiveExampleContext)
+    console.log("main", activeExample)
+
+    // exampleContent = <Html><h1>example1</h1></Html>
+    // exampleContent = <Html><h1>example2</h1></Html>
+
+    let exampleContent
+
+    switch (activeExample) {
+        case 1: {
+            // exampleContent = <TriadPoints/>
+            // exampleContent = <ExampleUI/>
+            exampleContent = <ExampleSphere/>
+            break
+        }
+        case 2: {
+            exampleContent = <ExampleTexture/>
+            break
+        }
+        case 3: {
+            exampleContent = <ExampleSpotlightOnObject/>
+            break
+        }
+        case 4: {
+            exampleContent = <ExamplePhysics/>
+            break
+        }
+        case 5: {
+            exampleContent = <ExampleSprites i={5} j={6}/>
+             break
+        }
+        case 6: {
+            exampleContent = <ExampleShowObjectCoordinates/>
+            break
+        }
+        case 7: {
+            exampleContent = <ExampleMoveObject/>
+            break
+        }
+        case 8: {
+            exampleContent = <ExampleCollisionDetection/>
+            break
+        }
+        case 9: {
+            exampleContent = <TriadPoints/>
+            break
+        }
+
+        case 10: {
+            exampleContent = <ExampleUI/>
+            break
+        }
+        case 11: {
+            exampleContent = <ExamplePendulum/>
+            break
+        }
+        case 12: {
+            exampleContent = <ExampleGripper/>
+            break
+        }
+        case 13: {
+            exampleContent = <ExampleIndicators/>
+            break
+        }
+        case 14: {
+            exampleContent = <ExampleSpring/>
+            break
+        }
+        case 15: {
+            exampleContent = <ExampleUI/>
+            break
+        }
+
+        default: {
+            exampleContent = <Html><h1>Error</h1></Html>
+            break
+        }
+    }
+
+    return (<ThreeDimensionalSceneTile model={TX40_MODEL}>{exampleContent}</ThreeDimensionalSceneTile>)
+}
+
+const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
+    .render(() => (<ThreeTutorial/>))
+    .build()
+
+const ActiveExampleProvider = ({children}) => {
+
+    const [activeExample, setActiveExample] = useState<number | null>(1)
+
+    console.log("provider render")
     return (
-        <>
-            <StyledApp>
-                <StandardButtons>
-                    <Space>
-                        <Switch defaultChecked={true} onChange={setShowRobot} />
-                        <div>Show robot</div>
-                    </Space>
-                </StandardButtons>
-                <div className="body">
-                    <nav>
-                        <ConnectTile />
-                        <JogTile />
-                        <CartesianDroTile />
-                        <FeedRateTile />
-                    </nav>
-                    <section>
-                        <ThreeDimensionalSceneTile
-                            model={showRobot && TX40_MODEL}
-                            getExtent={maxExtent}
-                            noLighting={false}
-                            noControls={false}
-                            noViewCube={false}
-                            noCamera={false}
-                        >
-                            {/*<ExampleLighting/>*/}
-                            {/*                  <ExampleSphere/>*/}
-                            {/*<ExampleBox/>*/}
-                            {/*<Plane*/}
-                            {/*    receiveShadow*/}
-                            {/*    // rotation={[-Math.PI / 2, 0, 0]}*/}
-                            {/*    position={[0, -1, 0]}*/}
-                            {/*    args={[1000, 1000]}*/}
-
-                            {/*>*/}
-                            {/*    <meshStandardMaterial attach="material" color={"yellow"} />*/}
-                            {/*</Plane>*/}
-
-                            {/*<Scene/>*/}
-                        </ThreeDimensionalSceneTile>
-                        <GCodeTile />
-                    </section>
-                    <nav>
-                        <DigitalOutputsTile />
-                        <DigitalInputsTile />
-                        <AnalogOutputsTile />
-                        <AnalogInputsTile />
-                        <IntegerOutputsTile />
-                        <IntegerInputsTile />
-                        <JointDroTile />
-                        <Tile title="three.js tutorial">
-                            <p>This is the three.js tutorial</p>
-                            <p>
-                                You need to connect to an instance of GBC before using this demo.
-                                Click the preferences button above to set the GBC websocket
-                                endpoint.
-                            </p>
-                        </Tile>
-                    </nav>
-                </div>
-            </StyledApp>
-        </>
+        <ActiveExampleContext.Provider value={{activeExample, setActiveExample}}>{children}</ActiveExampleContext.Provider>
     )
+
 }
 
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
         <GlowbuzzerApp>
-            <App />
+            <ActiveExampleProvider>
+                <DockLayoutProvider
+                    appName={"three-tutorial"}
+                    tiles={[
+                        GlowbuzzerTileDefinitions.CONNECT,
+                        GlowbuzzerTileDefinitions.CARTESIAN_JOG,
+                        GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                        GlowbuzzerTileDefinitions.JOINT_JOG,
+                        GlowbuzzerTileDefinitions.JOINT_DRO,
+                        GlowbuzzerTileDefinitions.DIGITAL_OUTPUTS,
+                        GlowbuzzerTileDefinitions.INTEGER_OUTPUTS,
+                        GlowbuzzerTileDefinitions.POINTS,
+                        GlowbuzzerTileDefinitions.FRAMES,
+                        GlowbuzzerTileDefinitions.CONFIG_EDIT,
+                        ChooseExampleTileDefinition,
+                        GlowbuzzerTileDefinitions.TOOLS,
+                        CustomSceneTile,
+                    ]}
+                >
+                    <ExampleAppMenu title="three-tutorial"/>
+                    <DockLayout/>
+                </DockLayoutProvider>
+            </ActiveExampleProvider>
         </GlowbuzzerApp>
     </StrictMode>
 )
