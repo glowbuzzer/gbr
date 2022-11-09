@@ -5,11 +5,19 @@
 import * as React from "react"
 import simplify from "./simplify"
 import { DynamicLine } from "./DynamicLine"
-import { ToolPathElement } from "@glowbuzzer/store"
+import { ToolPathElement, useFrames } from "@glowbuzzer/store"
+import { Vector3, Quaternion } from "three"
 
 /** @ignore - internal to the tool path tile */
-export const ToolPath = ({ path }: { path: ToolPathElement[] }) => {
-    const pathPoints = simplify(path, 0.01).flatMap(p => [p.x, p.y, p.z])
+export const ToolPath = ({ frameIndex, path }: { frameIndex: number; path: ToolPathElement[] }) => {
+    const { convertToFrame } = useFrames()
+    const pathPoints = simplify(path, 0.01)
+        .map(
+            p =>
+                convertToFrame(new Vector3(p.x, p.y, p.z), new Quaternion(), frameIndex, "world")
+                    .translation
+        )
+        .flatMap(p => [p.x, p.y, p.z])
 
     return (
         <DynamicLine

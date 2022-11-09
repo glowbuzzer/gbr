@@ -4,7 +4,7 @@
 
 import * as React from "react"
 import { useMemo, useRef, useState, useContext } from "react"
-import { ReactReduxContext  } from "react-redux"
+import { ReactReduxContext } from "react-redux"
 import {
     useConfig,
     useFrames,
@@ -137,7 +137,6 @@ export const ThreeDimensionalSceneTile = ({
 
     const ContextBridge = useContextBridge(ReactReduxContext)
 
-
     const parameters = Object.values(config.kinematicsConfiguration)[0]
     const { extentsX, extentsY, extentsZ } = parameters
     const extent = useMemo(() => {
@@ -164,57 +163,65 @@ export const ThreeDimensionalSceneTile = ({
         <>
             <Canvas shadows>
                 <ContextBridge>
-                {!noCamera && (
-                    <PerspectiveCamera
-                        makeDefault
-                        position={[0, 0, 3 * extent]}
-                        far={10000}
-                        near={1}
-                        up={[0, 0, 1]}
-                    />
-                )}
-                {!noControls && <OrbitControls enableDamping={false} makeDefault />}
-                {!noViewCube && (
-                    <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
-                        <GizmoViewcube
-                            {...{
-                                faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
-                            }}
+                    {!noCamera && (
+                        <PerspectiveCamera
+                            makeDefault
+                            position={[0, 0, 3 * extent]}
+                            far={10000}
+                            near={1}
+                            up={[0, 0, 1]}
                         />
-                    </GizmoHelper>
-                )}
-                {!noLighting && (
-                    <>
-                        <ThreeDimensionalSceneLighting distance={extent * 2} />
-                        <Plane receiveShadow position={[0, -1, 0]} args={[2 * extent, 2 * extent]}>
-                            <shadowMaterial attach="material" opacity={0.1} />
-                        </Plane>
-                    </>
-                )}
-                {!noGridHelper && (
-                    <>
-                        <gridHelper
-                            args={[2 * extent, 20, undefined, 0xd0d0d0]}
-                            rotation={new Euler(Math.PI / 2)}
-                        />
+                    )}
+                    {!noControls && <OrbitControls enableDamping={false} makeDefault />}
+                    {!noViewCube && (
+                        <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+                            <GizmoViewcube
+                                {...{
+                                    faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
+                                }}
+                            />
+                        </GizmoHelper>
+                    )}
+                    {!noLighting && (
+                        <>
+                            <ThreeDimensionalSceneLighting distance={extent * 2} />
+                            <Plane
+                                receiveShadow
+                                position={[0, -1, 0]}
+                                args={[2 * extent, 2 * extent]}
+                            >
+                                <shadowMaterial attach="material" opacity={0.1} />
+                            </Plane>
+                        </>
+                    )}
+                    {!noGridHelper && (
+                        <>
+                            <gridHelper
+                                args={[2 * extent, 20, undefined, 0xd0d0d0]}
+                                rotation={new Euler(Math.PI / 2)}
+                            />
 
-                        <group position={new Vector3((-extent * 11) / 10, -extent / 5, 0)}>
-                            <TriadHelper size={extent / 4} />
-                        </group>
-                    </>
-                )}
-                {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
-                {hideTrace ? null : <ToolPath path={path} />}
-                {disabled || hidePreview ? null : (
-                    <PreviewPath preview={segments} scale={extent} highlightLine={highlightLine} />
-                )}
-                {model ? (
-                    <TcpRobot model={model} joints={jointPositions} toolConfig={toolConfig} />
-                ) : (
-                    <TcpFrustum scale={extent} position={world_translation} />
-                )}
-                {/* Render any react-three-fiber nodes supplied */}
-                {children}
+                            <group position={new Vector3((-extent * 11) / 10, -extent / 5, 0)}>
+                                <TriadHelper size={extent / 4} />
+                            </group>
+                        </>
+                    )}
+                    {hidePreview ? null : <WorkspaceDimensions extent={extent} />}
+                    {hideTrace ? null : <ToolPath frameIndex={frameIndex} path={path} />}
+                    {disabled || hidePreview ? null : (
+                        <PreviewPath
+                            preview={segments}
+                            scale={extent}
+                            highlightLine={highlightLine}
+                        />
+                    )}
+                    {model ? (
+                        <TcpRobot model={model} joints={jointPositions} toolConfig={toolConfig} />
+                    ) : (
+                        <TcpFrustum scale={extent} position={world_translation} />
+                    )}
+                    {/* Render any react-three-fiber nodes supplied */}
+                    {children}
                 </ContextBridge>
             </Canvas>
             <DockToolbar floating>
