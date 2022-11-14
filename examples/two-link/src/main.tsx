@@ -1,7 +1,7 @@
 import * as React from "react"
-import { StrictMode } from "react"
+import { StrictMode, useEffect, useState } from "react"
 import { createRoot } from "react-dom/client"
-import * as THREE from "three"
+import { Group, Object3D, Vector3 } from "three"
 
 import {
     DockLayout,
@@ -9,7 +9,8 @@ import {
     DockTileDefinitionBuilder,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
-    RobotModel,
+    initializeStepLoader,
+    loadStepFile,
     ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
@@ -18,16 +19,10 @@ import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import { useKinematics } from "@glowbuzzer/store"
+import { Frustum } from "../../../libs/controls/src/scene/Frustum"
 
-const TWOLINK_MODEL: RobotModel = {
-    name: "2link",
-    config: [
-        { alpha: 0, link_length: 0.15, skip_link: true },
-        { alpha: 0, teta: 0, link_length: 0.15, limits: [-180, 180] }
-    ],
-    offset: new THREE.Vector3(0, 0, 0),
-    scale: 1000
-}
+initializeStepLoader()
 
 const AppIntroTileDefinition = DockTileDefinitionBuilder()
     .id("app-intro")
@@ -44,8 +39,46 @@ const AppIntroTileDefinition = DockTileDefinitionBuilder()
     ))
     .build()
 
+const TwoLinkArm = ({ children = null }) => {
+    const { jointPositions } = useKinematics(0)
+    const [links, setLinks] = useState<Object3D[]>([new Object3D(), new Object3D()])
+    const link1Ref = React.useRef<Group>()
+    const link2Ref = React.useRef<Group>()
+
+    useEffect(() => {
+        Promise.all(
+            ["L0", "L1"].map(linkName => loadStepFile(`/assets/2link/${linkName}.STEP`))
+        ).then(setLinks)
+    }, [])
+
+    useEffect(() => {
+        link1Ref.current.rotation.set(0, 0, jointPositions[0] || 0)
+        link2Ref.current.rotation.set(0, 0, jointPositions[1] || 0)
+    }, [jointPositions])
+
+    const [link1, link2] = links
+
+    return (
+        <group ref={link1Ref}>
+            <primitive object={link1} />
+            <group ref={link2Ref} position={new Vector3(0.15 * 1000, 0, 0)}>
+                <primitive object={link2} />
+                <group position={new Vector3(0.15 * 1000, 0, 0)}>{children}</group>
+            </group>
+        </group>
+    )
+}
+
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
-    .render(() => <ThreeDimensionalSceneTile model={TWOLINK_MODEL} />)
+    .render(() => {
+        return (
+            <ThreeDimensionalSceneTile>
+                <TwoLinkArm>
+                    <Frustum scale={500} />
+                </TwoLinkArm>
+            </ThreeDimensionalSceneTile>
+        )
+    })
     .build()
 
 const root = createRoot(document.getElementById("root"))

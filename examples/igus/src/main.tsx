@@ -8,63 +8,81 @@ import { Euler, Vector3 } from "three"
 import { createRoot } from "react-dom/client"
 import { DemoMoveTile, HIGH_BLOCK_Z } from "./DemoMoveTile"
 import {
+    BasicRobot,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinition,
     DockTileDefinitionBuilder,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
-    RobotModel,
+    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
+
+import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import {
+    useFrame,
+    useJointPositions,
+    useKinematicsConfiguration,
+    useToolIndex
+} from "@glowbuzzer/store"
+import { useGLTF } from "@react-three/drei"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import { TriadHelper } from "../../../libs/controls/src/scene/TriadHelper"
 
 const DEG90 = Math.PI / 2
+const DEG180 = Math.PI
 
-const IGUS_MODEL: RobotModel = {
-    name: "igus",
-    config: [
-        { alpha: -DEG90, limits: [-180, 180] },
-        { alpha: -DEG90, teta: -DEG90, link_length: 0.35, limits: [-70, 110] },
-        { alpha: DEG90, offset: 0.0119 },
-        { alpha: DEG90, link_length: 0.27, limits: [-10, 145], skip_link: true },
-        { alpha: -DEG90, offset: -0.0165 },
-        { alpha: DEG90, link_length: 0.17, limits: [-15, 145], skip_link: true },
-        { teta: DEG90 },
-        { alpha: DEG90, skip_link: true },
-        { teta: -DEG90, limits: [-180, 180], skip_link: true }
-    ],
-    offset: new Vector3(0, 0, 275),
-    scale: 1000
+const IGUS_KIN_CHAIN: RobotKinematicsChainElement[] = [
+    { moveable: true },
+    { rotateX: -DEG90, teta: -DEG90, moveable: true },
+    { rotateX: -DEG90, translateX: 0.35 },
+    { rotateX: DEG90, translateZ: 0.0119, moveable: true },
+    { rotateX: DEG90, translateX: 0.27 },
+    { rotateX: -DEG90, translateZ: -0.0165, moveable: true },
+    { rotateX: -DEG90, rotateY: DEG90, translateX: 0.17 },
+    { teta: -DEG180, moveable: true },
+    {
+        /* tool will be placed here */
+    }
+]
+
+const DEFAULT_POSITION = new Vector3(0, 0, 275)
+
+const IgusRobot = () => {
+    const { frameIndex } = useKinematicsConfiguration(0)
+    const { translation, rotation } = useFrame(frameIndex, false)
+
+    const jointPositions = useJointPositions(0)
+
+    // load the parts of the robot (links)
+    const parts = useGLTF([0, 1, 2, 3, 4, 5].map(j => `/assets/igus/L${j}.glb`)).map(m => m.scene)
+
+    return (
+        <BasicRobot
+            kinematicsChain={IGUS_KIN_CHAIN}
+            parts={parts}
+            jointPositions={jointPositions}
+            translation={translation || DEFAULT_POSITION}
+            rotation={rotation}
+            scale={1000}
+        >
+            <TriadHelper size={200} />
+        </BasicRobot>
+    )
 }
 
-const demoMoveTile: DockTileDefinition = DockTileDefinitionBuilder()
-    .id("demo-move")
-    .name("Demo Move")
-    .render(DemoMoveTile)
-    .placement(0, 1)
-    .build()
-
-const threeDimensionalSceneTile = DockTileDefinitionBuilder(
+const Custom3dSceneTile = DockTileDefinitionBuilder(
     GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE
 )
     .render(() => {
         return (
-            <ThreeDimensionalSceneTile
-                model={IGUS_MODEL}
-                hideTrace
-                hidePreview
-                // tool={
-                //     <mesh>
-                //         <boxGeometry args={[350, 350, 350]} />
-                //         <meshStandardMaterial color={"red"} />
-                //     </mesh>
-                // }
-            >
+            <ThreeDimensionalSceneTile hideTrace hidePreview>
+                <IgusRobot />
+
                 {["red", "green", "blue"].map((colour, index) => (
                     <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
                         <boxGeometry args={[150, 150, 150]} />
@@ -84,11 +102,27 @@ const threeDimensionalSceneTile = DockTileDefinitionBuilder(
     })
     .build()
 
+const demoMoveTile: DockTileDefinition = DockTileDefinitionBuilder()
+    .id("demo-move")
+    .name("Demo Move")
+    .render(() => <DemoMoveTile />)
+    .placement(0, 1)
+    .build()
+
 export function App() {
     return (
         <DockLayoutProvider
             appName={"igus"}
-            tiles={[GlowbuzzerTileDefinitions.CONNECT, demoMoveTile, threeDimensionalSceneTile]}
+            tiles={[
+                GlowbuzzerTileDefinitions.CONNECT,
+                GlowbuzzerTileDefinitions.FEEDRATE,
+                GlowbuzzerTileDefinitions.JOINT_JOG,
+                GlowbuzzerTileDefinitions.JOINT_DRO,
+                GlowbuzzerTileDefinitions.CARTESIAN_JOG,
+                GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                demoMoveTile,
+                Custom3dSceneTile
+            ]}
         >
             <ExampleAppMenu />
             <DockLayout />

@@ -3,17 +3,9 @@
  */
 
 import * as React from "react"
-import { useMemo, useRef, useState, useContext } from "react"
+import { useMemo, useRef, useState } from "react"
 import { ReactReduxContext } from "react-redux"
-import {
-    useConfig,
-    useFrames,
-    useKinematics,
-    usePreview,
-    useToolConfig,
-    useToolIndex,
-    useToolPath
-} from "@glowbuzzer/store"
+import { useConfig, useKinematics, usePreview, useToolPath } from "@glowbuzzer/store"
 import { ToolPath } from "./ToolPath"
 import { Canvas } from "@react-three/fiber"
 import {
@@ -27,9 +19,6 @@ import {
 import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { PreviewPath } from "./PreviewPath"
-import { RobotModel } from "./robots"
-import { TcpRobot } from "./TcpRobot"
-import { TcpFrustum } from "./TcpFrustum"
 import { TriadHelper } from "./TriadHelper"
 import { ThreeDimensionalSceneShowFramesButton } from "./ThreeDimensionalSceneShowFramesButton"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
@@ -38,31 +27,20 @@ import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/
 import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
 import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 
-// const LD = 1000
-//
-// const lighting = [
-//     [0, -LD, LD],
-//     [LD, -LD, LD],
-//     [-LD, LD, LD]
-//     // [LD, LD, -LD / 2]
-// ]
-
 type ThreeDimensionalSceneTileProps = {
-    /** Optional robot model information */
-    model?: RobotModel
     /** If true, trace of tool path will not be shown */
     hideTrace?: boolean
     /** If true, preview of tool path will not be shown */
     hidePreview?: boolean
-    /**Optional, If true no camera will be provided in the canvas*/
+    /** Optional, If true no camera will be provided in the canvas*/
     noCamera?: boolean
-    /**Optional, If true no controls will be provided in the canvas*/
+    /** Optional, If true no controls will be provided in the canvas*/
     noControls?: boolean
-    /**Optional, If true no lighting will be provided in the canvas*/
+    /** Optional, If true no lighting will be provided in the canvas*/
     noLighting?: boolean
-    /**Optional, If true no gridHelper will be provided in the canvas (& axis triad)*/
+    /** Optional, If true no gridHelper will be provided in the canvas (& axis triad)*/
     noGridHelper?: boolean
-    /**Optional, If true no viewCube will be provided in the canvas*/
+    /** Optional, If true no viewCube will be provided in the canvas*/
     noViewCube?: boolean
     /** Function to return the maximum extent of the view */
     getExtent?: (maxExtent: number) => void
@@ -104,7 +82,6 @@ const defaultGetExtentFunc = () => {}
  * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
 export const ThreeDimensionalSceneTile = ({
-    model = undefined,
     noLighting = false,
     noCamera = false,
     noControls = false,
@@ -116,21 +93,11 @@ export const ThreeDimensionalSceneTile = ({
     children = undefined
 }: ThreeDimensionalSceneTileProps) => {
     const { path, reset } = useToolPath(0)
-    const toolIndex = useToolIndex(0)
-    const toolConfig = useToolConfig(toolIndex)
 
     const [hideTrace, setHideTrace] = useState(defaultHideTrace || false)
     const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
 
-    const { jointPositions, translation, rotation, frameIndex } = useKinematics(0)
-    const { convertToFrame } = useFrames()
-
-    const { translation: world_translation } = convertToFrame(
-        translation,
-        rotation,
-        frameIndex,
-        "world"
-    )
+    const { frameIndex } = useKinematics(0)
 
     const { segments, highlightLine, disabled } = usePreview()
     const config = useConfig()
@@ -214,11 +181,6 @@ export const ThreeDimensionalSceneTile = ({
                             scale={extent}
                             highlightLine={highlightLine}
                         />
-                    )}
-                    {model ? (
-                        <TcpRobot model={model} joints={jointPositions} toolConfig={toolConfig} />
-                    ) : (
-                        <TcpFrustum scale={extent} position={world_translation} />
                     )}
                     {/* Render any react-three-fiber nodes supplied */}
                     {children}

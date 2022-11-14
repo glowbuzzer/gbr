@@ -2,19 +2,29 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode } from "react"
+import React, { StrictMode, Suspense } from "react"
+import { createRoot } from "react-dom/client"
 import {
+    BasicRobot,
+    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
-    RobotModel,
+    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
+import {
+    useFrame,
+    useJointPositions,
+    useKinematicsConfiguration,
+    useToolIndex
+} from "@glowbuzzer/store"
+
 import { Vector3 } from "three"
-import { createRoot } from "react-dom/client"
+import { useGLTF } from "@react-three/drei"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 import "antd/dist/antd.css"
@@ -23,31 +33,61 @@ import "flexlayout-react/style/light.css"
 
 const DEG90 = Math.PI / 2
 
-const TX40_MODEL: RobotModel = {
-    name: "tx40",
-    config: [
-        { alpha: -DEG90, limits: [-270, 270] },
-        { alpha: 0, link_length: 0.225, teta: -DEG90, limits: [-270, 270] },
-        { alpha: DEG90, offset: 0.035, teta: DEG90, limits: [-270, 270] },
-        { alpha: -DEG90, offset: 0.225, limits: [-270, 270] },
-        { alpha: DEG90, limits: [-270, 270] },
-        { offset: 0.065, limits: [-270, 270] }
-    ],
-    offset: new Vector3(0, 0, 325),
-    scale: 1000
+const TX40_KIN_CHAIN: RobotKinematicsChainElement[] = [
+    { moveable: true },
+    { rotateX: -DEG90, moveable: true, teta: -DEG90 },
+    { rotateX: 0, translateX: 0.225, teta: DEG90, moveable: true },
+    { rotateX: DEG90, translateZ: 0.035, moveable: true },
+    { rotateX: -DEG90, translateZ: 0.225, moveable: true },
+    { rotateX: DEG90, moveable: true },
+    { translateZ: 0.065 }
+]
+
+const DEFAULT_POSITION = new Vector3(0, 0, 325)
+
+const StaubliRobot = () => {
+    const { frameIndex } = useKinematicsConfiguration(0)
+    const { translation, rotation } = useFrame(frameIndex, false)
+
+    const jointPositions = useJointPositions(0)
+    const toolIndex = useToolIndex(0)
+
+    // load the parts of the robot (links)
+    const parts = useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(
+        m => m.scene
+    )
+
+    return (
+        <BasicRobot
+            kinematicsChain={TX40_KIN_CHAIN}
+            parts={parts}
+            jointPositions={jointPositions}
+            translation={translation || DEFAULT_POSITION}
+            rotation={rotation}
+            scale={1000}
+        >
+            <CylindricalTool toolIndex={toolIndex} />
+        </BasicRobot>
+    )
 }
 
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
-    .render(() => (
-        <ThreeDimensionalSceneTile model={TX40_MODEL}>
-            {["red", "green", "blue"].map((colour, index) => (
-                <mesh position={[500, (index - 1) * 200, 75]}>
-                    <boxGeometry args={[150, 150, 150]} />
-                    <meshStandardMaterial color={colour} />
-                </mesh>
-            ))}
-        </ThreeDimensionalSceneTile>
-    ))
+    .render(() => {
+        return (
+            <ThreeDimensionalSceneTile>
+                <Suspense fallback={null}>
+                    <StaubliRobot />
+                </Suspense>
+
+                {["red", "green", "blue"].map((colour, index) => (
+                    <mesh position={[500, (index - 1) * 200, 75]}>
+                        <boxGeometry args={[150, 150, 150]} />
+                        <meshStandardMaterial color={colour} />
+                    </mesh>
+                ))}
+            </ThreeDimensionalSceneTile>
+        )
+    })
     .build()
 
 const root = createRoot(document.getElementById("root"))

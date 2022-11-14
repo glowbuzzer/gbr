@@ -10,9 +10,9 @@ import {
     forwardRef,
     useLayoutEffect
 } from "react"
-import * as THREE from 'three'
-import {Switch, Space} from "antd"
-import {Physics, useBox, useSphere, usePlane} from "@react-three/cannon"
+import * as THREE from "three"
+import { Switch, Space } from "antd"
+import { Physics, useBox, useSphere, usePlane } from "@react-three/cannon"
 
 import {
     OrbitControls,
@@ -29,86 +29,84 @@ import {
     useTexture,
     useHelper,
     Stage,
-    Plane,
+    Plane
 } from "@react-three/drei"
 
-import {useLoader, useFrame, useThree} from "@react-three/fiber"
-
+import { useLoader, useFrame, useThree } from "@react-three/fiber"
 
 import {
     DockLayout,
-    DockLayoutProvider, DockTileDefinition,
+    DockLayoutProvider,
+    DockTileDefinition,
     DockTileDefinitionBuilder,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitions, GlowbuzzerTileIdentifiers, JogJointsTile,
-    RobotModel,
+    GlowbuzzerTileDefinitions,
+    GlowbuzzerTileIdentifiers,
+    JogJointsTile,
+    BasicRobotConfig,
     ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
-
-import {Vector3} from "three"
-import {createRoot} from "react-dom/client"
-import {ExampleAppMenu} from "../../util/ExampleAppMenu"
+import { Vector3 } from "three"
+import { createRoot } from "react-dom/client"
+import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import {appContext} from "../../convmc/src/app/AppContextType";
+import { appContext } from "../../convmc/src/app/AppContextType"
 
-import {ChooseExample} from "./menuTile"
-import {ExampleSphere} from "./exampleSphere"
-import {ExampleTexture} from "./exampleTexture"
-import {ExampleSpotlightOnObject} from "./exampleSpotlightOnObject"
-import {ExamplePhysics} from "./examplePhysics"
-import {ExampleSprites} from "./exampleSprites"
-import {ExampleIndicators} from "./exampleIndicators"
-import {ExampleShowObjectCoordinates} from "./exampleShowObjectCoordinates"
-import {ExampleMoveObject} from "./exampleMoveObject";
-import {ExampleCollisionDetection} from "./exampleCollisionDetection"
-import {ExampleGripper} from "./exampleGripper"
-import {ExampleSpring} from "./exampleSpring"
-import {ExamplePendulum} from "./examplePendulum"
-import {ExampleUI} from "./ExampleUI";
-import {TriadPoints} from "./triadPoints"
+import { ChooseExample } from "./menuTile"
+import { ExampleSphere } from "./exampleSphere"
+import { ExampleTexture } from "./exampleTexture"
+import { ExampleSpotlightOnObject } from "./exampleSpotlightOnObject"
+import { ExamplePhysics } from "./examplePhysics"
+import { ExampleSprites } from "./exampleSprites"
+import { ExampleIndicators } from "./exampleIndicators"
+import { ExampleShowObjectCoordinates } from "./exampleShowObjectCoordinates"
+import { ExampleMoveObject } from "./exampleMoveObject"
+import { ExampleCollisionDetection } from "./exampleCollisionDetection"
+import { ExampleGripper } from "./exampleGripper"
+import { ExampleSpring } from "./exampleSpring"
+import { ExamplePendulum } from "./examplePendulum"
+import { ExampleUI } from "./ExampleUI"
+import { TriadPoints } from "./triadPoints"
 
-import {ActiveExampleContext} from "./activeExampleContext";
+import { ActiveExampleContext } from "./activeExampleContext"
 
-const ChooseExampleTileDefinition: DockTileDefinition =
-    {
-        id: "chooseExample",
-        name: "Choose Example",
-        defaultPlacement: {
-            column: 2,
-            row: 0,
-        },
-        excludeByDefault: false,
-        config: {
-            enableWithoutConnection: true
-        },
-        render: () => <ChooseExample/>
-    }
-
+const ChooseExampleTileDefinition: DockTileDefinition = {
+    id: "chooseExample",
+    name: "Choose Example",
+    defaultPlacement: {
+        column: 2,
+        row: 0
+    },
+    excludeByDefault: false,
+    config: {
+        enableWithoutConnection: true
+    },
+    render: () => <ChooseExample />
+}
 
 const DEG90 = Math.PI / 2
 
-const TX40_MODEL: RobotModel = {
+const TX40_MODEL: BasicRobotConfig = {
     name: "tx40",
-    config: [
-        {alpha: -DEG90, limits: [-270, 270]},
-        {alpha: 0, link_length: 0.225, teta: -DEG90, limits: [-270, 270]},
-        {alpha: DEG90, offset: 0.035, teta: DEG90, limits: [-270, 270]},
-        {alpha: -DEG90, offset: 0.225, limits: [-270, 270]},
-        {alpha: DEG90, limits: [-270, 270]},
-        {offset: 0.065, limits: [-270, 270]}
+    kinematicsChain: [
+        { rotateX: -DEG90, limits: [-270, 270] },
+        { rotateX: 0, translateX: 0.225, teta: -DEG90, limits: [-270, 270] },
+        { rotateX: DEG90, translateZ: 0.035, teta: DEG90, limits: [-270, 270] },
+        { rotateX: -DEG90, translateZ: 0.225, limits: [-270, 270] },
+        { rotateX: DEG90, limits: [-270, 270] },
+        { translateZ: 0.065, limits: [-270, 270] }
     ],
     offset: new THREE.Vector3(0, 0, 325),
     scale: 1000
 }
 
 const ThreeTutorial = () => {
-
     // const [showRobot, setShowRobot] = useState(true)
-    const maxExtent = (val) => {
+    const maxExtent = val => {
         // console.log(val);
     }
 
@@ -116,7 +114,7 @@ const ThreeTutorial = () => {
     // const orientation = useKinematicsCartesianPosition(0).position.rotation
     // console.log(position)
 
-    const {activeExample, setActiveExample} = useContext(ActiveExampleContext)
+    const { activeExample, setActiveExample } = useContext(ActiveExampleContext)
     console.log("main", activeExample)
 
     // exampleContent = <Html><h1>example1</h1></Html>
@@ -128,89 +126,95 @@ const ThreeTutorial = () => {
         case 1: {
             // exampleContent = <TriadPoints/>
             // exampleContent = <ExampleUI/>
-            exampleContent = <ExampleSphere/>
+            exampleContent = <ExampleSphere />
             break
         }
         case 2: {
-            exampleContent = <ExampleTexture/>
+            exampleContent = <ExampleTexture />
             break
         }
         case 3: {
-            exampleContent = <ExampleSpotlightOnObject/>
+            exampleContent = <ExampleSpotlightOnObject />
             break
         }
         case 4: {
-            exampleContent = <ExamplePhysics/>
+            exampleContent = <ExamplePhysics />
             break
         }
         case 5: {
-            exampleContent = <ExampleSprites i={5} j={6}/>
-             break
+            exampleContent = <ExampleSprites i={5} j={6} />
+            break
         }
         case 6: {
-            exampleContent = <ExampleShowObjectCoordinates/>
+            exampleContent = <ExampleShowObjectCoordinates />
             break
         }
         case 7: {
-            exampleContent = <ExampleMoveObject/>
+            exampleContent = <ExampleMoveObject />
             break
         }
         case 8: {
-            exampleContent = <ExampleCollisionDetection/>
+            exampleContent = <ExampleCollisionDetection />
             break
         }
         case 9: {
-            exampleContent = <TriadPoints/>
+            exampleContent = <TriadPoints />
             break
         }
 
         case 10: {
-            exampleContent = <ExampleUI/>
+            exampleContent = <ExampleUI />
             break
         }
         case 11: {
-            exampleContent = <ExamplePendulum/>
+            exampleContent = <ExamplePendulum />
             break
         }
         case 12: {
-            exampleContent = <ExampleGripper/>
+            exampleContent = <ExampleGripper />
             break
         }
         case 13: {
-            exampleContent = <ExampleIndicators/>
+            exampleContent = <ExampleIndicators />
             break
         }
         case 14: {
-            exampleContent = <ExampleSpring/>
+            exampleContent = <ExampleSpring />
             break
         }
         case 15: {
-            exampleContent = <ExampleUI/>
+            exampleContent = <ExampleUI />
             break
         }
 
         default: {
-            exampleContent = <Html><h1>Error</h1></Html>
+            exampleContent = (
+                <Html>
+                    <h1>Error</h1>
+                </Html>
+            )
             break
         }
     }
 
-    return (<ThreeDimensionalSceneTile model={TX40_MODEL}>{exampleContent}</ThreeDimensionalSceneTile>)
+    return (
+        <ThreeDimensionalSceneTile model={TX40_MODEL}>{exampleContent}</ThreeDimensionalSceneTile>
+    )
 }
 
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
-    .render(() => (<ThreeTutorial/>))
+    .render(() => <ThreeTutorial />)
     .build()
 
-const ActiveExampleProvider = ({children}) => {
-
+const ActiveExampleProvider = ({ children }) => {
     const [activeExample, setActiveExample] = useState<number | null>(1)
 
     console.log("provider render")
     return (
-        <ActiveExampleContext.Provider value={{activeExample, setActiveExample}}>{children}</ActiveExampleContext.Provider>
+        <ActiveExampleContext.Provider value={{ activeExample, setActiveExample }}>
+            {children}
+        </ActiveExampleContext.Provider>
     )
-
 }
 
 const root = createRoot(document.getElementById("root"))
@@ -233,11 +237,11 @@ root.render(
                         GlowbuzzerTileDefinitions.CONFIG_EDIT,
                         ChooseExampleTileDefinition,
                         GlowbuzzerTileDefinitions.TOOLS,
-                        CustomSceneTile,
+                        CustomSceneTile
                     ]}
                 >
-                    <ExampleAppMenu title="three-tutorial"/>
-                    <DockLayout/>
+                    <ExampleAppMenu title="three-tutorial" />
+                    <DockLayout />
                 </DockLayoutProvider>
             </ActiveExampleProvider>
         </GlowbuzzerApp>
