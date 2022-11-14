@@ -128,8 +128,8 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
         })
 
         titleBlock.current.set({
-            fontFamily: "/fonts/Roboto-msdf-a.json",
-            fontTexture: "/fonts/Roboto-msdf-a.png"
+            fontFamily: "/fonts/Roboto-msdf.json",
+            fontTexture: "/fonts/Roboto-msdf.png"
         })
         titleText.current.set({
             fontFamily: "/fonts/Roboto-msdf.json",

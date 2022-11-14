@@ -66,6 +66,7 @@ root.render(
                     GlowbuzzerTileDefinitions.POINTS,
                     GlowbuzzerTileDefinitions.FRAMES,
                     GlowbuzzerTileDefinitions.CONFIG_EDIT,
+                    GlowbuzzerTileDefinitions.FEEDRATE,
                     CustomSceneTile
                 ]}
             >

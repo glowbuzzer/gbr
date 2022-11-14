@@ -69,9 +69,10 @@ import {ExampleGripper} from "./exampleGripper"
 import {ExampleSpring} from "./exampleSpring"
 import {ExamplePendulum} from "./examplePendulum"
 import {ExampleUI} from "./ExampleUI";
-import {TriadPoints} from "./triadPoints"
+import {ExampleTriadPoints} from "./ExampleTriadPoints"
 
 import {ActiveExampleContext} from "./activeExampleContext";
+import {ExampleLaserCutting} from "./exampleLaserCutting";
 
 const ChooseExampleTileDefinition: DockTileDefinition =
     {
@@ -126,8 +127,6 @@ const ThreeTutorial = () => {
 
     switch (activeExample) {
         case 1: {
-            // exampleContent = <TriadPoints/>
-            // exampleContent = <ExampleUI/>
             exampleContent = <ExampleSphere/>
             break
         }
@@ -160,7 +159,7 @@ const ThreeTutorial = () => {
             break
         }
         case 9: {
-            exampleContent = <TriadPoints/>
+            exampleContent = <ExampleTriadPoints/>
             break
         }
 
@@ -185,7 +184,7 @@ const ThreeTutorial = () => {
             break
         }
         case 15: {
-            exampleContent = <ExampleUI/>
+            exampleContent = <ExampleLaserCutting/>
             break
         }
 
@@ -194,8 +193,8 @@ const ThreeTutorial = () => {
             break
         }
     }
-
-    return (<ThreeDimensionalSceneTile model={TX40_MODEL}>{exampleContent}</ThreeDimensionalSceneTile>)
+    return (<ThreeDimensionalSceneTile model={TX40_MODEL} noViewCube={true} noCamera={false} noGridHelper={false} noLighting={false}>{exampleContent}</ThreeDimensionalSceneTile>)
+    // return (<ThreeDimensionalSceneTile noViewCube={true} noCamera={false} noGridHelper={true} noLighting={true}>{exampleContent}</ThreeDimensionalSceneTile>)
 }
 
 const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)

@@ -163,43 +163,39 @@ export const ThreeDimensionalSceneTile = ({
         <>
             <Canvas shadows>
                 <ContextBridge>
-                    {!noCamera && (
-                        <PerspectiveCamera
-                            makeDefault
-                            position={[0, 0, 3 * extent]}
-                            far={10000}
-                            near={1}
-                            up={[0, 0, 1]}
+                {!noCamera && (
+                    <PerspectiveCamera
+                        makeDefault
+                        position={[0, 0, 3 * extent]}
+                        far={10000}
+                        near={1}
+                        up={[0, 0, 1]}
+                    />
+                )}
+                {!noControls && <OrbitControls enableDamping={false} makeDefault />}
+                {!noViewCube && (
+                    <GizmoHelper alignment="bottom-right" margin={[80, 80]} renderPriority={0}>
+                        <GizmoViewcube
+                            {...{
+                                faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
+                            }}
                         />
-                    )}
-                    {!noControls && <OrbitControls enableDamping={false} makeDefault />}
-                    {!noViewCube && (
-                        <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
-                            <GizmoViewcube
-                                {...{
-                                    faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
-                                }}
-                            />
-                        </GizmoHelper>
-                    )}
-                    {!noLighting && (
-                        <>
-                            <ThreeDimensionalSceneLighting distance={extent * 2} />
-                            <Plane
-                                receiveShadow
-                                position={[0, -1, 0]}
-                                args={[2 * extent, 2 * extent]}
-                            >
-                                <shadowMaterial attach="material" opacity={0.1} />
-                            </Plane>
-                        </>
-                    )}
-                    {!noGridHelper && (
-                        <>
-                            <gridHelper
-                                args={[2 * extent, 20, undefined, 0xd0d0d0]}
-                                rotation={new Euler(Math.PI / 2)}
-                            />
+                    </GizmoHelper>
+                )}
+                {!noLighting && (
+                    <>
+                        <ThreeDimensionalSceneLighting distance={extent * 2} />
+                        <Plane receiveShadow position={[0, -1, 0]} args={[2 * extent, 2 * extent]}>
+                            <shadowMaterial attach="material" opacity={0.1} />
+                        </Plane>
+                    </>
+                )}
+                {!noGridHelper && (
+                    <>
+                        <gridHelper
+                            args={[2 * extent, 20, undefined, 0xd0d0d0]}
+                            rotation={new Euler(Math.PI / 2)}
+                        />
 
                             <group position={new Vector3((-extent * 11) / 10, -extent / 5, 0)}>
                                 <TriadHelper size={extent / 4} />

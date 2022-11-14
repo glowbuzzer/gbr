@@ -8,10 +8,11 @@ import * as THREE from 'three'
 import {
     Sphere,
     useHelper,
-    Html
+    Html,
+    useDepthBuffer,
+    SpotLight
 } from "@react-three/drei"
-import {useThree} from "@react-three/fiber"
-import {useFrames, useKinematicsCartesianPosition} from "@glowbuzzer/store";
+import {useThree, useFrame, Canvas} from "@react-three/fiber"
 
 
 export const ExampleSpotlightOnObject = () => {
@@ -37,64 +38,35 @@ export const ExampleSpotlightOnObject = () => {
     )
 }
 
+
+
+function MovingSpot({ vec = new THREE.Vector3(), ...props }) {
+    const light = useRef()
+    const viewport = useThree((state) => state.viewport)
+    useFrame((state) => {
+        light.current.target.position.lerp(vec.set((state.mouse.x * viewport.width) / 2, (state.mouse.y * viewport.height) / 2, 0), 0.1)
+        light.current.target.updateMatrixWorld()
+    })
+    return <SpotLight castShadow ref={light}  {...props} />
+}
+
 const TrackingSpotlight = forwardRef<THREE.Mesh, any>((props, ref) => {
 
     const spotRef = useRef(null)
-    const pointRef1 = useRef()
-    // const {scene} = useThree()
-    useHelper(spotRef, THREE.SpotLightHelper, "cyan")
-    useHelper(pointRef1, THREE.PointLightHelper, 100, "magenta")
-
+    // useHelper(spotRef, THREE.SpotLightHelper, "cyan")
 
     useEffect(() => {
-        if (ref) {
+        if (ref && typeof ref != "function") {
             spotRef.current.target = ref.current
             console.log('ref: ', ref)
         }
     }, [ref])
 
+
+    const depthBuffer = useDepthBuffer({ frames: 1 })
+
     return (
-        <>
-            <spotLight
-                ref={spotRef}
-                angle={12 * Math.PI / 180}
-                position={[0, 0, 1000]}
-                color={"red"}
-                castShadow
-            />
-        </>
+            <SpotLight position={[200, 200, 300]} castShadow ref={spotRef} attenuation={800} anglePower={4} radiusTop={20} radiusBottom={200} distance={2000} intensity={20} depthBuffer={depthBuffer} color="#0c8cbf"  />
     )
 })
-
-
-{/*<pointLight*/}
-{/*    position={[0, 0, 200]}*/}
-{/*    intensity={1}*/}
-{/*    castShadow={true}*/}
-{/*    shadow-mapSize-height={1024}*/}
-{/*    shadow-mapSize-width={1024}*/}
-{/*    shadow-radius={20}*/}
-{/*    shadow-bias={-0.0001}*/}
-{/*/>*/}
-
-
-{/*<pointLight*/}
-{/*    ref={pointRef1}*/}
-{/*    position={[300, 0, 0]}*/}
-{/*    intensity={0.5}*/}
-{/*    castShadow*/}
-{/*    shadow-mapSize-height={512}*/}
-{/*    shadow-mapSize-width={512}*/}
-{/*    shadow-radius={10}*/}
-{/*    shadow-bias={-0.0001}*/}
-{/*/>*/}
-{/*<pointLight*/}
-{/*    position={[150, 150, 150]}*/}
-{/*    intensity={0.5}*/}
-{/*    castShadow={true}*/}
-{/*    shadow-mapSize-height={512}*/}
-{/*    shadow-mapSize-width={512}*/}
-{/*    shadow-radius={10}*/}
-{/*    shadow-bias={-0.0001}*/}
-{/*/>*/}
 
