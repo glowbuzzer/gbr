@@ -22,6 +22,8 @@ export const ExampleCollisionDetection = () => {
 
     const [intersects, setIntersets] = useState(false);
 
+
+
     useFrame(() => {
         if (sphereRef && sphereRef.current) {
             sphereRef.current.geometry.computeBoundingBox()

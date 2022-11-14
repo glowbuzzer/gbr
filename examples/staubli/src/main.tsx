@@ -63,6 +63,7 @@ root.render(
                     GlowbuzzerTileDefinitions.JOINT_JOG,
                     GlowbuzzerTileDefinitions.JOINT_DRO,
                     GlowbuzzerTileDefinitions.TOOLS,
+                    GlowbuzzerTileDefinitions.FEEDRATE,
                     CustomSceneTile
                 ]}
             >

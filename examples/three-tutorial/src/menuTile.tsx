@@ -59,7 +59,7 @@ export const ChooseExample = (props) => {
                 </div>
             </div>
             <div className="row">
-                <p>(1) = adding a sphere, (2) = moving box with texture, (3) = spotlight on TCP, (4) = physics, demolish
+                <p>(1) = adding a sphere, (2) = moving box with texture, (3) = spotlight on object, (4) = physics, demolish
                     a wall, (5) = sprites and text</p>
             </div>
             <div className="row">
@@ -129,7 +129,7 @@ export const ChooseExample = (props) => {
                 </div>
             </div>
             <div className="row">
-                <p>(11) = object position from encoder, (12) = modelling a gripper, (13) = digital inputs display, (14) = using springs to create interactive controls, (15) = creating a 3D UI </p>
+                <p>(11) = object position from encoder, (12) = modelling a gripper, (13) = digital inputs display, (14) = using springs to create interactive controls, (15) = laser cutting </p>
             </div>
 
         </StyledDiv>

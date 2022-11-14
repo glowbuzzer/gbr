@@ -16,7 +16,8 @@ import {
     Points,
     PointMaterial,
     Segments,
-    Segment
+    Segment,
+    useTexture
 } from "@react-three/drei"
 import {useFrame, useLoader} from "@react-three/fiber"
 import {useConfig, useKinematicsCartesianPosition} from "@glowbuzzer/store"
@@ -48,7 +49,28 @@ const triadArrowColors = [0xff0000, 0x00ff00, 0x0000ff]
 // }
 
 
-export const TriadPoints = () => {
+
+
+export function PartModel(props) {
+    const { nodes, materials} = useGLTF('/models/part.glb')
+
+const ref=useRef(null)
+
+    console.log("ref.current",ref.current)
+
+    return (
+        <group {...props} dispose={null}>
+            <mesh ref={ref} geometry={nodes.Part1.geometry}>
+                <meshStandardMaterial color="gold" metalness={1}
+                roughness={0.5}  />
+            </mesh>
+        </group>
+    )
+}
+
+
+
+export const ExampleTriadPoints = () => {
 
     const config = useConfig()
 
@@ -185,10 +207,7 @@ export const TriadPoints = () => {
         <>
             <instancedMesh ref={cylinderRef} material={red} geometry={cylGeometry}
                            args={[undefined, undefined, numberOfPoints * 3]}>
-                {/*<cylinderGeometry args={[sphereRadius/10, sphereRadius/10, (triadLength)]}*/}
-                {/*/>*/}
-                {/*<mesh geometry={cylGeometry} material={red}/>*/}
-                {/*<meshBasicMaterial color={"yellow"} vertexColors={true} />*/}
+
             </instancedMesh>
             <instancedMesh ref={pointRef} args={[undefined, undefined, numberOfPoints]}
                            onPointerOver={(e) => setHover(e.instanceId)}
@@ -196,18 +215,19 @@ export const TriadPoints = () => {
                 <sphereGeometry args={[sphereRadius, 64, 64]}/>
                 <meshBasicMaterial color="black" depthWrite={true}/>
             </instancedMesh>
-
+            <PartModel rotation={[Math.PI/2,Math.PI/2,0]} position={[300,200,0]}/>
             {hovered != undefined &&
-                // <Html position={[points[hovered].translation.x,points[hovered].translation.y,points[hovered].translation.z]}>({points[hovered].translation.x},{points[hovered].translation.y},{points[hovered].translation.z})</Html>
+
+
                 <Html
                     position={[points[hovered].translation.x, points[hovered].translation.y, points[hovered].translation.z]}>
                     <Card title={points[hovered].name} style={{width: 300}}>
                         <p>World
                             position:({(Math.round(points[hovered].translation.x * 100) / 100).toFixed(2)},{(Math.round(points[hovered].translation.y * 100) / 100).toFixed(2)},{(Math.round(points[hovered].translation.z * 100) / 100).toFixed(2)})</p>
                         <p>World rotation:({(Math.round((180/Math.PI)*orientEuler[hovered].x * 100) / 100).toFixed(2)},{(Math.round((180/Math.PI)*orientEuler[hovered].y * 100) / 100).toFixed(2)}, {(Math.round((180/Math.PI)*orientEuler[hovered].z * 100) / 100).toFixed(2)})</p>
-                        <p>Frame name: XXXX</p>
-                        <p>Postion in frame: (xxxx, yyy, zzz)</p>
-                        <p>Rotation in frame: (xxx,yyy,zzz,www)</p>
+                        <p>Frame name: Part1</p>
+                        <p>Postion in frame: (0, 10, 40)</p>
+                        <p>Rotation in frame: (0, 0, 0, 1)</p>
                     </Card>
                 </Html>
             }

@@ -88,13 +88,19 @@ export function App() {
     return (
         <DockLayoutProvider
             appName={"igus"}
-            tiles={[GlowbuzzerTileDefinitions.CONNECT, demoMoveTile, threeDimensionalSceneTile]}
+            tiles={[GlowbuzzerTileDefinitions.CONNECT, demoMoveTile, GlowbuzzerTileDefinitions.CARTESIAN_JOG,
+                GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                GlowbuzzerTileDefinitions.JOINT_JOG,
+                GlowbuzzerTileDefinitions.JOINT_DRO, threeDimensionalSceneTile]}
         >
             <ExampleAppMenu />
             <DockLayout />
         </DockLayoutProvider>
     )
 }
+
+
+
 
 const root = createRoot(document.getElementById("root"))
 root.render(

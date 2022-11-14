@@ -175,7 +175,7 @@ export const ThreeDimensionalSceneTile = ({
                 )}
                 {!noControls && <OrbitControls enableDamping={false} makeDefault />}
                 {!noViewCube && (
-                    <GizmoHelper alignment="bottom-right" margin={[80, 80]}>
+                    <GizmoHelper alignment="bottom-right" margin={[80, 80]} renderPriority={0}>
                         <GizmoViewcube
                             {...{
                                 faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]

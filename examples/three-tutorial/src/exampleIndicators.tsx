@@ -68,47 +68,42 @@ export function BezelModel(props) {
 }
 
 
-function Led() {
-    const sphereRef = useRef();
-    const matRef = useRef();
-    const repeatX = 10;
-    const repeatY = 10;
-
-
-    // const base = useLoader(THREE.TextureLoader, "maps/led_emmisive.png")
-    // base.wrapS = THREE.RepeatWrapping;
-    // base.wrapT = THREE.RepeatWrapping;
-    // base.repeat.set(repeatX, repeatY);
+function Led(props) {
 
     const [hovered, onHover] = useState(null)
     const selected = hovered ? [hovered] : undefined
 
-    const ledColor = selected ? "red" : "pink"
+    const ledColor = selected ? props.colorActive : props.colorInactive
 
     const lightRef = useRef()
     const lightRef2 = useRef()
     const lightRef3 = useRef()
 
-    // useFrame(({ clock }) => {
-    //   sphereRef.current.rotation.y += -0.01;
-    //   matRef.current.emissiveIntensity = Math.abs(
-    //     Math.sin(clock.elapsedTime * 0.5)
-    //   );
-    // });
+    const ref=useRef()
 
     return (
         <>
-            <ambientLight intensity={0.5} ref={lightRef} />
-            <GlowBox onHover={onHover} ledColor={ledColor} args={[50, 32, 32, 0, 2*Math.PI, 0, Math.PI/2]} rotation={[Math.PI/2,0,0]} position={[500, 500, 0]} />
-            {/*<mesh ref={sphereRef} position={[500, 500, 250]} onPointerOver={(e) => onHover(ref)}><sphereGeometry args={[50, 36, 36]}/>      <meshStandardMaterial color="red" /></mesh>*/}
-            {/*<EffectComposer autoClear={false}>*/}
-            {/*<SelectiveBloom selection={selected} intensity={4.0} luminanceThreshold={0.01} luminanceSmoothing={0.025} lights={[lightRef]}/>*/}
-            {/*<Bloom intensity={4.0} luminanceThreshold={0.01} luminanceSmoothing={0.025}/>*/}
-            {/*</EffectComposer>*/}
+            <mesh ref={ref}  position={[props.position[0],props.position[1],props.position[2]+12 ]} onPointerOver={(e) => onHover(ref)} onPointerOut={(e) => onHover(null)} rotation={[Math.PI/2,0,0]}>
+                <sphereGeometry args={[30, 32, 32, 0, 2*Math.PI, 0, Math.PI/2]}/>
+                <meshStandardMaterial color={ledColor}/>
+            </mesh>
+
+            {/*<GlowBox onHover={onHover} ledColor={ledColor} args={[30, 32, 32, 0, 2*Math.PI, 0, Math.PI/2]} rotation={[Math.PI/2,0,0]} position={[props.position[0],props.position[1],props.position[2]+12 ]} />*/}
         </>
     )
 }
 
+const Indicator = (props) => {
+
+    console.log(props.position)
+    return(
+        <>
+        <Led colorActive={props.colorActive} colorInactive={props.colorInactive} position={props.position}/>
+    <BezelModel  position={[props.position[0],props.position[1],props.position[2]-100 ]} scale={[10,10,10]}/>
+        </>
+)
+
+}
 
 export const ExampleIndicators = () => {
 
@@ -128,10 +123,13 @@ export const ExampleIndicators = () => {
             }}
                   position={[-1000,1000,0]}>
                 <h1>Example 13 - adding indicators to your canvas - override digital outputs #0 and #1 to see the effect</h1></Html>
-            <Led/>
-            <LedModel position={[500,500,0]} scale={[10,10,10]}/>
-            <BezelModel position={[300,500,0]} scale={[10,10,10]}/>
 
+
+            {/*<LedModel position={[300,500,0]} scale={[10,10,10]}/>*/}
+
+            <Indicator position={[100,500,0]} colorActive={"green"} colorInactive={"lightgreen"}/>
+            <Indicator position={[300,500,0]} colorActive={"red"} colorInactive={"pink"}/>
+            <Indicator position={[500,500,0]} colorActive={"gold"} colorInactive={"lemonchiffon"}/>
         </>
     )
 
