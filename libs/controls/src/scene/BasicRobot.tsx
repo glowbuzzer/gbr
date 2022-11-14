@@ -94,7 +94,8 @@ export const BasicRobot = ({
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
-                e.group.rotation.z = (jointPositions[index] || 0) + (e.config.teta || 0)
+                e.group.rotation.z =
+                    (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
             })
     }, [elements, jointPositions])
 

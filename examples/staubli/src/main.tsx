@@ -35,8 +35,8 @@ const DEG90 = Math.PI / 2
 
 const TX40_KIN_CHAIN: RobotKinematicsChainElement[] = [
     { moveable: true },
-    { rotateX: -DEG90, moveable: true, teta: -DEG90 },
-    { rotateX: 0, translateX: 0.225, teta: DEG90, moveable: true },
+    { rotateX: -DEG90, moveable: true, jointAngleAdjustment: -DEG90 },
+    { rotateX: 0, translateX: 0.225, jointAngleAdjustment: DEG90, moveable: true },
     { rotateX: DEG90, translateZ: 0.035, moveable: true },
     { rotateX: -DEG90, translateZ: 0.225, moveable: true },
     { rotateX: DEG90, moveable: true },

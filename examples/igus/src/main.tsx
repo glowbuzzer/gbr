@@ -38,13 +38,13 @@ const DEG180 = Math.PI
 
 const IGUS_KIN_CHAIN: RobotKinematicsChainElement[] = [
     { moveable: true },
-    { rotateX: -DEG90, teta: -DEG90, moveable: true },
+    { rotateX: -DEG90, jointAngleAdjustment: -DEG90, moveable: true },
     { rotateX: -DEG90, translateX: 0.35 },
     { rotateX: DEG90, translateZ: 0.0119, moveable: true },
     { rotateX: DEG90, translateX: 0.27 },
     { rotateX: -DEG90, translateZ: -0.0165, moveable: true },
     { rotateX: -DEG90, rotateY: DEG90, translateX: 0.17 },
-    { teta: -DEG180, moveable: true },
+    { jointAngleAdjustment: -DEG180, moveable: true },
     {
         /* tool will be placed here */
     }
