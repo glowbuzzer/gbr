@@ -3,19 +3,16 @@
  */
 
 import * as THREE from "three"
+import { Object3D } from "three"
 
-type RobotConfig = {
-    teta?: number
-    offset?: number
-    alpha?: number
-    link_length?: number
-    limits?: number[]
-    skip_link?: boolean
-}[]
-
-export type RobotModel = {
-    name: string
-    config: RobotConfig
-    offset: THREE.Vector3
-    scale: number
+export type RobotKinematicsChainElement = {
+    moveable?: boolean // will be moved by joint position
+    teta?: number // adjustment to make to joint angle to match robot kinematics
+    translateX?: number
+    translateY?: number
+    translateZ?: number
+    rotateX?: number
+    rotateY?: number
+    rotateZ?: number
+    link?: Object3D
 }

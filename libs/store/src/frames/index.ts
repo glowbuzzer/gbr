@@ -10,7 +10,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
-import { FramesConfig } from "../gbc"
+import { FRAME_ABSRELATIVE, FramesConfig } from "../gbc"
 
 const { load, save } = settings("frames")
 
@@ -112,6 +112,30 @@ export const useFrames = () => {
     }
 }
 
+/**
+ * Provides a list of the currently configured frames.
+ */
 export function useFramesList(): FramesConfig[] {
     return useConfig().frames
+}
+
+/**
+ * Provides a frame from the configuration by index.
+ * @param index
+ * @param useDefaults If true, will return a default frame at the origin with no rotation if the given index is out of bounds, otherwise will return undefined.
+ */
+export function useFrame(index: number, useDefaults = true): FramesConfig {
+    const frames = useFramesList()
+
+    return (
+        frames[index] ||
+        (useDefaults
+            ? {
+                  translation: { x: 0, y: 0, z: 0 },
+                  rotation: { x: 0, y: 0, z: 0, w: 1 },
+                  name: "unknown",
+                  absRel: FRAME_ABSRELATIVE.FRAME_ABSOLUTE
+              }
+            : {})
+    )
 }

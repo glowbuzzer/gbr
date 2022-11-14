@@ -13,7 +13,7 @@ export const triadArrowVectors = [
 export const triadArrowColors = [0xff0000, 0x00ff00, 0x0000ff]
 
 /**
- * @ignore - internal to the tool path tile
+ * The TriadHelper component renders a simple triad of colored arrows showing orientation.
  */
 export const TriadHelper = ({ size }) => {
     return (
