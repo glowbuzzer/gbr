@@ -45,6 +45,7 @@ import { FramesTile } from "./frames/FramesTile"
 import { ConfigEditTile } from "./config/ConfigEditTile"
 import { PointsTile } from "./points/PointsTile"
 import { createElement } from "react"
+import { Frustum } from "./scene/Frustum"
 
 export enum GlowbuzzerTileIdentifiers {
     CONNECT = "CONNECT",
@@ -73,6 +74,10 @@ export enum GlowbuzzerTileIdentifiers {
 
 function renderComponent(c) {
     return createElement(c, {}, null)
+}
+
+function renderThreeDimensionalSceneWithFrustum() {
+    return createElement(ThreeDimensionalSceneTile, {}, createElement(Frustum, { scale: 500 }))
 }
 
 export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
@@ -119,7 +124,7 @@ export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
             column: 1,
             row: 0
         },
-        render: () => renderComponent(ThreeDimensionalSceneTile),
+        render: () => renderThreeDimensionalSceneWithFrustum(),
         renderHelp: () => renderComponent(ThreeDimensionalSceneTileHelp),
         config: {
             enableWithoutConnection: true
