@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native"
+import {Button, Text, View} from "react-native"
 import {
     DesiredState,
     determine_machine_state,
@@ -21,7 +21,7 @@ export const SimpleConnectView = () => {
     const connected = connection.connected && connection.statusReceived
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
-    const target_not_acquired = machine.target !== machine.requestedTarget
+    const target_not_acquired = machine.actualTarget !== machine.requestedTarget
     const op_enabled = !(!connected || fault || fault_active || target_not_acquired)
 
     function active_faults(faults: number) {

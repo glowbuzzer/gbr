@@ -73,7 +73,9 @@ for (const project of projects) {
                 // required for gcode editor
                 'ace-builds', 'react-ace',
                 // dseg font css (no code), but not sure we can bundle
-                'dseg'
+                'dseg',
+                // don't bundle the occt-import-js code
+                'occt-import-js'
 
                 ///// following add approx 30k to bundle unminified and can prob be included
                 // 'react-is',
