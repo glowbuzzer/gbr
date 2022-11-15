@@ -1,0 +1,36 @@
+###
+# Does a partial build to check that release build is likely to succeed. Detects issues with bundling and docgen
+###
+
+on:
+    push:
+        branches:
+            - main
+
+env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+    verify:
+        runs-on: ubuntu-22.04
+        steps:
+            -   uses: actions/checkout@v1
+
+            -   uses: pnpm/action-setup@v2.2.2
+                with:
+                    version: 6
+
+            -   uses: actions/setup-node@v3
+                with:
+                    node-version: 16
+                    cache: pnpm
+
+            -   name: Install packages
+                run: pnpm install
+
+            -   name: Package libs
+                run: node build.mjs controls,store 0.0.0
+
+            -   name: Verify react component docs
+                run: node react-docgen-verify.mjs

@@ -6,7 +6,7 @@ import { RobotKinematicsChainElement } from "./robots"
 import * as THREE from "three"
 import { Group } from "three"
 import * as React from "react"
-import { useEffect, useMemo } from "react"
+import { FunctionComponent, useEffect, useMemo } from "react"
 import { Quat, Vector3 } from "@glowbuzzer/store"
 
 type BasicRobotElement = {
@@ -39,7 +39,7 @@ type BasicRobotProps = {
  * custom tool such as a gripper.
  *
  */
-export const BasicRobot = ({
+export const BasicRobot: FunctionComponent = ({
     kinematicsChain,
     parts,
     jointPositions,
@@ -99,14 +99,20 @@ export const BasicRobot = ({
             })
     }, [elements, jointPositions])
 
-    return elements
-        .slice()
-        .reverse()
-        .reduce((child, parent, index) => {
-            return (
-                <primitive key={index} object={parent.group}>
-                    {child}
-                </primitive>
-            )
-        }, <>{children}</>)
+    return (
+        elements
+            .slice()
+            .reverse()
+            .reduce((child, parent, index) => {
+                return (
+                    <primitive key={index} object={parent.group}>
+                        {child}
+                    </primitive>
+                )
+            }, <>{children}</>) || (
+            /**
+             * This is only here to keep react-docgen happy, it will never be rendered
+             */ <></>
+        )
+    )
 }
