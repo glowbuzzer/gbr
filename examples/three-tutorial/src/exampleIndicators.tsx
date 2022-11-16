@@ -31,19 +31,17 @@ function GlowBox({onHover, args, ...props}) {
 }
 
 
-// function Model() {
-//     const gltf = useGLTF("/models/led.glb")
-//     return (<primitive object={gltf.scene} position={[500,500,0]} scale={[10,10,10]} />)
-// }
-
 export function LedModel(props) {
     const material = new THREE.MeshPhysicalMaterial({
     });
 
     const { nodes, materials } = useGLTF('/models/led.glb')
+
+    const ledMesh = nodes.mesh as THREE.Mesh;
+
     return (
         <group {...props} dispose={null}>
-            <mesh geometry={nodes.Mesh.geometry} material={materials.Material}>
+            <mesh geometry={ledMesh.geometry} material={materials.Material}>
                 <meshPhysicalMaterial roughness={0}
                 transmission={1}
                 thickness={0.2}
@@ -55,9 +53,11 @@ export function LedModel(props) {
 
 export function BezelModel(props) {
     const { nodes, materials } = useGLTF('/models/bezel.glb')
+    const bezel = nodes["5mm_led_bezel_v1"] as THREE.Mesh;
+
     return (
         <group {...props} dispose={null}>
-            <mesh geometry={nodes['5mm_led_bezel_v1'].geometry} material={materials.A39A86} >
+            <mesh geometry={bezel.geometry} material={materials.A39A86} >
                 <meshStandardMaterial
                     metalness={1}   // between 0 and 1
                     roughness={0.5} // between 0 and 1

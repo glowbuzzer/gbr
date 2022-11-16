@@ -53,6 +53,7 @@ const triadArrowColors = [0xff0000, 0x00ff00, 0x0000ff]
 
 export function PartModel(props) {
     const { nodes, materials} = useGLTF('/models/part.glb')
+    const Part1 = nodes.Part1 as THREE.Mesh;
 
 const ref=useRef(null)
 
@@ -60,7 +61,7 @@ const ref=useRef(null)
 
     return (
         <group {...props} dispose={null}>
-            <mesh ref={ref} geometry={nodes.Part1.geometry}>
+            <mesh ref={ref} geometry={Part1.geometry}>
                 <meshStandardMaterial color="gold" metalness={1}
                 roughness={0.5}  />
             </mesh>

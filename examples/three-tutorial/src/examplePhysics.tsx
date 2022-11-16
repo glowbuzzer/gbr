@@ -39,11 +39,11 @@ export const ExamplePhysics = () => {
     // console.log("worldPos.translation", worldPos.translation)
 
     return (
-        <Physics gravity={[0, 0, -999.81]}>
+        <Physics gravity={[0, 0, -9.81]}>
             {/*<Debug color="black" scale={1.1}>*/}
             <PhysicsPlane/>
             {/*<BrickWall num={16}/>*/}
-            <Dominos num={16}/>
+            <Dominos/>
             <PhysicsTool newPosition={worldPos.translation} size={[50,64,64]}/>
             {/*</Debug>*/}
             </Physics>
@@ -52,7 +52,7 @@ export const ExamplePhysics = () => {
 }
 
 function PhysicsPlane(props) {
-    const [ref] = usePlane(() => ({...props}))
+    const [ref] = usePlane(() => ({...props}), useRef<THREE.Mesh>(null))
 
     return (
         <mesh ref={ref}>
@@ -121,18 +121,28 @@ function Dominos (){
 
     console.log("colorData", colorData)
 
-    const colorArray = useMemo(() => Float32Array.from(new Array(number).fill().flatMap((_, i) => colorTemp.set(colorData[i].color).toArray())), [])
+    const colorArray = useMemo(() => Float32Array.from(new Array(number).fill(number).flatMap((_, i) => colorTemp.set(colorData[i].color).toArray())), [])
 
 
     const [ref, api] = useBox((index) => ({
-        mass: 1,
+        mass: 10,
         args: [100, 10, 200],
         // linearDamping: 0.56,
         // angularDamping: 0.56,
         // type: "Static"
         // type: "Kinematic"
         ...dominos[index],
-    }))
+    }), useRef<THREE.InstancedMesh>(null),)
+
+
+    // const [ref, api] = useBox(
+    //     (index) => ({
+    //         args: [1],
+    //         mass: 10,
+    //         ...dominos[index],
+    //     }),
+    //     useRef<THREE.Mesh>(null),
+    // )
 
 
     return(
@@ -148,7 +158,7 @@ function Dominos (){
 function BrickWall({num}) {
     const tempColor = new THREE.Color()
     const data = Array.from({ length: num }, () => ({ color: niceColors[17][Math.floor(Math.random() * 5)], scale: 1 }))
-    const colorArray = useMemo(() => Float32Array.from(new Array(num).fill().flatMap((_, i) => tempColor.set(data[i].color).toArray())), [])
+    const colorArray = useMemo(() => Float32Array.from(new Array(num).fill(num).flatMap((_, i) => tempColor.set(data[i].color).toArray())), [])
 
     const positions: {x:number, y:number, z:number}[]=[]
 
@@ -181,7 +191,7 @@ function BrickWall({num}) {
         // type: "Static"
         // type: "Kinematic"
         position: [positions[index].x,positions[index].y, positions[index].z]
-    }))
+    }), useRef<THREE.InstancedMesh>(null),)
 
 
     useEffect(() => {
@@ -207,12 +217,12 @@ function BrickWall({num}) {
     // })
 
     return (
-        <instancedMesh receiveShadow castShadow ref={ref} args={[null, null, num]}>
+        <instancedMesh receiveShadow={true} castShadow={true} ref={ref} args={[null, null, num]}>
             <boxGeometry attach="geometry" args={[100, 100, 100]}>
                 <instancedBufferAttribute attach="attributes-color" args={[colorArray, 3]} />
                 {/*<instancedBufferAttribute needsUpdate={true} attach="attributes-position" args={[positions,3]}/>*/}
             </boxGeometry>
-            <meshStandardMaterial attach="material" toneMapped={false} vertexColors/>
+            <meshStandardMaterial attach="material" toneMapped={false} vertexColors={true}/>
         </instancedMesh>
 
 
@@ -253,7 +263,7 @@ const PhysicsTool = (props) => {
                 <h1>Example 4 - physics engine - use the robot to knock down the dominos</h1></Html>
 
             <Sphere ref={toolRef} args={props.size}>
-            <meshStandardMaterial color="blue" visible={true}/>
+            <meshStandardMaterial color="blue" visible={false}/>
         </Sphere>
             </>
     )

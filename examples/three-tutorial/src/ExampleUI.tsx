@@ -38,14 +38,25 @@ type UiPanelProps = {
 
 
 const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100, visible = true}: UiPanelProps) => {
-    const button1Block = useRef()
-    const button2Block = useRef()
-    const buttonGroupBlock = useRef()
-    const titleBlock = useRef()
-    const overallBlock = useRef()
-    const titleText = useRef()
-    const button1Text = useRef()
-    const button2Text = useRef()
+    // const button1Block = useRef<ThreeMeshUI.Block>(null)
+    // const button2Block = useRef<ThreeMeshUI.Block>(null)
+    // const buttonGroupBlock = useRef<ThreeMeshUI.Block>(null)
+    // const titleBlock = useRef<ThreeMeshUI.Block>(null)
+    // const overallBlock = useRef<ThreeMeshUI.Block>(null)
+    // const titleText = useRef<ThreeMeshUI.Text>(null)
+    // const button1Text = useRef<ThreeMeshUI.Text>(null)
+    // const button2Text = useRef<ThreeMeshUI.Text>(null)
+
+
+    const button1Block = useRef(null)
+    const button2Block = useRef(null)
+    const buttonGroupBlock = useRef(null)
+    const titleBlock = useRef(null)
+    const overallBlock = useRef(null)
+    const titleText = useRef(null)
+    const button1Text = useRef(null)
+    const button2Text = useRef(null)
+
 
     const buttonOptions = {
         width: 0.5,
@@ -89,65 +100,66 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
 
 
     useEffect(() => {
-        button1Block.current.setupState({
-            state: 'selected',
-            attributes: selectedAttributes,
-            onSet: () => {
-                console.log("click1")
-            }
-        })
+            button1Block.current.setupState({
+                state: 'selected',
+                attributes: selectedAttributes,
+                onSet: () => {
+                    console.log("click1")
+                }
+            })
 
-        button1Block.current.setupState(hoveredStateAttributes)
-        button1Block.current.setupState(idleStateAttributes)
+            button1Block.current.setupState(hoveredStateAttributes)
+            button1Block.current.setupState(idleStateAttributes)
 
-        button2Block.current.setupState({
-            state: 'selected',
-            attributes: selectedAttributes,
-            onSet: () => {
-                console.log("click2")
-            }
-        })
+            button2Block.current.setupState({
+                state: 'selected',
+                attributes: selectedAttributes,
+                onSet: () => {
+                    console.log("click2")
+                }
+            })
 
-        button2Block.current.setupState(hoveredStateAttributes);
-        button2Block.current.setupState(idleStateAttributes);
+            button2Block.current.setupState(hoveredStateAttributes);
+            button2Block.current.setupState(idleStateAttributes);
 
-        button1Block.current.setState('idle')
-        button2Block.current.setState('idle')
+            button1Block.current.setState('idle')
+            button2Block.current.setState('idle')
 
-        overallBlock.current.set({
-        fontFamily: '/fonts/Roboto-msdf.json',
-        fontTexture: '/fonts/Roboto-msdf.png'
-    })
-        buttonGroupBlock.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
-        button1Text.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
+            overallBlock.current.set({
+                fontFamily: '/fonts/Roboto-msdf.json',
+                fontTexture: '/fonts/Roboto-msdf.png'
+            })
+            buttonGroupBlock.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
+            button1Text.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
 
-        titleBlock.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
-        titleText.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
+            titleBlock.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
+            titleText.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
 
-        button1Block.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
-        button2Text.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
-        button2Block.current.set({
-            fontFamily: "/fonts/Roboto-msdf.json",
-            fontTexture: "/fonts/Roboto-msdf.png"
-        })
+            button1Block.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
+            button2Text.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
+            button2Block.current.set({
+                fontFamily: "/fonts/Roboto-msdf.json",
+                fontTexture: "/fonts/Roboto-msdf.png"
+            })
+
     })
 
 
@@ -159,6 +171,9 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
     })
 
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
             <block ref={overallBlock} args={[{
                 fontSize: 0.07,
@@ -193,6 +208,8 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
                         }}
                         args={[buttonOptions]}
                     >
+                        {/* prettier-ignore */
+                            /* @ts-ignore  */}
                         <text ref={button2Text} content={'Digital Output 2'} args={[{fontSize: 0.06}]}/>
                     </block>
                     <block
@@ -205,6 +222,8 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
                         }}
                         args={[buttonOptions]}
                     >
+                        {/* prettier-ignore */
+                            /* @ts-ignore  */}
                         <text ref={button1Text} content={'Digital Output 1'} args={[{fontSize: 0.06}]}/>
                     </block>
                 </block>
@@ -219,8 +238,9 @@ const UiPanel = ({position = [200, 200, 200], rotation = [0, 0, 0], scale = 100,
                     backgroundOpacity:0,
                     fontColor: new THREE.Color("black"),
                 }]}>
-                    <text ref={titleText}
-                        content={'Use the buttons to set digital outputs. Open the Digital Outputs Tile to see the results'}
+                    {/* prettier-ignore */
+                        /* @ts-ignore  */}
+                    <text ref={titleText} content={'Use the buttons to set digital outputs. Open the Digital Outputs Tile to see the results'}
                         args={[{fontSize: 0.06}]}/>
                 </block>
             </block>

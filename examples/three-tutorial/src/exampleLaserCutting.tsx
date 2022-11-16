@@ -2,6 +2,7 @@ import * as React from "react"
 import {
     useRef,
     forwardRef,
+    useImperativeHandle,
     useEffect,
     useMemo,
     useState
@@ -32,7 +33,10 @@ import {EffectComposer, GodRays} from "@react-three/postprocessing"
 import {BlendFunction, Resizer, KernelSize} from "postprocessing";
 
 
-const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, forwardRef) {
+const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
+
+    const innerRef = useRef(null)
+    useImperativeHandle(ref, () => innerRef.current)
 
     const spriteGeometry = new THREE.BufferGeometry()
     const sprite = new THREE.TextureLoader().load("/png/star.png");
@@ -75,12 +79,12 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, forwardRef) {
     )
 
     useFrame(({clock}) => {
-        if (props.newRef != null && typeof props.newRef !== 'function') {
+        if (innerRef.current) {
 
             var prog = Math.round(clock.getElapsedTime() * 200) % totalPointsCount
 
-            props.newRef.position.x = vertices[prog].x
-            props.newRef.position.y = vertices[prog].y
+            innerRef.current.position.x = vertices[prog].x
+            innerRef.current.position.y = vertices[prog].y
         }
 
         spriteGeometry.setDrawRange(0, prog)
@@ -106,7 +110,7 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, forwardRef) {
 
             {/*<Line ref={myline} points={vertices.slice(0,progress+1)} color="red" />*/}
 
-            <Sphere ref={forwardRef} position={[0, 0, 3]} args={[1.5, 64, 64]}>
+            <Sphere ref={innerRef} position={[0, 0, 3]} args={[1.5, 64, 64]}>
                 <meshBasicMaterial color={"red"}/>
             </Sphere>
         </>
@@ -114,16 +118,17 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, forwardRef) {
 });
 
 function LaserEffect() {
-    const [laserRef, setLaserRef] = useState(null)
+    // const [laserRef, setLaserRef] = useState(null)
+    const laserRef = useRef<THREE.Mesh>(null)
 
     return (
         <>
-            <Laser ref={setLaserRef} newRef={laserRef} position={[200,200,0]}/>
-            {laserRef != null && (
+            <Laser ref={laserRef} position={[200,200,0]}/>
+            {laserRef.current != null && (
                 <>
                     <EffectComposer multisampling={0}>
                         <GodRays
-                            sun={laserRef}
+                            sun={laserRef.current}
                             blendFunction={BlendFunction.SCREEN}
                             samples={60} // The number of samples per pixel.
                             density={1.97}// The density of the light rays.

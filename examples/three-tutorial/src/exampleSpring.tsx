@@ -53,8 +53,25 @@ const Boxy = (props) => {
     );
 }
 
+function SwitchModel(props) {
+    const { nodes, materials } = useGLTF('/switch.glb')
+    const switchCube = nodes.Cube as THREE.Mesh
+    const switchSphere = nodes.Sphere as THREE.Mesh
+
+    return (
+        <group {...props} dispose={null}>
+            <mesh geometry={switchCube.geometry} material={materials.track} />
+            <mesh geometry={switchSphere.geometry} material={materials.sphere} position={[0, 0.85, -1.41]} />
+        </group>
+    )
+}
+
+
 function Switch({ x, set }) {
     const { nodes, materials } = useGLTF("/models/switch.glb")
+
+    const switchCube = nodes.Cube as THREE.Mesh;
+
     const texture = useTexture("/textures/cross.jpg")
     // Hover state
     const [hovered, setHover] = useState(false)
@@ -72,7 +89,7 @@ function Switch({ x, set }) {
 
     return (
         <group scale={[100, 100, 100]} rotation={[Math.PI/2,0,0]} position={[0,700,0]} dispose={null}>
-            <a.mesh receiveShadow castShadow material={materials.track} geometry={nodes.Cube.geometry} material-color={color} material-roughness={0.5} material-metalness={0.8} />
+            <a.mesh receiveShadow castShadow material={materials.track} geometry={switchCube.geometry} material-color={color} material-roughness={0.5} material-metalness={0.8} />
             <a.group position-y={0.45} position-z={pZ}>
                 <a.mesh receiveShadow castShadow raycast={meshBounds} rotation-x={rX} onClick={onClick} onPointerOver={onPointerOver} onPointerOut={onPointerOut}>
                     {/*<sphereGeometry args={[0.8, 64, 64]} />*/}

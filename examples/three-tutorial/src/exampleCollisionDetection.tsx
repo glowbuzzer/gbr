@@ -63,8 +63,8 @@ export const ExampleCollisionDetection = () => {
             </Sphere>
                 {intersects &&
                     <EffectComposer autoClear={false}>
-                        <Outline selection={sphereRef} visibleEdgeColor={"black"} edgeStrength={50}
-                                 edgeThickness={10}/>
+                        <Outline selection={sphereRef} visibleEdgeColor={0x000} edgeStrength={50}
+                                 />
                     </EffectComposer>
                 }
             </PivotControls>
