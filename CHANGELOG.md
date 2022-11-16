@@ -2,6 +2,75 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/glowbuzzer/gbr/compare/v1.3.0...v1.4.0) (2022-11-16)
+
+
+### Bug Fix
+
+* **#33:** Trace should apply kc frame translation ([9b378c2](https://github.com/glowbuzzer/gbr/commit/9b378c2cf7ec1af6d66bc717cd3fdf511b62aef4))
+* **#39:** Change in rotation using moveToPosition API method in gbr causes translation change (to zero) ([32d90bb](https://github.com/glowbuzzer/gbr/commit/32d90bbfe684ac062e57d74c096b4423c090dd14))
+* **#40:** make triads have consistent look ([56ba5e9](https://github.com/glowbuzzer/gbr/commit/56ba5e94fe2ae307bc55a5f5e8cd6fcd666c4b3b))
+* **#49:** Missing disable limits checkbox ([a7d4354](https://github.com/glowbuzzer/gbr/commit/a7d4354166890d55d370e0c723dd38cb0f869220))
+* **#56:** Improve npmjs.com page for gbr packages - add licence ([330acd4](https://github.com/glowbuzzer/gbr/commit/330acd467ae97c2f19c255a9ff637a8f9b538b36))
+* **#65:** Ensure useToolConfig cannot returned undefined ([b444ceb](https://github.com/glowbuzzer/gbr/commit/b444ceb188ae971f99af099da0a00cc9819356f2))
+* **#66:** Position robot in scene according to frames config ([40d46eb](https://github.com/glowbuzzer/gbr/commit/40d46eb2be054855c11eea247793e1676614e095))
+
+
+### Chore
+
+* add frustum to standard 3d scene tile definition ([ee727f1](https://github.com/glowbuzzer/gbr/commit/ee727f16c5ebadc270da79a075f4a7019efc9e42))
+* add react logo to react-native app ([ba29349](https://github.com/glowbuzzer/gbr/commit/ba293496b5ca8593fb493be783734e115cdcb073))
+* add support for operation error from gbc ([c05a5af](https://github.com/glowbuzzer/gbr/commit/c05a5af9da535a25552d1cf9c3efa42612f3da8a))
+* add tsconfig to avoid errors in cra template in ide ([5e03748](https://github.com/glowbuzzer/gbr/commit/5e037483db07f851470a1edbc2578af8ed3b8625))
+* don't bundle occt-import-js ([0221ac1](https://github.com/glowbuzzer/gbr/commit/0221ac1392a513fa71b2fba78666cac8e9d498cf))
+* don't use @glowbuzzer/store from inside lib ([18f5e2e](https://github.com/glowbuzzer/gbr/commit/18f5e2e345b4e00468d6991fc21aac7903b9c3fe))
+* enforce import of react and fix up existing files ([9359148](https://github.com/glowbuzzer/gbr/commit/9359148c724e9db911ba0fb9438295987482cebe))
+* export Frustum ([c59b1c4](https://github.com/glowbuzzer/gbr/commit/c59b1c4e04619e6a0ba0700a8cb513ca8aa148fe))
+* expose DockLayoutContext and add enableWithoutConnection to builder ([611a305](https://github.com/glowbuzzer/gbr/commit/611a305144b15a69b066244ed6dd1dbb661924d8))
+* fix issue with BasicRobot.tsx ([92d8e8b](https://github.com/glowbuzzer/gbr/commit/92d8e8b7486dde38a323cee92268319cae377935))
+* fix issue with disappearing tiles (hooks problem) ([93d6b0f](https://github.com/glowbuzzer/gbr/commit/93d6b0f012af6b3edbddfab7737e889f4367f4c5))
+* fix tsc errors ([980a166](https://github.com/glowbuzzer/gbr/commit/980a1661336b85661f0bccfc0d52d42adacc3711))
+* fix up examples and stray imports ([b441d4a](https://github.com/glowbuzzer/gbr/commit/b441d4a0728f245c046ad190a8d0a8de8f33b8d7))
+* flexlayout-react add custom component ([b6722a6](https://github.com/glowbuzzer/gbr/commit/b6722a699a556b40aeb8a6f7600b25bcaff12af3))
+* flexlayout-react add dummy frames tile ([546bb2b](https://github.com/glowbuzzer/gbr/commit/546bb2bab0078c54bc2f6619ebbb80c28b4f0dae))
+* flexlayout-react add settings and custom header ([f687fa0](https://github.com/glowbuzzer/gbr/commit/f687fa04d78f68269fdfa7e89cb74354fddc688c))
+* flexlayout-react example ([569f3b4](https://github.com/glowbuzzer/gbr/commit/569f3b425bec3b389f94801e80e5254ef049883a))
+* flexlayout-react example ([e3cb762](https://github.com/glowbuzzer/gbr/commit/e3cb762059fcb07562836766221c556e5998effd))
+* flexlayout-react mini framework ([c4628a1](https://github.com/glowbuzzer/gbr/commit/c4628a178973f28d8b205a160f4842ee57352d21))
+* flexlayout-react rework on various tiles ([73af3d1](https://github.com/glowbuzzer/gbr/commit/73af3d11114930071952eb7614161750fc77dbfc))
+* implement config file upload (gbc[#32](https://github.com/glowbuzzer/gbr/issues/32)) ([2a00df0](https://github.com/glowbuzzer/gbr/commit/2a00df0f0484e653e6dffd1105fb5fc6b9b8c2b9))
+* indirect render functions ([3f2e06b](https://github.com/glowbuzzer/gbr/commit/3f2e06bb8fc7b91708337353ed2bdfd02bde6fef))
+* rc-dock experiment ([afca807](https://github.com/glowbuzzer/gbr/commit/afca8071bf17746365995ecce18d5c94c8d27092))
+* refactor three-tutorial in line with robot rendering changes ([a46c34e](https://github.com/glowbuzzer/gbr/commit/a46c34ea83bca187ad4a5c0cbfa6948594a0793d))
+* refactor two-link example to use flexlayout ([877fb1b](https://github.com/glowbuzzer/gbr/commit/877fb1b06e27c02de815c0f6717ae8bead1e048a))
+* remove logging statement ([340e172](https://github.com/glowbuzzer/gbr/commit/340e17253cde2aa20de66bee23bdc8903669f8c8))
+* rename GlowbuzzerDockPlacement ([ce8baa5](https://github.com/glowbuzzer/gbr/commit/ce8baa509438487028d69942a747c487eeacdce3))
+* rename teta to jointAngleAdjustment ([923332d](https://github.com/glowbuzzer/gbr/commit/923332de301669b197a056edffaa6947c37e475e))
+* rename toolpath dir to scene ([f41d6af](https://github.com/glowbuzzer/gbr/commit/f41d6afe350994d13a34b8c82d3b04f6aa401b32))
+* rename ToolPathTile and fix react-docgen issues ([44aee65](https://github.com/glowbuzzer/gbr/commit/44aee65190a4bb105a09fa5c10dc1d0398f07a23))
+* update dependencies in react-native example ([91782a6](https://github.com/glowbuzzer/gbr/commit/91782a685287a64a9b28b074b1f892e778d62ad0))
+* update doc comments, and further work on dock layout ([1bfa028](https://github.com/glowbuzzer/gbr/commit/1bfa0289068c80fbd3ff79fe2972c40e5b618ab2))
+* update TDST doc comments ([199fc11](https://github.com/glowbuzzer/gbr/commit/199fc110c2009868076736e1eb7b07051c81a606))
+
+
+### Feature
+
+* **#30:** handle machine status message giving error reason ([300fcc3](https://github.com/glowbuzzer/gbr/commit/300fcc3f0a39ecf69902f8b053b0e16b517f5c85))
+* **#35:** Add pre-canned views (cube) to toolpath display ([6b2eb96](https://github.com/glowbuzzer/gbr/commit/6b2eb96e2ab94f5b0f0d3a641a5518adbd5b8d1d))
+* **#42:** Add example two-link visualisation ([43aacb1](https://github.com/glowbuzzer/gbr/commit/43aacb14d40a4051e0cedfe43103275453a20f1d))
+* **#43:** Provide API to control what is added to three scene ([43d3e70](https://github.com/glowbuzzer/gbr/commit/43d3e704b4649182ee9e9f6d05e77664fa64d594))
+* **#43:** Provide options for features in the 3d scene ([40d46eb](https://github.com/glowbuzzer/gbr/commit/40d46eb2be054855c11eea247793e1676614e095))
+* **#44:** Add three.js examples (two-link and general) ([4649076](https://github.com/glowbuzzer/gbr/commit/4649076a1927107ab6e296013bb1a1abb77a0caa))
+* **#44:** Add three.js examples (two-link and general) ([7e3849e](https://github.com/glowbuzzer/gbr/commit/7e3849e1d86a72bf154c5d90e7f8532c8f1fd1f2))
+* **#44:** Add three.js examples (two-link and general) ([a8965a4](https://github.com/glowbuzzer/gbr/commit/a8965a4201eaefa0a21df8feb477c81966b436ec))
+* **#44:** Add three.js examples (two-link and general) ([38613b6](https://github.com/glowbuzzer/gbr/commit/38613b6f8cfba87662fbf5b3f2a30c942e0cdd4d))
+* **#44:** Add three.js examples (two-link and general) ([1b65812](https://github.com/glowbuzzer/gbr/commit/1b65812a35ec20b8c5b8152b31c86883cd642c1b))
+* **#45:** flexlayout-react ([2a39e34](https://github.com/glowbuzzer/gbr/commit/2a39e347a9272636903e99586d9178673202c053))
+* **#47:** Don't show kc dropdown if there is only a single kc configured ([d514d0e](https://github.com/glowbuzzer/gbr/commit/d514d0eb55927d52426ea462162f7f2f8f393295))
+* **#52:** For revolute joints allow a "revolutions" as well as degrees and rads unit type ([1a180be](https://github.com/glowbuzzer/gbr/commit/1a180be6c598db7cbc9d0d3d8b9916767d6d37ba))
+* **#55:** Not clear you can't change tools when not in op enabled ([95da958](https://github.com/glowbuzzer/gbr/commit/95da958d0c7e872e543ed7676a28f74291c46d55))
+* **#73:** Refactor robot rendering ([40d46eb](https://github.com/glowbuzzer/gbr/commit/40d46eb2be054855c11eea247793e1676614e095))
+
 ## [1.3.0](https://github.com/glowbuzzer/gbr/compare/v1.2.1...v1.3.0) (2022-09-21)
 
 
