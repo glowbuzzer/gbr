@@ -73,13 +73,13 @@ const ThreeDimensionalSceneLighting = props => {
 const defaultGetExtentFunc = () => {}
 
 /**
- * The tool path tile provides a 3d visualisation of the planned motion (from G-code) and the actual path
- * taken while the machine is running.
+ * The three dimensional scene tile provides a 3d visualisation of the planned motion (if using G-code) and the actual path
+ * taken while the machine is in operation.
  *
- * The `model` property allows you to provide the location of model files for your machine and information
- * about the joints in the model. The joints in the model will be adjusted according to the actual position of the
- * physical joints on the machine. For an example of this in practice, refer to the
- * [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
+ * Any children you supply must be react-three-fibre components you want to add to the threejs scene. By default
+ * a frustum is added to show the current position of the machine. You can customise the default
+ * tile to add your own components, as shown in the example below. For a more complex example including an articulated
+ * robot, see the [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
 export const ThreeDimensionalSceneTile = ({
     noLighting = false,
@@ -130,39 +130,43 @@ export const ThreeDimensionalSceneTile = ({
         <>
             <Canvas shadows>
                 <ContextBridge>
-                {!noCamera && (
-                    <PerspectiveCamera
-                        makeDefault
-                        position={[0, 0, 3 * extent]}
-                        far={10000}
-                        near={1}
-                        up={[0, 0, 1]}
-                    />
-                )}
-                {!noControls && <OrbitControls enableDamping={false} makeDefault />}
-                {!noViewCube && (
-                    <GizmoHelper alignment="bottom-right" margin={[80, 80]} renderPriority={0}>
-                        <GizmoViewcube
-                            {...{
-                                faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
-                            }}
+                    {!noCamera && (
+                        <PerspectiveCamera
+                            makeDefault
+                            position={[0, 0, 3 * extent]}
+                            far={10000}
+                            near={1}
+                            up={[0, 0, 1]}
                         />
-                    </GizmoHelper>
-                )}
-                {!noLighting && (
-                    <>
-                        <ThreeDimensionalSceneLighting distance={extent * 2} />
-                        <Plane receiveShadow position={[0, -1, 0]} args={[2 * extent, 2 * extent]}>
-                            <shadowMaterial attach="material" opacity={0.1} />
-                        </Plane>
-                    </>
-                )}
-                {!noGridHelper && (
-                    <>
-                        <gridHelper
-                            args={[2 * extent, 20, undefined, 0xd0d0d0]}
-                            rotation={new Euler(Math.PI / 2)}
-                        />
+                    )}
+                    {!noControls && <OrbitControls enableDamping={false} makeDefault />}
+                    {!noViewCube && (
+                        <GizmoHelper alignment="bottom-right" margin={[80, 80]} renderPriority={0}>
+                            <GizmoViewcube
+                                {...{
+                                    faces: ["Right", "Left", "Back", "Front", "Top", "Bottom"]
+                                }}
+                            />
+                        </GizmoHelper>
+                    )}
+                    {!noLighting && (
+                        <>
+                            <ThreeDimensionalSceneLighting distance={extent * 2} />
+                            <Plane
+                                receiveShadow
+                                position={[0, -1, 0]}
+                                args={[2 * extent, 2 * extent]}
+                            >
+                                <shadowMaterial attach="material" opacity={0.1} />
+                            </Plane>
+                        </>
+                    )}
+                    {!noGridHelper && (
+                        <>
+                            <gridHelper
+                                args={[2 * extent, 20, undefined, 0xd0d0d0]}
+                                rotation={new Euler(Math.PI / 2)}
+                            />
 
                             <group position={new Vector3((-extent * 11) / 10, -extent / 5, 0)}>
                                 <TriadHelper size={extent / 4} />

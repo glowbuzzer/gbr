@@ -5,5 +5,6 @@
 export * from "./ThreeDimensionalSceneTile"
 export * from "./BasicRobot"
 export * from "./CylindricalTool"
+export * from "./Frustum"
 export * from "./ThreeDimensionalSceneTileHelp"
 export * from "./robots"
