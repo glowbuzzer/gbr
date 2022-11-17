@@ -20,15 +20,15 @@ export function initializeStepLoader() {
         return
     }
 
-    const occtLib = import("occt-import-js")
-    promise = occtLib
-        .then(occt => {
-            return occt.default()
-        })
-        .catch(err => {
-            console.error("Error loading occt-import-js", err)
-            promise = null
-        })
+    try {
+        promise = import("occt-import-js")
+            .then(occt => occt.default())
+            .catch(err => {
+                console.error("Error loading occt-import-js", err)
+            })
+    } catch (e) {
+        console.warn("No occt-import-js found. STEP files will not be supported")
+    }
 }
 
 export function loadStepFile(url: string): Promise<Object3D> {
