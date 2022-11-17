@@ -39,7 +39,7 @@ type BasicRobotProps = {
  * custom tool such as a gripper.
  *
  */
-export const BasicRobot: FunctionComponent = ({
+export const BasicRobot = ({
     kinematicsChain,
     parts,
     jointPositions,
