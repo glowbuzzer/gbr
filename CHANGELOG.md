@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.1](https://github.com/glowbuzzer/gbr/compare/v1.4.0...v1.4.1) (2022-11-18)
+
+
+### Bug Fix
+
+* refactor dynamic import so that catch is more visible to vite ([b1ed81b](https://github.com/glowbuzzer/gbr/commit/b1ed81b6d7a84538be8dd892bc266745e799393c))
+
+
+### Chore
+
+* move step loader from controls to examples ([a776740](https://github.com/glowbuzzer/gbr/commit/a776740788d2510629c40050da1f8496d818d05c))
+* remove FunctionComponent from BasicRobot.tsx ([bbbf8f0](https://github.com/glowbuzzer/gbr/commit/bbbf8f005b5e6d1f3ae33c448f82ecab06e1137f))
+* update create-react-app dependencies.json ([5a20545](https://github.com/glowbuzzer/gbr/commit/5a20545c1d2c99ff907af61a7fd306eabbe1d046))
+
 ## [1.4.0](https://github.com/glowbuzzer/gbr/compare/v1.3.0...v1.4.0) (2022-11-16)
 
 
