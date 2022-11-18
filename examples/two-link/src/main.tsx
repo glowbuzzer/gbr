@@ -7,10 +7,9 @@ import {
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    Frustum,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitions,
-    initializeStepLoader,
-    loadStepFile,
     ThreeDimensionalSceneTile
 } from "@glowbuzzer/controls"
 
@@ -20,7 +19,7 @@ import "flexlayout-react/style/light.css"
 
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import { useKinematics } from "@glowbuzzer/store"
-import { Frustum } from "../../../libs/controls/src/scene/Frustum"
+import { initializeStepLoader, loadStepFile } from "../../util/stepLoader"
 
 initializeStepLoader()
 
