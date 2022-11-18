@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.2](https://github.com/glowbuzzer/gbr/compare/v1.4.1...v1.4.2) (2022-11-18)
+
+
+### Bug Fix
+
+* remove references to flexlayout/src in imports ([d4639d9](https://github.com/glowbuzzer/gbr/commit/d4639d906c164d024c55cdec64640fbc4103956e))
+
 ## [1.4.1](https://github.com/glowbuzzer/gbr/compare/v1.4.0...v1.4.1) (2022-11-18)
 
 
