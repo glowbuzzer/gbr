@@ -11,6 +11,7 @@
     "@types/react-dom": "detect",
     "@types/styled-components": "detect",
     "@types/three": "detect",
+    "antd": "detect",
     "ace-builds": "detect",
     "d3": "detect",
     "dseg": "detect",
@@ -19,6 +20,7 @@
     "react-dom": "detect",
     "react-is": "detect",
     "react-scripts": "5.0.1",
+    "styled-components": "detect",
     "three-stdlib": "detect",
     "typescript": "detect"
 }
