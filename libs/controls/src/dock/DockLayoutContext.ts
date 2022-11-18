@@ -2,8 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Model } from "flexlayout-react"
-import { TabNode } from "flexlayout-react/src/model/TabNode"
+import { Model, TabNode } from "flexlayout-react"
 import * as React from "react"
 import { createContext } from "react"
 import { DockTileDefinition } from "./DockTileDefinition"

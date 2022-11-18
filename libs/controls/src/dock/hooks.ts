@@ -6,10 +6,9 @@ import { useContext, useState } from "react"
 import { DockLayoutContext, DockLayoutContextType } from "./DockLayoutContext"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { add_tile } from "./util"
-import { Actions, IJsonModel, Model } from "flexlayout-react"
+import { Actions, IJsonModel, Model, TabNode } from "flexlayout-react"
 import { DockPerspective } from "./types"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { TabNode } from "flexlayout-react/src/model/TabNode"
 import { DockPerspectiveLayoutProviderProps } from "./DockPerspectiveLayoutProvider"
 
 const DOCK_MODEL_TEMPLATE: IJsonModel = {
