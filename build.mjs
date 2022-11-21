@@ -159,6 +159,7 @@ for (const project of projects) {
         fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
             ...pkg,
             version,
+            license: 'MIT',
             types: "types/index.d.ts",
             exports
         }, null, 2));
