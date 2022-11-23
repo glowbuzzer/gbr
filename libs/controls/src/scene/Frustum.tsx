@@ -17,6 +17,8 @@ type FrustumProps = {
 export const Frustum = ({ scale }: FrustumProps) => {
     const { max } = useKinematicsExtents()
 
+    console.log("MAX", max)
+
     const frustumWidth = 0.05 * (scale || max)
     const frustumHeight = 0.4 * (scale || max)
 

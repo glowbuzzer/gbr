@@ -2,10 +2,10 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
-import { RootState } from "../root"
+import {createSlice, Slice} from "@reduxjs/toolkit"
+import {shallowEqual, useDispatch, useSelector} from "react-redux"
+import {GlowbuzzerConfig, MoveParametersConfig, ToolConfig} from "../gbc"
+import {RootState} from "../root"
 import deepEqual from "fast-deep-equal"
 
 export const DEFAULT_CONFIG: GlowbuzzerConfig = {
@@ -13,7 +13,10 @@ export const DEFAULT_CONFIG: GlowbuzzerConfig = {
     kinematicsConfiguration: [
         {
             linearLimits: [{}],
-            participatingJoints: []
+            participatingJoints: [],
+            extentsX: [-100, 100],
+            extentsY: [-100, 100],
+            extentsZ: [-100, 100]
         }
     ],
     joint: []
@@ -73,8 +76,8 @@ export function useConfig() {
 }
 
 const EMPTY_TOOL: ToolConfig = {
-    translation: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0, w: 1 }
+    translation: {x: 0, y: 0, z: 0},
+    rotation: {x: 0, y: 0, z: 0, w: 1}
 }
 
 /**
@@ -102,7 +105,7 @@ export function useDefaultMoveParameters(): MoveParametersConfig {
     return useSelector((state: RootState) => {
         const v = state.config?.value?.moveParameters?.[0] || {}
         // strip the name from move params as it's not valid in websocket message to gbc
-        const { name, ...props } = v
+        const {name, ...props} = v
         return props
     }, deepEqual)
 }

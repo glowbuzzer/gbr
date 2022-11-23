@@ -427,10 +427,7 @@ type ExtentsType = {
     max: number
 }
 
-export function useKinematicsExtents(
-    kinematicsConfigurationIndex?: number,
-    defaultValue = 1000
-): ExtentsType {
+export function useKinematicsExtents(kinematicsConfigurationIndex?: number): ExtentsType {
     const config = useConfig()
 
     function merge(current: ExtentsType, next: ExtentsType): ExtentsType {
@@ -457,14 +454,14 @@ export function useKinematicsExtents(
                   ],
                   max: Math.max(current.max, safe_next.max)
               }
-            : current || next
+            : next
     }
 
     function apply(current: ExtentsType, kinematicsConfiguration: KinematicsConfigurationConfig) {
         const { extentsX, extentsY, extentsZ } = kinematicsConfiguration
         const max = Math.max.apply(
             Math.max,
-            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v || defaultValue))
+            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
         )
         const next = {
             extentsX,
@@ -472,7 +469,7 @@ export function useKinematicsExtents(
             extentsZ,
             max
         }
-        return current ? merge(current, next) : next
+        return merge(current, next)
     }
 
     if (kinematicsConfigurationIndex === undefined) {
