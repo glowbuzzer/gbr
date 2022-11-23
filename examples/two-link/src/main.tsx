@@ -73,7 +73,7 @@ const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THRE
         return (
             <ThreeDimensionalSceneTile>
                 <TwoLinkArm>
-                    <Frustum scale={500} />
+                    <Frustum />
                 </TwoLinkArm>
             </ThreeDimensionalSceneTile>
         )

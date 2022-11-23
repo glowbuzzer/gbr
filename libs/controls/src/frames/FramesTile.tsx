@@ -2,14 +2,20 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useState } from "react"
-import { Frame, useFrames, useSelectedFrame } from "@glowbuzzer/store"
+import React from "react"
+import { Frame, useFrames, usePrefs, useSelectedFrame } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { StyledTable } from "../util/styles/StyledTable"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import {
+    RotationDisplay,
+    RotationSelectToolbarItem
+} from "../util/components/RotationSelectToolbarItem"
+
+const RotationDropdown = () => {}
 
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
@@ -18,6 +24,7 @@ export const FramesTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
     const { asTree } = useFrames()
     const [selected, setSelected] = useSelectedFrame()
+    const { current, update } = usePrefs()
 
     const columns = [
         {
@@ -96,7 +103,15 @@ export const FramesTile = () => {
 
     return (
         <DockTileWithToolbar
-            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
+            toolbar={
+                <>
+                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
+                    <RotationSelectToolbarItem
+                        value={(current.rotationDisplay || RotationDisplay.NONE) as RotationDisplay}
+                        onChange={value => update("rotationDisplay", value)}
+                    />
+                </>
+            }
         >
             <StyledTable
                 dataSource={treeData}

@@ -89,7 +89,7 @@ type CartesianDroTileProps = {
  */
 export const CartesianDroTile = ({
     kinematicsConfigurationIndex: fixedKinematicsConfigurationIndex = null,
-    clipboardMode
+    clipboardMode = true
 }: CartesianDroTileProps) => {
     const [frameIndex, setFrameIndex] = useState(0)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(

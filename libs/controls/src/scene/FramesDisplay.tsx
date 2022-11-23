@@ -14,8 +14,8 @@ import { TriadHelper } from "./TriadHelper"
 import { Euler, MeshBasicMaterial, Quaternion, Vector3 } from "three"
 import { Html, Sphere } from "@react-three/drei"
 import { ThreeEvent } from "@react-three/fiber"
-import { ReactComponent as TranslationIcon } from "./icons/translation.svg"
-import { ReactComponent as RotationIcon } from "./icons/rotation.svg"
+import { ReactComponent as TranslationIcon } from "../icons/translation.svg"
+import { ReactComponent as RotationIcon } from "../icons/rotation.svg"
 
 import styled from "styled-components"
 

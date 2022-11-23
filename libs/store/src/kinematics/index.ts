@@ -434,21 +434,30 @@ export function useKinematicsExtents(
     const config = useConfig()
 
     function merge(current: ExtentsType, next: ExtentsType): ExtentsType {
-        return {
-            extentsX: [
-                Math.min(current.extentsX[0], next.extentsX[0]),
-                Math.max(current.extentsX[1], next.extentsX[1])
-            ],
-            extentsY: [
-                Math.min(current.extentsY[0], next.extentsY[0]),
-                Math.max(current.extentsY[1], next.extentsY[1])
-            ],
-            extentsZ: [
-                Math.min(current.extentsZ[0], next.extentsZ[0]),
-                Math.max(current.extentsZ[1], next.extentsZ[1])
-            ],
-            max: Math.max(current.max, next.max)
+        const safe_next = {
+            extentsX: next.extentsX || [0, 0],
+            extentsY: next.extentsY || [0, 0],
+            extentsZ: next.extentsZ || [0, 0],
+            max: next.max || 0
         }
+
+        return current
+            ? {
+                  extentsX: [
+                      Math.min(current.extentsX[0], safe_next.extentsX[0]),
+                      Math.max(current.extentsX[1], safe_next.extentsX[1])
+                  ],
+                  extentsY: [
+                      Math.min(current.extentsY[0], safe_next.extentsY[0]),
+                      Math.max(current.extentsY[1], safe_next.extentsY[1])
+                  ],
+                  extentsZ: [
+                      Math.min(current.extentsZ[0], safe_next.extentsZ[0]),
+                      Math.max(current.extentsZ[1], safe_next.extentsZ[1])
+                  ],
+                  max: Math.max(current.max, safe_next.max)
+              }
+            : current || next
     }
 
     function apply(current: ExtentsType, kinematicsConfiguration: KinematicsConfigurationConfig) {

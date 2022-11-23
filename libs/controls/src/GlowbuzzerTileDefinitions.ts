@@ -46,6 +46,7 @@ import { ConfigEditTile } from "./config/ConfigEditTile"
 import { PointsTile } from "./points/PointsTile"
 import { createElement } from "react"
 import { Frustum } from "./scene/Frustum"
+import { TrackPosition } from "./scene/TrackPosition"
 
 export enum GlowbuzzerTileIdentifiers {
     CONNECT = "CONNECT",
@@ -77,7 +78,11 @@ function renderComponent(c) {
 }
 
 function renderThreeDimensionalSceneWithFrustum() {
-    return createElement(ThreeDimensionalSceneTile, {}, createElement(Frustum, { scale: 500 }))
+    return createElement(
+        ThreeDimensionalSceneTile,
+        {},
+        createElement(TrackPosition, { kinematicsConfigurationIndex: 0 }, createElement(Frustum))
+    )
 }
 
 export const GlowbuzzerTileDefinitionList: DockTileDefinition[] = [
