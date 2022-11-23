@@ -2,8 +2,8 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { Frame, useFrames } from "@glowbuzzer/store"
+import React, { useState } from "react"
+import { Frame, useFrames, useSelectedFrame } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
@@ -17,6 +17,7 @@ import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 export const FramesTile = () => {
     const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
     const { asTree } = useFrames()
+    const [selected, setSelected] = useSelectedFrame()
 
     const columns = [
         {
@@ -51,7 +52,7 @@ export const FramesTile = () => {
             const rotation = frame.relative.rotation
 
             return {
-                key: frame.index.toString(),
+                key: frame.index,
                 name: frame.text,
                 x: translation.x.toFixed(precision),
                 y: translation.y.toFixed(precision),
@@ -80,6 +81,19 @@ export const FramesTile = () => {
         }
     }
 
+    function selectRow(record) {
+        try {
+            setSelected(Number(record.key))
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const rowSelection = {
+        selectedRowKeys: [selected],
+        onChange: r => setSelected(r[0])
+    }
+
     return (
         <DockTileWithToolbar
             toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
@@ -93,6 +107,10 @@ export const FramesTile = () => {
                     // expandedRowRender: record => <p style={{ margin: 0 }}>{record.name}</p>,
                     expandIcon: expand_icon
                 }}
+                rowSelection={{ type: "radio", ...rowSelection }}
+                onRow={record => ({
+                    onClick: () => selectRow(record)
+                })}
             />
         </DockTileWithToolbar>
     )

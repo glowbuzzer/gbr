@@ -59,7 +59,7 @@ export function usePrefs(): {
         url: string
     } & {
         /** Application defined preferences */
-        [index: string]: string
+        [index: string]: string | number | boolean
     }
     /** Store preference */
     update(name, value): void

@@ -17,6 +17,7 @@ import {
     CartesianPosition,
     CartesianPositionsConfig,
     KinematicsConfigurationCommand,
+    KinematicsConfigurationConfig,
     POSITIONREFERENCE,
     Quat
 } from "../gbc"
@@ -417,4 +418,57 @@ export function useToolIndex(kinematicsConfigurationIndex: number): number {
     return useSelector(({ kinematics }: RootState) => {
         return kinematics[kinematicsConfigurationIndex]?.toolIndex
     }, shallowEqual)
+}
+
+type ExtentsType = {
+    extentsX: number[]
+    extentsY: number[]
+    extentsZ: number[]
+    max: number
+}
+
+export function useKinematicsExtents(
+    kinematicsConfigurationIndex?: number,
+    defaultValue = 1000
+): ExtentsType {
+    const config = useConfig()
+
+    function merge(current: ExtentsType, next: ExtentsType): ExtentsType {
+        return {
+            extentsX: [
+                Math.min(current.extentsX[0], next.extentsX[0]),
+                Math.max(current.extentsX[1], next.extentsX[1])
+            ],
+            extentsY: [
+                Math.min(current.extentsY[0], next.extentsY[0]),
+                Math.max(current.extentsY[1], next.extentsY[1])
+            ],
+            extentsZ: [
+                Math.min(current.extentsZ[0], next.extentsZ[0]),
+                Math.max(current.extentsZ[1], next.extentsZ[1])
+            ],
+            max: Math.max(current.max, next.max)
+        }
+    }
+
+    function apply(current: ExtentsType, kinematicsConfiguration: KinematicsConfigurationConfig) {
+        const { extentsX, extentsY, extentsZ } = kinematicsConfiguration
+        const max = Math.max.apply(
+            Math.max,
+            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v || defaultValue))
+        )
+        const next = {
+            extentsX,
+            extentsY,
+            extentsZ,
+            max
+        }
+        return current ? merge(current, next) : next
+    }
+
+    if (kinematicsConfigurationIndex === undefined) {
+        return config.kinematicsConfiguration.reduce<ExtentsType>(apply, null)
+    }
+
+    return apply(null, config.kinematicsConfiguration[kinematicsConfigurationIndex])
 }

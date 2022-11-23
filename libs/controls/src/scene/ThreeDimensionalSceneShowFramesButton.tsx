@@ -12,8 +12,7 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileDefinitions"
 export const ThreeDimensionalSceneShowFramesButton = () => {
     const { showTile, tiles } = useDockLayoutContext()
 
-    if (!tiles[GlowbuzzerTileIdentifiers.FRAMES]) {
-        // TODO: this leaves a gap in the toolbar
+    if (!tiles.some(t => t.id === GlowbuzzerTileIdentifiers.FRAMES)) {
         return null
     }
 

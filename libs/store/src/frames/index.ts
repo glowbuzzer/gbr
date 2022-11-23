@@ -14,11 +14,18 @@ import { FRAME_ABSRELATIVE, FramesConfig } from "../gbc"
 
 const { load, save } = settings("frames")
 
-export const framesSlice: Slice<{ activeFrame: number; overrides: number[][] }> = createSlice({
+type FramesSliceType = {
+    activeFrame: number
+    selectedFrame: number
+    overrides: number[][]
+}
+
+export const framesSlice: Slice<FramesSliceType> = createSlice({
     name: "frames",
     initialState: {
         overrides: [] as number[][],
         activeFrame: 0,
+        selectedFrame: null,
         ...load()
     },
     reducers: {
@@ -27,6 +34,9 @@ export const framesSlice: Slice<{ activeFrame: number; overrides: number[][] }> 
         },
         setActiveFrame(state, action) {
             return save({ ...state, activeFrame: action.payload })
+        },
+        setSelectedFrame(state, action) {
+            return save({ ...state, selectedFrame: action.payload })
         }
     }
 })
@@ -116,7 +126,14 @@ export const useFrames = () => {
  * Provides a list of the currently configured frames.
  */
 export function useFramesList(): FramesConfig[] {
-    return useConfig().frames
+    const config = useConfig()
+
+    // make sure the frames have sensible defaults for missing properties
+    return config.frames.map(f => ({
+        ...f,
+        translation: { x: 0, y: 0, z: 0, ...f.translation },
+        rotation: { x: 0, y: 0, z: 0, w: 1, ...f.rotation }
+    }))
 }
 
 /**
@@ -138,4 +155,14 @@ export function useFrame(index: number, useDefaults = true): FramesConfig {
               }
             : {})
     )
+}
+
+export function useSelectedFrame(): [number, (index: number) => void] {
+    const dispatch = useDispatch()
+    const selectedFrame = useSelector(
+        (state: RootState) => state.frames.selectedFrame,
+        shallowEqual
+    )
+
+    return [selectedFrame, (index: number) => dispatch(framesSlice.actions.setSelectedFrame(index))]
 }

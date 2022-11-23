@@ -66,22 +66,29 @@ export const toolPathSlice: Slice<ToolPathSliceType> = createSlice({
 /**
  * @ignore - Internal to the ToolPathTile
  */
-export const useToolPath = (kc: number) => {
+export const useToolPath = (kinematicsConfigurationIndex: number) => {
     const frames = useFrames()
     // select the given kc out of all toolpaths
     const toolPath = useSelector(({ toolPath }: RootState) => {
         // TODO: this is very inefficient
         return (
-            toolPath.paths[kc]?.path.map(({ x, y, z, qx, qy, qz, qw }) => {
-                const p = new Vector3(x, y, z)
-                const q = new Quaternion(qx, qy, qz, qw)
-                const { translation } = frames.convertToFrame(p, q, kc, "world")
-                return {
-                    x: translation.x,
-                    y: translation.y,
-                    z: translation.z
+            toolPath.paths[kinematicsConfigurationIndex]?.path.map(
+                ({ x, y, z, qx, qy, qz, qw }) => {
+                    const p = new Vector3(x, y, z)
+                    const q = new Quaternion(qx, qy, qz, qw)
+                    const { translation } = frames.convertToFrame(
+                        p,
+                        q,
+                        kinematicsConfigurationIndex,
+                        "world"
+                    )
+                    return {
+                        x: translation.x,
+                        y: translation.y,
+                        z: translation.z
+                    }
                 }
-            }) || [
+            ) || [
                 {
                     x: 0,
                     y: 0,
@@ -95,7 +102,7 @@ export const useToolPath = (kc: number) => {
     return {
         path: toolPath,
         reset() {
-            dispatch(toolPathSlice.actions.reset(kc))
+            dispatch(toolPathSlice.actions.reset(kinematicsConfigurationIndex))
         }
     }
 }

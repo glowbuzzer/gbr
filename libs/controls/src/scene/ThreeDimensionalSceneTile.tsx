@@ -3,9 +3,15 @@
  */
 
 import * as React from "react"
-import { useMemo, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { ReactReduxContext } from "react-redux"
-import { useConfig, useKinematics, usePreview, useToolPath } from "@glowbuzzer/store"
+import {
+    useKinematics,
+    useKinematicsExtents,
+    usePrefs,
+    usePreview,
+    useToolPath
+} from "@glowbuzzer/store"
 import { ToolPath } from "./ToolPath"
 import { Canvas } from "@react-three/fiber"
 import {
@@ -20,35 +26,36 @@ import { Euler, Vector3 } from "three"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { PreviewPath } from "./PreviewPath"
 import { TriadHelper } from "./TriadHelper"
-import { ThreeDimensionalSceneShowFramesButton } from "./ThreeDimensionalSceneShowFramesButton"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/block.svg"
 import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
 import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
+import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
+import { FramesDisplay } from "./FramesDisplay"
 
 type ThreeDimensionalSceneTileProps = {
+    /** The kinematics configuration to use */
+    kinematicsConfigurationIndex?: number
     /** If true, trace of tool path will not be shown */
     hideTrace?: boolean
     /** If true, preview of tool path will not be shown */
     hidePreview?: boolean
-    /** Optional, If true no camera will be provided in the canvas*/
+    /** Optional, If true no camera will be provided in the canvas */
     noCamera?: boolean
-    /** Optional, If true no controls will be provided in the canvas*/
+    /** Optional, If true no controls will be provided in the canvas */
     noControls?: boolean
-    /** Optional, If true no lighting will be provided in the canvas*/
+    /** Optional, If true no lighting will be provided in the canvas */
     noLighting?: boolean
-    /** Optional, If true no gridHelper will be provided in the canvas (& axis triad)*/
+    /** Optional, If true no gridHelper will be provided in the canvas (& axis triad) */
     noGridHelper?: boolean
-    /** Optional, If true no viewCube will be provided in the canvas*/
+    /** Optional, If true no viewCube will be provided in the canvas */
     noViewCube?: boolean
-    /** Function to return the maximum extent of the view */
-    getExtent?: (maxExtent: number) => void
     /** Optional react-three-fiber children to render */
     children?: React.ReactNode
 }
 
-const ThreeDimensionalSceneLighting = props => {
+const ThreeDimensionalSceneLighting = ({ distance }) => {
     const pointLightRef = useRef()
     // useHelper(pointLightRef, PointLightHelper, 100, "magenta")
 
@@ -56,21 +63,22 @@ const ThreeDimensionalSceneLighting = props => {
         <>
             <ambientLight color={"grey"} />
             <pointLight
-                position={[0, 0, props.distance]}
+                position={[0, 0, distance]}
                 color={"white"}
                 ref={pointLightRef}
                 castShadow={true}
-                distance={props.distance * 2}
+                distance={distance * 2}
                 shadow-mapSize-height={512}
                 shadow-mapSize-width={512}
                 shadow-radius={10}
                 shadow-bias={-0.0001}
             />
+            <Plane receiveShadow position={[0, -1, 0]} args={[distance, distance]}>
+                <shadowMaterial attach="material" opacity={0.1} />
+            </Plane>
         </>
     )
 }
-
-const defaultGetExtentFunc = () => {}
 
 /**
  * The three dimensional scene tile provides a 3d visualisation of the planned motion (if using G-code) and the actual path
@@ -82,39 +90,28 @@ const defaultGetExtentFunc = () => {}
  * robot, see the [Staubli example project](https://github.com/glowbuzzer/gbr/blob/main/examples/staubli/src/main.tsx)
  */
 export const ThreeDimensionalSceneTile = ({
+    kinematicsConfigurationIndex = 0,
     noLighting = false,
     noCamera = false,
     noControls = false,
     noGridHelper = false,
     noViewCube = false,
-    getExtent = defaultGetExtentFunc,
     hideTrace: defaultHideTrace = undefined,
     hidePreview: defaultHidePreview = undefined,
     children = undefined
 }: ThreeDimensionalSceneTileProps) => {
-    const { path, reset } = useToolPath(0)
+    const { path, reset } = useToolPath(kinematicsConfigurationIndex)
+    const { frameIndex } = useKinematics(kinematicsConfigurationIndex)
+    const { max: extent } = useKinematicsExtents(kinematicsConfigurationIndex)
+
+    const { current, update } = usePrefs()
 
     const [hideTrace, setHideTrace] = useState(defaultHideTrace || false)
     const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
 
-    const { frameIndex } = useKinematics(0)
-
     const { segments, highlightLine, disabled } = usePreview()
-    const config = useConfig()
 
     const ContextBridge = useContextBridge(ReactReduxContext)
-
-    const parameters = Object.values(config.kinematicsConfiguration)[0]
-    const { extentsX, extentsY, extentsZ } = parameters
-    const extent = useMemo(() => {
-        // just return the max of the abs of our cartesian limits
-        return (
-            Math.max.apply(
-                Math.max,
-                [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
-            ) || 1000
-        )
-    }, [extentsX, extentsY, extentsZ])
 
     function toggle_preview() {
         setHidePreview(current => !current)
@@ -124,13 +121,11 @@ export const ThreeDimensionalSceneTile = ({
         setHideTrace(current => !current)
     }
 
-    getExtent(extent)
-
     return (
         <>
             <Canvas shadows>
                 <ContextBridge>
-                    {!noCamera && (
+                    {noCamera || (
                         <PerspectiveCamera
                             makeDefault
                             position={[0, 0, 3 * extent]}
@@ -139,8 +134,8 @@ export const ThreeDimensionalSceneTile = ({
                             up={[0, 0, 1]}
                         />
                     )}
-                    {!noControls && <OrbitControls enableDamping={false} makeDefault />}
-                    {!noViewCube && (
+                    {noControls || <OrbitControls enableDamping={false} makeDefault />}
+                    {noViewCube || (
                         <GizmoHelper alignment="bottom-right" margin={[80, 80]} renderPriority={0}>
                             <GizmoViewcube
                                 {...{
@@ -149,19 +144,8 @@ export const ThreeDimensionalSceneTile = ({
                             />
                         </GizmoHelper>
                     )}
-                    {!noLighting && (
-                        <>
-                            <ThreeDimensionalSceneLighting distance={extent * 2} />
-                            <Plane
-                                receiveShadow
-                                position={[0, -1, 0]}
-                                args={[2 * extent, 2 * extent]}
-                            >
-                                <shadowMaterial attach="material" opacity={0.1} />
-                            </Plane>
-                        </>
-                    )}
-                    {!noGridHelper && (
+                    {noLighting || <ThreeDimensionalSceneLighting distance={extent * 2} />}
+                    {noGridHelper || (
                         <>
                             <gridHelper
                                 args={[2 * extent, 20, undefined, 0xd0d0d0]}
@@ -182,13 +166,21 @@ export const ThreeDimensionalSceneTile = ({
                             highlightLine={highlightLine}
                         />
                     )}
+                    {current.showFrames && <FramesDisplay />}
                     {/* Render any react-three-fiber nodes supplied */}
                     {children}
                 </ContextBridge>
             </Canvas>
             <DockToolbar floating>
                 <DockToolbarButtonGroup>
-                    <ThreeDimensionalSceneShowFramesButton />
+                    <GlowbuzzerIcon
+                        name="frames"
+                        Icon={FramesIcon}
+                        button
+                        checked={!!current.showFrames}
+                        title={current.showFrames ? "Hide frames" : "Show frames"}
+                        onClick={() => update("showFrames", !current.showFrames)}
+                    />
                 </DockToolbarButtonGroup>
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon
