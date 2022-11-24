@@ -3,13 +3,7 @@
  */
 
 import React, { useRef, useState } from "react"
-import {
-    Frame,
-    useFrames,
-    useKinematicsExtents,
-    usePrefs,
-    useSelectedFrame
-} from "@glowbuzzer/store"
+import { Frame, useFrames, usePrefs, useSelectedFrame } from "@glowbuzzer/store"
 import { TriadHelper } from "./TriadHelper"
 import { Euler, MeshBasicMaterial, Quaternion, Vector3 } from "three"
 import { Html, Sphere } from "@react-three/drei"
@@ -18,6 +12,7 @@ import { ReactComponent as TranslationIcon } from "../icons/translation.svg"
 import { ReactComponent as RotationIcon } from "../icons/rotation.svg"
 
 import styled from "styled-components"
+import { useScale } from "./ScaleProvider"
 
 const StyledDiv = styled.div`
     margin-top: 10px;
@@ -101,7 +96,7 @@ export const FramesDisplay = () => {
     const { asList: frames } = useFrames()
     const [selectedFrame, setSelectedFrame] = useSelectedFrame()
     const [hoveredFrame, setHoveredFrame] = useState<HoveredFrame>(null)
-    const { max } = useKinematicsExtents()
+    const { extent } = useScale()
     const debounceTimer = useRef(null)
 
     function on_mouse_enter(e: ThreeEvent<PointerEvent>, frameIndex: number) {
@@ -131,7 +126,7 @@ export const FramesDisplay = () => {
                 const { x: qx, y: qy, z: qz, w } = rotation
                 const q = new Quaternion(qx, qy, qz, w)
 
-                const sphere_size = max / 200
+                const sphere_size = extent / 200
                 return (
                     <group key={i}>
                         <group
@@ -141,7 +136,10 @@ export const FramesDisplay = () => {
                             onPointerOut={on_mouse_leave}
                             onClick={() => setSelectedFrame(i)}
                         >
-                            <TriadHelper size={max / 10} opacity={i === selectedFrame ? 1 : 0.3} />
+                            <TriadHelper
+                                size={extent / 10}
+                                opacity={i === selectedFrame ? 1 : 0.3}
+                            />
                             <Sphere
                                 args={[sphere_size, sphere_size, sphere_size]}
                                 position={[0, 0, 0]}

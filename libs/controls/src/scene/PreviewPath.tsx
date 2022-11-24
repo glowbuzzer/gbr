@@ -7,6 +7,7 @@ import { useLayoutEffect, useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import { GCodeSegment } from "@glowbuzzer/store"
 import { Line, Text } from "@react-three/drei"
+import { useScale } from "./ScaleProvider"
 
 function toVector3(vals: { x: number; y: number; z: number }) {
     const { x, y, z } = vals
@@ -150,11 +151,11 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
 type PreviewPathProps = {
     preview: GCodeSegment[]
     highlightLine: number | undefined
-    scale: number
 }
 
 /** @ignore - internal to the tool path tile */
-export const PreviewPath = ({ preview, scale, highlightLine }: PreviewPathProps) => {
+export const PreviewPath = ({ preview, highlightLine }: PreviewPathProps) => {
+    const { extent: scale } = useScale()
     const ref = React.useRef</*BufferGeometry*/ any>(null)
 
     useLayoutEffect(() => {

@@ -5,6 +5,7 @@
 import * as React from "react"
 import { DoubleSide, Euler, Vector3 } from "three"
 import { useKinematicsExtents } from "@glowbuzzer/store"
+import { useScale } from "./ScaleProvider"
 
 type FrustumProps = {
     scale?: number
@@ -15,12 +16,10 @@ type FrustumProps = {
  * at the end of a kinematics chain. The frustum is rendered with a semi-transparent material.
  */
 export const Frustum = ({ scale }: FrustumProps) => {
-    const { max } = useKinematicsExtents()
+    const { extent } = useScale()
 
-    console.log("MAX", max)
-
-    const frustumWidth = 0.05 * (scale || max)
-    const frustumHeight = 0.4 * (scale || max)
+    const frustumWidth = 0.05 * (scale || extent)
+    const frustumHeight = 0.4 * (scale || extent)
 
     const adjusted_position = new Vector3(0, 0, frustumHeight / 2)
 

@@ -5,15 +5,15 @@
 import React from "react"
 import { Text } from "@react-three/drei"
 import { Euler, Vector3 } from "three"
-
-type WorkspaceDimensionProps = {
-    extent: number
-}
+import { useScale } from "./ScaleProvider"
 
 /** @ignore - internal to the tool path tile */
-export const WorkspaceDimensions = ({ extent }: WorkspaceDimensionProps) => {
+export const WorkspaceDimensions = () => {
+    const { extent } = useScale()
+
     const fontSize = extent / 10
     const maxWidth = extent
+
     return (
         <>
             <Text
