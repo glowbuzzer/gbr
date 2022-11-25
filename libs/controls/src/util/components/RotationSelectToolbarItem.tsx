@@ -8,13 +8,16 @@ import styled from "styled-components"
 
 import { ReactComponent as RotationIcon } from "../../icons/rotation.svg"
 import { dockDropdownStyle } from "../../dock/styles"
-import { GlowbuzzerIcon } from "../GlowbuzzerIcon"
 
 const StyledSelect = styled(Select)`
     ${dockDropdownStyle}
-    svg path {
-        stroke: rgba(0, 0, 0, 0.3);
-        stroke-width: 5px;
+    svg {
+        transform: translateY(1 ópx);
+
+        path {
+            stroke: rgba(0, 0, 0, 0.6);
+            stroke-width: 5px;
+        }
     }
 `
 

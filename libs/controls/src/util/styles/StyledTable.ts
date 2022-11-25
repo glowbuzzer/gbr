@@ -14,7 +14,7 @@ export const StyledTable = styled(Table as any /* avoid TS4023 */)`
 
     .toggle-icon {
         margin-right: 8px;
-        font-size: 10px;
+        font-size: 12px;
     }
 
     .hidden {

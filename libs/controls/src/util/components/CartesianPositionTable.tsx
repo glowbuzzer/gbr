@@ -1,0 +1,132 @@
+/*
+ * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ */
+
+import { RotationDisplay, RotationSelectToolbarItem } from "./RotationSelectToolbarItem"
+import { usePref, usePrefs } from "@glowbuzzer/store"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { PrecisionToolbarButtonGroup } from "./PrecisionToolbarButtonGroup"
+import { StyledTable } from "../styles/StyledTable"
+import React from "react"
+import { Table, TreeDataNode } from "antd"
+import { DownOutlined, RightOutlined } from "@ant-design/icons"
+import { ColumnsType, ColumnType } from "antd/es/table"
+
+type CartesianPositionTableProps = {
+    selected: number
+    setSelected: (index: number) => void
+    items: TreeDataNode[]
+}
+
+/**
+ * Displays a table of cartesian positions (eg. points or frames). Allows the user to choose how the rotation component should be displayed,
+ * and the precision of the displayed values.
+ */
+export const CartesianPositionTable = ({
+    items,
+    selected,
+    setSelected
+}: CartesianPositionTableProps) => {
+    const { fromSI } = usePrefs()
+    const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
+    const [rotationDisplay, setRotationDisplay] = usePref("rotationDisplay", RotationDisplay.EULER)
+
+    const columns: ColumnType<any>[] = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+            ellipsis: true,
+            width: "30%"
+        },
+        ...["x", "y", "z"].map(key => ({
+            key: key,
+            title: key.toUpperCase(),
+            ellipsis: true,
+            dataIndex: key,
+            render: (value: number) => fromSI(value, "linear").toFixed(precision),
+            align: "right" as "right"
+        }))
+    ]
+
+    switch (rotationDisplay) {
+        case RotationDisplay.QUATERNION:
+            columns.push(
+                ...["x", "y", "z", "w"].map(key => ({
+                    key: "q" + key,
+                    title: "q" + key.toUpperCase(),
+                    ellipsis: true,
+                    dataIndex: "q" + key,
+                    render: (value: number) => value.toFixed(precision),
+                    align: "right" as "right"
+                }))
+            )
+            break
+        case RotationDisplay.EULER:
+            columns.push(
+                ...["a", "b", "c"].map(key => ({
+                    key: key,
+                    title: key.toUpperCase(),
+                    ellipsis: true,
+                    dataIndex: key,
+                    render: (value: number) => fromSI(value, "angular").toFixed(precision),
+                    align: "right" as "right"
+                }))
+            )
+            break
+    }
+
+    const rowSelection = {
+        selectedRowKeys: [selected],
+        onChange: r => setSelected(r[0])
+    }
+
+    const expand_icon = ({ expanded, onExpand, record }) => {
+        if ((record as any).children) {
+            return expanded ? (
+                <DownOutlined className="toggle-icon" onClick={e => onExpand(record, e)} />
+            ) : (
+                <RightOutlined className="toggle-icon" onClick={e => onExpand(record, e)} />
+            )
+        } else {
+            // placeholder to keep the alignment
+            return <RightOutlined className="toggle-icon hidden" />
+        }
+    }
+
+    function selectRow(record) {
+        try {
+            setSelected(Number(record.key))
+        } catch (e) {
+            console.error(e)
+        }
+    }
+
+    const nested = items.some(node => node.children?.length > 0)
+
+    return (
+        <DockTileWithToolbar
+            toolbar={
+                <>
+                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
+                    <RotationSelectToolbarItem
+                        value={(rotationDisplay || RotationDisplay.NONE) as RotationDisplay}
+                        onChange={setRotationDisplay}
+                    />
+                </>
+            }
+        >
+            <StyledTable
+                dataSource={items}
+                columns={columns}
+                size={"small"}
+                pagination={false}
+                expandable={nested ? { expandIcon: expand_icon } : undefined}
+                rowSelection={{ type: "radio", ...rowSelection }}
+                onRow={record => ({
+                    onClick: () => selectRow(record)
+                })}
+            />
+        </DockTileWithToolbar>
+    )
+}

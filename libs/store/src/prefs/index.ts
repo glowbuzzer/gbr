@@ -92,4 +92,46 @@ export function usePrefs(): {
     )
 }
 
+/**
+ * Returns a function for converting between SI and preferred units, and a function to get the current linear and angular units.
+ */
+export function useUnitConversion(): {
+    /** Convert value in SI to preferred units */
+    fromSI(value: number, type: "linear" | "angular"): number
+    /** Get current units of the given type */
+    getUnits(type: "linear" | "angular"): string
+} {
+    const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
+    const dispatch = useDispatch()
+    return useMemo(
+        () => ({
+            fromSI(value: number, type): number {
+                return value / ConversionFactors[prefs["units_" + type]]
+            },
+            getUnits(type: "linear" | "angular"): string {
+                return prefs["units_" + type]
+            }
+        }),
+        [dispatch, prefs]
+    )
+}
+
+export function usePref<T = any>(name: string, defaultValue?: T): [T, (value: T) => void] {
+    const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
+    const dispatch = useDispatch()
+    return useMemo(() => {
+        const currentValue = prefs[name]
+        return [
+            currentValue === undefined ? defaultValue : currentValue,
+            value =>
+                dispatch(
+                    prefsSlice.actions.set({
+                        name,
+                        value
+                    })
+                )
+        ]
+    }, [dispatch, name, prefs])
+}
+
 export * from "./unit_conversion"

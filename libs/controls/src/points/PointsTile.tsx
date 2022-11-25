@@ -2,16 +2,16 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { useLocalStorage } from "../util/LocalStorageHook"
+import React, { useState } from "react"
 import { PointsConfig, useFramesList, usePoints } from "@glowbuzzer/store"
 import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
-import { DockToolbar } from "../dock/DockToolbar"
 import { StyledTable } from "../util/styles/StyledTable"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import styled from "styled-components"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
+import { Euler, Quaternion } from "three"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
@@ -21,42 +21,21 @@ const StyledDiv = styled.div`
  * The points tile shows a simple table of all configured points.
  */
 export const PointsTile = () => {
-    const [precision, setPrecision] = useLocalStorage("frames.precision", 2)
+    const [selected, setSelected] = useState(0)
+
     const points = usePoints()
     const frames = useFramesList()
-
-    const columns = [
-        {
-            title: "Name",
-            dataIndex: "name",
-            key: "name",
-            ellipsis: true,
-            width: "30%"
-        },
-        ...["x", "y", "z"].map(key => ({
-            key: key,
-            title: key.toUpperCase(),
-            ellipsis: true,
-            dataIndex: key,
-            align: "right" as "right"
-        })),
-        ...["x", "y", "z", "w"].map(key => ({
-            key: "q" + key,
-            title: "q" + key.toUpperCase(),
-            ellipsis: true,
-            dataIndex: "q" + key,
-            align: "right" as "right"
-        }))
-    ]
 
     function transform_point(point: PointsConfig, index: number) {
         {
             const { name, frameIndex, translation, rotation } = point
             const { x, y, z } = translation ?? { x: 0, y: 0, z: 0 }
             const { w, x: qx, y: qy, z: qz } = rotation ?? { x: 0, y: 0, z: 0, w: 1 }
+            const q = new Quaternion(qx, qy, qz, w)
+            const euler = new Euler().setFromQuaternion(q)
 
             return {
-                key: index.toString(),
+                key: index,
                 name: (
                     <div className="point-name">
                         <div className="name">{name}</div>
@@ -73,31 +52,21 @@ export const PointsTile = () => {
                         )}
                     </div>
                 ),
-                x: x.toFixed(precision),
-                y: y.toFixed(precision),
-                z: z.toFixed(precision),
-                qx: qx.toFixed(precision),
-                qy: qy.toFixed(precision),
-                qz: qz.toFixed(precision),
-                qw: w.toFixed(precision)
+                x: x,
+                y: y,
+                z: z,
+                qx: qx,
+                qy: qy,
+                qz: qz,
+                qw: w,
+                a: euler.x,
+                b: euler.y,
+                c: euler.z
             }
         }
     }
 
-    const tableData = points?.map(transform_point)
+    const items = points?.map(transform_point)
 
-    return (
-        <DockTileWithToolbar
-            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
-        >
-            <StyledDiv>
-                <StyledTable
-                    columns={columns}
-                    dataSource={tableData}
-                    pagination={false}
-                    size="small"
-                />
-            </StyledDiv>
-        </DockTileWithToolbar>
-    )
+    return <CartesianPositionTable selected={selected} setSelected={setSelected} items={items} />
 }
