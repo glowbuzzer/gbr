@@ -4,12 +4,9 @@
 
 import React, { useState } from "react"
 import { PointsConfig, useFramesList, usePoints } from "@glowbuzzer/store"
-import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
-import { StyledTable } from "../util/styles/StyledTable"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import styled from "styled-components"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
 import { Euler, Quaternion } from "three"
 
