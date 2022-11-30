@@ -2,11 +2,7 @@
     "name": "@glowbuzzer/controls",
     "version": "0.0.0",
     "dependencies": {
-        "@glowbuzzer/store": "latest",
-        "@ant-design/icons": "auto",
-        "antd": "auto",
-        "styled-components": "auto",
-        "flexlayout-react": "auto"
+        "@glowbuzzer/store": "latest"
     },
     "exports": {
         ".": {

@@ -37,7 +37,7 @@ import {
     ThreeDimensionalSceneTileHelp,
     ToolsTile,
     ToolsTileHelp
-} from "@glowbuzzer/controls"
+} from "."
 import { SpindleTile } from "./spindle/SpindleTile"
 import { DockTileDefinition } from "./dock"
 import { ConnectTabButtons, ConnectTileHelp } from "./connect"

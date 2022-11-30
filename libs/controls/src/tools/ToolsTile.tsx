@@ -3,7 +3,6 @@
  */
 
 import * as React from "react"
-import { TileEmptyMessage } from "@glowbuzzer/controls"
 import {
     MachineState,
     useMachine,
@@ -16,6 +15,7 @@ import { Button, Tag } from "antd"
 import styled from "styled-components"
 import { RightOutlined } from "@ant-design/icons"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { TileEmptyMessage } from "../tiles"
 
 const StyledDiv = styled.div`
     display: flex;

@@ -3,7 +3,7 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { KinematicsConfigurationMcStatus } from "../types"
@@ -11,11 +11,10 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
 import { useRawJointPositions } from "../joints"
-import * as THREE from "three"
 import { Quaternion, Vector3 } from "three"
 import {
-    CartesianPosition,
     CartesianPositionsConfig,
+    KC_KINEMATICSCONFIGURATIONTYPE,
     KinematicsConfigurationCommand,
     KinematicsConfigurationConfig,
     POSITIONREFERENCE,
@@ -23,23 +22,23 @@ import {
 } from "../gbc"
 import { useMemo } from "react"
 
-// TODO: H: remove this and use gbc schema version
-enum KINEMATICSCONFIGURATIONTYPE {
-    TX40,
-    TX60,
-    TS40,
-    TS60,
-    CARTESIAN,
-    DH6DOF,
-    NAKED
-}
+// // TODO: H: remove this and use gbc schema version
+// enum KINEMATICSCONFIGURATIONTYPE {
+//     TX40,
+//     TX60,
+//     TS40,
+//     TS60,
+//     CARTESIAN,
+//     DH6DOF,
+//     NAKED
+// }
 
 /**
  * The state of the kinematics configuration
  */
 export type KinematicsState = {
     /** The type of kinematics, for example a robot or cartesian machine */
-    type: KINEMATICSCONFIGURATIONTYPE // TODO: should come from config
+    type: KC_KINEMATICSCONFIGURATIONTYPE
     /** The current translation and rotation */
     position: { translation: THREE.Vector3; rotation: THREE.Quaternion }
     /** Any logical offset applied to the kinematics configuration */
@@ -85,7 +84,7 @@ function marshal_tr_into_state({
 
 function marshal_into_state(k: KinematicsConfigurationMcStatus) {
     return {
-        type: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
+        type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
         currentConfiguration: 0,
         // frameIndex: 0,
         froTarget: k.froTarget,
@@ -104,15 +103,15 @@ function unmarshall_tr_from_state({
     translation: Vector3
     rotation: Quat
 }): {
-    translation: THREE.Vector3
-    rotation: THREE.Quaternion
+    translation: Vector3
+    rotation: Quaternion
 } {
     const { z, y, x } = translation
     const { z: qz, y: qy, x: qx, w: qw } = rotation
 
     return {
-        translation: new THREE.Vector3(x, y, z),
-        rotation: new THREE.Quaternion(qx, qy, qz, qw)
+        translation: new Vector3(x, y, z),
+        rotation: new Quaternion(qx, qy, qz, qw)
     }
 }
 
@@ -122,18 +121,18 @@ function unmarshall_from_state(state: KinematicsConfigurationMcStatus): Kinemati
     if (!state) {
         // ensure downstream always has something to work with even if just a default
         return {
-            type: KINEMATICSCONFIGURATIONTYPE.CARTESIAN,
+            type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
             currentConfiguration: 0,
             // frameIndex: 0,
             froTarget: 0,
             froActual: 0,
             position: {
-                translation: new THREE.Vector3(0, 0, 0),
-                rotation: new THREE.Quaternion(0, 0, 0, 1)
+                translation: new Vector3(0, 0, 0),
+                rotation: new Quaternion(0, 0, 0, 1)
             },
             offset: {
-                translation: new THREE.Vector3(0, 0, 0),
-                rotation: new THREE.Quaternion(0, 0, 0, 1)
+                translation: new Vector3(0, 0, 0),
+                rotation: new Quaternion(0, 0, 0, 1)
             },
             toolIndex: 0,
             limitsDisabled: false
@@ -220,7 +219,6 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
         )
     )
     // const frames = useFrames()
-    const dispatch = useDispatch()
     const connection = useConnection()
     const rawJointPositions = useRawJointPositions()
 

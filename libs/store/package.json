@@ -3,11 +3,5 @@
     "version": "0.0.0",
     "exports": {
         ".": {}
-    },
-    "dependencies": {
-        "react-redux": "auto",
-        "react": "auto",
-        "@reduxjs/toolkit": "auto",
-        "three": "auto"
     }
 }

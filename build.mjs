@@ -3,6 +3,17 @@
  *
  * This script packages libs/store and libs/controls using esbuild ready to be published to npm.
  *
+ * Includes a number of features:
+ * - Bundles using esbuild
+ * - Updates package.json version
+ * - Currently only outputs ESM, but could be adapted to support CJS
+ * - Tracks dependencies and will fail if new unexpected dependencies are added, otherwise will bundle or leave external
+ * - Generates bundles for submodules, so that they can be imported individually, reducing dependencies for some use cases
+ * - Generates typescript declarations
+ * - Generates a package.json file, and updates version numbers based on the version in the root package.json
+ * - Generates a module.json summary file of submodules and their dependencies
+ * - Copies the LICENSE file from the root directory
+ *
  */
 
 import {build} from 'esbuild';
@@ -11,6 +22,7 @@ import path from 'path';
 import {execSync} from 'child_process';
 import svgrPlugin from "esbuild-plugin-svgr";
 
+// when run as part of the build process, the version number is passed in as an environment variable
 const GITHUB_TAG_PREFIX = "refs/tags/";
 
 const [, , p, version_or_github_ref] = process.argv;
@@ -25,8 +37,10 @@ if (!version_or_github_ref?.length) {
 
 const projects = p.split(",")
 
+// figure out if we're running in CI or plain version is given
 const version = version_or_github_ref.startsWith(GITHUB_TAG_PREFIX) ? version_or_github_ref.substring(GITHUB_TAG_PREFIX.length) : version_or_github_ref
 
+// this is the root package.json containing authoratitive versions of all dependencies
 const master = JSON.parse(fs.readFileSync(`./package.json`).toString())
 
 console.log("Packaging the following projects:", projects.join(","))
@@ -34,134 +48,179 @@ console.log("Setting all versions to:", version)
 
 for (const project of projects) {
     console.log(`Processing @glowbuzzer/${project}`)
+
+    // this is the package.json for the project we're building
     const pkg = JSON.parse(fs.readFileSync(`./libs/${project}/package.json`).toString());
+
+    // the exports property defines the submodules
     if (!pkg.exports) {
         throw new Error('Failed to find \'exports\' property in package.json');
     }
 
-    const exports = {};
+    /**
+     * This plugin tracks all imports, so that we can report on external dependencies
+     * used by each submodule.
+     */
+    const reportPlugin = () => {
+        const imports = new Set()
 
-    await Promise.all(Object.keys(pkg.exports).map((sub_module) => {
+        return {
+            name: "report", setup(build) {
+                build.onResolve({filter: /.*/}, args => {
+                    if (args.kind !== "entry-point" // this is our entry point (full path)
+                        && !args.path.startsWith(".") // this is relative and will be bundled
+                        // && !args.path.startsWith("@glowbuzzer/" + project) // ourself (shouldn't really appear)
+                        && !args.path.startsWith("@material-symbols")) { // these are svgs which will be bundled by svgr
+
+                        // reduce the path to the package name (eg. @acme/util/some/path -> @acme/util)
+                        const scoped = args.path.startsWith("@")
+                        const parts = args.path.split("/");
+                        const name = scoped ? parts.slice(0, 2).join("/") : parts.slice(0, 1).join("/")
+                        imports.add(name)
+                    }
+                    // don't return anything (esbuild will resolve the path)
+                    return undefined
+                })
+                build.onEnd(result => {
+                    // add info to the final output
+                    result.imports = Array.from(imports)
+                })
+            }
+        }
+    }
+
+    // project pkg.exports defines all the distinct bundles we are going to produce
+    const summary = await Promise.all(Object.keys(pkg.exports).map(async (sub_module) => {
+        // all bundles must be relative to the project root
         if (!sub_module.startsWith('./') && sub_module !== '.') {
             throw new Error('Expected exported submodule key to start with \'./\' or be \'.\'');
         }
 
-        const index = sub_module === './';
-
+        // construct the entry point (each submodule must have an index.ts)
         const entryPoint = path.resolve(`libs/${project}/src/${sub_module}/index.ts`);
-        // console.log('Processing', entryPoint);
-        const common_options = {
+
+        // these libs will not be bundled and will be included in optional dependencies along with versions from root package.json
+        const external_libs = [
+            '@glowbuzzer/store',
+            // react and redux
+            'react', 'react-dom', 'react-redux', '@reduxjs/toolkit',
+            // antd
+            'antd', '@ant-design/icons',
+            // styles
+            'styled-components',
+            // dock layout
+            'flexlayout-react',
+            // robot and toolpath display
+            'three', 'three-stdlib', '@react-three/fiber', '@react-three/drei',
+            // telemetry tile
+            'd3',
+            // gcode editor
+            'ace-builds', 'react-ace',
+            // dseg font css (no code), but not sure we can bundle
+            'dseg',
+            // don't bundle the occt-import-js code (TODO not currently referenced)
+            'occt-import-js'
+        ];
+
+        // these libs will be bundled
+        const bundled_libs = [
+            'fast-deep-equal' // tiny so we will bundle it
+        ]
+
+        const options = {
             entryPoints: [entryPoint],
-            bundle: !index,
-            // outfile: "dist/controls/index.mjs",
-            // minify: true,
+            bundle: true,
             sourcemap: true,
-            // format: 'cjs',
-            external: index ? undefined : [
-                '@glowbuzzer/store',
-                // core
-                'react', 'react-dom'/*, 'react-reconciler'*/,
-                'react-redux', '@reduxjs/toolkit',
-                'antd', '@ant-design/icons',
-                'styled-components',
-                // dock layout
-                'flexlayout-react',
-                // required for robot and toolpath display
-                'three', 'three-stdlib', '@react-three/fiber', '@react-three/drei',
-                // required for telemetry tile
-                'd3',
-                // required for gcode editor
-                'ace-builds', 'react-ace',
-                // dseg font css (no code), but not sure we can bundle
-                'dseg',
-                // don't bundle the occt-import-js code
-                'occt-import-js'
-
-                ///// following add approx 30k to bundle unminified and can prob be included
-                // 'react-is',
-                // '@babel/runtime',
-                // 'fast-deep-equal', 'lodash.isequal',
-                // '@loadable/component', '@react-three/drei',
-            ],
-
+            external: external_libs, // won't be bundled
             platform: 'browser',
             target: 'es6',
             treeShaking: true,
-            // logLevel: "info",
             metafile: true,
-            // define: {
-            //     'process.env.NODE_ENV': '"production"'
-            // },
-            loader: {
-                // '.png': 'dataurl',
-                '.woff': 'file',
-                '.woff2': 'file',
-                '.eot': 'file',
-                '.ttf': 'file'
-                // '.svg': 'dataurl'
-            }
+            plugins: [
+                svgrPlugin({namedExport: "ReactComponent", exportType: "named"}),
+                reportPlugin()
+            ],
+            outdir: `dist/${project}/${sub_module}`,
+            outExtension: {'.js': '.mjs'},
+            format: 'esm'
         };
-        const sub_builds = [
-            {
-                ...common_options,
-                outdir: `dist/${project}/esm/${sub_module}`,
-                outExtension: {'.js': '.mjs'},
-                format: 'esm'
-            },
-            {
-                ...common_options,
-                outdir: `dist/${project}/${sub_module}`,
-                format: 'cjs'
-            }
-        ];
-        exports[sub_module] = {
-            'require': `${sub_module}/index.js`,
-            'import': `./esm/${sub_module === '.' ? '' : (sub_module.substr(2) + '/')}index.mjs`
-        };
-        return Promise.all(sub_builds.map(options => build({
-            ...options,
-            plugins: [svgrPlugin({namedExport: "ReactComponent", exportType: "named"})]
-        }).then(r => {
-            const meta = r.metafile;
-            const external_libs = Object.entries(meta.inputs).filter(l => !l[0].startsWith('libs'));
-            external_libs.sort((a, b) => b[1].bytes - a[1].bytes);
-            // const m = Object.fromEntries(external_libs);
-            // just report the biggest 50 imports
-            // console.log(external_libs.slice(0, 50).map(lib => [lib[0], lib[1].bytes]).map(l => l.join(', size:')).join('\n'));
 
-            // const external = external_libs.reduce((total, c) => total + c[1].bytes, 0);
-            // console.log('Totals for', options.entryPoints[0], 'external=', external, 'count=', external_libs.length);
-        })));
-    })).then(() => {
-        execSync(`tsc --build libs/${project}/tsconfig.lib.json`, {stdio: 'inherit'})
-        execSync(`mv dist/types/libs/${project}/src dist/${project}/types`, {stdio: 'inherit'})
-        execSync(`cp libs/${project}/README.md dist/${project}`,{stdio: 'inherit'})
-        execSync(`cp LICENSE dist/${project}`,{stdio: 'inherit'})
-        // re-write dependencies between included packages so everything uses new version
-        for (const dep of projects) {
-            const key = `@glowbuzzer/${dep}`;
-            if (pkg.dependencies?.[key]) {
-                pkg.dependencies[key] = version
+        // invoke esbuild to create the bundle
+        const {metafile, imports} = await build(options)
+
+        for (const item of imports) {
+            // check that no new depenendencies have crept in!
+            if (!external_libs.includes(item) && !bundled_libs.includes(item)) {
+                // try and figure out where the import is coming from and its size (and transitive dependencies)
+                const candidates = Object.entries(metafile.inputs)
+                    .filter(([i]) => i.startsWith("node_modules") && !i.endsWith(".svg"))
+                    .map(([p, info]) => `  ${p}, size ${info.bytes}, imports ${info.imports.join(", ")}`)
+
+                console.log("Unexpected import:", item)
+                if (candidates.length) {
+                    console.log("Candidates:")
+                    console.log(candidates.join("\n"))
+                }
+                process.exit(1)
             }
         }
-        // fill dependency versions from those we have in the top-level project
-        // noinspection JSCheckFunctionSignatures
-        pkg.dependencies = Object.fromEntries(Object.entries(pkg.dependencies).map(([name, version]) => {
-            if (version !== "auto") {
-                return [name, version]
-            }
-            const auto = master.dependencies[name]
-            if (!auto) {
-                throw new Error("Failed to find master dependency version for: " + name)
-            }
-            return [name, auto]
-        }))
-        fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
-            ...pkg,
-            version,
-            license: 'MIT',
-            types: "types/index.d.ts",
-            exports
-        }, null, 2));
-    })
+
+        // the metafile.outputs contains two entries: the bundled js and the map file
+        // we want the js file entry because it contains all the exports and we're going to report on these
+        const k = Object.keys(metafile.outputs).filter(k => !k.endsWith(".map"))[0]
+        const output = metafile.outputs[k];
+
+        const import_path = "@glowbuzzer/" + project + (sub_module === "." ? "" : "/" + sub_module.substring(2))
+        return {
+            module: sub_module,
+            import: import_path,
+            dependencies: imports
+                .filter(p => !bundled_libs.includes(p)) // don't list bundled libs in dependencies
+                .filter(p => !pkg.dependencies?.[p]) // don't list hard dependencies from project's package.json
+                .sort(),
+            exports: output.exports.sort()
+        }
+    }))
+
+    // write out the summary file
+    fs.writeFileSync(`dist/${project}/modules.json`, JSON.stringify(summary, null, 2));
+
+    // produce the typescript declaration files and move to package directory
+    execSync(`tsc --build libs/${project}/tsconfig.lib.json`, {stdio: 'inherit'})
+    execSync(`mv dist/types/libs/${project}/src dist/${project}/types`, {stdio: 'inherit'})
+    // copy readme and licence files
+    execSync(`cp libs/${project}/README.md dist/${project}`, {stdio: 'inherit'})
+    execSync(`cp LICENSE dist/${project}`, {stdio: 'inherit'})
+
+    // if we're building multiple projects (ie. controls and store, which we normally are), ensure versions are all in sync
+    for (const dep of projects) {
+        const key = `@glowbuzzer/${dep}`;
+        if (pkg.dependencies?.[key]) {
+            pkg.dependencies[key] = version
+        }
+    }
+
+    // add all external dependencies to optionalDependencies, taking the version from the root package.json
+    pkg.optionalDependencies = Object.fromEntries([
+        ...new Set(summary.map(s => s.dependencies).flat()) // flatten and remove duplicates
+    ].filter(d => !pkg.dependencies?.[d]).map(d => {
+        const version = master.dependencies[d]
+        if (!version) {
+            throw new Error("Failed to find dependency version for: " + d)
+        }
+        return [d, version];
+    }))
+
+    // finally fill in the exports with path to the bundled index file for each sub-module
+    const exports = Object.fromEntries(summary.map(s => [s.module, {
+        'import': `./${s.module === '.' ? '' : (s.module.substring(2) + '/')}index.mjs`
+    }]))
+
+    fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
+        ...pkg,
+        version,
+        license: 'MIT',
+        types: "types/index.d.ts",
+        exports
+    }, null, 2));
 }

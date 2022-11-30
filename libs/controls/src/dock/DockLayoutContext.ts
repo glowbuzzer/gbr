@@ -6,7 +6,7 @@ import { Model, TabNode } from "flexlayout-react"
 import * as React from "react"
 import { createContext } from "react"
 import { DockTileDefinition } from "./DockTileDefinition"
-import { DockPerspective } from "@glowbuzzer/controls"
+import { DockPerspective } from "./types"
 
 export type DockLayoutContextType = {
     appName: string

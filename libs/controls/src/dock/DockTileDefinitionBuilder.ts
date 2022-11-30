@@ -2,12 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {DockTileDefinition} from "@glowbuzzer/controls"
-import {ReactNode} from "react"
+import { ReactNode } from "react"
+import { DockTileDefinition } from "./DockTileDefinition"
 
 export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
     return new (class {
-        public definition = {...template}
+        public definition = { ...template }
 
         id(id: string) {
             this.definition.id = id
@@ -26,7 +26,7 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
         }
 
         placement(column: number, row: number) {
-            this.definition.defaultPlacement = {column, row}
+            this.definition.defaultPlacement = { column, row }
             return this
         }
 
@@ -35,7 +35,7 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
         }
 
         enableWithoutConnection() {
-            this.definition.config = {...this.definition.config, enableWithoutConnection: true}
+            this.definition.config = { ...this.definition.config, enableWithoutConnection: true }
             return this
         }
     })()

@@ -3,16 +3,16 @@
  */
 
 import { Connection } from "./connect/Connection"
-import * as THREE from "three"
+import { Quaternion, Vector3 } from "three"
 
 export type KinematicsConfigurationMcStatus = {
     position: {
-        translation: THREE.Vector3
-        rotation: THREE.Quaternion
+        translation: Vector3
+        rotation: Quaternion
     }
     offset: {
-        translation: THREE.Vector3
-        rotation: THREE.Quaternion
+        translation: Vector3
+        rotation: Quaternion
     }
     froTarget: number
     froActual: number
