@@ -185,9 +185,9 @@ for (const project of projects) {
     // write out the summary file
     fs.writeFileSync(`dist/${project}/modules.json`, JSON.stringify(summary, null, 2));
 
-    // produce the typescript declaration files and move to package directory
+    // produce the typescript declaration files and move to package directory, and merge in the typescript definitions
     execSync(`tsc --build libs/${project}/tsconfig.lib.json`, {stdio: 'inherit'})
-    execSync(`mv dist/types/libs/${project}/src dist/${project}/types`, {stdio: 'inherit'})
+    execSync(`cp -R dist/types/libs/${project}/src/* dist/${project}`, {stdio: 'inherit'})
     // copy readme and licence files
     execSync(`cp libs/${project}/README.md dist/${project}`, {stdio: 'inherit'})
     execSync(`cp LICENSE dist/${project}`, {stdio: 'inherit'})
@@ -211,14 +211,15 @@ for (const project of projects) {
         return [d, version];
     }))
 
-    // finally fill in the exports with path to the bundled index file for each sub-module, plus typescript declaration file
+    // finally fill in the exports with path to the bundled index file for each sub-module
     const exports = Object.fromEntries(summary.map(s => {
         const relpath = s.module === '.' ? '' : (s.module.substring(2) + '/');
         return [s.module, {
-            import: {
-                types: `./types/${relpath}index.d.ts`,
-                default: `./${relpath}index.mjs`
-            }
+            import: `./${relpath}index.mjs`
+            // import: {
+            //     types: `./types/${relpath}index.d.ts`,
+            //     default: `./${relpath}index.mjs`
+            // }
         }];
     }))
 
