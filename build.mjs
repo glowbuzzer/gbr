@@ -211,16 +211,22 @@ for (const project of projects) {
         return [d, version];
     }))
 
-    // finally fill in the exports with path to the bundled index file for each sub-module
-    const exports = Object.fromEntries(summary.map(s => [s.module, {
-        'import': `./${s.module === '.' ? '' : (s.module.substring(2) + '/')}index.mjs`
-    }]))
+    // finally fill in the exports with path to the bundled index file for each sub-module, plus typescript declaration file
+    const exports = Object.fromEntries(summary.map(s => {
+        const relpath = s.module === '.' ? '' : (s.module.substring(2) + '/');
+        return [s.module, {
+            import: {
+                types: `./types/${relpath}index.d.ts`,
+                default: `./${relpath}index.mjs`
+            }
+        }];
+    }))
 
     fs.writeFileSync(`dist/${project}/package.json`, JSON.stringify({
         ...pkg,
         version,
         license: 'MIT',
-        types: "types/index.d.ts",
+        // types: "types/index.d.ts",
         exports
     }, null, 2));
 }
