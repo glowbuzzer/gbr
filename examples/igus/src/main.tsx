@@ -32,7 +32,7 @@ import { useGLTF } from "@react-three/drei"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { TriadHelper } from "../../../libs/controls/src/scene/TriadHelper"
+import { TriadHelper } from "@glowbuzzer/controls"
 
 const DEG90 = Math.PI / 2
 const DEG180 = Math.PI
