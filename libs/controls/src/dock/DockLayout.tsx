@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { useContext, useState } from "react"
+import { createElement, Suspense, useContext, useState } from "react"
 import { Popover } from "antd"
 import { DockLayoutContext } from "./DockLayoutContext"
 import { Layout, TabNode } from "flexlayout-react"
@@ -51,10 +51,10 @@ export const DockLayout = () => {
     function connection_aware_factory(node: TabNode) {
         const tile = factory(node)
         if (connection.connected || node.getConfig()?.enableWithoutConnection) {
-            return tile
+            return <Suspense>{tile}</Suspense>
         }
         return (
-            <>
+            <Suspense>
                 {tile}
                 <div
                     style={{
@@ -70,7 +70,7 @@ export const DockLayout = () => {
                         opacity: "0.2"
                     }}
                 />
-            </>
+            </Suspense>
         )
     }
 

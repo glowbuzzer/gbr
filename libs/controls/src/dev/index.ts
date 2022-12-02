@@ -3,4 +3,5 @@
  */
 
 export * from "./StateMachineToolsTile"
-export { StateMachineToolsTileHelp } from "./StateMachineToolsTileHelp"
+export * from "./StateMachineToolsTileHelp"
+export * from "./StateMachineToolsTileDefinition"

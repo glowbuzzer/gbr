@@ -4,13 +4,26 @@ import { createRoot } from "react-dom/client"
 import { Group, Object3D, Vector3 } from "three"
 
 import {
+    AnalogInputsTileDefinition,
+    AnalogOutputsTileDefinition,
+    CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
+    ConnectTileDefinition,
+    DigitalInputsTileDefinition,
+    DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    FeedRateTileDefinition,
     Frustum,
+    GCodeTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitions,
-    ThreeDimensionalSceneTile
+    IntegerInputsTileDefinition,
+    IntegerOutputsTileDefinition,
+    JointDroTileDefinition,
+    JointJogTileDefinition,
+    ThreeDimensionalSceneTile,
+    ThreeDimensionalSceneTileDefinition
 } from "@glowbuzzer/controls"
 
 import "antd/dist/antd.min.css"
@@ -68,7 +81,7 @@ const TwoLinkArm = ({ children = null }) => {
     )
 }
 
-const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
+const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
             <ThreeDimensionalSceneTile>
@@ -89,19 +102,19 @@ root.render(
                 tiles={[
                     AppIntroTileDefinition,
                     CustomSceneTile,
-                    GlowbuzzerTileDefinitions.CONNECT,
-                    GlowbuzzerTileDefinitions.CARTESIAN_JOG,
-                    GlowbuzzerTileDefinitions.CARTESIAN_DRO,
-                    GlowbuzzerTileDefinitions.JOINT_DRO,
-                    GlowbuzzerTileDefinitions.JOINT_JOG,
-                    GlowbuzzerTileDefinitions.FEEDRATE,
-                    GlowbuzzerTileDefinitions.GCODE,
-                    GlowbuzzerTileDefinitions.ANALOG_INPUTS,
-                    GlowbuzzerTileDefinitions.ANALOG_OUTPUTS,
-                    GlowbuzzerTileDefinitions.DIGITAL_INPUTS,
-                    GlowbuzzerTileDefinitions.DIGITAL_OUTPUTS,
-                    GlowbuzzerTileDefinitions.INTEGER_INPUTS,
-                    GlowbuzzerTileDefinitions.INTEGER_OUTPUTS
+                    ConnectTileDefinition,
+                    CartesianJogTileDefinition,
+                    CartesianDroTileDefinition,
+                    JointDroTileDefinition,
+                    JointJogTileDefinition,
+                    FeedRateTileDefinition,
+                    GCodeTileDefinition,
+                    AnalogInputsTileDefinition,
+                    AnalogOutputsTileDefinition,
+                    DigitalInputsTileDefinition,
+                    DigitalOutputsTileDefinition,
+                    IntegerInputsTileDefinition,
+                    IntegerOutputsTileDefinition
                 ]}
             >
                 <ExampleAppMenu title={"Two Link Arm"} />

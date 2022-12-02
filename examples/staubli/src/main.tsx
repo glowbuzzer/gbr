@@ -6,14 +6,24 @@ import React, { StrictMode, Suspense } from "react"
 import { createRoot } from "react-dom/client"
 import {
     BasicRobot,
+    CartesianDroTileDefinition,
+    ConfigEditTileDefinition,
+    ConnectTileDefinition,
     CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    FeedRateTileDefinition,
+    FramesTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitions,
+    CartesianJogTileDefinition,
+    JointJogTileDefinition,
+    JointDroTileDefinition,
+    PointsTileDefinition,
     RobotKinematicsChainElement,
-    ThreeDimensionalSceneTile
+    ThreeDimensionalSceneTile,
+    ThreeDimensionalSceneTileDefinition,
+    ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
 import {
@@ -71,7 +81,7 @@ const StaubliRobot = () => {
     )
 }
 
-const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
+const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
             <ThreeDimensionalSceneTile>
@@ -97,17 +107,17 @@ root.render(
             <DockLayoutProvider
                 appName={"staubli"}
                 tiles={[
-                    GlowbuzzerTileDefinitions.CONNECT,
-                    GlowbuzzerTileDefinitions.CARTESIAN_JOG,
-                    GlowbuzzerTileDefinitions.CARTESIAN_DRO,
-                    GlowbuzzerTileDefinitions.JOINT_JOG,
-                    GlowbuzzerTileDefinitions.JOINT_DRO,
-                    GlowbuzzerTileDefinitions.TOOLS,
-                    GlowbuzzerTileDefinitions.POINTS,
-                    GlowbuzzerTileDefinitions.FRAMES,
-                    GlowbuzzerTileDefinitions.CONFIG_EDIT,
-                    GlowbuzzerTileDefinitions.FEEDRATE,
-                    CustomSceneTile
+                    ConnectTileDefinition,
+                    CartesianJogTileDefinition,
+                    CartesianDroTileDefinition,
+                    JointJogTileDefinition,
+                    JointDroTileDefinition,
+                    ToolsTileDefinition,
+                    PointsTileDefinition,
+                    FramesTileDefinition,
+                    ConfigEditTileDefinition,
+                    FeedRateTileDefinition,
+                    CustomSceneTileDefinition
                 ]}
             >
                 <ExampleAppMenu title="Staubli TX40" />

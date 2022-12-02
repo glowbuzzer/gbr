@@ -3,4 +3,5 @@
  */
 
 export * from "./TelemetryTile"
-export { TelemetryTileSettings } from "./TelemetryTileSettings"
+export * from "./TelemetryTileSettings"
+export * from "./TelemetryTileDefinition"

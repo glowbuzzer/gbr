@@ -20,7 +20,7 @@ import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
  * and there is also a goto mode where you can enter a target position for each axis. The kinematics configuration and
  * reference frame can be selected from a dropdown.
  */
-export const JogCartesianTile = () => {
+export const CartesianJogTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
     const [frameIndex, setFrameIndex] = useState(0)

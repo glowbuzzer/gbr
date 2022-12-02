@@ -3,4 +3,5 @@
  */
 
 export * from "./GCodeTile"
-export { GCodeTileHelp } from "./GCodeTileHelp"
+export * from "./GCodeTileHelp"
+export * from "./GCodeTileDefinition"

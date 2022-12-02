@@ -9,23 +9,24 @@ import { createRoot } from "react-dom/client"
 import { DemoMoveTile, HIGH_BLOCK_Z } from "./DemoMoveTile"
 import {
     BasicRobot,
+    CartesianDroTileDefinition,
+    ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinition,
     DockTileDefinitionBuilder,
+    FeedRateTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitions,
+    CartesianJogTileDefinition,
+    JointJogTileDefinition,
+    JointDroTileDefinition,
     RobotKinematicsChainElement,
-    ThreeDimensionalSceneTile
+    ThreeDimensionalSceneTile,
+    ThreeDimensionalSceneTileDefinition
 } from "@glowbuzzer/controls"
 
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
-import {
-    useFrame,
-    useJointPositions,
-    useKinematicsConfiguration,
-    useToolIndex
-} from "@glowbuzzer/store"
+import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { useGLTF } from "@react-three/drei"
 
 import "antd/dist/antd.css"
@@ -75,9 +76,7 @@ const IgusRobot = () => {
     )
 }
 
-const Custom3dSceneTile = DockTileDefinitionBuilder(
-    GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE
-)
+const Custom3dSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
             <ThreeDimensionalSceneTile hideTrace hidePreview>
@@ -114,12 +113,12 @@ export function App() {
         <DockLayoutProvider
             appName={"igus"}
             tiles={[
-                GlowbuzzerTileDefinitions.CONNECT,
-                GlowbuzzerTileDefinitions.FEEDRATE,
-                GlowbuzzerTileDefinitions.JOINT_JOG,
-                GlowbuzzerTileDefinitions.JOINT_DRO,
-                GlowbuzzerTileDefinitions.CARTESIAN_JOG,
-                GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                ConnectTileDefinition,
+                FeedRateTileDefinition,
+                JointJogTileDefinition,
+                JointDroTileDefinition,
+                CartesianJogTileDefinition,
+                CartesianDroTileDefinition,
                 demoMoveTile,
                 Custom3dSceneTile
             ]}

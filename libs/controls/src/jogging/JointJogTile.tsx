@@ -17,7 +17,7 @@ import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
  * and there is also a goto mode where you can enter a target position for each joint. The kinematics configuration can be
  * selected from a dropdown, and also the reference frame.
  */
-export const JogJointsTile = () => {
+export const JointJogTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
 

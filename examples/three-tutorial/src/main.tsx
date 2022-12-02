@@ -5,14 +5,25 @@ import { Html, useGLTF } from "@react-three/drei"
 
 import {
     BasicRobot,
+    CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
+    ConfigEditTileDefinition,
+    ConnectTileDefinition,
+    DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinition,
     DockTileDefinitionBuilder,
+    FramesTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitions,
+    IntegerOutputsTileDefinition,
+    JointDroTileDefinition,
+    JointJogTileDefinition,
+    PointsTileDefinition,
     RobotKinematicsChainElement,
-    ThreeDimensionalSceneTile
+    ThreeDimensionalSceneTile,
+    ThreeDimensionalSceneTileDefinition,
+    ToolsTileDefinition
 } from "@glowbuzzer/controls"
 import { createRoot } from "react-dom/client"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
@@ -181,7 +192,7 @@ const ThreeTutorial = () => {
     )
 }
 
-const CustomSceneTile = DockTileDefinitionBuilder(GlowbuzzerTileDefinitions.THREE_DIMENSIONAL_SCENE)
+const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => (
         <Suspense fallback={null}>
             <ThreeTutorial />
@@ -208,18 +219,18 @@ root.render(
                 <DockLayoutProvider
                     appName={"three-tutorial"}
                     tiles={[
-                        GlowbuzzerTileDefinitions.CONNECT,
-                        GlowbuzzerTileDefinitions.CARTESIAN_JOG,
-                        GlowbuzzerTileDefinitions.CARTESIAN_DRO,
-                        GlowbuzzerTileDefinitions.JOINT_JOG,
-                        GlowbuzzerTileDefinitions.JOINT_DRO,
-                        GlowbuzzerTileDefinitions.DIGITAL_OUTPUTS,
-                        GlowbuzzerTileDefinitions.INTEGER_OUTPUTS,
-                        GlowbuzzerTileDefinitions.POINTS,
-                        GlowbuzzerTileDefinitions.FRAMES,
-                        GlowbuzzerTileDefinitions.CONFIG_EDIT,
+                        ConnectTileDefinition,
+                        CartesianJogTileDefinition,
+                        CartesianDroTileDefinition,
+                        JointJogTileDefinition,
+                        JointDroTileDefinition,
+                        DigitalOutputsTileDefinition,
+                        IntegerOutputsTileDefinition,
+                        PointsTileDefinition,
+                        FramesTileDefinition,
+                        ConfigEditTileDefinition,
                         ChooseExampleTileDefinition,
-                        GlowbuzzerTileDefinitions.TOOLS,
+                        ToolsTileDefinition,
                         CustomSceneTile
                     ]}
                 >

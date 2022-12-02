@@ -5,11 +5,11 @@
 import React, { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
 import {
+    ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
-    GlowbuzzerApp,
-    GlowbuzzerTileDefinitions
+    GlowbuzzerApp
 } from "@glowbuzzer/controls"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
@@ -50,7 +50,7 @@ root.render(
         <GlowbuzzerApp>
             <DockLayoutProvider
                 appName={"set-digital-out"}
-                tiles={[GlowbuzzerTileDefinitions.CONNECT, toggleDigitalOutputTileDefinition]}
+                tiles={[ConnectTileDefinition, toggleDigitalOutputTileDefinition]}
             >
                 <ExampleAppMenu title="Toggle Digital Output" />
                 <DockLayout />

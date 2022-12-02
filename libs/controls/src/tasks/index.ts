@@ -3,4 +3,5 @@
  */
 
 export * from "./TasksTile"
-export { TasksTileHelp } from "./TasksTileHelp"
+export * from "./TasksTileHelp"
+export * from "./TasksTileDefinition"

@@ -9,10 +9,11 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import {
+    CartesianDroTileDefinition,
+    ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
-    GlowbuzzerApp,
-    GlowbuzzerTileDefinitions
+    GlowbuzzerApp
 } from "@glowbuzzer/controls"
 import { OscillatingMoveTileDefinition } from "./OscillatingMoveTile"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
@@ -24,8 +25,8 @@ root.render(
             <DockLayoutProvider
                 appName={"oscillating-move"}
                 tiles={[
-                    GlowbuzzerTileDefinitions.CONNECT,
-                    GlowbuzzerTileDefinitions.CARTESIAN_DRO,
+                    ConnectTileDefinition,
+                    CartesianDroTileDefinition,
                     OscillatingMoveTileDefinition
                 ]}
             >
