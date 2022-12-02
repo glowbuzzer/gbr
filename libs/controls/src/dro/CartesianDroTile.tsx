@@ -28,7 +28,7 @@ const StyledDownOutlined = styled(DownOutlined)`
     color: #bfbfbf;
 `
 
-enum CartesianDroClipboardOption {
+export enum CartesianDroClipboardOption {
     POSITION,
     POSITION_EULER,
     POSITION_QUATERNION,
