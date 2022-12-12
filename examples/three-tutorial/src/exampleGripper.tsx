@@ -97,21 +97,24 @@ export const ExampleGripper = () => {
         <h1>Example 12 - adding a gripper to the robot - activate by overriding digital output #0</h1></Html>
 
 
-        <group ref={group1} position={[300,300,300]}
-       onClick={() => {setGrip(true)
+    <group ref={group1} position={[300, 300, 300]}
+           onClick={() => {
+               setGrip(true)
            }}
     >
-    <Box ref={baseRef} args={[100,50,100]} position={[0, 0, 50]} visible={connection.connected} castShadow={true}>
-        <meshStandardMaterial color={"bisque"}/>
-    </Box>
-    <group ref={group2} position={[0,0,0]}>
-    <Box ref={gripperLeftRef} args={[20,20,50]} position={[40, 0, 125]} visible={connection.connected} castShadow={true}>
-        <meshStandardMaterial color={"silver"}/>
-    </Box>
-    <Box ref={gripperRightRef} args={[20,20,50]} position={[-40, 0, 125]} visible={connection.connected} castShadow={true}>
-        <meshStandardMaterial color={"silver"}/>
-    </Box>
-    </group>
+        <Box ref={baseRef} args={[100, 50, 100]} position={[0, 0, 50]} visible={connection.connected} castShadow={true}>
+            <meshStandardMaterial color={"bisque"}/>
+        </Box>
+        <group ref={group2} position={[0, 0, 0]}>
+            <Box ref={gripperLeftRef} args={[20, 20, 50]} position={[40, 0, 125]} visible={connection.connected}
+                 castShadow={true}>
+                <meshStandardMaterial color={"silver"}/>
+            </Box>
+            <Box ref={gripperRightRef} args={[20, 20, 50]} position={[-40, 0, 125]} visible={connection.connected}
+                 castShadow={true}>
+                <meshStandardMaterial color={"silver"}/>
+            </Box>
+        </group>
 </group>
 </>
     )

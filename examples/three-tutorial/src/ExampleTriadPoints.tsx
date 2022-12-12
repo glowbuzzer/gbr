@@ -73,10 +73,10 @@ const ref=useRef(null)
 
 export const ExampleTriadPoints = () => {
 
-    const config = useConfig()
+        const config = useConfig()
 
-    const numberOfPoints = config.points?.length
-    const points = config.points
+        const numberOfPoints = config.points?.length
+        const points = config.points
 
     // console.log(numberOfPoints)
     console.log(points)

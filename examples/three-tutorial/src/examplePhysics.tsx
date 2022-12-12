@@ -1,24 +1,15 @@
 import * as React from "react"
 import {
     useRef,
-    forwardRef,
     useEffect,
     useMemo
 } from "react"
 import * as THREE from 'three'
 import {
-    Box,
     Plane,
-    useHelper,
-    Instances,
-    Instance,
     Sphere,
     Html
 } from "@react-three/drei"
-import {
-    useThree,
-    useFrame
-} from "@react-three/fiber"
 import {useFrames, useKinematicsCartesianPosition} from "@glowbuzzer/store"
 import {Physics, useBox, useSphere, usePlane, Debug} from "@react-three/cannon"
 import niceColors from "nice-color-palettes"
@@ -27,9 +18,6 @@ export const ExamplePhysics = () => {
 
     const position = useKinematicsCartesianPosition(0).position.translation
     const orientation = useKinematicsCartesianPosition(0).position.rotation
-    // console.log("position", position)
-    // console.log("orientation", orientation)
-
     const p = new THREE.Vector3(position.x, position.y, position.z)
     const q = new THREE.Quaternion(orientation.x, orientation.y, orientation.z, orientation.w)
 
@@ -107,22 +95,16 @@ const getDominos = () => {
 }
 
 
-function Dominos (){
+const Dominos = () => {
 
     const dominos = getDominos();
     const number = dominos.length;
-    console.log(dominos)
-
-    console.log("number", number)
 
     const colorTemp = new THREE.Color()
 
     const colorData = Array.from({ length: number }, () => ({ color: niceColors[17][Math.floor(Math.random() * 5)], scale: 1 }))
 
-    console.log("colorData", colorData)
-
     const colorArray = useMemo(() => Float32Array.from(new Array(number).fill(number).flatMap((_, i) => colorTemp.set(colorData[i].color).toArray())), [])
-
 
     const [ref, api] = useBox((index) => ({
         mass: 10,
@@ -133,16 +115,6 @@ function Dominos (){
         // type: "Kinematic"
         ...dominos[index],
     }), useRef<THREE.InstancedMesh>(null),)
-
-
-    // const [ref, api] = useBox(
-    //     (index) => ({
-    //         args: [1],
-    //         mass: 10,
-    //         ...dominos[index],
-    //     }),
-    //     useRef<THREE.Mesh>(null),
-    // )
 
 
     return(

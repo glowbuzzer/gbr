@@ -32,11 +32,14 @@ import {SVGLoader} from 'three/examples/jsm/loaders/SVGLoader'
 import {EffectComposer, GodRays} from "@react-three/postprocessing"
 import {BlendFunction, Resizer, KernelSize} from "postprocessing";
 
+import {Smoke} from "./smoke"
 
 const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
-
     const innerRef = useRef(null)
     useImperativeHandle(ref, () => innerRef.current)
+
+    const smokeRef = useRef<THREE.Group>(null)
+
 
     const spriteGeometry = new THREE.BufferGeometry()
     const sprite = new THREE.TextureLoader().load("/png/star.png");
@@ -66,6 +69,7 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
     const totalPointsCount = vertices.length
     console.log("totalPointsCount", totalPointsCount)
 
+
     const justPoints = []
     for (let i = 0; i < totalPointsCount; i++) {
         justPoints.push(vertices[i].x)
@@ -78,6 +82,8 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
         new THREE.Float32BufferAttribute(justPoints, 3)
     )
 
+
+
     useFrame(({clock}) => {
         if (innerRef.current) {
 
@@ -89,6 +95,12 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
 
         spriteGeometry.setDrawRange(0, prog)
 
+        console.log(smokeRef)
+        if (smokeRef.current) {
+            smokeRef.current.position.x =vertices[prog].x
+            smokeRef.current.position.y =vertices[prog].y
+
+        }
     });
 
 
@@ -113,6 +125,17 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
             <Sphere ref={innerRef} position={[0, 0, 3]} args={[1.5, 64, 64]}>
                 <meshBasicMaterial color={"red"}/>
             </Sphere>
+
+            <Smoke
+                ref={smokeRef}
+                scale={[2,2,2]}
+                position={[200,0,50]}
+                opacity={1.5}
+                speed={0.8} // Rotation speed
+                width={10} // Width of the full cloud
+                depth={1.5} // Z-dir depth
+                segments={40} // Number of particles
+            />
         </>
     );
 });
@@ -120,6 +143,7 @@ const Laser = forwardRef<THREE.Mesh, any>(function Laser(props, ref) {
 function LaserEffect() {
     // const [laserRef, setLaserRef] = useState(null)
     const laserRef = useRef<THREE.Mesh>(null)
+
 
     return (
         <>
