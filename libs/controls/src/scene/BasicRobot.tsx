@@ -2,12 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {RobotKinematicsChainElement} from "./robots"
+import { RobotKinematicsChainElement } from "./robots"
 import * as THREE from "three"
-import {Group} from "three"
+import { Group } from "three"
 import * as React from "react"
-import {FunctionComponent, useEffect, useMemo, useRef} from "react"
-import {Quat, Vector3} from "@glowbuzzer/store"
+import { FunctionComponent, useEffect, useMemo, useRef } from "react"
+import { Quat, Vector3 } from "@glowbuzzer/store"
 
 type BasicRobotElement = {
     group: Group
@@ -40,17 +40,17 @@ type BasicRobotProps = {
  *
  */
 export const BasicRobot = ({
-                               kinematicsChain,
-                               parts,
-                               jointPositions,
-                               translation = {x: 0, y: 0, z: 0},
-                               rotation = {x: 0, y: 0, z: 0, w: 1},
-                               scale = 1,
-                               children = null
-                           }: BasicRobotProps) => {
+    kinematicsChain,
+    parts,
+    jointPositions,
+    translation = { x: 0, y: 0, z: 0 },
+    rotation = { x: 0, y: 0, z: 0, w: 1 },
+    scale = 1,
+    children = null
+}: BasicRobotProps) => {
     const elements = useMemo(() => {
         const chain: (RobotKinematicsChainElement & { base?: boolean })[] = [
-            {base: true, moveable: false}, // force the first element to include the base
+            { base: true, moveable: false }, // force the first element to include the base
             ...kinematicsChain
         ]
 
@@ -70,7 +70,7 @@ export const BasicRobot = ({
                 group.add(link)
                 console.log("group", group)
             }
-            const {translateX, translateY, translateZ, rotateX, rotateY, rotateZ} = element
+            const { translateX, translateY, translateZ, rotateX, rotateY, rotateZ } = element
 
             group.rotation.set(rotateX || 0, rotateY || 0, rotateZ || 0)
             group.position.set(translateX || 0, translateY || 0, translateZ || 0)
@@ -83,8 +83,6 @@ export const BasicRobot = ({
 
         console.log("elements", elements)
 
-
-
         const base = elements[0].group
         base.position.set(translation.x, translation.y, translation.z)
         base.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
@@ -94,16 +92,15 @@ export const BasicRobot = ({
         last.scale.setScalar(1 / scale)
 
         return elements
-
-}, [kinematicsChain, parts, scale]) //why on earth is this firing so much?
+    }, [kinematicsChain, parts, scale]) //why on earth is this firing so much?
 
     useEffect(() => {
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
                 console.log(e)
-                    e.group.rotation.z =
-                        (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
+                e.group.rotation.z =
+                    (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
             })
     }, [elements, jointPositions])
 
@@ -125,19 +122,18 @@ export const BasicRobot = ({
     )
 }
 
-
 export const BasicCartesian = ({
-                               kinematicsChain,
-                               parts,
-                               jointPositions,
-                               translation = {x: 0, y: 0, z: 0},
-                               rotation = {x: 0, y: 0, z: 0, w: 1},
-                               scale = 1,
-                               children = null
-                           }: BasicRobotProps) => {
+    kinematicsChain,
+    parts,
+    jointPositions,
+    translation = { x: 0, y: 0, z: 0 },
+    rotation = { x: 0, y: 0, z: 0, w: 1 },
+    scale = 1,
+    children = null
+}: BasicRobotProps) => {
     const elements = useMemo(() => {
         const chain: (RobotKinematicsChainElement & { base?: boolean })[] = [
-            {base: true, moveable: false}, // force the first element to include the base
+            { base: true, moveable: false }, // force the first element to include the base
             ...kinematicsChain
         ]
 
@@ -148,9 +144,12 @@ export const BasicCartesian = ({
             const group = new THREE.Group()
             group.name = `G${index}`
 
-
-            if(parts[index]){
-                parts[index].rotation.set(element.rotateX || 0, element.rotateY || 0, element.rotateZ || 0)
+            if (parts[index]) {
+                parts[index].rotation.set(
+                    element.rotateX || 0,
+                    element.rotateY || 0,
+                    element.rotateZ || 0
+                )
             }
 
             if (element.base || element.moveable) {
@@ -163,7 +162,7 @@ export const BasicCartesian = ({
                 group.add(link)
                 console.log("group", group)
             }
-            const {translateX, translateY, translateZ, rotateX, rotateY, rotateZ} = element
+            const { translateX, translateY, translateZ, rotateX, rotateY, rotateZ } = element
 
             group.position.set(translateX || 0, translateY || 0, translateZ || 0)
 
@@ -185,25 +184,27 @@ export const BasicCartesian = ({
         last.scale.setScalar(1 / scale)
 
         return elements
-
     }, [kinematicsChain, parts, scale]) //why on earth is this firing so much?
 
     useEffect(() => {
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
-                    if (index == 0) {
-                        console.log("index 0 e", e)
-                        e.group.position.x = (jointPositions[index] / 1000 || 0) + (e.config.translateX || 0)
-                    }
-                    if (index == 1) {
-                        console.log("index 1 e", e)
-                        e.group.position.y = (jointPositions[index] / 1000 || 0)+ (e.config.translateY || 0)
-                    }
-                    if (index == 2) {
-                        console.log("index 2 e", e)
-                        e.group.position.z = (jointPositions[index] / 1000 || 0)+ (e.config.translateZ || 0)
-                    }
+                if (index == 0) {
+                    console.log("index 0 e", e)
+                    e.group.position.x =
+                        (jointPositions[index] / 1000 || 0) + (e.config.translateX || 0)
+                }
+                if (index == 1) {
+                    console.log("index 1 e", e)
+                    e.group.position.y =
+                        (jointPositions[index] / 1000 || 0) + (e.config.translateY || 0)
+                }
+                if (index == 2) {
+                    console.log("index 2 e", e)
+                    e.group.position.z =
+                        (jointPositions[index] / 1000 || 0) + (e.config.translateZ || 0)
+                }
             })
     }, [elements, jointPositions])
 
@@ -225,23 +226,20 @@ export const BasicCartesian = ({
     )
 }
 
-
 export const BasicCartesianSimple = ({
-                                   kinematicsChain,
-                                   parts,
-                                   jointPositions,
-                                   translation = {x: 0, y: 0, z: 0},
-                                   rotation = {x: 0, y: 0, z: 0, w: 1},
-                                   scale = 1,
-                                   children = null
-                               }: BasicRobotProps) => {
-
+    kinematicsChain,
+    parts,
+    jointPositions,
+    translation = { x: 0, y: 0, z: 0 },
+    rotation = { x: 0, y: 0, z: 0, w: 1 },
+    scale = 1,
+    children = null
+}: BasicRobotProps) => {
     useEffect(() => {
-
         if (G1.current && G2.current && G3.current) {
-            G1.current.position.x = (jointPositions[0] / 1000 || 0)
-            G2.current.position.y = (jointPositions[1] / 1000 || 0)
-            G3.current.position.z = (jointPositions[2] / 1000 || 0)
+            G1.current.position.x = jointPositions[0] / 1000 || 0
+            G2.current.position.y = jointPositions[1] / 1000 || 0
+            G3.current.position.z = jointPositions[2] / 1000 || 0
         }
     }, [jointPositions])
 
@@ -251,14 +249,30 @@ export const BasicCartesianSimple = ({
     const G3 = useRef(null)
 
     return (
-        <group scale={[scale, scale, scale]} position={[translation.x, translation.y, translation.z]} ref={G0}>
-            <primitive rotation={[Math.PI / 2, 0, 0]} object={parts[0]}/>
+        <group
+            scale={[scale, scale, scale]}
+            // position={[translation.x, translation.y, translation.z]}
+            ref={G0}
+        >
+            <primitive rotation={[Math.PI / 2, 0, 0]} object={parts[0]} />
             <group ref={G1}>
-                <primitive rotation={[Math.PI / 2, 0, 0]} object={parts[1]}/>
+                <primitive
+                    rotation={[Math.PI / 2, 0, 0]}
+                    object={parts[1]}
+                    position={[0, 0, 0.053]}
+                />
                 <group ref={G2}>
-                    <primitive rotation={[Math.PI / 2, 0, 0]} object={parts[2]}/>
+                    <primitive
+                        rotation={[Math.PI / 2, Math.PI, 0]}
+                        object={parts[2]}
+                        position={[-0.015, 0, 0.41]}
+                    />
                     <group ref={G3}>
-                        <primitive rotation={[Math.PI / 2, 0, 0]} object={parts[3]}/>
+                        <primitive
+                            rotation={[Math.PI / 2, Math.PI, 0]}
+                            object={parts[3]}
+                            position={[0.05, 0.13, 0.3]}
+                        />
                     </group>
                 </group>
             </group>

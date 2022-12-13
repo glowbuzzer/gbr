@@ -2,19 +2,31 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense } from "react"
+import React, { StrictMode, Suspense, useMemo } from "react"
 
 import {
-    BasicRobot, BasicCartesian, CartesianDroTileDefinition, CartesianJogTileDefinition, ConfigEditTileDefinition, ConnectTileDefinition,
+    BasicRobot,
+    BasicCartesian,
+    CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
+    ConfigEditTileDefinition,
+    ConnectTileDefinition,
     CylindricalTool,
     DockLayout,
     DockLayoutProvider,
-    DockTileDefinitionBuilder, FeedRateTileDefinition, FramesTileDefinition,
+    DockTileDefinitionBuilder,
+    FeedRateTileDefinition,
+    FramesTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitionList, JointDroTileDefinition, JointJogTileDefinition, PointsTileDefinition,
+    GlowbuzzerTileDefinitionList,
+    JointDroTileDefinition,
+    JointJogTileDefinition,
+    PointsTileDefinition,
     RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
-    ThreeDimensionalSceneTileDefinition, ToolsTileDefinition
+    ThreeDimensionalSceneTileDefinition,
+    ToolsTileDefinition,
+    BasicCartesianSimple
 } from "@glowbuzzer/controls"
 
 import { useGLTF, Environment } from "@react-three/drei"
@@ -24,7 +36,8 @@ import {
     SoloActivityApi,
     useFrame,
     useJointPositions,
-    useKinematicsConfiguration, useToolIndex
+    useKinematicsConfiguration,
+    useToolIndex
 } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 
@@ -33,7 +46,7 @@ import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import * as THREE from 'three'
+import * as THREE from "three"
 
 const DEG90 = Math.PI / 2
 const DEG180 = Math.PI
@@ -42,22 +55,45 @@ const DEG180 = Math.PI
 // must have empty last row or your last joint vanishes
 //rotateZ doesnt work on movable joints
 
-
 // { rotateX: 0, rotateY: 0, rotateZ: 0, translateX:0, translateY:0, translateZ:0.053, moveable: true, prismatic: true },
 // { rotateX: 0, rotateY: 0, rotateZ: Math.PI, translateX:-0.015, translateY:0, translateZ:0.35, moveable: true, jointAngleAdjustment: 0, prismatic:true },
 // { rotateX: 0, rotateY: 0, rotateZ: 0, translateX:-0.05, translateY:-0.13, translateZ:-0.1, moveable: true, jointAngleAdjustment: 0, prismatic:true },
 
-
 const ROUTER_KIN_CHAIN: RobotKinematicsChainElement[] = [
-    { rotateX: DEG90, rotateY: 0, rotateZ: 0, translateX:0, translateY:0, translateZ:0.053, moveable: true},
-    { rotateX: -DEG90, rotateY: 0, rotateZ: Math.PI, translateX:-0.015, translateY:0, translateZ:0.35, moveable: true, jointAngleAdjustment: 0},
-    { rotateX: DEG90, rotateY: DEG180, rotateZ: 0, translateX:0.05, translateY:0.13, translateZ:-0.1, moveable: true, jointAngleAdjustment: 0},
+    {
+        rotateX: DEG90,
+        rotateY: 0,
+        rotateZ: 0,
+        translateX: 0,
+        translateY: 0,
+        translateZ: 0.053,
+        moveable: true
+    },
+    {
+        rotateX: -DEG90,
+        rotateY: 0,
+        rotateZ: Math.PI,
+        translateX: -0.015,
+        translateY: 0,
+        translateZ: 0.35,
+        moveable: true,
+        jointAngleAdjustment: 0
+    },
+    {
+        rotateX: DEG90,
+        rotateY: DEG180,
+        rotateZ: 0,
+        translateX: 0.05,
+        translateY: 0.13,
+        translateZ: -0.1,
+        moveable: true,
+        jointAngleAdjustment: 0
+    },
     {}
 ]
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 0)
-const DEFAULT_ROTATION = new THREE.Quaternion( 0.7071068, 0, 0,  0.7071068)
+const DEFAULT_ROTATION = new THREE.Quaternion(0.7071068, 0, 0, 0.7071068)
 // const DEFAULT_ROTATION = new THREE.Quaternion( 0, 0, 0,  1)
-
 
 const CncRouter = () => {
     const { frameIndex } = useKinematicsConfiguration(0)
@@ -67,21 +103,23 @@ const CncRouter = () => {
     const toolIndex = useToolIndex(0)
 
     // load the parts of the robot (links)
-    const parts = useGLTF([0, 1,2,3 ].map(j => `/assets/router/L${j}.glb`)).map(
-        m => m.scene
+
+    const parts = useMemo(
+        () => useGLTF([0, 1, 2, 3].map(j => `/assets/router/L${j}.glb`)).map(m => m.scene),
+        []
     )
 
     return (
-        <BasicCartesian
+        <BasicCartesianSimple
             kinematicsChain={ROUTER_KIN_CHAIN}
             parts={parts}
             jointPositions={jointPositions}
-            translation={ translation || DEFAULT_POSITION}
+            translation={translation || DEFAULT_POSITION}
             rotation={rotation || DEFAULT_ROTATION}
-            scale={100}
+            scale={1000}
         >
-            {/*<CylindricalTool toolIndex={toolIndex} />*/}
-        </BasicCartesian>
+            <CylindricalTool toolIndex={toolIndex} />
+        </BasicCartesianSimple>
     )
 }
 
@@ -97,7 +135,6 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         )
     })
     .build()
-
 
 function App() {
     function handleToolChange(

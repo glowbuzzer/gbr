@@ -41,12 +41,6 @@ export * from "./gbc_extra"
         /**  Position is to be super-imposed on the current move */
   MOVESUPERIMPOSED ,
     }
-    export enum FRAME_ABSRELATIVE {
-        /**  The frame is an absolute frame */
-  FRAME_ABSOLUTE ,
-        /**  Frame is a relative frame */
-  FRAME_RELATIVE ,
-    }
     export enum TASK_STATE {
         /**  Task state is not started */
   TASK_NOTSTARTED ,
@@ -208,6 +202,8 @@ export * from "./gbc_extra"
   KC_TWO_LINK ,
         /**  The kinematics configuration will use a custom user supplied c function */
   KC_CUSTOM ,
+        /**  The kinematics configuration will have the REVOLUTE_DELTAkinematics model (algorithm) applied */
+  KC_REVOLUTE_DELTA ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
@@ -1549,10 +1545,10 @@ export * from "./gbc_extra"
                         translation?:Vector3;
                         /**  Rotation of the frame */
                         rotation?:Quat;
-                        /**  Link to the parent of the frame */
-                        parent?:number;
-                        /**  Whether the frame is referenced with an absolute or relative position */
-                        absRel?:FRAME_ABSRELATIVE;
+                        /**  Index of the parent frame, if positionReference is POSITIONREFERENCE.RELATIVE */
+                        parentFrameIndex?:number;
+                        /**  Whether the frame is absolute or relative to a parent frame */
+                        positionReference?:POSITIONREFERENCE;
             }
             /** 
             Command parameters for frame
