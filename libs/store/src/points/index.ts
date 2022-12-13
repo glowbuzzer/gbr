@@ -3,12 +3,32 @@
  */
 
 import { useConfig } from "../config"
+import { PointsConfig } from "../gbc"
+import { createSlice, Slice } from "@reduxjs/toolkit"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import { RootState } from "../root"
+
+type PointsSliceType = {
+    selectedPoint: number
+}
+
+export const pointsSlice: Slice<PointsSliceType> = createSlice({
+    name: "points",
+    initialState: {
+        selectedPoint: null
+    },
+    reducers: {
+        setSelectedPoint(state, action) {
+            state.selectedPoint = action.payload
+        }
+    }
+})
 
 export function usePoints() {
     const config = useConfig()
     return (
         // normalise points
-        config.points?.map(p => ({
+        config.points?.map<PointsConfig>(p => ({
             ...p,
             translation: {
                 x: 0,
@@ -25,4 +45,14 @@ export function usePoints() {
             }
         })) || []
     )
+}
+
+export function useSelectedPoint(): [number, (index: number) => void] {
+    const dispatch = useDispatch()
+    const selectedPoint = useSelector(
+        (state: RootState) => state.points.selectedPoint,
+        shallowEqual
+    )
+
+    return [selectedPoint, (index: number) => dispatch(pointsSlice.actions.setSelectedPoint(index))]
 }

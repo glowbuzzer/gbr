@@ -67,12 +67,12 @@ export const StyledIcon = styled.span`
 
 /** @ignore */
 export const GlowbuzzerIcon = (props: CustomIconProps) => {
-    const { name, Icon, title } = props
+    const { name, Icon, title, disabled } = props
     const classes = custom_icon_classes(props, name, "anticon")
     const el = (
         <StyledIcon
             className={classes}
-            onClick={props.onClick}
+            onClick={disabled ? undefined : props.onClick}
             onMouseDown={e => e.stopPropagation()}
         >
             <Icon viewBox="0 0 48 48" />

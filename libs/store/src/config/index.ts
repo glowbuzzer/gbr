@@ -2,11 +2,13 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {createSlice, Slice} from "@reduxjs/toolkit"
-import {shallowEqual, useDispatch, useSelector} from "react-redux"
-import {GlowbuzzerConfig, MoveParametersConfig, ToolConfig} from "../gbc"
-import {RootState} from "../root"
+import { createSlice, Slice } from "@reduxjs/toolkit"
+import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
+import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
+import { useConnection } from "../connect"
+import { message } from "antd"
 
 export const DEFAULT_CONFIG: GlowbuzzerConfig = {
     frames: [{}],
@@ -75,9 +77,29 @@ export function useConfig() {
     ).value
 }
 
+/**
+ * Returns a function that can be used to apply partial updates to the configuration. Configuration
+ * changes will be sent to GBC.
+ */
+export function useConfigLoader() {
+    const connection = useConnection()
+    const config = useConfig()
+    const dispatch = useDispatch()
+
+    return (change: Partial<GlowbuzzerConfig>) => {
+        const next: GlowbuzzerConfig = {
+            ...config,
+            ...change
+        }
+        return connection.request("load config", { config: next }).then(() => {
+            dispatch(configSlice.actions.setConfig(next))
+        })
+    }
+}
+
 const EMPTY_TOOL: ToolConfig = {
-    translation: {x: 0, y: 0, z: 0},
-    rotation: {x: 0, y: 0, z: 0, w: 1}
+    translation: { x: 0, y: 0, z: 0 },
+    rotation: { x: 0, y: 0, z: 0, w: 1 }
 }
 
 /**
@@ -105,7 +127,7 @@ export function useDefaultMoveParameters(): MoveParametersConfig {
     return useSelector((state: RootState) => {
         const v = state.config?.value?.moveParameters?.[0] || {}
         // strip the name from move params as it's not valid in websocket message to gbc
-        const {name, ...props} = v
+        const { name, ...props } = v
         return props
     }, deepEqual)
 }

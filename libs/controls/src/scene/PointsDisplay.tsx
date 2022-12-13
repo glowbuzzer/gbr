@@ -3,30 +3,30 @@
  */
 
 import React from "react"
-import { useFrames, useSelectedFrame } from "@glowbuzzer/store"
+import { usePoints, useSelectedPoint } from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { CartesianPositionTriadDisplay } from "./CartesianPositionTriadDisplay"
 
-export const FramesDisplay = () => {
-    const { asList: frames } = useFrames()
-    const [selectedFrame, setSelectedFrame] = useSelectedFrame()
+export const PointsDisplay = () => {
+    const points = usePoints()
+    const [selectedPoint, setSelectedPoint] = useSelectedPoint()
 
     return (
         <>
-            {frames.map((f, i) => {
-                const { translation, rotation } = f.absolute
+            {points.map((p, i) => {
+                const { translation, rotation } = p
                 const { x, y, z } = translation
                 const { x: qx, y: qy, z: qz, w } = rotation
 
                 return (
                     <CartesianPositionTriadDisplay
                         key={i}
-                        name={f.text}
+                        name={p.name}
                         translation={new Vector3(x, y, z)}
                         rotation={new Quaternion(qx, qy, qz, w)}
-                        size="regular"
-                        onClick={() => setSelectedFrame(i)}
-                        selected={selectedFrame === i}
+                        size="small"
+                        onClick={() => setSelectedPoint(i)}
+                        selected={selectedPoint === i}
                     />
                 )
             })}

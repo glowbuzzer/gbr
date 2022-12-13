@@ -10,7 +10,7 @@ import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
-import { FRAME_ABSRELATIVE, FramesConfig } from "../gbc"
+import { FramesConfig, POSITIONREFERENCE } from "../gbc"
 
 const { load, save } = settings("frames")
 
@@ -151,7 +151,7 @@ export function useFrame(index: number, useDefaults = true): FramesConfig {
                   translation: { x: 0, y: 0, z: 0 },
                   rotation: { x: 0, y: 0, z: 0, w: 1 },
                   name: "unknown",
-                  absRel: FRAME_ABSRELATIVE.FRAME_ABSOLUTE
+                  positionReference: POSITIONREFERENCE.ABSOLUTE
               }
             : {})
     )

@@ -22,6 +22,7 @@ import { integerOutputsSlice } from "./io/iout"
 import { tasksSlice } from "./tasks"
 import { framesSlice } from "./frames"
 import { activitySlice } from "./activity"
+import { pointsSlice } from "./points"
 
 export const standardReducers = {
     config: configSlice.reducer,
@@ -32,6 +33,7 @@ export const standardReducers = {
     prefs: prefsSlice.reducer,
     machine: machineSlice.reducer,
     joints: jointsSlice.reducer,
+    points: pointsSlice.reducer,
     frames: framesSlice.reducer,
     din: digitalInputsSlice.reducer,
     dout: digitalOutputsSlice.reducer,

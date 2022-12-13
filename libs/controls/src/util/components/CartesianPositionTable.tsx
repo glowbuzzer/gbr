@@ -8,14 +8,22 @@ import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
 import { PrecisionToolbarButtonGroup } from "./PrecisionToolbarButtonGroup"
 import { StyledTable } from "../styles/StyledTable"
 import React from "react"
-import { Table, TreeDataNode } from "antd"
+import { Popconfirm, TreeDataNode } from "antd"
 import { DownOutlined, RightOutlined } from "@ant-design/icons"
-import { ColumnsType, ColumnType } from "antd/es/table"
+import { ColumnType } from "antd/es/table"
+import { DockToolbarButtonGroup } from "../../dock/DockToolbar"
+import { GlowbuzzerIcon } from "../GlowbuzzerIcon"
+import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
+import { ReactComponent as AddIcon } from "@material-symbols/svg-400/outlined/add.svg"
+import { ReactComponent as DeleteIcon } from "@material-symbols/svg-400/outlined/delete.svg"
 
 type CartesianPositionTableProps = {
     selected: number
     setSelected: (index: number) => void
     items: TreeDataNode[]
+    onEdit?(): void
+    onAdd?(): void
+    onDelete?(): void
 }
 
 /**
@@ -25,7 +33,10 @@ type CartesianPositionTableProps = {
 export const CartesianPositionTable = ({
     items,
     selected,
-    setSelected
+    setSelected,
+    onEdit,
+    onAdd,
+    onDelete
 }: CartesianPositionTableProps) => {
     const { fromSI } = usePrefs()
     const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
@@ -103,11 +114,43 @@ export const CartesianPositionTable = ({
     }
 
     const nested = items.some(node => node.children?.length > 0)
+    const no_selection = (selected ?? true) === true
 
     return (
         <DockTileWithToolbar
             toolbar={
                 <>
+                    {(onEdit || onAdd || onDelete) && (
+                        <DockToolbarButtonGroup>
+                            {onEdit && (
+                                <GlowbuzzerIcon
+                                    Icon={EditIcon}
+                                    title="Edit"
+                                    button
+                                    disabled={no_selection}
+                                    onClick={onEdit}
+                                />
+                            )}
+                            {onAdd && (
+                                <GlowbuzzerIcon Icon={AddIcon} title="New" button onClick={onAdd} />
+                            )}
+                            {onDelete && (
+                                <Popconfirm
+                                    title={<>Are you sure to delete this item?</>}
+                                    onConfirm={onDelete}
+                                    onCancel={() => {}}
+                                    okText="Delete"
+                                    cancelText="Cancel"
+                                >
+                                    <GlowbuzzerIcon
+                                        Icon={DeleteIcon}
+                                        button
+                                        disabled={no_selection}
+                                    />
+                                </Popconfirm>
+                            )}
+                        </DockToolbarButtonGroup>
+                    )}
                     <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
                     <RotationSelectToolbarItem
                         value={(rotationDisplay || RotationDisplay.NONE) as RotationDisplay}

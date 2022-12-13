@@ -3,7 +3,7 @@
  */
 
 import { Matrix4, Quaternion, Vector3 } from "three"
-import { FramesConfig } from "../gbc"
+import { FramesConfig, POSITIONREFERENCE } from "../gbc"
 
 export type FrameConfig = {
     translation: Vector3
@@ -86,15 +86,15 @@ export function build_tree(frames: FramesConfig[], overrides: (number[] | null |
         }
         const item: Frame = {
             index: Number(index),
-            parentIndex: def.parent,
+            parentIndex: def.parentFrameIndex,
             text: def.name || index,
             level: 0,
             absolute: relative, // will be modified if parent specified
             relative
         }
-        if (def.absRel) {
+        if (def.positionReference === POSITIONREFERENCE.RELATIVE) {
             // frame is relative to parent frame
-            const parent_index = def.parent
+            const parent_index = def.parentFrameIndex
             const parent = parents[parent_index]
             if (!parent) {
                 throw new Error("Invalid parent frame - forward refs not supported")

@@ -17,12 +17,14 @@ import { ReactComponent as BlockIcon } from "@material-symbols/svg-400/outlined/
 import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outlined/show_chart.svg"
 import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
+import { ReactComponent as PointsIcon } from "@material-symbols/svg-400/outlined/pin_drop.svg"
 import { FramesDisplay } from "./FramesDisplay"
 import { DefaultPerspectiveCamera } from "./DefaultPerspectiveCamera"
 import { DefaultGridHelper } from "./DefaultGridHelper"
 import { ScaleProvider } from "./ScaleProvider"
 import { DefaultViewCube } from "./DefaultViewCube"
 import { DefaultLighting } from "./DefaultLighting"
+import { PointsDisplay } from "./PointsDisplay"
 
 type ThreeDimensionalSceneTileProps = {
     /** The kinematics configuration to use */
@@ -101,6 +103,7 @@ export const ThreeDimensionalSceneTile = ({
                             <PreviewPath preview={segments} highlightLine={highlightLine} />
                         )}
                         {current.showFrames && <FramesDisplay />}
+                        {current.showPoints && <PointsDisplay />}
                         {/* Render any react-three-fiber nodes supplied */}
                         {children}
                     </ScaleProvider>
@@ -108,6 +111,14 @@ export const ThreeDimensionalSceneTile = ({
             </Canvas>
             <DockToolbar floating>
                 <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        name="points"
+                        Icon={PointsIcon}
+                        button
+                        checked={!!current.showPoints}
+                        title={current.showPoints ? "Hide points" : "Show points"}
+                        onClick={() => update("showPoints", !current.showPoints)}
+                    />
                     <GlowbuzzerIcon
                         name="frames"
                         Icon={FramesIcon}
@@ -127,7 +138,6 @@ export const ThreeDimensionalSceneTile = ({
                     />
                 </DockToolbarButtonGroup>
                 <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
                     <GlowbuzzerIcon
                         Icon={AutoGraphIcon}
                         button
@@ -135,6 +145,7 @@ export const ThreeDimensionalSceneTile = ({
                         onClick={toggle_trace}
                         checked={!hideTrace}
                     />
+                    <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
                 </DockToolbarButtonGroup>
             </DockToolbar>
         </>
