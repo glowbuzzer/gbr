@@ -202,6 +202,8 @@ export * from "./gbc_extra"
   KC_TWO_LINK ,
         /**  The kinematics configuration will use a custom user supplied c function */
   KC_CUSTOM ,
+        /**  The kinematics configuration will have the REVOLUTE_DELTAkinematics model (algorithm) applied */
+  KC_REVOLUTE_DELTA ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
