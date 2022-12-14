@@ -26,7 +26,8 @@ import {
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
-    BasicCartesianSimple
+    BasicCartesianSimple,
+    GCodeTileDefinition
 } from "@glowbuzzer/controls"
 
 import { useGLTF, Environment } from "@react-three/drei"
@@ -161,6 +162,7 @@ function App() {
                     FramesTileDefinition,
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
+                    GCodeTileDefinition,
                     CustomSceneTileDefinition
                 ]}
             >

@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { CartesianPosition, POSITIONREFERENCE, usePrefs } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Checkbox, Input, InputNumber, Space } from "antd"
@@ -45,12 +45,15 @@ type CartesianPositionEditProps = {
     /** The position changed callback */
     onSave(name: string, position: CartesianPosition): void
 
+    onChange?(name: string, position: CartesianPosition): void
+
     onCancel(): void
 }
 
 export const CartesianPositionEdit = ({
     name: currentName,
     value,
+    onChange,
     onSave,
     onCancel
 }: CartesianPositionEditProps) => {
@@ -62,6 +65,8 @@ export const CartesianPositionEdit = ({
     const [translation, setTranslation] = useState<CartesianPosition["translation"]>({
         ...value.translation
     })
+    const { current, toSI, fromSI } = usePrefs()
+
     const [rotation, setRotation] = useState<Euler>(
         // hold as Euler
         new Euler().setFromQuaternion(
@@ -69,24 +74,30 @@ export const CartesianPositionEdit = ({
         )
     )
 
-    const { current } = usePrefs()
+    function handle_change(update: Partial<CartesianPosition>) {
+        onChange?.(name, {
+            positionReference,
+            frameIndex,
+            translation,
+            rotation: new Quaternion().setFromEuler(rotation),
+            ...update
+        })
+    }
 
-    useEffect(() => {
-        setName(currentName)
-        setTranslation({ ...value.translation })
-        setRotation(
-            new Euler().setFromQuaternion(
-                new Quaternion(
-                    value.rotation.x,
-                    value.rotation.y,
-                    value.rotation.z,
-                    value.rotation.w
-                )
-            )
-        )
-        setFrameIndex(value.frameIndex)
-        setPositionReference(value.positionReference)
-    }, [currentName, value])
+    function update_translation(translation: CartesianPosition["translation"]) {
+        setTranslation(translation)
+        handle_change({ translation })
+    }
+
+    function update_rotation(rotation: Euler) {
+        setRotation(rotation)
+        handle_change({ rotation: new Quaternion().setFromEuler(rotation) })
+    }
+
+    function update_frame_index(frameIndex: number) {
+        setFrameIndex(frameIndex)
+        handle_change({ frameIndex })
+    }
 
     function save() {
         const { x, y, z, w } = new Quaternion().setFromEuler(rotation)
@@ -94,11 +105,12 @@ export const CartesianPositionEdit = ({
     }
 
     function toggle_relative() {
-        setPositionReference(
+        const next =
             positionReference === POSITIONREFERENCE.ABSOLUTE
                 ? POSITIONREFERENCE.RELATIVE
                 : POSITIONREFERENCE.ABSOLUTE
-        )
+        setPositionReference(next)
+        handle_change({ positionReference: next })
     }
 
     return (
@@ -119,12 +131,7 @@ export const CartesianPositionEdit = ({
                         <InputNumber
                             value={translation[axis]}
                             size="small"
-                            onChange={v =>
-                                setTranslation(current => ({
-                                    ...current,
-                                    [axis]: v
-                                }))
-                            }
+                            onChange={v => update_translation({ ...translation, [axis]: v })}
                         />
                     </div>
                 ))}
@@ -134,15 +141,13 @@ export const CartesianPositionEdit = ({
                     <div className="input" key={"r-" + axis}>
                         {axis.toUpperCase()}{" "}
                         <InputNumber
-                            value={rotation[axis]}
+                            value={fromSI(rotation[axis], "angular")}
                             size="small"
-                            onChange={v =>
-                                setRotation(current => {
-                                    const next = current.clone()
-                                    next[axis] = v
-                                    return next
-                                })
-                            }
+                            onChange={v => {
+                                const next = rotation.clone()
+                                next[axis] = toSI(v, "angular")
+                                update_rotation(next)
+                            }}
                         />{" "}
                     </div>
                 ))}
@@ -156,7 +161,7 @@ export const CartesianPositionEdit = ({
                     Relative to frame
                 </Checkbox>
                 {positionReference === POSITIONREFERENCE.RELATIVE && (
-                    <FramesDropdown value={frameIndex || 0} onChange={setFrameIndex} />
+                    <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
                 )}
             </div>
             <div className="actions">

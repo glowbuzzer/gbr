@@ -9,24 +9,28 @@ import {
     FramesConfig,
     PointsConfig,
     POSITIONREFERENCE,
+    Quat,
     useConfigLoader,
     useFrames,
     useFramesList,
-    useSelectedFrame
+    useSelectedFrame,
+    Vector3
 } from "@glowbuzzer/store"
 import { message, TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
+import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
 
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
  */
 export const FramesTile = () => {
     // Note that `asList` is in tree order, whereas `frames` is in the order given in the config file (not necessarily the same)
-    const { asTree, asList } = useFrames()
-    const frames = useFramesList()
+    const { frames: editedFrames, setFrames, clearFrames } = useConfigLiveEdit()
+    const { asTree, asList } = useFrames(editedFrames)
+    const frames = useFramesList(editedFrames)
     const [selected, setSelected] = useSelectedFrame()
     const [editMode, setEditMode] = useState(false)
 
@@ -72,17 +76,15 @@ export const FramesTile = () => {
         }
     }
 
-    function save(
+    function frames_with_modification(
+        frameIndex: number,
         name: string,
-        {
-            positionReference,
-            frameIndex: parentFrameIndex,
-            rotation,
-            translation
-        }: CartesianPosition
+        positionReference: POSITIONREFERENCE,
+        parentFrameIndex: number,
+        translation: Vector3,
+        rotation: Quat
     ) {
-        const frameIndex = asList[selected].index
-        const next: FramesConfig[] = frames.map((frame, index) => {
+        return frames.map((frame, index) => {
             if (index === frameIndex) {
                 return {
                     name,
@@ -94,9 +96,51 @@ export const FramesTile = () => {
             }
             return frame
         })
+    }
+
+    function update_frame(
+        name: string,
+        {
+            positionReference,
+            frameIndex: parentFrameIndex,
+            rotation,
+            translation
+        }: CartesianPosition
+    ) {
+        const frameIndex = asList[selected].index
+        const overrides: FramesConfig[] = frames_with_modification(
+            frameIndex,
+            name,
+            positionReference,
+            parentFrameIndex,
+            translation,
+            rotation
+        )
+        setFrames(overrides)
+    }
+
+    function save_frames(
+        name: string,
+        {
+            positionReference,
+            frameIndex: parentFrameIndex,
+            rotation,
+            translation
+        }: CartesianPosition
+    ) {
+        const frameIndex = asList[selected].index
+        const next: FramesConfig[] = frames_with_modification(
+            frameIndex,
+            name,
+            positionReference,
+            parentFrameIndex,
+            translation,
+            rotation
+        )
         loader({
             frames: next
         }).then(() => {
+            clearFrames()
             setEditMode(false)
             return message.success("Frames updated")
         })
@@ -130,6 +174,11 @@ export const FramesTile = () => {
         })
     }
 
+    function cancel_edit() {
+        clearFrames()
+        setEditMode(false)
+    }
+
     const treeData = transform_frame(asTree)
 
     return editMode ? (
@@ -137,8 +186,9 @@ export const FramesTile = () => {
             <CartesianPositionEdit
                 name={asList[selected].text}
                 value={frame_to_cartesian_position(asList[selected].index)}
-                onSave={save}
-                onCancel={() => setEditMode(false)}
+                onSave={save_frames}
+                onChange={update_frame}
+                onCancel={cancel_edit}
             />
         </StyledTileContent>
     ) : (

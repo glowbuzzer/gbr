@@ -1555,12 +1555,6 @@ export * from "./gbc_extra"
              */
             export type FramesCommand = {
             
-                        /**  Translation to be applied to the frame */
-                        translation?:Vector3;
-                        /**  Rotation to be applied to the frame */
-                        rotation?:Quat;
-                        /**  Should the frame's value be overridden */
-                        override?:boolean;
             }
             /** @ignore */
             export type FramesStatus = {

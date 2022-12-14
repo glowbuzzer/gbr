@@ -3,8 +3,8 @@
  */
 
 import * as React from "react"
-import { FC, ReactNode, useEffect, useRef } from "react"
-import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
+import {FC, ReactNode, useEffect, useRef} from "react"
+import {configureStore, StoreEnhancer} from "@reduxjs/toolkit"
 import {
     ConfigState,
     ConnectionState,
@@ -12,10 +12,11 @@ import {
     useConfigState,
     useConnection
 } from "@glowbuzzer/store"
-import styled, { css, ThemeProvider } from "styled-components"
-import { Button } from "antd"
-import { CloseOutlined } from "@ant-design/icons"
-import { Provider } from "react-redux"
+import styled, {css, ThemeProvider} from "styled-components"
+import {Button} from "antd"
+import {CloseOutlined} from "@ant-design/icons"
+import {Provider} from "react-redux"
+import {ConfigLiveEditProvider} from "../config/ConfigLiveEditProvider";
 
 const theme = {
     colors: {
@@ -29,7 +30,8 @@ declare module "styled-components" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    export interface DefaultTheme extends Theme {}
+    export interface DefaultTheme extends Theme {
+    }
 }
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
@@ -67,12 +69,12 @@ type GlowbuzzerContainerProps = {
     children: ReactNode
 }
 
-const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) => {
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => {
     const connection = useConnection()
     const [configState, setConfigState] = useConfigState()
     const connectDelay = useRef(0)
 
-    const { state, autoConnect, reconnect } = connection
+    const {state, autoConnect, reconnect} = connection
 
     useEffect(() => {
         if (state === ConnectionState.DISCONNECTED && autoConnect) {
@@ -88,7 +90,8 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
     useEffect(() => {
         if (configState === ConfigState.AWAITING_HLC_INIT) {
             // eslint-disable-next-line @typescript-eslint/no-empty-function
-            Promise.all([init ? init : () => {}]).then(() => setConfigState(ConfigState.READY))
+            Promise.all([init ? init : () => {
+            }]).then(() => setConfigState(ConfigState.READY))
         }
     }, [init, configState, setConfigState])
 
@@ -122,9 +125,9 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children, init }) =
                 <div className="reconnect-panel">
                     <div>
                         <p>
-                            <ConfigStateMessage />
+                            <ConfigStateMessage/>
                         </p>
-                        <Button icon={<CloseOutlined />} onClick={cancel}>
+                        <Button icon={<CloseOutlined/>} onClick={cancel}>
                             Cancel
                         </Button>
                     </div>
@@ -151,9 +154,9 @@ type GlowbuzzerAppProps = {
  *
  * You can look at the source for this component to see how to configure the GBR Redux store from scratch.
  */
-export const GlowbuzzerApp = ({ storeEnhancers, children }: GlowbuzzerAppProps) => {
+export const GlowbuzzerApp = ({storeEnhancers, children}: GlowbuzzerAppProps) => {
     const middleware = getDefault => {
-        return getDefault({ immutableCheck: false, serializableCheck: false })
+        return getDefault({immutableCheck: false, serializableCheck: false})
     }
 
     const store = configureStore({
@@ -165,7 +168,9 @@ export const GlowbuzzerApp = ({ storeEnhancers, children }: GlowbuzzerAppProps) 
     return (
         <ThemeProvider theme={theme}>
             <Provider store={store}>
-                <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                <ConfigLiveEditProvider>
+                    <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                </ConfigLiveEditProvider>
             </Provider>
         </ThemeProvider>
     )

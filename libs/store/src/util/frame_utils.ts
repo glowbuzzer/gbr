@@ -67,9 +67,8 @@ function quatOf(r): Quaternion {
  * Build a tree of frames from the raw config and calculate the relative and absolute transformation matrices for each frame
  *
  * @param frames The raw list of frames in the config containing translation and rotation (quaternion) info
- * @param overrides Any overrides that are in effect (can be null or undefined)
  */
-export function build_tree(frames: FramesConfig[], overrides: (number[] | null | undefined)[]) {
+export function build_tree(frames: FramesConfig[]) {
     const rootFrames = [] as Frame[]
     const parents = [] as Frame[]
 
@@ -79,20 +78,20 @@ export function build_tree(frames: FramesConfig[], overrides: (number[] | null |
             translation: vectorOf(def.translation),
             rotation: quatOf(def.rotation)
         }
-        if (overrides[index]) {
-            relative.translation.setX(overrides[index][0])
-            relative.translation.setY(overrides[index][1])
-            relative.translation.setZ(overrides[index][2])
-        }
+        const frameIndex = Number(index)
         const item: Frame = {
-            index: Number(index),
+            index: frameIndex,
             parentIndex: def.parentFrameIndex,
             text: def.name || index,
             level: 0,
             absolute: relative, // will be modified if parent specified
             relative
         }
-        if (def.positionReference === POSITIONREFERENCE.RELATIVE) {
+
+        if (
+            def.positionReference === POSITIONREFERENCE.RELATIVE &&
+            def.parentFrameIndex !== frameIndex /* don't allow self-reference */
+        ) {
             // frame is relative to parent frame
             const parent_index = def.parentFrameIndex
             const parent = parents[parent_index]

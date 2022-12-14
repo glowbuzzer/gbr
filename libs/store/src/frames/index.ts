@@ -6,7 +6,6 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { Quaternion, Vector3 } from "three"
 import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
@@ -17,7 +16,6 @@ const { load, save } = settings("frames")
 type FramesSliceType = {
     activeFrame: number
     selectedFrame: number
-    overrides: number[][]
 }
 
 export const framesSlice: Slice<FramesSliceType> = createSlice({
@@ -41,60 +39,16 @@ export const framesSlice: Slice<FramesSliceType> = createSlice({
     }
 })
 
-export function updateFrameOverridesMsg(overrides: number[][]) {
-    const frames = {}
-    for (const [index, value] of overrides.entries()) {
-        if (value) {
-            const [x, y, z] = value
-            frames[index] = {
-                command: {
-                    override: true,
-                    translation: {
-                        x,
-                        y,
-                        z
-                    },
-                    rotation: {
-                        x: 0,
-                        y: 0,
-                        z: 0,
-                        w: 1
-                    }
-                }
-            }
-        } else {
-            frames[index] = {
-                command: {
-                    override: false
-                }
-            }
-        }
-    }
-    return JSON.stringify({
-        command: {
-            frames
-        }
-    })
-}
-
 /** @ignore - currently part of the internal API */
-export const useFrames = () => {
+export const useFrames = (overrides?: FramesConfig[]) => {
     const dispatch = useDispatch()
-    const connection = useConnection()
     const config = useConfig()
-    const overrides = useSelector((state: RootState) => state.frames.overrides, shallowEqual)
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
 
-    const asTree = build_tree(config.frames, overrides)
+    const asTree = build_tree(overrides || config.frames)
     const asList = build_list(asTree)
 
     // console.log("FRAME", asList[0].absolute.translation)
-
-    function update(index, value) {
-        const length =
-            value === undefined ? overrides.length : Math.max(index + 1, overrides.length)
-        return Array.from({ length }).map((_, i) => (i === index ? value : overrides[i]))
-    }
 
     return {
         raw: config.frames,
@@ -108,13 +62,7 @@ export const useFrames = () => {
             fromIndex: number | "world",
             toIndex: number | "world"
         ) {
-            // console.log("FROM", fromIndex, "TO", toIndex)
             return change_reference_frame(asList, translation, rotation, fromIndex, toIndex)
-        },
-        setOverride(index: number, value: number[] | undefined) {
-            const new_list = update(index, value)
-            dispatch(framesSlice.actions.setOverrides(new_list))
-            connection.send(updateFrameOverridesMsg(new_list))
         },
         setActiveFrame(index: number) {
             dispatch(framesSlice.actions.setActiveFrame(index))
@@ -125,11 +73,11 @@ export const useFrames = () => {
 /**
  * Provides a list of the currently configured frames.
  */
-export function useFramesList(): FramesConfig[] {
+export function useFramesList(overrides?: FramesConfig[]): FramesConfig[] {
     const config = useConfig()
 
     // make sure the frames have sensible defaults for missing properties
-    return config.frames.map(f => ({
+    return (overrides || config.frames).map(f => ({
         ...f,
         translation: { x: 0, y: 0, z: 0, ...f.translation },
         rotation: { x: 0, y: 0, z: 0, w: 1, ...f.rotation }

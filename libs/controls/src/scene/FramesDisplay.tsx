@@ -6,9 +6,11 @@ import React from "react"
 import { useFrames, useSelectedFrame } from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { CartesianPositionTriadDisplay } from "./CartesianPositionTriadDisplay"
+import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
 
 export const FramesDisplay = () => {
-    const { asList: frames } = useFrames()
+    const editedFrames = useConfigLiveEdit().frames
+    const { asList: frames } = useFrames(editedFrames)
     const [selectedFrame, setSelectedFrame] = useSelectedFrame()
 
     return (
