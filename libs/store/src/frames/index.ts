@@ -117,3 +117,20 @@ export function useSelectedFrame(): [number, (index: number) => void] {
 
     return [selectedFrame, (index: number) => dispatch(framesSlice.actions.setSelectedFrame(index))]
 }
+
+export function useWorkspaceFrames(): Record<number, number> {
+    const frames = useFramesList()
+
+    // we want to retain the index of each frame in the array during the filter
+    const entries = Array.from(frames.entries())
+        // filter out frames that don't have a workspace offset
+        .filter(([, f]) => f.workspaceOffset)
+        // remove duplicates, we only want to keep the first instance of each workspace offset
+        .filter(
+            ([, f], i, a) => a.findIndex(([, f2]) => f2.workspaceOffset === f.workspaceOffset) === i
+        )
+        // convert to a map of workspace offset to frame index
+        .map(([i, f]) => [f.workspaceOffset, i])
+
+    return Object.fromEntries(entries)
+}

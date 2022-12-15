@@ -19,9 +19,14 @@ import {
 import { message, TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
 import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
+import styled from "styled-components"
+import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
+
+const StyledDiv = styled.div`
+    ${CssPointNameWithFrame}
+`
 
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
@@ -47,7 +52,16 @@ export const FramesTile = () => {
 
             return {
                 key: frame.index,
-                name: frame.name,
+                name: (
+                    <StyledDiv>
+                        <div className="frame-name">
+                            <div className="name">{frame.name}</div>
+                            {frame.workspaceOffset > 0 && (
+                                <div className="gcode">G{frame.workspaceOffset + 53}</div>
+                            )}
+                        </div>
+                    </StyledDiv>
+                ),
                 x: translation.x,
                 y: translation.y,
                 z: translation.z,

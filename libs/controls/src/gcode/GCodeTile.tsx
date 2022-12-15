@@ -26,6 +26,8 @@ import styled, { css } from "styled-components"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { GCodeWorkOffsetSelect } from "./GCodeWorkOffsetSelect"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
 
@@ -185,18 +187,10 @@ export const GCodeTile = () => {
         <DockTileWithToolbar
             toolbar={
                 <>
+                    <DockToolbarButtonGroup>
+                        <GCodeWorkOffsetSelect />
+                    </DockToolbarButtonGroup>
                     <Space>
-                        <Select
-                            size="small"
-                            value={workOffset}
-                            onChange={v => frames.setActiveFrame(v)}
-                        >
-                            <Option value={0}>G54</Option>
-                            <Option value={1}>G55</Option>
-                            <Option value={2}>G56</Option>
-                            <Option value={3}>G57</Option>
-                            <Option value={4}>G58</Option>
-                        </Select>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
                         <Tag>{STREAMSTATE[stream.state]}</Tag>
 

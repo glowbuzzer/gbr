@@ -2,10 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {css} from "styled-components"
+import { css } from "styled-components"
 
 export const CssPointNameWithFrame = css`
-    .point-name {
+    .point-name,
+    .frame-name,
+    .workspace-offset-name {
         display: flex;
         gap: 10px;
 
@@ -14,7 +16,8 @@ export const CssPointNameWithFrame = css`
             text-overflow: ellipsis;
         }
 
-        .frame {
+        .frame,
+        .gcode {
             display: inline-block;
             height: 18px;
             margin-top: 2px;
@@ -24,6 +27,11 @@ export const CssPointNameWithFrame = css`
             border-radius: 4px;
             line-height: 1em;
             opacity: 0.8;
+            font-weight: normal;
+        }
+
+        .gcode {
+            padding-top: 2px;
         }
     }
 `

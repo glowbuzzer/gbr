@@ -306,7 +306,7 @@ export class GbcTest {
 
     send_gcode(gcode) {
         const buffer = [] as any[]
-        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
+        const adapter = new GCodeSenderAdapter(buffer, 200, {} /* this is same as test config */)
         adapter.execute(gcode)
         return this.stream(buffer)
     }

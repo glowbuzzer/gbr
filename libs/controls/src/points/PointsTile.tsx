@@ -54,7 +54,7 @@ export const PointsTile = () => {
                     <StyledDiv>
                         <div className="point-name">
                             <div className="name">{name}</div>
-                            {frames[frameIndex] && (
+                            {frames[frameIndex] !== undefined && (
                                 <div className="frame">
                                     <FramesIcon
                                         width={13}
@@ -93,7 +93,7 @@ export const PointsTile = () => {
     ) {
         return points.map((point, index) => {
             if (index === selected) {
-                return {
+                const newVar = {
                     name,
                     frameIndex:
                         positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : frameIndex,
@@ -101,6 +101,8 @@ export const PointsTile = () => {
                     rotation,
                     configuration: point.configuration
                 }
+                console.log("Mapped point", newVar)
+                return newVar
             }
             return point
         })

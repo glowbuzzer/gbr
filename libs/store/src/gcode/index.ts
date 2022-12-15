@@ -13,6 +13,7 @@ import { useConnection } from "../connect"
 import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
 import { SoloActivityApi } from "../activity/activity_api"
 import { ActivityBuilder } from "../activity"
+import { useWorkspaceFrames } from "../frames"
 
 // test
 
@@ -72,8 +73,8 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         },
         append(state, action) {
             // convert the given gcode text into activities and add to buffer
-            const { gcode, vmax, context } = action.payload
-            const interpreter = new GCodeSenderAdapter(state.buffer, vmax, context)
+            const { gcode, vmax, workspaceFrames, context } = action.payload
+            const interpreter = new GCodeSenderAdapter(state.buffer, vmax, workspaceFrames, context)
             interpreter.execute(gcode)
         },
         consume(state, action) {
@@ -170,13 +171,14 @@ export function useGCode(): {
     const context = useContext(gcodeContext)
     const dispatch = useDispatch()
     const connection = useConnection()
+    const workspaceFrames = useWorkspaceFrames()
 
     return {
         state,
         time,
         lineNum: tag,
         send(gcode, vmax: number) {
-            dispatch(gcodeSlice.actions.append({ gcode, vmax, context }))
+            dispatch(gcodeSlice.actions.append({ gcode, vmax, workspaceFrames, context }))
         },
         setState(streamCommand: STREAMCOMMAND) {
             connection.send(updateStreamStateMsg(streamCommand))

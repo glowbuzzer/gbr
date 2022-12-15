@@ -1549,6 +1549,8 @@ export * from "./gbc_extra"
                         parentFrameIndex?:number;
                         /**  Whether the frame is absolute or relative to a parent frame */
                         positionReference?:POSITIONREFERENCE;
+                        /**  Allows you to use this frame as a workspace offset, where G54 is workspace offset 1 and so on */
+                        workspaceOffset?:number;
             }
             /** 
             Command parameters for frame

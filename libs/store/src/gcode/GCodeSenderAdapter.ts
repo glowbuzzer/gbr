@@ -48,12 +48,21 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private readonly api: GCodeActivityProvider
     private spindleSpeed: number
 
-    constructor(buffer, vmax: number, context?: GCodeContextType, simplifyTolerance = 0) {
-        super({
-            translation: { x: null, y: null, z: null },
-            positionReference: POSITIONREFERENCE.ABSOLUTE,
-            frameIndex: 0
-        })
+    constructor(
+        buffer,
+        vmax: number,
+        workspaceFrames: Record<number, number | null>,
+        context?: GCodeContextType,
+        simplifyTolerance = 0
+    ) {
+        super(
+            {
+                translation: { x: null, y: null, z: null },
+                positionReference: POSITIONREFERENCE.ABSOLUTE,
+                frameIndex: 0
+            },
+            workspaceFrames
+        )
         this.buffer = buffer
         this.api = new GCodeActivityProvider(0 /* TODO: allow different kcs */, buffer)
         this.vmax = vmax

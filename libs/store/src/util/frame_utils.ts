@@ -32,6 +32,7 @@ export type Frame = {
     absolute: FrameConfig
     relative: FrameConfig
     positionReference: POSITIONREFERENCE
+    workspaceOffset: number
 }
 
 function to_m4(f: FrameConfig) {
@@ -111,6 +112,7 @@ export function build_tree2(frames: FramesConfig[]): Frame[] {
             children: [],
             ...result[i], // may already exist with children due to forward ref
             name: f.name,
+            workspaceOffset: f.workspaceOffset,
             relative
         }
 
