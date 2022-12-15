@@ -68,7 +68,7 @@ export const BasicRobot = ({
                     child.castShadow = true
                 })
                 group.add(link)
-                console.log("group", group)
+                // console.log("group", group)
             }
             const { translateX, translateY, translateZ, rotateX, rotateY, rotateZ } = element
 
@@ -81,7 +81,7 @@ export const BasicRobot = ({
             } as BasicRobotElement
         })
 
-        console.log("elements", elements)
+        // console.log("elements", elements)
 
         const base = elements[0].group
         base.position.set(translation.x, translation.y, translation.z)
@@ -98,7 +98,7 @@ export const BasicRobot = ({
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
-                console.log(e)
+                // console.log(e)
                 e.group.rotation.z =
                     (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
             })
@@ -137,7 +137,7 @@ export const BasicCartesian = ({
             ...kinematicsChain
         ]
 
-        console.log("chain", chain)
+        // console.log("chain", chain)
 
         let link_index = 0
         const elements = chain.map((element, index) => {
@@ -160,7 +160,7 @@ export const BasicCartesian = ({
                     child.castShadow = true
                 })
                 group.add(link)
-                console.log("group", group)
+                // console.log("group", group)
             }
             const { translateX, translateY, translateZ, rotateX, rotateY, rotateZ } = element
 
@@ -172,7 +172,7 @@ export const BasicCartesian = ({
             } as BasicRobotElement
         })
 
-        console.log("elements", elements)
+        // console.log("elements", elements)
 
         const basePart = parts[0]
         basePart.quaternion.set(rotation.x, rotation.y, rotation.z, rotation.w)
@@ -191,17 +191,17 @@ export const BasicCartesian = ({
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
                 if (index == 0) {
-                    console.log("index 0 e", e)
+                    // console.log("index 0 e", e)
                     e.group.position.x =
                         (jointPositions[index] / 1000 || 0) + (e.config.translateX || 0)
                 }
                 if (index == 1) {
-                    console.log("index 1 e", e)
+                    // console.log("index 1 e", e)
                     e.group.position.y =
                         (jointPositions[index] / 1000 || 0) + (e.config.translateY || 0)
                 }
                 if (index == 2) {
-                    console.log("index 2 e", e)
+                    // console.log("index 2 e", e)
                     e.group.position.z =
                         (jointPositions[index] / 1000 || 0) + (e.config.translateZ || 0)
                 }

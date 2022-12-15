@@ -8,7 +8,7 @@ import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { useConfig } from "../config"
 import { RootState } from "../root"
-import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
+import { build_list, build_tree2, change_reference_frame } from "../util/frame_utils"
 import { FramesConfig, POSITIONREFERENCE } from "../gbc"
 
 const { load, save } = settings("frames")
@@ -45,7 +45,10 @@ export const useFrames = (overrides?: FramesConfig[]) => {
     const config = useConfig()
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
 
-    const asTree = build_tree(overrides || config.frames)
+    // const test = build_tree2(config.frames)
+    // console.log(test)
+
+    const asTree = build_tree2(overrides || config.frames)
     const asList = build_list(asTree)
 
     // console.log("FRAME", asList[0].absolute.translation)

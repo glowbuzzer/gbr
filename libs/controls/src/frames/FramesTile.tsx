@@ -47,7 +47,7 @@ export const FramesTile = () => {
 
             return {
                 key: frame.index,
-                name: frame.text,
+                name: frame.name,
                 x: translation.x,
                 y: translation.y,
                 z: translation.z,
@@ -58,7 +58,7 @@ export const FramesTile = () => {
                 a: euler.x,
                 b: euler.y,
                 c: euler.z,
-                children: transform_frame(frame.children)
+                children: frame.children?.length ? transform_frame(frame.children) : undefined
             }
         })
     }
@@ -182,15 +182,13 @@ export const FramesTile = () => {
     const treeData = transform_frame(asTree)
 
     return editMode ? (
-        <StyledTileContent>
-            <CartesianPositionEdit
-                name={asList[selected].text}
-                value={frame_to_cartesian_position(asList[selected].index)}
-                onSave={save_frames}
-                onChange={update_frame}
-                onCancel={cancel_edit}
-            />
-        </StyledTileContent>
+        <CartesianPositionEdit
+            name={asList[selected].name}
+            value={frame_to_cartesian_position(asList[selected].index)}
+            onSave={save_frames}
+            onChange={update_frame}
+            onCancel={cancel_edit}
+        />
     ) : (
         <CartesianPositionTable
             selected={selected}
