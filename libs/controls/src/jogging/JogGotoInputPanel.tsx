@@ -60,6 +60,9 @@ type JogGotoInputPanelProps = {
     onGotoAll(values: { [index: string]: number })
 }
 
+// we need to pass the same empty array to useLocalStorage to avoid infinite loop
+const EMPTY_ARRAY = []
+
 /** @ignore - internal to the jog tile */
 export const JogGotoInputPanel = ({
     localStorageKey,
@@ -68,13 +71,19 @@ export const JogGotoInputPanel = ({
     onGotoAll
 }: JogGotoInputPanelProps) => {
     const { toSI, getUnits } = usePrefs()
-    const [values, setValues] = useLocalStorage<string[]>(localStorageKey, [])
+    const [values, setValues] = useLocalStorage<string[]>(localStorageKey, EMPTY_ARRAY)
 
     const linearUnits = getUnits("linear")
     const linearUnitsRef = useRef(linearUnits)
 
     const angularUnits = getUnits("angular")
     const angularUnitsRef = useRef(angularUnits)
+
+    const itemsRef = useRef(items)
+    if (itemsRef.current !== items) {
+        console.log("items changed")
+        itemsRef.current = items
+    }
 
     useEffect(() => {
         setValues(current => {
