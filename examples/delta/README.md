@@ -1,6 +1,8 @@
-# Glowbuzzer Delta Robot Example
+# Glowbuzzer Revolute Delta Robot Example
 
-This example demonstrates a delta robot using the Glowbuzzer React framework. The application has two independent kinematics configurations: a simple 3-axis cartesian configuration and a single-axis auxilliary configuration.
+This example demonstrates a revolute delta robot using the Glowbuzzer React framework. The application has two
+independent kinematics configurations: a simple 3-axis cartesian configuration and a single-axis auxilliary
+configuration.
 
 To run this example:
 

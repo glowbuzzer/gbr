@@ -18,12 +18,12 @@ import {
 import styled from "styled-components"
 
 const StyledDiv = styled.div`
-    padding: 5px;
+  padding: 5px;
 
-    .row {
-        &.padded {
-            padding: 12px 0;
-        }
+  .row {
+    &.padded {
+      padding: 12px 0;
+    }
 
         padding: 2px 0;
         display: flex;
@@ -35,46 +35,46 @@ const StyledDiv = styled.div`
             flex-grow: 1;
         }
 
-        .ant-radio-group {
-            display: flex;
-            justify-content: stretch;
+    .ant-radio-group {
+      display: flex;
+      justify-content: stretch;
 
-            .ant-radio-button-wrapper {
-                flex-grow: 1;
-                flex-basis: 0;
-                text-align: center;
-            }
-
-            .ant-radio-button-wrapper:first-child {
-                border-radius: 10px 0 0 10px;
-            }
-
-            .ant-radio-button-wrapper:last-child {
-                border-radius: 0 10px 10px 0;
-            }
-        }
-
-        .controls {
-            min-width: 180px;
-            text-align: right;
-
-            .ant-tag {
-                min-width: 180px;
-                text-align: center;
-                margin: 0 0 2px 0;
-            }
-
-            .ant-btn {
-                padding: 0;
-                height: inherit;
-                min-width: 180px;
-            }
-        }
-    }
-
-    .machine-message {
+      .ant-radio-button-wrapper {
+        flex-grow: 1;
+        flex-basis: 0;
         text-align: center;
+      }
+
+      .ant-radio-button-wrapper:first-child {
+        border-radius: 10px 0 0 10px;
+      }
+
+      .ant-radio-button-wrapper:last-child {
+        border-radius: 0 10px 10px 0;
+      }
     }
+
+    .controls {
+      min-width: 180px;
+      text-align: right;
+
+      .ant-tag {
+        min-width: 180px;
+        text-align: center;
+        margin: 0 0 2px 0;
+      }
+
+      .ant-btn {
+        padding: 0;
+        height: inherit;
+        min-width: 180px;
+      }
+    }
+  }
+
+  .machine-message {
+    text-align: center;
+  }
 `
 
 /**
@@ -155,7 +155,7 @@ export const ConnectTile = () => {
                             {target_not_acquired &&
                             machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
                                 <span>
-                                    <Spin size="small" />{" "}
+                                    <Spin size="small"/>{" "}
                                 </span>
                             ) : null}
                             Live
@@ -191,7 +191,7 @@ export const ConnectTile = () => {
             </div>
             {connected && fault && (
                 <div className="row">
-                    <div className="label" />
+                    <div className="label"/>
                     <div className="controls">
                         <Button onClick={issue_reset}>Reset Fault</Button>
                     </div>

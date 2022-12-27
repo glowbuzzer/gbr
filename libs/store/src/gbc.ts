@@ -32,6 +32,9 @@ export * from "./gbc_extra"
         OPERATION_ERROR_INVALID_ARC,
         OPERATION_ERROR_TOOL_INDEX_OUT_OF_RANGE,
         OPERATION_ERROR_JOINT_LIMIT_EXCEEDED,
+        OPERATION_ERROR_KINEMATICS_FK_INVALID_VALUE,
+        OPERATION_ERROR_KINEMATICS_IK_INVALID_VALUE,
+        OPERATION_ERROR_KINEMATICS_INVALID_KIN_CHAIN_PARAMS,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
@@ -202,8 +205,16 @@ export * from "./gbc_extra"
   KC_TWO_LINK ,
         /**  The kinematics configuration will use a custom user supplied c function */
   KC_CUSTOM ,
-        /**  The kinematics configuration will have the REVOLUTE_DELTAkinematics model (algorithm) applied */
+        /**  The kinematics configuration will have the REVOLUTE_DELTA kinematics model (algorithm) applied */
   KC_REVOLUTE_DELTA ,
+        /**  The kinematics configuration will have the ANGLED_LINEAR_DELTA kinematics model (algorithm) applied */
+  KC_ANGLED_LINEAR_DELTA ,
+        /**  The kinematics configuration will have the RRPR_SCARA kinematics model (algorithm) applied */
+  KC_RRPR_SCARA ,
+        /**  The kinematics configuration will have the PRISMATIC_STEWART kinematics model (algorithm) applied */
+  KC_PRISMATIC_STEWART ,
+        /**  The kinematics configuration will have the PUMA kinematics model (algorithm) applied */
+  KC_PUMA ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
@@ -1549,6 +1560,8 @@ export * from "./gbc_extra"
                         parentFrameIndex?:number;
                         /**  Whether the frame is absolute or relative to a parent frame */
                         positionReference?:POSITIONREFERENCE;
+                        /**  Allows you to use this frame as a workspace offset, where G54 is workspace offset 1 and so on */
+                        workspaceOffset?:number;
             }
             /** 
             Command parameters for frame

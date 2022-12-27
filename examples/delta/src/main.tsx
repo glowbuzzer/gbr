@@ -42,8 +42,11 @@ import {
 import { createRoot } from "react-dom/client"
 
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
-import { fk_delta, ik_delta } from "./kin/DeltaKin"
-
+import {
+    RevoluteDeltaFk,
+    RevoluteDeltaIk,
+    revoluteDeltaRobot
+} from "../../kinematics/RevoluteDeltaKin"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
@@ -89,13 +92,32 @@ const TriangleExtruded = ({ vertices, depth, position, color }: TriangleExtruded
     )
 }
 
+const basicDelta: revoluteDeltaRobot = {
+    effectorTriangleSideLength: 150,
+    baseTriangleSideLength: 207.85,
+    lowerJointLength: 200,
+    upperJointLength: 100
+}
+
+type threeDimensionDeltaModel = {
+    meshEffectorTriangleSideLength: number
+    meshBaseTriangleSideLength: number
+    meshUpperLinkDiameter: number
+}
+
+const basicDeltaModel: threeDimensionDeltaModel = {
+    meshEffectorTriangleSideLength: 150,
+    meshBaseTriangleSideLength: 207.85,
+    meshUpperLinkDiameter: 3
+}
+
 const DeltaRobot = ({ children = null }) => {
     const baseZ = 250
-    const baseTriangleLength = 207.85
-    const effectorTriangleLength = 150
-    const upperLinkLength = 100
-    const lowerLinkLength = 200
-    const upperLinkDiameter = 3
+    // const baseTriangleLength = 207.85
+    // const effectorTriangleLength = 150
+    // const upperLinkLength = 100
+    // const lowerLinkLength = 200
+    // const upperLinkDiameter = 3
 
     // const e = 150.0;     // end effector
     // const  f = 207.85;     // base
@@ -103,9 +125,17 @@ const DeltaRobot = ({ children = null }) => {
     // const  rf = 100.0;
 
     const baseVertices = [
-        new THREE.Vector3(0, (Math.sqrt(3) * baseTriangleLength) / 3, 0),
-        new THREE.Vector3(-baseTriangleLength / 2, (-Math.sqrt(3) * baseTriangleLength) / 6, 0),
-        new THREE.Vector3(baseTriangleLength / 2, (-Math.sqrt(3) * baseTriangleLength) / 6, 0)
+        new THREE.Vector3(0, (Math.sqrt(3) * basicDeltaModel.meshBaseTriangleSideLength) / 3, 0),
+        new THREE.Vector3(
+            -basicDeltaModel.meshBaseTriangleSideLength / 2,
+            (-Math.sqrt(3) * basicDeltaModel.meshBaseTriangleSideLength) / 6,
+            0
+        ),
+        new THREE.Vector3(
+            basicDeltaModel.meshBaseTriangleSideLength / 2,
+            (-Math.sqrt(3) * basicDeltaModel.meshBaseTriangleSideLength) / 6,
+            0
+        )
     ]
     const baseAttachPoints = [
         new THREE.Vector3(0, (-Math.sqrt(3) * baseTriangleLength) / 6, 0),
@@ -140,20 +170,14 @@ const DeltaRobot = ({ children = null }) => {
         link2Ref.current.setRotationFromAxisAngle(rotAxis2, jointPositions[1] + Math.PI || +Math.PI)
         link3Ref.current.setRotationFromAxisAngle(rotAxis3, Math.PI - jointPositions[2] || Math.PI)
 
-        const fk = fk_delta(
+        const fk = RevoluteDeltaFk(
             [jointPositions[0] || 0, jointPositions[1] || 0, jointPositions[2] || 0],
-            effectorTriangleLength,
-            baseTriangleLength,
-            lowerLinkLength,
-            upperLinkLength
+            basicDelta
         )
-        const ik = ik_delta(
+        const ik = RevoluteDeltaIk(
             [fk.position[0], fk.position[1], fk.position[2]],
             [0, 0, 0, 1],
-            effectorTriangleLength,
-            baseTriangleLength,
-            lowerLinkLength,
-            upperLinkLength
+            basicDelta
         )
 
         effectorRef.current.position.x = fk.position[0]
@@ -196,7 +220,11 @@ const DeltaRobot = ({ children = null }) => {
             <group ref={link1Ref} position={[baseAttachPoints[0].x, baseAttachPoints[0].y, baseZ]}>
                 <Cylinder
                     ref={ref1}
-                    args={[upperLinkDiameter, upperLinkDiameter, upperLinkLength]}
+                    args={[
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter
+                    ]}
                     position={[0, -(upperLinkLength / 2), 0]}
                 />
             </group>
@@ -204,7 +232,11 @@ const DeltaRobot = ({ children = null }) => {
             <group ref={link2Ref} position={[baseAttachPoints[1].x, baseAttachPoints[1].y, baseZ]}>
                 <Cylinder
                     ref={ref2}
-                    args={[upperLinkDiameter, upperLinkDiameter, upperLinkLength]}
+                    args={[
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter
+                    ]}
                     position={[(-upperLinkLength * Math.sqrt(3)) / 4, -upperLinkLength / 4, 0]}
                     rotation={[0, 0, (-60 * Math.PI) / 180]}
                 />
@@ -213,7 +245,11 @@ const DeltaRobot = ({ children = null }) => {
             <group ref={link3Ref} position={[baseAttachPoints[2].x, baseAttachPoints[2].y, baseZ]}>
                 <Cylinder
                     ref={ref3}
-                    args={[upperLinkDiameter, upperLinkDiameter, upperLinkLength]}
+                    args={[
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter,
+                        basicDeltaModel.meshUpperLinkDiameter
+                    ]}
                     position={[(upperLinkLength * Math.sqrt(3)) / 4, -upperLinkLength / 4, 0]}
                     rotation={[0, 0, (-120 * Math.PI) / 180]}
                 />
