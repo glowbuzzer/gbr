@@ -24,12 +24,15 @@ function makeFrameConfig(): FrameConfig {
 
 export type Frame = {
     index: number
-    text: string
+    name: string
     children?: Frame[]
-    parentIndex?: number
+    parent?: Frame
+    parentFrameIndex?: number
     level: number
     absolute: FrameConfig
     relative: FrameConfig
+    positionReference: POSITIONREFERENCE
+    workspaceOffset: number
 }
 
 function to_m4(f: FrameConfig) {
@@ -63,11 +66,99 @@ function quatOf(r): Quaternion {
     return r ? new Quaternion(r.x, r.y, r.z, r.w) : NULL_FRAME_CONFIG.rotation.clone()
 }
 
+type Subset<K> = {
+    [attr in keyof K]?: K[attr] extends object
+        ? Subset<K[attr]>
+        : K[attr] extends object | null
+        ? Subset<K[attr]> | null
+        : K[attr] extends object | null | undefined
+        ? Subset<K[attr]> | null | undefined
+        : K[attr]
+}
+
+export function build_tree2(frames: FramesConfig[]): Frame[] {
+    // we want to build a valid tree of frames, with no cycles and where forward refs are allowed
+
+    function link(frame: Subset<Frame>, parent: Subset<Frame>, check_cycles = true) {
+        function has_cycle(node?: Subset<Frame>): boolean {
+            if (!node) {
+                return false
+            }
+            if (node.index === frame.index) {
+                return true
+            }
+            return has_cycle(node.parent)
+        }
+
+        if (!check_cycles || !has_cycle(parent)) {
+            parent.children.push(frame)
+            frame.parent = parent
+        } else {
+            // ignore the link if it would create a cycle
+            delete frame.parent
+            // console.warn("Cycle detected in frame tree")
+        }
+    }
+
+    const result: Subset<Frame>[] = []
+    frames.forEach((f, i) => {
+        const relative = {
+            translation: vectorOf(f.translation),
+            rotation: quatOf(f.rotation)
+        }
+
+        result[i] = {
+            index: i,
+            children: [],
+            ...result[i], // may already exist with children due to forward ref
+            name: f.name,
+            workspaceOffset: f.workspaceOffset,
+            relative
+        }
+
+        if (f.positionReference === POSITIONREFERENCE.RELATIVE) {
+            const parentIndex = f.parentFrameIndex
+            if (result[parentIndex]) {
+                // parent already exists (backward ref), check for cycles
+                link(result[i], result[parentIndex])
+            } else {
+                // parent doesn't exist yet (forward ref)
+                result[parentIndex] = {
+                    index: parentIndex,
+                    children: []
+                }
+                // pretty sure we don't need to check for cycles on forward refs
+                link(result[i], result[parentIndex], true)
+            }
+        }
+    })
+
+    // now we need to calculate the absolute and relative transforms
+    function resolve(node: Frame, level = 0) {
+        node.level = level
+        if (node.parent) {
+            node.absolute = add_frame_config(node.parent.absolute, node.relative)
+        } else {
+            node.absolute = node.relative
+        }
+        node.children.forEach(child => {
+            resolve(child, level + 1)
+        })
+        return node
+    }
+
+    // find the root nodes and walk them to work out the absolute transforms,
+    // and return only the root nodes
+    return result.filter(f => !f.parent).map(resolve)
+}
+
 /**
  * Build a tree of frames from the raw config and calculate the relative and absolute transformation matrices for each frame
  *
  * @param frames The raw list of frames in the config containing translation and rotation (quaternion) info
  */
+
+/*
 export function build_tree(frames: FramesConfig[]) {
     const rootFrames = [] as Frame[]
     const parents = [] as Frame[]
@@ -82,7 +173,7 @@ export function build_tree(frames: FramesConfig[]) {
         const item: Frame = {
             index: frameIndex,
             parentIndex: def.parentFrameIndex,
-            text: def.name || index,
+            name: def.name || index,
             level: 0,
             absolute: relative, // will be modified if parent specified
             relative
@@ -90,7 +181,7 @@ export function build_tree(frames: FramesConfig[]) {
 
         if (
             def.positionReference === POSITIONREFERENCE.RELATIVE &&
-            def.parentFrameIndex !== frameIndex /* don't allow self-reference */
+            def.parentFrameIndex !== frameIndex /!* don't allow self-reference *!/
         ) {
             // frame is relative to parent frame
             const parent_index = def.parentFrameIndex
@@ -113,6 +204,7 @@ export function build_tree(frames: FramesConfig[]) {
     }
     return rootFrames
 }
+*/
 
 /**
  * Take the tree of

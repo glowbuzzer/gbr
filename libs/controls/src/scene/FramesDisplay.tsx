@@ -23,7 +23,7 @@ export const FramesDisplay = () => {
                 return (
                     <CartesianPositionTriadDisplay
                         key={i}
-                        name={f.text}
+                        name={f.name}
                         translation={new Vector3(x, y, z)}
                         rotation={new Quaternion(qx, qy, qz, w)}
                         size="regular"

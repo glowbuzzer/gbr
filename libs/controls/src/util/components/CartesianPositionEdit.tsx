@@ -2,12 +2,17 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useState } from "react"
-import { CartesianPosition, POSITIONREFERENCE, usePrefs } from "@glowbuzzer/store"
+import React, { useEffect, useState } from "react"
+import { CartesianPosition, POSITIONREFERENCE, Quat, usePref, usePrefs } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Checkbox, Input, InputNumber, Space } from "antd"
 import { Euler, Quaternion } from "three"
 import { FramesDropdown } from "@glowbuzzer/controls"
+import { DockToolbar, DockToolbarButtonGroup } from "../../dock/DockToolbar"
+import { StyledTileContent } from "../styles/StyledTileContent"
+import { PrecisionToolbarButtonGroup } from "./PrecisionToolbarButtonGroup"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { PrecisionInput } from "./PrecisionInput"
 
 const StyledDiv = styled.div`
     .grid {
@@ -36,6 +41,12 @@ const StyledDiv = styled.div`
     }
 `
 
+function to_euler(q: Quat): Euler {
+    const { x, y, z, w } = q
+    const quaternion = new Quaternion(x, y, z, w)
+    return new Euler().setFromQuaternion(quaternion)
+}
+
 type CartesianPositionEditProps = {
     name: string
 
@@ -62,24 +73,26 @@ export const CartesianPositionEdit = ({
         CartesianPosition["positionReference"]
     >(value.positionReference)
     const [frameIndex, setFrameIndex] = useState<CartesianPosition["frameIndex"]>(value.frameIndex)
-    const [translation, setTranslation] = useState<CartesianPosition["translation"]>({
-        ...value.translation
-    })
-    const { current, toSI, fromSI } = usePrefs()
-
-    const [rotation, setRotation] = useState<Euler>(
-        // hold as Euler
-        new Euler().setFromQuaternion(
-            new Quaternion(value.rotation.x, value.rotation.y, value.rotation.z, value.rotation.w)
-        )
+    const [translation, setTranslation] = useState<CartesianPosition["translation"]>(
+        value.translation
     )
+    const [rotation, setRotation] = useState<CartesianPosition["rotation"]>(value.rotation)
+    const [rotationEuler, setRotationEuler] = useState<Euler>(to_euler(value.rotation))
+
+    const { current, toSI, fromSI } = usePrefs()
+    const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
+
+    useEffect(() => {
+        // convert rotation quaternion to euler
+        // setRotationEuler(to_euler(rotation))
+    }, [rotation])
 
     function handle_change(update: Partial<CartesianPosition>) {
         onChange?.(name, {
             positionReference,
             frameIndex,
             translation,
-            rotation: new Quaternion().setFromEuler(rotation),
+            rotation,
             ...update
         })
     }
@@ -90,8 +103,12 @@ export const CartesianPositionEdit = ({
     }
 
     function update_rotation(rotation: Euler) {
-        setRotation(rotation)
-        handle_change({ rotation: new Quaternion().setFromEuler(rotation) })
+        // we don't want the full three.js quaternion here, just the x,y,z,w values
+        const { x, y, z, w } = new Quaternion().setFromEuler(rotation)
+        const next = { x, y, z, w }
+        setRotation(next)
+        setRotationEuler(rotation)
+        handle_change({ rotation: next })
     }
 
     function update_frame_index(frameIndex: number) {
@@ -100,78 +117,95 @@ export const CartesianPositionEdit = ({
     }
 
     function save() {
-        const { x, y, z, w } = new Quaternion().setFromEuler(rotation)
-        onSave(name, { positionReference, frameIndex, translation, rotation: { x, y, z, w } })
+        onSave(name, { positionReference, frameIndex, translation, rotation })
     }
 
     function toggle_relative() {
-        const next =
-            positionReference === POSITIONREFERENCE.ABSOLUTE
-                ? POSITIONREFERENCE.RELATIVE
-                : POSITIONREFERENCE.ABSOLUTE
-        setPositionReference(next)
-        handle_change({ positionReference: next })
+        const update = {
+            positionReference:
+                positionReference === POSITIONREFERENCE.RELATIVE
+                    ? POSITIONREFERENCE.ABSOLUTE
+                    : POSITIONREFERENCE.RELATIVE,
+            frameIndex:
+                positionReference === POSITIONREFERENCE.ABSOLUTE
+                    ? /* will be relative */ frameIndex || 0
+                    : undefined
+        }
+        setPositionReference(update.positionReference)
+        setFrameIndex(update.frameIndex)
+        handle_change(update)
     }
 
     return (
-        <StyledDiv>
-            <div className="grid">
-                <div>Name</div>
-                <div>
-                    <Input value={name} onChange={e => setName(e.target.value)} />
-                </div>
-                <div />
-                <div />
-                <div />
+        <DockTileWithToolbar
+            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
+        >
+            <StyledTileContent>
+                <StyledDiv>
+                    <div className="grid">
+                        <div>Name</div>
+                        <div>
+                            <Input value={name} onChange={e => setName(e.target.value)} />
+                        </div>
+                        <div />
+                        <div />
+                        <div />
 
-                <div>Translation</div>
-                {["x", "y", "z"].map(axis => (
-                    <div className="input" key={"t-" + axis}>
-                        {axis.toUpperCase()}{" "}
-                        <InputNumber
-                            value={translation[axis]}
-                            size="small"
-                            onChange={v => update_translation({ ...translation, [axis]: v })}
-                        />
+                        <div>Translation</div>
+                        {["x", "y", "z"].map(axis => (
+                            <div className="input" key={"t-" + axis}>
+                                {axis.toUpperCase()}{" "}
+                                <PrecisionInput
+                                    value={fromSI(translation[axis], "linear")}
+                                    onChange={v =>
+                                        update_translation({
+                                            ...translation,
+                                            [axis]: toSI(v, "linear")
+                                        })
+                                    }
+                                    precision={precision}
+                                />
+                            </div>
+                        ))}
+                        <div>{current.units_linear}</div>
+                        <div>Rotation</div>
+                        {["x", "y", "z"].map(axis => (
+                            <div className="input" key={"r-" + axis}>
+                                {axis.toUpperCase()}{" "}
+                                <PrecisionInput
+                                    value={fromSI(rotationEuler[axis], "angular")}
+                                    onChange={v => {
+                                        const next = rotationEuler.clone()
+                                        next[axis] = toSI(v, "angular")
+                                        update_rotation(next)
+                                    }}
+                                    precision={precision}
+                                />
+                            </div>
+                        ))}
+                        <div>{current.units_angular}</div>
                     </div>
-                ))}
-                <div>{current.units_linear}</div>
-                <div>Rotation</div>
-                {["x", "y", "z"].map(axis => (
-                    <div className="input" key={"r-" + axis}>
-                        {axis.toUpperCase()}{" "}
-                        <InputNumber
-                            value={fromSI(rotation[axis], "angular")}
-                            size="small"
-                            onChange={v => {
-                                const next = rotation.clone()
-                                next[axis] = toSI(v, "angular")
-                                update_rotation(next)
-                            }}
-                        />{" "}
+                    <div className="frame">
+                        <Checkbox
+                            checked={positionReference === POSITIONREFERENCE.RELATIVE}
+                            onChange={toggle_relative}
+                        >
+                            Relative to frame
+                        </Checkbox>
+                        {positionReference === POSITIONREFERENCE.RELATIVE && (
+                            <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
+                        )}
                     </div>
-                ))}
-                <div>{current.units_angular}</div>
-            </div>
-            <div className="frame">
-                <Checkbox
-                    checked={positionReference === POSITIONREFERENCE.RELATIVE}
-                    onChange={toggle_relative}
-                >
-                    Relative to frame
-                </Checkbox>
-                {positionReference === POSITIONREFERENCE.RELATIVE && (
-                    <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
-                )}
-            </div>
-            <div className="actions">
-                <Space>
-                    <Button type="primary" onClick={save}>
-                        Save
-                    </Button>
-                    <Button onClick={onCancel}>Cancel</Button>
-                </Space>
-            </div>
-        </StyledDiv>
+                    <div className="actions">
+                        <Space>
+                            <Button type="primary" onClick={save}>
+                                Save
+                            </Button>
+                            <Button onClick={onCancel}>Cancel</Button>
+                        </Space>
+                    </div>
+                </StyledDiv>
+            </StyledTileContent>
+        </DockTileWithToolbar>
     )
 }

@@ -24,11 +24,11 @@ export const pointsSlice: Slice<PointsSliceType> = createSlice({
     }
 })
 
-export function usePoints() {
+export function usePoints(overrides?: PointsConfig[]) {
     const config = useConfig()
+    // normalise points
     return (
-        // normalise points
-        config.points?.map<PointsConfig>(p => ({
+        (overrides || config.points)?.map<PointsConfig>(p => ({
             ...p,
             translation: {
                 x: 0,

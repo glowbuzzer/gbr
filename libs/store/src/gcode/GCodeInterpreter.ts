@@ -53,14 +53,19 @@ const partitionWordsByGroup = (words = []) => {
 const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
 
 class GCodeInterpreter {
+    private readonly cartesianPosition: CartesianPosition
+    private readonly workspaceFrames: Record<number, number | null>
     protected unitConversion = 1
     private motionMode = "G0"
-    private readonly cartesianPosition: CartesianPosition
     private previousPosition: CartesianPosition
 
-    constructor(cartesianPosition: CartesianPosition) {
+    constructor(
+        cartesianPosition: CartesianPosition,
+        workspaceFrames: Record<number, number | null>
+    ) {
         this.previousPosition = cartesianPosition
         this.cartesianPosition = cartesianPosition
+        this.workspaceFrames = workspaceFrames
     }
 
     get position(): CartesianPosition {
@@ -162,28 +167,35 @@ class GCodeInterpreter {
         this.unitConversion = 1
     }
 
+    private set_frame_index(workspaceOffsetIndex: number) {
+        const frameIndex = this.workspaceFrames[workspaceOffsetIndex]
+        if (frameIndex !== null) {
+            this.cartesianPosition.frameIndex = frameIndex
+        }
+    }
+
     G54() {
-        this.cartesianPosition.frameIndex = 0
+        this.set_frame_index(1)
     }
 
     G55() {
-        this.cartesianPosition.frameIndex = 1
+        this.set_frame_index(2)
     }
 
     G56() {
-        this.cartesianPosition.frameIndex = 2
+        this.set_frame_index(3)
     }
 
     G57() {
-        this.cartesianPosition.frameIndex = 3
+        this.set_frame_index(4)
     }
 
     G58() {
-        this.cartesianPosition.frameIndex = 4
+        this.set_frame_index(5)
     }
 
     G59() {
-        this.cartesianPosition.frameIndex = 5
+        this.set_frame_index(6)
     }
 
     command(handled, cmd, args, data, current_position, target_position) {

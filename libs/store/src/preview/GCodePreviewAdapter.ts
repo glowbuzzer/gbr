@@ -25,8 +25,13 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
     private kcFrame: number
     private readonly convertToFrame
 
-    constructor(currentPosition: CartesianPosition, kcFrame, convertToFrame) {
-        super(currentPosition)
+    constructor(
+        currentPosition: CartesianPosition,
+        workspaceFrames: Record<number, number>,
+        kcFrame,
+        convertToFrame
+    ) {
+        super(currentPosition, workspaceFrames)
         this.kcFrame = kcFrame
         this.convertToFrame = convertToFrame
         this.frame_conversion = this.frame_conversion.bind(this)

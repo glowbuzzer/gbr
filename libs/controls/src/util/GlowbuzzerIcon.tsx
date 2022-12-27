@@ -73,7 +73,7 @@ export const GlowbuzzerIcon = (props: CustomIconProps) => {
         <StyledIcon
             className={classes}
             onClick={disabled ? undefined : props.onClick}
-            onMouseDown={e => e.stopPropagation()}
+            onMouseDown={e => (props.onClick ? e.stopPropagation() : undefined)}
         >
             <Icon viewBox="0 0 48 48" />
         </StyledIcon>

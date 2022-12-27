@@ -33,11 +33,11 @@ export const FramesDropdown = ({ value, onChange }: FramesDropdownProps) => {
             return {
                 key: frame.index,
                 value: frame.index,
-                title: frame.text,
+                title: frame.name,
                 display: (
                     <>
                         <FramesIcon />
-                        <span className="selected-text">{frame.text}</span>
+                        <span className="selected-text">{frame.name}</span>
                     </>
                 ),
                 children: transform_frame(frame.children)

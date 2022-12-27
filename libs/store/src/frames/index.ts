@@ -8,7 +8,7 @@ import { settings } from "../util/settings"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { useConfig } from "../config"
 import { RootState } from "../root"
-import { build_list, build_tree, change_reference_frame } from "../util/frame_utils"
+import { build_list, build_tree2, change_reference_frame } from "../util/frame_utils"
 import { FramesConfig, POSITIONREFERENCE } from "../gbc"
 
 const { load, save } = settings("frames")
@@ -45,7 +45,10 @@ export const useFrames = (overrides?: FramesConfig[]) => {
     const config = useConfig()
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
 
-    const asTree = build_tree(overrides || config.frames)
+    // const test = build_tree2(config.frames)
+    // console.log(test)
+
+    const asTree = build_tree2(overrides || config.frames)
     const asList = build_list(asTree)
 
     // console.log("FRAME", asList[0].absolute.translation)
@@ -113,4 +116,21 @@ export function useSelectedFrame(): [number, (index: number) => void] {
     )
 
     return [selectedFrame, (index: number) => dispatch(framesSlice.actions.setSelectedFrame(index))]
+}
+
+export function useWorkspaceFrames(): Record<number, number> {
+    const frames = useFramesList()
+
+    // we want to retain the index of each frame in the array during the filter
+    const entries = Array.from(frames.entries())
+        // filter out frames that don't have a workspace offset
+        .filter(([, f]) => f.workspaceOffset)
+        // remove duplicates, we only want to keep the first instance of each workspace offset
+        .filter(
+            ([, f], i, a) => a.findIndex(([, f2]) => f2.workspaceOffset === f.workspaceOffset) === i
+        )
+        // convert to a map of workspace offset to frame index
+        .map(([i, f]) => [f.workspaceOffset, i])
+
+    return Object.fromEntries(entries)
 }

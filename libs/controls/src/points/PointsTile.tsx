@@ -5,12 +5,15 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
+    FramesConfig,
     PointsConfig,
     POSITIONREFERENCE,
+    Quat,
     useConfigLoader,
     useFramesList,
     usePoints,
-    useSelectedPoint
+    useSelectedPoint,
+    Vector3
 } from "@glowbuzzer/store"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -19,7 +22,7 @@ import { CartesianPositionTable } from "../util/components/CartesianPositionTabl
 import { Euler, Quaternion } from "three"
 import { message } from "antd"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
@@ -29,10 +32,11 @@ const StyledDiv = styled.div`
  * The points tile shows a simple table of all configured points.
  */
 export const PointsTile = () => {
+    const { points: editedPoints, setPoints, clearPoints } = useConfigLiveEdit()
     const [selected, setSelected] = useSelectedPoint()
     const [editMode, setEditMode] = useState(false)
 
-    const points = usePoints()
+    const points = usePoints(editedPoints)
     const frames = useFramesList()
     const loader = useConfigLoader()
 
@@ -50,7 +54,7 @@ export const PointsTile = () => {
                     <StyledDiv>
                         <div className="point-name">
                             <div className="name">{name}</div>
-                            {frames[frameIndex] && (
+                            {frames[frameIndex] !== undefined && (
                                 <div className="frame">
                                     <FramesIcon
                                         width={13}
@@ -80,13 +84,16 @@ export const PointsTile = () => {
 
     const items = points?.map(transform_point)
 
-    function save(
+    function points_with_modification(
         name: string,
-        { positionReference, frameIndex, rotation, translation }: CartesianPosition
+        positionReference: POSITIONREFERENCE,
+        frameIndex: number,
+        translation: Vector3,
+        rotation: Quat
     ) {
-        const next: PointsConfig[] = points.map((point, index) => {
+        return points.map((point, index) => {
             if (index === selected) {
-                return {
+                const newVar = {
                     name,
                     frameIndex:
                         positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : frameIndex,
@@ -94,12 +101,47 @@ export const PointsTile = () => {
                     rotation,
                     configuration: point.configuration
                 }
+                console.log("Mapped point", newVar)
+                return newVar
             }
             return point
         })
+    }
+
+    function update_point(
+        name: string,
+        {
+            positionReference,
+            frameIndex: parentFrameIndex,
+            rotation,
+            translation
+        }: CartesianPosition
+    ) {
+        const overrides: FramesConfig[] = points_with_modification(
+            name,
+            positionReference,
+            parentFrameIndex,
+            translation,
+            rotation
+        )
+        setPoints(overrides)
+    }
+
+    function save_points(
+        name: string,
+        { positionReference, frameIndex, rotation, translation }: CartesianPosition
+    ) {
+        const next: PointsConfig[] = points_with_modification(
+            name,
+            positionReference,
+            frameIndex,
+            translation,
+            rotation
+        )
         loader({
             points: next
         }).then(() => {
+            clearPoints()
             setEditMode(false)
             return message.success("Points updated")
         })
@@ -144,15 +186,19 @@ export const PointsTile = () => {
         })
     }
 
+    function cancel_edit() {
+        clearPoints()
+        setEditMode(false)
+    }
+
     return editMode ? (
-        <StyledTileContent>
-            <CartesianPositionEdit
-                name={points[selected].name}
-                value={point_to_cartesian_position(points[selected])}
-                onSave={save}
-                onCancel={() => setEditMode(false)}
-            />
-        </StyledTileContent>
+        <CartesianPositionEdit
+            name={points[selected].name}
+            value={point_to_cartesian_position(points[selected])}
+            onSave={save_points}
+            onChange={update_point}
+            onCancel={cancel_edit}
+        />
     ) : (
         <CartesianPositionTable
             selected={selected}

@@ -19,9 +19,14 @@ import {
 import { message, TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
 import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
+import styled from "styled-components"
+import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
+
+const StyledDiv = styled.div`
+    ${CssPointNameWithFrame}
+`
 
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
@@ -47,7 +52,16 @@ export const FramesTile = () => {
 
             return {
                 key: frame.index,
-                name: frame.text,
+                name: (
+                    <StyledDiv>
+                        <div className="frame-name">
+                            <div className="name">{frame.name}</div>
+                            {frame.workspaceOffset > 0 && (
+                                <div className="gcode">G{frame.workspaceOffset + 53}</div>
+                            )}
+                        </div>
+                    </StyledDiv>
+                ),
                 x: translation.x,
                 y: translation.y,
                 z: translation.z,
@@ -58,7 +72,7 @@ export const FramesTile = () => {
                 a: euler.x,
                 b: euler.y,
                 c: euler.z,
-                children: transform_frame(frame.children)
+                children: frame.children?.length ? transform_frame(frame.children) : undefined
             }
         })
     }
@@ -182,15 +196,13 @@ export const FramesTile = () => {
     const treeData = transform_frame(asTree)
 
     return editMode ? (
-        <StyledTileContent>
-            <CartesianPositionEdit
-                name={asList[selected].text}
-                value={frame_to_cartesian_position(asList[selected].index)}
-                onSave={save_frames}
-                onChange={update_frame}
-                onCancel={cancel_edit}
-            />
-        </StyledTileContent>
+        <CartesianPositionEdit
+            name={asList[selected].name}
+            value={frame_to_cartesian_position(asList[selected].index)}
+            onSave={save_frames}
+            onChange={update_frame}
+            onCancel={cancel_edit}
+        />
     ) : (
         <CartesianPositionTable
             selected={selected}

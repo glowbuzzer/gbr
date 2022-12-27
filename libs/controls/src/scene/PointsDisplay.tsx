@@ -6,9 +6,11 @@ import React from "react"
 import { usePoints, useSelectedPoint } from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { CartesianPositionTriadDisplay } from "./CartesianPositionTriadDisplay"
+import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
 
 export const PointsDisplay = () => {
-    const points = usePoints()
+    const { points: editedPoints } = useConfigLiveEdit()
+    const points = usePoints(editedPoints)
     const [selectedPoint, setSelectedPoint] = useSelectedPoint()
 
     return (

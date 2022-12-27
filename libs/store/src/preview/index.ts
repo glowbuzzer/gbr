@@ -2,15 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
-import { GCodePreviewAdapter } from "./GCodePreviewAdapter"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { RootState } from "../root"
-import { useFrames } from "../frames"
-import { useKinematics } from "../kinematics"
-import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
-import { Quaternion, Vector3 } from "three"
-import { apply_offset } from "../util/frame_utils"
+import {createSlice, Slice} from "@reduxjs/toolkit"
+import {GCodePreviewAdapter} from "./GCodePreviewAdapter"
+import {shallowEqual, useDispatch, useSelector} from "react-redux"
+import {RootState} from "../root"
+import {useFrames, useWorkspaceFrames} from "../frames"
+import {useKinematics} from "../kinematics"
+import {CartesianPosition, POSITIONREFERENCE} from "../gbc"
+import {Quaternion, Vector3} from "three"
+import {apply_offset} from "../util/frame_utils"
 
 export type GCodeSegment = {
     from: { x: number; y: number; z: number }
@@ -49,16 +49,18 @@ export const previewSlice: Slice<PreviewSliceState> = createSlice({
  * @ignore - Used internally by the toolpath display
  */
 export function usePreview() {
-    const segments = useSelector(({ preview: { segments } }: RootState) => segments, shallowEqual)
+    const segments = useSelector(({preview: {segments}}: RootState) => segments, shallowEqual)
     const highlightLine = useSelector(
-        ({ preview: { highlightLine } }: RootState) => highlightLine,
+        ({preview: {highlightLine}}: RootState) => highlightLine,
         shallowEqual
     )
-    const disabled = useSelector(({ preview: { disabled } }: RootState) => disabled, shallowEqual)
+    const disabled = useSelector(({preview: {disabled}}: RootState) => disabled, shallowEqual)
 
     const frames = useFrames()
+    const workspaceFrames = useWorkspaceFrames()
+
     const kc = useKinematics(0)
-    const { translation, rotation } = frames.convertToFrame(
+    const {translation, rotation} = frames.convertToFrame(
         kc.translation,
         kc.rotation,
         kc.frameIndex,
@@ -67,7 +69,7 @@ export function usePreview() {
     const currentPosition: CartesianPosition = {
         positionReference: POSITIONREFERENCE.ABSOLUTE,
         // we need to undo the effect of kc offset because gcode adapter will apply it to all positions
-        translation: apply_offset({ translation, rotation }, kc.offset, true).translation,
+        translation: apply_offset({translation, rotation}, kc.offset, true).translation,
         frameIndex: frames.active
     }
 
@@ -89,6 +91,7 @@ export function usePreview() {
 
             const interpreter = new GCodePreviewAdapter(
                 currentPosition,
+                workspaceFrames,
                 kc.frameIndex,
                 convertToFrame
             )

@@ -306,7 +306,14 @@ export class GbcTest {
 
     send_gcode(gcode) {
         const buffer = [] as any[]
-        const adapter = new GCodeSenderAdapter(buffer, 200 /* this is same as test config */)
+        const adapter = new GCodeSenderAdapter(buffer, 200, {
+            // map g54 etc to frames using simple convention, as the tests don't read the actual workspaceOffset for frames in the config
+            1: 0,
+            2: 1,
+            3: 2,
+            4: 3,
+            5: 4
+        })
         adapter.execute(gcode)
         return this.stream(buffer)
     }
