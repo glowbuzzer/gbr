@@ -68,7 +68,7 @@ export const BasicRobot = ({
                     child.castShadow = true
                 })
                 group.add(link)
-                console.log("group", group)
+                // console.log("group", group)
             }
             const { translateX, translateY, translateZ, rotateX, rotateY, rotateZ } = element
 
@@ -81,7 +81,7 @@ export const BasicRobot = ({
             } as BasicRobotElement
         })
 
-        console.log("elements", elements)
+        // console.log("elements", elements)
 
         const base = elements[0].group
         base.position.set(translation.x, translation.y, translation.z)
@@ -98,7 +98,7 @@ export const BasicRobot = ({
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {
-                console.log(e)
+                // console.log(e)
                 e.group.rotation.z =
                     (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
             })

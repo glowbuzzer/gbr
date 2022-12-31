@@ -53,12 +53,8 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"
-import {
-    AngledLinearDeltaFk,
-    AngledLinearDeltaIk,
-    angledLinearDeltaRobotParams
-} from "../../kinematics/AngledLinearDeltaKin"
-import { DLE_DR_0001 } from "../../kinematics/IgusDeltaRobotParams"
+import { AngledLinearDeltaFk, AngledLinearDeltaIk } from "../../kinematics/AngledLinearDeltaKin"
+import { DLE_DR_0001 } from "../../kinematics/KinChainParams"
 import { EffectorPoints } from "./effectorPoints"
 
 const AngledLinearDeltaRobot = ({ children = null }) => {

@@ -1,4 +1,4 @@
-# Glowbuzzer React Staubli Example
+# Glowbuzzer Stewart Platform Example
 
 This example demonstrates a robot application using the Glowbuzzer React framework.
 The application has a single robot kinematics configuration using a 6-DOF Stewart Platform kinematics algo.

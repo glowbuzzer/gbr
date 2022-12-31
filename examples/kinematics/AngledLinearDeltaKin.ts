@@ -1,45 +1,33 @@
+import {angledLinearDeltaRobotParams} from "./KinChainParams"
+
 const error = 5e-4
-
-const zFiddle = 526.168
-const sliderKinematicsLength = 148.8
-const lengthOfCarriage = 100
-const carriageEndToPivotOffset = 84.5
-// 239.7091988222396 startoffset
-// 119.78 start offset adjusted
-
-export type angledLinearDeltaRobotParams = {
-    distanceZ1: number
-    distanceZ2: number
-    radius1: number
-    radius2: number
-    tcpRadius: number
-    sliderAngle: number
-    jointLength: number
-    carriagePivotOffsetZ: number
-    carriagePivotOffsetY: number
-    carriagePivotOffsetX: number //distance between two rods
-    effectorShaftLength: number
-    effectorInnerCircleRadius: number
-}
 
 export function AngledLinearDeltaFk(
     q: number[],
-    {
+    configParams: angledLinearDeltaRobotParams
+): {
+    orientation: [number, number, number, number]
+    position: [number, number, number]
+} {
+    const {
         distanceZ1,
         distanceZ2,
         radius1,
         radius2,
         tcpRadius,
         sliderAngle,
-        jointLength
-    }: angledLinearDeltaRobotParams
-): {
-    orientation: [number, number, number, number]
-    position: [number, number, number]
-} {
+        jointLength,
+        carriagePivotOffsetZ,
+        carriagePivotOffsetY,
+        carriagePivotOffsetX,
+        effectorShaftLength,
+        effectorInnerCircleRadius
+    } = configParams
+
     const startOffset = Math.sqrt(Math.pow(distanceZ1, 2) + Math.pow(distanceZ1, 2))
     const effectiveTcpRadius = Math.sqrt(3) * tcpRadius
     const effectiveBaseRadius = Math.sqrt(3) * (radius1 + distanceZ1)
+
 
     //apply offsets
     q[0] += startOffset
@@ -156,16 +144,26 @@ export function AngledLinearDeltaFk(
 export function AngledLinearDeltaIk(
     position: [number, number, number],
     orientation: [number, number, number, number],
-    {
+    configParams: angledLinearDeltaRobotParams
+): number[] {
+
+
+    const {
         distanceZ1,
         distanceZ2,
         radius1,
         radius2,
         tcpRadius,
         sliderAngle,
-        jointLength
-    }: angledLinearDeltaRobotParams
-): number[] {
+        jointLength,
+        carriagePivotOffsetZ,
+        carriagePivotOffsetY,
+        carriagePivotOffsetX,
+        effectorShaftLength,
+        effectorInnerCircleRadius
+    } = configParams
+
+
     const startOffset = Math.sqrt(Math.pow(distanceZ1, 2) + Math.pow(distanceZ1, 2))
     const effectiveTcpRadius = Math.sqrt(3) * tcpRadius
     const effectiveBaseRadius = Math.sqrt(3) * (radius1 + distanceZ1)
@@ -211,4 +209,13 @@ export function AngledLinearDeltaIk(
     const q2 = (-b2 - Math.sqrt(delt2)) / 2 - startOffset
 
     return [q0, q1, q2]
+}
+
+
+export function AngledLinearDeltaFindConfiguration(
+    q: number[],
+    configParams: angledLinearDeltaRobotParams
+): number {
+
+    return 0
 }

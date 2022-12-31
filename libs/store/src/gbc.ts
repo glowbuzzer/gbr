@@ -215,6 +215,10 @@ export * from "./gbc_extra"
   KC_PRISMATIC_STEWART ,
         /**  The kinematics configuration will have the PUMA kinematics model (algorithm) applied */
   KC_PUMA ,
+        /**  The kinematics configuration will have the FIVE_AXIS kinematics model (algorithm) applied */
+  KC_FIVE_AXIS ,
+        /**  The kinematics configuration will have the WMR kinematics model (algorithm) applied */
+  KC_WMR ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */

@@ -27,7 +27,7 @@ import {
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { useGLTF, Environment, Cylinder } from "@react-three/drei"
+import { useGLTF, Environment, Cylinder, Sphere } from "@react-three/drei"
 
 import {
     GCodeContextProvider,
@@ -36,6 +36,7 @@ import {
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
+    useKinematicsCartesianPosition,
     useToolIndex
 } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
@@ -53,85 +54,62 @@ const DEG180 = Math.PI
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 0)
 const DEFAULT_ROTATION = new THREE.Quaternion(1, 0, 0, 0)
 
-const PUMA_560_KIN_CHAIN: RobotKinematicsChainElement[] = [
-    {
-        moveable: true,
-        translateZ: -0.62357,
-        rotateX: Math.PI,
-        rotateY: 0,
-        jointAngleAdjustment: -DEG90
-    },
-    {
-        rotateY: DEG90,
-        rotateX: Math.PI,
-        translateX: -0.16764,
-        moveable: true,
-        jointAngleAdjustment: DEG180
-    },
-    {
-        rotateX: 0,
-        translateY: 0.4318,
-        translateZ: 0.0762,
-        jointAngleAdjustment: DEG180,
-        moveable: true
-    },
-    {
-        rotateY: DEG90,
-        translateX: 0.37211,
-        translateZ: -0.0381,
-        jointAngleAdjustment: 0,
-        moveable: true
-    },
-    { rotateX: DEG90, translateZ: 0.05994, jointAngleAdjustment: Math.PI, moveable: true },
-    { translateZ: 0.065 }
-]
-
-const Puma560 = ({ children = null }) => {
+const Wmr = ({ children = null }) => {
     const { frameIndex } = useKinematicsConfiguration(0)
 
     const jointPositions = useJointPositions(0)
-
+    const cartesianPosition = useKinematicsCartesianPosition(0)
     const { translation, rotation } = useFrame(frameIndex, false)
 
     const worldAxisZ = new THREE.Vector3(0, 0, 1)
 
     // load the parts of the robot (links)
-    const parts = useGLTF([0, 1, 2, 3, 4, 5].map(j => `/assets/puma_560/L${j}.glb`)).map(
-        m => m.scene
-    )
+    const parts = useGLTF([0, 1, 2].map(j => `/assets/bot/L${j}.glb`)).map(m => m.scene)
 
     useEffect(() => {
-        const pos = new THREE.Vector3()
-        parts[5].localToWorld(pos)
+        if (baseRef.current && leftWheeelRef.current && rightWheelRef) {
+            baseRef.current.position.x = cartesianPosition.position.translation.x / 1000
+            baseRef.current.position.y = cartesianPosition.position.translation.y / 1000
 
-        console.log(pos)
+            // const q = new THREE.Quaternion(cartesianPosition.position.rotation.x,)
+            baseRef.current.quaternion.set(
+                cartesianPosition.position.rotation.x,
+                cartesianPosition.position.rotation.y,
+                cartesianPosition.position.rotation.z,
+                cartesianPosition.position.rotation.w
+            )
+            console.log(jointPositions[0])
+            console.log(cartesianPosition.position.translation.x)
+            leftWheeelRef.current.rotation.y = jointPositions[0] || 0
+            rightWheelRef.current.rotation.y = jointPositions[1] || 0
+        }
     }, [jointPositions])
 
-    // const fk = fk_puma([0, 0, 0, 0, 0, 0], puma_560_dh)
+    const sceneRef = useRef(null)
+    const baseRef = useRef(null)
+    const leftWheeelRef = useRef(null)
+    const rightWheelRef = useRef(null)
 
-    const fk = fk_puma(
-        [
-            jointPositions[0],
-            jointPositions[1],
-            jointPositions[2],
-            jointPositions[3],
-            jointPositions[4],
-            jointPositions[5]
-        ],
-        puma_560_params
-    )
-    console.log("fk", fk.position)
-    const ik = ik_puma(0, fk.position, fk.orientation, puma_560_params)
-    console.log("ik", ik)
     return (
-        <BasicRobot
-            kinematicsChain={PUMA_560_KIN_CHAIN}
-            parts={parts}
-            jointPositions={jointPositions}
-            translation={translation || DEFAULT_POSITION}
-            rotation={rotation || DEFAULT_ROTATION}
-            scale={1000}
-        ></BasicRobot>
+        <group rotation={[Math.PI, 0, 0]} ref={sceneRef} scale={[1000, 1000, 1000]}>
+            <group ref={baseRef}>
+                <primitive rotation={[0, 0, 0]} object={parts[0]} position={[0, 0, 0]} />
+                <group position={[0, -0.07735, -0.03045]}>
+                    <primitive
+                        ref={leftWheeelRef}
+                        rotation={[0, 0, Math.PI / 2]}
+                        object={parts[1]}
+                    />
+                </group>
+                <group position={[0, 0.07735, -0.03045]}>
+                    <primitive
+                        ref={rightWheelRef}
+                        rotation={[0, 0, -Math.PI / 2]}
+                        object={parts[2]}
+                    />
+                </group>
+            </group>
+        </group>
     )
 }
 
@@ -140,7 +118,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <Puma560 />
+                    <Wmr />
                 </Suspense>
                 <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
             </ThreeDimensionalSceneTile>
@@ -161,7 +139,7 @@ function App() {
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
-                appName="puma 560"
+                appName="wmr"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,

@@ -1,7 +1,6 @@
-# Glowbuzzer Delta Robot Example
+# Glowbuzzer Scara Robot Example
 
-This example demonstrates a scara robot using the Glowbuzzer React framework. The application has two independent
-kinematics configurations: a simple 3-axis cartesian configuration and a single-axis auxilliary configuration.
+This example demonstrates a scara robot using the Glowbuzzer React framework.
 
 To run this example:
 
@@ -9,5 +8,5 @@ To run this example:
     ```bash
     gbc --config <path_to_configs>/config_ts2_40.json
     ```
-1. Start the React app using `vite examples/delta`
+1. Start the React app using `vite examples/scara`
 1. Open the app in your browser 

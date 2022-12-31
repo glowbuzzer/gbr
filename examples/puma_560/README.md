@@ -1,6 +1,6 @@
-# Glowbuzzer Delta Robot Example
+# Glowbuzzer Puma 560 Robot Example
 
-This example demonstrates a Puma 650 robot using the Glowbuzzer React framework. The application has two independent kinematics configurations: a simple 3-axis cartesian configuration and a single-axis auxilliary configuration.
+This example demonstrates a Puma 650 robot using the Glowbuzzer React framework.
 
 To run this example:
 
