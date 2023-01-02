@@ -149,7 +149,7 @@ test("move_line in rotated frame", async () => {
     }
 })
 
-test("move at velocity in rotated frame", async () => {
+test("move vector at velocity in rotated frame", async () => {
     try {
         // kc frame index is zero (no translation)
         assertNear(10, 10, 0, 0, 0, 0)

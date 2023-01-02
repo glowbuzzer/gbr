@@ -17,7 +17,7 @@ import {
 import { JogTileItem, StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
 
-enum Mode {
+export enum PositionMode {
     POSITION,
     ORIENTATION
 }
@@ -41,12 +41,10 @@ const abcItems: JogGotoItem[] = [
 /** @ignore - internal to the jog tile */
 export const JogGotoCartesian = ({
     jogSpeed,
+    positionMode,
     kinematicsConfigurationIndex,
-    frameIndex,
-    showRobotConfiguration
+    frameIndex
 }) => {
-    const [mode, setMode] = useState(Mode.POSITION)
-
     const [robotConfiguration, setRobotConfiguration] = useLocalStorage(
         "jog.robot.configuration",
         0
@@ -119,14 +117,8 @@ export const JogGotoCartesian = ({
 
     return (
         <StyledJogDiv>
-            <JogTileItem>
-                <Radio.Group value={mode} onChange={e => setMode(e.target.value)} size="small">
-                    <Radio.Button value={Mode.POSITION}>Position</Radio.Button>
-                    <Radio.Button value={Mode.ORIENTATION}>Orientation</Radio.Button>
-                </Radio.Group>
-            </JogTileItem>
             <div>
-                <Tab value={Mode.POSITION} mode={mode}>
+                <Tab value={PositionMode.POSITION} mode={positionMode}>
                     <JogGotoInputPanel
                         localStorageKey={"jog.position"}
                         items={xyzItems}
@@ -134,7 +126,7 @@ export const JogGotoCartesian = ({
                         onGotoAll={goto_position_all}
                     />
                 </Tab>
-                <Tab value={Mode.ORIENTATION} mode={mode}>
+                <Tab value={PositionMode.ORIENTATION} mode={positionMode}>
                     <JogGotoInputPanel
                         localStorageKey={"jog.orientation"}
                         items={abcItems}

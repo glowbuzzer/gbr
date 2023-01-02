@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { assertNear } from "../util"
+import { assertNear, do_cancel } from "../util"
 import { Euler, Matrix4, Quaternion, Vector3 } from "three"
 
 const test = uvu.suite("frames robot")
@@ -143,6 +143,35 @@ test("move_to_position in world frame with rotation", async () => {
         gbc.assert.near(py, 141.421)
         gbc.assert.near(pz, 0.001)
         assertNearWorld(200, 100, 100, -Math.PI / 4, 0, 0)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test.only("move rotation at velocity in kc frame", async () => {
+    // initial position
+    assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
+
+    try {
+        gbc.disable_limit_check()
+        const move = gbc.wrap(
+            gbc.activity
+                // frame 3 is rotated 90 around X,
+                // so a move in Y in local frame is a move in -Z in default (world) frame
+                .moveRotationAtVelocity(1, 0, 0)
+                .params({
+                    amaxPercentage: 10,
+                    vmaxPercentage: 10,
+                    jmaxPercentage: 10
+                }).promise
+        )
+        move.start().iterations(125)
+        await do_cancel(move, 1, 50)
+
+        gbc.assert.near(px, 225)
+        gbc.assert.near(py, -10.962)
+        gbc.assert.near(pz, 270.962)
+        // assertNearWorld(200, 100, 100, -Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
     }

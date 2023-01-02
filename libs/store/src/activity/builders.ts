@@ -14,6 +14,7 @@ import {
     MoveJointsStream,
     MoveLineStream,
     MoveParametersConfig,
+    MoveRotationAtVelocityStream,
     MoveToPositionStream,
     MoveVectorAtVelocityStream,
     PointsConfig,
@@ -376,6 +377,28 @@ export class MoveVectorAtVelocityBuilder extends MoveWithFrameBuilder {
         return {
             ...super.build(),
             vector: {
+                frameIndex: this._frameIndex,
+                vector: this._vector
+            }
+        }
+    }
+}
+
+export class MoveRotationAtVelocityBuilder extends MoveWithFrameBuilder {
+    protected commandName = "moveRotationAtVelocity"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEROTATIONATVELOCITY
+    private _vector: Vector3
+
+    /** Vector for the axis of rotation about which move will be made. Velocity is specified using `params` method, and represents a clockwise rotation about the axis, looking in the direction of the vector */
+    axis(x: number, y: number, z: number) {
+        this._vector = { x, y, z }
+        return this
+    }
+
+    protected build(): MoveRotationAtVelocityStream {
+        return {
+            ...super.build(),
+            axis: {
                 frameIndex: this._frameIndex,
                 vector: this._vector
             }

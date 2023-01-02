@@ -16,6 +16,7 @@ import {
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
     MoveLineBuilder,
+    MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
     PauseProgramBuilder,
@@ -106,6 +107,17 @@ export interface SoloActivityApi {
      * @param z Vector z component
      */
     moveVectorAtVelocity(x: number, y: number, z: number): MoveVectorAtVelocityBuilder
+
+    /** Rotate around an axis at a given velocity. The velocity of the motion can be controlled using `moveParams`. The position
+     * does not change.
+     *
+     * Note that this activity does not terminate and will run forever unless cancelled (using `cancel` or by executing another activity).
+     *
+     * @param x Axis of rotation x component
+     * @param y Axis of rotation y component
+     * @param z Axis of rotation z component
+     */
+    moveRotationAtVelocity(x: number, y: number, z: number): MoveRotationAtVelocityBuilder
 
     /** Move to the target position in joint space.
      *
@@ -213,6 +225,12 @@ export abstract class ActivityApiBase implements SoloActivityApi, ActivityContro
         return new MoveVectorAtVelocityBuilder(this)
             .params(this.defaultMoveParameters)
             .vector(x, y, z)
+    }
+
+    moveRotationAtVelocity(x: number, y: number, z: number) {
+        return new MoveRotationAtVelocityBuilder(this)
+            .params(this.defaultMoveParameters)
+            .axis(x, y, z)
     }
 
     moveToPosition(x?: number, y?: number, z?: number) {

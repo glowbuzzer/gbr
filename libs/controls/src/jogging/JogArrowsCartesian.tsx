@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogDirection, JogMode } from "./types"
+import { PositionMode } from "./JogGotoCartesian"
 
 const ArrowsDiv = styled.div`
     display: flex;
@@ -50,6 +51,7 @@ const StyledInput = styled(Input)`
 
 type JogArrowsCartesianProps = {
     jogMode: JogMode
+    positionMode: PositionMode
     jogSpeed: number
     kinematicsConfigurationIndex: number
     frameIndex: number
@@ -58,6 +60,7 @@ type JogArrowsCartesianProps = {
 /** @ignore - internal to the jog tile */
 export const JogArrowsCartesian = ({
     jogMode,
+    positionMode,
     jogSpeed,
     kinematicsConfigurationIndex,
     frameIndex
@@ -93,15 +96,20 @@ export const JogArrowsCartesian = ({
 
         if (jogMode === JogMode.CONTINUOUS) {
             preview.disable()
-            return motion
-                .moveVectorAtVelocity(
-                    ortho_vector(0, direction),
-                    ortho_vector(1, direction),
-                    ortho_vector(2, direction)
-                )
-                .params(move_params)
-                .promise()
-                .finally(preview.enable)
+            const activity =
+                positionMode === PositionMode.ORIENTATION
+                    ? motion.moveRotationAtVelocity(
+                          ortho_vector(0, direction),
+                          ortho_vector(1, direction),
+                          ortho_vector(2, direction)
+                      )
+                    : motion.moveVectorAtVelocity(
+                          ortho_vector(0, direction),
+                          ortho_vector(1, direction),
+                          ortho_vector(2, direction)
+                      )
+
+            return activity.params(move_params).promise().finally(preview.enable)
         }
     }
 
@@ -126,7 +134,6 @@ export const JogArrowsCartesian = ({
                 .params(move_params)
                 .promise()
                 .finally(preview.enable)
-            // }
         }
     }
 
