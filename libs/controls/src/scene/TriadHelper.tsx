@@ -32,13 +32,13 @@ declare global {
  */
 export const TriadHelper = ({ size, opacity = 1 }: { size: number; opacity?: number }) => {
     return (
-        <>
+        <group>
             {triadArrowVectors.map((v, i) => (
                 <arrowHelperWithOpacity
                     key={i + ":" + size}
                     args={[v, undefined, size, triadArrowColors[i], opacity, undefined, size / 10]}
                 />
             ))}
-        </>
+        </group>
     )
 }

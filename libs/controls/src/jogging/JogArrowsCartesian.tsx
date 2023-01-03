@@ -66,7 +66,10 @@ export const JogArrowsCartesian = ({
     frameIndex
 }: JogArrowsCartesianProps) => {
     const preview = usePreview()
-    const [jogStep, setJogStep] = useLocalStorage("jog.cartesian.step", 100)
+    const [jogStep, setJogStep] = useLocalStorage(
+        "jog.cartesian.step." + PositionMode[positionMode],
+        positionMode === PositionMode.POSITION ? 100 : 0.1
+    )
     const { getUnits, toSI } = usePrefs()
 
     const motion = useSoloActivity(kinematicsConfigurationIndex)
@@ -121,14 +124,21 @@ export const JogArrowsCartesian = ({
 
     function stepJog(index, direction: JogDirection) {
         if (jogMode === JogMode.STEP) {
-            const step = toSI(Number(jogStep), "linear")
+            const step = toSI(
+                Number(jogStep),
+                positionMode === PositionMode.POSITION ? "linear" : "angular"
+            )
             const [x, y, z] = [0, 1, 2].map(n =>
                 index === n ? (direction === JogDirection.POSITIVE ? step : -step) : 0
             )
 
             preview.disable()
-            return motion
-                .moveLine(x, y, z)
+            const builder =
+                positionMode === PositionMode.POSITION
+                    ? motion.moveLine(x, y, z)
+                    : motion.moveLine().rotationEuler(x, y, z)
+
+            return builder
                 .frameIndex(frameIndex)
                 .relative()
                 .params(move_params)
@@ -190,7 +200,7 @@ export const JogArrowsCartesian = ({
                 onChange={updateJogStep}
                 disabled={jogMode !== JogMode.STEP}
                 addonBefore={"Distance"}
-                addonAfter={getUnits("linear")}
+                addonAfter={getUnits(positionMode === PositionMode.POSITION ? "linear" : "angular")}
             />
         </>
     )

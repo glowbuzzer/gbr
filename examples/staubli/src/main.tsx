@@ -23,7 +23,8 @@ import {
     RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
-    ToolsTileDefinition
+    ToolsTileDefinition,
+    TriadHelper
 } from "@glowbuzzer/controls"
 
 import {
@@ -76,7 +77,7 @@ const StaubliRobot = () => {
             rotation={rotation}
             scale={1000}
         >
-            <CylindricalTool toolIndex={toolIndex} />
+            <TriadHelper size={200} />
         </BasicRobot>
     )
 }
