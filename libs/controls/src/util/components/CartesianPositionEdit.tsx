@@ -5,14 +5,13 @@
 import React, { useEffect, useState } from "react"
 import { CartesianPosition, POSITIONREFERENCE, Quat, usePref, usePrefs } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { Button, Checkbox, Input, InputNumber, Space } from "antd"
+import { Button, Checkbox, Input, Space } from "antd"
 import { Euler, Quaternion } from "three"
-import { FramesDropdown } from "@glowbuzzer/controls"
-import { DockToolbar, DockToolbarButtonGroup } from "../../dock/DockToolbar"
 import { StyledTileContent } from "../styles/StyledTileContent"
 import { PrecisionToolbarButtonGroup } from "./PrecisionToolbarButtonGroup"
 import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
 import { PrecisionInput } from "./PrecisionInput"
+import { FramesDropdown } from "../../frames"
 
 const StyledDiv = styled.div`
     .grid {

@@ -3,11 +3,12 @@
  */
 
 import React, { useRef, useState } from "react"
-import { TriadHelper, useScale } from "@glowbuzzer/controls"
 import { Sphere } from "@react-three/drei"
 import { CartesianPositionPopover } from "./CartesianPositionPopover"
 import { ThreeEvent } from "@react-three/fiber"
 import { MeshBasicMaterial, Quaternion, Vector3 } from "three"
+import { useScale } from "./ScaleProvider"
+import { TriadHelper } from "./TriadHelper"
 
 const mat_semi_transparent = new MeshBasicMaterial({
     color: 0x000000,
