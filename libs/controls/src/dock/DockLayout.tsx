@@ -11,6 +11,7 @@ import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { ReactComponent as SettingsIcon } from "@material-symbols/svg-400/outlined/settings.svg"
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { useConnection } from "@glowbuzzer/store"
+import { DockTileWrapper } from "./DockTileWrapper"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
@@ -51,7 +52,11 @@ export const DockLayout = () => {
     function connection_aware_factory(node: TabNode) {
         const tile = factory(node)
         if (connection.connected || node.getConfig()?.enableWithoutConnection) {
-            return <Suspense>{tile}</Suspense>
+            return (
+                <Suspense>
+                    <DockTileWrapper>{tile}</DockTileWrapper>
+                </Suspense>
+            )
         }
         return (
             <Suspense>

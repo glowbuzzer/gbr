@@ -21,6 +21,7 @@ import {
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { JogDirection, JogMode } from "./types"
 import { PositionMode } from "./JogGotoCartesian"
+import { useEffect, useRef } from "react"
 
 const ArrowsDiv = styled.div`
     display: flex;
@@ -71,6 +72,49 @@ export const JogArrowsCartesian = ({
         positionMode === PositionMode.POSITION ? 100 : 0.1
     )
     const { getUnits, toSI } = usePrefs()
+    const jogging = useRef(false)
+
+    useEffect(() => {
+        const fn = (index, direction) => {
+            document.removeEventListener("keydown", onKeyDown)
+            jogging.current = true
+
+            if (jogMode === JogMode.STEP) {
+                return stepJog(index, direction)
+            } else {
+                return startJog(index, direction)
+            }
+        }
+
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "ArrowUp") {
+                return fn(0, JogDirection.POSITIVE)
+            } else if (event.key === "ArrowDown") {
+                return fn(0, JogDirection.NEGATIVE)
+            } else if (event.key === "ArrowLeft") {
+                return fn(1, JogDirection.NEGATIVE)
+            } else if (event.key === "ArrowRight") {
+                return fn(1, JogDirection.POSITIVE)
+            }
+        }
+
+        const onKeyUp = (event: KeyboardEvent) => {
+            if (jogging.current) {
+                stopJog().then(() => {
+                    document.addEventListener("keydown", onKeyDown)
+                })
+                jogging.current = false
+            }
+        }
+
+        document.addEventListener("keydown", onKeyDown)
+        document.addEventListener("keyup", onKeyUp)
+
+        return () => {
+            document.removeEventListener("keydown", onKeyDown)
+            document.removeEventListener("keyup", onKeyUp)
+        }
+    }, [jogMode, stepJog, startJog, stopJog])
 
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
