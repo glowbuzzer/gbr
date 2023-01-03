@@ -148,12 +148,12 @@ test("move_to_position in world frame with rotation", async () => {
     }
 })
 
-test.only("move rotation at velocity in kc frame", async () => {
+test("move rotation at velocity in kc frame", async () => {
     // initial position
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 
     try {
-        gbc.disable_limit_check()
+        // gbc.disable_limit_check()
         const move = gbc.wrap(
             gbc.activity
                 // frame 3 is rotated 90 around X,
@@ -166,11 +166,11 @@ test.only("move rotation at velocity in kc frame", async () => {
                 }).promise
         )
         move.start().iterations(125)
-        await do_cancel(move, 1, 50)
+        await do_cancel(move, 3, 100)
 
-        gbc.assert.near(px, 225)
-        gbc.assert.near(py, -10.962)
-        gbc.assert.near(pz, 270.962)
+        gbc.assert.near(px, 225, 0.01)
+        gbc.assert.near(py, -10.962, 0.01)
+        gbc.assert.near(pz, 270.962, 0.01)
         // assertNearWorld(200, 100, 100, -Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
