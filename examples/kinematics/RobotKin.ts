@@ -2,7 +2,7 @@ import { Cos, List, Power, Sin, Sqrt } from "./mathematica"
 import { MathUtils, Matrix3, Matrix4, Quaternion, Vector3 } from "three"
 import { generate_configs, toQuat } from "./kinematics_utils"
 import * as math from "mathjs"
-import { staubli_tx40_dh, DhMatrix } from "./Dh"
+import { staubli_tx40_dh, DhMatrix } from "./KinChainParams"
 
 export enum Units {
     DEGREES,
@@ -319,8 +319,9 @@ function atan2(a, b) {
 export function ik_tx40(
     position: [number, number, number],
     orientation: [number, number, number, number],
-    dh: DhMatrix[]
-): number[][] {
+    dh: DhMatrix[],
+    configuration: number
+): { all: number[][]; matching: number[] } {
     const [x, y, z] = position.map(p => p / 1)
     const [i, j, k, w] = orientation
 
@@ -467,5 +468,48 @@ export function ik_tx40(
     // matprint("Result (degs)", rdeg);
     // matprint("Result (rads)", result);
 
-    return result
+    /*
+    000=0
+    001=1
+    010=2
+    011=3
+    100=1
+
+     */
+    return { all: result, matching: result[configuration] }
+}
+
+export function find_configuration_tx40(thetas: number[], dh: DhMatrix[]): number {
+    let [theta1, theta2, theta3, theta4, theta5, theta6] = thetas
+
+    theta2 -= Math.PI / 2
+    theta3 += Math.PI / 2
+
+    const dh_a1 = dh[0].a
+    const dh_a2 = dh[1].a
+    const dh_d1 = dh[0].d
+    const dh_d3 = dh[2].d
+    const dh_d4 = dh[3].d
+    const dh_d6 = dh[5].d
+
+    const delta = dh_d4 * Math.sin(theta2 + theta3) + dh_a2 * Math.cos(theta2)
+
+    var configurationNumber = 0
+
+    if (delta < 0) {
+        // BIT_SET(conf, 2);
+        configurationNumber += 1
+    }
+
+    if (theta3 < 0) {
+        configurationNumber += 2
+        // BIT_SET(conf, 1);
+    }
+
+    if (theta5 < 0) {
+        configurationNumber += 4
+        // BIT_SET(conf, 0);
+    }
+
+    return configurationNumber
 }

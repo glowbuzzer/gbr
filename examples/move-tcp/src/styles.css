@@ -1,0 +1,46 @@
+.tcpControls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #e5eaf1;
+    opacity: 0.8;
+    border-radius: 6px;
+    padding: 0.5rem;
+}
+
+.tcpControls .tcpSwitch {
+    color: Black;
+    font-size: 0.8rem;
+}
+
+
+.tcpControls h2 {
+    color: Black;
+    font-size: 1rem;
+}
+
+.tcpControls .tcpControlGroup {
+    margin-bottom: 0.5rem;
+}
+
+.tcpControls .control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tcpControls .control input {
+    margin: 0.2rem;
+    border: none;
+    border-radius: 4px;
+    padding: 0.1rem;
+}
+
+.tcpControls .control label {
+    font-size: 0.8rem;
+    color: white;
+    margin-right: 0.5rem;
+    flex: 1 1 0;
+}

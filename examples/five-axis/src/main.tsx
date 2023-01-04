@@ -68,11 +68,11 @@ const FiveAxis = ({ children = null }) => {
     )
 
     useEffect(() => {
-        G1.current.position.x = jointPositions[0] / 1000
-        G2.current.position.z = jointPositions[1] / 1000
-        G3.current.position.y = jointPositions[2] / 1000 - 0.1
-        G4.current.rotation.x = jointPositions[3] + Math.PI
-        G5.current.rotation.y = jointPositions[4] / 1
+        G1.current.position.x = jointPositions[0] / 1000 || 0
+        G2.current.position.z = jointPositions[1] / 1000 || 0
+        G3.current.position.y = jointPositions[2] / 1000 - 0.1 || 0
+        G4.current.rotation.x = jointPositions[3] + Math.PI || 0
+        G5.current.rotation.y = jointPositions[4] / 1 || 0
     }, [jointPositions])
 
     // // const fk = fk_puma([0, 0, 0, 0, 0, 0], puma_560_dh)
