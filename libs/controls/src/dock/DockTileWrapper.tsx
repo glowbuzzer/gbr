@@ -9,6 +9,8 @@ export const DockTileWrapper = ({ children }) => {
 
     useEffect(() => {
         // register keyboard event handlers
+        const elm = ref.current
+
         const onKeyDown = (e: KeyboardEvent) => {
             e.stopPropagation()
         }
@@ -16,11 +18,11 @@ export const DockTileWrapper = ({ children }) => {
             e.stopPropagation()
         }
 
-        ref.current.addEventListener("keydown", onKeyDown)
-        ref.current.addEventListener("keyup", onKeyUp)
+        elm.addEventListener("keydown", onKeyDown)
+        elm.addEventListener("keyup", onKeyUp)
         return () => {
-            ref.current.removeEventListener("keydown", onKeyDown)
-            ref.current.removeEventListener("keyup", onKeyUp)
+            elm.removeEventListener("keydown", onKeyDown)
+            elm.removeEventListener("keyup", onKeyUp)
         }
     })
 
