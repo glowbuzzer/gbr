@@ -21,9 +21,8 @@ import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"oscillating-move"}>
             <DockLayoutProvider
-                appName={"oscillating-move"}
                 tiles={[
                     ConnectTileDefinition,
                     CartesianDroTileDefinition,

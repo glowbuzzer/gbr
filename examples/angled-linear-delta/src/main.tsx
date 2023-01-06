@@ -475,7 +475,6 @@ function App() {
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
-                appName="angled linear delta"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,
@@ -500,7 +499,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="angled linear delta">
             <App />
         </GlowbuzzerApp>
     </StrictMode>

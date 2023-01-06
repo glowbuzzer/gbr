@@ -34,7 +34,6 @@ function App() {
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
-                appName="generic"
                 tiles={[
                     ...GlowbuzzerTileDefinitionList, // standard components
                     JointSpinnersTileDefinition
@@ -50,7 +49,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="generic">
             <App />
         </GlowbuzzerApp>
     </StrictMode>

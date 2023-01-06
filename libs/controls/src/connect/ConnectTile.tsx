@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Button, Radio, Spin, Tag } from "antd"
+import { Button, Radio, Space, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -12,18 +12,25 @@ import {
     MachineState,
     MACHINETARGET,
     possible_transitions,
+    useOfflineConfig,
     useConnection,
     useMachine
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
 const StyledDiv = styled.div`
-  padding: 5px;
+    padding: 5px;
 
-  .row {
-    &.padded {
-      padding: 12px 0;
+    .config-info {
+        margin: -5px -5px 5px -5px;
+        background: rgba(0, 0, 0, 0.05);
+        padding: 5px 10px;
     }
+
+    .row {
+        &.padded {
+            padding: 12px 0;
+        }
 
         padding: 2px 0;
         display: flex;
@@ -35,46 +42,46 @@ const StyledDiv = styled.div`
             flex-grow: 1;
         }
 
-    .ant-radio-group {
-      display: flex;
-      justify-content: stretch;
+        .ant-radio-group {
+            display: flex;
+            justify-content: stretch;
 
-      .ant-radio-button-wrapper {
-        flex-grow: 1;
-        flex-basis: 0;
-        text-align: center;
-      }
+            .ant-radio-button-wrapper {
+                flex-grow: 1;
+                flex-basis: 0;
+                text-align: center;
+            }
 
-      .ant-radio-button-wrapper:first-child {
-        border-radius: 10px 0 0 10px;
-      }
+            .ant-radio-button-wrapper:first-child {
+                border-radius: 10px 0 0 10px;
+            }
 
-      .ant-radio-button-wrapper:last-child {
-        border-radius: 0 10px 10px 0;
-      }
+            .ant-radio-button-wrapper:last-child {
+                border-radius: 0 10px 10px 0;
+            }
+        }
+
+        .controls {
+            min-width: 180px;
+            text-align: right;
+
+            .ant-tag {
+                min-width: 180px;
+                text-align: center;
+                margin: 0 0 2px 0;
+            }
+
+            .ant-btn {
+                padding: 0;
+                height: inherit;
+                min-width: 180px;
+            }
+        }
     }
 
-    .controls {
-      min-width: 180px;
-      text-align: right;
-
-      .ant-tag {
-        min-width: 180px;
+    .machine-message {
         text-align: center;
-        margin: 0 0 2px 0;
-      }
-
-      .ant-btn {
-        padding: 0;
-        height: inherit;
-        min-width: 180px;
-      }
     }
-  }
-
-  .machine-message {
-    text-align: center;
-  }
 `
 
 /**
@@ -87,6 +94,7 @@ const StyledDiv = styled.div`
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
+    const [config_modified, discard_offline_config, upload_offline_config] = useOfflineConfig()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -128,6 +136,45 @@ export const ConnectTile = () => {
 
     return (
         <StyledDiv>
+            <div>
+                {config_modified ? (
+                    connected ? (
+                        <div className="config-info">
+                            <Space>
+                                <div>
+                                    Configuration has been modified since you last connected. You
+                                    should save or discard your local changes.
+                                </div>
+                                <Space direction="vertical">
+                                    <Button
+                                        size="small"
+                                        style={{ width: "100%" }}
+                                        onClick={upload_offline_config}
+                                    >
+                                        Save
+                                    </Button>
+                                    <Button size="small" onClick={discard_offline_config}>
+                                        Discard
+                                    </Button>
+                                </Space>
+                            </Space>
+                        </div>
+                    ) : (
+                        <div className="config-info">
+                            <Space size={"small"}>
+                                <div>
+                                    Configuration has been modified since last connect. You need to
+                                    connect in order to save your local changes.
+                                </div>
+                                <Button size="small" onClick={discard_offline_config}>
+                                    Discard
+                                </Button>
+                            </Space>
+                        </div>
+                    )
+                ) : null}
+            </div>
+
             <div className="row">
                 <div className="label">Machine</div>
                 <div className="controls">
@@ -155,7 +202,7 @@ export const ConnectTile = () => {
                             {target_not_acquired &&
                             machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
                                 <span>
-                                    <Spin size="small"/>{" "}
+                                    <Spin size="small" />{" "}
                                 </span>
                             ) : null}
                             Live
@@ -191,7 +238,7 @@ export const ConnectTile = () => {
             </div>
             {connected && fault && (
                 <div className="row">
-                    <div className="label"/>
+                    <div className="label" />
                     <div className="controls">
                         <Button onClick={issue_reset}>Reset Fault</Button>
                     </div>

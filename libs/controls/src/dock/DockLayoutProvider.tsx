@@ -9,10 +9,9 @@ import { useDockContext } from "./hooks"
 import { StyledDockLayout } from "./styles"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { ReactNode } from "react"
+import { useAppName } from "../app"
 
 type DockLayoutProviderProps = {
-    /** The name of the application. This is used to save the model in local storage. */
-    appName: string
     /** The tiles that are available in the dock layout. */
     tiles: DockTileDefinition[]
     /** A list of tile ids that should be visible by default. If not specified, all tiles are visible. */
@@ -26,11 +25,12 @@ type DockLayoutProviderProps = {
  * the tiles contained within it.
  */
 export const DockLayoutProvider = ({
-    appName,
     tiles,
     defaultVisible,
     children
 }: DockLayoutProviderProps) => {
+    const appName = useAppName()
+
     // create a single 'default' perspective
     const perspective: DockPerspective = {
         id: "default",

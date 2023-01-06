@@ -91,7 +91,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
                 </Suspense>
 
                 {["red", "green", "blue"].map((colour, index) => (
-                    <mesh position={[500, (index - 1) * 200, 75]}>
+                    <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
                         <boxGeometry args={[150, 150, 150]} />
                         <meshStandardMaterial color={colour} />
                     </mesh>
@@ -104,9 +104,8 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="staubli">
             <DockLayoutProvider
-                appName={"staubli"}
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,
@@ -127,3 +126,5 @@ root.render(
         </GlowbuzzerApp>
     </StrictMode>
 )
+
+//

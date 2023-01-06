@@ -47,7 +47,6 @@ import { ExampleSpring } from "./exampleSpring"
 import { ExamplePendulum } from "./examplePendulum"
 import { ExampleUI } from "./ExampleUI"
 import { ExampleTriadPoints } from "./ExampleTriadPoints"
-import {Playground} from "./playground"
 import { ActiveExampleContext } from "./activeExampleContext"
 import { ExampleLaserCutting } from "./exampleLaserCutting"
 import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
@@ -106,8 +105,8 @@ const ThreeTutorial = () => {
 
     switch (activeExample) {
         case 1: {
-            // exampleContent = <ExampleSphere />
-            exampleContent = <Playground/>
+            exampleContent = <ExampleSphere />
+            // exampleContent = <Playground />
             break
         }
         case 2: {
@@ -215,10 +214,9 @@ const ActiveExampleProvider = ({ children }) => {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"three-tutorial"}>
             <ActiveExampleProvider>
                 <DockLayoutProvider
-                    appName={"three-tutorial"}
                     tiles={[
                         ConnectTileDefinition,
                         CartesianJogTileDefinition,

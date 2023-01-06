@@ -96,9 +96,8 @@ const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefin
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"two-link"}>
             <DockLayoutProvider
-                appName={"two-link"}
                 tiles={[
                     AppIntroTileDefinition,
                     CustomSceneTile,

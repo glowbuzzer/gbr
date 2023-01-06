@@ -19,10 +19,9 @@ const root = createRoot(document.getElementById("root")!)
 root.render(
     <React.StrictMode>
         {/* GlowbuzzerApp provides the Redux store */}
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"myapp"}>
             {/* DockLayoutProvider gives the visual docking layout */}
             <DockLayoutProvider
-                appName={"myapp"}
                 tiles={GlowbuzzerTileDefinitionList /* include all standard tiles */}
             >
                 {/* Provide a view menu to show/hide tiles */}

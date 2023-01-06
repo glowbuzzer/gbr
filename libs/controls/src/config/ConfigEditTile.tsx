@@ -5,7 +5,7 @@
 import React from "react"
 import { Input, message, Upload } from "antd"
 import styled from "styled-components"
-import { configSlice, useConfig, useConnection } from "@glowbuzzer/store"
+import { configSlice, useConfig, useConfigLoader, useConnection } from "@glowbuzzer/store"
 import { useEffect, useState } from "react"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { ReactComponent as FileUploadIcon } from "@material-symbols/svg-400/outlined/file_upload.svg"
@@ -42,6 +42,7 @@ export const ConfigEditTile = () => {
     const config = useConfig()
     const connection = useConnection()
     const dispatch = useDispatch()
+    const loader = useConfigLoader()
 
     const [editedConfig, setEditedConfig] = useState(JSON.stringify(config, null, 4))
     const [error, setError] = useState(null)
@@ -61,13 +62,7 @@ export const ConfigEditTile = () => {
     function upload() {
         setError(null)
         const configObject = JSON.parse(editedConfig)
-        connection
-            .request("load config", { config: configObject })
-            .then(() => {
-                message.success("Configuration updated")
-                return dispatch(configSlice.actions.setConfig(configObject))
-            })
-            .catch(e => setError(e))
+        loader(configObject).then(() => message.success("Configuration updated"))
     }
 
     function reformat() {

@@ -85,11 +85,13 @@ export const telemetrySlice: Slice<
             posEnabled: true,
             velEnabled: false,
             accEnabled: false,
-            captureDuration: 1000,
-            ...load()
+            captureDuration: 1000
         }
     } as TelemetrySliceType,
     reducers: {
+        loadSettings(state) {
+            return { ...state, settings: { ...state.settings, ...load() } }
+        },
         settings(state, action) {
             state.settings = {
                 ...state.settings,

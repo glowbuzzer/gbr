@@ -2,13 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState} from "react"
+import {useAppName} from "@glowbuzzer/controls";
 
 function parseJSON<T>(value: string | null): T | undefined {
     try {
         return value === "undefined" ? undefined : JSON.parse(value ?? "")
     } catch {
-        console.log("parsing error on", { value })
+        console.log("parsing error on", {value})
         return undefined
     }
 }
@@ -18,8 +19,9 @@ type SetValue<T> = Dispatch<SetStateAction<T>>
 export function useLocalStorage<T>(
     key: string,
     initialValue: T,
-    appName?: string
+    overrideAppName?: string
 ): [T, SetValue<T>] {
+    const appName = overrideAppName ?? useAppName()
     const appkey = appName ? `${appName}-${key}` : key
 
     // Get from local storage then

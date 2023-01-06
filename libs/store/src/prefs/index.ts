@@ -9,32 +9,26 @@ import { useMemo } from "react"
 import { RootState } from "../root"
 import { ConversionFactors } from "./unit_conversion"
 
-const default_prefs = {
-    units_linear: "mm",
-    units_angular: "rad",
-    url: "ws://localhost:9001/ws"
-}
-
 type PrefsState = {
     units_linear: "mm" | "in"
     units_angular: "rad" | "deg"
     url: string
 } & { [index: string]: string }
 
-const { load, save } = settings("glowbuzzer.prefs")
-
-function getPrefsAsObject(): PrefsState {
-    return {
-        ...default_prefs,
-        ...load()
-    }
-}
+const { load, save } = settings("prefs")
 
 export const prefsSlice: Slice<PrefsState> = createSlice({
     name: "prefs",
-    initialState: getPrefsAsObject(),
+    initialState: {
+        units_linear: "mm",
+        units_angular: "rad",
+        url: "ws://localhost:9001/ws"
+    },
     reducers: {
-        set: (store, action) => {
+        loadSettings(store) {
+            return { ...store, ...load() }
+        },
+        set(store, action) {
             const { name, value } = action.payload
             store[name] = value
             save(store)

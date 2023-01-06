@@ -101,7 +101,6 @@ export const PointsTile = () => {
                     rotation,
                     configuration: point.configuration
                 }
-                console.log("Mapped point", newVar)
                 return newVar
             }
             return point

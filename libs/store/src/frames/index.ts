@@ -23,12 +23,11 @@ export const framesSlice: Slice<FramesSliceType> = createSlice({
     initialState: {
         overrides: [] as number[][],
         activeFrame: 0,
-        selectedFrame: null,
-        ...load()
+        selectedFrame: null
     },
     reducers: {
-        setOverrides(state, action) {
-            return save({ ...state, overrides: action.payload })
+        loadSettings(state) {
+            return { ...state, ...load() }
         },
         setActiveFrame(state, action) {
             return save({ ...state, activeFrame: action.payload })

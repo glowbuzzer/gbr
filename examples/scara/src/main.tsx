@@ -46,7 +46,7 @@ import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"
 import { fk_RrprScara, ik_RrprScara } from "../../kinematics/RrprScaraKin"
-import { staubli_ts2_40_dh, staubli_tx40_dh } from "../../kinematics/Dh"
+import { staubli_ts2_40_dh, staubli_tx40_dh } from "../../kinematics/KinChainParams"
 import { fk_tx40, ik_tx40 } from "../../kinematics/RobotKin"
 
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 0)
@@ -193,7 +193,6 @@ function App() {
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
-                appName="scara robot"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,
@@ -218,7 +217,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="scara robot">
             <App />
         </GlowbuzzerApp>
     </StrictMode>

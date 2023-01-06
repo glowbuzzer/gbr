@@ -3,20 +3,26 @@
  */
 
 import * as React from "react"
-import {FC, ReactNode, useEffect, useRef} from "react"
-import {configureStore, StoreEnhancer} from "@reduxjs/toolkit"
+import { FC, ReactNode, useEffect, useRef } from "react"
+import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
 import {
+    configSlice,
     ConfigState,
     ConnectionState,
+    framesSlice,
+    gcodeSlice,
+    initSettings,
+    prefsSlice,
     rootReducer,
     useConfigState,
     useConnection
 } from "@glowbuzzer/store"
-import styled, {css, ThemeProvider} from "styled-components"
-import {Button} from "antd"
-import {CloseOutlined} from "@ant-design/icons"
-import {Provider} from "react-redux"
-import {ConfigLiveEditProvider} from "../config/ConfigLiveEditProvider";
+import styled, { css, ThemeProvider } from "styled-components"
+import { Button } from "antd"
+import { CloseOutlined } from "@ant-design/icons"
+import { Provider } from "react-redux"
+import { ConfigLiveEditProvider } from "../config/ConfigLiveEditProvider"
+import { appNameContext } from "./hooks"
 
 const theme = {
     colors: {
@@ -30,8 +36,7 @@ declare module "styled-components" {
     type Theme = typeof theme
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    export interface DefaultTheme extends Theme {
-    }
+    export interface DefaultTheme extends Theme {}
 }
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
@@ -65,16 +70,15 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
 const GlowbuzzerMainStyle = styled.div``
 
 type GlowbuzzerContainerProps = {
-    init?(connection)
     children: ReactNode
 }
 
-const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => {
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     const connection = useConnection()
     const [configState, setConfigState] = useConfigState()
     const connectDelay = useRef(0)
 
-    const {state, autoConnect, reconnect} = connection
+    const { state, autoConnect, reconnect } = connection
 
     useEffect(() => {
         if (state === ConnectionState.DISCONNECTED && autoConnect) {
@@ -87,14 +91,6 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => 
         connectDelay.current = 0
     }, [autoConnect])
 
-    useEffect(() => {
-        if (configState === ConfigState.AWAITING_HLC_INIT) {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            Promise.all([init ? init : () => {
-            }]).then(() => setConfigState(ConfigState.READY))
-        }
-    }, [init, configState, setConfigState])
-
     function cancel() {
         connection.setAutoConnect(false)
     }
@@ -102,16 +98,10 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => 
     function ConfigStateMessage() {
         if (state !== ConnectionState.CONNECTED) {
             return <>Connecting...</>
+        } else if (configState === ConfigState.AWAITING_CONFIG) {
+            return <>Waiting for config</>
         }
-
-        switch (configState) {
-            case ConfigState.AWAITING_CONFIG:
-                return <>Waiting for config</>
-            case ConfigState.AWAITING_HLC_INIT:
-                return <>Initializing</>
-            default:
-                return null
-        }
+        return null
     }
 
     return (
@@ -125,9 +115,9 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => 
                 <div className="reconnect-panel">
                     <div>
                         <p>
-                            <ConfigStateMessage/>
+                            <ConfigStateMessage />
                         </p>
-                        <Button icon={<CloseOutlined/>} onClick={cancel}>
+                        <Button icon={<CloseOutlined />} onClick={cancel}>
                             Cancel
                         </Button>
                     </div>
@@ -139,6 +129,8 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({children, init}) => 
 }
 
 type GlowbuzzerAppProps = {
+    /** The unique name for the application, used to prefix local storage keys */
+    appName: string
     /** Enhancers that can be used to manipulate the store. See [the Redux Toolkit documentation](https://redux-toolkit.js.org/api/configureStore#enhancers) */
     storeEnhancers?: StoreEnhancer[]
     /** Your application */
@@ -154,9 +146,11 @@ type GlowbuzzerAppProps = {
  *
  * You can look at the source for this component to see how to configure the GBR Redux store from scratch.
  */
-export const GlowbuzzerApp = ({storeEnhancers, children}: GlowbuzzerAppProps) => {
+export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerAppProps) => {
+    initSettings(appName)
+
     const middleware = getDefault => {
-        return getDefault({immutableCheck: false, serializableCheck: false})
+        return getDefault({ immutableCheck: false, serializableCheck: false })
     }
 
     const store = configureStore({
@@ -165,13 +159,21 @@ export const GlowbuzzerApp = ({storeEnhancers, children}: GlowbuzzerAppProps) =>
         enhancers: storeEnhancers
     })
 
+    store.dispatch(prefsSlice.actions.loadSettings(null))
+    store.dispatch(framesSlice.actions.loadSettings(null))
+    store.dispatch(gcodeSlice.actions.loadSettings(null))
+
+    store.dispatch(configSlice.actions.loadOfflineConfig(null))
+
     return (
-        <ThemeProvider theme={theme}>
-            <Provider store={store}>
-                <ConfigLiveEditProvider>
-                    <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
-                </ConfigLiveEditProvider>
-            </Provider>
-        </ThemeProvider>
+        <appNameContext.Provider value={appName}>
+            <ThemeProvider theme={theme}>
+                <Provider store={store}>
+                    <ConfigLiveEditProvider>
+                        <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                    </ConfigLiveEditProvider>
+                </Provider>
+            </ThemeProvider>
+        </appNameContext.Provider>
     )
 }

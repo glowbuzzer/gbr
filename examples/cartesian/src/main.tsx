@@ -209,7 +209,6 @@ function App() {
     return (
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
-                appName="cartesian"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,
@@ -235,7 +234,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="cartesian">
             <App />
         </GlowbuzzerApp>
     </StrictMode>

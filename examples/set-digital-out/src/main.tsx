@@ -47,11 +47,8 @@ const toggleDigitalOutputTileDefinition = DockTileDefinitionBuilder()
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
-            <DockLayoutProvider
-                appName={"set-digital-out"}
-                tiles={[ConnectTileDefinition, toggleDigitalOutputTileDefinition]}
-            >
+        <GlowbuzzerApp appName={"set-digital-out"}>
+            <DockLayoutProvider tiles={[ConnectTileDefinition, toggleDigitalOutputTileDefinition]}>
                 <ExampleAppMenu title="Toggle Digital Output" />
                 <DockLayout />
             </DockLayoutProvider>

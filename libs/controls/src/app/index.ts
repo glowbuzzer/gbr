@@ -3,3 +3,5 @@
  */
 
 export * from "./GlowbuzzerApp"
+export { useAppName } from "./hooks"
+export { appNameContext } from "./hooks"

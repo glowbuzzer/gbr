@@ -282,9 +282,8 @@ function App() {
     }
 
     return (
-        <GCodeContextProvider value={{ handleToolChange }}>
+        <GCodeContextProvider value={{ handleToolChange }} appName="delta">
             <DockLayoutProvider
-                appName="delta"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,

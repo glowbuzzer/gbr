@@ -111,7 +111,6 @@ const demoMoveTile: DockTileDefinition = DockTileDefinitionBuilder()
 export function App() {
     return (
         <DockLayoutProvider
-            appName={"igus"}
             tiles={[
                 ConnectTileDefinition,
                 FeedRateTileDefinition,
@@ -132,7 +131,7 @@ export function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"igus"}>
             <App />
         </GlowbuzzerApp>
     </StrictMode>

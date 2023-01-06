@@ -9,6 +9,7 @@ import svgr from "@svgr/rollup"
 const dir=process.cwd()
 
 export const DEFAULT_VITE_CONFIG = {
+    cacheDir: "./.vite-cache",
     plugins: [react(), svgr()],
     resolve: {
         alias: {

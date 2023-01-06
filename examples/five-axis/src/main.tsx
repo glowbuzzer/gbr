@@ -153,9 +153,8 @@ function App() {
     }
 
     return (
-        <GCodeContextProvider value={{ handleToolChange }}>
+        <GCodeContextProvider value={{ handleToolChange }} appName="five axis">
             <DockLayoutProvider
-                appName="five axis"
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,

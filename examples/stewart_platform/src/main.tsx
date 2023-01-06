@@ -431,9 +431,8 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName={"stewart_platform"}>
             <DockLayoutProvider
-                appName={"stewart_platform"}
                 tiles={[
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,

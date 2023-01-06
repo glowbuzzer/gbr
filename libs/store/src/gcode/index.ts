@@ -17,7 +17,7 @@ import { useWorkspaceFrames } from "../frames"
 
 // test
 
-const { load, save } = settings("store.gcode")
+const { load, save } = settings("gcode")
 
 export type GCodeSettingsType = {
     sendEndProgram: boolean
@@ -51,11 +51,13 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         writeCount: -1,
         tag: 0,
         settings: {
-            sendEndProgram: true,
-            ...load()
+            sendEndProgram: true
         }
     },
     reducers: {
+        loadSettings(state) {
+            return { ...state, settings: load() }
+        },
         settings(state, action) {
             state.settings = {
                 ...state.settings,

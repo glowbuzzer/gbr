@@ -11,7 +11,7 @@ import { toolPathSlice } from "../toolpath"
 import { gcodeSlice, updateStreamStateMsg } from "../gcode"
 import { GCodeStreamer } from "../gcode/GCodeStreamer"
 import { connectionSlice } from "./index"
-import { configSlice } from "../config"
+import { configSlice, ConfigState } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
 import { analogOutputsSlice } from "../io/aout"
@@ -186,9 +186,9 @@ if (typeof window !== "undefined") {
                     ws.onopen = () => {
                         // websocket is open, so start expecting status messages
                         start_status_timeout()
-                        // and send a request to get the current config
+                        // send a request to get the current config, but only if there's no current offline config
                         requestResponseHandler.request(ws, "get config").then(response => {
-                            dispatch(configSlice.actions.setConfig(response.config))
+                            dispatch(configSlice.actions.setConfigFromRemote(response.config))
                         })
                         dispatch(connectionSlice.actions.connected())
                     }

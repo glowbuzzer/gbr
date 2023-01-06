@@ -8,7 +8,9 @@ import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { useConnection } from "../connect"
-import { message } from "antd"
+import { settings } from "../util/settings"
+
+const { load, save } = settings("config")
 
 export const DEFAULT_CONFIG: GlowbuzzerConfig = {
     frames: [{}],
@@ -26,28 +28,78 @@ export const DEFAULT_CONFIG: GlowbuzzerConfig = {
 
 export enum ConfigState {
     AWAITING_CONFIG = "AWAITING CONFIG",
-    AWAITING_HLC_INIT = "AWAITING INIT",
     READY = "READY"
 }
 
-export const configSlice: Slice<{
+type ConfigSliceType = {
     state: ConfigState
     version: number
-    value: GlowbuzzerConfig
-}> = createSlice({
+    modified: boolean
+    current: GlowbuzzerConfig
+    remote: GlowbuzzerConfig | null
+}
+
+function persist({ current, modified, remote }) {
+    save({
+        current,
+        remote,
+        modified
+    })
+}
+
+export const configSlice: Slice<ConfigSliceType> = createSlice({
     name: "config",
     initialState: {
         state: ConfigState.AWAITING_CONFIG as ConfigState,
+        modified: false as boolean,
         version: 1,
-        // basic default value to avoid errors from components on startup
-        value: DEFAULT_CONFIG
+        current: DEFAULT_CONFIG,
+        remote: null
     },
     reducers: {
+        loadOfflineConfig(state) {
+            return { ...state, ...load() }
+        },
+        /** Set config on connect - will not overwrite a locally modified config */
+        setConfigFromRemote(state, action) {
+            state.version++
+            state.state = ConfigState.READY
+            if (state.modified) {
+                state.remote = action.payload
+            } else {
+                state.current = action.payload
+                state.remote = null
+            }
+            persist(state)
+        },
+        /** Set config - overrides and resets any locally modified config */
         setConfig(state, action) {
             state.version++
-            state.state = ConfigState.AWAITING_HLC_INIT // GlowbuzzerApp will handle this state
-            state.value = action.payload
-            // save(action.payload)
+            state.modified = false
+            state.remote = null
+            state.current = action.payload
+            persist(state)
+        },
+        /** Set offline config - marks config as modified and cache the last known remote config */
+        setOfflineConfig(state, action) {
+            state.version++
+            if (!state.modified) {
+                state.remote = state.current
+            }
+            state.modified = true
+            state.current = action.payload
+            persist(state)
+        },
+        /** Discard any locally modified config and replace with last known remote config */
+        discardOfflineConfig(state) {
+            if (!state.modified) {
+                return
+            }
+            state.version++
+            state.modified = false
+            state.current = state.remote || DEFAULT_CONFIG
+            state.remote = null
+            persist(state)
         },
         setConfigState(state, action) {
             state.state = action.payload
@@ -68,13 +120,29 @@ export function useConfigState() {
 }
 
 /**
+ * @ignore
+ */
+export function useOfflineConfig(): [boolean, () => void, () => void] {
+    const loader = useConfigLoader()
+    const modified = useSelector((state: RootState) => state.config.modified, shallowEqual)
+    const offline_config = useSelector((state: RootState) => state.config.current, deepEqual)
+    const dispatch = useDispatch()
+
+    return [
+        modified,
+        () => dispatch(configSlice.actions.discardOfflineConfig(null)),
+        () => loader(offline_config)
+    ]
+}
+
+/**
  * Returns the current configuration as provided by GBC.
  */
 export function useConfig() {
     return useSelector(
         (state: RootState) => state.config,
         (a, b) => a.version === b.version // only update on version change
-    ).value
+    ).current
 }
 
 /**
@@ -91,9 +159,13 @@ export function useConfigLoader() {
             ...config,
             ...change
         }
-        return connection.request("load config", { config: next }).then(() => {
-            dispatch(configSlice.actions.setConfig(next))
-        })
+        if (connection.connected) {
+            return connection.request("load config", { config: next }).then(() => {
+                dispatch(configSlice.actions.setConfig(next))
+            })
+        }
+        // just do the dispatch, but config is now cached
+        return Promise.resolve(dispatch(configSlice.actions.setOfflineConfig(next)))
     }
 }
 
@@ -109,7 +181,7 @@ const EMPTY_TOOL: ToolConfig = {
  */
 export function useToolConfig(toolIndex: number): ToolConfig {
     return useSelector((state: RootState) => {
-        return state.config.value.tool?.[toolIndex] ?? EMPTY_TOOL
+        return state.config.current.tool?.[toolIndex] ?? EMPTY_TOOL
     }, deepEqual)
 }
 
@@ -117,7 +189,7 @@ export function useToolConfig(toolIndex: number): ToolConfig {
  * Returns the configuration for all tools.
  */
 export function useToolList(): ToolConfig[] {
-    return useSelector((state: RootState) => state.config.value.tool, deepEqual)
+    return useSelector((state: RootState) => state.config.current.tool, deepEqual)
 }
 
 /**
@@ -125,7 +197,7 @@ export function useToolList(): ToolConfig[] {
  */
 export function useDefaultMoveParameters(): MoveParametersConfig {
     return useSelector((state: RootState) => {
-        const v = state.config?.value?.moveParameters?.[0] || {}
+        const v = state.config.current.moveParameters?.[0] || {}
         // strip the name from move params as it's not valid in websocket message to gbc
         const { name, ...props } = v
         return props
