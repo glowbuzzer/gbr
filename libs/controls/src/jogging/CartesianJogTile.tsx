@@ -4,18 +4,18 @@
 
 import { JogMode } from "./types"
 import React, { useState } from "react"
-import { JogArrowsCartesian } from "./JogArrowsCartesian"
-import { JogGotoCartesian, PositionMode } from "./JogGotoCartesian"
+import { PositionMode } from "./JogGotoCartesian"
 import { JogCartesianPanel } from "./JogCartesianPanel"
 import { JogModeRadioButtons } from "./JogModeRadioButtons"
-import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
 import { JogHomeSplitButton } from "./JogHomeSplitButton"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
 import { JogTileItem } from "./util"
-import { Radio } from "antd"
+import { Radio, Tag } from "antd"
+import { useKinematics } from "@glowbuzzer/store"
 
 /**
  * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
@@ -28,6 +28,8 @@ export const CartesianJogTile = () => {
 
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
     const [frameIndex, setFrameIndex] = useState(0)
+
+    const { isNearSingularity } = useKinematics(kinematicsConfigurationIndex)
 
     return (
         <DockTileWithToolbar
@@ -47,6 +49,11 @@ export const CartesianJogTile = () => {
                             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                         />
                     </DockToolbarButtonGroup>
+                    {isNearSingularity && (
+                        <Tag color={"red"} style={{ float: "right" }}>
+                            SINGULARITY
+                        </Tag>
+                    )}
                 </>
             }
         >
@@ -66,6 +73,7 @@ export const CartesianJogTile = () => {
                 positionMode={positionMode}
                 kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                 frameIndex={frameIndex}
+                disabled={!!isNearSingularity}
             />
         </DockTileWithToolbar>
     )

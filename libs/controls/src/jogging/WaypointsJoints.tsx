@@ -16,6 +16,7 @@ import { Button } from "antd"
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons"
 import * as React from "react"
 
+const EMPTY_ARRAY = []
 /** @ignore - internal to the jog tile */
 export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: WaypointsProps) => {
     const joints = useJointPositions(kinematicsConfigurationIndex)
@@ -29,7 +30,7 @@ export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: Wayp
 
     const [waypoints, setWaypoints] = useLocalStorage(
         `waypoints.joint.${kinematicsConfigurationIndex}`,
-        []
+        EMPTY_ARRAY
     )
 
     function add() {

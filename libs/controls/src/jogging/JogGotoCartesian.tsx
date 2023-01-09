@@ -43,7 +43,8 @@ export const JogGotoCartesian = ({
     jogSpeed,
     positionMode,
     kinematicsConfigurationIndex,
-    frameIndex
+    frameIndex,
+    disabled
 }) => {
     const [robotConfiguration, setRobotConfiguration] = useLocalStorage(
         "jog.robot.configuration",
@@ -122,6 +123,7 @@ export const JogGotoCartesian = ({
                     <JogGotoInputPanel
                         localStorageKey={"jog.position"}
                         items={xyzItems}
+                        disabled={disabled}
                         onGoto={goto_position}
                         onGotoAll={goto_position_all}
                     />
@@ -130,6 +132,7 @@ export const JogGotoCartesian = ({
                     <JogGotoInputPanel
                         localStorageKey={"jog.orientation"}
                         items={abcItems}
+                        disabled={disabled}
                         onGoto={goto_orient}
                         onGotoAll={goto_orient_all}
                     />

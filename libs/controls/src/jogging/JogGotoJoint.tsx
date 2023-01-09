@@ -29,13 +29,15 @@ const Tab = ({ mode, value, children }) => (
     <div className={"tab" + (value === mode ? " selected" : "")}>{children}</div>
 )
 
+const EMPTY_ARRAY = []
+
 /** @ignore - internal to the jog tile */
 export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
     const [mode, setMode] = useState(Mode.POSITION)
 
     const [positions, setPositions] = useLocalStorage(
         `jog.joints.${kinematicsConfigurationIndex}`,
-        []
+        EMPTY_ARRAY
     )
 
     const jointConfig = useJointConfig()
@@ -61,7 +63,7 @@ export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
     useEffect(() => {
         // ensure there are enough positions
         if (positions.length !== joints.length) {
-            setPositions(current => joints.map((j, i) => current[i] || 0))
+            // setPositions(current => joints.map((j, i) => current[i] || 0))
         }
     }, [setPositions, positions, joints])
 

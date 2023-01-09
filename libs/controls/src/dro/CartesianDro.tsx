@@ -4,7 +4,12 @@
 
 import * as React from "react"
 import { Euler } from "three"
-import { apply_offset, useConfig, useFrames, useKinematics } from "@glowbuzzer/store"
+import {
+    apply_offset,
+    useFrames,
+    useKinematics,
+    useKinematicsConfiguration
+} from "@glowbuzzer/store"
 import { DroItem } from "./DroItem"
 
 type CartesianDisplayProps = {
@@ -49,22 +54,25 @@ export const CartesianDro = ({
     warningThreshold
 }: CartesianDisplayProps) => {
     const kinematics = useKinematics(kinematicsConfigurationIndex)
-    const config = useConfig()
+    const {
+        frameIndex: localFrameIndex,
+        extentsX,
+        extentsY,
+        extentsZ
+    } = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const { convertToFrame } = useFrames()
 
-    const kc = config.kinematicsConfiguration[kinematicsConfigurationIndex]
-
     const p = convertToFrame(
-        kinematics.translation,
-        kinematics.rotation,
-        kinematics.frameIndex,
+        kinematics.position.translation,
+        kinematics.position.rotation,
+        localFrameIndex,
         frameIndex
     )
 
     const { translation, rotation } = apply_offset(p, kinematics.offset, true)
 
     // this is the local xyz, used to warn when tcp is near/outside of kc limits
-    const local_translation = kinematics.translation
+    const local_translation = kinematics.position.translation
 
     const euler = new Euler().setFromQuaternion(rotation)
 
@@ -87,9 +95,9 @@ export const CartesianDro = ({
     }
 
     const extents = {
-        x: kc.extentsX,
-        y: kc.extentsY,
-        z: kc.extentsZ
+        x: extentsX,
+        y: extentsY,
+        z: extentsZ
     }
 
     const display = select ? select.split(",").map(s => s.trim()) : Object.keys(pos)

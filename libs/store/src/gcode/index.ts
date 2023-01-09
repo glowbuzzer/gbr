@@ -6,11 +6,15 @@ import { createContext, useContext } from "react"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { KinematicsConfigurationMcStatus } from "../types"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import { useConnection } from "../connect"
-import { ActivityStreamItem, STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import {
+    ActivityStreamItem,
+    GlowbuzzerKinematicsConfigurationStatus,
+    STREAMCOMMAND,
+    STREAMSTATE
+} from "../gbc"
 import { SoloActivityApi } from "../activity/activity_api"
 import { ActivityBuilder } from "../activity"
 import { useWorkspaceFrames } from "../frames"
@@ -68,7 +72,7 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         init(state, action) {
             // called when connection established and we get the first status update with act pos
             // TODO: for now we only deal with kc 0
-            const status = action.payload[0] as KinematicsConfigurationMcStatus
+            const status = action.payload[0] as GlowbuzzerKinematicsConfigurationStatus
             const { x, y, z } = status.position.translation
             state.current_positions = [x, y, z]
             state.ready = true

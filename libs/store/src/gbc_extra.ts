@@ -90,6 +90,19 @@ export type GlowbuzzerMachineStatus = MachineStatus & {
     controlWord?: number
 }
 
+export type GlowbuzzerKinematicsConfigurationStatus = Pick<
+    KinematicsConfigurationStatus,
+    | "isNearSingularity"
+    | "limitsDisabled"
+    | "froActual"
+    | "froTarget"
+    | "configuration"
+    | "toolIndex"
+> & {
+    position: Pick<CartesianPosition, "translation" | "rotation">
+    offset: Pick<CartesianPosition, "translation" | "rotation">
+}
+
 export type GlowbuzzerStatus = {
     /**
      * Provides information about activities that are being streamed to GBC.
@@ -125,11 +138,7 @@ export type GlowbuzzerStatus = {
         /** The current state of all joints. */
         joint: (JointStatus & Pick<JointCommand, "controlWord">)[]
         /** The current state of all kinematics configurations. */
-        kc: (KinematicsConfigurationStatus & {
-            position: Pick<CartesianPosition, "translation" | "rotation">
-            offset: Vector3
-            limitsDisabled: boolean
-        })[]
+        kc: GlowbuzzerKinematicsConfigurationStatus[]
         /** The current state of all analog inputs. */
         ain: AinStatus[]
         /** The current state of all integer inputs. */

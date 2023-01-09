@@ -26,6 +26,7 @@ import {
     DoubleRightOutlined
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
+import { useMemo } from "react"
 
 const JointSliderDiv = styled.div`
     display: flex;
@@ -57,7 +58,7 @@ const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) 
             max={max}
             disabled
             value={joint?.actPos}
-            tooltipVisible={false}
+            tooltip={{ open: false }}
         />
     )
 }
@@ -130,10 +131,13 @@ const JogArrowsJointStep = ({
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const preview = usePreview()
 
-    const [steps, setSteps] = useLocalStorage(
-        "jog.joint.steps",
-        joints.map(() => "0")
-    )
+    // we need to memoize this to avoid use local storage doing work on every render,
+    // due to change in initial value
+    const jointStepsInitialValue = useMemo(() => {
+        return joints.map(() => "0")
+    }, [joints])
+
+    const [steps, setSteps] = useLocalStorage("jog.joint.steps", jointStepsInitialValue)
 
     function jogStep(index, distance) {
         // convert to SI units

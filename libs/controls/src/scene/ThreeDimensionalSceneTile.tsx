@@ -5,7 +5,7 @@
 import * as React from "react"
 import { useState } from "react"
 import { ReactReduxContext } from "react-redux"
-import { useKinematics, usePrefs, usePreview, useToolPath } from "@glowbuzzer/store"
+import { useKinematicsConfiguration, usePrefs, usePreview, useToolPath } from "@glowbuzzer/store"
 import { ToolPath } from "./ToolPath"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useContextBridge } from "@react-three/drei"
@@ -68,7 +68,7 @@ export const ThreeDimensionalSceneTile = ({
     children = undefined
 }: ThreeDimensionalSceneTileProps) => {
     const { path, reset } = useToolPath(kinematicsConfigurationIndex)
-    const { frameIndex } = useKinematics(kinematicsConfigurationIndex)
+    const { frameIndex } = useKinematicsConfiguration(kinematicsConfigurationIndex)
 
     const { current, update } = usePrefs()
 

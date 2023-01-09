@@ -12,6 +12,7 @@ type JogCartesianPanelProps = {
     positionMode: PositionMode
     kinematicsConfigurationIndex: number
     frameIndex: number
+    disabled: boolean
 }
 
 /** @ignore - internal to the jog tile */

@@ -56,6 +56,7 @@ type JogArrowsCartesianProps = {
     jogSpeed: number
     kinematicsConfigurationIndex: number
     frameIndex: number
+    disabled: boolean
 }
 
 /** @ignore - internal to the jog tile */
@@ -64,7 +65,8 @@ export const JogArrowsCartesian = ({
     positionMode,
     jogSpeed,
     kinematicsConfigurationIndex,
-    frameIndex
+    frameIndex,
+    disabled
 }: JogArrowsCartesianProps) => {
     const preview = usePreview()
     const [jogStep, setJogStep] = useLocalStorage(
@@ -197,6 +199,7 @@ export const JogArrowsCartesian = ({
                 onClick={() => stepJog(index, direction)}
                 onMouseDown={() => startJog(index, direction)}
                 onMouseUp={() => stopJog()}
+                disabled={disabled}
             >
                 {children}
             </Button>

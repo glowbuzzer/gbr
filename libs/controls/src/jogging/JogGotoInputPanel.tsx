@@ -56,6 +56,7 @@ const StyledDiv = styled.div`
 type JogGotoInputPanelProps = {
     localStorageKey: string
     items: JogGotoItem[]
+    disabled?: boolean
     onGoto(key: string | number, value: number)
     onGotoAll(values: { [index: string]: number })
 }
@@ -68,7 +69,8 @@ export const JogGotoInputPanel = ({
     localStorageKey,
     items,
     onGoto,
-    onGotoAll
+    onGotoAll,
+    disabled
 }: JogGotoInputPanelProps) => {
     const { toSI, getUnits } = usePrefs()
     const [values, setValues] = useLocalStorage<string[]>(localStorageKey, EMPTY_ARRAY)
@@ -78,12 +80,6 @@ export const JogGotoInputPanel = ({
 
     const angularUnits = getUnits("angular")
     const angularUnitsRef = useRef(angularUnits)
-
-    const itemsRef = useRef(items)
-    if (itemsRef.current !== items) {
-        console.log("items changed")
-        itemsRef.current = items
-    }
 
     useEffect(() => {
         setValues(current => {
@@ -143,10 +139,18 @@ export const JogGotoInputPanel = ({
                         value={values[index]}
                         onChange={e => update_position(index, e.target.value)}
                     />
-                    <Button size="small" onClick={() => goto(key, index)} disabled={invalid[index]}>
+                    <Button
+                        size="small"
+                        onClick={() => goto(key, index)}
+                        disabled={disabled || invalid[index]}
+                    >
                         Go to {label}
                     </Button>
-                    <Button size="small" onClick={() => update_position(index, "0")}>
+                    <Button
+                        size="small"
+                        onClick={() => update_position(index, "0")}
+                        disabled={disabled}
+                    >
                         Zero
                     </Button>
                 </div>
@@ -157,7 +161,7 @@ export const JogGotoInputPanel = ({
                         size="small"
                         block={true}
                         onClick={goto_all}
-                        disabled={invalid.some(p => p)}
+                        disabled={disabled || invalid.some(p => p)}
                     >
                         Go to All
                     </Button>

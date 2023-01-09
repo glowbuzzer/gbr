@@ -6,19 +6,18 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
-import { KinematicsConfigurationMcStatus } from "../types"
 import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
 import { useRawJointPositions } from "../joints"
-import { Quaternion, Vector3 } from "three"
 import {
     CartesianPositionsConfig,
-    KC_KINEMATICSCONFIGURATIONTYPE,
+    GlowbuzzerKinematicsConfigurationStatus,
     KinematicsConfigurationCommand,
     KinematicsConfigurationConfig,
     POSITIONREFERENCE,
-    Quat
+    Quat,
+    Vector3
 } from "../gbc"
 import { useMemo } from "react"
 
@@ -36,116 +35,115 @@ import { useMemo } from "react"
 /**
  * The state of the kinematics configuration
  */
-export type KinematicsState = {
-    /** The type of kinematics, for example a robot or cartesian machine */
-    type: KC_KINEMATICSCONFIGURATIONTYPE
-    /** The current translation and rotation */
-    position: { translation: THREE.Vector3; rotation: THREE.Quaternion }
-    /** Any logical offset applied to the kinematics configuration */
-    offset: { translation: THREE.Vector3; rotation: THREE.Quaternion }
-    /** The current configuration for a robot (waist, elbow, wrist) */
-    currentConfiguration: number
-    /** The feedrate the kinematics configuration is trying to achieve */
-    froTarget: number
-    /** The actual feedrate */
-    froActual: number
-    /** The current tool index */
-    toolIndex: number
-    /** Indicates if limit checking is currently disabled */
-    limitsDisabled: boolean
-}
+// export type KinematicsState = {
+//     /** The type of kinematics, for example a robot or cartesian machine */
+//     type: KC_KINEMATICSCONFIGURATIONTYPE
+//     /** The current translation and rotation */
+//     position: { translation: THREE.Vector3; rotation: THREE.Quaternion }
+//     /** Any logical offset applied to the kinematics configuration */
+//     offset: { translation: THREE.Vector3; rotation: THREE.Quaternion }
+//     /** The current configuration for a robot (waist, elbow, wrist) */
+//     currentConfiguration: number
+//     /** The feedrate the kinematics configuration is trying to achieve */
+//     froTarget: number
+//     /** The actual feedrate */
+//     froActual: number
+//     /** The current tool index */
+//     toolIndex: number
+//     /** Indicates if limit checking is currently disabled */
+//     limitsDisabled: boolean
+// }
 
-export const kinematicsSlice: Slice<KinematicsState[]> = createSlice({
+export const kinematicsSlice: Slice<GlowbuzzerKinematicsConfigurationStatus[]> = createSlice({
     name: "kinematics",
-    initialState: [] as KinematicsState[],
+    initialState: [] as GlowbuzzerKinematicsConfigurationStatus[],
     reducers: {
         status(state, action) {
-            // convert inbound state to more friendly redux state
-            return action.payload.map(marshal_into_state)
+            return action.payload
         }
     }
 })
 
-function marshal_tr_into_state({
-    translation,
-    rotation
-}: {
-    translation: THREE.Vector3
-    rotation: THREE.Quaternion
-}) {
-    const { x, y, z } = translation
-    const { z: qz, y: qy, x: qx, w: qw } = rotation
+// function marshal_tr_into_state({
+//     translation,
+//     rotation
+// }: {
+//     translation: THREE.Vector3
+//     rotation: THREE.Quaternion
+// }) {
+//     const { x, y, z } = translation
+//     const { z: qz, y: qy, x: qx, w: qw } = rotation
+//
+//     return {
+//         translation: { x, y, z },
+//         rotation: { x: qx, y: qy, z: qz, w: qw }
+//     }
+// }
 
-    return {
-        translation: { x, y, z },
-        rotation: { x: qx, y: qy, z: qz, w: qw }
-    }
-}
-
-function marshal_into_state(k: KinematicsConfigurationMcStatus) {
-    return {
-        type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-        currentConfiguration: 0,
-        // frameIndex: 0,
-        froTarget: k.froTarget,
-        froActual: k.froActual,
-        position: marshal_tr_into_state(k.position),
-        offset: marshal_tr_into_state(k.offset),
-        toolIndex: k.toolIndex,
-        limitsDisabled: k.limitsDisabled
-    }
-}
-
-function unmarshall_tr_from_state({
-    translation,
-    rotation
-}: {
-    translation: Vector3
-    rotation: Quat
-}): {
-    translation: Vector3
-    rotation: Quaternion
-} {
-    const { z, y, x } = translation
-    const { z: qz, y: qy, x: qx, w: qw } = rotation
-
-    return {
-        translation: new Vector3(x, y, z),
-        rotation: new Quaternion(qx, qy, qz, qw)
-    }
-}
+// function marshal_into_state(k: KinematicsConfigurationMcStatus) {
+//     return {
+//         type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
+//         currentConfiguration: 0,
+//         // frameIndex: 0,
+//         froTarget: k.froTarget,
+//         froActual: k.froActual,
+//         position: marshal_tr_into_state(k.position),
+//         offset: marshal_tr_into_state(k.offset),
+//         toolIndex: k.toolIndex,
+//         limitsDisabled: k.limitsDisabled
+//     }
+// }
+//
+// function unmarshall_tr_from_state({
+//     translation,
+//     rotation
+// }: {
+//     translation: Vector3
+//     rotation: Quat
+// }): {
+//     translation: Vector3
+//     rotation: Quaternion
+// } {
+//     const { z, y, x } = translation
+//     const { z: qz, y: qy, x: qx, w: qw } = rotation
+//
+//     return {
+//         translation: new Vector3(x, y, z),
+//         rotation: new Quaternion(qx, qy, qz, qw)
+//     }
+// }
 
 // we're not allowed to put THREE objects into state because they are not serializable,
 // so we need to convert the vanilla json objects into THREE version for downstream
-function unmarshall_from_state(state: KinematicsConfigurationMcStatus): KinematicsState {
-    if (!state) {
-        // ensure downstream always has something to work with even if just a default
-        return {
-            type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-            currentConfiguration: 0,
-            // frameIndex: 0,
-            froTarget: 0,
-            froActual: 0,
-            position: {
-                translation: new Vector3(0, 0, 0),
-                rotation: new Quaternion(0, 0, 0, 1)
-            },
-            offset: {
-                translation: new Vector3(0, 0, 0),
-                rotation: new Quaternion(0, 0, 0, 1)
-            },
-            toolIndex: 0,
-            limitsDisabled: false
-        }
-    }
-    return {
-        ...state,
-        position: unmarshall_tr_from_state(state.position),
-        offset: unmarshall_tr_from_state(state.offset),
-        toolIndex: state.toolIndex,
-        limitsDisabled: state.limitsDisabled
-    }
-}
+// function unmarshall_from_state(state: KinematicsConfigurationMcStatus): KinematicsState {
+//     if (!state) {
+//         // ensure downstream always has something to work with even if just a default
+//         return {
+//             type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
+//             currentConfiguration: 0,
+//             // frameIndex: 0,
+//             froTarget: 0,
+//             froActual: 0,
+//             position: {
+//                 translation: new Vector3(0, 0, 0),
+//                 rotation: new Quaternion(0, 0, 0, 1)
+//             },
+//             offset: {
+//                 translation: new Vector3(0, 0, 0),
+//                 rotation: new Quaternion(0, 0, 0, 1)
+//             },
+//             toolIndex: 0,
+//             limitsDisabled: false
+//         }
+//     }
+//     return {
+//         ...state,
+//         position: state.position,
+//         offset: state.offset,
+//         toolIndex: state.toolIndex,
+//         limitsDisabled: state.limitsDisabled
+//     }
+// }
 
 export function updateFroMsg(kc: number, value: number) {
     return JSON.stringify({
@@ -161,15 +159,16 @@ export function updateFroMsg(kc: number, value: number) {
     })
 }
 
-export function updateOffsetMsg(kc: number, { x, y, z }: Vector3, rotation?: Quaternion) {
-    rotation ||= new Quaternion().identity()
+export function updateOffsetMsg(kc: number, translation: Vector3, rotation?: Quat) {
+    rotation ||= { x: 0, y: 0, z: 0, w: 1 }
+    translation ||= { x: 0, y: 0, z: 0 }
     return JSON.stringify({
         command: {
             kinematicsConfiguration: {
                 [kc]: {
                     command: {
-                        translation: { x, y, z },
-                        rotation: { x: rotation.x, y: rotation.y, z: rotation.z, w: rotation.w }
+                        translation,
+                        rotation
                     } as KinematicsConfigurationCommand
                 }
             }
@@ -200,7 +199,7 @@ export function useKinematicsConfigurationList() {
 }
 
 /**
- * Read and manipulate a kinematics configuration.
+ * Read the state of a kinematics configuration.
  *
  * A kinematics configuration (KC) represents a number of
  * joints joined together in a kinematic relationship. The translation and rotation returned is in local
@@ -212,50 +211,29 @@ export function useKinematicsConfigurationList() {
  */
 export const useKinematics = (kinematicsConfigurationIndex: number) => {
     // select the given kc
-    const state = unmarshall_from_state(
-        useSelector(
-            ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex],
-            deepEqual
-        )
+    const state: GlowbuzzerKinematicsConfigurationStatus = useSelector(
+        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex],
+        deepEqual
     )
-    // const frames = useFrames()
-    const connection = useConnection()
     const rawJointPositions = useRawJointPositions()
-
-    // TODO: seeing 'world' passed here which cannot be found in configs
     const configs = useKinematicsConfigurationList()
 
-    const { frameIndex, participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
-    const { position, offset } = state
-    const { translation, rotation } = position
+    const { participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
     const jointPositions = useMemo(
         () => participatingJoints.map(j => rawJointPositions[j]),
         [rawJointPositions, participatingJoints]
     )
 
+    const empty_position = {
+        translation: { x: 0, y: 0, z: 0 },
+        rotation: { x: 0, y: 0, z: 0, w: 1 }
+    }
     return {
-        /** The current robot configuration */
-        currentConfiguration: state.currentConfiguration,
-        /** The local frame index for the kinematics configuration */
-        frameIndex,
-        /** The current translation (cartesian position) */
-        translation,
-        /** The current rotation (cartesian position) */
-        rotation,
-        /** The positions of all joints in the kinematics configuration */
-        jointPositions,
-        /** Current logical offset, if any */
-        offset,
-        /**
-         * Set a logical offset to use for moves
-         * @param translation Logical translation to apply
-         * @param rotation? Logical rotation to apply
-         */
-        setOffset(translation: Vector3, rotation?: Quaternion) {
-            // dispatch<any>(() => {
-            connection.send(updateOffsetMsg(kinematicsConfigurationIndex, translation, rotation))
-            // })
-        }
+        // ensure that position is not undefined
+        position: empty_position,
+        offset: empty_position,
+        ...state,
+        jointPositions
     }
 }
 
@@ -307,19 +285,19 @@ export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: num
 }
 
 /** @ignore - not currently supported */
-export const useTcp = (kc: number, frame: number | "world") => {
-    const state = unmarshall_from_state(
-        useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
-    )
-    const frames = useFrames()
-
-    return frames.convertToFrame(
-        state.position.translation,
-        state.position.rotation,
-        "world",
-        frame
-    )
-}
+// export const useTcp = (kc: number, frame: number | "world") => {
+//     const state = unmarshall_from_state(
+//         useSelector(({ kinematics }: RootState) => kinematics[kc], deepEqual)
+//     )
+//     const frames = useFrames()
+//
+//     return frames.convertToFrame(
+//         state.position.translation,
+//         state.position.rotation,
+//         "world",
+//         frame
+//     )
+// }
 
 /**
  * Returns the current position for all joints in a kinematics configuration, in the order they are given
@@ -365,6 +343,9 @@ export function useFeedRate(kinematicsConfigurationIndex: number) {
     }
 }
 
+type PositionType = { translation?: Vector3; rotation?: Quat }
+
+// noinspection JSValidateJSDoc
 /**
  * Returns the current offset for the kinematics configuration.
  *
@@ -375,14 +356,20 @@ export function useFeedRate(kinematicsConfigurationIndex: number) {
  *
  * @param kinematicsConfigurationIndex The kinematics configuration index
  */
-export function useKinematicsOffset(kinematicsConfigurationIndex: number): {
-    translation: Vector3
-    rotation: Quaternion
-} {
-    return useSelector(
+export function useKinematicsOffset(
+    kinematicsConfigurationIndex: number
+): [PositionType, (offset: PositionType) => void] {
+    const connection = useConnection()
+    const offset = useSelector(
         ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex]?.offset,
         deepEqual
     )
+
+    function setOffset({ translation, rotation }: PositionType) {
+        connection.send(updateOffsetMsg(kinematicsConfigurationIndex, translation, rotation))
+    }
+
+    return [offset, setOffset]
 }
 
 /**

@@ -95,7 +95,6 @@ export const BasicRobot = ({
     }, [kinematicsChain, parts, scale]) //why on earth is this firing so much?
 
     useEffect(() => {
-        console.log("joint positions in basic robot", jointPositions)
         elements
             .filter(e => e.config.moveable)
             .forEach((e, index) => {

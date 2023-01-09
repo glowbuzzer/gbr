@@ -2,23 +2,23 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Matrix4, Quaternion, Vector3 } from "three"
-import { FramesConfig, POSITIONREFERENCE } from "../gbc"
+import * as THREE from "three"
+import { FramesConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
 
-export type FrameConfig = {
-    translation: Vector3
-    rotation: Quaternion
+type FrameConfig = {
+    translation: THREE.Vector3
+    rotation: THREE.Quaternion
 }
 
 export const NULL_FRAME_CONFIG = {
-    translation: new Vector3(0, 0, 0),
-    rotation: new Quaternion(0, 0, 0, 1)
+    translation: new THREE.Vector3(0, 0, 0),
+    rotation: new THREE.Quaternion(0, 0, 0, 1)
 }
 
 function makeFrameConfig(): FrameConfig {
     return {
-        translation: new Vector3(),
-        rotation: new Quaternion(0, 0, 0, 1)
+        translation: new THREE.Vector3(),
+        rotation: new THREE.Quaternion(0, 0, 0, 1)
     }
 }
 
@@ -36,34 +36,29 @@ export type Frame = {
 }
 
 function to_m4(f: FrameConfig) {
-    return new Matrix4().compose(f.translation, f.rotation, new Vector3(1, 1, 1))
+    return new THREE.Matrix4().compose(f.translation, f.rotation, new THREE.Vector3(1, 1, 1))
 }
 
-function decompose(matrix: Matrix4): FrameConfig {
+function decompose(matrix: THREE.Matrix4): FrameConfig {
     const result = makeFrameConfig()
-    matrix.decompose(result.translation, result.rotation, new Vector3(1, 1, 1))
+    matrix.decompose(result.translation, result.rotation, new THREE.Vector3(1, 1, 1))
 
     return result
 }
 
-export function add_frame_config(f1: FrameConfig, f2: FrameConfig): FrameConfig {
+function add_frame_config(f1: FrameConfig, f2: FrameConfig): FrameConfig {
     const m1 = to_m4(f1)
     const m2 = to_m4(f2)
 
     return decompose(m1.multiply(m2))
 }
 
-/**
- * Provides a convenience 'useFrames' method that can be used to get frame information from the config
- * and convert between frames
- */
-
-function vectorOf(t): Vector3 {
-    return t ? new Vector3(t.x, t.y, t.z) : NULL_FRAME_CONFIG.translation.clone()
+function vectorOf(t?: Vector3): THREE.Vector3 {
+    return t ? new THREE.Vector3(t.x, t.y, t.z) : NULL_FRAME_CONFIG.translation.clone()
 }
 
-function quatOf(r): Quaternion {
-    return r ? new Quaternion(r.x, r.y, r.z, r.w) : NULL_FRAME_CONFIG.rotation.clone()
+function quatOf(r?: Quat): THREE.Quaternion {
+    return r ? new THREE.Quaternion(r.x, r.y, r.z, r.w) : NULL_FRAME_CONFIG.rotation.clone()
 }
 
 type Subset<K> = {
@@ -226,16 +221,16 @@ export function build_list(asTree: Frame[]) {
     return result
 }
 
-function decompose2(matrix: Matrix4) {
-    const translation = new Vector3()
-    const rotation = new Quaternion()
-    const scale = new Vector3()
+function decompose2(matrix: THREE.Matrix4) {
+    const translation = new THREE.Vector3()
+    const rotation = new THREE.Quaternion()
+    const scale = new THREE.Vector3()
     matrix.decompose(translation, rotation, scale)
     return { translation, rotation, scale }
 }
 
-const UNIT_SCALE = new Vector3(1, 1, 1)
-const IDENTITY_MATRIX = new Matrix4()
+const UNIT_SCALE = new THREE.Vector3(1, 1, 1)
+const IDENTITY_MATRIX = new THREE.Matrix4()
 
 /*
 function log_translation(f: Matrix4, ...msg) {
@@ -259,10 +254,10 @@ function log_translation(f: Matrix4, ...msg) {
 export function change_reference_frame(
     frames: Frame[],
     translation: Vector3,
-    rotation: Quaternion,
+    rotation: Quat,
     fromIndex: number | "world",
     toIndex?: number | "world"
-): { translation: Vector3; rotation: Quaternion } {
+): { translation: Vector3; rotation: Quat } {
     if (toIndex === fromIndex) {
         // console.log("NULL FRAME CONVERSION, SAME FROM AND TO FRAME", toIndex)
         return { translation, rotation }
@@ -275,7 +270,7 @@ export function change_reference_frame(
             // console.warn("Invalid frame requested", index, frames)
             return IDENTITY_MATRIX
         }
-        return new Matrix4().compose(f.absolute.translation, f.absolute.rotation, UNIT_SCALE)
+        return new THREE.Matrix4().compose(f.absolute.translation, f.absolute.rotation, UNIT_SCALE)
     }
 
     const fromMatrix = fromIndex === "world" ? IDENTITY_MATRIX : matrixOf(fromIndex)
@@ -290,40 +285,46 @@ export function change_reference_frame(
     // log_translation(transformation, "RESULT")
 
     // we can apply the transformation matrix to the input position directly
-    const transformed_translation = translation.clone().applyMatrix4(transformation)
+    const transformed_translation = vectorOf(translation).clone().applyMatrix4(transformation)
 
     // console.log("Transform", position, "to", transformed_pose)
 
     return {
         translation: transformed_translation,
         // sum the rotation due to the transformation and the 'mobile' orientation of the input position
-        rotation: decompose2(transformation).rotation.multiply(rotation)
+        rotation: decompose2(transformation).rotation.multiply(quatOf(rotation))
     }
 }
 
 export function apply_offset(
     position: {
         translation: Vector3
-        rotation: Quaternion
+        rotation: Quat
     },
-    offset: { translation: Vector3; rotation: Quaternion },
+    offset: { translation?: Vector3; rotation?: Quat },
     invert = false
-): { translation: Vector3; rotation: Quaternion } {
-    const p = new Matrix4().compose(position.translation, position.rotation, new Vector3(1, 1, 1))
-    const q = new Matrix4().compose(offset.translation, offset.rotation, new Vector3(1, 1, 1))
+): { translation: THREE.Vector3; rotation: THREE.Quaternion } {
+    const p = new THREE.Matrix4().compose(
+        vectorOf(position.translation),
+        quatOf(position.rotation),
+        new THREE.Vector3(1, 1, 1)
+    )
+    const q = new THREE.Matrix4().compose(
+        vectorOf(offset.translation),
+        quatOf(offset.rotation),
+        new THREE.Vector3(1, 1, 1)
+    )
 
     if (invert) {
         q.invert()
         p.multiply(q)
     } else {
-        // console.log("P", position.translation, position.rotation)
-        // console.log("Q", offset.translation, offset.rotation)
         p.multiply(q)
     }
 
-    const translation = new Vector3()
-    const rotation = new Quaternion()
-    p.decompose(translation, rotation, new Vector3())
+    const translation = new THREE.Vector3()
+    const rotation = new THREE.Quaternion()
+    p.decompose(translation, rotation, new THREE.Vector3())
 
     return { translation, rotation }
 }

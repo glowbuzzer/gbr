@@ -2,7 +2,11 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { useKinematics, useKinematicsCartesianPosition } from "@glowbuzzer/store"
+import {
+    useKinematics,
+    useKinematicsCartesianPosition,
+    useKinematicsOffset
+} from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { Dropdown, Menu, message } from "antd"
 import { Euler, Quaternion, Vector3 } from "three"
@@ -98,6 +102,7 @@ export const CartesianDroTile = ({
 
     const position = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
     const kinematics = useKinematics(kinematicsConfigurationIndex)
+    const [, setOffset] = useKinematicsOffset(kinematicsConfigurationIndex)
 
     const [selectedOption, setSelectedOption] = useLocalStorage<CartesianDroClipboardOption>(
         `dro.clipboard.mode.${kinematicsConfigurationIndex}`,
@@ -159,11 +164,14 @@ export const CartesianDroTile = ({
     }
 
     function zero_dro() {
-        kinematics.setOffset(kinematics.translation, new Quaternion().identity())
+        setOffset(kinematics.position)
     }
 
     function reset_dro() {
-        kinematics.setOffset(new Vector3(0, 0, 0), new Quaternion().identity())
+        setOffset({
+            translation: { x: 0, y: 0, z: 0 },
+            rotation: { x: 0, y: 0, z: 0, w: 1 }
+        })
     }
 
     const tooltip = `Copy ${CLIPBOARD_MODE_TITLES[selectedOption]} to clipboard`

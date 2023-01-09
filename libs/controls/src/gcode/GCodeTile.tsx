@@ -9,7 +9,7 @@ import "ace-builds/src-noconflict/theme-github.js"
 import "ace-builds/src-noconflict/mode-gcode.js"
 import "ace-builds/src-noconflict/mode-text.js"
 
-import { Radio, Select, Space, Tag } from "antd"
+import { Radio, Space, Tag } from "antd"
 import {
     settings,
     STREAMCOMMAND,
@@ -30,8 +30,6 @@ import { GCodeWorkOffsetSelect } from "./GCodeWorkOffsetSelect"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
-
-const { Option } = Select
 
 const { load, save } = settings("tiles.gcode")
 
@@ -84,7 +82,7 @@ export const GCodeTile = () => {
     const active = stream.state !== STREAMSTATE.STREAMSTATE_IDLE
     const workOffset = frames.active
     const config = useConfig()
-    const offset = useKinematicsOffset(0)
+    const [offset] = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
     const editorRef = useRef<AceEditor>(null)
     const timerRef = useRef<any>()

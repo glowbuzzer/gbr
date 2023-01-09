@@ -36,6 +36,7 @@ export * from "./gbc_extra"
         OPERATION_ERROR_KINEMATICS_IK_INVALID_VALUE,
         OPERATION_ERROR_KINEMATICS_INVALID_KIN_CHAIN_PARAMS,
         OPERATION_ERROR_JOINT_DISCONTINUITY,
+        OPERATION_ERROR_JOINT_OVER_SPEED,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
@@ -779,6 +780,8 @@ export * from "./gbc_extra"
                         cartesianActAcc?:Vector3;
                         /**  Indicates if soft limits (machine extents) are disabled */
                         limitsDisabled?:boolean;
+                        /**  Indicates if the robot is near a singularity */
+                        isNearSingularity?:number;
                         /**  Current tool index */
                         toolIndex?:number;
             }

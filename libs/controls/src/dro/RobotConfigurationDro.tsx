@@ -17,9 +17,9 @@ import { useKinematics } from "@glowbuzzer/store"
 export const RobotConfigurationDro = () => {
     const kinematics = useKinematics(0)
 
-    const waist = kinematics.currentConfiguration & 0b100
-    const elbow = kinematics.currentConfiguration & 0b100
-    const wrist = kinematics.currentConfiguration & 0b100
+    const waist = kinematics.configuration & 0b100
+    const elbow = kinematics.configuration & 0b100
+    const wrist = kinematics.configuration & 0b100
 
     return (
         <>
