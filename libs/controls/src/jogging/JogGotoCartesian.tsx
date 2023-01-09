@@ -2,10 +2,8 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Radio } from "antd"
-import React, { useState } from "react"
+import React from "react"
 import { Euler, Quaternion } from "three"
-import { useLocalStorage } from "../util/LocalStorageHook"
 import {
     LIMITPROFILE,
     MoveParametersConfig,
@@ -14,7 +12,7 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { JogTileItem, StyledJogDiv } from "./util"
+import { StyledJogDiv } from "./util"
 import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
 
 export enum PositionMode {
@@ -44,13 +42,9 @@ export const JogGotoCartesian = ({
     positionMode,
     kinematicsConfigurationIndex,
     frameIndex,
+    robotConfiguration,
     disabled
 }) => {
-    const [robotConfiguration, setRobotConfiguration] = useLocalStorage(
-        "jog.robot.configuration",
-        0
-    )
-
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const waypoint = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
 

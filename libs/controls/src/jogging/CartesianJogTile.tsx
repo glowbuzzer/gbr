@@ -3,19 +3,20 @@
  */
 
 import { JogMode } from "./types"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { PositionMode } from "./JogGotoCartesian"
 import { JogCartesianPanel } from "./JogCartesianPanel"
 import { JogModeRadioButtons } from "./JogModeRadioButtons"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
-import { FramesDropdown } from "../frames/FramesDropdown"
+import { FramesDropdown } from "../frames"
 import { JogHomeSplitButton } from "./JogHomeSplitButton"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
 import { JogTileItem } from "./util"
 import { Radio, Tag } from "antd"
-import { useKinematics } from "@glowbuzzer/store"
+import { useKinematics, useKinematicsConfiguration } from "@glowbuzzer/store"
+import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
 
 /**
  * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
@@ -25,11 +26,17 @@ import { useKinematics } from "@glowbuzzer/store"
 export const CartesianJogTile = () => {
     const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
     const [positionMode, setPositionMode] = useState(PositionMode.POSITION)
+    const [robotConfiguration, setRobotConfiguration] = useState(0)
 
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
     const [frameIndex, setFrameIndex] = useState(0)
 
-    const { isNearSingularity } = useKinematics(kinematicsConfigurationIndex)
+    const { isNearSingularity, configuration } = useKinematics(kinematicsConfigurationIndex)
+    const { supportedConfigurationBits } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+
+    useEffect(() => {
+        setRobotConfiguration(configuration)
+    }, [configuration])
 
     return (
         <DockTileWithToolbar
@@ -66,12 +73,21 @@ export const CartesianJogTile = () => {
                     <Radio.Button value={PositionMode.POSITION}>Position</Radio.Button>
                     <Radio.Button value={PositionMode.ORIENTATION}>Orientation</Radio.Button>
                 </Radio.Group>
+                {jogMode === JogMode.GOTO && (
+                    <RobotConfigurationSelector
+                        currentValue={configuration}
+                        value={robotConfiguration}
+                        supportedConfigurationBits={supportedConfigurationBits}
+                        onChange={setRobotConfiguration}
+                    />
+                )}
             </JogTileItem>
 
             <JogCartesianPanel
                 jogMode={jogMode}
                 positionMode={positionMode}
                 kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                robotConfiguration={robotConfiguration}
                 frameIndex={frameIndex}
                 disabled={!!isNearSingularity}
             />

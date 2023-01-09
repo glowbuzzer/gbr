@@ -736,6 +736,8 @@ export * from "./gbc_extra"
             
                         /**  Kinematics configuration type. That is, the kinematics model that will be used. Used as discriminator for the union */
                         kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
+                        /**  Defines the supported configurations a robot. Bit 0 is waist, bit 1 elbow, bit 2 wrist. Higher bits are user-defined */
+                        supportedConfigurationBits?:number;
                         /**  Frame index this kinematics configuration will use */
                         frameIndex?:number;
                         /**  Array of physical joint indices use in this kinematics configuration */

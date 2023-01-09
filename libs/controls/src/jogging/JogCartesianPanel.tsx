@@ -12,6 +12,7 @@ type JogCartesianPanelProps = {
     positionMode: PositionMode
     kinematicsConfigurationIndex: number
     frameIndex: number
+    robotConfiguration: number
     disabled: boolean
 }
 
@@ -25,6 +26,6 @@ export const JogCartesianPanel = (props: JogCartesianPanelProps) => {
             return <JogArrowsCartesian jogSpeed={100} jogMode={jogMode} {...otherProps} />
 
         case JogMode.GOTO:
-            return <JogGotoCartesian jogSpeed={100} {...otherProps} />
+            return <JogGotoCartesian jogSpeed={100} {...otherProps} disabled={false} />
     }
 }
