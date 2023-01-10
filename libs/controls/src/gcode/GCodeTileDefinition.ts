@@ -15,5 +15,8 @@ export const GCodeTileDefinition = {
         row: 1
     },
     render: () => createElement(GCodeTile, {}, null),
-    renderHelp: () => createElement(GCodeTileHelp, {}, null)
+    renderHelp: () => createElement(GCodeTileHelp, {}, null),
+    config: {
+        enableWithoutConnection: true
+    }
 }

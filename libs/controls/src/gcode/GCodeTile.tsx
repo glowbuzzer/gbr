@@ -15,6 +15,7 @@ import {
     STREAMCOMMAND,
     STREAMSTATE,
     useConfig,
+    useConnection,
     useFrames,
     useGCode,
     useKinematicsCartesianPosition,
@@ -75,6 +76,7 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
 export const GCodeTile = () => {
     const [gcode, setGCode] = React.useState(load("G1 X10 Y5 Z2"))
 
+    const connection = useConnection()
     const stream = useGCode()
     const prefs = usePrefs()
     const preview = usePreview()
@@ -190,7 +192,7 @@ export const GCodeTile = () => {
                     </DockToolbarButtonGroup>
                     <Space>
                         <span>{(stream.time / 1000).toFixed(1)}s</span>
-                        <Tag>{STREAMSTATE[stream.state]}</Tag>
+                        <Tag>{connection.connected ? STREAMSTATE[stream.state] : "OFFLINE"}</Tag>
 
                         <Radio.Group
                             size={"small"}
@@ -199,7 +201,7 @@ export const GCodeTile = () => {
                             value={inferredCommand}
                         >
                             <Radio.Button
-                                disabled={can_pause}
+                                disabled={can_pause || !connection.connected}
                                 value={STREAMCOMMAND.STREAMCOMMAND_RUN}
                             >
                                 {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
