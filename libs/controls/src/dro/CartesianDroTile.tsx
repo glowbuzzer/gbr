@@ -5,6 +5,7 @@
 import {
     useKinematics,
     useKinematicsCartesianPosition,
+    useKinematicsConfiguration,
     useKinematicsOffset
 } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
@@ -24,6 +25,7 @@ import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../frames/FramesDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { RobotConfigurationDro } from "./RobotConfigurationDro"
 
 const StyledDownOutlined = styled(DownOutlined)`
     display: inline-block;
@@ -102,6 +104,8 @@ export const CartesianDroTile = ({
 
     const position = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
     const kinematics = useKinematics(kinematicsConfigurationIndex)
+    const { supportedConfigurationBits } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+
     const [, setOffset] = useKinematicsOffset(kinematicsConfigurationIndex)
 
     const [selectedOption, setSelectedOption] = useLocalStorage<CartesianDroClipboardOption>(
@@ -245,6 +249,14 @@ export const CartesianDroTile = ({
             }
         >
             <StyledTileContent>
+                {supportedConfigurationBits ? (
+                    <div>
+                        <RobotConfigurationDro
+                            value={kinematics.configuration}
+                            supportedConfigurationBits={supportedConfigurationBits}
+                        />
+                    </div>
+                ) : null}
                 <CartesianDro
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                     frameIndex={frameIndex}

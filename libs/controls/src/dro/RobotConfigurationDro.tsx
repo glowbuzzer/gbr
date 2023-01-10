@@ -12,22 +12,41 @@ import {
     ReloadOutlined
 } from "@ant-design/icons"
 import { useKinematics } from "@glowbuzzer/store"
+import styled from "styled-components"
 
-/** @ignore - not currently supported */
-export const RobotConfigurationDro = () => {
-    const kinematics = useKinematics(0)
+const StyledDiv = styled.div`
+    display: flex;
+    justify-content: center;
 
-    const waist = kinematics.configuration & 0b100
-    const elbow = kinematics.configuration & 0b100
-    const wrist = kinematics.configuration & 0b100
+    .ant-tag {
+        border: none;
+        padding: 5px 10px;
+    }
+`
+
+/** @ignore - internal to the cartesian DRO tile */
+export const RobotConfigurationDro = ({ value, supportedConfigurationBits }) => {
+    const waist = value & 0b100
+    const elbow = value & 0b010
+    const wrist = value & 0b001
+
+    const waistSupported = supportedConfigurationBits & 0b100 || null
+    const elbowSupported = supportedConfigurationBits & 0b010 || null
+    const wristSupported = supportedConfigurationBits & 0b001 || null
 
     return (
-        <>
-            <Tag>Waist {waist ? <ArrowRightOutlined /> : <ArrowLeftOutlined />}</Tag>
-            <Tag>Elbow {elbow ? <ArrowUpOutlined /> : <ArrowDownOutlined />}</Tag>
-            <Tag>
-                Wrist <ReloadOutlined style={wrist ? { transform: "scaleX(-1)" } : undefined} />
-            </Tag>
-        </>
+        <StyledDiv>
+            {waistSupported && (
+                <Tag>Waist {waist ? <ArrowRightOutlined /> : <ArrowLeftOutlined />}</Tag>
+            )}
+            {elbowSupported && (
+                <Tag>Elbow {elbow ? <ArrowDownOutlined /> : <ArrowUpOutlined />}</Tag>
+            )}
+            {wristSupported && (
+                <Tag>
+                    Wrist <ReloadOutlined style={wrist ? { transform: "scaleX(-1)" } : undefined} />
+                </Tag>
+            )}
+        </StyledDiv>
     )
 }

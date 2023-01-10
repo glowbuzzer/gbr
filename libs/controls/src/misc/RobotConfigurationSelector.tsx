@@ -63,7 +63,7 @@ export const RobotConfigurationSelector = ({
                     onClick={() => toggle(0b100)}
                     color={currentWaist !== waist ? "blue" : undefined}
                 >
-                    Waist {waist ? <ArrowRightOutlined color={"red"} /> : <ArrowLeftOutlined />}
+                    Waist {waist ? <ArrowRightOutlined /> : <ArrowLeftOutlined />}
                 </Tag>
             )}
             {elbowSupported && (
@@ -71,7 +71,7 @@ export const RobotConfigurationSelector = ({
                     onClick={() => toggle(0b010)}
                     color={currentElbow !== elbow ? "blue" : undefined}
                 >
-                    Elbow {elbow ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                    Elbow {elbow ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
                 </Tag>
             )}
             {wristSupported && (
