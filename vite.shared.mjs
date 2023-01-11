@@ -3,13 +3,23 @@
  */
 
 import react from "@vitejs/plugin-react";
-import {resolve} from "path";
+import {resolve, basename} from "path";
 import svgr from "@svgr/rollup"
 
-const dir=process.cwd()
+const dir = process.cwd()
+
+const [, , projectDir] = process.argv
+
+const project = basename(projectDir);
+if ( !project.length ) {
+    throw new Error("Vite project could not be detetermined")
+}
+
+const cacheDir = resolve(dir, "node_modules/.vite/"+ project);
+console.log("Using cache dir", cacheDir)
 
 export const DEFAULT_VITE_CONFIG = {
-    cacheDir: "./.vite-cache",
+    cacheDir,
     plugins: [react(), svgr()],
     resolve: {
         alias: {
