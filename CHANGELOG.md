@@ -2,6 +2,70 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/glowbuzzer/gbr/compare/v1.4.2...v1.5.0) (2023-01-10)
+
+
+### Bug Fix
+
+* **#51:** maximum call depth exceeded ([d2e2863](https://github.com/glowbuzzer/gbr/commit/d2e2863d506d38d6ef6493b43d37d2f27194e8e3))
+* **#83:** fix max call depth exceeded ([d0ed77a](https://github.com/glowbuzzer/gbr/commit/d0ed77af5eaa58d6d856f19b717ef127392acb78))
+* add back in GlowbuzzerTileDefinitionList.ts for full list of tiles ([e6d2a30](https://github.com/glowbuzzer/gbr/commit/e6d2a30dcbc361dd50a4ce845036ee4695788ed6))
+* error using ThreeDimensionalSceneTileDefinition.tsx ([2193e60](https://github.com/glowbuzzer/gbr/commit/2193e60521929f56250a3f9ce0657a6961496b5e))
+* fix gbc tests (missing gcode G5x to frame association) ([9a0a28d](https://github.com/glowbuzzer/gbr/commit/9a0a28d00838df51891c39403acb81164365bc46))
+* fix tsc compile error ([58317a0](https://github.com/glowbuzzer/gbr/commit/58317a02592b017fc2cb6ea9cfd4a8acabf7c64c))
+* frustum should use extents hook for size ([5b36eb3](https://github.com/glowbuzzer/gbr/commit/5b36eb32245b880d570d93d72f89811f8cccbdc5))
+* handle orientation step jog ([8b67d98](https://github.com/glowbuzzer/gbr/commit/8b67d98a28bcaa1b0f19659d6cecf81bbda73722))
+* issue with event listener for keydown/keyup ([ca7f0b5](https://github.com/glowbuzzer/gbr/commit/ca7f0b5e273d0f92fd494bb562b1beb355a1673f))
+* issue with max extents ([77fbd60](https://github.com/glowbuzzer/gbr/commit/77fbd60afeabc94d75799b9bc51e1cb8cea91b24))
+* remove @glowbuzzer/controls self-imports ([e77ee50](https://github.com/glowbuzzer/gbr/commit/e77ee50251d02aea38da5a97d43e3c4f0302688a))
+* remove indirect dependency from scene to d3 etc ([e02142c](https://github.com/glowbuzzer/gbr/commit/e02142c168969f8c9a91c0ccedd1ed410ad5751a))
+* roll back rename of ThreeDimensionalSceneTileDefinition.ts ([01c5920](https://github.com/glowbuzzer/gbr/commit/01c59201b09e98e6abb60bd9e52cae4ec88bb2bc))
+
+
+### Chore
+
+* add configuration display to CartesianDroTile.tsx ([b0d19ce](https://github.com/glowbuzzer/gbr/commit/b0d19cebce43fd59fc3bfef23de103c2b598e1b7))
+* add individual types property to exports (typescript) ([f06833c](https://github.com/glowbuzzer/gbr/commit/f06833c44c69ca6b2f7900974744ee7315196049))
+* add licence property to package.json in npm packages ([ef40293](https://github.com/glowbuzzer/gbr/commit/ef402931a371dbd1191cb61bd3937718a6d1ba30))
+* add Suspense around all tile renders ([5a1234e](https://github.com/glowbuzzer/gbr/commit/5a1234e6f426f3b1281351b0dda8c75c23e9cf14))
+* Added delta and router examples ([250ad3b](https://github.com/glowbuzzer/gbr/commit/250ad3bb90140594edfd7d0aa5deeadfde693ccd))
+* Added new robot examples ([094cd9d](https://github.com/glowbuzzer/gbr/commit/094cd9d03cca6877e2a12dcf2fd02b3858975ccd))
+* Added new robot examples ([287a628](https://github.com/glowbuzzer/gbr/commit/287a6285b6bd1a70ef1740b58872dded852d010b))
+* Added new robot examples ([f47c9a5](https://github.com/glowbuzzer/gbr/commit/f47c9a5446d1a77f1f81bb883331556d94097c97))
+* disable pnpm cache (doesn't work in v7) ([2a5817b](https://github.com/glowbuzzer/gbr/commit/2a5817bb921be93bfea5ac8cda91f4cf13984d55))
+* fix build issue with local @glowbuzzer/controls import ([ef05dc9](https://github.com/glowbuzzer/gbr/commit/ef05dc9dc8e73d327df640c69de4d331d51d9723))
+* fix move rotation at velocity test ([0777dc3](https://github.com/glowbuzzer/gbr/commit/0777dc3ad3c6358c12cd7743eeacf5381723ccb3))
+* fix react component docs ([b43114d](https://github.com/glowbuzzer/gbr/commit/b43114d0b369e0003b06fbfcb3cf591fc8239a7b))
+* increase retries to cloudfront invalidate ([1029348](https://github.com/glowbuzzer/gbr/commit/102934877e7bd48fc96e13bc1943e78ad8e2960e))
+* merge typescript .d.ts files into bundle files ([b4fc964](https://github.com/glowbuzzer/gbr/commit/b4fc9649977f1c9fe3ea1a85522190d5322b8032))
+* Modified cnc router example ([a53d0f2](https://github.com/glowbuzzer/gbr/commit/a53d0f23370cef7b9f342a8561229deb31d9c58b))
+* remove GlowbuzzerTileDefinitions.ts and move tile definitions under sub-modules (to avoid dependency spread when using individual tiles) ([5a1234e](https://github.com/glowbuzzer/gbr/commit/5a1234e6f426f3b1281351b0dda8c75c23e9cf14))
+* rework build to remove CJS modules and tighten up dependency management ([ba3e4ff](https://github.com/glowbuzzer/gbr/commit/ba3e4ff2feaeaa47a27aad13441ce3f27d8239e2))
+* try to increase max attempts when publishing examples ([d280016](https://github.com/glowbuzzer/gbr/commit/d280016bc52ad5ab45a0edef930b8a618ae41e8b))
+* update pnpm lockfile ([8a0881e](https://github.com/glowbuzzer/gbr/commit/8a0881efa3b69e7a56804b787dd5479da4ece02b))
+* update pnpm version in github actions ([0be79ab](https://github.com/glowbuzzer/gbr/commit/0be79abe64f9ad218d94ec68762ba3da6acbef2f))
+
+
+### Feature
+
+* **#33:** Show frames on 3d robot view ([0bc4c87](https://github.com/glowbuzzer/gbr/commit/0bc4c87655054f72b004af1953f62686a26d374a))
+* **#60:** provide continuous rotation jog ([fdc4510](https://github.com/glowbuzzer/gbr/commit/fdc45106c0bbe56e9416fbdd86cd7e271c9584cf))
+* **#62:** Ability to view frame and point rotations as Euler angles ([81bce0f](https://github.com/glowbuzzer/gbr/commit/81bce0f3bbbf0dca49fe3f8aa67dc01d0c0b0fcb))
+* **#69:** associate work offsets with specific frames ([189ab80](https://github.com/glowbuzzer/gbr/commit/189ab80751b9853b9f48a9cc10951f29cafe01f8))
+* **#71:** editor for points and frames ([c026a39](https://github.com/glowbuzzer/gbr/commit/c026a397c0a85cf693dd347011978e0b33eacbe9))
+* **#71:** initial live view of frame changes ([7dd22ea](https://github.com/glowbuzzer/gbr/commit/7dd22eaf8ef49a29e3b54bded8abf0924ae65eba))
+* **#71:** live view of points changes ([8386a8e](https://github.com/glowbuzzer/gbr/commit/8386a8ed1a5503a6a629c66f2e61666b5a2298e7))
+* **#72:** Provide useScale hook and misc cleanup ([615169d](https://github.com/glowbuzzer/gbr/commit/615169d3f8a776b8ec430792af94207b58d5fc2f))
+* **#76:** Provide max extents hook and clean up ThreeDimensionalSceneTile.tsx preamble ([0bc4c87](https://github.com/glowbuzzer/gbr/commit/0bc4c87655054f72b004af1953f62686a26d374a))
+* **#79:** jog using keyboard arrow keys ([519a027](https://github.com/glowbuzzer/gbr/commit/519a027cebcd33e2002e316f82266e841ba9ff95))
+* **#80:** offline config and per-app local storage key ([d0ed77a](https://github.com/glowbuzzer/gbr/commit/d0ed77af5eaa58d6d856f19b717ef127392acb78))
+* **#80:** per app settings and editing of config offline ([793f1e5](https://github.com/glowbuzzer/gbr/commit/793f1e596b5f40bb97e15a5a66f7dcb6dba98046))
+* **#81:** allow robot configuration select when performing cartesian goto ([3038f4d](https://github.com/glowbuzzer/gbr/commit/3038f4dd6a5ceb6f3689ce53290dc789c82b4d9b))
+* **#82:** show singularity and disable jog panel ([d0ed77a](https://github.com/glowbuzzer/gbr/commit/d0ed77af5eaa58d6d856f19b717ef127392acb78))
+* **#85:** enable gcode editor even when offline ([b0bc993](https://github.com/glowbuzzer/gbr/commit/b0bc9932223f5b194182351a46eb8d217aa5476a))
+* add TrackPosition component ([5b36eb3](https://github.com/glowbuzzer/gbr/commit/5b36eb32245b880d570d93d72f89811f8cccbdc5))
+* smart number input component with precision ([8386a8e](https://github.com/glowbuzzer/gbr/commit/8386a8ed1a5503a6a629c66f2e61666b5a2298e7))
+
 ## [1.4.2](https://github.com/glowbuzzer/gbr/compare/v1.4.1...v1.4.2) (2022-11-18)
 
 
