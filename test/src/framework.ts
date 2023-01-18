@@ -352,8 +352,8 @@ export class GbcTest {
 
                 this.capture_state.push({
                     joints: joints_act_pos,
-                    translation,
-                    rotation,
+                    translation: new Vector3(translation.x, translation.y, translation.z),
+                    rotation: new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w),
                     activity: { tag, streamState, activityState }
                 })
             }

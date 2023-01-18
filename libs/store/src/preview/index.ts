@@ -11,6 +11,7 @@ import { useKinematics, useKinematicsConfiguration } from "../kinematics"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
 import { Quaternion, Vector3 } from "three"
 import { apply_offset } from "../util/frame_utils"
+import { GCodeMode, useGCodeContext } from "../gcode"
 
 export type GCodeSegment = {
     from: { x: number; y: number; z: number }
@@ -58,6 +59,8 @@ export function usePreview() {
 
     const frames = useFrames()
     const workspaceFrames = useWorkspaceFrames()
+    const gCodeContext = useGCodeContext()
+    const mode = gCodeContext?.mode || GCodeMode.CARTESIAN
 
     const kc = useKinematics(0)
     const { frameIndex } = useKinematicsConfiguration(0)
@@ -78,6 +81,10 @@ export function usePreview() {
 
     return {
         setGCode(gcode: string) {
+            if (mode === GCodeMode.JOINT) {
+                dispatch(previewSlice.actions.set([]))
+                return
+            }
             const convertToFrame = (
                 translation: Vector3,
                 rotation: Quaternion,
@@ -91,10 +98,12 @@ export function usePreview() {
             }
 
             const interpreter = new GCodePreviewAdapter(
+                [0, 0, 0, 0, 0, 0], // we only support X,Y,Z and I,J,K
                 currentPosition,
                 workspaceFrames,
                 frameIndex,
-                convertToFrame
+                convertToFrame,
+                mode
             )
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
@@ -109,7 +118,7 @@ export function usePreview() {
             dispatch(previewSlice.actions.setDisabled(false))
         },
         segments,
-        disabled,
+        disabled: disabled || mode === GCodeMode.JOINT,
         highlightLine
     }
 }

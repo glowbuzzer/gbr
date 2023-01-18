@@ -11,6 +11,7 @@ import "ace-builds/src-noconflict/mode-text.js"
 
 import { Radio, Space, Tag } from "antd"
 import {
+    GCodeMode,
     settings,
     STREAMCOMMAND,
     STREAMSTATE,
@@ -18,6 +19,7 @@ import {
     useConnection,
     useFrames,
     useGCode,
+    useGCodeContext,
     useKinematicsCartesianPosition,
     useKinematicsOffset,
     usePrefs,
@@ -86,6 +88,9 @@ export const GCodeTile = () => {
     const config = useConfig()
     const [offset] = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
+    const gCodeContext = useGCodeContext()
+    const mode = gCodeContext?.mode || GCodeMode.CARTESIAN
+
     const editorRef = useRef<AceEditor>(null)
     const timerRef = useRef<any>()
 
@@ -190,37 +195,45 @@ export const GCodeTile = () => {
                     <DockToolbarButtonGroup>
                         <GCodeWorkOffsetSelect />
                     </DockToolbarButtonGroup>
-                    <Space>
-                        <span>{(stream.time / 1000).toFixed(1)}s</span>
-                        <Tag>{connection.connected ? STREAMSTATE[stream.state] : "OFFLINE"}</Tag>
+                    <DockToolbarButtonGroup>
+                        <Space>
+                            <span>{(stream.time / 1000).toFixed(1)}s</span>
+                            <Tag>
+                                {connection.connected ? STREAMSTATE[stream.state] : "OFFLINE"}
+                            </Tag>
 
-                        <Radio.Group
-                            size={"small"}
-                            optionType="button"
-                            onChange={send_command}
-                            value={inferredCommand}
-                        >
-                            <Radio.Button
-                                disabled={can_pause || !connection.connected}
-                                value={STREAMCOMMAND.STREAMCOMMAND_RUN}
+                            <Radio.Group
+                                size={"small"}
+                                optionType="button"
+                                onChange={send_command}
+                                value={inferredCommand}
                             >
-                                {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
-                            </Radio.Button>
-                            <Radio.Button
-                                disabled={!can_pause}
-                                value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}
-                            >
-                                <PauseOutlined />
-                            </Radio.Button>
-                            <Radio.Button
-                                disabled={!can_stop}
-                                value={STREAMCOMMAND.STREAMCOMMAND_STOP}
-                            >
-                                <StopIcon />
-                            </Radio.Button>
-                        </Radio.Group>
-                    </Space>
-                    &nbsp;&nbsp;
+                                <Radio.Button
+                                    disabled={can_pause || !connection.connected}
+                                    value={STREAMCOMMAND.STREAMCOMMAND_RUN}
+                                >
+                                    {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
+                                </Radio.Button>
+                                <Radio.Button
+                                    disabled={!can_pause}
+                                    value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}
+                                >
+                                    <PauseOutlined />
+                                </Radio.Button>
+                                <Radio.Button
+                                    disabled={!can_stop}
+                                    value={STREAMCOMMAND.STREAMCOMMAND_STOP}
+                                >
+                                    <StopIcon />
+                                </Radio.Button>
+                            </Radio.Group>
+                        </Space>
+                    </DockToolbarButtonGroup>
+                    {mode === GCodeMode.JOINT && (
+                        <DockToolbarButtonGroup>
+                            <Tag>JOINT MODE</Tag>
+                        </DockToolbarButtonGroup>
+                    )}
                 </>
             }
         >

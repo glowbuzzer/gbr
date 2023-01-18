@@ -7,18 +7,18 @@ import { createRoot } from "react-dom/client"
 import {
     BasicRobot,
     CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
-    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
+    GCodeTileDefinition,
     GlowbuzzerApp,
-    CartesianJogTileDefinition,
-    JointJogTileDefinition,
     JointDroTileDefinition,
+    JointJogTileDefinition,
     PointsTileDefinition,
     RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
@@ -28,6 +28,10 @@ import {
 } from "@glowbuzzer/controls"
 
 import {
+    GCodeContextProvider,
+    GCodeContextType,
+    GCodeMode,
+    KC_KINEMATICSCONFIGURATIONTYPE,
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
@@ -101,10 +105,21 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
     })
     .build()
 
-const root = createRoot(document.getElementById("root"))
-root.render(
-    <StrictMode>
-        <GlowbuzzerApp appName="staubli">
+const App = () => {
+    const kc = useKinematicsConfiguration(0)
+
+    // depending on the type of kinematics we want to perform cartesian moves or joint space moves
+    const mode: GCodeMode =
+        kc.kinematicsConfigurationType === KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED
+            ? GCodeMode.JOINT
+            : GCodeMode.CARTESIAN
+
+    const context: GCodeContextType = {
+        mode
+    }
+
+    return (
+        <GCodeContextProvider value={context}>
             <DockLayoutProvider
                 tiles={[
                     ConnectTileDefinition,
@@ -117,14 +132,22 @@ root.render(
                     FramesTileDefinition,
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
+                    GCodeTileDefinition,
                     CustomSceneTileDefinition
                 ]}
             >
                 <ExampleAppMenu title="Staubli TX40" />
                 <DockLayout />
             </DockLayoutProvider>
+        </GCodeContextProvider>
+    )
+}
+
+const root = createRoot(document.getElementById("root"))
+root.render(
+    <StrictMode>
+        <GlowbuzzerApp appName="staubli">
+            <App />
         </GlowbuzzerApp>
     </StrictMode>
 )
-
-//

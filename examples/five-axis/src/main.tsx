@@ -153,7 +153,7 @@ function App() {
     }
 
     return (
-        <GCodeContextProvider value={{ handleToolChange }} appName="five axis">
+        <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
                 tiles={[
                     ConnectTileDefinition,
@@ -179,7 +179,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp>
+        <GlowbuzzerApp appName="five axis">
             <App />
         </GlowbuzzerApp>
     </StrictMode>
