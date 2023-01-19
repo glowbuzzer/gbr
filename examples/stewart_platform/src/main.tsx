@@ -2,8 +2,8 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useRef, useMemo, useEffect, useState } from "react"
-import { createRoot } from "react-dom/client"
+import React, {StrictMode, Suspense, useRef, useMemo, useEffect, useState} from "react"
+import {createRoot} from "react-dom/client"
 import {
     BasicRobot,
     CartesianDroTileDefinition,
@@ -36,8 +36,8 @@ import {
 
 import * as THREE from "three"
 
-import { useGLTF, Cylinder, Environment } from "@react-three/drei"
-import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import {useGLTF, Cylinder, Environment} from "@react-three/drei"
+import {ExampleAppMenu} from "../../util/ExampleAppMenu"
 
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
@@ -52,16 +52,12 @@ import {
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 325)
 
 const StewartPlatform = () => {
-    const { frameIndex } = useKinematicsConfiguration(0)
-    const { translation, rotation } = useFrame(frameIndex, false)
+    const {frameIndex} = useKinematicsConfiguration(0)
+    const {translation, rotation} = useFrame(frameIndex, false)
 
     const jointPositions = useJointPositions(0)
     const toolIndex = useToolIndex(0)
 
-    // load the parts of the robot (links)
-    // const parts = useGLTF([0, 1, 2, 3].map(j => `/assets/platform/L${j}.glb`)).map(
-    //     m => m.scene
-    // )
 
     const base = useMemo(() => useGLTF("/assets/platform/L0.glb"), [])
     const platform = useMemo(() => useGLTF("/assets/platform/L1.glb"), [])
@@ -150,7 +146,7 @@ const StewartPlatform = () => {
             var tmpJointPositions = [...jointPositions]
 
             if (tmpJointPositions.length == 0) {
-                tmpJointPositions = Array.from({ length: 6 }, () => 305)
+                tmpJointPositions = Array.from({length: 6}, () => 305)
             } else {
                 for (let i = 0; i < 6; i++) {
                     tmpJointPositions[i] += 305
@@ -375,7 +371,7 @@ const StewartPlatform = () => {
     return (
         <group ref={gOverall} scale={[scale, scale, scale]}>
             <group ref={gBase}>
-                <primitive rotation={[Math.PI, 0, 0]} object={base.scene} position={[0, 0, 0]} />
+                <primitive rotation={[Math.PI, 0, 0]} object={base.scene} position={[0, 0, 0]}/>
             </group>
             <group ref={gPlatform}>
                 <primitive
@@ -407,7 +403,7 @@ const StewartPlatform = () => {
             <group rotation={[0, 0, 0]}>
                 {baseCoordinates.map((item, i) => (
                     <group key={i} ref={gTopRod[i]}>
-                        <primitive rotation={[0, 0, 0]} object={topRods[i]} position={[0, 0, 0]} />
+                        <primitive rotation={[0, 0, 0]} object={topRods[i]} position={[0, 0, 0]}/>
                     </group>
                 ))}
             </group>
@@ -420,9 +416,9 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <StewartPlatform />
+                    <StewartPlatform/>
                 </Suspense>
-                <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
+                <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr"/>
             </ThreeDimensionalSceneTile>
         )
     })
@@ -447,8 +443,8 @@ root.render(
                     CustomSceneTileDefinition
                 ]}
             >
-                <ExampleAppMenu title="Stewart Platform" />
-                <DockLayout />
+                <ExampleAppMenu title="Stewart Platform"/>
+                <DockLayout/>
             </DockLayoutProvider>
         </GlowbuzzerApp>
     </StrictMode>

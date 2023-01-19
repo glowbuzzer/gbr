@@ -2,18 +2,18 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useState } from "react"
-import { Button, InputNumber, Switch, Tag } from "antd"
-import { ArrowRightOutlined } from "@ant-design/icons"
+import React, {useState} from "react"
+import {Button, InputNumber, Switch, Tag} from "antd"
+import {ArrowRightOutlined} from "@ant-design/icons"
 
 /** @ignore - internal to the jog tile */
 export function NumericOutputWidget({
-    label,
-    effectiveValue,
-    setValue,
-    override,
-    onChange
-}: {
+                                        label,
+                                        effectiveValue,
+                                        setValue,
+                                        override,
+                                        onChange
+                                    }: {
     label: string
     effectiveValue: number
     setValue: number
@@ -51,7 +51,7 @@ export function NumericOutputWidget({
             </div>
             <div>
                 <Button size="small" disabled={!override} onClick={handle_value_change}>
-                    <ArrowRightOutlined />
+                    <ArrowRightOutlined/>
                 </Button>
             </div>
             <div>
