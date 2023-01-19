@@ -15,7 +15,7 @@ import {
     SPINDLEDIRECTION
 } from "../gbc"
 import { simplify } from "./simplify"
-import { GCodeContextType } from "./index"
+import { GCodeContextType, GCodeMode } from "./index"
 import { GCodeActivityProvider } from "../activity/GCodeActivityProvider"
 import { MoveArcBuilder } from "../activity"
 
@@ -52,10 +52,12 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         buffer,
         vmax: number,
         workspaceFrames: Record<number, number | null>,
+        jointPositions: number[] = [],
         context?: GCodeContextType,
         simplifyTolerance = 0
     ) {
         super(
+            jointPositions,
             {
                 translation: { x: null, y: null, z: null },
                 positionReference: POSITIONREFERENCE.ABSOLUTE,
@@ -286,7 +288,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         // tool change
         if (this.context) {
             // hard coded to first KC for now
-            const builders = this.context.handleToolChange(
+            const builders = this.context.handleToolChange?.(
                 0,
                 this.previousToolIndex,
                 this.toolIndex,
@@ -326,32 +328,35 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     G0(params, line: GCodeLine) {
         this.api.setTag(line.lineNum)
-        // we treat rapids as a linear move but with a different limit profile
-        // (if specified, otherwise gbc will default to regular limits)
-        // F param is ignored
+
+        const activity =
+            this.context?.mode === GCodeMode.JOINT
+                ? this.api.moveJoints(this.joints)
+                : this.api.moveLine().setFromCartesianPosition(this.position)
+
         this.push(
-            this.api
-                .moveLine()
-                .setFromCartesianPosition(this.position)
-                .params({
-                    ...this.moveParams,
-                    limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_RAPIDS,
-                    blendType: BLENDTYPE.BLENDTYPE_NONE
-                }).command
+            activity.params({
+                ...this.moveParams,
+                limitConfigurationIndex: LIMITPROFILE.LIMITPROFILE_RAPIDS,
+                blendType: BLENDTYPE.BLENDTYPE_NONE
+            }).command
         )
     }
 
     G1(params, line: GCodeLine) {
         this.F(params.F) // modal feedrate
+        this.api.setTag(line.lineNum)
+
+        const activity =
+            this.context?.mode === GCodeMode.JOINT
+                ? this.api.moveJoints(this.joints)
+                : this.api.moveLine().setFromCartesianPosition(this.position)
+
         this.push(
-            this.api
-                .setTag(line.lineNum)
-                .moveLine()
-                .setFromCartesianPosition(this.position)
-                .params({
-                    ...this.moveParams,
-                    vmaxPercentage: this.vmaxPercentage
-                }).command
+            activity.params({
+                ...this.moveParams,
+                vmaxPercentage: this.vmaxPercentage
+            }).command
         )
     }
 

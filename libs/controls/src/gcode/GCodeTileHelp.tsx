@@ -23,7 +23,7 @@ export const GCodeTileHelp = () => (
             Jobs can be stopped with the <StopIcon /> button.
         </p>
         <p>
-            The gocde work offset (G54, G55 etc. which are set from frames in your config.json) file
+            The gcode work offset (G54, G55 etc. which are set from frames in your config.json) file
             can be applied before a job is run.
         </p>
         <p>The estimated job running time is shown on the tile's top bar.</p>

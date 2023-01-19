@@ -10,7 +10,7 @@ type PrecisionInputProps = {
     onChange: (value: number) => void
     precision: number
 }
-export const PrecisionInput = ({ value, onChange, precision }) => {
+export const PrecisionInput = ({ value, onChange, precision }: PrecisionInputProps) => {
     const [valueString, setValueString] = React.useState(value.toFixed(precision))
     const valueRef = useRef(value) // initial value
 

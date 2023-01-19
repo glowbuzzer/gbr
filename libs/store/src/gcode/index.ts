@@ -19,8 +19,6 @@ import { SoloActivityApi } from "../activity/activity_api"
 import { ActivityBuilder } from "../activity"
 import { useWorkspaceFrames } from "../frames"
 
-// test
-
 const { load, save } = settings("gcode")
 
 export type GCodeSettingsType = {
@@ -80,7 +78,13 @@ export const gcodeSlice: Slice<GCodeSliceType> = createSlice({
         append(state, action) {
             // convert the given gcode text into activities and add to buffer
             const { gcode, vmax, workspaceFrames, context } = action.payload
-            const interpreter = new GCodeSenderAdapter(state.buffer, vmax, workspaceFrames, context)
+            const interpreter = new GCodeSenderAdapter(
+                state.buffer,
+                vmax,
+                workspaceFrames,
+                [null, null, null, null, null, null],
+                context
+            )
             interpreter.execute(gcode)
         },
         consume(state, action) {
@@ -174,7 +178,7 @@ export function useGCode(): {
         ({ gcode: { state, tag, time } }: RootState) => ({ state, tag, time }),
         shallowEqual
     )
-    const context = useContext(gcodeContext)
+    const context = useGCodeContext()
     const dispatch = useDispatch()
     const connection = useConnection()
     const workspaceFrames = useWorkspaceFrames()
@@ -200,6 +204,11 @@ export function useGCode(): {
 export function useGCodeSettings() {
     return useSelector(({ gcode: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings
+}
+
+export enum GCodeMode {
+    CARTESIAN,
+    JOINT
 }
 
 /**
@@ -236,14 +245,20 @@ export type GCodeContextType = {
      * @param newToolIndex The new tool index (set by Tn code)
      * @param api The activity API you can use to create activities to execute
      */
-    handleToolChange(
+    handleToolChange?(
         kinematicsConfigurationIndex: number,
         currentToolIndex: number,
         newToolIndex: number,
         api: SoloActivityApi
     ): ActivityBuilder[]
+
+    mode?: GCodeMode
 }
 
 export const gcodeContext = createContext<GCodeContextType>(null)
 
 export const GCodeContextProvider = gcodeContext.Provider
+
+export function useGCodeContext() {
+    return useContext(gcodeContext)
+}

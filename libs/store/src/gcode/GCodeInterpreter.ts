@@ -50,9 +50,11 @@ const partitionWordsByGroup = (words = []) => {
     return groups
 }
 
-const gcode_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+const cartesian_axes = ["X", "Y", "Z"] // case-sensitive as found in gcode, eg. G0 X100
+const joint_axes = ["X", "Y", "Z", "I", "J", "K"]
 
 class GCodeInterpreter {
+    private readonly jointPositions: number[]
     private readonly cartesianPosition: CartesianPosition
     private readonly workspaceFrames: Record<number, number | null>
     protected unitConversion = 1
@@ -60,9 +62,11 @@ class GCodeInterpreter {
     private previousPosition: CartesianPosition
 
     constructor(
+        jointPositions: number[],
         cartesianPosition: CartesianPosition,
         workspaceFrames: Record<number, number | null>
     ) {
+        this.jointPositions = jointPositions
         this.previousPosition = cartesianPosition
         this.cartesianPosition = cartesianPosition
         this.workspaceFrames = workspaceFrames
@@ -70,6 +74,10 @@ class GCodeInterpreter {
 
     get position(): CartesianPosition {
         return { ...this.cartesianPosition }
+    }
+
+    get joints(): number[] {
+        return [...this.jointPositions]
     }
 
     interpret(data) {
@@ -227,9 +235,13 @@ class GCodeInterpreter {
             this.cartesianPosition.translation = { ...this.cartesianPosition.translation }
         }
         Object.keys(params).forEach(k => {
-            if (gcode_axes.includes(k)) {
+            if (cartesian_axes.includes(k)) {
                 this.cartesianPosition.translation[k.toLowerCase()] =
                     params[k] * this.unitConversion
+            }
+            const joint = joint_axes.indexOf(k)
+            if (joint >= 0) {
+                this.jointPositions[joint] = params[k]
             }
         })
         // this is handled differently by preview adapter
