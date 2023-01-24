@@ -250,6 +250,14 @@ export * from "./gbc_extra"
         /**  An overlapped blend to be used for move */
   BLENDTYPE_OVERLAPPED ,
     }
+    export enum SYNCTYPE {
+        /**  No sync for move */
+  SYNCTYPE_NONE ,
+        /**  Ensure move is of specified duration in milliseconds */
+  SYNCTYPE_DURATION_MS ,
+        /**  Ensure move ends at the specified clock tick */
+  SYNCTYPE_AT_TICK ,
+    }
     export enum OPENCLOSED {
         /**  Tool is opened */
   OPEN ,
@@ -279,11 +287,18 @@ export * from "./gbc_extra"
   STREAMSTATE_STOPPED ,
     }
     export enum TRIGGERON {
-        TRIGGERON_NONE,
-        TRIGGERON_ANALOG_INPUT,
-        TRIGGERON_DIGITAL_INPUT,
-        TRIGGERON_INTEGER_INPUT,
-        TRIGGERON_TIMER,
+        /**  No trigger */
+  TRIGGERON_NONE ,
+        /**  Trigger on analog input */
+  TRIGGERON_ANALOG_INPUT ,
+        /**  Trigger on digital input */
+  TRIGGERON_DIGITAL_INPUT ,
+        /**  Trigger on integer input */
+  TRIGGERON_INTEGER_INPUT ,
+        /**  Trigger on countdown timer */
+  TRIGGERON_TIMER ,
+        /**  Trigger on absolute clock value */
+  TRIGGERON_TICK ,
     }
     export enum TRIGGERACTION {
         TRIGGERACTION_NONE,
@@ -485,6 +500,10 @@ export * from "./gbc_extra"
                         blendTolerance?:number;
                         /**  Tool to be used for the move */
                         toolIndex?:number;
+                        
+                        syncType?:SYNCTYPE;
+                        
+                        syncValue?:number;
             }
             /** 
             Parameters for vector 3
@@ -577,7 +596,7 @@ export * from "./gbc_extra"
             
                         /**  The position including translation and rotation */
                         position?:CartesianPosition;
-                        /**  The robot configuration (waist/elbow/wrist), if applicable */
+                        /**  The robot configuration (shoulder/elbow/wrist), if applicable */
                         configuration?:number;
             }
             
@@ -615,6 +634,12 @@ export * from "./gbc_extra"
                         delay?:number;
             }
             
+            export type TriggerOnTick = {
+            
+                        
+                        value?:number;
+            }
+            
             export type TriggerParams = {
             
                         
@@ -630,6 +655,8 @@ export * from "./gbc_extra"
                          integer?: TriggerOnIntegerInput,
                         
                          timer?: TriggerOnTimer,
+                        
+                         tick?: TriggerOnTick,
     //              End of Union
             }
             /** 
@@ -738,6 +765,8 @@ export * from "./gbc_extra"
             
                         /**  Kinematics configuration type. That is, the kinematics model that will be used. Used as discriminator for the union */
                         kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
+                        /**  Defines the supported configurations a robot. Bit 0 is wrist, bit 1 elbow, bit 2 shoulder. Higher bits are user-defined */
+                        supportedConfigurationBits?:number;
                         /**  Frame index this kinematics configuration will use */
                         frameIndex?:number;
                         /**  Array of physical joint indices use in this kinematics configuration */
@@ -770,7 +799,7 @@ export * from "./gbc_extra"
                         froTarget?:number;
                         /**  Feed rate actual value */
                         froActual?:number;
-                        /**  Configuration (for example, waist/elbow/wrist) of the kinematics configuration */
+                        /**  Configuration (for example, shoulder/elbow/wrist) of the kinematics configuration */
                         configuration?:number;
                         /**  @ignore (not exposed) */
                         cartesianActPos?:Vector3;
@@ -1643,7 +1672,7 @@ export * from "./gbc_extra"
                         translation?:Vector3;
                         /**  Rotation of the point */
                         rotation?:Quat;
-                        /**  Robot configuration (waist, elbow, wrist) */
+                        /**  Robot configuration (shoulder, elbow, wrist) */
                         configuration?:number;
             }
             /** 
