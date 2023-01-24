@@ -125,7 +125,7 @@ const JointDroItem = ({ index, warningThreshold }) => {
                             max={max}
                             disabled
                             value={j?.actPos}
-                            tooltipVisible={false}
+                            tooltip={{ open: false }}
                         />
                         {max.toPrecision(4)}
                     </div>
