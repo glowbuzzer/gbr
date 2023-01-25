@@ -19,6 +19,7 @@ import {
     useConnection,
     useFrames,
     useGCode,
+    useStream,
     useGCodeContext,
     useKinematicsCartesianPosition,
     useKinematicsOffset,
@@ -75,11 +76,12 @@ const StyledDiv = styled.div<{ readOnly: boolean }>`
  * at frame zero.
  *
  */
-export const GCodeTile = () => {
+export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const [gcode, setGCode] = React.useState(load("G1 X10 Y5 Z2"))
 
     const connection = useConnection()
-    const stream = useGCode()
+    const stream = useStream(kinematicsConfigurationIndex)
+    const send = useGCode(kinematicsConfigurationIndex)
     const prefs = usePrefs()
     const preview = usePreview()
     const frames = useFrames()
@@ -120,7 +122,7 @@ export const GCodeTile = () => {
     function send_gcode() {
         save(gcode)
         const offset = "G" + (54 + workOffset)
-        stream.send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""), vmax)
+        send(offset + "\n" + gcode + (prefs.current.send_m2 ? " M2" : ""), vmax)
     }
 
     function update_gcode(gcode: string) {
@@ -134,8 +136,8 @@ export const GCodeTile = () => {
     const highlight = active
         ? [
               {
-                  startRow: stream.lineNum - 1,
-                  endRow: stream.lineNum,
+                  startRow: stream.tag - 1,
+                  endRow: stream.tag,
                   startCol: 0,
                   endCol: 0,
                   type: "screenLine",
@@ -146,9 +148,9 @@ export const GCodeTile = () => {
 
     useEffect(() => {
         if (active) {
-            editorRef.current.editor.scrollToLine(stream.lineNum - 1, true, true, () => {})
+            editorRef.current.editor.scrollToLine(stream.tag - 1, true, true, () => {})
         }
-    }, [active, stream.lineNum])
+    }, [active, stream.tag])
 
     const inferredCommand = (() => {
         switch (stream.state) {

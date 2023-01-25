@@ -10,7 +10,6 @@ import {
     ConfigState,
     ConnectionState,
     framesSlice,
-    gcodeSlice,
     initSettings,
     prefsSlice,
     rootReducer,
@@ -161,8 +160,6 @@ export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerA
 
     store.dispatch(prefsSlice.actions.loadSettings(null))
     store.dispatch(framesSlice.actions.loadSettings(null))
-    store.dispatch(gcodeSlice.actions.loadSettings(null))
-
     store.dispatch(configSlice.actions.loadOfflineConfig(null))
 
     return (

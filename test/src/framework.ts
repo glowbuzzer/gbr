@@ -20,11 +20,12 @@ import {
     updateMachineTargetMsg
 } from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, FaultCode, gcodeSlice, jointsSlice } from "../../libs/store/src"
+import { activitySlice, FaultCode, jointsSlice } from "../../libs/store/src"
 import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
+import { streamSlice } from "../../libs/store/src/stream"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -38,7 +39,7 @@ function near(v1, v2) {
 const rootReducer = combineReducers({
     activity: activitySlice.reducer,
     joint: jointsSlice.reducer,
-    gcode: gcodeSlice.reducer,
+    stream: streamSlice.reducer,
     kc: kinematicsSlice.reducer
 })
 
@@ -337,7 +338,7 @@ export class GbcTest {
                     this.store.dispatch(activitySlice.actions.status(status.activity))
                 this.status_msg.stream &&
                     // @ts-ignore
-                    this.store.dispatch(gcodeSlice.actions.status(this.status_msg.stream))
+                    this.store.dispatch(streamSlice.actions.status(this.status_msg.stream))
 
                 const store_state = this.store.getState()
 
@@ -346,8 +347,8 @@ export class GbcTest {
                 const translation = store_state.kc[0].position.translation
                 const rotation = store_state.kc[0].position.rotation
 
-                const tag = store_state.gcode.tag
-                const streamState = store_state.gcode.state
+                const tag = store_state.stream.tag
+                const streamState = store_state.stream.state
                 const activityState = this.gbc.get_streamed_activity_state()
 
                 this.capture_state.push({

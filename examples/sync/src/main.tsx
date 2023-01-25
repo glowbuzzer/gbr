@@ -9,6 +9,8 @@ import {
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     Frustum,
+    GCodeTile,
+    GCodeTileDefinition,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitionList,
     ThreeDimensionalSceneTile,
@@ -40,6 +42,22 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
     })
     .build()
 
+const GCodeTileDefinition3Axis = DockTileDefinitionBuilder(GCodeTileDefinition)
+    .render(() => {
+        return <GCodeTile kinematicsConfigurationIndex={0} />
+    })
+    .name("GCode 3-Axis")
+    .id("gcode-3-axis")
+    .build()
+
+const GCodeTileDefinition2Axis = DockTileDefinitionBuilder(GCodeTileDefinition)
+    .render(() => {
+        return <GCodeTile kinematicsConfigurationIndex={1} />
+    })
+    .name("GCode 2-Axis")
+    .id("gcode-2-axis")
+    .build()
+
 function App() {
     function handleToolChange(
         kinematicsConfigurationIndex: number,
@@ -55,9 +73,12 @@ function App() {
             <DockLayoutProvider
                 tiles={[
                     ...GlowbuzzerTileDefinitionList.filter(
-                        t => t.id !== CustomSceneTileDefinition.id
+                        t =>
+                            t.id !== CustomSceneTileDefinition.id && t.id !== GCodeTileDefinition.id
                     ), // standard components minus the 3d scene
                     CustomSceneTileDefinition,
+                    GCodeTileDefinition3Axis,
+                    GCodeTileDefinition2Axis,
                     ControlsTileDefinition
                 ]}
             >

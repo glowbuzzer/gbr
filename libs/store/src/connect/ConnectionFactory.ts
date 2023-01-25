@@ -8,10 +8,9 @@ import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
-import { gcodeSlice, updateStreamStateMsg } from "../gcode"
-import { GCodeStreamer } from "../gcode/GCodeStreamer"
+import { updateStreamStateMsg } from "../gcode"
 import { connectionSlice } from "./index"
-import { configSlice, ConfigState } from "../config"
+import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
 import { analogOutputsSlice } from "../io/aout"
@@ -27,6 +26,7 @@ import {
 } from "../machine/machine_api"
 import { framesSlice } from "../frames"
 import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { StreamHandler, streamSlice } from "../stream"
 
 /**
  * This class handles status messages from GBC and updates the redux store. It also handles
@@ -67,7 +67,7 @@ class StatusProcessor {
             }
             if (msg.status.kc?.length) {
                 // update current position within gcode slice with status
-                dispatch(gcodeSlice.actions.init(msg.status.kc))
+                dispatch(streamSlice.actions.init(msg.status.kc))
 
                 const kinematics = getState().kinematics
                 for (let n = 0; n < kinematics.length; n++) {
@@ -216,29 +216,38 @@ if (typeof window !== "undefined") {
                                 statusProcessor.process(msg, dispatch, ws, getState)
                             }
                             if (msg.stream) {
-                                dispatch(gcodeSlice.actions.status(msg.stream))
+                                dispatch(streamSlice.actions.status(msg.stream))
                                 const store = getState()
-                                if (
-                                    store.gcode.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY
-                                ) {
-                                    // gbc state is paused by activity -- we want to transition immediately to paused state
-                                    // this is so UI can then allow operator to continue / unpause
-                                    ws.send(updateStreamStateMsg(STREAMCOMMAND.STREAMCOMMAND_PAUSE))
-                                }
-                                // there may be capacity on the GBC queue where before there was none, so give
-                                // an opportunity to stream more activities from the gcode queue
-                                GCodeStreamer.update(
-                                    dispatch,
-                                    store.gcode,
-                                    store.machine.currentState,
-                                    streamItems => {
+                                store.stream.forEach((stream, streamIndex) => {
+                                    if (
+                                        stream.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY
+                                    ) {
+                                        // gbc state is paused by activity -- we want to transition asap to paused state
+                                        // this is so UI can then allow operator to continue / unpause
                                         ws.send(
-                                            JSON.stringify({
-                                                stream: streamItems
-                                            })
+                                            updateStreamStateMsg(
+                                                streamIndex,
+                                                STREAMCOMMAND.STREAMCOMMAND_PAUSE
+                                            )
                                         )
                                     }
-                                )
+
+                                    // there may be capacity on the GBC queue where before there was none, so give
+                                    // an opportunity to stream more activities from the queue
+                                    StreamHandler.update(
+                                        dispatch,
+                                        streamIndex,
+                                        stream,
+                                        store.machine.currentState,
+                                        items => {
+                                            ws.send(
+                                                JSON.stringify({
+                                                    stream: { streamIndex, items }
+                                                })
+                                            )
+                                        }
+                                    )
+                                })
                             }
                             // handle any responses to specific requests
                             msg.response && requestResponseHandler.response(msg.response)
