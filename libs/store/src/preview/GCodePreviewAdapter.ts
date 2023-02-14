@@ -6,7 +6,6 @@ import GCodeInterpreter from "../gcode/GCodeInterpreter"
 import { GCodeSegment } from "./index"
 import { EllipseCurve, Quaternion, Vector3 } from "three"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
-import { GCodeMode } from "@glowbuzzer/store"
 
 function fromHexString(s: string) {
     // convert web color code, eg '#c0c0c0' into THREE rgb floats in range [0,1]
@@ -31,8 +30,7 @@ export class GCodePreviewAdapter extends GCodeInterpreter {
         currentPosition: CartesianPosition,
         workspaceFrames: Record<number, number>,
         kcFrame,
-        convertToFrame,
-        mode: GCodeMode
+        convertToFrame
     ) {
         super(currentJointPositions, currentPosition, workspaceFrames)
         this.kcFrame = kcFrame

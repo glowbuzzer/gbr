@@ -102,8 +102,7 @@ export function usePreview() {
                 currentPosition,
                 workspaceFrames,
                 frameIndex,
-                convertToFrame,
-                mode
+                convertToFrame
             )
             interpreter.execute(gcode)
             dispatch(previewSlice.actions.set(interpreter.segments))
