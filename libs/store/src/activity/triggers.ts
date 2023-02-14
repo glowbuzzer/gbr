@@ -2,14 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {
-    GTLT,
-    TRIGGERACTION,
-    TRIGGERON,
-    TriggerOnTimer,
-    TriggerParams,
-    TRIGGERTYPE
-} from "@glowbuzzer/store"
+import { GTLT, TRIGGERACTION, TRIGGERON, TriggerOnTimer, TriggerParams, TRIGGERTYPE } from "../gbc"
 
 abstract class TriggerBuilder {
     private readonly _type: TRIGGERON

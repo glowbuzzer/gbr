@@ -2,13 +2,8 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import {
-    ActivityApi,
-    ActivityApiBase,
-    ActivityController,
-    ActivityStreamItem,
-    MoveParametersConfig
-} from "@glowbuzzer/store"
+import { ActivityController } from "../activity"
+import { ActivityApi, ActivityApiBase, MoveParametersConfig } from "../api"
 
 interface StreamingActivityApi extends ActivityApi {
     something(): void

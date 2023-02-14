@@ -2,20 +2,19 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import {
-    ActivityApi,
-    ActivityStreamItem,
-    GlowbuzzerKinematicsConfigurationStatus,
-    MachineState,
-    RootState,
-    STREAMCOMMAND,
-    STREAMSTATE,
-    updateStreamStateMsg,
-    useConnection
-} from "@glowbuzzer/store"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { Dispatch } from "redux"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
+import {
+    ActivityStreamItem,
+    GlowbuzzerKinematicsConfigurationStatus,
+    STREAMCOMMAND,
+    STREAMSTATE
+} from "../gbc"
+import { MachineState } from "../machine"
+import { RootState } from "../root"
+import { useConnection } from "../connect"
+import { updateStreamStateMsg } from "../gcode"
 
 // there is one of these per stream configured
 type StreamSliceType = {
