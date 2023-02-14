@@ -29,7 +29,7 @@ test.after.each(() => {
     gbc.destroy()
 })
 
-const tag = state => state.stream.tag
+const tag = state => state.stream[0].tag
 
 test("can trigger cancel after a number of ms (solo)", async () => {
     // the bus cycle time is 4, so 20ms is 5 cycles

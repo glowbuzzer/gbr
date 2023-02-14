@@ -8,8 +8,8 @@ import { ACTIVITYSTATE, STREAMSTATE } from "../../../libs/store/src"
 
 const test = uvu.suite("gcode")
 
-const state = state => state.stream.state
-const tag = state => state.stream.tag
+const state = state => state.stream[0].state
+const tag = state => state.stream[0].tag
 const pos = joint => state => state.status.joint[joint].actPos
 
 test.before.each(ctx => {

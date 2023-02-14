@@ -70,17 +70,22 @@ export const ControlsTile = () => {
                 action: TRIGGERACTION.TRIGGERACTION_START,
                 type: TRIGGERON.TRIGGERON_TICK,
                 tick: {
-                    value: heartbeat + 1000
+                    value: heartbeat + 250
                 }
             })
             .promise()
             .then(() => setBusy(false))
     }
 
+    function reset() {}
+
     return (
         <StyledTileContent>
             <div>{(heartbeat / 4 || 0).toFixed(0)}</div>
             <div>
+                <Button onClick={reset} disabled={busy}>
+                    RESET
+                </Button>
                 <Button onClick={move_start} disabled={busy}>
                     START 1
                 </Button>
@@ -93,5 +98,5 @@ export const ControlsTileDefinition = DockTileDefinitionBuilder()
     .id("sync-controls")
     .name("Controls")
     .placement(1, 1)
-    .render(ControlsTile)
+    .render(() => <ControlsTile />)
     .build()

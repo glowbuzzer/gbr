@@ -59,6 +59,7 @@ export function useGCode(kinematicsConfigurationIndex = 0): /** Send gcode to ex
         const buffer = []
         // convert the given gcode text into activities and add to buffer
         const interpreter = new GCodeSenderAdapter(
+            kinematicsConfigurationIndex,
             buffer,
             vmax,
             workspaceFrames,

@@ -110,7 +110,7 @@ test("move_arc in rotated frame (local xy-plane)", async () => {
 })
 
 test("move_arc using gcode in rotated frame", async () => {
-    const state = state => state.stream.state
+    const state = state => state.stream[0].state
     const pos = joint => state => state.status.joint[joint].actPos
 
     try {

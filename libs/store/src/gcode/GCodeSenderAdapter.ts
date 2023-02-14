@@ -49,6 +49,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     private spindleSpeed: number
 
     constructor(
+        kinematicsConfigurationIndex,
         buffer,
         vmax: number,
         workspaceFrames: Record<number, number | null>,
@@ -66,7 +67,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             workspaceFrames
         )
         this.buffer = buffer
-        this.api = new GCodeActivityProvider(0 /* TODO: allow different kcs */, buffer)
+        this.api = new GCodeActivityProvider(kinematicsConfigurationIndex, buffer)
         this.vmax = vmax
         this.context = context
         this.simplifyTolerance = simplifyTolerance

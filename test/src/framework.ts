@@ -24,17 +24,17 @@ import { activitySlice, FaultCode, jointsSlice } from "../../libs/store/src"
 import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src"
 import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
+import { streamSlice } from "../../libs/store/src"
 import { Quaternion, Vector3 } from "three"
-import { streamSlice } from "../../libs/store/src/stream"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
 }
 
-function near(v1, v2) {
-    // are the values close
-    return Math.abs(v1 - v2) < 0.0001
-}
+// function near(v1, v2) {
+//     // are the values close
+//     return Math.abs(v1 - v2) < 0.0001
+// }
 
 const rootReducer = combineReducers({
     activity: activitySlice.reducer,
@@ -122,8 +122,8 @@ export class GbcTest {
                 test_near(this.gbc.get_fb_joint_pos(index), value, tolerance)
                 return this
             },
-            streamActivityState: (value, msg?) => {
-                const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state()]
+            streamActivityState: (value, streamIndex: number, msg?) => {
+                const actual = ACTIVITYSTATE[this.gbc.get_streamed_activity_state(streamIndex)]
                 const expected = ACTIVITYSTATE[value]
                 if (msg && actual !== expected) {
                     console.log(msg)
@@ -192,6 +192,7 @@ export class GbcTest {
                             .selector(selector, tag, "incorrect stream item tag at step " + n) //
                             .assert.streamActivityState(
                                 state,
+                                0,
                                 "incorrect stream item state at step " + n
                             )
                     }
@@ -299,15 +300,15 @@ export class GbcTest {
         return this
     }
 
-    stream(stream) {
+    stream(items, streamIndex = 0) {
         // console.log("message", JSON.stringify(stream, null, 2))
-        this.send(JSON.stringify({ stream }))
+        this.send(JSON.stringify({ stream: { streamIndex, items } }))
         return this
     }
 
     send_gcode(gcode) {
         const buffer = [] as any[]
-        const adapter = new GCodeSenderAdapter(buffer, 200, {
+        const adapter = new GCodeSenderAdapter(0, buffer, 200, {
             // map g54 etc to frames using simple convention, as the tests don't read the actual workspaceOffset for frames in the config
             1: 0,
             2: 1,
@@ -347,8 +348,8 @@ export class GbcTest {
                 const translation = store_state.kc[0].position.translation
                 const rotation = store_state.kc[0].position.rotation
 
-                const tag = store_state.stream.tag
-                const streamState = store_state.stream.state
+                const tag = store_state.stream[0].tag
+                const streamState = store_state.stream[0].state
                 const activityState = this.gbc.get_streamed_activity_state()
 
                 this.capture_state.push({
@@ -479,8 +480,23 @@ export class GbcTest {
         return this
     }
 
-    offset(translation: Vector3, rotation?: Quaternion) {
-        this.send(updateOffsetMsg(0, translation, rotation))
+    offset(translation: Vector3, rotation: Quaternion) {
+        this.send(
+            updateOffsetMsg(
+                0,
+                {
+                    x: translation.x,
+                    y: translation.y,
+                    z: translation.z
+                },
+                {
+                    x: rotation.x,
+                    y: rotation.y,
+                    z: rotation.z,
+                    w: rotation.w
+                }
+            )
+        )
         this.exec_double_cycle()
     }
 

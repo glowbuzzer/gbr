@@ -3,6 +3,7 @@
  */
 
 import {
+    ActivityApi,
     ActivityStreamItem,
     GlowbuzzerKinematicsConfigurationStatus,
     MachineState,

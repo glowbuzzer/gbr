@@ -14,7 +14,7 @@ test.before.each(ctx => {
     gbc.enable_operation()
 })
 
-const tag = state => state.stream.tag
+const tag = state => state.stream[0].tag
 const pos = joint => state => state.status.joint[joint].actPos
 
 /**

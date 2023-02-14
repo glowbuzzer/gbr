@@ -11,8 +11,8 @@ const test = uvu.suite("robot")
 
 const config = state => state.status.kc[0].configuration
 
-const state = state => state.stream.state
-const tag = state => state.stream.tag
+const state = state => state.stream[0].state
+const tag = state => state.stream[0].tag
 
 const INITIAL_CONFIG = 1
 

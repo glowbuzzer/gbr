@@ -4,7 +4,8 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { STREAMSTATE } from "../../../libs/store/src"
+import { ActivityApiImpl, STREAMSTATE } from "../../../libs/store/src"
+import { StreamingActivityApiImpl } from "../../../libs/store/src/stream/api"
 
 const test = uvu.suite("stream")
 
@@ -15,11 +16,11 @@ test.before.each(ctx => {
     // gbc.set_fro(0, 100)
 })
 
-const capacity = state => state.stream.capacity
-const state = state => state.stream.state
-const tag = state => state.stream.tag
-const readCount = state => state.stream.readCount
-const writeCount = state => state.stream.writeCount
+const capacity = state => state.stream[0].capacity
+const state = state => state.stream[0].state
+const tag = state => state.stream[0].tag
+const readCount = state => state.stream[0].readCount
+const writeCount = state => state.stream[0].writeCount
 
 test("can see state of stream queue", async () => {
     gbc.assert
@@ -154,6 +155,16 @@ test("can stream one program after another", () => {
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .exec(10)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+})
+
+test("can use the stream activity api", () => {
+    const api = new StreamingActivityApiImpl(0, {}, gbc.send)
+
+    api.enqueue(api.dwell(5))
+
+    api.dwell(5).promise()
+
+    const api2 = new ActivityApiImpl(0, {}, gbc.send)
 })
 
 export const stream = test
