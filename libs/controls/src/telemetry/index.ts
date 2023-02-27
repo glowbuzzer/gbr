@@ -3,5 +3,4 @@
  */
 
 export * from "./TelemetryTile"
-export * from "./TelemetryTileSettings"
 export * from "./TelemetryTileDefinition"

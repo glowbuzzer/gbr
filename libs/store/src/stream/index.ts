@@ -14,7 +14,9 @@ import {
 import { MachineState } from "../machine"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
-import { updateStreamStateMsg } from "../gcode"
+import { updateStreamCommandMsg } from "../gcode"
+import { StreamingActivityApi, StreamingActivityApiImpl } from "./api"
+import { useMemo } from "react"
 
 // there is one of these per stream configured
 type StreamSliceType = {
@@ -23,10 +25,13 @@ type StreamSliceType = {
     paused: boolean
     capacity: number
     buffer: ActivityStreamItem[]
+    pending: number
     state: STREAMSTATE
     time: number
     readCount: number
     writeCount: number
+    lastWriteCount: number
+    writePending: boolean
     tag: number
     // settings: GCodeSettingsType
 }
@@ -37,14 +42,38 @@ const DEFAULT_STREAM_STATE: StreamSliceType = {
     paused: false as boolean,
     capacity: 0,
     buffer: [] as ActivityStreamItem[],
+    pending: 0,
     state: STREAMSTATE.STREAMSTATE_IDLE,
     time: 0,
     readCount: -1,
-    writeCount: -1,
+    writeCount: 0,
+    lastWriteCount: -1,
+    writePending: false,
     tag: 0
     // settings: {
     //     sendEndProgram: true
     // }
+}
+
+function changed(index, state, status) {
+    for (const key of Object.keys(status)) {
+        if (key === "capacity" || key === "time") {
+            continue
+        }
+        if (state[key] !== status[key]) {
+            // console.log(
+            //     "TRIGGER QUEUE UPDATE",
+            //     index,
+            //     key,
+            //     "OLD CAPACITY",
+            //     state.capacity,
+            //     "NEW",
+            //     status.capacity
+            // )
+            return true
+        }
+    }
+    return false
 }
 
 export const streamSlice: Slice<StreamSliceType[]> = createSlice({
@@ -64,43 +93,42 @@ export const streamSlice: Slice<StreamSliceType[]> = createSlice({
         },
         append(state, action) {
             // add to back of queue
-            const { kinematicsConfigurationIndex, buffer } = action.payload
-            state[kinematicsConfigurationIndex].buffer.push(...buffer)
+            const { streamIndex, buffer } = action.payload
+            state[streamIndex].buffer.push(...buffer)
+            state[streamIndex].pending += buffer.length
         },
         consume(state, action) {
             // remove requested count from the front of the queue
             const { streamIndex, count } = action.payload
-            // remove sent items from buffer queue
-            state[streamIndex].buffer.splice(0, count)
-            // reduce capacity of control (until new capacity status update)
-            state[streamIndex].capacity -= count
+            if (count === 0) {
+                state[streamIndex].lastWriteCount = -1
+                state[streamIndex].writePending = false
+            } else {
+                // remove sent items from buffer queue
+                state[streamIndex].buffer.splice(0, count)
+                // reduce capacity of control (until new capacity status update)
+                state[streamIndex].capacity -= count
+                state[streamIndex].pending = state[streamIndex].buffer.length
+                state[streamIndex].lastWriteCount = state[streamIndex].writeCount
+                state[streamIndex].writePending = true
+            }
         },
         reset(state, action) {
             const streamIndex = action.payload
             state[streamIndex].buffer.length = 0
             state[streamIndex].readCount = -1
-            state[streamIndex].writeCount = -1
+            state[streamIndex].writeCount = 0
+            state[streamIndex].lastWriteCount = -1
+            state[streamIndex].writePending = false
             state[streamIndex].paused = false
+            state[streamIndex].pending = 0
         },
         status: (state, action) => {
-            action.payload.forEach((status, streamIndex) => {
-                const { capacity, tag, state: stream_state, time, readCount, writeCount } = status
-
-                // tag is UDF for current item
-                state[streamIndex].tag = tag
-                state[streamIndex].state = stream_state
-                state[streamIndex].time = time
-
-                // have both read and write counts changed, which indicates movement on the queue
-                if (
-                    state[streamIndex].readCount !== readCount &&
-                    state[streamIndex].writeCount !== writeCount
-                ) {
-                    // safe to record new capacity
-                    state[streamIndex].capacity = capacity
-                    state[streamIndex].readCount = readCount
-                    state[streamIndex].writeCount = writeCount
-                }
+            return action.payload.map((status, streamIndex) => {
+                const newVar = changed(streamIndex, state[streamIndex], status)
+                    ? { ...state[streamIndex], ...status }
+                    : state[streamIndex]
+                return { ...newVar }
             })
         },
         pause: (state, action) => {
@@ -122,16 +150,27 @@ export const StreamHandler = {
         machineState: MachineState,
         send: (any) => void
     ) {
-        if (machineState === MachineState.OPERATION_ENABLED) {
-            const { paused, buffer, capacity } = state
-            if (!paused && capacity > 0 && buffer.length) {
-                const items = buffer.slice(0, capacity)
-                send(items)
-                dispatch(streamSlice.actions.consume({ streamIndex, count: items.length }))
-            }
-        } else {
-            // not enabled, so clear down buffer
+        if (machineState !== MachineState.OPERATION_ENABLED) {
+            // not enabled, so clear down buffer and return
             dispatch(streamSlice.actions.reset(streamIndex))
+            return
+        }
+        const { paused, buffer, capacity } = state
+        if (state.lastWriteCount !== state.writeCount) {
+            if (buffer.length === 0) {
+                if (state.writePending) {
+                    // we've cleared the buffer, and write has been seen, so reset the write pending flag
+                    dispatch(streamSlice.actions.consume({ streamIndex, count: 0 }))
+                }
+            } else {
+                // buffer is not empty, so we need to send the next slice
+                if (!paused && capacity > 0) {
+                    const items = buffer.slice(0, capacity)
+                    send(items)
+                    dispatch(streamSlice.actions.consume({ streamIndex, count: items.length }))
+                    return
+                }
+            }
         }
     }
 }
@@ -145,25 +184,48 @@ export const useStream = (
     time: number
     /** The tag of the currently executing stream item */
     tag: number
-    /** Set the state of stream execution, for example pause, resume and cancel */
-    setState(state: STREAMCOMMAND)
+    /** The number of items that can be sent to the stream. You can stream more than this number but activities will be buffered client side until capacity becomes available. */
+    capacity: number
+    /** The number of items that are currently buffered on the client waiting to be sent */
+    pending: number
+    /** Access the streaming activity api for this stream */
+    activity: StreamingActivityApi
+    /** Send a stream command, for example pause, resume and cancel */
+    sendCommand(state: STREAMCOMMAND)
     /** Reset the local stream queue */
     reset()
 } => {
-    const { state, tag, time } = useSelector(
+    const { state, tag, time, capacity, pending } = useSelector(
         (state: RootState) =>
-            state.stream[streamIndex] || { state: STREAMSTATE.STREAMSTATE_IDLE, tag: 0, time: 0 },
+            state.stream[streamIndex] || {
+                state: STREAMSTATE.STREAMSTATE_IDLE,
+                tag: 0,
+                time: 0,
+                capacity: 0,
+                pending: 0
+            },
         shallowEqual
     )
     const connection = useConnection()
     const dispatch = useDispatch()
 
+    const activity = useMemo(
+        () =>
+            new StreamingActivityApiImpl(streamIndex, {}, activity => {
+                dispatch(streamSlice.actions.append({ streamIndex, buffer: [activity] }))
+            }),
+        [streamIndex, dispatch]
+    )
+
     return {
         state,
         time,
         tag,
-        setState(streamCommand: STREAMCOMMAND) {
-            connection.send(updateStreamStateMsg(streamIndex, streamCommand))
+        capacity,
+        pending,
+        activity,
+        sendCommand(streamCommand: STREAMCOMMAND) {
+            connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
         },
         reset() {
             dispatch(streamSlice.actions.reset(streamIndex))

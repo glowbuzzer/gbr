@@ -13,6 +13,7 @@ import {
     GCodeTileDefinition,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitionList,
+    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     TrackPosition
@@ -26,16 +27,18 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { ControlsTileDefinition } from "./ControlsTile"
+import { Puck } from "./Puck"
+import { StaubliRobot } from "./StaubliRobot"
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
             <ThreeDimensionalSceneTile>
-                <TrackPosition kinematicsConfigurationIndex={0}>
-                    <Frustum />
-                </TrackPosition>
+                <Suspense fallback={null}>
+                    <StaubliRobot />
+                </Suspense>
                 <TrackPosition kinematicsConfigurationIndex={1}>
-                    <Frustum />
+                    <Puck />
                 </TrackPosition>
             </ThreeDimensionalSceneTile>
         )

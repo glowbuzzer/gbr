@@ -19,7 +19,7 @@ import { streamSlice } from "../stream"
 //     sendEndProgram: boolean
 // }
 
-export function updateStreamStateMsg(
+export function updateStreamCommandMsg(
     kinematicsConfigurationIndex: number,
     streamCommand: STREAMCOMMAND
 ) {
@@ -68,7 +68,7 @@ export function useGCode(kinematicsConfigurationIndex = 0): /** Send gcode to ex
         )
         interpreter.execute(gcode)
 
-        dispatch(streamSlice.actions.append({ kinematicsConfigurationIndex, buffer }))
+        dispatch(streamSlice.actions.append({ streamIndex: kinematicsConfigurationIndex, buffer }))
     }
 }
 

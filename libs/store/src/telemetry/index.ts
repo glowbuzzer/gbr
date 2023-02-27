@@ -9,23 +9,21 @@ import { settings } from "../util/settings"
 
 const { load, save } = settings("telemetry")
 
+export enum TelemetryPVA {
+    POS = 0x00,
+    VEL = 0x01,
+    ACC = 0x02
+}
 export type TelemetrySettingsType = {
-    cartesianEnabled: boolean
-    cartesianAxes: boolean[]
-    jointsEnabled: boolean
-    queueEnabled: boolean
-    joints: boolean[]
-    posEnabled: boolean
-    velEnabled: boolean
-    accEnabled: boolean
     captureDuration: number
+    plot: TelemetryPVA
 }
 
 export enum CaptureState {
-    CONTINUOUS,
+    RUNNING,
     PAUSED,
     WAITING,
-    TRIGGERED,
+    CAPTURING,
     COMPLETE
 }
 
@@ -35,9 +33,6 @@ type TelemetryEntry = {
     m7cap: number
     m7wait: number
     joints: number[]
-    x: number
-    y: number
-    z: number
 }
 
 type TelemetrySliceType = {
@@ -59,9 +54,12 @@ function compare_captures(a, b) {
     return true
 }
 
+const MAX_SAMPLES = 2500
+
 export const telemetrySlice: Slice<
     TelemetrySliceType,
     {
+        loadSettings: CaseReducer<TelemetrySliceType>
         init: CaseReducer<TelemetrySliceType>
         pause: CaseReducer<TelemetrySliceType>
         resume: CaseReducer<TelemetrySliceType>
@@ -78,14 +76,8 @@ export const telemetrySlice: Slice<
         captureState: CaptureState.PAUSED,
         t: 0,
         settings: {
-            cartesianEnabled: true,
-            jointsEnabled: false,
-            cartesianAxes: [true, true, false],
-            joints: [true, true, true, true, true, true],
-            posEnabled: true,
-            velEnabled: false,
-            accEnabled: false,
-            captureDuration: 1000
+            captureDuration: 1000,
+            plot: TelemetryPVA.POS
         }
     } as TelemetrySliceType,
     reducers: {
@@ -105,8 +97,8 @@ export const telemetrySlice: Slice<
         },
         data(state, action) {
             if (
-                state.captureState === CaptureState.CONTINUOUS ||
-                state.captureState === CaptureState.TRIGGERED
+                state.captureState === CaptureState.RUNNING ||
+                state.captureState === CaptureState.CAPTURING
             ) {
                 state.data.push(
                     ...action.payload.map((d, index) => ({
@@ -114,15 +106,15 @@ export const telemetrySlice: Slice<
                         ...d
                     }))
                 )
-                if (state.data.length > 5000) {
-                    state.data.splice(0, state.data.length - 5000)
+                if (state.data.length > MAX_SAMPLES) {
+                    state.data.splice(0, state.data.length - MAX_SAMPLES)
                 }
                 state.t += action.payload.length
             } else if (state.captureState === CaptureState.WAITING && state.lastCapture) {
                 // if waiting for trigger, find the first bit of data that deviates from last capture
                 for (let n = 0; n < action.payload.length; n++) {
                     if (!compare_captures(state.lastCapture, action.payload[n])) {
-                        state.captureState = CaptureState.TRIGGERED
+                        state.captureState = CaptureState.CAPTURING
                         // clear data and append from this point in the incoming data
                         state.data.splice(0)
                         state.data.push(...action.payload.slice(n))
@@ -132,7 +124,7 @@ export const telemetrySlice: Slice<
             }
 
             if (
-                state.captureState === CaptureState.TRIGGERED &&
+                state.captureState === CaptureState.CAPTURING &&
                 state.data.length >= state.settings.captureDuration
             ) {
                 state.captureState = CaptureState.COMPLETE
@@ -144,7 +136,7 @@ export const telemetrySlice: Slice<
             state.captureState = CaptureState.PAUSED
         },
         resume(state) {
-            state.captureState = CaptureState.CONTINUOUS
+            state.captureState = CaptureState.RUNNING
             state.lastCapture = null
             state.data.splice(0)
         },
@@ -154,7 +146,7 @@ export const telemetrySlice: Slice<
             state.data.splice(0)
         },
         cancelCapture(state) {
-            state.captureState = CaptureState.CONTINUOUS
+            state.captureState = CaptureState.RUNNING
             state.lastCapture = null
             state.data.splice(0)
         }
@@ -169,14 +161,15 @@ export const useTelemetryControls = () => {
         (state: RootState) => state.telemetry.captureState,
         shallowEqual
     )
-    const captureDuration = useSelector(
-        (state: RootState) => state.telemetry.settings.captureDuration,
+    const { captureDuration, plot } = useSelector(
+        (state: RootState) => state.telemetry.settings,
         shallowEqual
     )
     const dispatch = useDispatch()
     return {
         captureState,
         captureDuration,
+        plot,
         pause() {
             dispatch(telemetrySlice.actions.pause())
         },
@@ -195,6 +188,13 @@ export const useTelemetryControls = () => {
                     captureDuration: value
                 })
             )
+        },
+        setPlot(value: TelemetryPVA) {
+            dispatch(
+                telemetrySlice.actions.settings({
+                    plot: value
+                })
+            )
         }
     }
 }
@@ -202,14 +202,14 @@ export const useTelemetryControls = () => {
 /**
  * @ignore - Internal to TelemetryTile
  */
-export const useTelemetryData = () => {
+export function useTelemetryData(): TelemetryEntry[] {
     return useSelector(({ telemetry: { data } }: RootState) => ({ data }), shallowEqual).data
 }
 
 /**
  * @ignore - Internal to TelemetryTile
  */
-export const useTelemetrySettings = (): TelemetrySettingsType => {
+export function useTelemetrySettings(): TelemetrySettingsType {
     return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings
 }

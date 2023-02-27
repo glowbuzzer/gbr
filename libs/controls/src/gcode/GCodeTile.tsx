@@ -173,7 +173,7 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const can_pause = stream.state === STREAMSTATE.STREAMSTATE_ACTIVE
 
     function send_command(v) {
-        stream.setState(v.target.value)
+        stream.sendCommand(v.target.value)
         switch (v.target.value as STREAMCOMMAND) {
             case STREAMCOMMAND.STREAMCOMMAND_RUN:
                 if (stream.state === STREAMSTATE.STREAMSTATE_IDLE) {

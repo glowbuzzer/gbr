@@ -2,49 +2,47 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityController } from "../activity"
-import { ActivityApi, ActivityApiBase, MoveParametersConfig } from "../api"
+import { ActivityBuilder, ActivityController } from "../activity"
+import { ActivityApi, ActivityApiBase, ActivityStreamItem, MoveParametersConfig } from "../api"
 
-interface StreamingActivityApi extends ActivityApi {
-    something(): void
+export interface StreamingActivityApi extends ActivityApi {
+    /**
+     * Enqueue the provided activities. The activities provided will be added to the stream queue and executed in order.
+     *
+     * To cancel the execution of the activities, use the useStream hook.
+     *
+     * @param builders The array of activity builders to execute
+     */
+    enqueue(...builders: ActivityBuilder[]): void
 }
 
 export class StreamingActivityApiImpl
     extends ActivityApiBase
-    implements StreamingActivityApi, ActivityController
+    implements ActivityApi, ActivityController
 {
-    private readonly index: number
-    private readonly _send: (msg: string) => void
     private currentTag = 0
+    private readonly dispatch: (activity: ActivityStreamItem) => void
 
     constructor(
-        index: number,
+        kinematicsConfigurationIndex: number,
         defaultMoveParameters: MoveParametersConfig,
-        send: (msg: string) => void
+        dispatch: (activity: ActivityStreamItem) => void
     ) {
-        super(index, defaultMoveParameters)
-        this.index = index
-        this._send = send
+        super(kinematicsConfigurationIndex, defaultMoveParameters)
+        this.dispatch = dispatch
     }
-
-    something(): void {}
 
     get nextTag(): number {
         return this.currentTag++
     }
 
-    execute(command) {
-        console.log("Need to execute command", command)
+    execute(command: ActivityStreamItem) {
+        this.dispatch(command)
     }
 
-    // enqueue(items: ActivityStreamItem[]) {
-    //     const msg = JSON.stringify({
-    //         stream: {
-    //             streamIndex: this.index,
-    //             items
-    //         }
-    //     })
-    //
-    //     this._send(msg)
-    // }
+    enqueue(...items: ActivityBuilder[]) {
+        Promise.all(items.map(i => i.promise())).catch(e => {
+            console.error(e)
+        })
+    }
 }

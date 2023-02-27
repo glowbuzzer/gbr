@@ -14,6 +14,7 @@ import {
     ACTIVITYSTATE,
     GlowbuzzerStatus,
     MACHINETARGET,
+    STREAMCOMMAND,
     TASK_COMMAND,
     TASK_STATE,
     updateMachineControlWordMsg,
@@ -26,6 +27,7 @@ import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { streamSlice } from "../../libs/store/src"
 import { Quaternion, Vector3 } from "three"
+import { gbc } from "../gbc"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -303,6 +305,23 @@ export class GbcTest {
     stream(items, streamIndex = 0) {
         // console.log("message", JSON.stringify(stream, null, 2))
         this.send(JSON.stringify({ stream: { streamIndex, items } }))
+        return this
+    }
+
+    streamCommand(streamCommand: STREAMCOMMAND, streamIndex = 0) {
+        this.send(
+            JSON.stringify({
+                command: {
+                    stream: {
+                        [streamIndex]: {
+                            command: {
+                                streamCommand
+                            }
+                        }
+                    }
+                }
+            })
+        )
         return this
     }
 

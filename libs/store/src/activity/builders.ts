@@ -3,13 +3,13 @@
  */
 
 import {
+    ActivityStreamItem,
     ACTIVITYTYPE,
     ARCDIRECTION,
     ArcsConfig,
     ARCTYPE,
     CartesianPosition,
     DwellActivityParams,
-    GTLT,
     MoveJointsAtVelocityStream,
     MoveJointsStream,
     MoveLineStream,
@@ -25,9 +25,8 @@ import {
     SetIoutActivityParams,
     SpindleActivityParams,
     SPINDLEDIRECTION,
-    TRIGGERACTION,
+    SYNCTYPE,
     TriggerParams,
-    TRIGGERTYPE,
     Vector3
 } from "../gbc"
 import { Euler, Quaternion } from "three"
@@ -37,7 +36,7 @@ export interface ActivityController {
 
     get nextTag(): number
 
-    execute(command)
+    execute(command: ActivityStreamItem)
 }
 
 export abstract class ActivityBuilder {
@@ -53,7 +52,7 @@ export abstract class ActivityBuilder {
     }
 
     /** Builds the activity and returns an object that can be serialised and sent to GBC */
-    get command(): any {
+    get command(): ActivityStreamItem {
         const command = {
             activityType: this.activityType,
             tag: this.tag
@@ -190,6 +189,15 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
                 ...this._params,
                 ...params
             }
+        }
+        return this
+    }
+
+    duration(durationInMillis: number) {
+        this._params = {
+            ...this._params,
+            syncType: SYNCTYPE.SYNCTYPE_DURATION_MS,
+            syncValue: durationInMillis
         }
         return this
     }

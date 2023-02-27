@@ -36,7 +36,7 @@ export const SparklineScrolling = ({ options, data, domain }: SparklineScrolling
     const height = 200
     const xmargin = 20
     const ymargin = 20
-    const duration = 500
+    const duration = 2000
     const scaleRef = useRef(null)
     const axisRef = useRef(null)
     const elemRef = useRef<HTMLDivElement>(null)
@@ -131,7 +131,8 @@ export const SparklineScrolling = ({ options, data, domain }: SparklineScrolling
                     return xScale(d.t)
                 })
                 .y(function (d) {
-                    return yScale(d.values[index])
+                    // console.log("value", index, yScale(d.values[index]))
+                    return yScale(d.values[index]) || 0
                 }),
             selection: d3
                 .select(elemRef.current)

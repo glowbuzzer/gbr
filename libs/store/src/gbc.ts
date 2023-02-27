@@ -255,7 +255,7 @@ export * from "./gbc_extra"
   SYNCTYPE_NONE ,
         /**  Ensure move is of specified duration in milliseconds */
   SYNCTYPE_DURATION_MS ,
-        /**  Ensure move ends at the specified clock tick */
+        /**  Ensure move ends at the specified clock tick (not currently supported) */
   SYNCTYPE_AT_TICK ,
     }
     export enum OPENCLOSED {
@@ -374,6 +374,8 @@ export * from "./gbc_extra"
                     /** Name for this configuration item */
                     name?: string
             
+                        /**  Indicates that buffer must be full or end program activity issued before stream will start executing */
+                        enableEndProgram?:boolean;
             }
             
             export type StreamStatus = {

@@ -4,8 +4,9 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ActivityApiImpl, STREAMSTATE } from "../../../libs/store/src"
+import { ActivityApiImpl, STREAMCOMMAND, STREAMSTATE } from "../../../libs/store/src"
 import { StreamingActivityApiImpl } from "../../../libs/store/src/stream/api"
+import * as assert from "assert"
 
 const test = uvu.suite("stream")
 
@@ -158,13 +159,72 @@ test("can stream one program after another", () => {
 })
 
 test("can use the stream activity api", () => {
-    const api = new StreamingActivityApiImpl(0, {}, gbc.send)
+    // this isn't much of a test... just a demo of how to use the api
+    // in the real implementation, the dispatch function pushes activities to the stream slice
+    const buffer = []
 
-    api.enqueue(api.dwell(5))
+    const api = new StreamingActivityApiImpl(0, {}, item => buffer.push(item))
 
-    api.dwell(5).promise()
+    const item = api.dwell(5)
+    api.enqueue(item)
 
-    const api2 = new ActivityApiImpl(0, {}, gbc.send)
+    assert.equal(buffer.length, 1)
+})
+
+test("can command stream to stop", () => {
+    const capacity = state => state.stream[1].capacity
+    const state = state => state.stream[1].state
+    const tag = state => state.stream[1].tag
+    const readCount = state => state.stream[1].readCount
+    const writeCount = state => state.stream[1].writeCount
+
+    const dwells1 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(20).command)
+    const dwells2 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(20).command)
+
+    gbc.stream(dwells1, 1).exec(5)
+    gbc.assert
+        // all items have been taken onto the m7 queue, so m4 queue is empty
+        .selector(capacity, gbc.m7_stream_total_cap)
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
+        .assert.selector(tag, 1)
+        .assert.selector(readCount, 10)
+        .assert.selector(writeCount, 10)
+
+    gbc.stream(dwells2, 1).exec(5)
+    gbc.assert
+        .selector(capacity, 0)
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
+        .assert.selector(tag, 1) // still on first dwell
+        .assert.selector(readCount, 10)
+        .assert.selector(writeCount, 20)
+
+    // now we ask the stream to stop
+    gbc.streamCommand(STREAMCOMMAND.STREAMCOMMAND_STOP, 1)
+        .exec(2)
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPED)
+        .exec(2)
+        .assert.selector(capacity, gbc.m7_stream_total_cap)
+})
+
+test("can stop stream during move", () => {
+    const move = gbc.activity.moveLine(100, 100, 100).command
+    const endProgram = gbc.activity.endProgram().command
+
+    gbc.disable_limit_check() // TODO: we are exceeding joint limit when ramping down fro
+    gbc.stream([move, endProgram]).exec(15)
+    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE).assert.selector(tag, 1)
+
+    // command the stream to stop
+    gbc.streamCommand(STREAMCOMMAND.STREAMCOMMAND_STOP)
+        .exec(5)
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPING)
+        .exec(20) // it takes a while to shift the fro to zero
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPED)
+
+    // move was not complete when stream stopped, but has now been removed from the queue so stream should be idle
+    gbc.streamCommand(STREAMCOMMAND.STREAMCOMMAND_RUN)
+        .exec(2)
+        .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
 })
 
 export const stream = test

@@ -13,6 +13,7 @@ import {
     initSettings,
     prefsSlice,
     rootReducer,
+    telemetrySlice,
     useConfigState,
     useConnection
 } from "@glowbuzzer/store"
@@ -161,6 +162,7 @@ export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerA
     store.dispatch(prefsSlice.actions.loadSettings(null))
     store.dispatch(framesSlice.actions.loadSettings(null))
     store.dispatch(configSlice.actions.loadOfflineConfig(null))
+    store.dispatch(telemetrySlice.actions.loadSettings())
 
     return (
         <appNameContext.Provider value={appName}>

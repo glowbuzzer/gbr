@@ -8,7 +8,7 @@ import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
-import { updateStreamStateMsg } from "../gcode"
+import { updateStreamCommandMsg } from "../gcode"
 import { connectionSlice } from "./index"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
@@ -225,7 +225,7 @@ if (typeof window !== "undefined") {
                                         // gbc state is paused by activity -- we want to transition asap to paused state
                                         // this is so UI can then allow operator to continue / unpause
                                         ws.send(
-                                            updateStreamStateMsg(
+                                            updateStreamCommandMsg(
                                                 streamIndex,
                                                 STREAMCOMMAND.STREAMCOMMAND_PAUSE
                                             )

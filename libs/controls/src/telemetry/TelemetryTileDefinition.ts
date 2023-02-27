@@ -5,7 +5,6 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { TelemetryTile } from "./TelemetryTile"
-import { TelemetryTileSettings } from "./TelemetryTileSettings"
 
 export const TelemetryTileDefinition = {
     id: GlowbuzzerTileIdentifiers.TELEMETRY,
@@ -14,6 +13,5 @@ export const TelemetryTileDefinition = {
         column: 0,
         row: 2
     },
-    render: () => createElement(TelemetryTile, {}, null),
-    renderSettings: () => TelemetryTileSettings
+    render: () => createElement(TelemetryTile, {}, null)
 }
