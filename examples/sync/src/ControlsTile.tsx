@@ -24,7 +24,6 @@ export const ControlsTile = () => {
     const [running, setRunning] = useState(false)
 
     const streams = [twoAxisStream, threeAxisStream]
-    const idle = streams.every(s => s.state === STREAMSTATE.STREAMSTATE_IDLE)
 
     function start() {
         setRunning(true)
@@ -74,13 +73,7 @@ export const ControlsTile = () => {
                     threeAxisStream.activity.moveLine(0, 0, -70).relative().frameIndex(0).duration(APPROACH_TIME),
                     threeAxisStream.activity.moveLine(0, 0, 50).relative().frameIndex(0).duration(APPROACH_TIME),
                     threeAxisStream.activity.moveJoints(ROBOT_REST_POSITION).duration(PUCK_TIME / 2 - APPROACH_TIME),
-                    // threeAxisStream.activity.moveLine(-50, 0, 20).duration(PUCK_TIME / 2 - APPROACH_TIME),
-                    // threeAxisStream.activity.moveLine(-50, 0, 2).duration(APPROACH_TIME),
-                    // threeAxisStream.activity.moveLine(-50, 0, 20).duration(APPROACH_TIME),
-                    // threeAxisStream.activity.moveLine(0, -50, 30).duration(PUCK_TIME / 2 - APPROACH_TIME)
                 )
-            } else {
-                // console.log("TOO MANY PENDING ITEMS", threeAxisStream.pending)
             }
         }
     }, [running, twoAxisStream.pending, threeAxisStream.pending])
@@ -104,26 +97,12 @@ export const ControlsTile = () => {
         twoAxisStream.activity.enqueue(twoAxisStream.activity.moveToPosition(300, 0, 0))
     }
 
-    function queue() {
-        threeAxisStream.activity.enqueue(
-            ...Array.from({ length: 100 }).map(() => threeAxisStream.activity.dwell(29))
-        )
-        twoAxisStream.activity.enqueue(
-            ...Array.from({ length: 100 }).map(() => threeAxisStream.activity.dwell(37))
-        )
-    }
-
     return (
         <StyledTileContent>
             <div>{(heartbeat / 4 || 0).toFixed(0)}</div>
             <div>
-                <Button onClick={reset} disabled={running}>
-                    RESET
-                </Button>
-                <Button onClick={running ? stop : start} disabled={!running && !idle}>
-                    {running ? "STOP" : "START"}
-                </Button>
-                <Button onClick={queue}>TEST</Button>
+                <Button onClick={reset}>RESET</Button>
+                <Button onClick={running ? stop : start}>{running ? "STOP" : "START"}</Button>
             </div>
             <div>{STREAMSTATE[twoAxisStream.state]}</div>
             <div>{STREAMSTATE[threeAxisStream.state]}</div>
