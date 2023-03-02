@@ -267,6 +267,13 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
         this._frameIndex = cartesianPosition.frameIndex
         return this
     }
+
+    setFromPoint(point: PointsConfig) {
+        this._frameIndex = point.frameIndex
+        this._translation = point.translation
+        this._rotation = point.rotation
+        return this
+    }
 }
 
 abstract class CartesianMoveBuilder extends MoveBuilder {
@@ -292,9 +299,7 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
     }
 
     setFromPoint(point: PointsConfig) {
-        this._frameIndex = point.frameIndex
-        this._translation = point.translation
-        this._rotation = point.rotation
+        super.setFromPoint(point)
         this._configuration = point.configuration
         return this
     }

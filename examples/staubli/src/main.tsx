@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense } from "react"
+import React, { StrictMode, Suspense, useMemo } from "react"
 import { createRoot } from "react-dom/client"
 import {
     BasicRobot,
@@ -21,6 +21,7 @@ import {
     JointJogTileDefinition,
     PointsTileDefinition,
     RobotKinematicsChainElement,
+    TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
@@ -45,6 +46,7 @@ import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
+import { OscillatingMoveTileDefinition } from "../../util/OscillatingMoveTile"
 
 const DEG90 = Math.PI / 2
 
@@ -68,8 +70,9 @@ const StaubliRobot = () => {
     const toolIndex = useToolIndex(0)
 
     // load the parts of the robot (links)
-    const parts = useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(
-        m => m.scene
+    const parts = useMemo(
+        () => useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(m => m.scene),
+        []
     )
 
     return (
@@ -133,6 +136,8 @@ const App = () => {
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
                     GCodeTileDefinition,
+                    TelemetryTileDefinition,
+                    OscillatingMoveTileDefinition,
                     CustomSceneTileDefinition
                 ]}
             >
