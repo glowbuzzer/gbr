@@ -5,6 +5,7 @@
 import React, { StrictMode, Suspense } from "react"
 
 import {
+    ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
@@ -26,14 +27,14 @@ import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { ControlsTileDefinition } from "./ControlsTile"
+import { DemoTileDefinition } from "./DemoTile"
 import { Puck } from "./Puck"
 import { StaubliRobot } from "./StaubliRobot"
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
-            <ThreeDimensionalSceneTile>
+            <ThreeDimensionalSceneTile hidePreview hideTrace>
                 <Suspense fallback={null}>
                     <StaubliRobot />
                 </Suspense>
@@ -78,11 +79,11 @@ function App() {
                     ...GlowbuzzerTileDefinitionList.filter(
                         t =>
                             t.id !== CustomSceneTileDefinition.id && t.id !== GCodeTileDefinition.id
-                    ), // standard components minus the 3d scene
+                    ), // standard components minus the 3d scene and gcode tile
                     CustomSceneTileDefinition,
                     GCodeTileDefinition3Axis,
                     GCodeTileDefinition2Axis,
-                    ControlsTileDefinition
+                    DemoTileDefinition
                 ]}
             >
                 <ExampleAppMenu />

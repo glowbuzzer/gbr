@@ -14,9 +14,9 @@ import {
 import { MachineState } from "../machine"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
-import { updateStreamCommandMsg } from "../gcode"
 import { StreamingActivityApi, StreamingActivityApiImpl } from "./api"
 import { useMemo } from "react"
+import { useDefaultMoveParameters } from "../config"
 
 // there is one of these per stream configured
 type StreamSliceType = {
@@ -175,6 +175,37 @@ export const StreamHandler = {
     }
 }
 
+export function updateStreamCommandMsg(streamIndex: number, streamCommand: STREAMCOMMAND) {
+    return JSON.stringify({
+        command: {
+            stream: {
+                [streamIndex]: {
+                    command: {
+                        streamCommand
+                    }
+                }
+            }
+        }
+    })
+}
+
+export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
+    const streams = status.map((_, i) => ({
+        [i]: {
+            command: {
+                streamCommand
+            }
+        }
+    }))
+    return JSON.stringify({
+        command: {
+            stream: {
+                ...streams
+            }
+        }
+    })
+}
+
 export const useStream = (
     streamIndex: number
 ): {
@@ -208,10 +239,11 @@ export const useStream = (
     )
     const connection = useConnection()
     const dispatch = useDispatch()
+    const defaultMoveParameters = useDefaultMoveParameters()
 
     const activity = useMemo(
         () =>
-            new StreamingActivityApiImpl(streamIndex, {}, activity => {
+            new StreamingActivityApiImpl(streamIndex, defaultMoveParameters, activity => {
                 dispatch(streamSlice.actions.append({ streamIndex, buffer: [activity] }))
             }),
         [streamIndex, dispatch]

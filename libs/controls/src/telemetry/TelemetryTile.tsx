@@ -6,7 +6,7 @@ import * as React from "react"
 import { useMemo } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
 import styled from "styled-components"
-import { Button, InputNumber, Radio, RadioChangeEvent, Space } from "antd"
+import { Button, InputNumber, Radio, RadioChangeEvent, Space, Tag } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
@@ -209,7 +209,10 @@ const TelemetryControls = () => {
                     }[capture.captureState]
                 }
             </DockToolbarButtonGroup>
-            <StyledCaptureState>{CaptureState[capture.captureState]}</StyledCaptureState>
+            <Space>
+                <StyledCaptureState>{CaptureState[capture.captureState]}</StyledCaptureState>
+                {capture.lastCapture ? null : <Tag color="red">NO DATA</Tag>}
+            </Space>
         </>
     )
 }

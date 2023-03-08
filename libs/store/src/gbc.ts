@@ -9,10 +9,6 @@ export * from "./gbc_extra"
         CONFIG_STATUS_PREPARED,
         CONFIG_STATUS_LOADED,
     }
-    export enum ONOFF {
-        OFF,
-        ON,
-    }
     export enum LIMITPROFILE {
         /**  Use default limits */
   LIMITPROFILE_DEFAULT ,
@@ -849,7 +845,7 @@ export * from "./gbc_extra"
             export type DinStatus = {
             
                         /**  State of the digital input */
-                        actValue?:ONOFF;
+                        actValue?:boolean;
             }
             /** 
             Configuration parameters for Digital Outs (dout)
@@ -868,7 +864,7 @@ export * from "./gbc_extra"
             export type DoutStatus = {
             
                         /**  State of the Digital Out */
-                        effectiveValue?:ONOFF;
+                        effectiveValue?:boolean;
             }
             /** 
             Command for Digital Outs (dout)
@@ -878,7 +874,7 @@ export * from "./gbc_extra"
                         /**  Defines if the Dout state is to be overridden */
                         override?:boolean;
                         /**  State of the Digital Out */
-                        setValue?:ONOFF;
+                        setValue?:boolean;
             }
             /** 
             Configuration parameters for an analogue input

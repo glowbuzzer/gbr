@@ -3,23 +3,14 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
-
-export type IntegerOutputCommand = {
-    setValue: number
-    override: boolean
-}
-
-/** The current status of a single integer output. This also incorporates the current commanded state for the integer output (override) */
-export type IntegerOutputStatus = {
-    effectiveValue: number
-} & IntegerOutputCommand
+import { IntegerOutputStatus } from "../gbc_extra"
 
 export const integerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[]> = createSlice({
     name: "iout",
@@ -61,7 +52,7 @@ export function useIntegerOutputState(index: number): [
     const connection = useConnection()
     const ref = useRef<IntegerOutputStatus>(null)
 
-    const iout = useSelector(({ iout }: RootState) => iout[index]) || {
+    const iout = useSelector(({ iout }: RootState) => iout[index], shallowEqual) || {
         effectiveValue: 0,
         setValue: 0,
         override: false

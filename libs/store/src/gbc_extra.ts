@@ -6,20 +6,17 @@ import {
     ActivityConfig,
     ActivityStatus,
     AinConfig,
-    AinStatus,
     AoutCommand,
     AoutConfig,
     AoutStatus,
     CartesianPosition,
     DinConfig,
-    DinStatus,
     DoutCommand,
     DoutConfig,
     DoutStatus,
     FieldbusConfig,
     FramesConfig,
     IinConfig,
-    IinStatus,
     IoutCommand,
     IoutConfig,
     IoutStatus,
@@ -36,8 +33,7 @@ import {
     STREAMSTATE,
     TaskConfig,
     TaskStatus,
-    ToolConfig,
-    Vector3
+    ToolConfig
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
@@ -103,6 +99,10 @@ export type GlowbuzzerKinematicsConfigurationStatus = Pick<
     offset: Pick<CartesianPosition, "translation" | "rotation">
 }
 
+export type AnalogOutputStatus = Required<AoutStatus & AoutCommand>
+export type IntegerOutputStatus = Required<IoutStatus & IoutCommand>
+export type DigitalOutputStatus = Required<DoutStatus & DoutCommand>
+
 export type GlowbuzzerStatus = {
     /**
      * Provides information about activities that are being streamed to GBC.
@@ -126,7 +126,7 @@ export type GlowbuzzerStatus = {
         readCount: number
         /** The number of activities written to the stream buffer. */
         writeCount: number
-    }
+    }[]
     /**
      * Provides information about the current state of the machine, activities, joints, kinematics configurations, IO and tasks.
      */
@@ -140,17 +140,17 @@ export type GlowbuzzerStatus = {
         /** The current state of all kinematics configurations. */
         kc: GlowbuzzerKinematicsConfigurationStatus[]
         /** The current state of all analog inputs. */
-        ain: AinStatus[]
+        ain: number[]
         /** The current state of all integer inputs. */
-        iin: IinStatus[]
+        iin: number[]
         /** The current state of all digital inputs. */
-        din: DinStatus[]
+        din: boolean[]
         /** The current state of all analog outputs. */
-        aout: (AoutStatus & AoutCommand)[]
+        aout: AnalogOutputStatus[]
         /** The current state of all integer outputs. */
-        iout: (IoutStatus & IoutCommand)[]
+        iout: IntegerOutputStatus[]
         /** The current state of all digital outputs. */
-        dout: (DoutStatus & DoutCommand)[]
+        dout: DigitalOutputStatus[]
         /** The current state of all tasks. */
         tasks: TaskStatus[]
     }

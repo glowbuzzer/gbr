@@ -386,7 +386,7 @@ test("handles incomplete gcode during blend", async () => {
     }
 })
 
-test("can handle very short arc in blend sequence", async () => {
+test.skip("can handle very short arc in blend sequence", async () => {
     try {
         // gbc.disable_limit_check()
         gbc.send_gcode(

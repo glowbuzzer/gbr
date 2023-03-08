@@ -14,6 +14,7 @@ import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
 import { GlowbuzzerMachineStatus, MACHINETARGET, OPERATION_ERROR } from "../gbc"
 import { useConfig } from "../config"
+import { RootState } from "../root"
 
 // noinspection JSUnusedGlobalSymbols
 export enum FaultCode {
@@ -117,6 +118,10 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
         }
     }
 })
+
+export function useMachineState(): MachineState {
+    return useSelector<RootState, MachineState>(state => state.machine.currentState)
+}
 
 /**
  * Returns the current status and methods to interact with the machine.

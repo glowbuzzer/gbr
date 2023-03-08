@@ -9,14 +9,7 @@ export * from "./gbc"
 export * from "./util/frame_utils"
 export * from "./activity/activity_api"
 export { ConnectionState, useConnection, connectionSlice } from "./connect"
-export {
-    DesiredState,
-    useMachine,
-    MachineState,
-    determine_machine_state,
-    possible_transitions,
-    FaultCode
-} from "./machine"
+export * from "./machine"
 export { useConfig, configSlice } from "./config"
 export * from "./prefs"
 export * from "./frames"

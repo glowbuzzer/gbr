@@ -21,6 +21,10 @@ export const PrecisionInput = ({ value, onChange, precision }: PrecisionInputPro
     }, [valueString])
 
     useEffect(() => {
+        setValueString(value.toFixed(precision))
+    }, [value])
+
+    useEffect(() => {
         if (Number.isNaN(valueString)) {
             // don't apply precision change if mid-edit
             return

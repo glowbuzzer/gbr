@@ -19,23 +19,6 @@ import { streamSlice } from "../stream"
 //     sendEndProgram: boolean
 // }
 
-export function updateStreamCommandMsg(
-    kinematicsConfigurationIndex: number,
-    streamCommand: STREAMCOMMAND
-) {
-    return JSON.stringify({
-        command: {
-            stream: {
-                [kinematicsConfigurationIndex]: {
-                    command: {
-                        streamCommand
-                    }
-                }
-            }
-        }
-    })
-}
-
 /**
  * Returns an object containing the state of, and methods to interact with, the execution of gcode in GBC.
  *

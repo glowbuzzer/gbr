@@ -3,7 +3,16 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { CartesianPosition, POSITIONREFERENCE, Quat, usePref, usePrefs } from "@glowbuzzer/store"
+import {
+    CartesianPosition,
+    POSITIONREFERENCE,
+    Quat,
+    useKinematicsCartesianPosition,
+    useKinematicsConfigurationList,
+    useKinematicsConfigurationPositions,
+    usePref,
+    usePrefs
+} from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Button, Checkbox, Input, Space } from "antd"
 import { Euler, Quaternion } from "three"
@@ -12,6 +21,7 @@ import { PrecisionToolbarButtonGroup } from "./PrecisionToolbarButtonGroup"
 import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
 import { PrecisionInput } from "./PrecisionInput"
 import { FramesDropdown } from "../../frames"
+import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
 
 const StyledDiv = styled.div`
     .grid {
@@ -29,6 +39,7 @@ const StyledDiv = styled.div`
     .frame {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         padding: 8px 0 12px 0;
     }
 
@@ -81,10 +92,12 @@ export const CartesianPositionEdit = ({
     const { current, toSI, fromSI } = usePrefs()
     const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
 
+    const positions = useKinematicsConfigurationPositions()
+    const kinematicsConfigurations = useKinematicsConfigurationList()
+
     useEffect(() => {
-        // convert rotation quaternion to euler
-        // setRotationEuler(to_euler(rotation))
-    }, [rotation])
+        setRotationEuler(to_euler(value.rotation))
+    }, [value.rotation])
 
     function handle_change(update: Partial<CartesianPosition>) {
         onChange?.(name, {
@@ -113,6 +126,23 @@ export const CartesianPositionEdit = ({
     function update_frame_index(frameIndex: number) {
         setFrameIndex(frameIndex)
         handle_change({ frameIndex })
+    }
+
+    function update_from_kc(kinematicsConfigurationIndex: number) {
+        const position = positions[kinematicsConfigurationIndex]
+        if (position) {
+            setTranslation(position.translation)
+            setRotation(position.rotation)
+            const frameIndex = kinematicsConfigurations[kinematicsConfigurationIndex].frameIndex
+            setFrameIndex(frameIndex)
+            setPositionReference(POSITIONREFERENCE.RELATIVE)
+            handle_change({
+                translation: position.translation,
+                rotation: position.rotation,
+                frameIndex,
+                positionReference: POSITIONREFERENCE.RELATIVE
+            })
+        }
     }
 
     function save() {
@@ -185,15 +215,25 @@ export const CartesianPositionEdit = ({
                         <div>{current.units_angular}</div>
                     </div>
                     <div className="frame">
-                        <Checkbox
-                            checked={positionReference === POSITIONREFERENCE.RELATIVE}
-                            onChange={toggle_relative}
-                        >
-                            Relative to frame
-                        </Checkbox>
-                        {positionReference === POSITIONREFERENCE.RELATIVE && (
-                            <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
-                        )}
+                        <Space>
+                            <Checkbox
+                                checked={positionReference === POSITIONREFERENCE.RELATIVE}
+                                onChange={toggle_relative}
+                            >
+                                Relative to frame
+                            </Checkbox>
+                            {positionReference === POSITIONREFERENCE.RELATIVE && (
+                                <FramesDropdown
+                                    value={frameIndex || 0}
+                                    onChange={update_frame_index}
+                                />
+                            )}
+                        </Space>
+                        <KinematicsDropdown
+                            value={null}
+                            placeholder="Set from current position"
+                            onChange={update_from_kc}
+                        />
                     </div>
                     <div className="actions">
                         <Space>

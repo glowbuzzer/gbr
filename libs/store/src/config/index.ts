@@ -201,5 +201,5 @@ export function useDefaultMoveParameters(): MoveParametersConfig {
         // strip the name from move params as it's not valid in websocket message to gbc
         const { name, ...props } = v
         return props
-    }, deepEqual)
+    }, shallowEqual)
 }

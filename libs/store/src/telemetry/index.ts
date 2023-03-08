@@ -43,17 +43,6 @@ type TelemetrySliceType = {
     t: number
 }
 
-function compare_captures(a, b) {
-    // do a shallow compare of the keys we're interested in
-    // changes to these properties will trigger start of capture
-    for (const k of ["x", "y", "z", "joints"]) {
-        if (!shallowEqual(a[k], b[k])) {
-            return false
-        }
-    }
-    return true
-}
-
 const MAX_SAMPLES = 2500
 
 export const telemetrySlice: Slice<
@@ -113,7 +102,7 @@ export const telemetrySlice: Slice<
             } else if (state.captureState === CaptureState.WAITING && state.lastCapture) {
                 // if waiting for trigger, find the first bit of data that deviates from last capture
                 for (let n = 0; n < action.payload.length; n++) {
-                    if (!compare_captures(state.lastCapture, action.payload[n])) {
+                    if (!shallowEqual(state.lastCapture.joints, action.payload[n].joints)) {
                         state.captureState = CaptureState.CAPTURING
                         // clear data and append from this point in the incoming data
                         state.data.splice(0)
@@ -146,7 +135,7 @@ export const telemetrySlice: Slice<
             state.data.splice(0)
         },
         cancelCapture(state) {
-            state.captureState = CaptureState.RUNNING
+            state.captureState = CaptureState.PAUSED
             state.lastCapture = null
             state.data.splice(0)
         }
@@ -161,6 +150,7 @@ export const useTelemetryControls = () => {
         (state: RootState) => state.telemetry.captureState,
         shallowEqual
     )
+    const lastCapture = useSelector((state: RootState) => state.telemetry.lastCapture, shallowEqual)
     const { captureDuration, plot } = useSelector(
         (state: RootState) => state.telemetry.settings,
         shallowEqual
@@ -168,6 +158,7 @@ export const useTelemetryControls = () => {
     const dispatch = useDispatch()
     return {
         captureState,
+        lastCapture,
         captureDuration,
         plot,
         pause() {

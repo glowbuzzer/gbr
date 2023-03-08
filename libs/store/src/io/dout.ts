@@ -3,24 +3,14 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
 import { useConfig } from "../config"
 import { useConnection } from "../connect"
 import { StatusUpdateSlice } from "../util/redux"
-
-export type DigitalOutputCommand = {
-    /** the desired state */
-    setValue: boolean
-    /** whether this state should override state set by an activity */
-    override: boolean
-}
-
-export type DigitalOutputStatus = {
-    effectiveValue: boolean
-} & DigitalOutputCommand
+import { DigitalOutputStatus } from "../gbc_extra"
 
 export const digitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = createSlice({
     name: "dout",
@@ -52,17 +42,17 @@ export function useDigitalOutputList() {
 export function useDigitalOutputState(index: number): [
     {
         /** The current effective value */
-        effectiveValue: boolean
+        effectiveValue?: boolean
         /** The desired value */
-        setValue: boolean
+        setValue?: boolean
         /** Whether the desired value should override the value last set by an activity */
-        override: boolean
+        override?: boolean
     },
     (setValue: boolean, override?: boolean) => void
 ] {
     const connection = useConnection()
     const ref = useRef<DigitalOutputStatus>(null)
-    const dout = useSelector(({ dout }: RootState) => dout[index]) || {
+    const dout = useSelector(({ dout }: RootState) => dout[index], shallowEqual) || {
         effectiveValue: false,
         setValue: false,
         override: false

@@ -247,6 +247,14 @@ export const useKinematicsConfiguration = (kinematicsConfigurationIndex: number)
     return list[kinematicsConfigurationIndex] || list[0]
 }
 
+export const useKinematicsConfigurationPositions = () => {
+    const state: GlowbuzzerKinematicsConfigurationStatus[] = useSelector(
+        ({ kinematics }: RootState) => kinematics,
+        deepEqual
+    )
+    return state.map(s => s.position)
+}
+
 /**
  * Returns the current cartesian position of the kinematics configuration given.
  *
@@ -402,7 +410,7 @@ export function useKinematicsLimitsDisabled(
 export function useToolIndex(kinematicsConfigurationIndex: number): number {
     return useSelector(({ kinematics }: RootState) => {
         return kinematics[kinematicsConfigurationIndex]?.toolIndex
-    }, shallowEqual)
+    })
 }
 
 type ExtentsType = {

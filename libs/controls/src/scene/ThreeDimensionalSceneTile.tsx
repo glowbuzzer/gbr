@@ -89,7 +89,7 @@ export const ThreeDimensionalSceneTile = ({
 
     return (
         <>
-            <Canvas shadows>
+            <Canvas shadows frameloop="demand">
                 <ContextBridge>
                     <ScaleProvider>
                         {noCamera || <DefaultPerspectiveCamera />}

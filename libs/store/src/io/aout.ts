@@ -3,22 +3,14 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useMemo, useRef } from "react"
 import deepEqual from "fast-deep-equal"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
-
-type AnalogOutputCommand = {
-    setValue: number
-    override: boolean
-}
-
-export type AnalogOutputStatus = {
-    effectiveValue: number
-} & AnalogOutputCommand
+import { AnalogOutputStatus } from "../gbc_extra"
 
 export const analogOutputsSlice: StatusUpdateSlice<AnalogOutputStatus[]> = createSlice({
     name: "aout",
@@ -60,7 +52,7 @@ export function useAnalogOutputState(index: number): [
     const connection = useConnection()
     const ref = useRef<AnalogOutputStatus>(null)
 
-    const aout = useSelector(({ aout }: RootState) => aout[index]) || {
+    const aout = useSelector(({ aout }: RootState) => aout[index], shallowEqual) || {
         effectiveValue: 0,
         setValue: 0,
         override: false

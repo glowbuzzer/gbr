@@ -5,7 +5,7 @@
 import * as React from "react"
 import {
     MachineState,
-    useMachine,
+    useMachineState,
     usePrefs,
     useSoloActivity,
     useToolIndex,
@@ -37,7 +37,7 @@ export const ToolsTile = () => {
     const toolIndex = useToolIndex(0)
     const { fromSI, getUnits } = usePrefs()
     const api = useSoloActivity(0)
-    const { currentState } = useMachine()
+    const currentState = useMachineState()
 
     function select(index: number) {
         return api.setToolOffset(index).promise()

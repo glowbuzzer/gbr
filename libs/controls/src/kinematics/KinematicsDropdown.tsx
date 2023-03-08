@@ -17,11 +17,12 @@ const StyledSelect = styled(Select)`
 
 type KinematicsDropdownProps = {
     value: number
+    placeholder?: string
     onChange: (kinematicsConfigurationIndex: number) => void
 }
 
 /** @ignore */
-export const KinematicsDropdown = ({ value, onChange }: KinematicsDropdownProps) => {
+export const KinematicsDropdown = ({ value, placeholder, onChange }: KinematicsDropdownProps) => {
     const kcs = useKinematicsConfigurationList()
 
     if (kcs.length < 2) {
@@ -45,6 +46,7 @@ export const KinematicsDropdown = ({ value, onChange }: KinematicsDropdownProps)
             options={options}
             value={value}
             onChange={onChange}
+            placeholder={placeholder}
             optionLabelProp="display"
             dropdownMatchSelectWidth={false}
             dropdownStyle={{ maxHeight: 400, overflow: "auto", minWidth: 200 }}

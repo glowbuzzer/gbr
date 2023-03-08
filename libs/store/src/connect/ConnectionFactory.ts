@@ -8,7 +8,6 @@ import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroMsg } from "../kinematics"
 import { toolPathSlice } from "../toolpath"
-import { updateStreamCommandMsg } from "../gcode"
 import { connectionSlice } from "./index"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
@@ -25,8 +24,8 @@ import {
     updateMachineTargetMsg
 } from "../machine/machine_api"
 import { framesSlice } from "../frames"
-import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
-import { StreamHandler, streamSlice } from "../stream"
+import { GlowbuzzerStatus, STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { StreamHandler, streamSlice, updateStreamCommandMsg } from "../stream"
 
 /**
  * This class handles status messages from GBC and updates the redux store. It also handles
@@ -36,8 +35,9 @@ import { StreamHandler, streamSlice } from "../stream"
 class StatusProcessor {
     private first = true
     private tick: number
+    // private lastMachineState: MachineState = MachineState.UNKNOWN
 
-    process(msg, dispatch, ws, getState) {
+    process(msg: GlowbuzzerStatus, dispatch, ws, getState) {
         msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
         msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
         msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
@@ -82,6 +82,19 @@ class StatusProcessor {
             }
             dispatch(telemetrySlice.actions.init())
         }
+
+        // this isn't needed because gbc will zero out all command structs when operation not enabled
+        // const state = determine_machine_state(msg.status.machine.statusWord)
+        // if (
+        //     state !== this.lastMachineState &&
+        //     state === MachineState.OPERATION_ENABLED &&
+        //     msg.stream?.length // at least one stream configured
+        // ) {
+        //     // transition to operation enabled detected
+        //     // reset all streams to default run command state
+        //     ws.send(updateAllStreams(msg.stream, STREAMCOMMAND.STREAMCOMMAND_RUN))
+        // }
+        // this.lastMachineState = state
 
         if (this.tick % 50 === 0) {
             // send heartbeat about every 5 seconds assuming status message is 10hz
