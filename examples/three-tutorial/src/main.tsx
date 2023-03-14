@@ -1,8 +1,6 @@
 import * as React from "react"
-import { StrictMode, Suspense, useContext, useState } from "react"
-
+import { StrictMode, Suspense, useContext, useState, useEffect, useMemo } from "react"
 import { Html, useGLTF } from "@react-three/drei"
-
 import {
     BasicRobot,
     CartesianDroTileDefinition,
@@ -15,6 +13,7 @@ import {
     DockTileDefinition,
     DockTileDefinitionBuilder,
     FramesTileDefinition,
+    FeedRateTileDefinition,
     GlowbuzzerApp,
     IntegerOutputsTileDefinition,
     JointDroTileDefinition,
@@ -27,7 +26,7 @@ import {
 } from "@glowbuzzer/controls"
 import { createRoot } from "react-dom/client"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
-
+import { BasicRobotTelemetryPlayback } from "./BasicRobotTelemetryPlayback"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
@@ -49,8 +48,11 @@ import { ExampleUI } from "./ExampleUI"
 import { ExampleTriadPoints } from "./ExampleTriadPoints"
 import { ActiveExampleContext } from "./activeExampleContext"
 import { ExampleLaserCutting } from "./exampleLaserCutting"
+import { ExamplePlayback } from "./examplePlayback"
 import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { Vector3 } from "three"
+import { PlaybackTile } from "./playbackTile"
+import { DemoMoveTile } from "./demoMoveTile"
 
 const ChooseExampleTileDefinition: DockTileDefinition = {
     id: "chooseExample",
@@ -64,6 +66,34 @@ const ChooseExampleTileDefinition: DockTileDefinition = {
         enableWithoutConnection: true
     },
     render: () => <ChooseExample />
+}
+
+const PlaybackTileDefinition: DockTileDefinition = {
+    id: "playback",
+    name: "Playback telemetry",
+    defaultPlacement: {
+        column: 2,
+        row: 0
+    },
+    excludeByDefault: false,
+    config: {
+        enableWithoutConnection: true
+    },
+    render: () => <PlaybackTile />
+}
+
+const DemoMoveTileDefinition: DockTileDefinition = {
+    id: "demoMove",
+    name: "Demo move",
+    defaultPlacement: {
+        column: 2,
+        row: 0
+    },
+    excludeByDefault: false,
+    config: {
+        enableWithoutConnection: true
+    },
+    render: () => <DemoMoveTile />
 }
 
 const DEG90 = Math.PI / 2
@@ -82,14 +112,43 @@ const DEFAULT_POSITION = new Vector3(0, 0, 325)
 
 const ThreeTutorial = () => {
     const jointPositions = useJointPositions(0)
+
+    const startJointPositions = [0, 0, 0, 0, 0, 0]
+
+    // const [jointPositions, setJointPositions] = useState(startJointPositions)
+
+    // const setJointPos = (index, value) => {
+    //     const newJointPositions = [...jointPositions]
+    //     console.log("NEW JOINT POSITIONS", newJointPositions)
+    //     newJointPositions[index] = value
+    //     setJointPositions(newJointPositions)
+    // }
+    //
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         const newJointPositions = [...jointPositions]
+    //         newJointPositions[0] = Math.random()
+    //         newJointPositions[1] = Math.random()
+    //         newJointPositions[2] = Math.random()
+    //         setJointPositions(newJointPositions)
+    //         console.log(jointPositions)
+    //     }, 1000)
+    //     return () => clearInterval(interval)
+    // }, [])
+
     const { frameIndex } = useKinematicsConfiguration(0)
     const { translation, rotation } = useFrame(frameIndex, false)
 
-    const parts = useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(
-        m => m.scene
+    // const parts = useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(
+    //     m => m.scene
+    // )
+
+    const parts = useMemo(
+        () => useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(m => m.scene),
+        []
     )
 
-    console.log("PARTS", parts)
+    // console.log("PARTS", parts)
 
     const maxExtent = val => {
         // console.log(val);
@@ -105,8 +164,8 @@ const ThreeTutorial = () => {
 
     switch (activeExample) {
         case 1: {
-            exampleContent = <ExampleSphere />
-            // exampleContent = <Playground />
+            // exampleContent = <ExampleSphere />
+            exampleContent = <ExamplePlayback />
             break
         }
         case 2: {
@@ -179,7 +238,7 @@ const ThreeTutorial = () => {
 
     return (
         <ThreeDimensionalSceneTile noViewCube>
-            <BasicRobot
+            <BasicRobotTelemetryPlayback
                 kinematicsChain={TX40_KIN_CHAIN}
                 jointPositions={jointPositions}
                 parts={parts}
@@ -187,6 +246,7 @@ const ThreeTutorial = () => {
                 rotation={rotation}
                 scale={1000}
             />
+
             {exampleContent}
         </ThreeDimensionalSceneTile>
     )
@@ -230,7 +290,10 @@ root.render(
                         ConfigEditTileDefinition,
                         ChooseExampleTileDefinition,
                         ToolsTileDefinition,
-                        CustomSceneTile
+                        CustomSceneTile,
+                        FeedRateTileDefinition,
+                        PlaybackTileDefinition,
+                        DemoMoveTileDefinition
                     ]}
                 >
                     <ExampleAppMenu title="three-tutorial" />

@@ -60,9 +60,13 @@ const TS2_40_KIN_CHAIN: RobotKinematicsChainElement[] = [
 
 const ScaraRobot = ({ children = null }) => {
     const jointPositions = useJointPositions(0)
-    const { frameIndex } = useKinematicsConfiguration(0)
+    // const {frameIndex} = useKinematicsConfiguration(0)
 
-    const { translation, rotation } = useFrame(frameIndex, false)
+    const { frameIndex } = useKinematicsConfiguration(0)
+    const { parentFrameIndex } = useFrame(frameIndex, true)
+    const { translation, rotation } = useFrame(parentFrameIndex, true)
+
+    // const {translation, rotation} = useFrame(frameIndex, false)
 
     // load the parts of the robot (links)
     const parts = useGLTF([0, 1, 2, 3].map(j => `/assets/ts2_40/L${j}.glb`)).map(m => m.scene)
@@ -142,11 +146,7 @@ const ScaraRobot = ({ children = null }) => {
 
     const scale = 1000
     return (
-        <group
-            scale={[scale, scale, scale]}
-            // position={[translation.x, translation.y, translation.z]}
-            ref={G0}
-        >
+        <group scale={[scale, scale, scale]} position={[0, 0, 400]} ref={G0}>
             <group ref={G1}>
                 <primitive rotation={[0, Math.PI, 0]} object={parts[0]} position={[0, 0, 0]} />
                 <group ref={G2}>

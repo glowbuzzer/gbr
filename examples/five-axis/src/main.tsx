@@ -16,6 +16,7 @@ import {
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
+    GCodeTileDefinition,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitionList,
     JointDroTileDefinition,
@@ -36,7 +37,10 @@ import {
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
-    useToolIndex
+    useToolIndex,
+    GCodeMode,
+    KC_KINEMATICSCONFIGURATIONTYPE,
+    GCodeContextType
 } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 
@@ -143,6 +147,18 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
     .build()
 
 function App() {
+    const kc = useKinematicsConfiguration(0)
+
+    // depending on the type of kinematics we want to perform cartesian moves or joint space moves
+    const mode: GCodeMode =
+        kc.kinematicsConfigurationType === KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED
+            ? GCodeMode.JOINT
+            : GCodeMode.CARTESIAN
+
+    const context: GCodeContextType = {
+        mode
+    }
+
     function handleToolChange(
         kinematicsConfigurationIndex: number,
         current: number,
@@ -153,7 +169,7 @@ function App() {
     }
 
     return (
-        <GCodeContextProvider value={{ handleToolChange }}>
+        <GCodeContextProvider value={context}>
             <DockLayoutProvider
                 tiles={[
                     ConnectTileDefinition,
@@ -166,6 +182,7 @@ function App() {
                     FramesTileDefinition,
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
+                    GCodeTileDefinition,
                     CustomSceneTileDefinition
                 ]}
             >

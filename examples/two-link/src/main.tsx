@@ -33,6 +33,7 @@ import "flexlayout-react/style/light.css"
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import { useKinematics } from "@glowbuzzer/store"
 import { initializeStepLoader, loadStepFile } from "../../util/stepLoader"
+import { Environment } from "@react-three/drei"
 
 initializeStepLoader()
 
@@ -88,6 +89,7 @@ const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefin
                 <TwoLinkArm>
                     <Frustum />
                 </TwoLinkArm>
+                <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
             </ThreeDimensionalSceneTile>
         )
     })

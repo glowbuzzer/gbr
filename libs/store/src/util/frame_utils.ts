@@ -96,6 +96,7 @@ export function build_tree2(frames: FramesConfig[]): Frame[] {
     }
 
     const result: Subset<Frame>[] = []
+
     frames.forEach((f, i) => {
         const relative = {
             translation: vectorOf(f.translation),
