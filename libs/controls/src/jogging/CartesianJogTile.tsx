@@ -44,6 +44,7 @@ export const CartesianJogTile = () => {
                 <>
                     <JogHomeSplitButton
                         kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                        frameIndex={frameIndex}
                     />
                     <JogModeRadioButtons mode={jogMode} onChange={setJogMode} />
                     <DockToolbarButtonGroup>

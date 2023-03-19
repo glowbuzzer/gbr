@@ -30,6 +30,7 @@ import "flexlayout-react/style/light.css"
 import { DemoTileDefinition } from "./DemoTile"
 import { Puck } from "./Puck"
 import { StaubliRobot } from "./StaubliRobot"
+import { Environment } from "@react-three/drei"
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
@@ -41,6 +42,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
                 <TrackPosition kinematicsConfigurationIndex={1}>
                     <Puck />
                 </TrackPosition>
+                <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
             </ThreeDimensionalSceneTile>
         )
     })

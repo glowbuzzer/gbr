@@ -24,13 +24,14 @@ const StyledDownOutlined = styled(DownOutlined)`
 `
 
 /** @ignore - internal to the jog tile */
-export const JogHomeSplitButton = ({ kinematicsConfigurationIndex }) => {
+export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex }) => {
     const points = usePoints()
     const frames = useFramesList()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
     function go(point) {
-        return motion.moveToPosition().setFromPoint(point).promise()
+        // we'll use the currently selected frame if none is specified by the point
+        return motion.moveToPosition().frameIndex(frameIndex).setFromPoint(point).promise()
     }
 
     function go_home() {

@@ -269,7 +269,7 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
     }
 
     setFromPoint(point: PointsConfig) {
-        this._frameIndex = point.frameIndex
+        this._frameIndex = isNaN(point.frameIndex) ? this._frameIndex : point.frameIndex
         this._translation = point.translation
         this._rotation = point.rotation
         return this

@@ -33,6 +33,7 @@ export * from "./gbc_extra"
         OPERATION_ERROR_KINEMATICS_INVALID_KIN_CHAIN_PARAMS,
         OPERATION_ERROR_JOINT_DISCONTINUITY,
         OPERATION_ERROR_JOINT_OVER_SPEED,
+        OPERATION_ERROR_INVALID_ROTATION,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
@@ -502,6 +503,8 @@ export * from "./gbc_extra"
                         syncType?:SYNCTYPE;
                         
                         syncValue?:number;
+                        
+                        optimizeJointDistance?:boolean;
             }
             /** 
             Parameters for vector 3

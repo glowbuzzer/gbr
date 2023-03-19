@@ -27,7 +27,7 @@ import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { streamSlice } from "../../libs/store/src"
 import { Quaternion, Vector3 } from "three"
-import { gbc } from "../gbc"
+import { readFileSync, writeFileSync } from "fs"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -259,8 +259,17 @@ export class GbcTest {
         return this
     }
 
-    reset(configFile?) {
-        this.gbc.reset(configFile)
+    reset(configFile?, custom?) {
+        if (custom) {
+            const config = {
+                ...JSON.parse(readFileSync(configFile, "utf8")),
+                ...custom
+            }
+            writeFileSync("./config_tmp.json", JSON.stringify(config, null, 2))
+            this.gbc.reset("./config_tmp.json")
+        } else {
+            this.gbc.reset(configFile)
+        }
 
         this.store = configureStore({
             reducer: rootReducer
