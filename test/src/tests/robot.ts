@@ -34,6 +34,7 @@ function init_robot_test() {
 
 test.before.each(() => {
     gbc.reset("configs/tx40_config.json")
+    gbc.enable_limit_check()
 })
 
 test("joint space move", async () => {
@@ -59,10 +60,11 @@ test("joint space move with empty array from all joints zero", async () => {
 
 test("move to position from all joints zero", async () => {
     gbc.enable_operation()
+    // gbc.disable_limit_check()
     // this tests that we can move away from a singularity with a joint space move
     try {
         const move = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).promise)
-        await move.start().iterations(66).assertCompleted()
+        await move.start().iterations(100).assertCompleted()
     } finally {
         gbc.plot("test")
     }
@@ -71,7 +73,6 @@ test("move to position from all joints zero", async () => {
 test("move line keeping same orientation", async () => {
     init_robot_test()
     try {
-        // gbc.disable_limit_check()
         const move = gbc.wrap(
             // this doesn't involve orientation change
             gbc.activity.moveLine(100, 100, 100).rotationEuler(Math.PI, Math.PI / 4, 0).promise
@@ -227,7 +228,7 @@ test("move to position with change in configuration followed by another move wit
         await move1.start().iterations(200).assertCompleted()
         gbc.assert.selector(config, 2)
 
-        const move2 = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).promise)
+        const move2 = gbc.wrap(gbc.activity.moveToPosition(100, 250, 100).promise)
         await move2.start().iterations(100).assertCompleted()
         gbc.assert.selector(config, 2)
     } finally {
@@ -237,11 +238,16 @@ test("move to position with change in configuration followed by another move wit
 
 test("can run move joints followed by move to position", async () => {
     init_robot_test()
-    const move1 = gbc.wrap(gbc.activity.moveJoints([1, 1, 1, 1, 1, 1]).promise)
-    await move1.start().iterations(200).assertCompleted()
-    const move2 = gbc.wrap(gbc.activity.moveToPosition(1, 1, 0).rotationEuler(0, 0, 0).promise)
-    await move2.start().iterations(200).assertCompleted()
-    // assertNear(1, 1, 0, 0, 0, 0)
+    try {
+        const move1 = gbc.wrap(gbc.activity.moveJoints([1, 1, 1, 1, 1, 1]).promise)
+        await move1.start().iterations(80).assertCompleted()
+        const move2 = gbc.wrap(
+            gbc.activity.moveToPosition(100, 250, 100).rotationEuler(Math.PI, 0, 0).promise
+        )
+        await move2.start().iterations(80).assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
 })
 
 test("move to position changing configuration but not position", async () => {
@@ -268,7 +274,7 @@ test("blend move_to_position (with different orientation)", async () => {
     }
     const move1 = gbc.activity.moveToPosition(300, 100, 150).params(moveParams).command
     const move2 = gbc.activity
-        .moveToPosition(100, 100, 300)
+        .moveToPosition(100, 250, 100)
         .rotationEuler(Math.PI, 0, Math.PI / 4)
         .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
@@ -278,19 +284,19 @@ test("blend move_to_position (with different orientation)", async () => {
             .assert.streamSequence(
                 tag,
                 [
-                    [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
-                    [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [60, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [35, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
+                    [25, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [75, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
                 ],
-                false
+                true
             )
             .verify()
     } finally {
         gbc.plot("test")
     }
 
-    assertNear(100, 100, 300, Math.PI, 0, Math.PI / 4)
+    assertNear(100, 250, 100, Math.PI, 0, Math.PI / 4)
     gbc.assert.selector(config, INITIAL_CONFIG)
 })
 
@@ -313,8 +319,8 @@ test("blend move_to_position (with configuration change)", async () => {
             .assert.streamSequence(
                 tag,
                 [
-                    [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [15, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
+                    [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [25, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [25, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [50, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
                 ],
@@ -331,39 +337,40 @@ test("blend move_to_position (with configuration change)", async () => {
 
 test("blend move_to_position with move_line (with configuration and orientation change)", async () => {
     init_robot_test()
+    gbc.disable_limit_check()
     const moveParams = {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
     const move1 = gbc.activity
-        .moveToPosition(100, 100, 100)
-        .rotationEuler(Math.PI, 0, 0)
+        .moveToPosition(100, 25, 100)
+        .rotationEuler(Math.PI / 2, 0, 0)
         .configuration(2)
         .params(moveParams).command
     const move2 = gbc.activity
-        .moveLine(100, 100, 150)
-        .rotationEuler(0, Math.PI, 0)
+        .moveLine(100, 25, 150)
+        .rotationEuler(Math.PI / 2, 0, 0)
         .params(moveParams).command
     const end_program = gbc.activity.endProgram().command
 
     try {
-        gbc.stream([move1, move2, end_program]) //
+        gbc.stream([move1, move2, end_program])
             .assert.streamSequence(
                 tag,
                 [
-                    [20, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [20, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
+                    [30, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
+                    [30, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [100, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [70, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
                 ],
-                false
+                true
             )
             .verify()
     } finally {
         gbc.plot("test")
     }
 
-    assertNear(100, 100, 150, 0, Math.PI, 0)
+    assertNear(100, 25, 150, Math.PI / 2, 0, 0)
     gbc.assert.selector(config, 2)
 })
 

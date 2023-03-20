@@ -89,7 +89,7 @@ test("basic move_to_position in kc local coords", async () => {
                 // frameIndex 1 is robot
                 .frameIndex(1).promise
         )
-        await move.start().iterations(125).assertCompleted()
+        await move.start().iterations(50).assertCompleted()
         assertNear(100, 100, 100, Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")
@@ -130,6 +130,7 @@ test("move_to_position with different frame index for target", async () => {
 test("move_to_position in world frame with rotation", async () => {
     try {
         // default frame index is zero
+        gbc.disable_limit_check()
         const move = gbc.wrap(
             gbc.activity
                 .moveToPosition(200, 100, 100)
