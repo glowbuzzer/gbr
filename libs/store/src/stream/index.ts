@@ -14,8 +14,8 @@ import {
 import { MachineState } from "../machine"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
-import { StreamingActivityApi, StreamingActivityApiImpl } from "./api"
-import { useMemo } from "react"
+import { StreamingActivityApi } from "./api"
+import { useEffect, useMemo } from "react"
 import { useDefaultMoveParameters } from "../config"
 
 // there is one of these per stream configured
@@ -55,21 +55,12 @@ const DEFAULT_STREAM_STATE: StreamSliceType = {
     // }
 }
 
-function changed(index, state, status) {
+function changed(state, status) {
     for (const key of Object.keys(status)) {
         if (key === "capacity" || key === "time") {
             continue
         }
         if (state[key] !== status[key]) {
-            // console.log(
-            //     "TRIGGER QUEUE UPDATE",
-            //     index,
-            //     key,
-            //     "OLD CAPACITY",
-            //     state.capacity,
-            //     "NEW",
-            //     status.capacity
-            // )
             return true
         }
     }
@@ -124,11 +115,9 @@ export const streamSlice: Slice<StreamSliceType[]> = createSlice({
             state[streamIndex].pending = 0
         },
         status: (state, action) => {
-            return action.payload.map((status, streamIndex) => {
-                const newVar = changed(streamIndex, state[streamIndex], status)
-                    ? { ...state[streamIndex], ...status }
-                    : state[streamIndex]
-                return { ...newVar }
+            return state.map((current, streamIndex) => {
+                const update = action.payload[streamIndex]
+                return changed(current, update) ? { ...current, ...update } : current
             })
         },
         pause: (state, action) => {
@@ -241,13 +230,17 @@ export const useStream = (
     const dispatch = useDispatch()
     const defaultMoveParameters = useDefaultMoveParameters()
 
-    const activity = useMemo(
+    const api = useMemo(
         () =>
-            new StreamingActivityApiImpl(streamIndex, defaultMoveParameters, activity => {
+            new StreamingActivityApi(streamIndex, defaultMoveParameters, activity => {
                 dispatch(streamSlice.actions.append({ streamIndex, buffer: [activity] }))
             }),
         [streamIndex, dispatch]
     )
+
+    useEffect(() => {
+        api.updateStream(tag, state)
+    }, [api, tag, state])
 
     return {
         state,
@@ -255,7 +248,7 @@ export const useStream = (
         tag,
         capacity,
         pending,
-        activity,
+        activity: api,
         sendCommand(streamCommand: STREAMCOMMAND) {
             connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
         },

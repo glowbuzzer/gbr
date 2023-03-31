@@ -583,6 +583,8 @@ export * from "./gbc_extra"
                         arcDirection?:ARCDIRECTION;
                         /**  Destination position for the arc */
                         destination?:CartesianPosition;
+                        /**  Local rotation of arc, useful for plane switching */
+                        plane?:Quat;
     //              Start of Union
                         /**  Is the centre defined absolutely or relatively */
                          centre?: PositionAbsRel,

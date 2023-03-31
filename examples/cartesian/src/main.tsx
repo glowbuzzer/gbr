@@ -2,12 +2,11 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useMemo, useEffect, useRef } from "react"
+import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react"
 
 import {
-    BasicRobot,
-    BasicRobotProps,
     BasicRobotElement,
+    BasicRobotProps,
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
@@ -18,23 +17,22 @@ import {
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
+    GCodeTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitionList,
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
     RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
-    ToolsTileDefinition,
-    GCodeTileDefinition
+    ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { useGLTF, Environment } from "@react-three/drei"
+import { Environment, useGLTF } from "@react-three/drei"
 
 import {
+    ActivityApi,
     GCodeContextProvider,
-    SoloActivityApi,
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
@@ -201,7 +199,7 @@ function App() {
         kinematicsConfigurationIndex: number,
         current: number,
         next: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ) {
         return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }

@@ -44,7 +44,8 @@ import {
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
-    useToolIndex
+    useToolIndex,
+    ActivityApi
 } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 
@@ -467,7 +468,7 @@ function App() {
         kinematicsConfigurationIndex: number,
         current: number,
         next: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ) {
         return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }

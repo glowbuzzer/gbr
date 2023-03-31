@@ -2,8 +2,13 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
+import React, { useMemo } from "react"
+import {
+    useFrames,
+    useKinematicsCartesianPosition,
+    useKinematicsConfiguration,
+    useKinematicsConfigurationList
+} from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 
 type TrackPositionProps = {
@@ -20,10 +25,22 @@ type TrackPositionProps = {
  */
 export const TrackPosition = ({ kinematicsConfigurationIndex, children }: TrackPositionProps) => {
     const { position } = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
-    const { translation, rotation } = position
+    const { frameIndex } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+    const { convertToFrame } = useFrames()
 
-    const p = new Vector3(translation.x, translation.y, translation.z)
-    const q = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)
+    const { p, q } = useMemo(() => {
+        const { translation, rotation } = convertToFrame(
+            position.translation,
+            position.rotation,
+            frameIndex,
+            "world"
+        )
+
+        const p = new Vector3(translation.x, translation.y, translation.z)
+        const q = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)
+
+        return { p, q }
+    }, [, position, frameIndex, convertToFrame])
 
     return (
         <group position={p} quaternion={q}>

@@ -9,7 +9,7 @@ import { telemetrySlice } from "./telemetry"
 import { prefsSlice } from "./prefs"
 import { machineSlice } from "./machine"
 import { jointsSlice } from "./joints"
-import { toolPathSlice } from "./toolpath"
+import { traceSlice } from "./trace"
 import { kinematicsSlice } from "./kinematics"
 import { previewSlice } from "./preview"
 import { digitalInputsSlice } from "./io/din"
@@ -43,7 +43,7 @@ export const standardReducers = {
     iout: integerOutputsSlice.reducer,
     stream: streamSlice.reducer,
     preview: previewSlice.reducer,
-    toolPath: toolPathSlice.reducer,
+    trace: traceSlice.reducer,
     kinematics: kinematicsSlice.reducer
 }
 

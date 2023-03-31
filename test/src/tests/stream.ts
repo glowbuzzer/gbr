@@ -4,8 +4,8 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ActivityApiImpl, STREAMCOMMAND, STREAMSTATE } from "../../../libs/store/src"
-import { StreamingActivityApiImpl } from "../../../libs/store/src/stream/api"
+import { SoloActivityApi, STREAMCOMMAND, STREAMSTATE } from "../../../libs/store/src"
+import { StreamingActivityApi } from "../../../libs/store/src/stream/api"
 import * as assert from "assert"
 
 const test = uvu.suite("stream")
@@ -163,10 +163,10 @@ test("can use the stream activity api", () => {
     // in the real implementation, the dispatch function pushes activities to the stream slice
     const buffer = []
 
-    const api = new StreamingActivityApiImpl(0, {}, item => buffer.push(item))
+    const api = new StreamingActivityApi(0, {}, item => buffer.push(item))
 
-    const item = api.dwell(5)
-    api.enqueue(item)
+    const item = api.dwell(5).promise()
+    api.send(item)
 
     assert.equal(buffer.length, 1)
 })

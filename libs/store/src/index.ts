@@ -7,7 +7,7 @@ import "./connect/ConnectionFactory"
 export * from "./gbc"
 
 export * from "./util/frame_utils"
-export * from "./activity/activity_api"
+export * from "./activity/api/base"
 export { ConnectionState, useConnection, connectionSlice } from "./connect"
 export * from "./machine"
 export { useConfig, configSlice } from "./config"
@@ -28,7 +28,7 @@ export * from "./io/aout"
 export * from "./io/iin"
 export * from "./io/iout"
 export * from "./kinematics"
-export * from "./toolpath"
+export * from "./trace"
 
 export * from "./root"
 
@@ -40,3 +40,4 @@ export * from "./StateMachine"
 export * from "./types"
 
 export * from "./config"
+export { SoloActivityApi } from "./activity/solo/api"

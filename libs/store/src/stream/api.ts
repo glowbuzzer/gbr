@@ -2,34 +2,23 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityBuilder, ActivityController } from "../activity"
-import { ActivityApi, ActivityApiBase, ActivityStreamItem, MoveParametersConfig } from "../api"
+import { ActivityApi, ActivityController } from "../activity"
+import { ActivityApiBaseWithPromises, ActivityStreamItem, MoveParametersConfig } from "../api"
 
-export interface StreamingActivityApi extends ActivityApi {
-    /**
-     * Enqueue the provided activities. The activities provided will be added to the stream queue and executed in order.
-     *
-     * To cancel the execution of the activities, use the useStream hook.
-     *
-     * @param builders The array of activity builders to execute
-     */
-    enqueue(...builders: ActivityBuilder[]): void
-}
-
-export class StreamingActivityApiImpl
-    extends ActivityApiBase
+export class StreamingActivityApi
+    extends ActivityApiBaseWithPromises
     implements ActivityApi, ActivityController
 {
-    private currentTag = 0
-    private readonly dispatch: (activity: ActivityStreamItem) => void
+    // function that will add activity to the gbr stream queue ready to send to gbc
+    private readonly _send: (activity: ActivityStreamItem) => void
 
     constructor(
         kinematicsConfigurationIndex: number,
         defaultMoveParameters: MoveParametersConfig,
-        dispatch: (activity: ActivityStreamItem) => void
+        send: (activity: ActivityStreamItem) => void
     ) {
         super(kinematicsConfigurationIndex, defaultMoveParameters)
-        this.dispatch = dispatch
+        this._send = send
     }
 
     get nextTag(): number {
@@ -37,12 +26,12 @@ export class StreamingActivityApiImpl
     }
 
     execute(command: ActivityStreamItem) {
-        this.dispatch(command)
+        return this.createPromise(command.tag, () => this._send(command))
     }
 
-    enqueue(...items: ActivityBuilder[]) {
-        Promise.all(items.map(i => i.promise())).catch(e => {
-            console.error(e)
-        })
+    send(
+        ...items: Promise<{ tag: number; completed: boolean } | void>[]
+    ): Promise<({ tag: number; completed: boolean } | void)[]> {
+        return Promise.all(items)
     }
 }

@@ -10,6 +10,7 @@ import {
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
+    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
@@ -25,19 +26,11 @@ import {
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
-    TriadHelper
+    Trace,
+    TrackPosition
 } from "@glowbuzzer/controls"
 
-import {
-    GCodeContextProvider,
-    GCodeContextType,
-    GCodeMode,
-    KC_KINEMATICSCONFIGURATIONTYPE,
-    useFrame,
-    useJointPositions,
-    useKinematicsConfiguration,
-    useToolIndex
-} from "@glowbuzzer/store"
+import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
 
 import { Vector3 } from "three"
 import { useGLTF } from "@react-three/drei"
@@ -47,7 +40,9 @@ import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { OscillatingMoveTileDefinition } from "../../util/OscillatingMoveTile"
-import { DemoTileDefinition } from "./DemoTile"
+import { ConnTest } from "../../util/ConnTest"
+import { TraceLabel } from "./TraceLabel"
+import { DemoTileDefinition } from "./tiles"
 
 const DEG90 = Math.PI / 2
 
@@ -87,29 +82,30 @@ const StaubliRobot = ({ kinematicsConfigurationIndex }) => {
             rotation={rotation}
             scale={1000}
         >
-            <TriadHelper size={200} />
+            <CylindricalTool toolIndex={0} />
         </BasicRobot>
     )
 }
 
 const StaubliDanceTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
-    .render(() => (
-        <ThreeDimensionalSceneTile>
-            <Suspense fallback={null}>
-                <StaubliRobot kinematicsConfigurationIndex={0} />
-                <StaubliRobot kinematicsConfigurationIndex={1} />
-            </Suspense>
-
-            {/*
-            {["red", "green", "blue"].map((colour, index) => (
-                <mesh key={colour} position={[500, (index - 1) * 200, 75]}>
-                    <boxGeometry args={[150, 150, 150]} />
-                    <meshStandardMaterial color={colour} />
-                </mesh>
-            ))}
-*/}
-        </ThreeDimensionalSceneTile>
-    ))
+    .render(() => {
+        return (
+            <ThreeDimensionalSceneTile hideTrace>
+                <Suspense fallback={null}>
+                    <StaubliRobot kinematicsConfigurationIndex={0} />
+                    <Trace kinematicsConfigurationIndex={0} color={"red"} />
+                    <TrackPosition kinematicsConfigurationIndex={0}>
+                        <TraceLabel kinematicsConfigurationIndex={0} />
+                    </TrackPosition>
+                    <StaubliRobot kinematicsConfigurationIndex={1} />
+                    <Trace kinematicsConfigurationIndex={1} color={"blue"} />
+                    <TrackPosition kinematicsConfigurationIndex={1}>
+                        <TraceLabel kinematicsConfigurationIndex={1} />
+                    </TrackPosition>
+                </Suspense>
+            </ThreeDimensionalSceneTile>
+        )
+    })
     .build()
 
 const App = () => {
@@ -134,6 +130,7 @@ const App = () => {
             ]}
         >
             <ExampleAppMenu title="Staubli TX40" />
+            <ConnTest />
             <DockLayout />
         </DockLayoutProvider>
     )

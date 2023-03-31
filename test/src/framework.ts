@@ -10,7 +10,7 @@ import {
 } from "../../libs/store/src/machine/MachineStateHandler"
 import * as assert from "uvu/assert"
 import {
-    ActivityApiImpl,
+    SoloActivityApi,
     ACTIVITYSTATE,
     GlowbuzzerStatus,
     MACHINETARGET,
@@ -27,7 +27,7 @@ import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { streamSlice } from "../../libs/store/src"
 import { Quaternion, Vector3 } from "three"
-import { readFileSync, writeFileSync } from "fs"
+import { ConfigBuilder } from "./builder"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -59,7 +59,7 @@ export class GbcTest {
     private check_limits = true
     private readonly gbc: any
     private store: EnhancedStore<State>
-    private activity_api: ActivityApiImpl
+    private activity_api: SoloActivityApi
     private readonly enable_plot: boolean
 
     constructor(gbc, plot) {
@@ -154,7 +154,12 @@ export class GbcTest {
                 }
                 assert.equal(actual, expected)
             },
-            near: (selector, expected, tolerance = 0.001, allowNeg = false) => {
+            near: (
+                selector: (s: GlowbuzzerStatus) => any,
+                expected,
+                tolerance = 0.001,
+                allowNeg = false
+            ) => {
                 const actual = selector(this.status_msg)
                 test_near(actual, expected, tolerance, allowNeg)
                 return this
@@ -259,23 +264,12 @@ export class GbcTest {
         return this
     }
 
-    reset(configFile?, custom?) {
-        if (custom) {
-            const config = {
-                ...JSON.parse(readFileSync(configFile, "utf8")),
-                ...custom
-            }
-            writeFileSync("./config_tmp.json", JSON.stringify(config, null, 2))
-            this.gbc.reset("./config_tmp.json")
-        } else {
-            this.gbc.reset(configFile)
-        }
-
+    init() {
         this.store = configureStore({
             reducer: rootReducer
         })
 
-        this.activity_api = new ActivityApiImpl(0, null, this.gbc.send)
+        this.activity_api = new SoloActivityApi(0, null, this.gbc.send)
         this.capture_state = undefined
         this.check_limits = true
 
@@ -284,6 +278,20 @@ export class GbcTest {
         this.exec_double_cycle()
 
         return this
+    }
+
+    reset(configFile?) {
+        this.gbc.reset(configFile)
+        return this.init()
+    }
+
+    reset_from_json(json) {
+        this.gbc.reset_from_json(JSON.stringify(json))
+        return this.init()
+    }
+
+    config() {
+        return new ConfigBuilder(this)
     }
 
     destroy() {
@@ -309,6 +317,16 @@ export class GbcTest {
     set_joint_pos(joint: number, value: number) {
         this.gbc.set_fb_joint_pos(joint, value)
         return this
+    }
+
+    set_joints(...joints) {
+        this.disable_limit_check()
+        for (let i = 0; i < joints.length; i++) {
+            this.set_joint_pos(i, joints[i])
+        }
+        this.gbc.init_kc()
+        this.exec(3)
+        this.enable_limit_check()
     }
 
     stream(items, streamIndex = 0) {
@@ -357,7 +375,8 @@ export class GbcTest {
             for (let n = 0; n < count; n++) {
                 this.gbc.run(1, single_cycle, this.check_limits)
                 // get the joint status
-                const status = this.status_msg.status
+                const msg = this.status_msg
+                const status = msg.status
                 // @ts-ignore
                 status.joint && this.store.dispatch(jointsSlice.actions.status(status.joint))
                 // @ts-ignore
@@ -365,9 +384,10 @@ export class GbcTest {
                 status.activity &&
                     // @ts-ignore
                     this.store.dispatch(activitySlice.actions.status(status.activity))
-                this.status_msg.stream &&
+                if (msg.stream) {
                     // @ts-ignore
-                    this.store.dispatch(streamSlice.actions.status(this.status_msg.stream))
+                    this.store.dispatch(streamSlice.actions.status(msg.stream))
+                }
 
                 const store_state = this.store.getState()
 
@@ -395,7 +415,7 @@ export class GbcTest {
         // @ts-ignore
         activity && this.store.dispatch(activitySlice.actions.status(activity))
         const { tag, state } = this.store.getState().activity[0]
-        this.activity_api.update(tag, state)
+        this.activity_api.updateActivity(tag, state)
         return this
     }
 

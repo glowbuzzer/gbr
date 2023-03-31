@@ -72,8 +72,6 @@ test("after tool change cartesian position is modified (gcode version)", async (
 
 test("can move then change tool and perform another move without joint discontinuity", async () => {
     try {
-        gbc.disable_limit_check()
-
         await gbc
             .wrap(gbc.activity.moveToPosition(0, 0, 20).promise) // safe Z
             .start()
@@ -91,7 +89,7 @@ test("can move then change tool and perform another move without joint discontin
             .assertCompleted()
 
         await gbc
-            .wrap(gbc.activity.moveToPosition(0, 0, 0).promise) // material
+            .wrap(gbc.activity.moveLine(0, 0, 0).promise) // material
             .start()
             .iterations(45)
             .assertCompleted()

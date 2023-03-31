@@ -8,10 +8,11 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
-import { SoloActivityApi } from "../activity/activity_api"
 import { ActivityBuilder } from "../activity"
 import { useWorkspaceFrames } from "../frames"
 import { streamSlice } from "../stream"
+import { SoloActivityApi } from "../activity/solo/api"
+import { ActivityApi } from "../activity/api/interface"
 
 // const { load, save } = settings("gcode")
 
@@ -98,7 +99,7 @@ export type GCodeContextType = {
         kinematicsConfigurationIndex: number,
         currentToolIndex: number,
         newToolIndex: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ): ActivityBuilder[]
 
     mode?: GCodeMode

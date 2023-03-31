@@ -5,8 +5,8 @@
 import * as React from "react"
 import { useState } from "react"
 import { ReactReduxContext } from "react-redux"
-import { useKinematicsConfiguration, usePrefs, usePreview, useToolPath } from "@glowbuzzer/store"
-import { ToolPath } from "./ToolPath"
+import { usePrefs, usePreview, useTrace } from "@glowbuzzer/store"
+import { Trace } from "./Trace"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useContextBridge } from "@react-three/drei"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
@@ -67,8 +67,7 @@ export const ThreeDimensionalSceneTile = ({
     hidePreview: defaultHidePreview = undefined,
     children = undefined
 }: ThreeDimensionalSceneTileProps) => {
-    const { path, reset } = useToolPath(kinematicsConfigurationIndex)
-    const { frameIndex } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+    const { reset } = useTrace(kinematicsConfigurationIndex)
 
     const { current, update } = usePrefs()
 
@@ -98,7 +97,12 @@ export const ThreeDimensionalSceneTile = ({
                         {noLighting || <DefaultLighting />}
                         {noGridHelper || <DefaultGridHelper />}
                         {hidePreview ? null : <WorkspaceDimensions />}
-                        {hideTrace ? null : <ToolPath frameIndex={frameIndex} path={path} />}
+                        {hideTrace ? null : (
+                            <Trace
+                                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                                color="red"
+                            />
+                        )}
                         {disabled || hidePreview ? null : (
                             <PreviewPath preview={segments} highlightLine={highlightLine} />
                         )}
@@ -138,13 +142,15 @@ export const ThreeDimensionalSceneTile = ({
                     />
                 </DockToolbarButtonGroup>
                 <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon
-                        Icon={AutoGraphIcon}
-                        button
-                        title="Toggle Trace"
-                        onClick={toggle_trace}
-                        checked={!hideTrace}
-                    />
+                    {defaultHideTrace || (
+                        <GlowbuzzerIcon
+                            Icon={AutoGraphIcon}
+                            button
+                            title="Toggle Trace"
+                            onClick={toggle_trace}
+                            checked={!hideTrace}
+                        />
+                    )}
                     <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
                 </DockToolbarButtonGroup>
             </DockToolbar>

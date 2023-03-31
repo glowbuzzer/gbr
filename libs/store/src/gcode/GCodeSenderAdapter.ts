@@ -16,7 +16,7 @@ import {
 } from "../gbc"
 import { simplify } from "./simplify"
 import { GCodeContextType, GCodeMode } from "./index"
-import { GCodeActivityProvider } from "../activity/GCodeActivityProvider"
+import { GCodeActivityProvider } from "./GCodeActivityProvider"
 import { MoveArcBuilder } from "../activity"
 
 // noinspection JSUnusedGlobalSymbols

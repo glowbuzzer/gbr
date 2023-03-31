@@ -2,15 +2,13 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react"
+import React, {StrictMode, Suspense, useEffect, useRef} from "react"
 
 import {
-    BasicRobot,
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
-    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
@@ -18,39 +16,33 @@ import {
     FramesTileDefinition,
     GCodeTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitionList,
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
-    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { useGLTF, Environment, Cylinder } from "@react-three/drei"
+import {Environment, useGLTF} from "@react-three/drei"
 
 import {
+    ActivityApi,
     GCodeContextProvider,
-    SoloActivityApi,
-    useKinematics,
-    useFrame,
-    useJointPositions,
-    useKinematicsConfiguration,
-    useToolIndex,
+    GCodeContextType,
     GCodeMode,
     KC_KINEMATICSCONFIGURATIONTYPE,
-    GCodeContextType
+    useFrame,
+    useJointPositions,
+    useKinematicsConfiguration
 } from "@glowbuzzer/store"
-import { createRoot } from "react-dom/client"
+import {createRoot} from "react-dom/client"
 
-import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import {ExampleAppMenu} from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"
-import { puma_560_params } from "../../kinematics/KinChainParams"
-import { fk_puma, ik_puma } from "../../kinematics/PumaKin"
 
 const DEG90 = Math.PI / 2
 const DEG180 = Math.PI
@@ -163,7 +155,7 @@ function App() {
         kinematicsConfigurationIndex: number,
         current: number,
         next: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ) {
         return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }

@@ -10,7 +10,7 @@ export const ConnTest = () => {
     const countRef = useRef(1)
 
     function open_connection() {
-        const socket = new WebSocket("ws://10.10.0.2:9001/ws")
+        const socket = new WebSocket("ws://10.10.0.2:9002/ws")
 
         const id = countRef.current++
         const entry = { id, socket, title: "Connection " + id }
@@ -28,14 +28,14 @@ export const ConnTest = () => {
                 )
         }
 
-        socket.onopen = () => {
+        socket.onopen = function () {
             setConnections(update({ open: true }))
         }
-        socket.onclose = () => {
+        socket.onclose = function () {
             setConnections(update({ closed: true, open: false }))
         }
-        socket.onerror = e => {
-            console.log("Error", e)
+        socket.onerror = function (e) {
+            this.close()
             setConnections(update({ error: true, open: false }))
         }
     }

@@ -7,7 +7,7 @@ import { telemetrySlice } from "../telemetry"
 import { machineSlice } from "../machine"
 import { jointsSlice } from "../joints"
 import { kinematicsSlice, updateFroMsg } from "../kinematics"
-import { toolPathSlice } from "../toolpath"
+import { traceSlice } from "../trace"
 import { connectionSlice } from "./index"
 import { configSlice } from "../config"
 import { digitalInputsSlice } from "../io/din"
@@ -49,7 +49,7 @@ class StatusProcessor {
         msg.status.iin && dispatch(integerInputsSlice.actions.status(msg.status.iin))
         msg.status.iout && dispatch(integerOutputsSlice.actions.status(msg.status.iout))
         msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
-        msg.status.kc && dispatch(toolPathSlice.actions.status(msg.status.kc))
+        msg.status.kc && dispatch(traceSlice.actions.status(msg.status.kc))
 
         // this is after the status update on slices above, so state now has latest from GBC
         const { target, requestedTarget, nextControlWord, heartbeat } = getState().machine
@@ -59,7 +59,7 @@ class StatusProcessor {
             this.first = false
             this.tick = 0
 
-            dispatch(toolPathSlice.actions.reset(0)) // clear tool path on connect
+            dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
             dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
 
             if (target !== requestedTarget) {
@@ -170,6 +170,7 @@ class RequestResponseHandler {
  * This needs to be global on window, otherwise there is a circular dependency: connection -> actions -> useConnect -> connection
  */
 if (typeof window !== "undefined") {
+    console.log("Creating connection on window")
     window.connection = ((): Connection => {
         let ws: WebSocket = null
         let statusTimeout = null
@@ -178,6 +179,12 @@ if (typeof window !== "undefined") {
         return {
             connect(url): AppThunk {
                 return async (dispatch, getState) => {
+                    if (ws) {
+                        // close any existing connection
+                        // console.log("Closing existing connection")
+                        // ws.close()
+                    }
+
                     const statusProcessor = new StatusProcessor()
 
                     function no_status_handler() {
@@ -195,30 +202,35 @@ if (typeof window !== "undefined") {
                     }
 
                     dispatch(connectionSlice.actions.connecting())
-                    ws = new WebSocket(url)
-                    ws.onopen = () => {
+                    ws = null // we don't want to use the old websocket, so null it out
+                    console.log("connecting to", url)
+                    const localWebsocket = new WebSocket(url)
+                    localWebsocket.onopen = () => {
                         // websocket is open, so start expecting status messages
                         start_status_timeout()
                         // send a request to get the current config, but only if there's no current offline config
-                        requestResponseHandler.request(ws, "get config").then(response => {
-                            dispatch(configSlice.actions.setConfigFromRemote(response.config))
-                        })
+                        requestResponseHandler
+                            .request(localWebsocket, "get config")
+                            .then(response => {
+                                dispatch(configSlice.actions.setConfigFromRemote(response.config))
+                            })
                         dispatch(connectionSlice.actions.connected())
+                        ws = localWebsocket
                     }
-                    ws.onclose = () => {
+                    localWebsocket.onclose = () => {
                         ws = null
                         clear_status_timeout()
                         dispatch(connectionSlice.actions.disconnected())
                     }
-                    ws.onerror = () => {
-                        if (ws) {
-                            ws.close()
-                            ws = null
-                        }
+                    localWebsocket.onerror = function (e) {
+                        this.close()
+                        console.log("ERROR", e)
+                        ws = null
+                        localWebsocket.close()
                         clear_status_timeout()
                         dispatch(connectionSlice.actions.disconnected())
                     }
-                    ws.onmessage = event => {
+                    localWebsocket.onmessage = event => {
                         // message received so inspect it to decide where to route it (or parts of it)
                         try {
                             const msg = JSON.parse(event.data)
@@ -226,7 +238,7 @@ if (typeof window !== "undefined") {
                             if (msg.status) {
                                 // restart status timer
                                 start_status_timeout()
-                                statusProcessor.process(msg, dispatch, ws, getState)
+                                statusProcessor.process(msg, dispatch, localWebsocket, getState)
                             }
                             if (msg.stream) {
                                 dispatch(streamSlice.actions.status(msg.stream))
@@ -237,7 +249,7 @@ if (typeof window !== "undefined") {
                                     ) {
                                         // gbc state is paused by activity -- we want to transition asap to paused state
                                         // this is so UI can then allow operator to continue / unpause
-                                        ws.send(
+                                        localWebsocket.send(
                                             updateStreamCommandMsg(
                                                 streamIndex,
                                                 STREAMCOMMAND.STREAMCOMMAND_PAUSE
@@ -253,7 +265,7 @@ if (typeof window !== "undefined") {
                                         stream,
                                         store.machine.currentState,
                                         items => {
-                                            ws.send(
+                                            localWebsocket.send(
                                                 JSON.stringify({
                                                     stream: { streamIndex, items }
                                                 })

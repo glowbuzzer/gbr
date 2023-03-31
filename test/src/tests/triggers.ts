@@ -9,7 +9,7 @@ import {
     DigitalInputTriggerBuilder,
     IntegerInputTriggerBuilder,
     TimerTriggerBuilder
-} from "../../../libs/store/src/activity/triggers"
+} from "../../../libs/store/src/activity/api/triggers"
 import {
     ACTIVITYSTATE,
     TASK_COMMAND,
@@ -21,7 +21,59 @@ import {
 const test = uvu.suite("triggers")
 
 test.before.each(() => {
-    gbc.reset("configs/triggers.json")
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics()
+        .digitalInputs(3)
+        .tasks(
+            {
+                name: "task1 - trigger start",
+                activityCount: 1,
+                triggers: [
+                    {
+                        type: 2,
+                        action: 2,
+                        digital: {
+                            input: 1,
+                            when: 0
+                        }
+                    }
+                ]
+            },
+            {
+                name: "task2 - trigger cancel",
+                firstActivityIndex: 1,
+                activityCount: 1,
+                triggers: [
+                    {
+                        type: 2,
+                        action: 1,
+                        digital: {
+                            input: 2,
+                            when: 0
+                        }
+                    }
+                ]
+            }
+        )
+        .activities(
+            {
+                name: "activity1",
+                activityType: 14,
+                dwell: {
+                    ticksToDwell: 10
+                }
+            },
+            {
+                name: "activity2",
+                activityType: 14,
+                dwell: {
+                    ticksToDwell: 10
+                }
+            }
+        )
+        .finalize()
+
     gbc.enable_operation()
 })
 

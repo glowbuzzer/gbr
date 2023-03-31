@@ -18,14 +18,55 @@ const pz = state => state.status.kc[0].position.translation.z
  */
 
 test.before.each(() => {
-    gbc.reset("configs/frames_simple.json")
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics()
+        // there is always a default empty frame at position 0
+        .addFrame({
+            name: "tr_only",
+            translation: {
+                x: 10
+            }
+        })
+        .addFrame({
+            name: "both",
+            translation: {
+                x: 10
+            },
+            rotation: {
+                x: 0.7071068,
+                y: 0,
+                z: 0,
+                w: 0.7071068
+            }
+        })
+        .addFrame({
+            name: "rot_only",
+            rotation: {
+                x: 0.7071068,
+                y: 0,
+                z: 0,
+                w: 0.7071068
+            }
+        })
+        .addFrame({
+            name: "both_in_z",
+            translation: {
+                z: 325
+            },
+            rotation: {
+                x: 0.7071068,
+                y: 0,
+                z: 0,
+                w: 0.7071068
+            }
+        })
+        .finalize()
 
     gbc.disable_limit_check()
 
     // move machine away from origin
-    gbc.set_joint_pos(0, 10)
-    gbc.set_joint_pos(1, 10)
-    gbc.set_joint_pos(2, 0)
+    gbc.set_joints(10, 10, 0)
 
     gbc.enable_operation()
     gbc.enable_limit_check()
@@ -76,55 +117,6 @@ test("move_to_position with different frame index (translation and rotation)", a
         )
         await move.start().iterations(75).assertCompleted()
         assertNear(30, 0, 10, 0, 0, 0)
-    } finally {
-        gbc.plot("test")
-    }
-})
-
-test("move_arc in rotated frame (local xy-plane)", async () => {
-    try {
-        // kc frame index is zero (no translation): start position is 10,10,0 kc local
-        assertNear(10, 10, 0, 0, 0, 0)
-        const move = gbc.wrap(
-            gbc.activity
-                // we want to end up at 0,10 in target frame
-                // frame 3 is rotated 90deg in X
-                // so we are at 10,0,-10 in target frame
-                .moveArc(0, 10, null)
-                .radius(10)
-                .frameIndex(3).promise
-        )
-        // run roughly half of the arc
-        move.start().iterations(50)
-        // move start is 10 in y (kc frame)
-        // arc is in xy (target frame) and this is rotated 90 around x,
-        // so arc runs xz in kc frame and y doesn't change
-        gbc.assert.near(py, 10)
-        // run rest of arc
-        await move.iterations(50).assertCompleted()
-
-        assertNear(0, 10, 10, 0, 0, 0)
-    } finally {
-        gbc.plot("test")
-    }
-})
-
-test("move_arc using gcode in rotated frame", async () => {
-    const state = state => state.stream[0].state
-    const pos = joint => state => state.status.joint[joint].actPos
-
-    try {
-        gbc.send_gcode(`
-        g57
-        g1 x30 y0 z20
-        g2 i-30 x0 y-30
-        m2`)
-        gbc.exec(160)
-        gbc.assert
-            .selector(state, STREAMSTATE.STREAMSTATE_IDLE, "stream state not idle")
-            .assert.near(pos(0), 0)
-            .assert.near(pos(1), -20)
-            .assert.near(pos(2), -30)
     } finally {
         gbc.plot("test")
     }

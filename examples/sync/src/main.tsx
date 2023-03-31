@@ -5,21 +5,18 @@
 import React, { StrictMode, Suspense } from "react"
 
 import {
-    ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
-    Frustum,
     GCodeTile,
     GCodeTileDefinition,
     GlowbuzzerApp,
     GlowbuzzerTileDefinitionList,
-    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     TrackPosition
 } from "@glowbuzzer/controls"
-import { GCodeContextProvider, SoloActivityApi } from "@glowbuzzer/store"
+import { ActivityApi, GCodeContextProvider } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 
 import { ExampleAppMenu } from "../../util/ExampleAppMenu"
@@ -69,7 +66,7 @@ function App() {
         kinematicsConfigurationIndex: number,
         current: number,
         next: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ) {
         return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }

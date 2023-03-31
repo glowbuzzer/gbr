@@ -29,8 +29,11 @@ import {
     MachineStatus,
     MoveParametersConfig,
     PointsConfig,
+    SoloActivityConfig,
     SpindleConfig,
+    StreamConfig,
     STREAMSTATE,
+    StreamStatus,
     TaskConfig,
     TaskStatus,
     ToolConfig
@@ -68,6 +71,8 @@ export type GlowbuzzerConfig = {
     points?: PointsConfig[]
     task?: TaskConfig[]
     activity?: ActivityConfig[]
+    stream?: StreamConfig[]
+    soloActivity?: SoloActivityConfig[]
     dout?: DoutConfig[]
     aout?: AoutConfig[]
     iout?: IoutConfig[]

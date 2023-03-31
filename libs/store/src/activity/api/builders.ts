@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2023. Glowbuzzer. All rights reserved
  */
 
 import {
@@ -28,7 +28,7 @@ import {
     SYNCTYPE,
     TriggerParams,
     Vector3
-} from "../gbc"
+} from "../../gbc"
 import { Euler, Quaternion } from "three"
 
 export interface ActivityController {
@@ -49,6 +49,11 @@ export abstract class ActivityBuilder {
     constructor(controller: ActivityController) {
         this.controller = controller
         this.tag = controller.nextTag
+    }
+
+    withTag(tag: number): this {
+        this.tag = tag
+        return this
     }
 
     /** Builds the activity and returns an object that can be serialised and sent to GBC */
@@ -426,6 +431,7 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
     private _centre: Vector3
     private _centrePositionReference: POSITIONREFERENCE
     private _radius: number
+    private _plane: Quat
 
     /** The direction of the arc (clockwise or counter-clockwise). */
     direction(direction: ARCDIRECTION) {
@@ -446,6 +452,11 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
         return this
     }
 
+    plane(x, y, z, w) {
+        this._plane = { x, y, z, w }
+        return this
+    }
+
     protected build() {
         const arc: ArcsConfig = this._centre
             ? {
@@ -463,6 +474,9 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
               }
         arc.destination = this.cartesianPosition
         arc.arcDirection = this._direction
+        if (this._plane) {
+            arc.plane = this._plane
+        }
 
         return { ...super.build(), arc }
     }

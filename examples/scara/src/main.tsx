@@ -2,22 +2,19 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react"
+import React, {StrictMode, Suspense, useEffect, useRef} from "react"
 
 import {
-    BasicRobot,
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
-    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitionList,
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
@@ -27,27 +24,25 @@ import {
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { useGLTF, Environment, Cylinder } from "@react-three/drei"
+import {Environment, useGLTF} from "@react-three/drei"
 
 import {
+    ActivityApi,
     GCodeContextProvider,
-    SoloActivityApi,
-    useKinematics,
     useFrame,
     useJointPositions,
-    useKinematicsConfiguration,
-    useToolIndex
+    useKinematicsConfiguration
 } from "@glowbuzzer/store"
-import { createRoot } from "react-dom/client"
+import {createRoot} from "react-dom/client"
 
-import { ExampleAppMenu } from "../../util/ExampleAppMenu"
+import {ExampleAppMenu} from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"
-import { fk_RrprScara, ik_RrprScara } from "../../kinematics/RrprScaraKin"
-import { staubli_ts2_40_dh, staubli_tx40_dh } from "../../kinematics/KinChainParams"
-import { fk_tx40, ik_tx40 } from "../../kinematics/RobotKin"
+import {fk_RrprScara, ik_RrprScara} from "../../kinematics/RrprScaraKin"
+import {staubli_ts2_40_dh, staubli_tx40_dh} from "../../kinematics/KinChainParams"
+import {fk_tx40} from "../../kinematics/RobotKin"
 
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 0)
 const DEG90 = Math.PI / 2
@@ -185,7 +180,7 @@ function App() {
         kinematicsConfigurationIndex: number,
         current: number,
         next: number,
-        api: SoloActivityApi
+        api: ActivityApi
     ) {
         return [api.moveToPosition(null, null, 50), api.setToolOffset(next), api.dwell(500)]
     }

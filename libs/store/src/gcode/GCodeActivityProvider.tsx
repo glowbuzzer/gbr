@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityApiBase } from "./activity_api"
+import { ActivityApiBase } from "../activity/api/base"
 
 export class GCodeActivityProvider extends ActivityApiBase {
     // noinspection JSMismatchedCollectionQueryUpdate

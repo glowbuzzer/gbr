@@ -3,14 +3,14 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
-import deepEqual from "fast-deep-equal"
+import { shallowEqual, useSelector } from "react-redux"
 import { useEffect, useMemo } from "react"
-import { ActivityApiImpl, SoloActivityApi } from "./activity_api"
 import { ACTIVITYSTATE } from "../gbc"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useDefaultMoveParameters } from "../config"
+import { SoloActivityApi } from "./solo/api"
+import { ActivityApi } from "./api/interface"
 
 type ActivityStatus = {
     tag: number
@@ -34,23 +34,21 @@ export const activitySlice: Slice<
 /**
  * Instantiates and returns a solo activity API on a given kinematics configuration (KC) index.
  *
- * Each KC can have at most one solo activity executing at any time. For more information see {@link SoloActivityApi}.
+ * Each KC can have at most one solo activity executing at any time. For more information see {@link ActivityApi}.
  *
  * @param kinematicsConfigurationIndex The kinematics configuration index the solo activity API will execute against
  */
-export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityApi {
+export function useSoloActivity(kinematicsConfigurationIndex = 0): ActivityApi {
     const connection = useConnection()
     const defaultMoveParameters = useDefaultMoveParameters()
 
-    // console.log("DEFAULT MOVE PARAMS", defaultMoveParameters)
-
     const status = useSelector(
         ({ activity }: RootState) => activity[kinematicsConfigurationIndex],
-        deepEqual
+        shallowEqual
     ) as ActivityStatus
 
     const api = useMemo(() => {
-        return new ActivityApiImpl(
+        return new SoloActivityApi(
             kinematicsConfigurationIndex,
             defaultMoveParameters,
             connection.send
@@ -63,10 +61,11 @@ export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityA
         }
         // take care of resolving or rejecting previous promises when tag or solo activity status changes
         const { tag, state } = status
-        api.update(tag, state)
+        api.updateActivity(tag, state)
     }, [api, status])
 
     return api
 }
 
-export * from "./builders"
+export * from "./api/builders"
+export * from "./api/interface"
