@@ -208,8 +208,8 @@ export const useStream = (
     capacity: number
     /** The number of items that are currently buffered on the client waiting to be sent */
     pending: number
-    /** Access the streaming activity api for this stream */
-    activity: StreamingActivityApi
+    /** Send activities to the stream using the api */
+    send(fn: (api: StreamingActivityApi) => Promise<any>[])
     /** Send a stream command, for example pause, resume and cancel */
     sendCommand(state: STREAMCOMMAND)
     /** Reset the local stream queue */
@@ -248,7 +248,9 @@ export const useStream = (
         tag,
         capacity,
         pending,
-        activity: api,
+        send(factory: (api: StreamingActivityApi) => Promise<any>[]) {
+            return api.send(...factory(api))
+        },
         sendCommand(streamCommand: STREAMCOMMAND) {
             connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
         },

@@ -63,51 +63,47 @@ export const DemoTile = () => {
         lucyTrace.disable()
 
         Promise.all([
-            thomasStream.activity.send(
-                thomasStream.activity.dwell(0).addTrigger(syncTrigger).promise(),
-                thomasStream.activity
+            thomasStream.send(api => [
+                api.dwell(0).addTrigger(syncTrigger).promise(),
+                api
                     .moveArc()
                     .setFromPoint(points[2])
                     .frameIndex(1)
                     .centre(300, 0, 200)
                     .direction(ARCDIRECTION.ARCDIRECTION_CCW)
                     .promise(),
-                thomasStream.activity
+                api
                     .moveLine(100, 0, 0)
                     .relative(true)
                     .promise()
                     .then(() => thomasTrace.enable()),
                 // first traced line segment
-                thomasStream.activity.moveLine(0, 0, -150).duration(1500).relative(true).promise(),
+                api.moveLine(0, 0, -150).duration(1500).relative(true).promise(),
                 // second traced line segment
-                thomasStream.activity
+                api
                     .moveLine(0, -150, 0)
                     .duration(1500)
                     .relative(true)
                     .promise()
                     .then(() => thomasTrace.disable()),
-                thomasStream.activity
-                    .moveToPosition()
-                    .setFromPoint(points[2])
-                    .frameIndex(1)
-                    .promise()
-            ),
-            lucyStream.activity.send(
-                lucyStream.activity.dwell(0).addTrigger(syncTrigger).promise(),
-                lucyStream.activity
+                api.moveToPosition().setFromPoint(points[2]).frameIndex(1).promise()
+            ]),
+            lucyStream.send(api => [
+                api.dwell(0).addTrigger(syncTrigger).promise(),
+                api
                     .moveArc()
                     .setFromPoint(points[2])
                     .frameIndex(2)
                     .centre(300, 0, 200)
                     .direction(ARCDIRECTION.ARCDIRECTION_CCW)
                     .promise(),
-                lucyStream.activity
+                api
                     .moveLine(100, 0, 0)
                     .relative(true)
                     .promise()
                     .then(() => lucyTrace.enable()),
                 // synchronised traced arc segment
-                lucyStream.activity
+                api
                     .moveArc(350, 100, 100)
                     .duration(3000)
                     .centre(350, 0, 100)
@@ -117,8 +113,8 @@ export const DemoTile = () => {
                     .frameIndex(2)
                     .promise()
                     .then(() => lucyTrace.disable()),
-                lucyStream.activity.moveToPosition().setFromPoint(points[2]).frameIndex(2).promise()
-            )
+                api.moveToPosition().setFromPoint(points[2]).frameIndex(2).promise()
+            ])
         ]).then(() => {
             streams.forEach(s => {
                 s.reset()
