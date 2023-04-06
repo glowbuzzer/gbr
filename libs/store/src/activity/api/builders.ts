@@ -51,6 +51,7 @@ export abstract class ActivityBuilder {
     constructor(controller: ActivityController) {
         this.controller = controller
         this.tag = controller.nextTag
+        this.promise = this.promise.bind(this)
     }
 
     /** @ignore not currently supported */
