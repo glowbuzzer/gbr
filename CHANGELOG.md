@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.1](https://github.com/glowbuzzer/gbr/compare/v1.6.0...v1.6.1) (2023-04-06)
+
+
+### Bug Fix
+
+* export ConnectionProvider ([163ff1e](https://github.com/glowbuzzer/gbr/commit/163ff1ebbe1f8b18fdeeb38678eea3f0e68717d7))
+
 ## [1.6.0](https://github.com/glowbuzzer/gbr/compare/v1.5.0...v1.6.0) (2023-04-06)
 
 
