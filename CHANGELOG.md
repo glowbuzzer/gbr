@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/glowbuzzer/gbr/compare/v1.5.0...v1.6.0) (2023-04-06)
+
+
+### Feature
+
+* **#95:** provide joint space mode for gcode ([63f6066](https://github.com/glowbuzzer/gbr/commit/63f6066ed6bcff0c953ae0466ef01dff7181333f))
+* enhance telemetry tile ([268c1fc](https://github.com/glowbuzzer/gbr/commit/268c1fca0f2259731aabd620633da50d6801e500))
+* multiple streams ([d00909d](https://github.com/glowbuzzer/gbr/commit/d00909da100f06fb8ff1670cfaf9aebcb44d4c22))
+
+
+### Chore
+
+* add connection test component ([fd49432](https://github.com/glowbuzzer/gbr/commit/fd494320931c5150a8814ffe88c3d624872265d0))
+* add double staubli example ([8ad7c9a](https://github.com/glowbuzzer/gbr/commit/8ad7c9a21639034ea6b3abddbeb7a7591c86fbde))
+* add initial drives example ([2c7323f](https://github.com/glowbuzzer/gbr/commit/2c7323f4644d3378dba1ace9e50ae02dd24e9a55))
+* add OscillatingMoveTile.tsx to staubli example ([33c48d2](https://github.com/glowbuzzer/gbr/commit/33c48d248c0d037ab91191857a88dc6abd4b6d07))
+* Added moveable staubli ([4bd7445](https://github.com/glowbuzzer/gbr/commit/4bd74458f46ad3ae54e7b0ccdbd0a6e7ad882d4d))
+* Added moveable staubli ([046baf1](https://github.com/glowbuzzer/gbr/commit/046baf182660975a7838b11259b166ac24f0a220))
+* Demo moves ([b596b11](https://github.com/glowbuzzer/gbr/commit/b596b116e31819d0eb386586468efe5033223e3c))
+* export ConfigLiveEditProvider ([e6cd5e8](https://github.com/glowbuzzer/gbr/commit/e6cd5e85b5d367daefd247f9095cf34f36df7eb5))
+* fix self-reference in import ([f61af43](https://github.com/glowbuzzer/gbr/commit/f61af435cc760f3584849576a9e6f88f30ec0af0))
+* fix self-references in import ([71ded3a](https://github.com/glowbuzzer/gbr/commit/71ded3a5d09125d7da37f10668954ee8ce3c16d8))
+* get all tests passing ([359ddeb](https://github.com/glowbuzzer/gbr/commit/359ddeb3680f49e7a06f3fbd8516e836385aed48))
+* improve code doc ([2c7323f](https://github.com/glowbuzzer/gbr/commit/2c7323f4644d3378dba1ace9e50ae02dd24e9a55))
+* initial work on handling multiple streams of activities ([bfd54a4](https://github.com/glowbuzzer/gbr/commit/bfd54a4f4c98b1421ac90ef6c9af3016aaa9a73b))
+* initial work on time sync'd motion example ([028f76b](https://github.com/glowbuzzer/gbr/commit/028f76b6b55beea4d81bd7ea3f614ef992d87e08))
+* put vite cache under node_modules, with dir per example project ([ad6495e](https://github.com/glowbuzzer/gbr/commit/ad6495e70299eb42e7ad3047cd8602b090c105ee))
+* refactor stream hook ([400757e](https://github.com/glowbuzzer/gbr/commit/400757e55939b78ec9870e5f29f6f6294adc1a08))
+* refactoring and work on Staubli dance example project ([5a864e4](https://github.com/glowbuzzer/gbr/commit/5a864e4b9c47938856dce33d6d4eaa0536356f3f))
+* remove depreated use of antd attribute ([238a03d](https://github.com/glowbuzzer/gbr/commit/238a03d44339ae390b96012fac38979de63c476d))
+* tweak sync demo ([220b4b3](https://github.com/glowbuzzer/gbr/commit/220b4b37e286a0f539fb03aedb197e9e35389aa7))
+* update gbc.ts ([645cc80](https://github.com/glowbuzzer/gbr/commit/645cc80d9aa6cce52f6d8834ec20b2f8a704b91d))
+* update runner for publish-test-code.yml ([5d979fb](https://github.com/glowbuzzer/gbr/commit/5d979fbc068a36bb7fba5bb963a31582c08bc4ec))
+* various fixes and refactoring ([3fbc4d0](https://github.com/glowbuzzer/gbr/commit/3fbc4d00e8d45499aadbb70c4f682401407aa416))
+* various refactoring ([2c7323f](https://github.com/glowbuzzer/gbr/commit/2c7323f4644d3378dba1ace9e50ae02dd24e9a55))
+* work on sync demo ([268c1fc](https://github.com/glowbuzzer/gbr/commit/268c1fca0f2259731aabd620633da50d6801e500))
+
+
+### Bug Fix
+
+* bind promise method to 'this' ([7de05ad](https://github.com/glowbuzzer/gbr/commit/7de05ad3bef7b242151bd3108ca93c5dfbe898e6))
+* fixes to stream handling ([268c1fc](https://github.com/glowbuzzer/gbr/commit/268c1fca0f2259731aabd620633da50d6801e500))
+
 ## [1.5.0](https://github.com/glowbuzzer/gbr/compare/v1.4.2...v1.5.0) (2023-01-10)
 
 
