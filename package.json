@@ -81,5 +81,5 @@
     "vite": "^4.2.1",
     "vite-plugin-static-copy": "^0.13.1"
   },
-  "version": "1.5.0"
+  "version": "1.6.0"
 }
