@@ -159,4 +159,11 @@ export type GlowbuzzerStatus = {
         /** The current state of all tasks. */
         tasks: TaskStatus[]
     }
+    telemetry: {
+        t: number
+        m7cap: number
+        m4cap: number
+        m7wait: number
+        joints: number[]
+    }[]
 }

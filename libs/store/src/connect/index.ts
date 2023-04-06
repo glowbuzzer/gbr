@@ -1,13 +1,5 @@
-/*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
- */
-
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
-import { RootState } from "../root"
-import { usePrefs } from "../prefs"
-import { useMemo } from "react"
-import { MessageResponse } from "./ConnectionFactory"
+import { MessageResponse } from "./RequestResponseHandler"
+import React from "react"
 
 export enum ConnectionState {
     DISCONNECTED = "DISCONNECTED",
@@ -15,114 +7,41 @@ export enum ConnectionState {
     CONNECTED = "CONNECTED"
 }
 
-type ConnectionSliceType = {
+export type GlowbuzzerConnectionContextType = {
+    /** Indicates if connection has been established */
+    connected: boolean
+    /** Connect to remote websocket on the given url, and indicate if auto-reconnect is enabled (default: true) */
+    connect(url: string, autoConnect?: boolean): void
+    /** Disconnect from remote websocket */
+    disconnect(): void
+    /** Reconnect to the last connected url */
+    reconnect(): void
+    /** Send a message to the remote websocket */
+    send(msg): void
+    /** Send a request to the remote websocket and return a promise that resolves when the request has been completed */
+    request(type, body): Promise<MessageResponse>
+    /** The current connection state */
     state: ConnectionState
-    error: unknown
-    autoConnect: boolean
+    /** Whether status messages are being received */
     statusReceived: boolean
+    /** Whether the connection should be reestablished automatically if it drops */
+    autoConnect: boolean
 }
 
-export const connectionSlice: Slice<
-    ConnectionSliceType,
-    {
-        connected: CaseReducer<ConnectionSliceType>
-        connecting: CaseReducer<ConnectionSliceType>
-        disconnected: CaseReducer<ConnectionSliceType>
-        autoConnect: CaseReducer<ConnectionSliceType, PayloadAction<boolean>>
-        error: CaseReducer<ConnectionSliceType, PayloadAction<unknown>>
-        statusReceived: CaseReducer<ConnectionSliceType, PayloadAction<boolean>>
-    }
-> = createSlice({
-    name: "connection",
-    initialState: {
-        state: ConnectionState.DISCONNECTED as ConnectionState,
-        error: null,
-        autoConnect: false,
-        statusReceived: true // assume all okay at start
-    } as ConnectionSliceType,
-    reducers: {
-        connected: state => ({ ...state, state: ConnectionState.CONNECTED }),
-        connecting: state => {
-            state.state = ConnectionState.CONNECTING
-            state.statusReceived = true
-            state.error = null
-        },
-        disconnected: state => ({ ...state, state: ConnectionState.DISCONNECTED }),
-        autoConnect: (state, action) => ({ ...state, autoConnect: action.payload }),
-        error: (state, action) => ({
-            ...state,
-            state: ConnectionState.DISCONNECTED,
-            error: action.payload
-        }),
-        statusReceived: (state, action) => {
-            state.statusReceived = action.payload
-        }
-    }
-})
+export const GlowbuzzerConnectionContext =
+    React.createContext<GlowbuzzerConnectionContextType>(null)
 
 /**
- * Returns an object containing the current connection state and methods to interact with GBC.
+ * Provides a way to connect to a remote instance of GBC, and send and receive messages.
  */
-export const useConnection = (): {
-    /** Current state of the connection */
-    state: ConnectionState
-    /** @ignore **/
-    error: unknown
-    /** Indicates connection should be re-established automatically after unexpected disconnect */
-    autoConnect: boolean
-    /** Indicates status is being received in a timely manner (heartbeat) */
-    statusReceived: boolean
-    /** Indicates connection is established */
-    connected: boolean
-    /** Connect to url */
-    connect(url: string): void
-    /** Close connection and reconnect */
-    reconnect(): void
-    /** Disconnect */
-    disconnect(): void
-    /** Send a message over websocket. See GBC schema docs for format */
-    send(message): void
-    /** Make a request over websocket. See GBC schema docs for format */
-    request(type, body): Promise<MessageResponse>
-    /** Set whether connection should be re-established automatically after unexpected disconnects */
-    setAutoConnect(value: boolean): void
-} => {
-    const { state, error, autoConnect, statusReceived } = useSelector(
-        ({ connection }: RootState) => connection,
-        shallowEqual
-    )
-    const dispatch = useDispatch()
-    const prefs = usePrefs()
+export function useConnection() {
+    const context = React.useContext(GlowbuzzerConnectionContext)
+    if (!context) {
+        throw new Error("useConnection must be used within a ConnectionProvider")
+    }
 
-    // window.connection is created in ConnectionFactory.ts
-
-    return useMemo(
-        () => ({
-            state,
-            error,
-            autoConnect,
-            statusReceived,
-            connected: state === ConnectionState.CONNECTED,
-            connect(url) {
-                dispatch<any>(window.connection.connect(url))
-                dispatch(connectionSlice.actions.autoConnect(true))
-            },
-            reconnect() {
-                dispatch<any>(window.connection.connect(prefs.current.url))
-            },
-            disconnect() {
-                dispatch<any>(window.connection.disconnect())
-            },
-            send(msg) {
-                dispatch<any>(window.connection.send(msg))
-            },
-            request(type, body) {
-                return dispatch<any>(window.connection.request(type, body))
-            },
-            setAutoConnect(value: boolean) {
-                dispatch(connectionSlice.actions.autoConnect(value))
-            }
-        }),
-        [state, error, autoConnect, dispatch, prefs, statusReceived]
-    )
+    return context
 }
+
+export * from "./StatusProcessor"
+export * from "./RequestResponseHandler"

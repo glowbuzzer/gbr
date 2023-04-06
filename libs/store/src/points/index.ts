@@ -24,7 +24,11 @@ export const pointsSlice: Slice<PointsSliceType> = createSlice({
     }
 })
 
-export function usePoints(overrides?: PointsConfig[]) {
+/**
+ * Provides access to the points that have been configured. The overrides parameter is used by GBR for dynamic editing of points
+ * and should not generally be used by applications.
+ */
+export function usePointsList(overrides?: PointsConfig[]) {
     const config = useConfig()
     // normalise points
     return (
@@ -47,6 +51,7 @@ export function usePoints(overrides?: PointsConfig[]) {
     )
 }
 
+/** @ignore - used internally by the points tile */
 export function useSelectedPoint(): [number, (index: number) => void] {
     const dispatch = useDispatch()
     const selectedPoint = useSelector(

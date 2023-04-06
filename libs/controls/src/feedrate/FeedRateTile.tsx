@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from "react"
-import { useConfig, useFeedRate } from "@glowbuzzer/store"
+import { useConfig, useFeedRate, useKinematicsConfigurationList } from "@glowbuzzer/store"
 import { Slider } from "antd"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { CaretRightFilled, PauseOutlined } from "@ant-design/icons"
@@ -36,9 +36,9 @@ export const FeedRateTile = () => {
 
     const timer = useRef(null)
 
-    const { kinematicsConfiguration } = useConfig()
+    const kinematics = useKinematicsConfigurationList()
 
-    const options = kinematicsConfiguration.map((kc, index) => ({
+    const options = kinematics.map((kc, index) => ({
         title: kc.name,
         value: index
     }))

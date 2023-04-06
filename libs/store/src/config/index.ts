@@ -7,12 +7,12 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
-import { useConnection } from "../connect"
 import { settings } from "../util/settings"
+import { useConnection } from "../connect"
 
 const { load, save } = settings("config")
 
-export const DEFAULT_CONFIG: GlowbuzzerConfig = {
+const DEFAULT_CONFIG: GlowbuzzerConfig = {
     frames: [{}],
     kinematicsConfiguration: [
         {

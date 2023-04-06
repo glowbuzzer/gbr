@@ -54,12 +54,12 @@ export enum FaultCode {
 type MachineStateHandling = {
     currentState?: MachineState
     desiredState: DesiredState
-    nextControlWord?: number | void
+    nextControlWord?: number
     requestedTarget: MACHINETARGET
     heartbeatReceived?: boolean
 }
 
-type MachineSliceType = GlowbuzzerMachineStatus & MachineStateHandling
+export type MachineSliceType = GlowbuzzerMachineStatus & MachineStateHandling
 
 // createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
 export const machineSlice: Slice<MachineSliceType> = createSlice({
@@ -83,6 +83,7 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
                 operationError,
                 operationErrorMessage
             } = action.payload
+
             state.statusWord = statusWord
             state.controlWord = controlWord
             state.activeFault = activeFault
@@ -119,6 +120,7 @@ export const machineSlice: Slice<MachineSliceType> = createSlice({
     }
 })
 
+/** Returns the current machine state using the CiA 402 state machine codes. */
 export function useMachineState(): MachineState {
     return useSelector<RootState, MachineState>(state => state.machine.currentState)
 }
@@ -160,6 +162,8 @@ export function useMachine(): {
     currentState?: MachineState
     /** Whether the desired state of the machine is operational (enabled) or standby (disabled) */
     desiredState: DesiredState
+    /** @ignore */
+    nextControlWord?: number
     /** Sets the desired backend target */
     setDesiredMachineTarget(target: MACHINETARGET): void
     /** Sets the desired machine state, operational (enabled) or standby (disabled) */

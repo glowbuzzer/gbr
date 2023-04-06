@@ -11,7 +11,7 @@ import {
     Quat,
     useConfigLoader,
     useFramesList,
-    usePoints,
+    usePointsList,
     useSelectedPoint,
     Vector3
 } from "@glowbuzzer/store"
@@ -36,7 +36,7 @@ export const PointsTile = () => {
     const [selected, setSelected] = useSelectedPoint()
     const [editMode, setEditMode] = useState(false)
 
-    const points = usePoints(editedPoints)
+    const points = usePointsList(editedPoints)
     const frames = useFramesList()
     const loader = useConfigLoader()
 

@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2023. Glowbuzzer. All rights reserved
  */
 
 import { useJoint, useJointCount } from "@glowbuzzer/store"
-import { DockTileDefinitionBuilder, MotorDro, SegmentDisplay } from "@glowbuzzer/controls"
-import { ExampleTileContent } from "../../util/styles"
+import { DockTileDefinitionBuilder, MotorVisualization, SegmentDisplay } from "@glowbuzzer/controls"
+import { ExampleTileContent } from "./styles"
 
 import React from "react"
 import styled from "styled-components"
@@ -32,7 +32,7 @@ const JointSpinnerItem = ({ index }) => {
     return (
         <div key={index} className="motor" style={{ display: "inline-block" }}>
             <div>
-                <MotorDro width={200} value={j.actPos || 0} />
+                <MotorVisualization width={200} value={j.actPos || 0} />
             </div>
             <div className="dro">
                 <SegmentDisplay value={j.actPos || 0} toFixed={3} />

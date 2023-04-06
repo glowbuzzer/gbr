@@ -114,13 +114,25 @@ export interface ActivityApi {
      */
     setIout(index: number, value: number): IoutBuilder
 
+    /**
+     * Sets the current tool offset. This is used to calculate the position of the tool tip and is typically
+     * invoked after a tool change.
+     *
+     * @param toolIndex
+     */
     setToolOffset(toolIndex: number): ToolOffsetBuilder
 
     /**
-     * @ignore Has no effect for solo activities
+     * Not used for solo activities, and not used by default for streamed activities. If the stream is configured
+     * to require an end program before starting execution, this will be used to end the program.
      */
     endProgram(): EndProgramBuilder
 
+    /**
+     * Not used for solo activities. For streamed activities, this will pause the stream until the stream is resumed
+     * by sending a stream resume command. This is useful, for example, for tool changes where the operator has to perform
+     * a task before resuming execution.
+     */
     pauseProgram(): PauseProgramBuilder
 
     /** Cancel any currently executing activity */

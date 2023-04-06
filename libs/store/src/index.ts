@@ -2,15 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import "./connect/ConnectionFactory"
-
 export * from "./gbc"
-
+export * from "./connect"
 export * from "./util/frame_utils"
 export * from "./activity/api/base"
-export { ConnectionState, useConnection, connectionSlice } from "./connect"
 export * from "./machine"
-export { useConfig, configSlice } from "./config"
+export * from "./config"
 export * from "./prefs"
 export * from "./frames"
 export * from "./points"
@@ -20,7 +17,7 @@ export * from "./stream"
 export * from "./gcode"
 export * from "./preview"
 export * from "./telemetry"
-export { useJoint, useJointCount, useJointConfig, jointsSlice } from "./joints"
+export * from "./joints"
 export * from "./io/din"
 export * from "./io/dout"
 export * from "./io/ain"
@@ -29,15 +26,9 @@ export * from "./io/iin"
 export * from "./io/iout"
 export * from "./kinematics"
 export * from "./trace"
-
 export * from "./root"
-
 export * from "./util/settings"
 export * from "./util/enhancers/digitalInputEnhancer"
-
 export * from "./StateMachine"
-
-export * from "./types"
-
 export * from "./config"
-export { SoloActivityApi } from "./activity/solo/api"
+export * from "./activity/solo/api"

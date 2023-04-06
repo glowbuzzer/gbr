@@ -7,6 +7,9 @@
  * and determines what state command should next be sent in order to transition the state machine towards the desired state.
  */
 
+/**
+ * The state of the machine as reported by GBC, using the CiA 402 state machine.
+ */
 export enum MachineState {
     UNKNOWN = "UNKNOWN",
     FAULT_REACTION_ACTIVE = "FAULT_REACTION_ACTIVE",

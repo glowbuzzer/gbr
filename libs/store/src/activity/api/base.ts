@@ -154,14 +154,6 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
     }
 
     updateActivity(tag: number, state: ACTIVITYSTATE) {
-        // console.log(
-        //     "UPDATE INCOMING TAG=",
-        //     tag,
-        //     "CURRENT=",
-        //     this.currentTag,
-        //     "STATE=",
-        //     ACTIVITYSTATE[state]
-        // )
         if (!this.currentTag) {
             this.currentTag = tag + 1
         }

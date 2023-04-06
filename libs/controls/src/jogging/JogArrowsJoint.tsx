@@ -3,14 +3,15 @@
  */
 
 import * as React from "react"
+import { useMemo } from "react"
 import {
     JOINT_TYPE,
     JointConfig,
     LIMITPROFILE,
     MoveParametersConfig,
     useJoint,
-    useJointConfig,
-    useKinematicsConfigurationList,
+    useJointConfigurationList,
+    useKinematicsConfiguration,
     usePrefs,
     usePreview,
     useSoloActivity
@@ -26,7 +27,7 @@ import {
     DoubleRightOutlined
 } from "@ant-design/icons"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { useMemo } from "react"
+import { useJointsForKinematicsConfiguration } from "../util/hooks"
 
 const JointSliderDiv = styled.div`
     display: flex;
@@ -194,15 +195,7 @@ export const JogArrowsJoint = ({
     kinematicsConfigurationIndex,
     jogSpeed
 }: JogArrowsJointProps) => {
-    const kcs = useKinematicsConfigurationList()
-
-    const kcConfig = kcs[kinematicsConfigurationIndex] || kcs[0]
-
-    const joint_config = useJointConfig()
-    const joints = kcConfig.participatingJoints.map(jointNum => ({
-        index: jointNum,
-        config: joint_config[jointNum]
-    }))
+    const joints = useJointsForKinematicsConfiguration(kinematicsConfigurationIndex)
 
     const moveParams: MoveParametersConfig = {
         vmaxPercentage: jogSpeed,

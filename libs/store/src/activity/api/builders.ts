@@ -42,7 +42,9 @@ export interface ActivityController {
 export abstract class ActivityBuilder {
     /** @ignore */
     tag: number
+    /** @ignore */
     protected readonly controller: ActivityController
+    /** @ignore */
     triggers: TriggerParams[] = []
 
     /** @ignore */
@@ -51,6 +53,7 @@ export abstract class ActivityBuilder {
         this.tag = controller.nextTag
     }
 
+    /** @ignore not currently supported */
     withTag(tag: number): this {
         this.tag = tag
         return this
@@ -70,6 +73,7 @@ export abstract class ActivityBuilder {
         return this.triggers.length ? { ...command, triggers: this.triggers } : command
     }
 
+    /** Add a trigger to this activity */
     addTrigger(trigger: TriggerParams) {
         this.triggers.push(trigger)
         return this
@@ -78,10 +82,8 @@ export abstract class ActivityBuilder {
     /**
      * Executes the activity and returns a promise that will be resolved when the activity is complete.
      */
-    get promise(): () => Promise<{ tag: number; completed: boolean }> {
-        return () => {
-            return this.controller.execute(this.command)
-        }
+    promise(): Promise<{ tag: number; completed: boolean }> {
+        return this.controller.execute(this.command)
     }
 
     /** The name of the command. */
@@ -91,7 +93,7 @@ export abstract class ActivityBuilder {
     protected abstract get activityType(): ACTIVITYTYPE
 
     /**
-     * Build the activity parameters
+     * Build the activity parameters. Used internally and should not be used by applications.
      * @return An object containing any parameters that will be sent for the activity.
      */
     protected abstract build()
@@ -101,6 +103,7 @@ export class CancelActivityBuilder extends ActivityBuilder {
     protected commandName = ""
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_NONE
 
+    /** @ignore */
     protected build() {
         // this activity type has no params (not even union member)
         return null
@@ -111,6 +114,7 @@ export class EndProgramBuilder extends ActivityBuilder {
     protected commandName = "endProgram"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM
 
+    /** @ignore */
     protected build() {
         // this activity type has no params (not even union member)
         return null
@@ -121,6 +125,7 @@ export class PauseProgramBuilder extends ActivityBuilder {
     protected commandName = "pauseProgram"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM
 
+    /** @ignore */
     protected build() {
         // this activity type has no params (not even union member)
         return null
@@ -138,6 +143,7 @@ export class DwellActivityBuilder extends ActivityBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): DwellActivityParams {
         return {
             ticksToDwell: this._ticksToDwell
@@ -173,6 +179,7 @@ export class SpindleActivityBuilder extends ActivityBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): SpindleActivityParams {
         return {
             spindleIndex: this._spindleIndex,
@@ -184,6 +191,7 @@ export class SpindleActivityBuilder extends ActivityBuilder {
 }
 
 abstract class SimpleMoveBuilder extends ActivityBuilder {
+    /** @ignore */
     private _params: MoveParametersConfig = {}
 
     /** The move parameters. */
@@ -198,6 +206,10 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
         return this
     }
 
+    /**
+     * Specify how long his move should take to complete.
+     * @param durationInMillis The duration of the move in milliseconds.
+     */
     duration(durationInMillis: number) {
         this._params = {
             ...this._params,
@@ -207,6 +219,7 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): {
         moveParams?: MoveParametersConfig
         kinematicsConfigurationIndex?: number
@@ -219,6 +232,7 @@ abstract class SimpleMoveBuilder extends ActivityBuilder {
 }
 
 abstract class MoveWithFrameBuilder extends SimpleMoveBuilder {
+    /** @ignore */
     protected _frameIndex = 0xffff // magic number to mean stay in local frame
 
     /** The frame index to use for the move */
@@ -229,8 +243,11 @@ abstract class MoveWithFrameBuilder extends SimpleMoveBuilder {
 }
 
 abstract class MoveBuilder extends MoveWithFrameBuilder {
+    /** @ignore */
     protected _translation: Vector3
+    /** @ignore */
     protected _rotation: Quat = { x: null, y: null, z: null, w: null }
+    /** @ignore */
     protected _positionReference: POSITIONREFERENCE
 
     /** Specify if the move is relative (default is absolute move). */
@@ -265,6 +282,10 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
         return this.rotation(q.x, q.y, q.z, q.w)
     }
 
+    /**
+     * Set the target position for the move from a cartesian position.
+     * @param cartesianPosition The cartesian position to use for the move.
+     */
     setFromCartesianPosition(cartesianPosition: CartesianPosition) {
         this._positionReference = cartesianPosition.positionReference
         this._translation = cartesianPosition.translation
@@ -273,6 +294,10 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
         return this
     }
 
+    /**
+     * Set the target position for the move from a position (typically one from the configuration).
+     * @param point The point to use for the move.
+     */
     setFromPoint(point: PointsConfig) {
         this._frameIndex = isNaN(point.frameIndex) ? this._frameIndex : point.frameIndex
         this._translation = point.translation
@@ -309,6 +334,7 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): MoveToPositionStream {
         return {
             ...super.build(),
@@ -324,6 +350,7 @@ export class MoveLineBuilder extends CartesianMoveBuilder {
     protected commandName = "moveLine"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE
 
+    /** @ignore */
     protected build(): MoveLineStream {
         return {
             ...super.build(),
@@ -352,6 +379,7 @@ export class MoveJointsBuilder extends SimpleMoveBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): MoveJointsStream {
         return {
             ...super.build(),
@@ -372,6 +400,7 @@ export class MoveJointsAtVelocityBuilder extends SimpleMoveBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): MoveJointsAtVelocityStream {
         return {
             ...super.build(),
@@ -391,6 +420,7 @@ export class MoveVectorAtVelocityBuilder extends MoveWithFrameBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): MoveVectorAtVelocityStream {
         return {
             ...super.build(),
@@ -413,6 +443,7 @@ export class MoveRotationAtVelocityBuilder extends MoveWithFrameBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): MoveRotationAtVelocityStream {
         return {
             ...super.build(),
@@ -427,10 +458,15 @@ export class MoveRotationAtVelocityBuilder extends MoveWithFrameBuilder {
 export class MoveArcBuilder extends CartesianMoveBuilder {
     protected commandName = "moveArc"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC
+    /** @ignore */
     private _direction: ARCDIRECTION = ARCDIRECTION.ARCDIRECTION_CW
+    /** @ignore */
     private _centre: Vector3
+    /** @ignore */
     private _centrePositionReference: POSITIONREFERENCE
+    /** @ignore */
     private _radius: number
+    /** @ignore */
     private _plane: Quat
 
     /** The direction of the arc (clockwise or counter-clockwise). */
@@ -452,11 +488,13 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
         return this
     }
 
+    /** The plane of the arc, used for plane switching if arc should not be in the XY plane. */
     plane(x, y, z, w) {
         this._plane = { x, y, z, w }
         return this
     }
 
+    /** @ignore */
     protected build() {
         const arc: ArcsConfig = this._centre
             ? {
@@ -491,6 +529,7 @@ abstract class SetOutputBuilder extends ActivityBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): { valueToSet? } {
         return {
             valueToSet: this._valueToSet
@@ -509,6 +548,7 @@ export class DoutBuilder extends SetOutputBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): SetDoutActivityParams {
         return {
             doutToSet: this._doutToSet,
@@ -528,6 +568,7 @@ export class AoutBuilder extends SetOutputBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): SetAoutActivityParams {
         return {
             aoutToSet: this._aoutToSet,
@@ -547,6 +588,7 @@ export class IoutBuilder extends SetOutputBuilder {
         return this
     }
 
+    /** @ignore */
     protected build(): SetIoutActivityParams {
         return {
             ioutToSet: this._ioutToSet,
@@ -565,6 +607,7 @@ export class ToolOffsetBuilder extends ActivityBuilder {
         return this
     }
 
+    /** @ignore */
     protected build() {
         return {
             toolIndex: this._toolIndex

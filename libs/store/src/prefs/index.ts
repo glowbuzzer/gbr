@@ -110,6 +110,11 @@ export function useUnitConversion(): {
     )
 }
 
+/**
+ * Provides a hook for retrieving and updating a single preference.
+ * @param name
+ * @param defaultValue
+ */
 export function usePref<T = any>(name: string, defaultValue?: T): [T, (value: T) => void] {
     const prefs = useSelector(({ prefs }: RootState) => prefs, shallowEqual)
     const dispatch = useDispatch()

@@ -11,7 +11,7 @@ import {
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
     useJoint,
-    useJointConfig,
+    useJointConfigurationList,
     useJointCount,
     usePrefs
 } from "@glowbuzzer/store"
@@ -89,7 +89,7 @@ const styles: { [key: string]: CSSProperties } = {
 const JointDroItem = ({ index, warningThreshold }) => {
     const prefs = usePrefs()
     const j = useJoint(index)
-    const config = useJointConfig()[index]
+    const config = useJointConfigurationList()[index]
 
     if (!config) {
         return null

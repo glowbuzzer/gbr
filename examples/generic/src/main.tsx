@@ -11,7 +11,7 @@ import {
     GlowbuzzerTileDefinitionList
 } from "@glowbuzzer/controls"
 
-import { JointSpinnersTileDefinition } from "./JointSpinnersTile"
+import { JointSpinnersTileDefinition } from "../../util/JointSpinnersTile"
 import { ActivityApi, GCodeContextProvider } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"
 

@@ -7,7 +7,6 @@ import {
     CartesianPosition,
     POSITIONREFERENCE,
     Quat,
-    useKinematicsCartesianPosition,
     useKinematicsConfigurationList,
     useKinematicsConfigurationPositions,
     usePref,

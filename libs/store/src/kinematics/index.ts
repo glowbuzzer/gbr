@@ -3,13 +3,13 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { shallowEqual, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { useConnection } from "../connect"
 import { useConfig } from "../config"
 import { useFrames } from "../frames"
-import { useRawJointPositions } from "../joints"
+import { useJointCount, useRawJointPositions } from "../joints"
 import {
     CartesianPositionsConfig,
     GlowbuzzerKinematicsConfigurationStatus,
@@ -191,11 +191,20 @@ export function updateDisableLimitsMsg(kc: number, disableLimits) {
 }
 
 /**
- * Returns a list of kinematics configurations in the configuration
+ * Provides a list of kinematics configurations in the configuration
  */
 export function useKinematicsConfigurationList() {
     const config = useConfig()
-    return config.kinematicsConfiguration
+    return config.kinematicsConfiguration || []
+}
+
+/** Provides the current state of all kinematics configurations, including translation and rotation. */
+export function useKinematicsList() {
+    return useSelector(({ kinematics }: RootState) => kinematics, deepEqual)
+}
+
+const NULL_KINEMATICS: KinematicsConfigurationConfig = {
+    participatingJoints: []
 }
 
 /**
@@ -216,11 +225,10 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
         deepEqual
     )
     const rawJointPositions = useRawJointPositions()
-    const configs = useKinematicsConfigurationList()
+    const { participatingJoints } = useKinematicsConfiguration(kinematicsConfigurationIndex)
 
-    const { participatingJoints } = configs[kinematicsConfigurationIndex] || configs[0]
     const jointPositions = useMemo(
-        () => participatingJoints.map(j => rawJointPositions[j]),
+        () => participatingJoints?.map(j => rawJointPositions[j]),
         [rawJointPositions, participatingJoints]
     )
 
@@ -243,10 +251,23 @@ export const useKinematics = (kinematicsConfigurationIndex: number) => {
  * @param kinematicsConfigurationIndex The kinematics configuration index
  */
 export const useKinematicsConfiguration = (kinematicsConfigurationIndex: number) => {
+    const jointCount = useJointCount()
     const list = useKinematicsConfigurationList()
-    return list[kinematicsConfigurationIndex] || list[0]
+    const config = list[kinematicsConfigurationIndex]
+    if (config && !config.participatingJoints) {
+        throw new Error(
+            "Invalid kinematics configuration. A participatingJoints array must be defined."
+        )
+    }
+    return (
+        config || {
+            ...NULL_KINEMATICS,
+            participatingJoints: Array.from(Array(jointCount).keys())
+        }
+    )
 }
 
+/** Provides a list of all current positions (translation and rotation) across the kinematics configurations */
 export const useKinematicsConfigurationPositions = () => {
     const state: GlowbuzzerKinematicsConfigurationStatus[] = useSelector(
         ({ kinematics }: RootState) => kinematics,
@@ -315,12 +336,7 @@ export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: num
  */
 export function useJointPositions(kinematicsConfigurationIndex: number) {
     const rawJointPositions = useRawJointPositions()
-
-    const kinematicsConfigurations = useKinematicsConfigurationList()
-
-    const { participatingJoints } =
-        kinematicsConfigurations[kinematicsConfigurationIndex] || kinematicsConfigurations[0]
-
+    const { participatingJoints } = useKinematicsConfiguration(kinematicsConfigurationIndex)
     return participatingJoints.map(j => rawJointPositions[j])
 }
 
@@ -420,6 +436,7 @@ type ExtentsType = {
     max: number
 }
 
+/** Provides the extents of the machine. That is, the union of the extents of all configured kinematics configurations. */
 export function useKinematicsExtents(kinematicsConfigurationIndex?: number): ExtentsType {
     const config = useConfig()
 

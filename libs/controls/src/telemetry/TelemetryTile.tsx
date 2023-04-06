@@ -12,7 +12,7 @@ import {
     JOINT_TYPE,
     JointConfig,
     TelemetryPVA,
-    useJointConfig,
+    useJointConfigurationList,
     useKinematicsConfigurationList,
     useTelemetryControls,
     useTelemetryData,
@@ -28,7 +28,7 @@ const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e3
 const SparklineJoints = ({ kinematicsConfiguration }) => {
     const telemetry = useTelemetryData()
     const { plot } = useTelemetrySettings()
-    const jointConfigurations = useJointConfig()
+    const jointConfigurations = useJointConfigurationList()
     const participatingJoints: JointConfig[] = kinematicsConfiguration.participatingJoints.map(
         n => jointConfigurations[n]
     )
@@ -116,7 +116,7 @@ const StyledCaptureState = styled.span`
 const TelemetryControls = () => {
     const capture = useTelemetryControls()
     const data = useTelemetryData()
-    const joints = useJointConfig()
+    const joints = useJointConfigurationList()
 
     function download() {
         const dl =

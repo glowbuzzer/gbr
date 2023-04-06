@@ -2,14 +2,14 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityBuilder, usePoints, useSoloActivity } from "@glowbuzzer/store"
+import { ActivityBuilder, usePointsList, useSoloActivity } from "@glowbuzzer/store"
 import { StyledTileContent } from "../../libs/controls/src/util/styles/StyledTileContent"
 import { Button, Input, Select, Space } from "antd"
 import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
 import { useState } from "react"
 
 export const OscillatingMoveTile = () => {
-    const points = usePoints()
+    const points = usePointsList()
     const [start, setStart] = useState(undefined)
     const [end, setEnd] = useState(undefined)
     const [iterations, setIterations] = useState(1)

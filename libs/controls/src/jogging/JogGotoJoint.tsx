@@ -10,7 +10,7 @@ import {
     LIMITPROFILE,
     MoveJointsBuilder,
     MoveParametersConfig,
-    useJointConfig,
+    useJointConfigurationList,
     useJointPositions,
     useKinematicsConfiguration,
     usePreview,
@@ -40,7 +40,7 @@ export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
         EMPTY_ARRAY
     )
 
-    const jointConfig = useJointConfig()
+    const jointConfig = useJointConfigurationList()
     const kcConfig = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const jointItems = useMemo<JogGotoItem[]>(
         () =>
@@ -59,13 +59,6 @@ export const JogGotoJoint = ({ kinematicsConfigurationIndex, jogSpeed }) => {
 
     // we need the joints, both for the joint count and for current positions
     const joints = useJointPositions(kinematicsConfigurationIndex)
-
-    useEffect(() => {
-        // ensure there are enough positions
-        if (positions.length !== joints.length) {
-            // setPositions(current => joints.map((j, i) => current[i] || 0))
-        }
-    }, [setPositions, positions, joints])
 
     const preview = usePreview()
 

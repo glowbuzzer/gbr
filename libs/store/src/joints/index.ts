@@ -31,7 +31,7 @@ export const jointsSlice: Slice<JointsState> = createSlice({
 })
 
 /** Returns an array of all configured joints with joint names, retrieved using {@link useConfig} */
-export function useJointConfig(): ({
+export function useJointConfigurationList(): ({
     name: string
 } & JointConfig)[] {
     const config = useConfig()

@@ -14,7 +14,8 @@ import {
     possible_transitions,
     useOfflineConfig,
     useConnection,
-    useMachine
+    useMachine,
+    usePrefs
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
@@ -95,6 +96,7 @@ export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
     const [config_modified, discard_offline_config, upload_offline_config] = useOfflineConfig()
+    const prefs = usePrefs()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -106,29 +108,10 @@ export const ConnectTile = () => {
 
     const state = determine_machine_state(machine.statusWord)
 
-    function connect() {
-        connection.setAutoConnect(true)
-    }
-
-    function disconnect() {
-        connection.setAutoConnect(false)
-        connection.disconnect()
-    }
-
     const connected = connection.connected && connection.statusReceived
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
     const target_not_acquired = machine.target !== machine.requestedTarget
-
-    function determine_traffic_light_color() {
-        if (!connected) {
-            return "red"
-        }
-        if (!machine.heartbeatReceived || machine.activeFault) {
-            return "orange"
-        }
-        return "green"
-    }
 
     function issue_reset() {
         machine.setMachineControlWord(possible_transitions.FaultReset())

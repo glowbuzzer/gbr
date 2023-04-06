@@ -4,11 +4,11 @@ import { useContext, useState } from "react"
 import styled from "styled-components"
 
 import { Button, Input, Select, Space } from "antd"
-import { ActivityBuilder, usePoints, useSoloActivity } from "@glowbuzzer/store"
+import { ActivityBuilder, usePointsList, useSoloActivity } from "@glowbuzzer/store"
 import { StyledTileContent } from "../../../libs/controls/src/util/styles/StyledTileContent"
 
 export const DemoMoveTile = () => {
-    const points = usePoints()
+    const points = usePointsList()
     const [start, setStart] = useState(undefined)
     const [end, setEnd] = useState(undefined)
     const [iterations, setIterations] = useState(1)

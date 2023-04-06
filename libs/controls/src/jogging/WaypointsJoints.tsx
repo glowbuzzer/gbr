@@ -5,7 +5,7 @@
 import { WaypointsProps } from "./types"
 import {
     JOINT_TYPE,
-    useJointConfig,
+    useJointConfigurationList,
     useJointPositions,
     useKinematicsConfiguration,
     usePrefs
@@ -20,7 +20,7 @@ const EMPTY_ARRAY = []
 /** @ignore - internal to the jog tile */
 export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: WaypointsProps) => {
     const joints = useJointPositions(kinematicsConfigurationIndex)
-    const jointConfig = useJointConfig()
+    const jointConfig = useJointConfigurationList()
     const kcConfig = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const { fromSI, getUnits } = usePrefs()
 

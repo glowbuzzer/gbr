@@ -9,7 +9,7 @@ import {
     TRIGGERACTION,
     TRIGGERON,
     useMachine,
-    usePoints,
+    usePointsList,
     useSoloActivity,
     useStream
 } from "@glowbuzzer/store"
@@ -31,7 +31,7 @@ export const DemoTile = () => {
     const threeAxisSoloApi = useSoloActivity(0)
     const twoAxisSoloApi = useSoloActivity(1)
 
-    const points = usePoints()
+    const points = usePointsList()
     const [useSecondPoint, setUseSecondPoint] = useState(false)
     const [homePoint, setHomePoint] = useState(0)
     const [secondPoint, setSecondPoint] = useState(1)
@@ -61,68 +61,82 @@ export const DemoTile = () => {
                 value: heartbeat + 250
             }
         }
-        twoAxisStream.activity.enqueue(twoAxisStream.activity.dwell(0).addTrigger(syncTrigger))
-        threeAxisStream.activity.enqueue(
-            threeAxisStream.activity.dwell(PUCK_TIME / 2 / 4).addTrigger(syncTrigger)
-        )
+
+        return Promise.all([
+            twoAxisStream.send(api => [api.dwell(0).addTrigger(syncTrigger).promise()]),
+            threeAxisStream.send(api => [
+                api
+                    .dwell(PUCK_TIME / 2 / 4)
+                    .addTrigger(syncTrigger)
+                    .promise()
+            ])
+        ])
     }
 
     useEffect(() => {
         if (mode === Mode.RUNNING) {
-            // add to the "puck" moves
+            // add to the puck moves
             if (twoAxisStream.pending < 20) {
                 // prettier-ignore
-                twoAxisStream.activity.enqueue(
-                    twoAxisStream.activity.moveArc(0, -300, 0).centre(0, 0, 0).direction(ARCDIRECTION.ARCDIRECTION_CW).duration(PUCK_TIME),
-                    twoAxisStream.activity.moveArc(300, 0, 0).centre(0, 0, 0).direction(ARCDIRECTION.ARCDIRECTION_CCW).duration(PUCK_TIME)
+                twoAxisStream.send(api => [
+                    api.moveArc(0, -300, 0).centre(0, 0, 0).direction(ARCDIRECTION.ARCDIRECTION_CW).duration(PUCK_TIME).promise(),
+                    api.moveArc(300, 0, 0).centre(0, 0, 0).direction(ARCDIRECTION.ARCDIRECTION_CCW).duration(PUCK_TIME).promise()]
                 )
             }
-            // add to the "frustum" moves
+            // add to the robot moves
             if (threeAxisStream.pending < 20) {
-                threeAxisStream.activity.enqueue(
-                    threeAxisStream.activity
+                threeAxisStream.send(api => [
+                    api
                         .moveToPosition(0, -300, 80)
                         .rotation(0, 1, 0, 0)
                         .frameIndex(0)
                         .configuration(0)
-                        .duration(PUCK_TIME / 2 - APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(PUCK_TIME / 2 - APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveLine(0, 0, -70)
                         .relative()
                         .frameIndex(0)
-                        .duration(APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveLine(0, 0, 50)
                         .relative()
                         .frameIndex(0)
-                        .duration(APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveToPosition()
                         .setFromPoint(points[homePoint])
                         .configuration(0)
-                        .duration(PUCK_TIME / 2 - APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(PUCK_TIME / 2 - APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveToPosition(300, 0, 80)
                         .rotationEuler(0, -Math.PI, Math.PI)
                         .frameIndex(0)
                         .configuration(0)
-                        .duration(PUCK_TIME / 2 - APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(PUCK_TIME / 2 - APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveLine(0, 0, -70)
                         .relative()
                         .frameIndex(0)
-                        .duration(APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveLine(0, 0, 50)
                         .relative()
                         .frameIndex(0)
-                        .duration(APPROACH_TIME),
-                    threeAxisStream.activity
+                        .duration(APPROACH_TIME)
+                        .promise(),
+                    api
                         .moveToPosition()
                         .setFromPoint(useSecondPoint ? points[secondPoint] : points[homePoint])
                         .configuration(0)
                         .duration(PUCK_TIME / 2 - APPROACH_TIME)
-                )
+                        .promise()
+                ])
             }
         }
     }, [mode, twoAxisStream.pending, threeAxisStream.pending])

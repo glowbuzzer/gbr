@@ -7,7 +7,7 @@ import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { DownOutlined } from "@ant-design/icons"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { useFramesList, usePoints, useSoloActivity } from "@glowbuzzer/store"
+import { useFramesList, usePointsList, useSoloActivity } from "@glowbuzzer/store"
 import { Dropdown, Menu } from "antd"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -25,7 +25,7 @@ const StyledDownOutlined = styled(DownOutlined)`
 
 /** @ignore - internal to the jog tile */
 export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex }) => {
-    const points = usePoints()
+    const points = usePointsList()
     const frames = useFramesList()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 

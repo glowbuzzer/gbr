@@ -4,7 +4,7 @@
 
 import { combineReducers } from "@reduxjs/toolkit"
 import { configSlice } from "./config"
-import { connectionSlice } from "./connect"
+// import { connectionSlice } from "./connect"
 import { telemetrySlice } from "./telemetry"
 import { prefsSlice } from "./prefs"
 import { machineSlice } from "./machine"
@@ -26,7 +26,7 @@ import { streamSlice } from "./stream"
 
 export const standardReducers = {
     config: configSlice.reducer,
-    connection: connectionSlice.reducer,
+    // connection: connectionSlice.reducer,
     tasks: tasksSlice.reducer,
     activity: activitySlice.reducer,
     telemetry: telemetrySlice.reducer,

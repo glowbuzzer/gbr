@@ -12,7 +12,7 @@ import {
     TRIGGERACTION,
     TRIGGERON,
     useMachine,
-    usePoints,
+    usePointsList,
     useSoloActivity,
     useStream,
     useTrace
@@ -35,7 +35,7 @@ export const DemoTile = () => {
     const lucySoloActivity = useSoloActivity(1)
     const lucyTrace = useTrace(1)
 
-    const points = usePoints()
+    const points = usePointsList()
 
     const [mode, setMode] = useState(Mode.REQUIRE_RESET)
 
@@ -72,11 +72,7 @@ export const DemoTile = () => {
                     .centre(300, 0, 200)
                     .direction(ARCDIRECTION.ARCDIRECTION_CCW)
                     .promise(),
-                api
-                    .moveLine(100, 0, 0)
-                    .relative(true)
-                    .promise()
-                    .then(() => thomasTrace.enable()),
+                api.moveLine(100, 0, 0).relative(true).promise().then(thomasTrace.enable),
                 // first traced line segment
                 api.moveLine(0, 0, -150).duration(1500).relative(true).promise(),
                 // second traced line segment
@@ -85,7 +81,7 @@ export const DemoTile = () => {
                     .duration(1500)
                     .relative(true)
                     .promise()
-                    .then(() => thomasTrace.disable()),
+                    .then(thomasTrace.disable),
                 api.moveToPosition().setFromPoint(points[2]).frameIndex(1).promise()
             ]),
             lucyStream.send(api => [
@@ -97,11 +93,7 @@ export const DemoTile = () => {
                     .centre(300, 0, 200)
                     .direction(ARCDIRECTION.ARCDIRECTION_CCW)
                     .promise(),
-                api
-                    .moveLine(100, 0, 0)
-                    .relative(true)
-                    .promise()
-                    .then(() => lucyTrace.enable()),
+                api.moveLine(100, 0, 0).relative(true).promise().then(lucyTrace.enable),
                 // synchronised traced arc segment
                 api
                     .moveArc(350, 100, 100)
@@ -112,7 +104,7 @@ export const DemoTile = () => {
                     .direction(ARCDIRECTION.ARCDIRECTION_CCW)
                     .frameIndex(2)
                     .promise()
-                    .then(() => lucyTrace.disable()),
+                    .then(lucyTrace.disable),
                 api.moveToPosition().setFromPoint(points[2]).frameIndex(2).promise()
             ])
         ]).then(() => {
@@ -148,6 +140,7 @@ export const DemoTile = () => {
             thomasSoloActivity.moveToPosition().setFromPoint(points[0]).frameIndex(1).promise(),
             lucySoloActivity.moveToPosition().setFromPoint(points[0]).frameIndex(2).promise()
         ]).then(() => {
+            console.log("READY")
             setMode(Mode.READY)
         })
     }

@@ -21,8 +21,9 @@ import styled, { css, ThemeProvider } from "styled-components"
 import { Button } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import { Provider } from "react-redux"
-import { ConfigLiveEditProvider } from "../config/ConfigLiveEditProvider"
+import { ConfigLiveEditProvider } from "../config"
 import { appNameContext } from "./hooks"
+import { ConnectionProvider } from "./ConnectionProvider"
 
 const theme = {
     colors: {
@@ -82,11 +83,13 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
 
     useEffect(() => {
         if (state === ConnectionState.DISCONNECTED && autoConnect) {
-            setTimeout(() => {
-                console.log("RECONNECTING!")
+            const timer = setTimeout(() => {
                 reconnect()
             }, connectDelay.current)
+
             connectDelay.current = 5000
+
+            return () => clearTimeout(timer)
         }
     }, [state, autoConnect, reconnect])
 
@@ -95,7 +98,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     }, [autoConnect])
 
     function cancel() {
-        connection.setAutoConnect(false)
+        connection.disconnect()
     }
 
     function ConfigStateMessage() {
@@ -171,9 +174,11 @@ export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerA
         <appNameContext.Provider value={appName}>
             <ThemeProvider theme={theme}>
                 <Provider store={store}>
-                    <ConfigLiveEditProvider>
-                        <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
-                    </ConfigLiveEditProvider>
+                    <ConnectionProvider>
+                        <ConfigLiveEditProvider>
+                            <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                        </ConfigLiveEditProvider>
+                    </ConnectionProvider>
                 </Provider>
             </ThemeProvider>
         </appNameContext.Provider>

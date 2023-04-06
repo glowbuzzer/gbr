@@ -4,15 +4,11 @@
 
 import { createContext, useContext } from "react"
 import { GCodeSenderAdapter } from "./GCodeSenderAdapter"
-import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { RootState } from "../root"
-import { useConnection } from "../connect"
-import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { useDispatch } from "react-redux"
 import { ActivityBuilder } from "../activity"
 import { useWorkspaceFrames } from "../frames"
 import { streamSlice } from "../stream"
-import { SoloActivityApi } from "../activity/solo/api"
-import { ActivityApi } from "../activity/api/interface"
+import { ActivityApi } from "../activity"
 
 // const { load, save } = settings("gcode")
 
@@ -29,6 +25,8 @@ import { ActivityApi } from "../activity/api/interface"
  * is encountered. It is good practice to append M2 to all of your gcode.
  *
  * You can pause, resume and cancel gcode execution using the `setState` method.
+ *
+ * @param kinematicsConfigurationIndex The index of the kinematics configuration to use for the gcode
  */
 export function useGCode(kinematicsConfigurationIndex = 0): /** Send gcode to execute
  * @param gcode The gcode to send
@@ -70,6 +68,7 @@ export type GCodeContextType = {
      * Provide an implementation of this function to handle automated tool changes. Typically this function is supplied to
      * {@link GCodeContextProvider}. The function you supply should return an array of activities which achieve the tool change.
      * These activities will be inserted in place of the the M06 code and queued for processing. For example:
+     *
      * ```
      *    function handleToolChange(
      *         kinematicsConfigurationIndex: number,
@@ -90,6 +89,7 @@ export type GCodeContextType = {
      *         </GCodeContextProvider>
      *     )
      * ```
+     *
      * @param kinematicsConfigurationIndex The kinematics configuration
      * @param currentToolIndex The current tool index
      * @param newToolIndex The new tool index (set by Tn code)
@@ -102,13 +102,19 @@ export type GCodeContextType = {
         api: ActivityApi
     ): ActivityBuilder[]
 
+    /** Provides a way to control whether gcode moves such as G1 X100 Y100 should be interpreted as linear or joint space moves */
     mode?: GCodeMode
 }
 
-export const gcodeContext = createContext<GCodeContextType>(null)
+const gcodeContext = createContext<GCodeContextType>(null)
 
+/**
+ * Use this component to provide additional context to the gcode interpreter. This context provides a mechanism to handle tool changes,
+ * and to indicate if moves should be made in joint or cartesian space.
+ */
 export const GCodeContextProvider = gcodeContext.Provider
 
+/** @ignore used by the gcode interpreter and not intended for use by applications */
 export function useGCodeContext() {
     return useContext(gcodeContext)
 }

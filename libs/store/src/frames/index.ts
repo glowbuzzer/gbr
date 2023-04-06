@@ -106,6 +106,7 @@ export function useFrame(index: number, useDefaults = true): FramesConfig {
     )
 }
 
+/** @ignore used internally by the frames tile */
 export function useSelectedFrame(): [number, (index: number) => void] {
     const dispatch = useDispatch()
     const selectedFrame = useSelector(
@@ -116,6 +117,9 @@ export function useSelectedFrame(): [number, (index: number) => void] {
     return [selectedFrame, (index: number) => dispatch(framesSlice.actions.setSelectedFrame(index))]
 }
 
+/**
+ * @ignore used internally by the gcode interpreter
+ */
 export function useWorkspaceFrames(): Record<number, number> {
     const frames = useFramesList()
 
