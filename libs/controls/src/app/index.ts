@@ -3,5 +3,6 @@
  */
 
 export * from "./GlowbuzzerApp"
+export * from "./ConnectionProvider"
 export { useAppName } from "./hooks"
 export { appNameContext } from "./hooks"
