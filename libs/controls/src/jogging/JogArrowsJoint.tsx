@@ -5,13 +5,12 @@
 import * as React from "react"
 import { useMemo } from "react"
 import {
+    JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
     JointConfig,
     LIMITPROFILE,
     MoveParametersConfig,
     useJoint,
-    useJointConfigurationList,
-    useKinematicsConfiguration,
     usePrefs,
     usePreview,
     useSoloActivity
@@ -58,7 +57,11 @@ const JointSliderReadonly = ({ jc, index }: { jc: JointConfig; index: number }) 
             min={min}
             max={max}
             disabled
-            value={joint?.actPos}
+            value={
+                jc.finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
+                    ? joint?.actPos
+                    : undefined
+            }
             tooltip={{ open: false }}
         />
     )
