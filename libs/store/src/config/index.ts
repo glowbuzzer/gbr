@@ -57,8 +57,11 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
         remote: null
     },
     reducers: {
-        loadOfflineConfig(state) {
-            return { ...state, ...load() }
+        loadOfflineConfig(state, action) {
+            const current = action.payload
+            const saved = load()
+            const modified = saved?.modified || !deepEqual(saved?.current, current)
+            return { ...state, ...saved, ...{ current }, modified }
         },
         /** Set config on connect - will not overwrite a locally modified config */
         setConfigFromRemote(state, action) {

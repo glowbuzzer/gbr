@@ -469,10 +469,11 @@ export function useKinematicsExtents(kinematicsConfigurationIndex?: number): Ext
 
     function apply(current: ExtentsType, kinematicsConfiguration: KinematicsConfigurationConfig) {
         const { extentsX, extentsY, extentsZ } = kinematicsConfiguration
-        const max = Math.max.apply(
-            Math.max,
-            [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
-        )
+        const max =
+            Math.max.apply(
+                Math.max,
+                [extentsX, extentsY, extentsZ].flat().map(v => Math.abs(v))
+            ) || 100
         const next = {
             extentsX,
             extentsY,

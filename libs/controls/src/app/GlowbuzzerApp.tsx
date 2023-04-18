@@ -4,15 +4,16 @@
 
 import * as React from "react"
 import { FC, ReactNode, useEffect, useRef } from "react"
-import { configureStore, StoreEnhancer } from "@reduxjs/toolkit"
+import { combineReducers, configureStore, Reducer, StoreEnhancer } from "@reduxjs/toolkit"
 import {
     configSlice,
     ConfigState,
     ConnectionState,
     framesSlice,
+    GlowbuzzerConfig,
     initSettings,
     prefsSlice,
-    rootReducer,
+    standardReducers,
     telemetrySlice,
     useConfigState,
     useConnection
@@ -76,7 +77,7 @@ type GlowbuzzerContainerProps = {
 
 const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     const connection = useConnection()
-    const [configState, setConfigState] = useConfigState()
+    const [configState] = useConfigState()
     const connectDelay = useRef(0)
 
     const { state, autoConnect, reconnect } = connection
@@ -139,6 +140,9 @@ type GlowbuzzerAppProps = {
     appName: string
     /** Enhancers that can be used to manipulate the store. See [the Redux Toolkit documentation](https://redux-toolkit.js.org/api/configureStore#enhancers) */
     storeEnhancers?: StoreEnhancer[]
+    additionalReducers?: { [index: string]: Reducer }
+    /** Configuration to load into the store. If not provided, the configuration will be loaded from local storage, or from GBC upon connect. */
+    configuration?: GlowbuzzerConfig
     /** Your application */
     children: ReactNode
 }
@@ -152,7 +156,13 @@ type GlowbuzzerAppProps = {
  *
  * You can look at the source for this component to see how to configure the GBR Redux store from scratch.
  */
-export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerAppProps) => {
+export const GlowbuzzerApp = ({
+    appName,
+    storeEnhancers,
+    additionalReducers,
+    configuration,
+    children
+}: GlowbuzzerAppProps) => {
     initSettings(appName)
 
     const middleware = getDefault => {
@@ -160,14 +170,14 @@ export const GlowbuzzerApp = ({ appName, storeEnhancers, children }: GlowbuzzerA
     }
 
     const store = configureStore({
-        reducer: rootReducer,
+        reducer: combineReducers({ ...standardReducers, ...additionalReducers }),
         middleware,
         enhancers: storeEnhancers
     })
 
     store.dispatch(prefsSlice.actions.loadSettings(null))
     store.dispatch(framesSlice.actions.loadSettings(null))
-    store.dispatch(configSlice.actions.loadOfflineConfig(null))
+    store.dispatch(configSlice.actions.loadOfflineConfig(configuration))
     store.dispatch(telemetrySlice.actions.loadSettings())
 
     return (
