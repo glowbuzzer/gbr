@@ -57,11 +57,11 @@ export const CartesianJogTile = () => {
                             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                         />
                     </DockToolbarButtonGroup>
-                    {isNearSingularity && (
+                    {isNearSingularity ? (
                         <Tag color={"red"} style={{ float: "right" }}>
                             SINGULARITY
                         </Tag>
-                    )}
+                    ) : null}
                 </>
             }
         >

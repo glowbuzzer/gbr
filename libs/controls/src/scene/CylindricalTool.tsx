@@ -20,9 +20,12 @@ export const CylindricalTool = forwardRef(
     ({ toolIndex, color = 0x666666 }: CylindricalToolProps, ref) => {
         const toolConfig = useToolConfig(toolIndex)
 
-        const x = toolConfig.translation.x || 0
-        const y = toolConfig.translation.y || 0
-        const z = toolConfig.translation.z || 0
+        if (!toolConfig) {
+            console.warn(`No tool configuration found for tool ${toolIndex}`)
+        }
+        const x = toolConfig?.translation?.x || 0
+        const y = toolConfig?.translation?.y || 0
+        const z = toolConfig?.translation?.z || 0
 
         const toolDiameter = toolConfig.diameter / 2 || 0
 

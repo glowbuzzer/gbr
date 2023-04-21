@@ -1,7 +1,9 @@
 {
   "name": "gbr",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+      "start": "vite"
+  },
   "private": true,
   "optionalDependencies": {
     "fsevents": "^2.3.2"
@@ -79,7 +81,7 @@
     "typescript": "~4.8.3",
     "uvu": "^0.5.6",
     "vite": "^4.2.1",
-    "vite-plugin-static-copy": "^0.13.1"
+    "vite-plugin-static-copy": "^0.14.0"
   },
   "version": "1.6.1"
 }

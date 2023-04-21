@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ARCDIRECTION, STREAMSTATE } from "../../../libs/store/src"
+import { ARCDIRECTION, STREAMSTATE } from "../../../@glowbuzzer/store"
 import { assertNear, do_cancel } from "../util"
 
 const test = uvu.suite("arcs")

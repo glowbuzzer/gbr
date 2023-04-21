@@ -5,7 +5,7 @@
 import React from "react"
 import { ReactComponent as ContactlessIcon } from "@material-symbols/svg-400/outlined/contactless.svg"
 import styled from "styled-components"
-import { useOfflineConfig, useConfigState, useConnection, usePrefs } from "@glowbuzzer/store"
+import { useConnection, useOfflineConfig, usePrefs } from "@glowbuzzer/store"
 import { classes } from "../util/classes"
 import { Button } from "antd"
 
@@ -40,7 +40,7 @@ const ConnectIndicator = styled.span`
  */
 export const ConnectTabButtons = () => {
     const connection = useConnection()
-    const [config_modified] = useOfflineConfig()
+    const { modified } = useOfflineConfig()
     const prefs = usePrefs()
 
     function toggle_connection() {
@@ -54,7 +54,7 @@ export const ConnectTabButtons = () => {
     const className = classes(
         "anticon",
         connection.connected && "connected",
-        config_modified && "config-modified"
+        modified && "config-modified"
     )
 
     return (

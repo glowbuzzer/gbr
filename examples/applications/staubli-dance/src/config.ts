@@ -1,0 +1,430 @@
+/*
+ * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ */
+
+import { GlowbuzzerConfig } from "@glowbuzzer/store"
+
+export const config: GlowbuzzerConfig = {
+    machine: [
+        {
+            name: "STAUBLI DANCE",
+            busCycleTime: 4,
+            statusFrequency: 50
+        }
+    ],
+    stream: [
+        {
+            name: "Thomas"
+        },
+        {
+            name: "Lucy"
+        }
+    ],
+    soloActivity: [
+        {
+            name: "Thomas"
+        },
+        {
+            name: "Lucy"
+        }
+    ],
+    points: [
+        {
+            name: "Point1",
+            translation: {
+                x: 300,
+                y: 100,
+                z: 250
+            },
+            rotation: {
+                x: 0.6547971573,
+                y: 0.266909503,
+                z: 0.2669095029999014,
+                w: 0.6547971573002419
+            }
+        },
+        {
+            name: "Point2",
+            translation: {
+                x: 300,
+                y: -100,
+                z: 250
+            },
+            rotation: {
+                x: -0.7071530001974361,
+                y: -0.0000019988290900649497,
+                z: 0.0000019990904168421206,
+                w: 0.7070605591487714
+            },
+            configuration: 0
+        },
+        {
+            name: "Point3",
+            translation: {
+                x: 200,
+                y: 0,
+                z: 300
+            },
+            rotation: {
+                x: 0.7088173033,
+                y: -0.0018869218,
+                z: 0.7053870881,
+                w: -0.0018777903
+            },
+            configuration: 0
+        }
+    ],
+    frames: [
+        {
+            name: "default"
+        },
+        {
+            name: "Thomas",
+            translation: {
+                x: -300,
+                y: 0,
+                z: 325
+            }
+        },
+        {
+            name: "Lucy",
+            translation: {
+                x: 300,
+                y: 0,
+                z: 325
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 1,
+                w: 0
+            }
+        }
+    ],
+    joint: [
+        {
+            name: "T0",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -180,
+            posLimit: 180
+        },
+        {
+            name: "T1",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -125,
+            posLimit: 125
+        },
+        {
+            name: "T2",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -138,
+            posLimit: 138
+        },
+        {
+            name: "T3",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -270,
+            posLimit: 270
+        },
+        {
+            name: "T4",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -120,
+            posLimit: 133.5
+        },
+        {
+            name: "T5",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -270,
+            posLimit: 270
+        },
+
+        {
+            name: "L0",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -180,
+            posLimit: 180
+        },
+        {
+            name: "L1",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -125,
+            posLimit: 125
+        },
+        {
+            name: "L2",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -138,
+            posLimit: 138
+        },
+        {
+            name: "L3",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -270,
+            posLimit: 270
+        },
+        {
+            name: "L4",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -120,
+            posLimit: 133.5
+        },
+        {
+            name: "L5",
+            limits: [
+                {
+                    vmax: 1,
+                    amax: 8,
+                    jmax: 160
+                }
+            ],
+            scale: 10000,
+            jointType: 1,
+            negLimit: -270,
+            posLimit: 270
+        }
+    ],
+    kinematicsConfiguration: [
+        {
+            name: "Thomas",
+            frameIndex: 1,
+            participatingJoints: [0, 1, 2, 3, 4, 5],
+            participatingJointsCount: 6,
+            kinematicsConfigurationType: 1,
+            supportedConfigurationBits: 7,
+            extentsX: [-1000, 1000],
+            extentsY: [-1000, 1000],
+            extentsZ: [0, 840],
+            linearLimits: [
+                {
+                    vmax: 200,
+                    amax: 4000,
+                    jmax: 80000
+                }
+            ],
+            angularLimits: [
+                {
+                    vmax: 1,
+                    amax: 10,
+                    jmax: 100
+                }
+            ],
+            kinChainParams: {
+                numRows: 6,
+                numCols: 5,
+                data: [
+                    -90, 0, 0, 0, 0, 0, 0, -90, 225, 0, 90, 0, 90, 0, 35, -90, 0, 0, 0, 225, 90, 0,
+                    0, 0, 0, 0, 0, 0, 0, 65
+                ]
+            }
+        },
+
+        {
+            name: "Lucy",
+            frameIndex: 2,
+            participatingJoints: [6, 7, 8, 9, 10, 11],
+            participatingJointsCount: 6,
+            kinematicsConfigurationType: 1,
+            supportedConfigurationBits: 7,
+            extentsX: [-1000, 1000],
+            extentsY: [-1000, 1000],
+            extentsZ: [0, 840],
+            linearLimits: [
+                {
+                    vmax: 200,
+                    amax: 4000,
+                    jmax: 80000
+                }
+            ],
+            angularLimits: [
+                {
+                    vmax: 1,
+                    amax: 10,
+                    jmax: 100
+                }
+            ],
+            kinChainParams: {
+                numRows: 6,
+                numCols: 5,
+                data: [
+                    -90, 0, 0, 0, 0, 0, 0, -90, 225, 0, 90, 0, 90, 0, 35, -90, 0, 0, 0, 225, 90, 0,
+                    0, 0, 0, 0, 0, 0, 0, 65
+                ]
+            }
+        }
+    ],
+    tool: [
+        {
+            name: "default",
+            diameter: 10,
+            translation: {
+                z: 40
+            }
+        },
+        {
+            name: "tool1",
+            diameter: 20,
+            translation: {
+                z: 10
+            }
+        },
+        {
+            name: "tool2",
+            diameter: 30,
+            translation: {
+                z: 20
+            }
+        },
+        {
+            name: "tool3",
+            diameter: 10,
+            translation: {
+                z: 30
+            }
+        },
+        {
+            name: "tool4",
+            diameter: 50,
+            translation: {
+                z: 40
+            }
+        },
+        {
+            name: "offset_tool",
+            diameter: 15,
+            translation: {
+                y: 35,
+                z: 30
+            }
+        }
+    ],
+    din: [],
+    dout: [],
+    ain: [],
+    aout: [],
+    iin: [],
+    iout: [],
+    fieldbus: [
+        {
+            jointCount: 12,
+            RxPdo: {
+                machineStatusWordOffset: 0,
+                activeFaultOffset: 4,
+                faultHistoryOffset: 8,
+                heartbeatOffset: 12,
+                jointStatuswordOffset: 16,
+                jointActualPositionOffset: 40,
+                jointActualVelocityOffset: 88,
+                jointActualTorqueOffset: 136,
+                digitalOffset: 184,
+                digitalCount: 64,
+                analogOffset: 192,
+                integerOffset: 192,
+                integerCount: 2
+            },
+            TxPdo: {
+                machineControlWordOffset: 0,
+                gbcControlWordOffset: 4,
+                hlcControlWordOffset: 8,
+                heartbeatOffset: 12,
+                jointControlwordOffset: 16,
+                jointSetPositionOffset: 40,
+                jointSetVelocityOffset: 88,
+                jointSetTorqueOffset: 136,
+                digitalOffset: 184,
+                digitalCount: 64,
+                analogOffset: 192,
+                integerOffset: 192,
+                integerCount: 2
+            }
+        }
+    ]
+}

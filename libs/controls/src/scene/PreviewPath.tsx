@@ -92,7 +92,7 @@ const DrawingExtent = ({ preview, scale }: DrawingExtentProps) => {
         return null
     }
     return (
-        <group position={new Vector3(minPoint.x, minPoint.y, 0)}>
+        <group position={new Vector3(minPoint.x, minPoint.y, 1)}>
             <DashedExtent
                 position={new Vector3(0, -fontSize, 0)}
                 distanceX={extentX}

@@ -21,9 +21,9 @@
         "./node_modules/**"
     ],
     "files": [
-        "./libs/store/src/index.ts"
+        "./@glowbuzzer/store/index.ts"
     ]
     //    "include": [
-    //        "./libs/store/src/**/*.ts"
+    //        "./@glowbuzzer/store/**/*.ts"
     //    ]
 }

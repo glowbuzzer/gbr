@@ -12,10 +12,9 @@ import {
     MachineState,
     MACHINETARGET,
     possible_transitions,
-    useOfflineConfig,
     useConnection,
     useMachine,
-    usePrefs
+    useOfflineConfig
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
@@ -95,8 +94,7 @@ const StyledDiv = styled.div`
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
-    const [config_modified, discard_offline_config, upload_offline_config] = useOfflineConfig()
-    const prefs = usePrefs()
+    const { modified, usingLocalConfiguration, upload, discard } = useOfflineConfig()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -120,36 +118,57 @@ export const ConnectTile = () => {
     return (
         <StyledDiv>
             <div>
-                {config_modified ? (
+                {modified ? (
                     connected ? (
                         <div className="config-info">
                             <Space>
-                                <div>
-                                    Configuration has been modified since you last connected. You
-                                    should save or discard your local changes.
-                                </div>
-                                <Space direction="vertical">
-                                    <Button
-                                        size="small"
-                                        style={{ width: "100%" }}
-                                        onClick={upload_offline_config}
-                                    >
-                                        Save
-                                    </Button>
-                                    <Button size="small" onClick={discard_offline_config}>
-                                        Discard
-                                    </Button>
-                                </Space>
+                                {usingLocalConfiguration ? (
+                                    <>
+                                        <div>
+                                            Local configuration provided does not match remote. You
+                                            should upload a new configuration.
+                                        </div>
+                                        <Space direction="vertical">
+                                            <Button
+                                                size="small"
+                                                style={{ width: "100%" }}
+                                                onClick={upload}
+                                            >
+                                                Upload
+                                            </Button>
+                                        </Space>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div>
+                                            Configuration has been modified since you last
+                                            connected. You should save or discard your local
+                                            changes.
+                                        </div>
+                                        <Space direction="vertical">
+                                            <Button
+                                                size="small"
+                                                style={{ width: "100%" }}
+                                                onClick={upload}
+                                            >
+                                                Save
+                                            </Button>
+                                            <Button size="small" onClick={discard}>
+                                                Discard
+                                            </Button>
+                                        </Space>
+                                    </>
+                                )}
                             </Space>
                         </div>
-                    ) : (
+                    ) : usingLocalConfiguration ? null : (
                         <div className="config-info">
                             <Space size={"small"}>
                                 <div>
                                     Configuration has been modified since last connect. You need to
                                     connect in order to save your local changes.
                                 </div>
-                                <Button size="small" onClick={discard_offline_config}>
+                                <Button size="small" onClick={discard}>
                                     Discard
                                 </Button>
                             </Space>

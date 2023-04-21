@@ -20,6 +20,7 @@ import { ExampleAppMenu } from "../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
+import { config } from "./config"
 
 function App() {
     function handleToolChange(
@@ -35,8 +36,7 @@ function App() {
         <GCodeContextProvider value={{ handleToolChange }}>
             <DockLayoutProvider
                 tiles={[
-                    ...GlowbuzzerTileDefinitionList, // standard components
-                    JointSpinnersTileDefinition
+                    ...GlowbuzzerTileDefinitionList // standard components
                 ]}
             >
                 <ExampleAppMenu />
@@ -49,7 +49,7 @@ function App() {
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
-        <GlowbuzzerApp appName="generic">
+        <GlowbuzzerApp appName="generic" configuration={config}>
             <App />
         </GlowbuzzerApp>
     </StrictMode>

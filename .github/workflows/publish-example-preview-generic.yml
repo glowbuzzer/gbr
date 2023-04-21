@@ -2,7 +2,8 @@ name: Publish examples/generic
 on:
     push:
         branches:
-            - main
+            # disabled for now - would require refactoring to get working
+            - none
         paths:
             - ".github/workflows/publish-example-preview-generic.yml"
             - ".github/workflows/publish-example.yml"

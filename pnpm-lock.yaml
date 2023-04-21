@@ -74,7 +74,7 @@ specifiers:
   typescript: ~4.8.3
   uvu: ^0.5.6
   vite: ^4.2.1
-  vite-plugin-static-copy: ^0.13.1
+  vite-plugin-static-copy: ^0.14.0
 
 dependencies:
   '@ant-design/icons': 4.7.0_ef5jwxihqo6n7gxfmzogljlgcm
@@ -149,7 +149,7 @@ dependencies:
   typescript: 4.8.3
   uvu: 0.5.6
   vite: 4.2.1_@types+node@17.0.35
-  vite-plugin-static-copy: 0.13.1_vite@4.2.1
+  vite-plugin-static-copy: 0.14.0_vite@4.2.1
 
 optionalDependencies:
   fsevents: 2.3.2
@@ -8608,8 +8608,8 @@ packages:
       convert-source-map: 1.8.0
     dev: false
 
-  /vite-plugin-static-copy/0.13.1_vite@4.2.1:
-    resolution: {integrity: sha512-KwIcGBT1aOxSq+laK3VmSngoEa3HXWj/6ZEXdv+y59eZ7p/XSuPahoDo+CfYW22JjTdnstgeKWiX+78KNgDu6g==}
+  /vite-plugin-static-copy/0.14.0_vite@4.2.1:
+    resolution: {integrity: sha512-RMFmb4czomcrsbQBiUZs9HcDGN3kxGvF+OrtkfTVocp12CuoUCuJQhcY26RK35A6KS4WasGzEwcYZqHMjkAvVw==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0

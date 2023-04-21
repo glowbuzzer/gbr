@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { DesiredState, FaultCode } from "../../../libs/store/src"
+import { DesiredState, FaultCode } from "../../../@glowbuzzer/store"
 
 const test = uvu.suite("core")
 

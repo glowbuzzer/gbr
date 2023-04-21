@@ -25,10 +25,10 @@
         "baseUrl": ".",
         "paths": {
             "@glowbuzzer/controls": [
-                "libs/controls/src/index.ts"
+                "./libs/controls/src/index.ts"
             ],
             "@glowbuzzer/store": [
-                "libs/store/src/index.ts"
+                "./libs/store/src/index.ts"
             ]
         }
     },

@@ -39,8 +39,7 @@ jobs:
         uses: ./.github/workflows/publish-example.yml
         with:
             example: generic
-            site: www.glowbuzzer.com
-            distribution: EOLCC9H61HP6F
+            site: examples.glowbuzzer.com
         secrets: inherit
 
     publish-example-staubli:
@@ -48,7 +47,6 @@ jobs:
         if: ${{ needs.release-please.outputs.release_created }}
         uses: ./.github/workflows/publish-example.yml
         with:
-            example: staubli
-            site: www.glowbuzzer.com
-            distribution: EOLCC9H61HP6F
+            example: machines/staubli
+            site: examples.glowbuzzer.com
         secrets: inherit

@@ -14,8 +14,8 @@ on:
                 required: true
                 type: string
             distribution:
-                # cloudfront distribution id
-                required: true
+                # cloudfront distribution id (not used for now as we use S3 website hosting)
+                required: false
                 type: string
 
 jobs:
@@ -30,17 +30,18 @@ jobs:
 
             -   uses: actions/setup-node@v3
                 with:
-                    node-version: 16
-#                    cache: pnpm
+                    node-version: 18
 
             -   name: Install packages
                 run: pnpm install
 
             -   name: Build app
-                run: ./node_modules/.bin/vite build examples/${{ inputs.example }} --base=/examples/${{ inputs.example }}/
+                run: |
+                    PROJECT=$(basename ${{ inputs.example }})
+                    ./node_modules/.bin/vite build examples/${{ inputs.example }} --base=/$PROJECT/
 
             -   name: Deploy site
-                run: ./examples/deploy-example.sh ${{ inputs.example }} ${{ inputs.site }} ${{ inputs.distribution }}
+                run: ./examples/deploy-example.sh ${{ inputs.example }} ${{ inputs.site }}
                 env:
                     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
                     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

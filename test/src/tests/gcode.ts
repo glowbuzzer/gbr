@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, STREAMSTATE } from "../../../libs/store/src"
+import { ACTIVITYSTATE, STREAMSTATE } from "../../../@glowbuzzer/store"
 
 const test = uvu.suite("gcode")
 

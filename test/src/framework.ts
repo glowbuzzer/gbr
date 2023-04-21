@@ -7,7 +7,7 @@ import {
     determine_machine_state,
     handleMachineState,
     MachineState
-} from "../../libs/store/src/machine/MachineStateHandler"
+} from "../../@glowbuzzer/store/machine/MachineStateHandler"
 import * as assert from "uvu/assert"
 import {
     SoloActivityApi,
@@ -19,13 +19,13 @@ import {
     TASK_STATE,
     updateMachineControlWordMsg,
     updateMachineTargetMsg
-} from "../../libs/store/src/api"
+} from "../../@glowbuzzer/store/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, FaultCode, jointsSlice } from "../../libs/store/src"
-import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../libs/store/src"
+import { activitySlice, FaultCode, jointsSlice } from "../../@glowbuzzer/store"
+import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../@glowbuzzer/store"
 import { make_plot } from "./plot"
-import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
-import { streamSlice } from "../../libs/store/src"
+import { GCodeSenderAdapter } from "../../@glowbuzzer/store/gcode/GCodeSenderAdapter"
+import { streamSlice } from "../../@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { ConfigBuilder } from "./builder"
 

@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { STREAMSTATE } from "../../../libs/store/src"
+import { STREAMSTATE } from "../../../@glowbuzzer/store"
 import * as assert from "uvu/assert"
 
 const test = uvu.suite("stream-multi")

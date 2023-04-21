@@ -1,0 +1,25 @@
+name: publish-examples-test
+
+on:
+    push:
+        branches:
+            - main
+
+env:
+    AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+    publish-example-generic:
+        uses: ./.github/workflows/publish-example.yml
+        with:
+            example: generic
+            site: examples.glowbuzzer.com
+        secrets: inherit
+
+    publish-example-staubli:
+        uses: ./.github/workflows/publish-example.yml
+        with:
+            example: machines/staubli
+            site: examples.glowbuzzer.com
+        secrets: inherit

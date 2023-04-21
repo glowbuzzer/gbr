@@ -8,7 +8,7 @@ import {
     GlowbuzzerConfig,
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE
-} from "../../libs/store/src"
+} from "../../@glowbuzzer/store"
 
 const DEFAULT_FIELDBUS_CONFIG = {
     name: "0",

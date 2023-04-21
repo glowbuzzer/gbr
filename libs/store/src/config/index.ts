@@ -12,7 +12,7 @@ import { useConnection } from "../connect"
 
 const { load, save } = settings("config")
 
-const DEFAULT_CONFIG: GlowbuzzerConfig = {
+export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
     frames: [{}],
     kinematicsConfiguration: [
         {
@@ -35,6 +35,7 @@ type ConfigSliceType = {
     state: ConfigState
     version: number
     modified: boolean
+    usingLocalConfiguration: boolean
     current: GlowbuzzerConfig
     remote: GlowbuzzerConfig | null
 }
@@ -52,16 +53,24 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
     initialState: {
         state: ConfigState.AWAITING_CONFIG as ConfigState,
         modified: false as boolean,
+        usingLocalConfiguration: false,
         version: 1,
-        current: DEFAULT_CONFIG,
+        current: GlowbuzzerMinimalConfig,
         remote: null
     },
     reducers: {
         loadOfflineConfig(state, action) {
-            const current = action.payload
             const saved = load()
-            const modified = saved?.modified || !deepEqual(saved?.current, current)
-            return { ...state, ...saved, ...{ current }, modified }
+            const mismatch = action.payload && !deepEqual(saved?.current, action.payload)
+            const modified = saved?.modified || mismatch
+            const localOverride = action.payload ? { current: action.payload } : {}
+            return {
+                ...state,
+                ...saved,
+                ...localOverride,
+                usingLocalConfiguration: !!action.payload,
+                modified
+            }
         },
         /** Set config on connect - will not overwrite a locally modified config */
         setConfigFromRemote(state, action) {
@@ -100,7 +109,7 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
             }
             state.version++
             state.modified = false
-            state.current = state.remote || DEFAULT_CONFIG
+            state.current = state.remote || GlowbuzzerMinimalConfig
             state.remote = null
             persist(state)
         },
@@ -125,17 +134,26 @@ export function useConfigState() {
 /**
  * @ignore
  */
-export function useOfflineConfig(): [boolean, () => void, () => void] {
+export function useOfflineConfig() {
     const loader = useConfigLoader()
     const modified = useSelector((state: RootState) => state.config.modified, shallowEqual)
     const offline_config = useSelector((state: RootState) => state.config.current, deepEqual)
+    const usingLocalConfiguration = useSelector(
+        (state: RootState) => state.config.usingLocalConfiguration,
+        shallowEqual
+    )
     const dispatch = useDispatch()
 
-    return [
+    return {
         modified,
-        () => dispatch(configSlice.actions.discardOfflineConfig(null)),
-        () => loader(offline_config)
-    ]
+        usingLocalConfiguration,
+        discard() {
+            dispatch(configSlice.actions.discardOfflineConfig(null))
+        },
+        upload() {
+            loader(offline_config)
+        }
+    }
 }
 
 /**

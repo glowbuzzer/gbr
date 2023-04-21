@@ -2,13 +2,14 @@ name: Publish examples/staubli
 on:
     push:
         branches:
-            - main
+            # disabled for now - would require refactoring to get working
+            - none
         paths:
             - ".github/workflows/publish-example-preview-staubli.yml"
             - ".github/workflows/publish-example.yml"
             - "package.json"
             - "libs/**"
-            - "examples/staubli/**"
+            - "examples/machines/staubli/**"
             - "examples/deploy-example.sh"
 
 jobs:
