@@ -4,8 +4,13 @@
     "@types/node": "detect",
     "@types/react": "detect",
     "@types/react-dom": "detect",
+    "@vitejs/plugin-react": "detect",
+    "antd": "detect",
     "dseg": "detect",
+    "flexlayout-react": "detect",
+    "react": "detect",
     "react-dom": "detect",
     "react-is": "detect",
-    "typescript": "detect"
+    "typescript": "detect",
+    "vite": "detect"
 }
