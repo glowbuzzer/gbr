@@ -4,6 +4,7 @@
     "@types/node": "detect",
     "@types/react": "detect",
     "@types/react-dom": "detect",
+    "@types/three": "detect",
     "@vitejs/plugin-react": "detect",
     "antd": "detect",
     "dseg": "detect",
@@ -11,6 +12,7 @@
     "react": "detect",
     "react-dom": "detect",
     "react-is": "detect",
+    "three": "detect",
     "typescript": "detect",
     "vite": "detect"
 }
