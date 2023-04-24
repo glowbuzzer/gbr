@@ -2,7 +2,7 @@
   "name": "gbr",
   "license": "MIT",
   "scripts": {
-      "start": "vite"
+    "start": "vite"
   },
   "private": true,
   "optionalDependencies": {
@@ -83,5 +83,5 @@
     "vite": "^4.2.1",
     "vite-plugin-static-copy": "^0.14.0"
   },
-  "version": "1.6.1"
+  "version": "1.7.0"
 }
