@@ -4,8 +4,6 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { assertNear, do_cancel } from "../util"
-import { SoloActivityApi, STREAMSTATE } from "../../../@glowbuzzer/store"
 
 const test = uvu.suite("frames kc rotated")
 

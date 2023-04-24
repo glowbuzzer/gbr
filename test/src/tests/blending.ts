@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE } from "../../../@glowbuzzer/store"
+import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE } from "../../../libs/store/src"
 
 const test = uvu.suite("blending")
 

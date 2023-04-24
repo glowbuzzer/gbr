@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, BLENDTYPE } from "../../../@glowbuzzer/store"
+import { ACTIVITYSTATE, BLENDTYPE } from "../../../libs/store/src"
 import { assertNear, do_cancel } from "../util"
 
 const test = uvu.suite("robot")

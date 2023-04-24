@@ -9,14 +9,14 @@ import {
     DigitalInputTriggerBuilder,
     IntegerInputTriggerBuilder,
     TimerTriggerBuilder
-} from "../../../@glowbuzzer/store/activity/api/triggers"
+} from "../../../libs/store/src/activity/api/triggers"
 import {
     ACTIVITYSTATE,
     TASK_COMMAND,
     TASK_STATE,
     TRIGGERACTION,
     TRIGGERTYPE
-} from "../../../@glowbuzzer/store"
+} from "../../../libs/store/src"
 
 const test = uvu.suite("triggers")
 

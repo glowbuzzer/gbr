@@ -7,27 +7,33 @@ import {
     determine_machine_state,
     handleMachineState,
     MachineState
-} from "../../@glowbuzzer/store/machine/MachineStateHandler"
+} from "../../libs/store/src/machine/MachineStateHandler"
 import * as assert from "uvu/assert"
 import {
-    SoloActivityApi,
     ACTIVITYSTATE,
     GlowbuzzerStatus,
     MACHINETARGET,
+    SoloActivityApi,
     STREAMCOMMAND,
     TASK_COMMAND,
     TASK_STATE,
     updateMachineControlWordMsg,
     updateMachineTargetMsg
-} from "../../@glowbuzzer/store/api"
-import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
-import { activitySlice, FaultCode, jointsSlice } from "../../@glowbuzzer/store"
-import { kinematicsSlice, updateFroMsg, updateOffsetMsg } from "../../@glowbuzzer/store"
-import { make_plot } from "./plot"
-import { GCodeSenderAdapter } from "../../@glowbuzzer/store/gcode/GCodeSenderAdapter"
-import { streamSlice } from "../../@glowbuzzer/store"
-import { Quaternion, Vector3 } from "three"
-import { ConfigBuilder } from "./builder"
+} from "../../libs/store/src/api"
+import {combineReducers, configureStore, EnhancedStore} from "@reduxjs/toolkit"
+import {
+    activitySlice,
+    FaultCode,
+    jointsSlice,
+    kinematicsSlice,
+    streamSlice,
+    updateFroMsg,
+    updateOffsetMsg
+} from "../../libs/store/src"
+import {make_plot} from "./plot"
+import {GCodeSenderAdapter} from "../../libs/store/src/gcode/GCodeSenderAdapter"
+import {Quaternion, Vector3} from "three"
+import {ConfigBuilder} from "./builder"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))

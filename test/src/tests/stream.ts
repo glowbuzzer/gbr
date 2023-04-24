@@ -4,8 +4,8 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { STREAMCOMMAND, STREAMSTATE } from "../../../@glowbuzzer/store"
-import { StreamingActivityApi } from "../../../@glowbuzzer/store/stream/api"
+import { STREAMCOMMAND, STREAMSTATE } from "../../../libs/store/src"
+import { StreamingActivityApi } from "../../../libs/store/src/stream/api"
 import * as assert from "assert"
 
 const test = uvu.suite("stream")
