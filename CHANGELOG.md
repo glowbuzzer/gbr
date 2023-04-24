@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://github.com/glowbuzzer/gbr/compare/v1.6.1...v1.7.0) (2023-04-24)
+
+
+### Feature
+
+* add pick and place demo ([77d7fe4](https://github.com/glowbuzzer/gbr/commit/77d7fe4c0aad0b4dec9bb7b95c462c2a86665652))
+* add way to include config in gbr app ([9408c77](https://github.com/glowbuzzer/gbr/commit/9408c779a87365857cc18f52eeec9fcfdc6b1dab))
+
+
+### Bug Fix
+
+* fix examples build ([264775f](https://github.com/glowbuzzer/gbr/commit/264775f40d0774f9f8ca79e7f55d0b8e0bd78021))
+
+
+### Chore
+
+* add scripts to template package.src.json ([cc08623](https://github.com/glowbuzzer/gbr/commit/cc08623a0846f3bc7e8b942d238acc783dccd248))
+* add to dependencies.json ([2180d20](https://github.com/glowbuzzer/gbr/commit/2180d20113cab3a6da599c8782e4bf9691a05a0f))
+* modify example project structure ([25d19ce](https://github.com/glowbuzzer/gbr/commit/25d19cebd1a1e17dee5c4d3d9043b2ffb23fcee3))
+* more work on drives example ([fd49a5b](https://github.com/glowbuzzer/gbr/commit/fd49a5b8b833b1cba848937893ca52e9fd0d234e))
+* publish examples to dedicated http-only site ([25d19ce](https://github.com/glowbuzzer/gbr/commit/25d19cebd1a1e17dee5c4d3d9043b2ffb23fcee3))
+* push template project for testing ([ddd24ab](https://github.com/glowbuzzer/gbr/commit/ddd24abc73e40f5c455b462df4f37cf717ef8490))
+* update dependencies.json in app template ([615420b](https://github.com/glowbuzzer/gbr/commit/615420b808ae36c99da53a53b570ce566d7c25ab))
+
 ## [1.6.1](https://github.com/glowbuzzer/gbr/compare/v1.6.0...v1.6.1) (2023-04-06)
 
 
