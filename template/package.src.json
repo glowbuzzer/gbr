@@ -1,0 +1,13 @@
+{
+  "name": "create-glowbuzzer-app-template",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A template for creating a vanilla Glowbuzzer React app",
+  "license": "MIT",
+  "engines": {
+    "node": ">=16"
+  },
+  "bugs": {
+    "url": "https://github.com/glowbuzzer/gbr/issues"
+  }
+}

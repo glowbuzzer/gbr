@@ -1,0 +1,11 @@
+{
+    "@glowbuzzer/controls": "detect",
+    "@glowbuzzer/store": "detect",
+    "@types/node": "detect",
+    "@types/react": "detect",
+    "@types/react-dom": "detect",
+    "dseg": "detect",
+    "react-dom": "detect",
+    "react-is": "detect",
+    "typescript": "detect"
+}
