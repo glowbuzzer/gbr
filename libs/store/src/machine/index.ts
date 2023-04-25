@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import {
     DesiredState,
@@ -61,16 +61,26 @@ type MachineStateHandling = {
 
 export type MachineSliceType = GlowbuzzerMachineStatus & MachineStateHandling
 
-// createSlice adds a top-level object to the app state and lets us define the initial state and reducers (actions) on it
-export const machineSlice: Slice<MachineSliceType> = createSlice({
+const INITIAL_STATE = {
+    requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
+    target: undefined,
+    desiredState: DesiredState.OPERATIONAL,
+    heartbeatReceived: true
+} as MachineSliceType
+
+export const machineSlice: Slice<
+    MachineSliceType,
+    {
+        init: CaseReducer<MachineSliceType>
+        status: CaseReducer<MachineSliceType, PayloadAction<GlowbuzzerMachineStatus>>
+        setRequestedTarget: CaseReducer<MachineSliceType, PayloadAction<MACHINETARGET>>
+        setDesiredState: CaseReducer<MachineSliceType, PayloadAction<DesiredState>>
+    }
+> = createSlice({
     name: "machine",
-    initialState: {
-        requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
-        target: undefined,
-        desiredState: DesiredState.OPERATIONAL,
-        heartbeatReceived: true
-    } as MachineSliceType,
+    initialState: INITIAL_STATE,
     reducers: {
+        init: () => INITIAL_STATE,
         status: (state, action) => {
             // called with status.machine from the json every time GBC sends status message
             const {

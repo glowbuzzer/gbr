@@ -54,6 +54,13 @@ export function useStatusProcessor(connection: WebSocket) {
         if (!connection) {
             return
         }
+
+        function safe_send(msg) {
+            if (connection.readyState === WebSocket.OPEN) {
+                connection.send(msg)
+            }
+        }
+
         // we test if the tick count is non-zero, because we only want to do initial connection
         // handling after we've received our first status message, as this populates the store with
         // things like the number of kinematics configurations, streams, and so on
@@ -63,14 +70,20 @@ export function useStatusProcessor(connection: WebSocket) {
             dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
             dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
             dispatch(telemetrySlice.actions.init()) // reset telemetry
+            dispatch(machineSlice.actions.init()) // reset machine state
 
             if (target !== requestedTarget) {
                 // we are not in the desired target state (sim/live) so send a message to GBC to change state
-                connection.send(updateMachineTargetMsg(requestedTarget))
+                safe_send(updateMachineTargetMsg(requestedTarget))
+            }
+
+            if (nextControlWord !== undefined) {
+                // logic wants to dictate new control word to GBC
+                safe_send(updateMachineControlWordMsg(nextControlWord))
             }
 
             // get a quick heartbeat over to GBC so it knows we are connected
-            connection.send(
+            safe_send(
                 updateMachineCommandMsg({
                     heartbeat // echo the machine status heartbeat
                 })
@@ -79,7 +92,7 @@ export function useStatusProcessor(connection: WebSocket) {
             for (const [n, { froTarget }] of kinematics.entries()) {
                 if (froTarget === 0) {
                     // set fro to 100% if not already set on connect
-                    connection.send(updateFroMsg(n, 1))
+                    safe_send(updateFroMsg(n, 1))
                 }
             }
         }
@@ -90,15 +103,13 @@ export function useStatusProcessor(connection: WebSocket) {
         for (const [streamIndex, stream] of streams.entries()) {
             if (stream.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY) {
                 // stream is paused by activity so immediately set it to paused from client side
-                connection.send(
-                    updateStreamCommandMsg(streamIndex, STREAMCOMMAND.STREAMCOMMAND_PAUSE)
-                )
+                safe_send(updateStreamCommandMsg(streamIndex, STREAMCOMMAND.STREAMCOMMAND_PAUSE))
             }
 
             // update buffered streams with latest from GBC, which may trigger more items
             // to be send from the queue (if there is capacity)
             StreamHandler.update(dispatch, streamIndex, stream, currentState, items => {
-                connection.send(
+                safe_send(
                     JSON.stringify({
                         stream: { streamIndex, items }
                     })
@@ -108,7 +119,7 @@ export function useStatusProcessor(connection: WebSocket) {
 
         if (tick % 50 === 0) {
             // send heartbeat about every 5 seconds assuming status message is 10hz
-            connection.send(
+            safe_send(
                 updateMachineCommandMsg({
                     heartbeat // echo the machine status heartbeat
                 })
@@ -117,7 +128,11 @@ export function useStatusProcessor(connection: WebSocket) {
     }, [connection, tick])
 
     useEffect(() => {
-        if (nextControlWord !== undefined) {
+        if (
+            nextControlWord !== undefined &&
+            connection &&
+            connection.readyState === WebSocket.OPEN
+        ) {
             // logic wants to dictate new control word to GBC
             connection.send(updateMachineControlWordMsg(nextControlWord))
         }

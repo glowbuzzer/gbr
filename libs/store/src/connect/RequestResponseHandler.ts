@@ -59,7 +59,7 @@ export class RequestResponseHandler {
         }
     }
 
-    terminate() {
+    rejectAll() {
         for (const { reject } of Object.values(this.requests)) {
             reject("Connection terminated")
         }

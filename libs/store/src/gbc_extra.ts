@@ -166,4 +166,5 @@ export type GlowbuzzerStatus = {
         m7wait: number
         joints: number[]
     }[]
+    response: any // used for promise resolution
 }
