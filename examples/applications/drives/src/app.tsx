@@ -19,7 +19,7 @@ import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 import "antd/dist/antd.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { DrivesTileDefinition } from "./tiles"
+import { DrivesOscillatingMoveTileDefinition, DrivesTileDefinition } from "./tiles"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
@@ -35,7 +35,8 @@ export const App = () => {
                 ConfigEditTileDefinition,
                 FeedRateTileDefinition,
                 TelemetryMiddleCol,
-                DrivesTileDefinition
+                DrivesTileDefinition,
+                DrivesOscillatingMoveTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives" />
