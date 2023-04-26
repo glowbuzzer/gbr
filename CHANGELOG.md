@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.1](https://github.com/glowbuzzer/gbr/compare/v1.7.0...v1.7.1) (2023-04-26)
+
+
+### Bug Fix
+
+* fix tsconfig.doc.json ([0634230](https://github.com/glowbuzzer/gbr/commit/06342301e7ca97009a20fe97dcf0f5c68b4f0fe0))
+* refactor connection handling to remove issue on hot-reload ([3ee74ba](https://github.com/glowbuzzer/gbr/commit/3ee74ba0f856d09d2ab2e4dcb6cb3f955e33c467))
+
+
+### Chore
+
+* add oscillating move and move at velocity tile to drives app ([8dec782](https://github.com/glowbuzzer/gbr/commit/8dec782d0d06392669743865059d6c8ea570c91f))
+* fix invalid imports in tests ([1351691](https://github.com/glowbuzzer/gbr/commit/13516910edd4e8d9d0931705b270386bec42379a))
+* remove create-react-app ([40c3b58](https://github.com/glowbuzzer/gbr/commit/40c3b58cf3ee830a96c5300bdb508cfae0e1ec77))
+* small refactor to streaming and solo activity apis ([d223b7c](https://github.com/glowbuzzer/gbr/commit/d223b7ceb0925d319d0d525eced6776121caf8ba))
+
 ## [1.7.0](https://github.com/glowbuzzer/gbr/compare/v1.6.1...v1.7.0) (2023-04-24)
 
 
