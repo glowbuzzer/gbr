@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.2](https://github.com/glowbuzzer/gbr/compare/v1.7.1...v1.7.2) (2023-04-26)
+
+
+### Bug Fix
+
+* fix missing methods on useSoloActivity return ([26ab56e](https://github.com/glowbuzzer/gbr/commit/26ab56e4310e6d4464a27056c3112f33944942ba))
+
 ## [1.7.1](https://github.com/glowbuzzer/gbr/compare/v1.7.0...v1.7.1) (2023-04-26)
 
 
