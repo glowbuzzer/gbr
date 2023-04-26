@@ -38,7 +38,7 @@ export const activitySlice: Slice<
  *
  * @param kinematicsConfigurationIndex The kinematics configuration index the solo activity API will execute against
  */
-export function useSoloActivity(kinematicsConfigurationIndex = 0): ActivityApi {
+export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityApi {
     const connection = useConnection()
     const defaultMoveParameters = useDefaultMoveParameters()
 
