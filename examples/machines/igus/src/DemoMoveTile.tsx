@@ -3,52 +3,65 @@
  */
 
 import { Button, Space } from "antd"
-import { useSoloActivity } from "@glowbuzzer/store"
+import { useStream } from "@glowbuzzer/store"
 import { Euler, Quaternion } from "three"
 import { StyledTileContent } from "../../../../libs/controls/src/util/styles/StyledTileContent"
 
 export const HIGH_BLOCK_Z = 600
 
 export const DemoMoveTile = () => {
-    const api = useSoloActivity(0)
+    const stream = useStream(0)
 
     function move_start() {
-        return api
-            .moveToPosition(200, 0, 500)
-            .configuration(0)
-            .rotationEuler(0, Math.PI, 0)
-            .promise()
+        return stream.send(api => [
+            api.moveToPosition(200, 0, 500).configuration(0).rotationEuler(0, Math.PI, 0).promise()
+        ])
     }
 
     async function move_red() {
-        return api.sequence(
-            api.moveToPosition(500, -200, 200).configuration(0).rotationEuler(0, Math.PI, 0),
-            api.moveLine(500, -200, 150).rotationEuler(0, Math.PI, Math.PI / 2)
-        )
+        return stream.send(api => [
+            api
+                .moveToPosition(500, -200, 200)
+                .configuration(0)
+                .rotationEuler(0, Math.PI, 0)
+                .promise(),
+            api
+                .moveLine(500, -200, 150)
+                .rotationEuler(0, Math.PI, Math.PI / 2)
+                .promise()
+        ])
     }
 
     async function move_green() {
-        return api.sequence(
-            api.moveToPosition(500, 0, 250).configuration(0).rotationEuler(0, Math.PI, 0),
-            api.moveLine(500, 0, 150)
-        )
+        return stream.send(api => [
+            api.moveToPosition(500, 0, 250).configuration(0).rotationEuler(0, Math.PI, 0).promise(),
+            api.moveLine(500, 0, 150).promise()
+        ])
     }
 
     async function move_blue() {
-        return api.sequence(
-            api.moveToPosition(500, 200, 200).configuration(0).rotationEuler(0, Math.PI, 0),
-            api.moveLine(500, 200, 150)
-        )
+        return stream.send(api => [
+            api
+                .moveToPosition(500, 200, 200)
+                .configuration(0)
+                .rotationEuler(0, Math.PI, 0)
+                .promise(),
+            api.moveLine(500, 200, 150).promise()
+        ])
     }
 
     async function move_pink() {
-        return api.sequence(
+        return stream.send(api => [
             api
                 .moveToPosition(425, 0, HIGH_BLOCK_Z)
                 .configuration(0)
-                .rotationEuler(0, Math.PI / 2, 0),
-            api.moveLine(525, 0, HIGH_BLOCK_Z).rotationEuler(0, Math.PI / 2, Math.PI / 2)
-        )
+                .rotationEuler(0, Math.PI / 2, 0)
+                .promise(),
+            api
+                .moveLine(525, 0, HIGH_BLOCK_Z)
+                .rotationEuler(0, Math.PI / 2, Math.PI / 2)
+                .promise()
+        ])
     }
 
     async function move_yellow() {
@@ -58,10 +71,14 @@ export const DemoMoveTile = () => {
 
         const { x, y, z, w } = new Quaternion().setFromEuler(euler)
 
-        return api.sequence(
-            api.moveToPosition(p1, p1, HIGH_BLOCK_Z).configuration(0).rotation(x, y, z, w),
-            api.moveLine(p2, p2, HIGH_BLOCK_Z)
-        )
+        return stream.send(api => [
+            api
+                .moveToPosition(p1, p1, HIGH_BLOCK_Z)
+                .configuration(0)
+                .rotation(x, y, z, w)
+                .promise(),
+            api.moveLine(p2, p2, HIGH_BLOCK_Z).promise()
+        ])
     }
 
     return (

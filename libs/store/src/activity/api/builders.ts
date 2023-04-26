@@ -31,6 +31,7 @@ import {
 } from "../../gbc"
 import { Euler, Quaternion } from "three"
 
+/** @ignore */
 export interface ActivityController {
     get kinematicsConfigurationIndex(): number
 

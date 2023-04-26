@@ -3,12 +3,9 @@
  */
 
 import {
-    ActivityBuilder,
     AoutBuilder,
-    CancelActivityBuilder,
     DoutBuilder,
     DwellActivityBuilder,
-    EndProgramBuilder,
     IoutBuilder,
     MoveArcBuilder,
     MoveJointsAtVelocityBuilder,
@@ -17,9 +14,10 @@ import {
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
-    PauseProgramBuilder,
+    SpindleActivityBuilder,
     ToolOffsetBuilder
 } from "./builders"
+import { SPINDLEDIRECTION } from "../../gbc"
 
 export interface ActivityApi {
     /** Dwell for a number of cycles */
@@ -123,20 +121,19 @@ export interface ActivityApi {
     setToolOffset(toolIndex: number): ToolOffsetBuilder
 
     /**
-     * Not used for solo activities, and not used by default for streamed activities. If the stream is configured
-     * to require an end program before starting execution, this will be used to end the program.
+     * Control the spindle.
+     *
+     * @param spindleIndex
+     * @param enable
+     * @param speed
+     * @param direction
      */
-    endProgram(): EndProgramBuilder
-
-    /**
-     * Not used for solo activities. For streamed activities, this will pause the stream until the stream is resumed
-     * by sending a stream resume command. This is useful, for example, for tool changes where the operator has to perform
-     * a task before resuming execution.
-     */
-    pauseProgram(): PauseProgramBuilder
-
-    /** Cancel any currently executing activity */
-    cancel(): CancelActivityBuilder
+    spindle(
+        spindleIndex,
+        enable?: boolean,
+        speed?: number,
+        direction?: SPINDLEDIRECTION
+    ): SpindleActivityBuilder
 
     /**
      * Run activities in sequence. The activities provided will be executed in order.
@@ -145,5 +142,5 @@ export interface ActivityApi {
      *
      * @param builders The array of builders to execute
      */
-    sequence(...builders: ActivityBuilder[]): Promise<void>
+    // sequence(...builders: ActivityBuilder[]): Promise<void>
 }

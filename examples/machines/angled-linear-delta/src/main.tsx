@@ -39,12 +39,9 @@ import { useGLTF, Environment, Cylinder } from "@react-three/drei"
 
 import {
     GCodeContextProvider,
-    SoloActivityApi,
-    useKinematics,
     useFrame,
     useJointPositions,
     useKinematicsConfiguration,
-    useToolIndex,
     ActivityApi
 } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"

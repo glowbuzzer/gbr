@@ -273,7 +273,7 @@ export const useStream = (
         capacity,
         pending,
         send(factory: (api: ActivityApi) => Promise<any>[]) {
-            return api.send(...factory(api))
+            return Promise.all(factory(api))
         },
         sendCommand(streamCommand: STREAMCOMMAND) {
             connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
@@ -283,3 +283,5 @@ export const useStream = (
         }
     }
 }
+
+export * from "./api"

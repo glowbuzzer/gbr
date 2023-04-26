@@ -2,9 +2,9 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityController } from "../api/builders"
-import { ACTIVITYSTATE, ActivityStreamItem, MoveParametersConfig } from "../../gbc"
-import { ActivityApiBase, ActivityApiBaseWithPromises } from "../api/base"
+import { ActivityController, CancelActivityBuilder } from "../api/builders"
+import { ActivityStreamItem, MoveParametersConfig } from "../../gbc"
+import { ActivityApiBaseWithPromises } from "../api/base"
 import { ActivityApi } from "../api/interface"
 
 /**
@@ -52,10 +52,12 @@ export class SoloActivityApi
         this._send = send
     }
 
+    /** @ignore */
     get nextTag(): number {
         return this.currentTag++
     }
 
+    /** @ignore */
     execute(command: ActivityStreamItem) {
         const soloActivity = JSON.stringify({
             command: {
@@ -68,5 +70,10 @@ export class SoloActivityApi
         })
 
         return this.createPromise(command.tag, () => this._send(soloActivity))
+    }
+
+    /** Cancel any currently executing activity */
+    cancel() {
+        return new CancelActivityBuilder(this)
     }
 }

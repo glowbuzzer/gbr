@@ -4,7 +4,6 @@
 
 import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, STREAMSTATE } from "../../gbc"
 import {
-    ActivityBuilder,
     AoutBuilder,
     CancelActivityBuilder,
     DoutBuilder,
@@ -28,7 +27,9 @@ function nullify(v?: number) {
     return v === null || isNaN(v /* null is not NaN */) ? null : v
 }
 
+/** @ignore */
 export abstract class ActivityApiBase {
+    /** @ignore */
     public readonly kinematicsConfigurationIndex: number
     private readonly defaultMoveParameters: MoveParametersConfig
 
@@ -40,14 +41,11 @@ export abstract class ActivityApiBase {
         this.defaultMoveParameters = defaultMoveParameters
     }
 
+    /** @ignore */
     abstract get nextTag(): number
 
+    /** @ignore */
     abstract execute(command)
-
-    cancel() {
-        return new CancelActivityBuilder(this)
-        // return this.buildMotion(ACTIVITYTYPE.ACTIVITYTYPE_NONE, {}, {})
-    }
 
     dwell(ticksToDwell: number) {
         return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
@@ -65,7 +63,7 @@ export abstract class ActivityApiBase {
             .joints(jointPositionArray)
     }
 
-    moveJointsAtVelocity(jointVelocityArray: number[], moveParams: MoveParametersConfig = {}) {
+    moveJointsAtVelocity(jointVelocityArray: number[]) {
         return new MoveJointsAtVelocityBuilder(this)
             .params(this.defaultMoveParameters)
             .velocities(jointVelocityArray)
@@ -123,29 +121,17 @@ export abstract class ActivityApiBase {
             .speed(speed)
             .direction(direction)
     }
-
-    endProgram() {
-        return new EndProgramBuilder(this)
-    }
-
-    pauseProgram() {
-        return new PauseProgramBuilder(this)
-    }
-
-    async sequence(...builders: ActivityBuilder[]): Promise<void> {
-        for (const b of builders) {
-            const r = await b.promise()
-            if (!r.completed) {
-                break
-            }
-        }
-    }
 }
 
+/**
+ * @ignore
+ */
 export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
+    /** @ignore */
     protected currentTag = 0
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
+    /** @ignore */
     protected createPromise(tag: number, send: () => void): Promise<number> {
         return new Promise((resolve, reject) => {
             this.promiseFifo.push({ tag, resolve, reject })
@@ -153,6 +139,7 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
         })
     }
 
+    /** @ignore */
     updateActivity(tag: number, state: ACTIVITYSTATE) {
         if (!this.currentTag) {
             this.currentTag = tag + 1
@@ -176,6 +163,7 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
         }
     }
 
+    /** @ignore */
     updateStream(tag: number, state: STREAMSTATE) {
         // we take a simple approach to stream handling...
         // if we are idle, then we can resolve any pending promises
