@@ -24,6 +24,7 @@ export type StreamSliceType = {
     ready: boolean
     paused: boolean
     capacity: number
+    queued: number
     buffer: ActivityStreamItem[]
     pending: number
     state: STREAMSTATE
@@ -40,6 +41,7 @@ const DEFAULT_STREAM_STATE: StreamSliceType = {
     ready: false as boolean,
     paused: false as boolean,
     capacity: 0,
+    queued: 0,
     buffer: [] as ActivityStreamItem[],
     pending: 0,
     state: STREAMSTATE.STREAMSTATE_IDLE,
@@ -228,6 +230,8 @@ export const useStream = (
     tag: number
     /** The number of items that can be sent to the stream. You can stream more than this number but activities will be buffered client side until capacity becomes available. */
     capacity: number
+    /** The number of items that are currently buffered in GBC waiting to be executed */
+    queued: number
     /** The number of items that are currently buffered on the client waiting to be sent */
     pending: number
     /** Send activities to the stream using the api */
@@ -239,7 +243,7 @@ export const useStream = (
     /** Reset the local stream queue */
     reset()
 } => {
-    const { state, tag, time, capacity, pending } = useSelector(
+    const { state, tag, time, capacity, queued, pending } = useSelector(
         (state: RootState) =>
             state.stream[streamIndex] || {
                 state: STREAMSTATE.STREAMSTATE_IDLE,
@@ -263,6 +267,7 @@ export const useStream = (
     )
 
     useEffect(() => {
+        console.log("UPDATE STREAM", tag, state)
         api.updateStream(tag, state)
     }, [api, tag, state])
 
@@ -271,6 +276,7 @@ export const useStream = (
         time,
         tag,
         capacity,
+        queued,
         pending,
         send(factory: (api: ActivityApi) => Promise<any>[]) {
             return Promise.all(factory(api))

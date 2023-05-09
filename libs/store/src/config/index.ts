@@ -76,6 +76,9 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
         setConfigFromRemote(state, action) {
             state.version++
             state.state = ConfigState.READY
+            state.modified =
+                state.usingLocalConfiguration && !deepEqual(state.current, action.payload)
+
             if (state.modified) {
                 state.remote = action.payload
             } else {
@@ -111,6 +114,7 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
             state.modified = false
             state.current = state.remote || GlowbuzzerMinimalConfig
             state.remote = null
+            state.usingLocalConfiguration = false
             persist(state)
         },
         setConfigState(state, action) {
@@ -119,9 +123,12 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
     }
 })
 
-/**
- * @ignore
- */
+/** @ignore */
+export function useConfigVersion(): number {
+    return useSelector((state: RootState) => state.config.version)
+}
+
+/** @ignore */
 export function useConfigState() {
     const dispatch = useDispatch()
     // return value and setter
@@ -131,9 +138,7 @@ export function useConfigState() {
     ] as [ConfigState, (state: ConfigState) => void]
 }
 
-/**
- * @ignore
- */
+/** @ignore */
 export function useOfflineConfig() {
     const loader = useConfigLoader()
     const modified = useSelector((state: RootState) => state.config.modified, shallowEqual)
@@ -150,8 +155,8 @@ export function useOfflineConfig() {
         discard() {
             dispatch(configSlice.actions.discardOfflineConfig(null))
         },
-        upload() {
-            loader(offline_config)
+        upload(): Promise<void> {
+            return loader(offline_config)
         }
     }
 }
@@ -175,7 +180,7 @@ export function useConfigLoader() {
     const config = useConfig()
     const dispatch = useDispatch()
 
-    return (change: Partial<GlowbuzzerConfig>) => {
+    return (change: Partial<GlowbuzzerConfig>): Promise<void> => {
         const next: GlowbuzzerConfig = {
             ...config,
             ...change
@@ -183,10 +188,19 @@ export function useConfigLoader() {
         if (connection.connected) {
             return connection.request("load config", { config: next }).then(() => {
                 dispatch(configSlice.actions.setConfig(next))
+                // return new Promise(
+                //     resolve =>
+                //     // setTimeout(() => {
+                //     //     // we want to get a new status through after loading the config before checking for fro, etc
+                //     //     // (after config is loaded gbc does a full reset)
+                //     //     resolve()
+                //     // }, 1000)
+                // )
             })
         }
         // just do the dispatch, but config is now cached
-        return Promise.resolve(dispatch(configSlice.actions.setOfflineConfig(next)))
+        dispatch(configSlice.actions.setOfflineConfig(next))
+        return Promise.resolve()
     }
 }
 

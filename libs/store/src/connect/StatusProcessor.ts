@@ -27,6 +27,7 @@ import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
 import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
+import { useConfig, useConfigVersion } from "../config"
 
 /**
  * This hook handles status messages from GBC and updates the redux store. It also handles
@@ -36,6 +37,7 @@ import { integerOutputsSlice } from "../io/iout"
 export function useStatusProcessor(connection: WebSocket) {
     const [tick, setTick] = useState(0)
 
+    const configVersion = useConfigVersion()
     const dispatch = useDispatch()
     const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
     const { target, requestedTarget, heartbeat, nextControlWord, currentState } = machine
@@ -48,7 +50,8 @@ export function useStatusProcessor(connection: WebSocket) {
     useEffect(() => {
         setTick(0)
         newConnection.current = true
-    }, [connection])
+        console.log("Init status processor", configVersion)
+    }, [connection, configVersion])
 
     useEffect(() => {
         if (!connection) {
@@ -64,7 +67,9 @@ export function useStatusProcessor(connection: WebSocket) {
         // we test if the tick count is non-zero, because we only want to do initial connection
         // handling after we've received our first status message, as this populates the store with
         // things like the number of kinematics configurations, streams, and so on
-        if (tick && newConnection.current) {
+        if (tick === 1 && newConnection.current) {
+            console.log("StatusProcessor: perform initial connection handling")
+
             newConnection.current = false
 
             dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
@@ -91,8 +96,16 @@ export function useStatusProcessor(connection: WebSocket) {
 
             for (const [n, { froTarget }] of kinematics.entries()) {
                 if (froTarget === 0) {
+                    console.log("Set fro to 100% for kc", n)
                     // set fro to 100% if not already set on connect
                     safe_send(updateFroMsg(n, 1))
+                } else {
+                    console.log(
+                        "Cowardly refusing to set fro to 100% for kc",
+                        n,
+                        "current=",
+                        froTarget
+                    )
                 }
             }
         }
@@ -125,7 +138,7 @@ export function useStatusProcessor(connection: WebSocket) {
                 })
             )
         }
-    }, [connection, tick])
+    }, [requestedTarget, target, connection, tick])
 
     useEffect(() => {
         if (
@@ -159,6 +172,12 @@ export function useStatusProcessor(connection: WebSocket) {
         msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
 
         // increment tick count
-        setTick(current => current + 1)
+        setTick(current => {
+            // if (current === 0) {
+            //     console.log("StatusProcessor: processing first status message", msg.status)
+            // }
+            //
+            return current + 1
+        })
     }
 }

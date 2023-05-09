@@ -32,13 +32,16 @@ export const DockToolbarButtonGroup = styled.span`
         margin-left: 0;
     }
 
-    &:first-child:before,
+    //&:first-child:before,
     :after {
         content: "";
         display: inline-block;
         height: 14px;
-        margin: 0 4px;
+        margin: 0 8px;
         border-left: 1px solid rgb(227, 227, 227);
+    }
+    :last-child:after {
+        display: none;
     }
 
     .anticon {

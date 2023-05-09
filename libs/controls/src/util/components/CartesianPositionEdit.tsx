@@ -173,7 +173,11 @@ export const CartesianPositionEdit = ({
                     <div className="grid">
                         <div>Name</div>
                         <div>
-                            <Input value={name} onChange={e => setName(e.target.value)} />
+                            <Input
+                                size="small"
+                                value={name}
+                                onChange={e => setName(e.target.value)}
+                            />
                         </div>
                         <div />
                         <div />
@@ -228,11 +232,17 @@ export const CartesianPositionEdit = ({
                                 />
                             )}
                         </Space>
-                        <KinematicsDropdown
-                            value={null}
-                            placeholder="Set from current position"
-                            onChange={update_from_kc}
-                        />
+                        {kinematicsConfigurations.length < 2 ? (
+                            <Button size="small" onClick={() => update_from_kc(0)}>
+                                Set from current position
+                            </Button>
+                        ) : (
+                            <KinematicsDropdown
+                                value={null}
+                                placeholder="Set from current position"
+                                onChange={update_from_kc}
+                            />
+                        )}
                     </div>
                     <div className="actions">
                         <Space>

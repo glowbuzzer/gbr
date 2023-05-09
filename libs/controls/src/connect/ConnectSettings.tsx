@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { usePrefs } from "@glowbuzzer/store"
+import { useConnection, usePrefs } from "@glowbuzzer/store"
 import { Button, Form, Input, Modal } from "antd"
 import * as React from "react"
 
@@ -11,6 +11,7 @@ import * as React from "react"
  */
 export const ConnectSettings = ({ open, onClose }) => {
     const prefs = usePrefs()
+    const { connected, connect } = useConnection()
 
     const labelCol = { span: 6 }
 
@@ -18,13 +19,20 @@ export const ConnectSettings = ({ open, onClose }) => {
         prefs.update("url", e.target.value)
     }
 
+    function connect_and_close() {
+        if (!connected) {
+            connect(prefs.current.url)
+        }
+        onClose()
+    }
+
     return (
         <Modal
             open={open}
             onCancel={onClose}
             footer={[
-                <Button key="close" onClick={onClose}>
-                    Close
+                <Button key="close" onClick={connect_and_close}>
+                    {connected ? "Close" : "Connect"}
                 </Button>
             ]}
         >

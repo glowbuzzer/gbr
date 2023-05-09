@@ -45,6 +45,7 @@ export const CartesianPositionTable = ({
     const columns: ColumnType<any>[] = [
         {
             title: "Name",
+            className: "name",
             dataIndex: "name",
             key: "name",
             ellipsis: true,

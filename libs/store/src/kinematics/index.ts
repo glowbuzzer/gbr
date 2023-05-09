@@ -21,39 +21,6 @@ import {
 } from "../gbc"
 import { useMemo } from "react"
 
-// // TODO: H: remove this and use gbc schema version
-// enum KINEMATICSCONFIGURATIONTYPE {
-//     TX40,
-//     TX60,
-//     TS40,
-//     TS60,
-//     CARTESIAN,
-//     DH6DOF,
-//     NAKED
-// }
-
-/**
- * The state of the kinematics configuration
- */
-// export type KinematicsState = {
-//     /** The type of kinematics, for example a robot or cartesian machine */
-//     type: KC_KINEMATICSCONFIGURATIONTYPE
-//     /** The current translation and rotation */
-//     position: { translation: THREE.Vector3; rotation: THREE.Quaternion }
-//     /** Any logical offset applied to the kinematics configuration */
-//     offset: { translation: THREE.Vector3; rotation: THREE.Quaternion }
-//     /** The current configuration for a robot (waist, elbow, wrist) */
-//     currentConfiguration: number
-//     /** The feedrate the kinematics configuration is trying to achieve */
-//     froTarget: number
-//     /** The actual feedrate */
-//     froActual: number
-//     /** The current tool index */
-//     toolIndex: number
-//     /** Indicates if limit checking is currently disabled */
-//     limitsDisabled: boolean
-// }
-
 export const kinematicsSlice: Slice<GlowbuzzerKinematicsConfigurationStatus[]> = createSlice({
     name: "kinematics",
     initialState: [] as GlowbuzzerKinematicsConfigurationStatus[],
@@ -63,87 +30,6 @@ export const kinematicsSlice: Slice<GlowbuzzerKinematicsConfigurationStatus[]> =
         }
     }
 })
-
-// function marshal_tr_into_state({
-//     translation,
-//     rotation
-// }: {
-//     translation: THREE.Vector3
-//     rotation: THREE.Quaternion
-// }) {
-//     const { x, y, z } = translation
-//     const { z: qz, y: qy, x: qx, w: qw } = rotation
-//
-//     return {
-//         translation: { x, y, z },
-//         rotation: { x: qx, y: qy, z: qz, w: qw }
-//     }
-// }
-
-// function marshal_into_state(k: KinematicsConfigurationMcStatus) {
-//     return {
-//         type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-//         currentConfiguration: 0,
-//         // frameIndex: 0,
-//         froTarget: k.froTarget,
-//         froActual: k.froActual,
-//         position: marshal_tr_into_state(k.position),
-//         offset: marshal_tr_into_state(k.offset),
-//         toolIndex: k.toolIndex,
-//         limitsDisabled: k.limitsDisabled
-//     }
-// }
-//
-// function unmarshall_tr_from_state({
-//     translation,
-//     rotation
-// }: {
-//     translation: Vector3
-//     rotation: Quat
-// }): {
-//     translation: Vector3
-//     rotation: Quaternion
-// } {
-//     const { z, y, x } = translation
-//     const { z: qz, y: qy, x: qx, w: qw } = rotation
-//
-//     return {
-//         translation: new Vector3(x, y, z),
-//         rotation: new Quaternion(qx, qy, qz, qw)
-//     }
-// }
-
-// we're not allowed to put THREE objects into state because they are not serializable,
-// so we need to convert the vanilla json objects into THREE version for downstream
-// function unmarshall_from_state(state: KinematicsConfigurationMcStatus): KinematicsState {
-//     if (!state) {
-//         // ensure downstream always has something to work with even if just a default
-//         return {
-//             type: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-//             currentConfiguration: 0,
-//             // frameIndex: 0,
-//             froTarget: 0,
-//             froActual: 0,
-//             position: {
-//                 translation: new Vector3(0, 0, 0),
-//                 rotation: new Quaternion(0, 0, 0, 1)
-//             },
-//             offset: {
-//                 translation: new Vector3(0, 0, 0),
-//                 rotation: new Quaternion(0, 0, 0, 1)
-//             },
-//             toolIndex: 0,
-//             limitsDisabled: false
-//         }
-//     }
-//     return {
-//         ...state,
-//         position: state.position,
-//         offset: state.offset,
-//         toolIndex: state.toolIndex,
-//         limitsDisabled: state.limitsDisabled
-//     }
-// }
 
 export function updateFroMsg(kc: number, value: number) {
     return JSON.stringify({

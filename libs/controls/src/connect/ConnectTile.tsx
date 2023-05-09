@@ -17,6 +17,8 @@ import {
     useOfflineConfig
 } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { useState } from "react"
+import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -95,6 +97,7 @@ export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
     const { modified, usingLocalConfiguration, upload, discard } = useOfflineConfig()
+    const [uploading, setUploading] = useState(false)
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -102,6 +105,15 @@ export const ConnectTile = () => {
 
     function change_desired_state(e) {
         machine.setDesiredState(e.target.value)
+    }
+
+    function upload_config() {
+        setUploading(true)
+        upload().finally(() => setUploading(false))
+    }
+
+    function fetch_remote() {
+        discard()
     }
 
     const state = determine_machine_state(machine.statusWord)
@@ -132,9 +144,17 @@ export const ConnectTile = () => {
                                             <Button
                                                 size="small"
                                                 style={{ width: "100%" }}
-                                                onClick={upload}
+                                                onClick={upload_config}
+                                                disabled={uploading}
                                             >
                                                 Upload
+                                            </Button>
+                                            <Button
+                                                size="small"
+                                                style={{ width: "100%" }}
+                                                onClick={fetch_remote}
+                                            >
+                                                Fetch
                                             </Button>
                                         </Space>
                                     </>
@@ -149,7 +169,8 @@ export const ConnectTile = () => {
                                             <Button
                                                 size="small"
                                                 style={{ width: "100%" }}
-                                                onClick={upload}
+                                                onClick={upload_config}
+                                                disabled={uploading}
                                             >
                                                 Save
                                             </Button>

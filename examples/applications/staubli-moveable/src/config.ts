@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig } from "@glowbuzzer/store"
+import { GlowbuzzerConfig, JOINT_TYPE } from "@glowbuzzer/store"
 
 export const config: GlowbuzzerConfig = {
     machine: [
@@ -24,64 +24,98 @@ export const config: GlowbuzzerConfig = {
     points: [
         {
             name: "point1",
-            frameIndex: 0,
+            frameIndex: 2,
             translation: {
-                x: 210,
-                y: 210,
-                z: 400
+                x: -1296.072088,
+                y: 420.201074,
+                z: 0
             },
             rotation: {
-                x: 1,
-                y: 0,
-                z: 0,
-                w: 0
+                x: -0.5294895069388674,
+                y: 0.4367770731254619,
+                z: 0.06052237274791161,
+                w: 0.724709385085189
             },
             configuration: 0
         },
         {
             name: "point2",
+            frameIndex: 2,
             translation: {
-                x: 210,
-                y: 390,
-                z: 40
+                x: -498.843729,
+                y: 383.71176,
+                z: 0
             },
             rotation: {
-                x: 0,
-                y: 0,
-                z: 0,
-                w: 1
+                x: -0.7071099974887766,
+                y: 0.00006199991607229216,
+                z: -0.00006200048057078487,
+                w: 0.7071035594333924
             },
             configuration: 0
         },
         {
             name: "point3",
+            frameIndex: 2,
             translation: {
-                x: 290,
-                y: 210,
-                z: 40
+                x: 500.043961,
+                y: 383.719657,
+                z: 0
             },
-            configuration: 0
-        },
-        {
-            name: "point4",
-            translation: {
-                x: 290,
-                y: 390,
-                z: 40
+            rotation: {
+                x: -0.6743752406488375,
+                y: -0.21258285998556473,
+                z: 0.2125690752674474,
+                w: 0.6744189726572962
             },
             configuration: 0
         }
     ],
     frames: [
         {
-            name: "default"
-        },
-        {
-            name: "robot",
+            name: "World",
             translation: {
                 x: 0,
                 y: 0,
-                z: 725
+                z: 0
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
+            }
+        },
+        {
+            name: "MoveablePlatform",
+            positionReference: 1,
+            parentFrameIndex: 0,
+            translation: {
+                x: 0,
+                y: 0,
+                z: 300
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
+            }
+        },
+        {
+            name: "Robot",
+            positionReference: 1,
+            parentFrameIndex: 1,
+            translation: {
+                x: 0,
+                y: 0,
+                z: 325
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0,
+                w: 1
             }
         }
     ],
@@ -174,21 +208,21 @@ export const config: GlowbuzzerConfig = {
             name: "6",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 1200,
+                    amax: 12000,
+                    jmax: 120000
                 }
             ],
             scale: 10000,
             jointType: 0,
-            negLimit: -270,
-            posLimit: 270
+            negLimit: -2000,
+            posLimit: 2000
         }
     ],
     kinematicsConfiguration: [
         {
             name: "default",
-            frameIndex: 1,
+            frameIndex: 2,
             participatingJoints: [0, 1, 2, 3, 4, 5, 6],
             participatingJointsCount: 7,
             kinematicsConfigurationType: 15,
@@ -197,9 +231,9 @@ export const config: GlowbuzzerConfig = {
             extentsZ: [0, 840],
             linearLimits: [
                 {
-                    vmax: 200,
-                    amax: 4000,
-                    jmax: 80000
+                    vmax: 1200,
+                    amax: 12000,
+                    jmax: 120000
                 }
             ],
             angularLimits: [

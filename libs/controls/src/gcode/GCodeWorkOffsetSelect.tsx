@@ -3,10 +3,9 @@
  */
 
 import React from "react"
-import { useFrames, useFramesList } from "@glowbuzzer/store"
+import { useActiveFrame, useFramesList } from "@glowbuzzer/store"
 import { Select } from "antd"
 import { ReactComponent as WorkOffsetIcon } from "@material-symbols/svg-400/outlined/flip_to_back.svg"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
@@ -19,7 +18,7 @@ const StyledDiv = styled.div`
 
 export const GCodeWorkOffsetSelect = () => {
     const frames = useFramesList()
-    const { active, setActiveFrame } = useFrames()
+    const [active, setActiveFrame] = useActiveFrame()
 
     // we currently only support 6 work offsets G54-G59
     const items = Array.from({ length: 6 }).map((_, i) => {

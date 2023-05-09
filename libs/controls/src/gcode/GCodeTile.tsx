@@ -24,7 +24,9 @@ import {
     useKinematicsCartesianPosition,
     useKinematicsOffset,
     usePrefs,
-    usePreview
+    usePreview,
+    useActiveFrame,
+    useFramesList
 } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
@@ -84,13 +86,16 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const send = useGCode(kinematicsConfigurationIndex)
     const prefs = usePrefs()
     const preview = usePreview()
-    const frames = useFrames()
     const active = stream.state !== STREAMSTATE.STREAMSTATE_IDLE
-    const workOffset = frames.active
+    const [workOffset] = useActiveFrame()
     const config = useConfig()
     const [offset] = useKinematicsOffset(0)
     const position = useKinematicsCartesianPosition(0).position
     const gCodeContext = useGCodeContext()
+    const framesList = useFramesList()
+
+    const usingWorkOffsets = framesList.some(frame => frame.workspaceOffset)
+
     const mode = gCodeContext?.mode || GCodeMode.CARTESIAN
 
     const editorRef = useRef<AceEditor>(null)
@@ -115,7 +120,6 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
         position,
         offset,
         gcode,
-        frames.overrides,
         config /* extra dep because config can cause frames to change */
     ])
 
@@ -172,12 +176,13 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const can_stop = !needs_reset && stream.state !== STREAMSTATE.STREAMSTATE_IDLE
     const can_pause = stream.state === STREAMSTATE.STREAMSTATE_ACTIVE
 
+    const current_line = stream.state === STREAMSTATE.STREAMSTATE_IDLE ? 0 : stream.tag
+
     function send_command(v) {
         stream.sendCommand(v.target.value)
         switch (v.target.value as STREAMCOMMAND) {
             case STREAMCOMMAND.STREAMCOMMAND_RUN:
                 if (stream.state === STREAMSTATE.STREAMSTATE_IDLE) {
-                    console.log("reset and send gcode")
                     stream.reset()
                     send_gcode()
                 }
@@ -194,43 +199,52 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
         <DockTileWithToolbar
             toolbar={
                 <>
+                    {usingWorkOffsets && (
+                        <DockToolbarButtonGroup>
+                            <GCodeWorkOffsetSelect />
+                        </DockToolbarButtonGroup>
+                    )}
                     <DockToolbarButtonGroup>
-                        <GCodeWorkOffsetSelect />
-                    </DockToolbarButtonGroup>
-                    <DockToolbarButtonGroup>
-                        <Space>
-                            <span>{(stream.time / 1000).toFixed(1)}s</span>
-                            <Tag>
-                                {connection.connected ? STREAMSTATE[stream.state] : "OFFLINE"}
-                            </Tag>
-
-                            <Radio.Group
-                                size={"small"}
-                                optionType="button"
-                                onChange={send_command}
-                                value={inferredCommand}
+                        <Radio.Group
+                            size={"small"}
+                            optionType="button"
+                            onChange={send_command}
+                            value={inferredCommand}
+                        >
+                            <Radio.Button
+                                disabled={can_pause || !connection.connected}
+                                value={STREAMCOMMAND.STREAMCOMMAND_RUN}
                             >
-                                <Radio.Button
-                                    disabled={can_pause || !connection.connected}
-                                    value={STREAMCOMMAND.STREAMCOMMAND_RUN}
-                                >
-                                    {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
-                                </Radio.Button>
-                                <Radio.Button
-                                    disabled={!can_pause}
-                                    value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}
-                                >
-                                    <PauseOutlined />
-                                </Radio.Button>
-                                <Radio.Button
-                                    disabled={!can_stop}
-                                    value={STREAMCOMMAND.STREAMCOMMAND_STOP}
-                                >
-                                    <StopIcon />
-                                </Radio.Button>
-                            </Radio.Group>
-                        </Space>
+                                {needs_reset ? <ReloadOutlined /> : <CaretRightOutlined />}
+                            </Radio.Button>
+                            <Radio.Button
+                                disabled={!can_pause}
+                                value={STREAMCOMMAND.STREAMCOMMAND_PAUSE}
+                            >
+                                <PauseOutlined />
+                            </Radio.Button>
+                            <Radio.Button
+                                disabled={!can_stop}
+                                value={STREAMCOMMAND.STREAMCOMMAND_STOP}
+                            >
+                                <StopIcon />
+                            </Radio.Button>
+                        </Radio.Group>
                     </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        <Tag>
+                            {connection.connected
+                                ? STREAMSTATE[stream.state].substring(12)
+                                : "OFFLINE"}
+                        </Tag>
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        Line {current_line} of {gcode.split("\n").length}
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        Running Time <span>{(stream.time / 1000).toFixed(1)}s</span>
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>Queued {stream.queued}</DockToolbarButtonGroup>
                     {mode === GCodeMode.JOINT && (
                         <DockToolbarButtonGroup>
                             <Tag>JOINT MODE</Tag>

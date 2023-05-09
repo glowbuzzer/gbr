@@ -117,6 +117,14 @@ export function useSelectedFrame(): [number, (index: number) => void] {
     return [selectedFrame, (index: number) => dispatch(framesSlice.actions.setSelectedFrame(index))]
 }
 
+/** @ignore used internally by the gcode tile */
+export function useActiveFrame(): [number, (index: number) => void] {
+    const dispatch = useDispatch()
+    const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
+
+    return [activeFrame, (index: number) => dispatch(framesSlice.actions.setActiveFrame(index))]
+}
+
 /**
  * @ignore used internally by the gcode interpreter
  */

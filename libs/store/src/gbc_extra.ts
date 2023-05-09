@@ -121,6 +121,8 @@ export type GlowbuzzerStatus = {
     stream: {
         /** Capacity of the stream buffer. You must not send more than this number of activities in a single message. */
         capacity: number
+        /** Number of items currently in the stream buffer. */
+        queued: number
         /** The current state of the stream. */
         state: STREAMSTATE
         /** The tag of of the currently executing activity. */

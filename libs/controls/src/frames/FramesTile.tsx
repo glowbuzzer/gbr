@@ -25,6 +25,8 @@ import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 
 const StyledDiv = styled.div`
+    display: inline-block;
+
     ${CssPointNameWithFrame}
 `
 

@@ -6,7 +6,8 @@ export * from "./gbc_extra"
 // ENUMS
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,
-        CONFIG_STATUS_PREPARED,
+        CONFIG_STATUS_RELOAD,
+        CONFIG_STATUS_RELOAD_FULL,
         CONFIG_STATUS_LOADED,
     }
     export enum LIMITPROFILE {
@@ -34,6 +35,7 @@ export * from "./gbc_extra"
         OPERATION_ERROR_JOINT_DISCONTINUITY,
         OPERATION_ERROR_JOINT_OVER_SPEED,
         OPERATION_ERROR_INVALID_ROTATION,
+        OPERATION_ERROR_CONFIG_RELOADED,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */

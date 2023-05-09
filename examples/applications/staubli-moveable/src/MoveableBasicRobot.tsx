@@ -71,8 +71,7 @@ export const MoveableBasicRobot = ({
                     (jointPositions[index] || 0) + (e.config.jointAngleAdjustment || 0)
             })
         // console.log("elements", elements)
-        console.log("jointPositions[6]", jointPositions[6])
-        elements[0].group.position.x = jointPositions[6] * 10 || 0
+        elements[0].group.position.x = jointPositions[6] || 0
     }, [elements, jointPositions])
 
     return (

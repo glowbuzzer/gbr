@@ -9,24 +9,11 @@ import {
     GlowbuzzerConnectionContext,
     GlowbuzzerConnectionContextType,
     GlowbuzzerStatus,
-    RequestResponseHandler,
+    useRequestHandler,
     useStatusProcessor
 } from "@glowbuzzer/store"
 import { useDispatch } from "react-redux"
-
-type ConnectionProviderStaticState = {
-    count: number
-    websocket: WebSocket
-    url: string
-    handler: RequestResponseHandler
-}
-
-const store: ConnectionProviderStaticState = {
-    count: 0,
-    websocket: null,
-    url: null,
-    handler: null
-}
+import { GlowbuzzerAppLifecycle } from "./lifecycle"
 
 type ConnectionProviderPrivateState = {
     connection: WebSocket
@@ -42,66 +29,60 @@ const DISCONNECTED_STATE: ConnectionProviderPrivateState = {
 
 export const ConnectionProvider = ({ children }) => {
     const [state, setState] = useState<ConnectionProviderPrivateState>(DISCONNECTED_STATE)
+
     const dispatch = useDispatch()
+
+    const [url, setUrl] = useState()
 
     const { connectionState, connection, autoConnect } = state
     const process_status = useStatusProcessor(connection)
+    const handler = useRequestHandler()
 
     const autoConnectRef = useRef(false)
+    const appReloadRef = useRef(false)
 
-    function init_connection() {
-        console.log("✅ connection open", store.count, "reconnect enabled=", autoConnectRef.current)
+    function init_connection(websocket: WebSocket) {
+        console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
 
-        store.websocket.onmessage = msg => {
+        websocket.onmessage = msg => {
             const status: GlowbuzzerStatus = JSON.parse(msg.data)
-            status.response && store.handler.response(status.response)
-            process_status(status)
+            if (status.response) {
+                handler.response(status.response)
+            } else {
+                process_status(status)
+            }
         }
 
-        store.websocket.onclose = () => {
-            console.log(
-                "❌ connection closed",
-                store.count,
-                "reconnect enabled=",
-                autoConnectRef.current
-            )
-            store.handler.rejectAll()
-            store.websocket.close()
-            setState({ ...DISCONNECTED_STATE, autoConnect: autoConnectRef.current })
-        }
-
-        // dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
-        // dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
-        // dispatch(telemetrySlice.actions.init()) // reset telemetry
-        // dispatch(machineSlice.actions.init()) // reset machine state
-
-        store.handler.request("get config").then(response => {
+        handler.request(websocket, "get config").then(response => {
+            // console.log("Setting config from remote")
             dispatch(configSlice.actions.setConfigFromRemote(response.config))
         })
     }
 
     useEffect(() => {
         // this effect is called on initial mount
-        // if the component has been hot reloaded, the existing 'store' holding any previous websocket
-        // will be intact, but the rest of the application state will have been discarded, so we need
+        // if the component has been hot reloaded, the previous websocket held by GlowbuzzerAppLifecycle
+        // should be intact, but the rest of the application state will have been discarded, so we need
         // to re-initialize
-        if (store.websocket?.readyState === WebSocket.OPEN && store.url === store.websocket.url) {
+        const websocket = GlowbuzzerAppLifecycle.websocket
+
+        if (websocket?.readyState === WebSocket.OPEN && !appReloadRef.current) {
             // we're already connected, just do initial connection logic
+            appReloadRef.current = true // to prevent repeat calls to this effect
             autoConnectRef.current = true
             setState({
-                connection: store.websocket,
+                connection: websocket,
                 connectionState: ConnectionState.CONNECTED,
                 autoConnect: true
             })
-            init_connection()
+            init_connection(websocket)
         }
     }, [])
 
     function connect(url, autoConnect = true) {
-        store.url = url
-        store.count++
-        store.websocket = new WebSocket(store.url)
-        store.handler = new RequestResponseHandler(store.websocket)
+        setUrl(url)
+
+        const connection = GlowbuzzerAppLifecycle.connect(url)
 
         autoConnectRef.current = autoConnect
         setState({
@@ -110,16 +91,22 @@ export const ConnectionProvider = ({ children }) => {
             autoConnect
         })
 
-        store.websocket.onopen = () => {
-            init_connection()
+        connection.onopen = () => {
+            init_connection(connection)
             setState({
-                connection: store.websocket,
+                connection,
                 connectionState: ConnectionState.CONNECTED,
                 autoConnect: autoConnectRef.current
             })
         }
 
-        store.websocket.onerror = () => {
+        connection.onclose = () => {
+            console.log("❌ connection closed", "reconnect enabled=", autoConnectRef.current)
+            handler.clear()
+            setState({ ...DISCONNECTED_STATE, autoConnect: autoConnectRef.current })
+        }
+
+        connection.onerror = () => {
             setState({
                 connection: null,
                 connectionState: ConnectionState.DISCONNECTED,
@@ -137,10 +124,7 @@ export const ConnectionProvider = ({ children }) => {
     }
 
     function request(type, body) {
-        if (!store.handler) {
-            throw new Error("No request handler for request")
-        }
-        return store.handler.request(type, body)
+        return handler.request(state.connection, type, body)
     }
 
     const context: GlowbuzzerConnectionContextType = useMemo(
@@ -151,16 +135,16 @@ export const ConnectionProvider = ({ children }) => {
             connected: connectionState === ConnectionState.CONNECTED,
             connect,
             reconnect() {
-                console.log("Reconnect called with auto connect=", autoConnectRef.current)
-                connect(store.url)
+                // console.log("Reconnect called with auto connect=", autoConnectRef.current)
+                connect(url)
             },
             send,
             request,
             disconnect() {
-                console.log("Disconnect called")
+                // console.log("Disconnect called")
                 setState(DISCONNECTED_STATE)
                 autoConnectRef.current = false
-                store.websocket?.close()
+                state.connection?.close()
             }
         }),
         [connection, connectionState, autoConnect]

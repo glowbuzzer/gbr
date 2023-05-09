@@ -25,6 +25,7 @@ import { Provider } from "react-redux"
 import { ConfigLiveEditProvider } from "../config"
 import { appNameContext } from "./hooks"
 import { ConnectionProvider } from "./ConnectionProvider"
+import { GlowbuzzerAppLifecycle } from "./lifecycle"
 
 const theme = {
     colors: {
@@ -165,20 +166,11 @@ export const GlowbuzzerApp = ({
 }: GlowbuzzerAppProps) => {
     initSettings(appName)
 
-    const middleware = getDefault => {
-        return getDefault({ immutableCheck: false, serializableCheck: false })
-    }
-
-    const store = configureStore({
-        reducer: combineReducers({ ...standardReducers, ...additionalReducers }),
-        middleware,
-        enhancers: storeEnhancers
-    })
-
-    store.dispatch(prefsSlice.actions.loadSettings(null))
-    store.dispatch(framesSlice.actions.loadSettings(null))
-    store.dispatch(configSlice.actions.loadOfflineConfig(configuration))
-    store.dispatch(telemetrySlice.actions.loadSettings())
+    const store = GlowbuzzerAppLifecycle.createStore(
+        configuration,
+        storeEnhancers,
+        additionalReducers
+    )
 
     return (
         <appNameContext.Provider value={appName}>

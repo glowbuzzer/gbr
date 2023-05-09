@@ -128,7 +128,7 @@ export abstract class ActivityApiBase {
  */
 export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
     /** @ignore */
-    protected currentTag = 0
+    protected currentTag = 1
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     /** @ignore */

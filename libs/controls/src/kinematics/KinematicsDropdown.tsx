@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Select } from "antd"
+import { Button, Select } from "antd"
 import { useKinematicsConfigurationList } from "@glowbuzzer/store"
 import * as React from "react"
 import styled from "styled-components"
