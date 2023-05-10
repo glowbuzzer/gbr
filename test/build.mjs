@@ -15,12 +15,11 @@ program
 program.parse(process.argv)
 const {source, outfile, watch} = program.opts()
 
-esbuild.build({
+
+const options = {
     define: {
         "process.env.NODE_ENV": '"production"'
     },
-    // external: ["canvas"],
-    watch: !!watch,
     sourcemap: true,
     target: "es2019",
     platform: "node",
@@ -33,4 +32,12 @@ esbuild.build({
             build.onEnd(() => console.log("Build complete", new Date().toISOString()))
         }
     }]
-}).catch(() => process.exit(1))
+};
+
+if (watch) {
+    esbuild.context(options).then(async c => {
+        await c.watch();
+    })
+} else {
+    esbuild.build(options).catch(() => process.exit(1))
+}
