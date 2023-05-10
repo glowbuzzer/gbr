@@ -10,8 +10,17 @@ import styled from "styled-components"
 
 const StyledDiv = styled.div`
     padding: 10px;
+
+    p {
+        margin: 10px 0;
+    }
     > div {
-        margin: 60px 0 0 0;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        .ant-slider {
+            flex: 1;
+        }
     }
 `
 
@@ -74,23 +83,32 @@ export const LinkLengthTile = () => {
     return (
         <StyledDiv>
             <div>
+                Link 1
                 <Slider
                     value={c1}
                     min={0}
                     max={1000}
-                    tooltip={{ open: true }}
+                    tooltip={{ formatter: null }}
                     onChange={v => set(v, 0)}
                 />
+                {c1} mm
             </div>
             <div>
+                Link 2
                 <Slider
                     value={c2}
                     min={0}
                     max={1000}
-                    tooltip={{ open: true }}
+                    tooltip={{ formatter: null }}
                     onChange={v => set(v, 1)}
                 />
+                {c2} mm
             </div>
+            <p>
+                Note that the link lengths are only updated in the kinematics you click the "Update
+                Kinematics" button. You need to do this before executing a move after changing the
+                link lengths.
+            </p>
             <Button size="small" onClick={apply}>
                 Update Kinematics
             </Button>
