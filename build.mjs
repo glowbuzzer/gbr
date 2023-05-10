@@ -133,7 +133,7 @@ for (const project of projects) {
             sourcemap: true,
             external: external_libs, // won't be bundled
             platform: 'browser',
-            target: 'es6',
+            target: 'es2020',
             treeShaking: true,
             metafile: true,
             plugins: [

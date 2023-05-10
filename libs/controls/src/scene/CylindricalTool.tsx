@@ -5,6 +5,7 @@
 import React, { forwardRef } from "react"
 import { useToolConfig } from "@glowbuzzer/store"
 import { Cylinder } from "@react-three/drei"
+import { Mesh } from "three"
 
 type CylindricalToolProps = {
     /** The index of the current tool in the configuration */
@@ -16,7 +17,7 @@ type CylindricalToolProps = {
 /**
  * The CylindricalTool component renders a simple tool with a cylindrical shape. It can be added to the {@link BasicRobot} component.
  */
-export const CylindricalTool = forwardRef(
+export const CylindricalTool = forwardRef<Mesh>(
     ({ toolIndex, color = 0x666666 }: CylindricalToolProps, ref) => {
         const toolConfig = useToolConfig(toolIndex)
 

@@ -27,7 +27,7 @@ import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
 import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
-import { useConfig, useConfigVersion } from "../config"
+import { useConfigVersion } from "../config"
 
 /**
  * This hook handles status messages from GBC and updates the redux store. It also handles

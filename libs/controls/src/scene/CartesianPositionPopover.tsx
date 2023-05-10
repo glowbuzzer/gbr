@@ -56,7 +56,7 @@ export const CartesianPositionPopover = ({
         new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)
     )
     const [x, y, z] = translation.toArray().map(v => fromSI(v, "linear"))
-    const [rx, ry, rz] = euler.toArray().map(v => fromSI(v, "angular"))
+    const [rx, ry, rz] = euler.toArray().map(v => fromSI(Number(v), "angular"))
 
     return (
         <Html position={point}>

@@ -29,7 +29,7 @@ import {
     TriggerParams,
     Vector3
 } from "../../gbc"
-import { Euler, Quaternion } from "three"
+import { Euler, EulerOrder, Quaternion } from "three"
 
 /** @ignore */
 export interface ActivityController {
@@ -279,7 +279,7 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
      * @param z Z rotation in radians
      * @param order The order in which X, Y and Z angles will be applied (default: "XYZ")
      */
-    rotationEuler(x: number, y: number, z: number, order = "XYZ") {
+    rotationEuler(x: number, y: number, z: number, order: EulerOrder = "XYZ") {
         const q = new Quaternion().setFromEuler(new Euler(x, y, z, order))
         return this.rotation(q.x, q.y, q.z, q.w)
     }

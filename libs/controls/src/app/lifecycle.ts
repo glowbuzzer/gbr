@@ -18,7 +18,7 @@ export const GlowbuzzerAppLifecycle = new (class {
         storeEnhancers: StoreEnhancer[],
         additionalReducers: Record<string, Reducer>
     ) {
-        if (import.meta.hot?.data.store) {
+        if (typeof import.meta !== "undefined" && import.meta?.hot?.data.store) {
             return import.meta.hot.data.store
         }
 
@@ -37,7 +37,7 @@ export const GlowbuzzerAppLifecycle = new (class {
         store.dispatch(configSlice.actions.loadOfflineConfig(configuration))
         store.dispatch(telemetrySlice.actions.loadSettings())
 
-        if (import.meta.hot.data) {
+        if (import.meta?.hot?.data) {
             import.meta.hot.data.store = store
         }
 
@@ -45,7 +45,7 @@ export const GlowbuzzerAppLifecycle = new (class {
     }
 
     connect(url: string): WebSocket {
-        if (import.meta.hot) {
+        if (import.meta?.hot) {
             const { url: existingUrl, websocket } = import.meta.hot.data as {
                 url: string
                 websocket: WebSocket
@@ -65,7 +65,7 @@ export const GlowbuzzerAppLifecycle = new (class {
     }
 
     get websocket(): WebSocket {
-        if (import.meta.hot) {
+        if (import.meta?.hot) {
             return import.meta.hot.data.websocket
         }
         return null

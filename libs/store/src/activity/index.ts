@@ -2,31 +2,22 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { useEffect, useMemo } from "react"
-import { ACTIVITYSTATE } from "../gbc"
+import { ActivityStatus } from "../gbc"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useDefaultMoveParameters } from "../config"
 import { SoloActivityApi } from "./solo/api"
 import { ActivityApi } from "./api/interface"
 
-type ActivityStatus = {
-    tag: number
-    state: ACTIVITYSTATE
-}
-
-export const activitySlice: Slice<
-    ActivityStatus[],
-    { status: (state, action) => ActivityStatus[] },
-    string
-> = createSlice({
+export const activitySlice = createSlice({
     name: "activity",
-    initialState: [] as ActivityStatus[],
+    initialState: [],
     reducers: {
-        status: (state, action): ActivityStatus[] => {
-            return [...action.payload]
+        status(state, action: PayloadAction<ActivityStatus[]>) {
+            return action.payload
         }
     }
 })

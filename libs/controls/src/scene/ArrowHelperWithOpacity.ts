@@ -34,7 +34,7 @@ export class ArrowHelperWithOpacity extends Object3D {
     ) {
         super()
 
-        this.type = "ArrowHelper"
+        // this.type = "ArrowHelper"
 
         if (_lineGeometry === undefined) {
             _lineGeometry = new BufferGeometry()
