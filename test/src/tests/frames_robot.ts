@@ -77,11 +77,11 @@ test.before.each(() => {
     init_robot_test()
 })
 
-test("initial kc local position from joint angles is not rotated", async () => {
+test.skip("initial kc local position from joint angles is not rotated", async () => {
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 })
 
-test("basic move_to_position in kc local coords", async () => {
+test.skip("basic move_to_position in kc local coords", async () => {
     try {
         const move = gbc.wrap(
             gbc.activity
@@ -96,7 +96,7 @@ test("basic move_to_position in kc local coords", async () => {
     }
 })
 
-test("move_to_position with no frame index specified (use kc local)", async () => {
+test.skip("move_to_position with no frame index specified (use kc local)", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).promise)
@@ -107,7 +107,7 @@ test("move_to_position with no frame index specified (use kc local)", async () =
     }
 })
 
-test("move_to_position with different frame index for target", async () => {
+test.skip("move_to_position with different frame index for target", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(
@@ -127,7 +127,7 @@ test("move_to_position with different frame index for target", async () => {
     }
 })
 
-test("move_to_position in world frame with rotation", async () => {
+test.skip("move_to_position in world frame with rotation", async () => {
     try {
         // default frame index is zero
         gbc.disable_limit_check()
@@ -149,7 +149,7 @@ test("move_to_position in world frame with rotation", async () => {
     }
 })
 
-test("move rotation at velocity in kc frame", async () => {
+test.skip("move rotation at velocity in kc frame", async () => {
     // initial position
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 

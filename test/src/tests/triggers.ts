@@ -94,14 +94,14 @@ test("can trigger cancel after a number of ms (solo)", async () => {
 test("can trigger cancel after a number of ms (stream)", async () => {
     // the bus cycle time is 4, so 20ms is 5 cycles
     const trigger = new TimerTriggerBuilder(20).action(TRIGGERACTION.TRIGGERACTION_CANCEL).build()
-    const dwell1 = gbc.activity.dwell(10000).addTrigger(trigger).command
-    const dwell2 = gbc.activity.dwell(3).command
-    const end_program = gbc.activity.endProgram().command
-    gbc.stream([dwell1, dwell2, end_program]) //
+    const dwell1 = gbc.stream.dwell(10000).addTrigger(trigger).command
+    const dwell2 = gbc.stream.dwell(3).command
+    const end_program = gbc.stream.endProgram().command
+    gbc.enqueue([dwell1, dwell2, end_program]) //
         .assert.streamSequence(tag, [
             [2, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE], // first dwell before trigger
             [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // second dwell normal
-            [5, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE] // end of stream
+            [5, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED] // end of stream
         ])
         .verify()
 })
@@ -120,10 +120,10 @@ test("can trigger cancel on digital in (stream)", async () => {
     const trigger = new DigitalInputTriggerBuilder(0)
         .action(TRIGGERACTION.TRIGGERACTION_CANCEL)
         .build()
-    const dwell1 = gbc.activity.dwell(10000).addTrigger(trigger).command
-    const dwell2 = gbc.activity.dwell(3).command
-    const end_program = gbc.activity.endProgram().command
-    const sequence = gbc.stream([dwell1, dwell2, end_program])
+    const dwell1 = gbc.stream.dwell(10000).addTrigger(trigger).command
+    const dwell2 = gbc.stream.dwell(3).command
+    const end_program = gbc.stream.endProgram().command
+    const sequence = gbc.enqueue([dwell1, dwell2, end_program])
     sequence.assert
         .streamSequence(tag, [
             [2, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE] // first dwell before trigger
@@ -134,7 +134,7 @@ test("can trigger cancel on digital in (stream)", async () => {
         .streamSequence(tag, [
             [2, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE], // second dwell normal
             [1, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // second dwell normal
-            [5, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE] // end of stream
+            [5, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED] // end of stream
         ])
         .verify()
 })
@@ -178,7 +178,7 @@ test("can trigger cancel on gt integer in (solo)", async () => {
 //         .action(TRIGGERACTION.TRIGGERACTION_CANCEL)
 //         .lt(0)
 //         .build()
-//     const command = gbc.wrap(gbc.activity.dwell(10000).addTrigger(trigger).promise).start()
+//     const command = gbc.wrap(gbc.stream.dwell(10000).addTrigger(trigger).promise).start()
 //     await command.iterations(10).assertNotResolved()
 //     gbc.pdo.set_iin(0, -1)
 //     await command.iterations(5).assertCancelled()
@@ -195,15 +195,15 @@ test("can trigger start after a number of ms (solo)", async () => {
 test("can trigger start after a number of ms (stream)", async () => {
     // the bus cycle time is 4, so 20ms is 5 cycles
     const trigger = new TimerTriggerBuilder(20).action(TRIGGERACTION.TRIGGERACTION_START).build()
-    const dwell1 = gbc.activity.dwell(15).command
-    const dwell2 = gbc.activity.dwell(5).addTrigger(trigger).command // 2nd dwell is triggered
-    const end_program = gbc.activity.endProgram().command
-    gbc.stream([dwell1, dwell2, end_program]) //
+    const dwell1 = gbc.stream.dwell(15).command
+    const dwell2 = gbc.stream.dwell(5).addTrigger(trigger).command // 2nd dwell is triggered
+    const end_program = gbc.stream.endProgram().command
+    gbc.enqueue([dwell1, dwell2, end_program]) //
         .assert.streamSequence(tag, [
             [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE], // first dwell before complete
             [8, 2, ACTIVITYSTATE.ACTIVITY_INACTIVE], // second dwell pending trigger
             [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // second dwell active
-            [15, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE] // end of stream
+            [15, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED] // end of stream
         ])
         .verify()
 })

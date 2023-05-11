@@ -107,8 +107,8 @@ export class ConfigBuilder {
         }
     }
 
-    public finalize() {
-        return this.framework.reset_from_json(this.json)
+    public finalize(restoreJoints = false) {
+        return this.framework.reset_from_json(this.json, restoreJoints)
     }
 
     joints(number: number) {

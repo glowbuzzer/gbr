@@ -117,7 +117,7 @@ test("doesn't blend rapid to line", async () => {
                     [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
                     [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [45, 3, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true /* set to false to skip verify */
             )
@@ -142,7 +142,7 @@ test("doesn't blend line to rapid", async () => {
                     [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE], // this would be in blend
                     [20, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [45, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [45, 3, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true /* set to false to skip verify */
             )

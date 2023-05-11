@@ -20,20 +20,21 @@ import {
     updateMachineControlWordMsg,
     updateMachineTargetMsg
 } from "../../libs/store/src/api"
-import {combineReducers, configureStore, EnhancedStore} from "@reduxjs/toolkit"
+import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import {
     activitySlice,
     FaultCode,
     jointsSlice,
     kinematicsSlice,
+    StreamingActivityApi,
     streamSlice,
     updateFroMsg,
     updateOffsetMsg
 } from "../../libs/store/src"
-import {make_plot} from "./plot"
-import {GCodeSenderAdapter} from "../../libs/store/src/gcode/GCodeSenderAdapter"
-import {Quaternion, Vector3} from "three"
-import {ConfigBuilder} from "./builder"
+import { make_plot } from "./plot"
+import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
+import { Quaternion, Vector3 } from "three"
+import { ConfigBuilder } from "./builder"
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -66,6 +67,7 @@ export class GbcTest {
     private readonly gbc: any
     private store: EnhancedStore<State>
     private activity_api: SoloActivityApi
+    private streaming_api: StreamingActivityApi
     private readonly enable_plot: boolean
 
     constructor(gbc, plot) {
@@ -139,7 +141,7 @@ export class GbcTest {
                 assert.equal(actual, expected)
                 return this
             },
-            selector: (selector, expected, msg?) => {
+            selector: (selector: (s: GlowbuzzerStatus) => any, expected, msg?) => {
                 const statusMsg = this.status_msg
                 const actual = selector(statusMsg)
                 if (msg && actual !== expected) {
@@ -229,6 +231,10 @@ export class GbcTest {
         return this.activity_api
     }
 
+    get stream() {
+        return this.streaming_api
+    }
+
     get pdo() {
         const self = this
         return {
@@ -276,12 +282,14 @@ export class GbcTest {
         })
 
         this.activity_api = new SoloActivityApi(0, null, this.gbc.send)
+        this.streaming_api = new StreamingActivityApi(0, null, this.gbc.send)
         this.capture_state = undefined
-        this.check_limits = true
 
         this.send(updateMachineTargetMsg(MACHINETARGET.MACHINETARGET_SIMULATION))
         this.send(updateFroMsg(0, 1))
         this.exec_double_cycle()
+
+        this.check_limits = true
 
         return this
     }
@@ -291,8 +299,8 @@ export class GbcTest {
         return this.init()
     }
 
-    reset_from_json(json) {
-        this.gbc.reset_from_json(JSON.stringify(json))
+    reset_from_json(json, restoreJoints = false) {
+        this.gbc.reset_from_json(JSON.stringify(json), restoreJoints)
         return this.init()
     }
 
@@ -335,8 +343,7 @@ export class GbcTest {
         this.enable_limit_check()
     }
 
-    stream(items, streamIndex = 0) {
-        // console.log("message", JSON.stringify(stream, null, 2))
+    enqueue(items, streamIndex = 0) {
         this.send(JSON.stringify({ stream: { streamIndex, items } }))
         return this
     }
@@ -369,7 +376,7 @@ export class GbcTest {
             5: 4
         })
         adapter.execute(gcode)
-        return this.stream(buffer)
+        return this.enqueue(buffer)
     }
 
     get(selector) {
@@ -383,15 +390,11 @@ export class GbcTest {
                 // get the joint status
                 const msg = this.status_msg
                 const status = msg.status
-                // @ts-ignore
                 status.joint && this.store.dispatch(jointsSlice.actions.status(status.joint))
-                // @ts-ignore
                 status.kc && this.store.dispatch(kinematicsSlice.actions.status(status.kc))
                 status.activity &&
-                    // @ts-ignore
                     this.store.dispatch(activitySlice.actions.status(status.activity))
                 if (msg.stream) {
-                    // @ts-ignore
                     this.store.dispatch(streamSlice.actions.status(msg.stream))
                 }
 

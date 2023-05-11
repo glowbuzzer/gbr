@@ -272,22 +272,22 @@ test("blend move_to_position (with different orientation)", async () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const move1 = gbc.activity.moveToPosition(300, 100, 150).params(moveParams).command
-    const move2 = gbc.activity
+    const move1 = gbc.stream.moveToPosition(300, 100, 150).params(moveParams).command
+    const move2 = gbc.stream
         .moveToPosition(100, 250, 100)
         .rotationEuler(Math.PI, 0, Math.PI / 4)
         .params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([move1, move2, end_program]) //
+        gbc.enqueue([move1, move2, end_program]) //
             .assert.streamSequence(
                 tag,
                 [
                     [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [35, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [25, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [75, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [75, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true
             )
@@ -306,23 +306,23 @@ test("blend move_to_position (with configuration change)", async () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const move1 = gbc.activity.moveToPosition(100, 100, 100).params(moveParams).command
-    const move2 = gbc.activity
+    const move1 = gbc.stream.moveToPosition(100, 100, 100).params(moveParams).command
+    const move2 = gbc.stream
         .moveToPosition(100, 100, 300)
         .rotationEuler(Math.PI, 0, Math.PI / 4)
         .configuration(0) // wrist flip
         .params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([move1, move2, end_program]) //
+        gbc.enqueue([move1, move2, end_program]) //
             .assert.streamSequence(
                 tag,
                 [
                     [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [25, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [25, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [50, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [50, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true
             )
@@ -342,26 +342,26 @@ test("blend move_to_position with move_line (with configuration and orientation 
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const move1 = gbc.activity
+    const move1 = gbc.stream
         .moveToPosition(100, 25, 100)
         .rotationEuler(Math.PI / 2, 0, 0)
         .configuration(2)
         .params(moveParams).command
-    const move2 = gbc.activity
+    const move2 = gbc.stream
         .moveLine(100, 25, 150)
         .rotationEuler(Math.PI / 2, 0, 0)
         .params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([move1, move2, end_program])
+        gbc.enqueue([move1, move2, end_program])
             .assert.streamSequence(
                 tag,
                 [
                     [30, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [30, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [70, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [70, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true
             )

@@ -36,22 +36,22 @@ test("can blend move line / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveLine(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveline-moveline-100")
+        gbc.plot("test")
     }
 })
 
@@ -60,23 +60,23 @@ test("can blend move line / move line at 50pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 50
     }
-    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveLine(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [15, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [10, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [10, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveline-moveline-50")
+        gbc.plot("test")
     }
 })
 
@@ -85,23 +85,23 @@ test("can blend move line / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(25, 0, 0).params(moveParams).command
-    const line2 = gbc.activity
+    const line1 = gbc.stream.moveLine(25, 0, 0).params(moveParams).command
+    const line2 = gbc.stream
         .moveArc(0, 25, 0)
         .centre(0, 0, 0)
         .direction(ARCDIRECTION.ARCDIRECTION_CCW)
         .params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [30, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [40, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [40, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
@@ -114,23 +114,23 @@ test("can blend move to / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(25, 0, 0).params(moveParams).command
-    const line2 = gbc.activity
+    const line1 = gbc.stream.moveToPosition(25, 0, 0).params(moveParams).command
+    const line2 = gbc.stream
         .moveArc(0, 25, 0)
         .centre(0, 0, 0)
         .direction(ARCDIRECTION.ARCDIRECTION_CCW)
         .params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [30, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [40, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [40, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
@@ -143,21 +143,21 @@ test("can blend move arc / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
-    const line2 = gbc.activity.moveLine(5, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const line2 = gbc.stream.moveLine(5, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [50, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [50, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [50, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("movearc-moveline-100")
+        gbc.plot("test")
     }
 })
 
@@ -166,12 +166,12 @@ test("can blend move arc / move to position at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
-    const line2 = gbc.activity.moveToPosition(5, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const line2 = gbc.stream.moveToPosition(5, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(
                 tag,
                 [
@@ -179,13 +179,13 @@ test("can blend move arc / move to position at 100pc", () => {
                     [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [25, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true
             )
             .verify()
     } finally {
-        gbc.plot("movearc-moveto-100")
+        gbc.plot("test")
     }
 })
 
@@ -194,23 +194,23 @@ test("can blend move arc / move arc at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const arc1 = gbc.activity.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
-    const arc2 = gbc.activity.moveArc(0, 0, 0).centre(0, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const arc1 = gbc.stream.moveArc(25, 25, 0).centre(25, 0, 0).params(moveParams).command
+    const arc2 = gbc.stream.moveArc(0, 0, 0).centre(0, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([arc1, arc2, end_program]) //
+        gbc.enqueue([arc1, arc2, end_program]) //
             .assert.streamSequence(tag, [
                 [40, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [30, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("movearc-movearc-100")
+        gbc.plot("test")
     }
 })
 
@@ -219,22 +219,22 @@ test("can blend move to position / move line at 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveLine(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveToPosition(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveLine(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveto-moveline-100")
+        gbc.plot("test")
     }
 })
 
@@ -243,22 +243,22 @@ test("can blend move to position / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveToPosition(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveToPosition(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveToPosition(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveto-moveto-100")
+        gbc.plot("test")
     }
 })
 
@@ -267,22 +267,22 @@ test("can blend move line / move to position 100pc", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveToPosition(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [10, 1, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveline-moveto-100")
+        gbc.plot("test")
     }
 })
 
@@ -292,21 +292,21 @@ test("CANNOT blend move joints / move to position", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveJoints([25, 5, 0]).params(moveParams).command
-    const line2 = gbc.activity.moveToPosition(20, 25, 0).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveJoints([25, 5, 0]).params(moveParams).command
+    const line2 = gbc.stream.moveToPosition(20, 25, 0).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [25, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [20, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [40, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [30, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [30, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("movejoints-moveto-100")
+        gbc.plot("test")
     }
 })
 
@@ -316,21 +316,21 @@ test("CANNOT blend move line / move joints", () => {
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     }
-    const line1 = gbc.activity.moveLine(25, 5, 0).params(moveParams).command
-    const line2 = gbc.activity.moveJoints([20, 25, 0]).params(moveParams).command
-    const end_program = gbc.activity.endProgram().command
+    const line1 = gbc.stream.moveLine(25, 5, 0).params(moveParams).command
+    const line2 = gbc.stream.moveJoints([20, 25, 0]).params(moveParams).command
+    const end_program = gbc.stream.endProgram().command
 
     try {
-        gbc.stream([line1, line2, end_program]) //
+        gbc.enqueue([line1, line2, end_program]) //
             .assert.streamSequence(tag, [
                 [30, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [20, 1, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                 [20, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                [40, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                [40, 2, ACTIVITYSTATE.ACTIVITY_COMPLETED]
             ])
             .verify()
     } finally {
-        gbc.plot("moveline-movejoints-100")
+        gbc.plot("test")
     }
 })
 
@@ -351,7 +351,7 @@ test("can handle very short move in blend sequence", async () => {
                     [14, 2, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE], // this should be in blend
                     [13, 3, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE],
                     [6, 3, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [25, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [25, 3, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true /* set to false to skip verify */
             )
@@ -375,14 +375,14 @@ test("handles incomplete gcode during blend", async () => {
         )
             .assert.streamSequence(
                 tag,
-                [[35, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]],
+                [[35, 4, ACTIVITYSTATE.ACTIVITY_COMPLETED]],
                 true /* set to false to skip verify */
             )
             .verify()
             .assert.near(pos(0), 1)
             .assert.near(pos(1), 0)
     } finally {
-        gbc.plot("blend-handle-partial-gcode")
+        gbc.plot("test")
     }
 })
 
@@ -403,7 +403,7 @@ test.skip("can handle very short arc in blend sequence", async () => {
                     [5, 2, ACTIVITYSTATE.ACTIVITY_ACTIVE],
                     [13, 2, ACTIVITYSTATE.ACTIVITY_BLEND_ACTIVE], // this should be in blend
                     [10, 4, ACTIVITYSTATE.ACTIVITY_ACTIVE],
-                    [20, 0, ACTIVITYSTATE.ACTIVITY_INACTIVE]
+                    [20, 4, ACTIVITYSTATE.ACTIVITY_COMPLETED]
                 ],
                 true /* set to false to skip verify */
             )

@@ -33,9 +33,9 @@ test("can see state of stream queue", async () => {
 })
 
 test("can execute empty program", async () => {
-    const end_program = gbc.activity.endProgram().command
+    const end_program = gbc.stream.endProgram().command
 
-    gbc.stream([end_program]).exec(1)
+    gbc.enqueue([end_program]).exec(1)
 
     gbc.assert
         .selector(capacity, gbc.m4_stream_total_cap)
@@ -47,10 +47,10 @@ test("can execute empty program", async () => {
 })
 
 test("can execute a dwell", async () => {
-    const dwell = gbc.activity.dwell(5).command
-    const end_program = gbc.activity.endProgram().command
+    const dwell = gbc.stream.dwell(5).command
+    const end_program = gbc.stream.endProgram().command
 
-    gbc.stream([dwell, end_program]).exec(1)
+    gbc.enqueue([dwell, end_program]).exec(1)
 
     gbc.assert
         .selector(capacity, gbc.m4_stream_total_cap)
@@ -66,14 +66,14 @@ test("can execute a dwell", async () => {
 
     gbc.exec(3) // dwell complete, all done
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
-        .assert.selector(tag, 0)
+        .assert.selector(tag, 1)
 })
 
 test("can fill the m4 buffer", async () => {
     const number_to_stream = gbc.m4_stream_total_cap - 1
-    const dwells = Array.from({ length: number_to_stream }).map(() => gbc.activity.dwell(1).command)
+    const dwells = Array.from({ length: number_to_stream }).map(() => gbc.stream.dwell(1).command)
 
-    gbc.stream(dwells)
+    gbc.enqueue(dwells)
 
     gbc.assert
         .selector(capacity, 1) // most of buffer used up
@@ -91,8 +91,8 @@ test("can fill the m4 buffer", async () => {
         .assert.selector(readCount, number_to_stream) // items read to m7 capacity
         .assert.selector(writeCount, number_to_stream)
 
-    const end_program = gbc.activity.endProgram().command
-    gbc.stream([end_program]) // send end program
+    const end_program = gbc.stream.endProgram().command
+    gbc.enqueue([end_program]) // send end program
         .exec(5) // kick off
         .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
@@ -104,12 +104,12 @@ test("can fill the m4 buffer", async () => {
     gbc.exec(10) // finish off
         .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
-        .assert.selector(tag, 0)
+        .assert.selector(tag, number_to_stream)
 })
 
 test("will start executing when m7 buffer is full", () => {
-    const dwells1 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(2).command)
-    const dwells2 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(2).command)
+    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(2).command)
+    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(2).command)
 
     gbc.assert // was issue with reset, so let's do some extra checking at start
         .selector(capacity, gbc.m4_stream_total_cap)
@@ -117,8 +117,8 @@ test("will start executing when m7 buffer is full", () => {
         .assert.selector(writeCount, 0)
 
     // we can't stream down 20 dwells all at once because m4 buffer is not large enough
-    gbc.stream(dwells1).exec(1) // the exec pulls from shared queue onto internal queue
-    gbc.stream(dwells2).exec(1)
+    gbc.enqueue(dwells1).exec(1) // the exec pulls from shared queue onto internal queue
+    gbc.enqueue(dwells2).exec(1)
 
     // note that we never send end program
     gbc.assert
@@ -135,40 +135,27 @@ test("will start executing when m7 buffer is full", () => {
 })
 
 test("can stream one program after another", () => {
-    const dwells1 = Array.from({ length: 5 }).map(() => gbc.activity.dwell(2).command)
-    const dwells2 = Array.from({ length: 5 }).map(() => gbc.activity.dwell(2).command)
+    const dwells1 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(2).command)
+    const dwells2 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(2).command)
 
     // exec first program to completion
-    gbc.stream([...dwells1, gbc.activity.endProgram().command])
+    gbc.enqueue([...dwells1, gbc.stream.endProgram().command])
         .exec(5)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .exec(10)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
 
     // stream next program
-    gbc.stream(dwells2)
+    gbc.enqueue(dwells2)
         .exec(5) // should not start until end program
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
 
     // end next program and exec to completion
-    gbc.stream([gbc.activity.endProgram().command])
+    gbc.enqueue([gbc.stream.endProgram().command])
         .exec(5)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .exec(10)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
-})
-
-test("can use the stream activity api", () => {
-    // this isn't much of a test... just a demo of how to use the api
-    // in the real implementation, the dispatch function pushes activities to the stream slice
-    const buffer = []
-
-    const api = new StreamingActivityApi(0, {}, item => buffer.push(item))
-
-    const item = api.dwell(5).promise()
-    api.send(item)
-
-    assert.equal(buffer.length, 1)
 })
 
 test("can command stream to stop", () => {
@@ -178,10 +165,10 @@ test("can command stream to stop", () => {
     const readCount = state => state.stream[1].readCount
     const writeCount = state => state.stream[1].writeCount
 
-    const dwells1 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(20).command)
-    const dwells2 = Array.from({ length: 10 }).map(() => gbc.activity.dwell(20).command)
+    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(20).command)
+    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(20).command)
 
-    gbc.stream(dwells1, 1).exec(5)
+    gbc.enqueue(dwells1, 1).exec(5)
     gbc.assert
         // all items have been taken onto the m7 queue, so m4 queue is empty
         .selector(capacity, gbc.m7_stream_total_cap)
@@ -190,7 +177,7 @@ test("can command stream to stop", () => {
         .assert.selector(readCount, 10)
         .assert.selector(writeCount, 10)
 
-    gbc.stream(dwells2, 1).exec(5)
+    gbc.enqueue(dwells2, 1).exec(5)
     gbc.assert
         .selector(capacity, 0)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
@@ -207,11 +194,11 @@ test("can command stream to stop", () => {
 })
 
 test("can stop stream during move", () => {
-    const move = gbc.activity.moveLine(100, 100, 100).command
-    const endProgram = gbc.activity.endProgram().command
+    const move = gbc.stream.moveLine(100, 100, 100).command
+    const endProgram = gbc.stream.endProgram().command
 
     gbc.disable_limit_check() // TODO: we are exceeding joint limit when ramping down fro
-    gbc.stream([move, endProgram]).exec(15)
+    gbc.enqueue([move, endProgram]).exec(15)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE).assert.selector(tag, 1)
 
     // command the stream to stop
