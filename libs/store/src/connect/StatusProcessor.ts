@@ -77,11 +77,6 @@ export function useStatusProcessor(connection: WebSocket) {
             dispatch(telemetrySlice.actions.init()) // reset telemetry
             dispatch(machineSlice.actions.init()) // reset machine state
 
-            if (target !== requestedTarget) {
-                // we are not in the desired target state (sim/live) so send a message to GBC to change state
-                safe_send(updateMachineTargetMsg(requestedTarget))
-            }
-
             if (nextControlWord !== undefined) {
                 // logic wants to dictate new control word to GBC
                 safe_send(updateMachineControlWordMsg(nextControlWord))
@@ -94,20 +89,18 @@ export function useStatusProcessor(connection: WebSocket) {
                 })
             )
 
-            for (const [n, { froTarget }] of kinematics.entries()) {
-                if (froTarget === 0) {
-                    console.log("Set fro to 100% for kc", n)
-                    // set fro to 100% if not already set on connect
-                    safe_send(updateFroMsg(n, 1))
-                } else {
-                    console.log(
-                        "Cowardly refusing to set fro to 100% for kc",
-                        n,
-                        "current=",
-                        froTarget
-                    )
-                }
-            }
+            // if (target !== requestedTarget) {
+            //     // we are not in the desired target state (sim/live) so send a message to GBC to change state
+            //     safe_send(updateMachineTargetMsg(requestedTarget))
+            // }
+
+            // for (const [n, { froTarget }] of kinematics.entries()) {
+            //     if (froTarget === 0) {
+            //         console.log("Set fro to 100% for kc", n)
+            //         // set fro to 100% if not already set on connect
+            //         safe_send(updateFroMsg(n, 1))
+            //     }
+            // }
         }
 
         // end of initial connection handling
