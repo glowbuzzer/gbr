@@ -18,6 +18,8 @@ import {
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
+    TelemetryTile,
+    TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
@@ -66,6 +68,8 @@ root.render(
         >
             <DockLayoutProvider
                 tiles={[
+                    MoveableStaubliTileDefinition,
+                    DemoTileDefinition,
                     ConnectTileDefinition,
                     CartesianJogTileDefinition,
                     CartesianDroTileDefinition,
@@ -76,8 +80,7 @@ root.render(
                     FramesTileDefinition,
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
-                    MoveableStaubliTileDefinition,
-                    DemoTileDefinition
+                    TelemetryTileDefinition
                 ]}
             >
                 <ExampleAppMenu title="Moveable Staubli TX40" />

@@ -2,7 +2,9 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig, JOINT_TYPE } from "@glowbuzzer/store"
+import { GlowbuzzerConfig } from "@glowbuzzer/store"
+
+const JOINT_SCALE = 1000000
 
 export const config: GlowbuzzerConfig = {
     machine: [
@@ -121,7 +123,7 @@ export const config: GlowbuzzerConfig = {
     ],
     joint: [
         {
-            name: "0",
+            name: "W",
             limits: [
                 {
                     vmax: 1,
@@ -129,13 +131,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -180,
             posLimit: 180
         },
         {
-            name: "1",
+            name: "S",
             limits: [
                 {
                     vmax: 1,
@@ -143,13 +145,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -125,
             posLimit: 125
         },
         {
-            name: "2",
+            name: "E",
             limits: [
                 {
                     vmax: 1,
@@ -157,13 +159,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -138,
             posLimit: 138
         },
         {
-            name: "3",
+            name: "W",
             limits: [
                 {
                     vmax: 1,
@@ -171,13 +173,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
         },
         {
-            name: "4",
+            name: "H",
             limits: [
                 {
                     vmax: 1,
@@ -185,13 +187,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -120,
             posLimit: 133.5
         },
         {
-            name: "5",
+            name: "T",
             limits: [
                 {
                     vmax: 1,
@@ -199,13 +201,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
         },
         {
-            name: "6",
+            name: "TR",
             limits: [
                 {
                     vmax: 1200,
@@ -213,7 +215,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 120000
                 }
             ],
-            scale: 10000,
+            scale: JOINT_SCALE,
             jointType: 0,
             negLimit: -2000,
             posLimit: 2000
@@ -228,7 +230,7 @@ export const config: GlowbuzzerConfig = {
             kinematicsConfigurationType: 15,
             extentsX: [-2000, 2000],
             extentsY: [-2000, 2000],
-            extentsZ: [0, 840],
+            extentsZ: [-200, 840],
             linearLimits: [
                 {
                     vmax: 1200,

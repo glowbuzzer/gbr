@@ -60,8 +60,8 @@ export const DemoTile = () => {
     }
 
     const move_type_options = [
-        { label: "Relative move in X", value: "moveRelative" },
-        { label: "Linear move to position", value: "moveLine" }
+        { label: "relative move in X", value: "moveRelative" },
+        { label: "linear move to position", value: "moveLine" }
     ]
 
     return (
@@ -84,9 +84,10 @@ export const DemoTile = () => {
                     Tracking Camera
                 </Checkbox>
                 <Space>
+                    Move to start, then do
                     <Select options={move_type_options} value={moveType} onChange={setMoveType} />
-                    <span>Duration of move</span>
-                    <PrecisionInput value={duration} onChange={setDuration} precision={0} />
+                    <span>for</span>
+                    <PrecisionInput value={duration} onChange={setDuration} precision={0} /> second
                 </Space>
             </Space>
         </div>
