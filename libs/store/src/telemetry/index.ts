@@ -43,7 +43,7 @@ type TelemetrySliceType = {
     t: number
 }
 
-const MAX_SAMPLES = 2500
+const MAX_SAMPLES = 3000
 
 export const telemetrySlice: Slice<
     TelemetrySliceType,

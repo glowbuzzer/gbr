@@ -3,14 +3,15 @@
  */
 
 import * as React from "react"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
 import styled from "styled-components"
-import { Button, InputNumber, Radio, RadioChangeEvent, Space, Tag } from "antd"
+import { Button, InputNumber, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
     JointConfig,
+    KinematicsConfigurationConfig,
     TelemetryPVA,
     useJointConfigurationList,
     useKinematicsConfigurationList,
@@ -22,10 +23,17 @@ import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import * as d3 from "d3"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { useLocalStorage } from "../util/LocalStorageHook"
 
-const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c"]
+const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#000000"]
 
-const SparklineJoints = ({ kinematicsConfiguration }) => {
+type SparklineJointsProps = {
+    kinematicsConfiguration: KinematicsConfigurationConfig
+    selected: boolean[]
+    duration: number
+}
+
+const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: SparklineJointsProps) => {
     const telemetry = useTelemetryData()
     const { plot } = useTelemetrySettings()
     const jointConfigurations = useJointConfigurationList()
@@ -33,10 +41,17 @@ const SparklineJoints = ({ kinematicsConfiguration }) => {
         n => jointConfigurations[n]
     )
 
+    const selectedJointColours = kinematicsConfiguration.participatingJoints
+        .map((_, i) => axis_colors[i])
+        .filter((_, i) => selected[i])
+        .map(color => ({ color }))
+
     const { data, domain } = useMemo(() => {
         let data = telemetry.map(d => ({
             t: d.t,
-            values: kinematicsConfiguration.participatingJoints.map(index => d.joints[index])
+            values: kinematicsConfiguration.participatingJoints
+                .map(index => d.joints[index])
+                .filter((_, i) => selected[i])
         }))
 
         if (plot >= TelemetryPVA.VEL) {
@@ -70,42 +85,12 @@ const SparklineJoints = ({ kinematicsConfiguration }) => {
     return (
         <SparklineScrolling
             domain={domain}
-            options={axis_colors.slice(0, participatingJoints.length).map(color => ({ color }))}
+            options={selectedJointColours}
             data={data}
+            duration={duration}
         />
     )
 }
-
-/*
-const SparklineQueue = () => {
-    const telemetry = useTelemetryData()
-    const settings = useTelemetrySettings()
-
-    const cap_options = useMemo(() => [{ color: axis_colors[0] }, { color: axis_colors[1] }], [])
-    const wait_options = useMemo(() => [{ color: axis_colors[0] }], [])
-
-    if (!settings.queueEnabled) {
-        return null
-    }
-
-    const cap = telemetry.map(d => ({
-        t: d.t,
-        values: [d.m7cap, d.m4cap]
-    }))
-
-    const wait = telemetry.map(d => ({
-        t: d.t,
-        values: [d.m7wait || 0]
-    }))
-
-    return (
-        <>
-            <SparklineScrolling domain={[0, 150]} options={cap_options} data={cap} />
-            <SparklineScrolling domain={[0, 10]} options={wait_options} data={wait} />
-        </>
-    )
-}
-*/
 
 const StyledCaptureState = styled.span`
     display: inline-block;
@@ -217,6 +202,67 @@ const TelemetryControls = () => {
     )
 }
 
+const StyledTelemetryForKinematicsConfiguration = styled.div`
+    user-select: none;
+    display: flex;
+    gap: 5px;
+
+    align-items: center;
+    .ant-slider {
+        flex-grow: 1;
+    }
+    .ant-tag:hover {
+        outline: 1px solid grey;
+    }
+`
+
+const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration }) => {
+    const joints = useJointConfigurationList()
+    const [selected, setSelected] = useState(
+        kinematicsConfiguration.participatingJoints.map(() => true)
+    )
+    const [duration, setDuration] = useLocalStorage(
+        "telemetry-" + kinematicsConfiguration.name,
+        1000
+    )
+
+    function toggle_selected(index) {
+        setSelected(selected.map((v, i) => (i === index ? !v : v)))
+    }
+
+    return (
+        <>
+            <StyledTelemetryForKinematicsConfiguration>
+                <div>
+                    {kinematicsConfiguration.participatingJoints.map((joint, index) => (
+                        <Tag
+                            onClick={() => toggle_selected(index)}
+                            color={selected[index] ? axis_colors[index] : undefined}
+                            style={{ cursor: "pointer" }}
+                        >
+                            {joints[joint].name}
+                        </Tag>
+                    ))}
+                </div>
+                <Slider
+                    value={duration}
+                    onChange={setDuration}
+                    min={250}
+                    max={3000}
+                    step={250}
+                    tooltip={{ placement: "bottom" }}
+                />
+                <span>{duration}ms</span>
+            </StyledTelemetryForKinematicsConfiguration>
+            <SparklineJoints
+                kinematicsConfiguration={kinematicsConfiguration}
+                selected={selected}
+                duration={duration}
+            />
+        </>
+    )
+}
+
 /**
  * @ignore
  */
@@ -226,10 +272,11 @@ export const TelemetryTile = () => {
         <DockTileWithToolbar toolbar={<TelemetryControls />}>
             <StyledTileContent>
                 {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
-                    <SparklineJoints
-                        key={index}
-                        kinematicsConfiguration={kinematicsConfiguration}
-                    />
+                    <div key={index}>
+                        <TelemetryForKinematicsConfiguration
+                            kinematicsConfiguration={kinematicsConfiguration}
+                        />
+                    </div>
                 ))}
             </StyledTileContent>
         </DockTileWithToolbar>

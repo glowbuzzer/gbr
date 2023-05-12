@@ -20,6 +20,7 @@ type SparklineScrollingProps = {
     data: Datapoint[]
     domain: number[]
     options: SparklineScrollingSeriesOptions[]
+    duration: number
 }
 
 type SparklineScrollingLineInfo = {
@@ -32,11 +33,15 @@ const StyledDiv = styled.div`
 `
 
 /** @ignore - not currenly supported */
-export const SparklineScrolling = ({ options, data, domain }: SparklineScrollingProps) => {
+export const SparklineScrolling = ({
+    options,
+    data,
+    domain,
+    duration
+}: SparklineScrollingProps) => {
     const height = 200
     const xmargin = 20
     const ymargin = 20
-    const duration = 2000
     const scaleRef = useRef(null)
     const axisRef = useRef(null)
     const elemRef = useRef<HTMLDivElement>(null)
