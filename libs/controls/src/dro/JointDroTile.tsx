@@ -9,6 +9,7 @@ import { useLocalStorage } from "../util/LocalStorageHook"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 
 /**
  * The joint DRO tile displays all configured joints with joint position.
@@ -19,29 +20,26 @@ import { StyledTileContent } from "../util/styles/StyledTileContent"
  */
 export const JointDroTile = () => {
     const [selectedKc, setSelectedKc] = useLocalStorage("dro.joint.kc", 0)
+    const [precision, setPrecision] = useLocalStorage("dro.joint.precision", 4)
 
     const kc = useKinematicsConfiguration(selectedKc)
     const jointsToDisplay = kc.participatingJoints
 
     return (
         <DockTileWithToolbar
-            toolbar={<KinematicsDropdown value={selectedKc} onChange={setSelectedKc} />}
+            toolbar={
+                <>
+                    <KinematicsDropdown value={selectedKc} onChange={setSelectedKc} />
+                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
+                </>
+            }
         >
-            {/*
-            Kinematics:{" "}
-            <Select
-                size="small"
-                value={selectedKc}
-                onChange={setSelectedKc}
-                style={{ width: 120 }}
-                options={[
-                    { title: "All joints", value: "all" },
-                    ...kcs.map((kc, index) => ({ title: kc.name, value: index }))
-                ]}
-            />
-*/}
             <StyledTileContent>
-                <JointDro warningThreshold={0.05} jointsToDisplay={jointsToDisplay} />
+                <JointDro
+                    warningThreshold={0.05}
+                    jointsToDisplay={jointsToDisplay}
+                    precision={precision}
+                />
             </StyledTileContent>
         </DockTileWithToolbar>
     )

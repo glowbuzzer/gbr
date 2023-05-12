@@ -2,18 +2,10 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { GlobalStyles } from "../misc/GlobalStyles"
 import { usePrefs } from "@glowbuzzer/store"
-import { Col, Row } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
 import * as React from "react"
 
-const styles = {
-    ...GlobalStyles,
-    dro: {
-        marginTop: "6px"
-    }
-}
 type DroItemProps = {
     /**
      * The label for this DRO item
@@ -32,26 +24,30 @@ type DroItemProps = {
      * Whether the value is in error (shown in a different colour)
      */
     error?: boolean
+    /**
+     * Number of decimal places to show for each value.
+     */
+    precision: number
 }
 
 /**
  * Displays a single DRO item with label and optional error state.
  */
-export const DroItem = ({ label, value, type, error }: DroItemProps) => {
+export const DroItem = ({ label, value, type, error, precision }: DroItemProps) => {
     const prefs = usePrefs()
 
     return (
-        <Row gutter={0}>
-            <Col style={styles.title}>{label}</Col>
-            <Col style={styles.dro}>
+        <>
+            <div className="label">{label}</div>
+            <div className="value">
                 <SegmentDisplay
                     value={prefs.fromSI(value, type)}
-                    toFixed={4}
+                    toFixed={precision}
                     width={12}
                     error={error}
                 />
                 {prefs.getUnits(type)}
-            </Col>
-        </Row>
+            </div>
+        </>
     )
 }

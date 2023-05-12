@@ -11,6 +11,7 @@ import {
     useKinematicsConfiguration
 } from "@glowbuzzer/store"
 import { DroItem } from "./DroItem"
+import styled from "styled-components"
 
 type CartesianDisplayProps = {
     /**
@@ -33,6 +34,10 @@ type CartesianDisplayProps = {
      * A number between zero and 1 representing the fraction of the overall range of travel within which a warning will be displayed.
      */
     warningThreshold?: number
+    /**
+     * Number of decimal places to show for each value.
+     */
+    precision: number
 }
 
 const types = {
@@ -44,6 +49,23 @@ const types = {
     c: "angular"
 }
 
+const StyledGrid = styled.div`
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 8px;
+
+    .label {
+        font-weight: bold;
+        text-align: center;
+        border: 1px solid black;
+        padding: 0 4px;
+    }
+    .value {
+        text-align: right;
+    }
+`
+
 /**
  * Displays position and orientation given a kinematics configuration index.
  */
@@ -51,7 +73,8 @@ export const CartesianDro = ({
     kinematicsConfigurationIndex,
     frameIndex,
     select,
-    warningThreshold
+    warningThreshold,
+    precision
 }: CartesianDisplayProps) => {
     const kinematics = useKinematics(kinematicsConfigurationIndex)
     const {
@@ -80,9 +103,9 @@ export const CartesianDro = ({
         x: "X",
         y: "Y",
         z: "Z",
-        a: "α",
-        b: "β",
-        c: "Ɣ"
+        a: "Rx",
+        b: "Ry",
+        c: "Rz"
     }
 
     const pos = {
@@ -103,7 +126,7 @@ export const CartesianDro = ({
     const display = select ? select.split(",").map(s => s.trim()) : Object.keys(pos)
 
     return (
-        <div>
+        <StyledGrid>
             {display.map(k => {
                 const axis_extents = extents[k]
 
@@ -123,9 +146,10 @@ export const CartesianDro = ({
                         value={pos[k]}
                         type={types[k]}
                         error={should_warn()}
+                        precision={precision}
                     />
                 )
             })}
-        </div>
+        </StyledGrid>
     )
 }

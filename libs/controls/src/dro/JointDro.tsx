@@ -3,10 +3,8 @@
  */
 
 import * as React from "react"
-import { CSSProperties } from "react"
-import { Col, Row, Slider } from "antd"
+import { Row, Slider } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
-import { GlobalStyles } from "../misc/GlobalStyles"
 import {
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
@@ -18,75 +16,24 @@ import {
 import styled from "styled-components"
 import { MathUtils } from "three"
 
-const StyledRow = styled(Row)`
-    .slider-wrapper {
-        margin-left: 20px;
-        padding-top: 10px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
+const StyledGrid = styled.div<{ cols }>`
+    display: grid;
+    grid-template-columns: ${props => (props.cols === 2 ? "auto 1fr" : "auto auto 1fr")};
+    align-items: center;
+    column-gap: 8px;
 
-        .ant-slider {
-            flex-grow: 1;
-        }
+    .label {
+        font-weight: bold;
+        text-align: center;
+        border: 1px solid black;
+        padding: 0 4px;
+    }
+    .value {
+        text-align: right;
     }
 `
 
-const minmaxStyle: CSSProperties = {
-    display: "inline-block",
-    width: "50px",
-    overflowX: "hidden",
-    whiteSpace: "nowrap",
-    transform: "translateY(4px)"
-}
-
-// TODO: convert to styled-components
-const styles: { [key: string]: CSSProperties } = {
-    ...GlobalStyles,
-    min: {
-        ...minmaxStyle,
-        textAlign: "right",
-        marginLeft: "10px",
-        marginRight: "10px"
-    },
-    max: {
-        ...minmaxStyle,
-        marginLeft: "10px"
-    },
-    slider: {
-        display: "inline-block",
-        cursor: "default",
-        width: "200px",
-        margin: "0"
-    },
-    middle: {
-        width: "350px",
-        transform: "translateY(1px)"
-    },
-    leftDot: {
-        left: "0%"
-    },
-    rightDot: {
-        left: "100%"
-    },
-    markTextLeft: {
-        cursor: "default",
-        left: "0%"
-        // transform: "translateX(-120%) translateY(-90%)",
-    },
-    markTextRight: {
-        cursor: "default",
-        left: "100%"
-        // transform: "translateX(20%) translateY(-90%)",
-    },
-    handle: {
-        cursor: "default",
-        right: "auto"
-        // transform: "translateX(-50%)"
-    }
-}
-
-const JointDroItem = ({ index, warningThreshold }) => {
+const JointDroItem = ({ index, warningThreshold, precision }) => {
     const prefs = usePrefs()
     const j = useJoint(index)
     const config = useJointConfigurationList()[index]
@@ -110,28 +57,31 @@ const JointDroItem = ({ index, warningThreshold }) => {
     // const progress = (current / (max - min)) * 100
 
     return (
-        <StyledRow key={index}>
-            <Col style={styles.title}>{name}</Col>
-            <Col style={styles.dro}>
-                <SegmentDisplay value={current} toFixed={4} width={12} error={warn} />
+        <>
+            <div className="label">{name}</div>
+            <div className="value">
+                <SegmentDisplay
+                    value={current}
+                    toFixed={precision === undefined ? 4 : precision}
+                    width={12}
+                    error={warn}
+                />
                 {units}
-            </Col>
-            <Col flex={"auto"}>
-                {showSlider && (
-                    <div className="slider-wrapper">
-                        {min.toPrecision(4)}
-                        <Slider
-                            min={min}
-                            max={max}
-                            disabled
-                            value={j?.actPos}
-                            tooltip={{ open: false }}
-                        />
-                        {max.toPrecision(4)}
-                    </div>
-                )}
-            </Col>
-        </StyledRow>
+            </div>
+            {showSlider && (
+                <div className="slider-wrapper">
+                    {min.toPrecision(4)}
+                    <Slider
+                        min={min}
+                        max={max}
+                        disabled
+                        value={j?.actPos}
+                        tooltip={{ open: false }}
+                    />
+                    {max.toPrecision(4)}
+                </div>
+            )}
+        </>
     )
 }
 
@@ -141,19 +91,35 @@ const JointDroItem = ({ index, warningThreshold }) => {
  */
 export const JointDro = ({
     jointsToDisplay,
+    precision,
     warningThreshold
 }: {
     jointsToDisplay?: number[]
+    precision?: number
     warningThreshold: number
 }) => {
     const count = useJointCount()
     const joints = jointsToDisplay ? jointsToDisplay : Array.from(Array(count).keys())
 
+    const jointConfigs = useJointConfigurationList()
+
+    // determine if we need to show a slider for any of the joints
+    const cols = joints.some(
+        j => jointConfigs[j].finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
+    )
+        ? 3
+        : 2
+
     return (
-        <div>
+        <StyledGrid cols={cols}>
             {joints.map(j => (
-                <JointDroItem key={j} index={j} warningThreshold={warningThreshold} />
+                <JointDroItem
+                    key={j}
+                    index={j}
+                    warningThreshold={warningThreshold}
+                    precision={precision}
+                />
             ))}
-        </div>
+        </StyledGrid>
     )
 }

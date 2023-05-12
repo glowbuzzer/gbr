@@ -26,6 +26,7 @@ import { FramesDropdown } from "../frames/FramesDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { RobotConfigurationDro } from "./RobotConfigurationDro"
+import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 
 const StyledDownOutlined = styled(DownOutlined)`
     display: inline-block;
@@ -98,6 +99,7 @@ export const CartesianDroTile = ({
     clipboardMode = true
 }: CartesianDroTileProps) => {
     const [frameIndex, setFrameIndex] = useState(0)
+    const [precision, setPrecision] = useLocalStorage("dro.cartesian.precision", 4)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(
         fixedKinematicsConfigurationIndex || 0
     )
@@ -245,6 +247,7 @@ export const CartesianDroTile = ({
                             />
                         )}
                     </DockToolbarButtonGroup>
+                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
                 </>
             }
         >
@@ -260,7 +263,8 @@ export const CartesianDroTile = ({
                 <CartesianDro
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                     frameIndex={frameIndex}
-                    warningThreshold={0.05}
+                    warningThreshold={0.01}
+                    precision={precision}
                 />
             </StyledTileContent>
         </DockTileWithToolbar>

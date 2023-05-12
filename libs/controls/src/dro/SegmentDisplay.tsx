@@ -42,14 +42,14 @@ const StyledSegmentDisplay = styled.span<{ error }>`
  * Displays a given numeric value as a traditional segmented display.
  */
 export const SegmentDisplay = ({ value, toFixed, width, error }: SegmentDisplayProps) => {
-    let text = toFixed ? value.toFixed(toFixed) : value.toString()
-    if (width) {
-        const length = width - text.length
-        text =
-            Array.from({ length })
-                .map(() => "!")
-                .join("") + text
-    }
+    let text = toFixed === undefined ? value.toString() : value.toFixed(toFixed)
+    // if (width) {
+    //     const length = width - text.length
+    //     text =
+    //         Array.from({ length })
+    //             .map(() => "!")
+    //             .join("") + text
+    // }
     const padding = text
         .split("")
         .map(c => (c === "." ? "." : c === "+" ? "+" : "8"))
