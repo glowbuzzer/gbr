@@ -10,5 +10,5 @@ import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
  * @ignore
  */
 export const FramesIcon = props => (
-    <GlowbuzzerIcon Icon={FramesIconIcon} name={"frames"} {...props} />
+    <GlowbuzzerIcon Icon={FramesIconIcon} useFill={true} name={"frames"} {...props} />
 )

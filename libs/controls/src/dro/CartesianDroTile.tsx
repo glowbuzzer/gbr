@@ -10,7 +10,7 @@ import {
 } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { Dropdown, Menu, message } from "antd"
-import { Euler, Quaternion, Vector3 } from "three"
+import { Euler, Quaternion } from "three"
 import { DownOutlined } from "@ant-design/icons"
 import * as React from "react"
 import { useState } from "react"
@@ -198,6 +198,7 @@ export const CartesianDroTile = ({
 
                     <DockToolbarButtonGroup>
                         <GlowbuzzerIcon
+                            useFill={true}
                             Icon={ZeroDRO}
                             button
                             title={"Zero DRO"}
@@ -205,6 +206,7 @@ export const CartesianDroTile = ({
                         />
                         <GlowbuzzerIcon
                             Icon={ResetDRO}
+                            useFill={true}
                             button
                             title={"Reset DRO"}
                             onClick={reset_dro}
@@ -215,6 +217,7 @@ export const CartesianDroTile = ({
                         {clipboardMode === true ? (
                             <>
                                 <GlowbuzzerIcon
+                                    useFill={true}
                                     title={tooltip}
                                     Icon={CopyIcon}
                                     button
@@ -222,24 +225,23 @@ export const CartesianDroTile = ({
                                 />
                                 <Dropdown
                                     trigger={["click"]}
-                                    overlay={
-                                        <Menu
-                                            selectedKeys={[selectedOption.toString()]}
-                                            onClick={copy_selected_mode}
-                                            items={Object.entries(CLIPBOARD_MODE_TITLES).map(
-                                                ([key, label]) => ({
-                                                    key,
-                                                    label
-                                                })
-                                            )}
-                                        />
-                                    }
+                                    menu={{
+                                        selectedKeys: [selectedOption.toString()],
+                                        onClick: copy_selected_mode,
+                                        items: Object.entries(CLIPBOARD_MODE_TITLES).map(
+                                            ([key, label]) => ({
+                                                key,
+                                                label
+                                            })
+                                        )
+                                    }}
                                 >
                                     <StyledDownOutlined />
                                 </Dropdown>
                             </>
                         ) : clipboardMode === false || clipboardMode === undefined ? null : (
                             <GlowbuzzerIcon
+                                useFill={true}
                                 title={tooltip}
                                 Icon={CopyIcon}
                                 button

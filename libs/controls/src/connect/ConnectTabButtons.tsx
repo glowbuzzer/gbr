@@ -11,27 +11,25 @@ import { Button } from "antd"
 
 const DockButton = styled(Button)`
     padding: 1px 6px;
-    font-size: 11px;
+    font-size: 10px;
     height: inherit;
-    color: rgba(0, 0, 0, 0.7);
 `
 
 const ConnectIndicator = styled.span`
-    svg {
-        width: 2em;
-        height: 2em;
+  svg {
+    width: 1.5em;
+    height: 1.5em;
 
-        path {
-            fill: rgba(0, 0, 0, 0.5);
-        }
+    path {
+      fill: ${props => props.theme.colorText}
     }
 
     &.connected path {
-        fill: #00b700;
+      fill: #00b700;
     }
 
     &.config-modified path {
-        fill: #ffae00;
+      fill: #ffae00;
     }
 `
 

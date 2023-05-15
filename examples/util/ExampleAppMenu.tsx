@@ -14,15 +14,15 @@ const StyledMenuBar = styled.div`
     display: flex;
 
     svg {
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid ${props => props.theme.colorBorder};
     }
 
     .title,
     .perspective-title {
         font-size: 1.5em;
         display: inline-block;
-        padding: 6px 10px 0 14px;
-        border-bottom: 1px solid #f0f0f0;
+        padding: 10px 10px 0 14px;
+        border-bottom: 1px solid ${props => props.theme.colorBorder};
 
         span {
             display: inline-block;
@@ -76,7 +76,7 @@ export const ExampleAppMenu = ({ title = null }) => {
                         ))}
                     </Menu.SubMenu>
                 )}
-                <DockViewMenu/>
+                <DockViewMenu />
             </Menu>
         </StyledMenuBar>
     )

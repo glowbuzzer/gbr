@@ -29,7 +29,7 @@ import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { Environment, useGLTF } from "@react-three/drei"
 
-import "antd/dist/antd.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { TriadHelper } from "@glowbuzzer/controls"

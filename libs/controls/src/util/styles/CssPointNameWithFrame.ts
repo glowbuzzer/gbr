@@ -16,6 +16,10 @@ export const CssPointNameWithFrame = css`
             text-overflow: ellipsis;
         }
 
+        svg path {
+            fill: ${props => props.theme.colorText};
+        }
+
         .frame,
         .gcode {
             display: inline-block;
@@ -23,7 +27,7 @@ export const CssPointNameWithFrame = css`
             margin-top: 2px;
             padding: 0 4px;
             font-size: 12px;
-            outline: 1px dashed rgba(0, 0, 0, 0.3);
+            outline: 1px dashed ${props => props.theme.colorText};
             border-radius: 4px;
             line-height: 1em;
             opacity: 0.8;

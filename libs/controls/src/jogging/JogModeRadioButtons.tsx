@@ -21,6 +21,7 @@ export const JogModeRadioButtons = ({ mode, onChange }) => {
         <DockToolbarButtonGroup>
             {options.map(({ mode: m, title, icon }) => (
                 <GlowbuzzerIcon
+                    useFill={true}
                     key={m}
                     Icon={icon}
                     button

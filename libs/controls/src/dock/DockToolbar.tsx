@@ -4,6 +4,7 @@
 
 import React from "react"
 import styled, { css } from "styled-components"
+import { Divider, Space } from "antd"
 
 const StyledDockToolbar = styled.div<{ floating: boolean }>`
     ${props =>
@@ -22,36 +23,37 @@ const StyledDockToolbar = styled.div<{ floating: boolean }>`
         visibility: visible;
     }
 
-    border-bottom: 1px solid rgb(227, 227, 227);
+    border-bottom: 1px solid var(--color-tabset-divider-line);
 `
 
 export const DockToolbarButtonGroup = styled.span`
-    //margin: 0 4px;
+    //&:first-child {
+    //    margin-left: 0;
+    //}
+    //
+    //:after {
+    //    content: "";
+    //    display: inline-block;
+    //    height: 14px;
+    //    margin: 0 8px;
+    //    border-left: 1px solid rgb(227, 227, 227);
+    //}
+    //:last-child:after {
+    //    display: none;
+    //}
+    //
+    //.anticon {
+    //    display: inline-block;
+    //    margin-right: 3px;
+    //
+    //    &:last-child {
+    //        margin-right: 0;
+    //    }
+    //}
+`
 
-    &:first-child {
-        margin-left: 0;
-    }
-
-    //&:first-child:before,
-    :after {
-        content: "";
-        display: inline-block;
-        height: 14px;
-        margin: 0 8px;
-        border-left: 1px solid rgb(227, 227, 227);
-    }
-    :last-child:after {
-        display: none;
-    }
-
-    .anticon {
-        display: inline-block;
-        margin-right: 3px;
-
-        &:last-child {
-            margin-right: 0;
-        }
-    }
+const StyledSpace = styled(Space)`
+    gap: 0 !important;
 `
 
 /**
@@ -65,5 +67,9 @@ export const DockToolbar = ({
     floating?: boolean
     children
 }) => {
-    return <StyledDockToolbar floating={floating}>{children}</StyledDockToolbar>
+    return (
+        <StyledDockToolbar floating={floating}>
+            <StyledSpace split={<Divider type="vertical" />}>{children}</StyledSpace>
+        </StyledDockToolbar>
+    )
 }

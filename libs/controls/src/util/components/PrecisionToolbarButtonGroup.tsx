@@ -21,12 +21,14 @@ export const PrecisionToolbarButtonGroup = ({ value, onChange }) => {
     return (
         <DockToolbarButtonGroup>
             <GlowbuzzerIcon
+                useFill={false}
                 Icon={DecreaseDecimalPlaces}
                 title="Decrease Decimal Places"
                 button
                 onClick={decrease}
             />
             <GlowbuzzerIcon
+                useFill={false}
                 Icon={IncreaseDecimalPlaces}
                 title="Increase Decimal Places"
                 button

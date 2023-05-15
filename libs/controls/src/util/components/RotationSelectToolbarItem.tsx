@@ -10,12 +10,20 @@ import { ReactComponent as RotationIcon } from "../../icons/rotation.svg"
 import { dockDropdownStyle } from "../../dock/styles"
 
 const StyledSelect = styled(Select)`
+    &.ant-select-open svg path {
+        opacity: 0.2;
+    }
+    .ant-select-selection-item span {
+        display: inline-block;
+        padding-left: 4px;
+    }
     ${dockDropdownStyle}
     svg {
-        transform: translateY(1 ópx);
+        transform: translateY(1px);
 
         path {
-            stroke: rgba(0, 0, 0, 0.6);
+            stroke: ${props => props.theme.colorText};
+            opacity: 0.8;
             stroke-width: 5px;
         }
     }
@@ -39,7 +47,8 @@ const OPTIONS = [
         label: "None",
         display: (
             <>
-                <RotationIcon height={16} /> None
+                <RotationIcon height={16} />
+                <span>None</span>
             </>
         )
     },
@@ -49,7 +58,8 @@ const OPTIONS = [
         label: "Quaternion",
         display: (
             <>
-                <RotationIcon height={16} /> Quaternion
+                <RotationIcon height={16} />
+                <span>Quaternion</span>
             </>
         )
     },
@@ -59,7 +69,8 @@ const OPTIONS = [
         label: "Euler",
         display: (
             <>
-                <RotationIcon height={18} /> Euler
+                <RotationIcon height={18} />
+                <span>Euler</span>
             </>
         )
     }

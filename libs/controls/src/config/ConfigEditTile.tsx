@@ -2,18 +2,16 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { Input, message, Upload } from "antd"
 import styled from "styled-components"
-import { configSlice, useConfig, useConfigLoader, useConnection } from "@glowbuzzer/store"
-import { useEffect, useState } from "react"
+import { useConfig, useConfigLoader } from "@glowbuzzer/store"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { ReactComponent as FileUploadIcon } from "@material-symbols/svg-400/outlined/file_upload.svg"
 import { ReactComponent as FileOpenIcon } from "@material-symbols/svg-400/outlined/file_open.svg"
 import { ReactComponent as ResetConfigIcon } from "@material-symbols/svg-400/outlined/restart_alt.svg"
 import { ReactComponent as FormatConfigIcon } from "@material-symbols/svg-400/outlined/format_align_left.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -40,8 +38,6 @@ const StyledDiv = styled.div`
  */
 export const ConfigEditTile = () => {
     const config = useConfig()
-    const connection = useConnection()
-    const dispatch = useDispatch()
     const loader = useConfigLoader()
 
     const [editedConfig, setEditedConfig] = useState(JSON.stringify(config, null, 4))
@@ -84,14 +80,21 @@ export const ConfigEditTile = () => {
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon
                         Icon={FileUploadIcon}
+                        useFill={true}
                         button
                         title="Save and Upload"
                         onClick={upload}
                     />
                     <Upload beforeUpload={before_upload} maxCount={1} showUploadList={false}>
-                        <GlowbuzzerIcon Icon={FileOpenIcon} button title="Load Config from File" />
+                        <GlowbuzzerIcon
+                            useFill={true}
+                            Icon={FileOpenIcon}
+                            button
+                            title="Load Config from File"
+                        />
                     </Upload>
                     <GlowbuzzerIcon
+                        useFill={true}
                         Icon={ResetConfigIcon}
                         button
                         title="Undo Changes"
@@ -100,6 +103,7 @@ export const ConfigEditTile = () => {
                 </DockToolbarButtonGroup>
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon
+                        useFill={true}
                         Icon={FormatConfigIcon}
                         button
                         title="Format Config"

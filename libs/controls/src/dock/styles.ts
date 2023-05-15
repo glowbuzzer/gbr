@@ -13,7 +13,6 @@ export const dockDropdownStyle = css`
 
     .ant-select-selector {
         padding-left: 0 !important;
-        //font-size: 12px;
         line-height: 12px !important;
         height: 20px !important;
         border: none !important;
@@ -30,7 +29,6 @@ export const dockDropdownStyle = css`
 
         .selected-text {
             display: inline-block;
-            transform: translate(0, -2px);
             line-height: 22px;
         }
     }
@@ -39,6 +37,7 @@ export const StyledDockLayout = styled.div`
     padding: 10px;
     display: flex;
     gap: 10px;
+    background: ${props => props.theme.colorBgContainer};
     position: absolute;
     flex-direction: column;
     justify-content: stretch;
@@ -49,11 +48,12 @@ export const StyledDockLayout = styled.div`
         position: relative;
         flex-grow: 1;
         border: 1px solid rgba(128, 128, 128, 0.27);
+        --color-text: ${props => props.theme.colorText};
     }
 
     .flexlayout__tab_button--selected {
         background: none;
-        border-bottom: 1px solid #1890ff;
+        border-bottom: 1px solid ${props => props.theme.colorPrimary};
     }
 
     .help-popover {

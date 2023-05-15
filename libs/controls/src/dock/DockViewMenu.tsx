@@ -3,10 +3,11 @@
  */
 
 import React from "react"
-import { Menu } from "antd"
+import { Menu, Space } from "antd"
 import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"
 import { MenuItemType } from "antd/es/menu/hooks/useItems"
+import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
 
 /**
  * This component renders a sub-menu containing available tiles and allows the user to show or hide them. It should be used in conjunction with
@@ -27,7 +28,13 @@ import { MenuItemType } from "antd/es/menu/hooks/useItems"
 export const DockViewMenu = () => {
     // render antd menu which toggles visibility of the dock components
     const { showTile, resetLayout } = useDockLayoutContext()
+    const { darkMode, setDarkMode } = useGlowbuzzerTheme()
+
     const tiles = useDockTiles()
+
+    function toggle_dark_mode() {
+        setDarkMode(!darkMode)
+    }
 
     const items: MenuItemType[] = tiles.map(tile => ({
         key: tile.id,
@@ -48,6 +55,12 @@ export const DockViewMenu = () => {
                 })}
             </Menu.SubMenu>
             <Menu.Divider />
+            <Menu.Item key="dark-mode" onClick={toggle_dark_mode} defaultChecked={true}>
+                <Space>
+                    Dark Mode
+                    {darkMode && <CheckOutlined />}
+                </Space>
+            </Menu.Item>
             <Menu.Item key="reset-layout" onClick={resetLayout}>
                 Reset Layout
             </Menu.Item>

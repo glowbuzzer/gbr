@@ -117,6 +117,7 @@ export const ThreeDimensionalSceneTile = ({
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon
                         name="points"
+                        useFill={true}
                         Icon={PointsIcon}
                         button
                         checked={!!current.showPoints}
@@ -125,6 +126,7 @@ export const ThreeDimensionalSceneTile = ({
                     />
                     <GlowbuzzerIcon
                         name="frames"
+                        useFill={true}
                         Icon={FramesIcon}
                         button
                         checked={!!current.showFrames}
@@ -135,6 +137,7 @@ export const ThreeDimensionalSceneTile = ({
                 <DockToolbarButtonGroup>
                     <GlowbuzzerIcon
                         Icon={ShowChartIcon}
+                        useFill={true}
                         button
                         title="Show/hide Preview"
                         onClick={toggle_preview}
@@ -145,13 +148,20 @@ export const ThreeDimensionalSceneTile = ({
                     {defaultHideTrace || (
                         <GlowbuzzerIcon
                             Icon={AutoGraphIcon}
+                            useFill={true}
                             button
                             title="Toggle Trace"
                             onClick={toggle_trace}
                             checked={!hideTrace}
                         />
                     )}
-                    <GlowbuzzerIcon Icon={BlockIcon} button title="Clear Trace" onClick={reset} />
+                    <GlowbuzzerIcon
+                        useFill={true}
+                        Icon={BlockIcon}
+                        button
+                        title="Clear Trace"
+                        onClick={reset}
+                    />
                 </DockToolbarButtonGroup>
             </DockToolbar>
         </>

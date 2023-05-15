@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { createElement, Suspense, useContext, useState } from "react"
+import { Suspense, useContext, useState } from "react"
 import { Popover } from "antd"
 import { DockLayoutContext } from "./DockLayoutContext"
 import { Layout, TabNode } from "flexlayout-react"
@@ -12,6 +12,8 @@ import { ReactComponent as SettingsIcon } from "@material-symbols/svg-400/outlin
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { useConnection } from "@glowbuzzer/store"
 import { DockTileWrapper } from "./DockTileWrapper"
+import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import styled from "styled-components"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
@@ -21,6 +23,7 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
             <GlowbuzzerIcon
                 key="settings-btn"
                 name="settings"
+                useFill={true}
                 Icon={SettingsIcon}
                 button
                 title="Settings"
@@ -32,6 +35,31 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
 }
 
 const ButtonsWrapper = ({ children }) => <>{children}</>
+
+function gradient(darkMode: boolean) {
+    const color1 = darkMode ? "#333333" : "#f0f0f0"
+    const color2 = darkMode ? "#fff0f0" : "#ff6666"
+    return `linear-gradient(
+        135deg,
+        ${color2} 5%,
+        ${color1} 5%,
+        ${color1} 50%,
+        ${color2} 50%,
+        ${color2} 55%,
+        ${color1} 55%,
+        ${color1} 100%
+    )`
+}
+const StyledDockTileDimmer = styled.div<{ darkMode: boolean }>`
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: ${props => gradient(props.darkMode)};
+    background-size: 6px 6px;
+    opacity: 0.2;
+`
 
 /**
  * This component renders the current layout, as defined by the current layout context (see {@link DockLayoutProvider}).
@@ -48,6 +76,7 @@ export const DockLayout = () => {
     } = useContext(DockLayoutContext)
 
     const connection = useConnection()
+    const { darkMode } = useGlowbuzzerTheme()
 
     function connection_aware_factory(node: TabNode) {
         const tile = factory(node)
@@ -61,20 +90,7 @@ export const DockLayout = () => {
         return (
             <Suspense>
                 {tile}
-                <div
-                    style={{
-                        position: "absolute",
-                        left: 0,
-                        top: 0,
-                        right: 0,
-                        bottom: 0,
-                        // background: "rgba(255,210,127,0.47)"
-                        backgroundImage:
-                            "linear-gradient(135deg, #ff6666 3.85%, #f0f0f0 3.85%, #f0f0f0 50%, #ff6666 50%, #ff6666 53.85%, #f0f0f0 53.85%, #f0f0f0 100%)",
-                        backgroundSize: "6px 6px",
-                        opacity: "0.2"
-                    }}
-                />
+                <StyledDockTileDimmer darkMode={darkMode} />
             </Suspense>
         )
     }

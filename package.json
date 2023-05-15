@@ -38,7 +38,7 @@
     "@vitejs/plugin-react": "^3.1.0",
     "ace-builds": "^1.19.0",
     "animejs": "^3.2.1",
-    "antd": "^4.24.10",
+    "antd": "^5.4.7",
     "babel-jest": "^29.5.0",
     "babel-plugin-module-resolver": "^5.0.0",
     "commander": "^10.0.1",

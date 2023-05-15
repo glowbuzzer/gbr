@@ -6,6 +6,7 @@ import * as React from "react"
 import { useEffect, useRef } from "react"
 import AceEditor from "react-ace"
 import "ace-builds/src-noconflict/theme-github.js"
+import "ace-builds/src-noconflict/theme-gruvbox.js"
 import "ace-builds/src-noconflict/mode-gcode.js"
 import "ace-builds/src-noconflict/mode-text.js"
 
@@ -34,6 +35,7 @@ import { StopIcon } from "../util/StopIcon"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { GCodeWorkOffsetSelect } from "./GCodeWorkOffsetSelect"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
 
@@ -93,6 +95,7 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const position = useKinematicsCartesianPosition(0).position
     const gCodeContext = useGCodeContext()
     const framesList = useFramesList()
+    const { darkMode } = useGlowbuzzerTheme()
 
     const usingWorkOffsets = framesList.some(frame => frame.workspaceOffset)
 
@@ -258,7 +261,7 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
                     ref={editorRef}
                     readOnly={active}
                     mode="gcode"
-                    theme="github"
+                    theme={darkMode ? "gruvbox" : "github"}
                     width={"100%"}
                     height={"100%"}
                     value={gcode}

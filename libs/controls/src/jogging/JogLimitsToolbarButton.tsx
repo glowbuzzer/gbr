@@ -14,6 +14,7 @@ export const JogLimitsToolbarButton = ({ kinematicsConfigurationIndex }) => {
 
     return (
         <GlowbuzzerIcon
+            useFill={true}
             Icon={JogLimitIcon}
             button
             title="Enable Travel Limits"

@@ -107,7 +107,6 @@ export function useDockContext(
         null,
         `${appName}-${currentPerspective}`
     )
-
     const perspective = perspectives.find(p => p.id === currentPerspective)
     if (!perspective) {
         throw new Error(`Perspective ${currentPerspective} not found`)

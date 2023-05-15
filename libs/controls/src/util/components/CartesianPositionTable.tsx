@@ -126,6 +126,7 @@ export const CartesianPositionTable = ({
                             {onEdit && (
                                 <GlowbuzzerIcon
                                     Icon={EditIcon}
+                                    useFill={true}
                                     title="Edit"
                                     button
                                     disabled={no_selection}
@@ -133,7 +134,13 @@ export const CartesianPositionTable = ({
                                 />
                             )}
                             {onAdd && (
-                                <GlowbuzzerIcon Icon={AddIcon} title="New" button onClick={onAdd} />
+                                <GlowbuzzerIcon
+                                    useFill={true}
+                                    Icon={AddIcon}
+                                    title="New"
+                                    button
+                                    onClick={onAdd}
+                                />
                             )}
                             {onDelete && (
                                 <Popconfirm
@@ -144,6 +151,7 @@ export const CartesianPositionTable = ({
                                     cancelText="Cancel"
                                 >
                                     <GlowbuzzerIcon
+                                        useFill={true}
                                         Icon={DeleteIcon}
                                         button
                                         disabled={no_selection}

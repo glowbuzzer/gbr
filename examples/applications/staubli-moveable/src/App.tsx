@@ -9,11 +9,6 @@ import { useAppState } from "./store"
 import React, { useEffect, useMemo, useRef } from "react"
 import { PerspectiveCamera, useGLTF } from "@react-three/drei"
 
-//
-//
-//
-//
-
 const DEG90 = Math.PI / 2
 const TX40_KIN_CHAIN: RobotKinematicsChainElement[] = [
     { moveable: true },

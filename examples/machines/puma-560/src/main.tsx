@@ -37,7 +37,7 @@ import {
 import { createRoot } from "react-dom/client"
 
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
-import "antd/dist/antd.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"

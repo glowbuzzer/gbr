@@ -11,7 +11,22 @@ import styled from "styled-components"
 import { dockDropdownStyle } from "../dock/styles"
 
 const StyledTreeSelect = styled(TreeSelect)`
+    :last-child {
+        margin-right: -10px !important;
+    }
+
     ${dockDropdownStyle}
+
+    svg {
+        transform: translate(0, -2px);
+    }
+
+    .ant-select-selector {
+    }
+
+    .ant-select-arrow {
+        padding-top: 6px;
+    }
 `
 
 type FramesDropdownProps = {

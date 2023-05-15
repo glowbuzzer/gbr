@@ -58,7 +58,7 @@ const StyledGrid = styled.div`
     .label {
         font-weight: bold;
         text-align: center;
-        border: 1px solid black;
+        border: 1px solid ${props => props.theme.colorBorder};
         padding: 0 4px;
     }
     .value {

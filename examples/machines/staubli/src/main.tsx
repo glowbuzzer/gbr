@@ -35,7 +35,7 @@ import {
 import { Environment } from "@react-three/drei"
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
-import "antd/dist/antd.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { OscillatingMoveTileDefinition } from "../../../util/OscillatingMoveTile"

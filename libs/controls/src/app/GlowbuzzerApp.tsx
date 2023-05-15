@@ -19,27 +19,17 @@ import {
     useConnection
 } from "@glowbuzzer/store"
 import styled, { css, ThemeProvider } from "styled-components"
-import { Button } from "antd"
+import { Button, GlobalToken, theme as antdTheme } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import { Provider } from "react-redux"
 import { ConfigLiveEditProvider } from "../config"
 import { appNameContext } from "./hooks"
 import { ConnectionProvider } from "./ConnectionProvider"
 import { GlowbuzzerAppLifecycle } from "./lifecycle"
+import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
 
-const theme = {
-    colors: {
-        border: "#cccccc"
-    }
-}
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 declare module "styled-components" {
-    type Theme = typeof theme
-
-    // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    export interface DefaultTheme extends Theme {}
+    export interface DefaultTheme extends GlobalToken {}
 }
 
 const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
@@ -61,7 +51,6 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
         position: fixed;
         text-align: center;
         z-index: 301;
-        //background-color: rgb(255, 255, 255, 0.9);
         color: white;
         top: 35vh;
         left: 25vw;
@@ -70,7 +59,10 @@ const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
     }
 `
 
-const GlowbuzzerMainStyle = styled.div``
+const GlowbuzzerMainStyle = styled.div`
+    font-size: 14px;
+    color: ${props => props.theme.colorText};
+`
 
 type GlowbuzzerContainerProps = {
     children: ReactNode
@@ -174,7 +166,7 @@ export const GlowbuzzerApp = ({
 
     return (
         <appNameContext.Provider value={appName}>
-            <ThemeProvider theme={theme}>
+            <GlowbuzzerThemeProvider>
                 <Provider store={store}>
                     <ConnectionProvider>
                         <ConfigLiveEditProvider>
@@ -182,7 +174,7 @@ export const GlowbuzzerApp = ({
                         </ConfigLiveEditProvider>
                     </ConnectionProvider>
                 </Provider>
-            </ThemeProvider>
+            </GlowbuzzerThemeProvider>
         </appNameContext.Provider>
     )
 }

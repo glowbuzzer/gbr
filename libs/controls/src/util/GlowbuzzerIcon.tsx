@@ -9,6 +9,7 @@ import { ReactNode } from "react"
 
 export type CustomIconProps = {
     name?: string
+    useFill: boolean
     Icon
     onClick?(): void
     button?: boolean
@@ -31,13 +32,18 @@ export function custom_icon_classes(props: CustomIconProps, ...classes: string[]
         .join(" ")
 }
 
-export const StyledIcon = styled.span`
+export const StyledIcon = styled.span<{ useFill: boolean }>`
     padding: 2px;
     user-select: none;
 
     svg {
         width: 1.5em;
         height: 1.5em;
+
+        path {
+            fill: ${props => (props.useFill ? props.theme.colorText : undefined)};
+            stroke: ${props => props.theme.colorText};
+        }
     }
 
     &.button {
@@ -67,10 +73,11 @@ export const StyledIcon = styled.span`
 
 /** @ignore */
 export const GlowbuzzerIcon = (props: CustomIconProps) => {
-    const { name, Icon, title, disabled } = props
+    const { name, Icon, title, disabled, useFill } = props
     const classes = custom_icon_classes(props, name, "anticon")
     const el = (
         <StyledIcon
+            useFill={useFill}
             className={classes}
             onClick={disabled ? undefined : props.onClick}
             onMouseDown={e => (props.onClick ? e.stopPropagation() : undefined)}
@@ -79,7 +86,7 @@ export const GlowbuzzerIcon = (props: CustomIconProps) => {
         </StyledIcon>
     )
     return title ? (
-        <Tooltip title={title} placement={"bottomLeft"} arrowPointAtCenter={true}>
+        <Tooltip title={title} placement={"bottomLeft"} arrow={{ pointAtCenter: true }}>
             {el}
         </Tooltip>
     ) : (

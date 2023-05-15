@@ -3,7 +3,7 @@
  */
 
 import React, { useEffect, useRef, useState } from "react"
-import { useConfig, useFeedRate, useKinematicsConfigurationList } from "@glowbuzzer/store"
+import { useFeedRate, useKinematicsConfigurationList } from "@glowbuzzer/store"
 import { Slider } from "antd"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { CaretRightFilled, PauseOutlined } from "@ant-design/icons"
@@ -80,6 +80,7 @@ export const FeedRateTile = () => {
                         {feedRestoreValue === null ? (
                             <GlowbuzzerIcon
                                 Icon={PauseOutlined}
+                                useFill={true}
                                 button
                                 onClick={feed_hold}
                                 title="Feed Hold"
@@ -87,6 +88,7 @@ export const FeedRateTile = () => {
                         ) : (
                             <GlowbuzzerIcon
                                 Icon={CaretRightFilled}
+                                useFill={true}
                                 button
                                 onClick={feed_resume}
                                 title="Resume"

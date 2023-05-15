@@ -34,7 +34,7 @@ export const KinematicsDropdown = ({ value, placeholder, onChange }: KinematicsD
         value: index,
         display: (
             <>
-                <GlowbuzzerIcon Icon={KcIcon} name={"kc"} />
+                <GlowbuzzerIcon useFill={true} Icon={KcIcon} name={"kc"} />
                 <span className="selected-text">{kc.name}</span>
             </>
         ),

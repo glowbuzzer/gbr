@@ -25,7 +25,7 @@ import * as d3 from "d3"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { useLocalStorage } from "../util/LocalStorageHook"
 
-const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#000000"]
+const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#444444"]
 
 type SparklineJointsProps = {
     kinematicsConfiguration: KinematicsConfigurationConfig
@@ -41,10 +41,12 @@ const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: Sparkl
         n => jointConfigurations[n]
     )
 
-    const selectedJointColours = kinematicsConfiguration.participatingJoints
-        .map((_, i) => axis_colors[i])
-        .filter((_, i) => selected[i])
-        .map(color => ({ color }))
+    const selectedJointColours = useMemo(() => {
+        return kinematicsConfiguration.participatingJoints
+            .map((_, i) => axis_colors[i])
+            .filter((_, i) => selected[i])
+            .map(color => ({ color }))
+    }, [kinematicsConfiguration.participatingJoints, selected])
 
     const { data, domain } = useMemo(() => {
         let data = telemetry.map(d => ({
@@ -98,7 +100,79 @@ const StyledCaptureState = styled.span`
     user-select: none;
 `
 
-const TelemetryControls = () => {
+const StyledTelemetryForKinematicsConfiguration = styled.div`
+    user-select: none;
+    display: flex;
+    gap: 5px;
+
+    align-items: center;
+
+    .ant-tag:hover {
+        outline: 1px solid grey;
+    }
+`
+
+const StyledDuration = styled.div`
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    color: ${props => props.theme.colorText};
+    .ant-slider {
+        width: 150px;
+    }
+`
+
+const StyledAxisToggle = styled(Tag)<{ axisColor: string; selected: boolean }>`
+    cursor: pointer;
+    span {
+        display: block;
+        min-width: 18px;
+        margin-bottom: 3px;
+        text-align: center;
+        border-bottom: 2px solid ${props => (props.selected ? props.axisColor : "transparent")};
+    }
+`
+
+const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration }) => {
+    const joints = useJointConfigurationList()
+    const [selected, setSelected] = useState(
+        kinematicsConfiguration.participatingJoints.map(() => true)
+    )
+
+    function toggle_selected(index) {
+        setSelected(selected.map((v, i) => (i === index ? !v : v)))
+    }
+
+    return (
+        <>
+            <StyledTelemetryForKinematicsConfiguration>
+                <div>
+                    {kinematicsConfiguration.participatingJoints.map((joint, index) => (
+                        <StyledAxisToggle
+                            key={index}
+                            axisColor={axis_colors[index]}
+                            selected={selected[index]}
+                            onClick={() => toggle_selected(index)}
+                        >
+                            <span>{joints[joint].name}</span>
+                        </StyledAxisToggle>
+                    ))}
+                </div>
+            </StyledTelemetryForKinematicsConfiguration>
+            <SparklineJoints
+                kinematicsConfiguration={kinematicsConfiguration}
+                selected={selected}
+                duration={duration}
+            />
+        </>
+    )
+}
+
+/**
+ * @ignore
+ */
+export const TelemetryTile = () => {
+    const kinematicsConfigurations = useKinematicsConfigurationList()
     const capture = useTelemetryControls()
     const data = useTelemetryData()
     const joints = useJointConfigurationList()
@@ -135,146 +209,100 @@ const TelemetryControls = () => {
     }
 
     return (
-        <>
-            <DockToolbarButtonGroup>
-                <Radio.Group
-                    size="small"
-                    value={capture.plot}
-                    buttonStyle="solid"
-                    onChange={update_pva}
-                >
-                    <Radio.Button value={TelemetryPVA.POS}>Pos</Radio.Button>
-                    <Radio.Button value={TelemetryPVA.VEL}>Vel</Radio.Button>
-                    <Radio.Button value={TelemetryPVA.ACC}>Acc</Radio.Button>
-                </Radio.Group>
-            </DockToolbarButtonGroup>
-            <DockToolbarButtonGroup>
-                {
-                    {
-                        [CaptureState.RUNNING]: (
-                            <Button size="small" onClick={() => capture.pause()}>
-                                Pause
-                            </Button>
-                        ),
-                        [CaptureState.PAUSED]: (
-                            <Space>
-                                <Button size="small" onClick={() => capture.resume()}>
-                                    Start
-                                </Button>
-                                <Button size="small" onClick={() => capture.startCapture()}>
-                                    Start Capture
-                                </Button>
-                                <InputNumber
-                                    size="small"
-                                    value={capture.captureDuration}
-                                    min={10}
-                                    max={2500}
-                                    step={10}
-                                    onChange={captureDuration =>
-                                        capture.setDuration(Number(captureDuration))
-                                    }
-                                />
-                            </Space>
-                        ),
-                        [CaptureState.WAITING]: (
-                            <Button size="small" onClick={() => capture.cancelCapture()}>
-                                Cancel Capture
-                            </Button>
-                        ),
-                        [CaptureState.COMPLETE]: (
-                            <Space>
-                                <Button size="small" onClick={download}>
-                                    Download
-                                </Button>
-                                <Button size="small" onClick={() => capture.cancelCapture()}>
-                                    Reset
-                                </Button>
-                            </Space>
-                        )
-                    }[capture.captureState]
-                }
-            </DockToolbarButtonGroup>
-            <Space>
-                <StyledCaptureState>{CaptureState[capture.captureState]}</StyledCaptureState>
-                {capture.lastCapture ? null : <Tag color="red">NO DATA</Tag>}
-            </Space>
-        </>
-    )
-}
-
-const StyledTelemetryForKinematicsConfiguration = styled.div`
-    user-select: none;
-    display: flex;
-    gap: 5px;
-
-    align-items: center;
-    .ant-slider {
-        flex-grow: 1;
-    }
-    .ant-tag:hover {
-        outline: 1px solid grey;
-    }
-`
-
-const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration }) => {
-    const joints = useJointConfigurationList()
-    const [selected, setSelected] = useState(
-        kinematicsConfiguration.participatingJoints.map(() => true)
-    )
-    const [duration, setDuration] = useLocalStorage(
-        "telemetry-" + kinematicsConfiguration.name,
-        1000
-    )
-
-    function toggle_selected(index) {
-        setSelected(selected.map((v, i) => (i === index ? !v : v)))
-    }
-
-    return (
-        <>
-            <StyledTelemetryForKinematicsConfiguration>
-                <div>
-                    {kinematicsConfiguration.participatingJoints.map((joint, index) => (
-                        <Tag
-                            onClick={() => toggle_selected(index)}
-                            color={selected[index] ? axis_colors[index] : undefined}
-                            style={{ cursor: "pointer" }}
+        <DockTileWithToolbar
+            toolbar={
+                <>
+                    <DockToolbarButtonGroup>
+                        <Radio.Group
+                            size="small"
+                            value={capture.plot}
+                            buttonStyle="solid"
+                            onChange={update_pva}
                         >
-                            {joints[joint].name}
-                        </Tag>
-                    ))}
-                </div>
-                <Slider
-                    value={duration}
-                    onChange={setDuration}
-                    min={250}
-                    max={3000}
-                    step={250}
-                    tooltip={{ placement: "bottom" }}
-                />
-                <span>{duration}ms</span>
-            </StyledTelemetryForKinematicsConfiguration>
-            <SparklineJoints
-                kinematicsConfiguration={kinematicsConfiguration}
-                selected={selected}
-                duration={duration}
-            />
-        </>
-    )
-}
-
-/**
- * @ignore
- */
-export const TelemetryTile = () => {
-    const kinematicsConfigurations = useKinematicsConfigurationList()
-    return (
-        <DockTileWithToolbar toolbar={<TelemetryControls />}>
+                            <Radio.Button value={TelemetryPVA.POS}>Pos</Radio.Button>
+                            <Radio.Button value={TelemetryPVA.VEL}>Vel</Radio.Button>
+                            <Radio.Button value={TelemetryPVA.ACC}>Acc</Radio.Button>
+                        </Radio.Group>
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        {
+                            {
+                                [CaptureState.RUNNING]: (
+                                    <Button size="small" onClick={() => capture.pause()}>
+                                        Pause
+                                    </Button>
+                                ),
+                                [CaptureState.PAUSED]: (
+                                    <Space>
+                                        <Button size="small" onClick={() => capture.resume()}>
+                                            Start
+                                        </Button>
+                                        <Button size="small" onClick={() => capture.startCapture()}>
+                                            Capture
+                                        </Button>
+                                        {/*
+                                        <InputNumber
+                                            size="small"
+                                            value={capture.captureDuration}
+                                            min={10}
+                                            max={2500}
+                                            step={10}
+                                            onChange={captureDuration =>
+                                                capture.setDuration(Number(captureDuration))
+                                            }
+                                        />
+*/}
+                                    </Space>
+                                ),
+                                [CaptureState.WAITING]: (
+                                    <Button size="small" onClick={() => capture.cancelCapture()}>
+                                        Cancel Capture
+                                    </Button>
+                                ),
+                                [CaptureState.COMPLETE]: (
+                                    <Space>
+                                        <Button size="small" onClick={download}>
+                                            Download
+                                        </Button>
+                                        <Button
+                                            size="small"
+                                            onClick={() => capture.cancelCapture()}
+                                        >
+                                            Reset
+                                        </Button>
+                                    </Space>
+                                )
+                            }[capture.captureState]
+                        }
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        <StyledDuration>
+                            <Slider
+                                value={capture.captureDuration}
+                                onChange={capture.setDuration}
+                                min={250}
+                                max={3000}
+                                step={250}
+                                tooltip={{ placement: "bottom" }}
+                            />
+                            <span>{capture.captureDuration}ms</span>
+                        </StyledDuration>
+                    </DockToolbarButtonGroup>
+                    <Space>
+                        <StyledCaptureState>
+                            {CaptureState[capture.captureState]}
+                        </StyledCaptureState>
+                        {capture.lastCapture ? null : <Tag color="red">NO DATA</Tag>}
+                    </Space>
+                </>
+            }
+        >
             <StyledTileContent>
                 {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
                     <div key={index}>
                         <TelemetryForKinematicsConfiguration
                             kinematicsConfiguration={kinematicsConfiguration}
+                            duration={capture.captureDuration}
                         />
                     </div>
                 ))}

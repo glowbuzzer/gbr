@@ -84,7 +84,7 @@ export const DemoTile = () => {
                     Tracking Camera
                 </Checkbox>
                 <Space>
-                    Move to start, then do
+                    Move to start, then
                     <Select options={move_type_options} value={moveType} onChange={setMoveType} />
                     <span>for</span>
                     <PrecisionInput value={duration} onChange={setDuration} precision={0} /> second

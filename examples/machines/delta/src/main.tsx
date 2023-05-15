@@ -34,7 +34,7 @@ import {
     RevoluteDeltaIk,
     revoluteDeltaRobot
 } from "../../../util/kinematics/RevoluteDeltaKin"
-import "antd/dist/antd.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import * as THREE from "three"

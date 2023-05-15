@@ -9,7 +9,7 @@ import { createRoot } from "react-dom/client"
 import { config } from "./config"
 import { App } from "./app"
 
-import "antd/dist/antd.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 

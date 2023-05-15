@@ -66,7 +66,7 @@ export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex })
 
     return (
         <DockToolbarButtonGroup>
-            <GlowbuzzerIcon Icon={HomeIcon} button onClick={go_home} />
+            <GlowbuzzerIcon useFill={true} Icon={HomeIcon} button onClick={go_home} />
             <Dropdown trigger={["click"]} overlay={<StyledMenu items={items} />}>
                 <StyledDownOutlined />
             </Dropdown>

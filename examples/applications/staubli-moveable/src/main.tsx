@@ -18,23 +18,24 @@ import {
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
-    TelemetryTile,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
+
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
-import "antd/dist/antd.css"
-import "dseg/css/dseg.css"
-import "flexlayout-react/style/light.css"
 import { config } from "./config"
 import { appReducers, useAppState } from "./store"
 import { MoveableStaubliRobot } from "./App"
 import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal"
 import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
 import { DemoTile } from "./DemoTile"
+
+import "antd/dist/reset.css"
+import "dseg/css/dseg.css"
+import "flexlayout-react/style/light.css"
 
 const MoveableStaubliTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
