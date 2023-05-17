@@ -267,7 +267,6 @@ export const useStream = (
     )
 
     useEffect(() => {
-        console.log("UPDATE STREAM", tag, state)
         api.updateStream(tag, state)
     }, [api, tag, state])
 
