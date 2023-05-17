@@ -36,7 +36,7 @@ export const JointDroTile = () => {
         >
             <StyledTileContent>
                 <JointDro
-                    warningThreshold={0.05}
+                    warningThreshold={0.01}
                     jointsToDisplay={jointsToDisplay}
                     precision={precision}
                 />
