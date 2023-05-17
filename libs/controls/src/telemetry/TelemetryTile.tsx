@@ -3,14 +3,13 @@
  */
 
 import * as React from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
 import styled from "styled-components"
 import { Button, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
-    JointConfig,
     KinematicsConfigurationConfig,
     TelemetryPVA,
     useJointConfigurationList,
@@ -32,12 +31,28 @@ type SparklineJointsProps = {
 }
 
 const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: SparklineJointsProps) => {
+    const elemRef = useRef<HTMLDivElement>(null)
     const telemetry = useTelemetryData()
     const { plot } = useTelemetrySettings()
-    const jointConfigurations = useJointConfigurationList()
-    const participatingJoints: JointConfig[] = kinematicsConfiguration.participatingJoints.map(
-        n => jointConfigurations[n]
-    )
+    const [height, setHeight] = useState(0)
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                setHeight(entry.contentRect.height)
+            }
+        })
+
+        if (elemRef.current) {
+            resizeObserver.observe(elemRef.current)
+        }
+
+        return () => {
+            if (elemRef.current) {
+                resizeObserver.unobserve(elemRef.current)
+            }
+        }
+    }, [])
 
     const selectedJointColours = useMemo(() => {
         return kinematicsConfiguration.participatingJoints
@@ -83,14 +98,28 @@ const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: Sparkl
     }, [telemetry, kinematicsConfiguration, plot])
 
     return (
-        <SparklineScrolling
-            domain={domain}
-            options={selectedJointColours}
-            data={data}
-            duration={duration}
-        />
+        <div ref={elemRef} className="chart">
+            <SparklineScrolling
+                height={height}
+                domain={domain}
+                options={selectedJointColours}
+                data={data}
+                duration={duration}
+            />
+        </div>
     )
 }
+
+const StyledTelemetryGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: red;
+
+    > div {
+        flex-grow: 1;
+    }
+`
 
 const StyledCaptureState = styled.span`
     display: inline-block;
@@ -101,8 +130,11 @@ const StyledCaptureState = styled.span`
 const StyledTelemetryForKinematicsConfiguration = styled.div`
     user-select: none;
     padding: 10px;
+    height: 100%;
     margin-bottom: 4px;
     background: ${props => props.theme.colorBgContainer};
+    display: flex;
+    flex-direction: column;
 
     .controls {
         display: flex;
@@ -118,6 +150,10 @@ const StyledTelemetryForKinematicsConfiguration = styled.div`
         .ant-tag:hover {
             outline: 1px solid grey;
         }
+    }
+
+    .chart {
+        flex-grow: 1;
     }
 `
 
@@ -321,7 +357,7 @@ export const TelemetryTile = () => {
             }
         >
             {isVisible && (
-                <div>
+                <StyledTelemetryGroup>
                     {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
                         <div key={index}>
                             <TelemetryForKinematicsConfiguration
@@ -330,7 +366,7 @@ export const TelemetryTile = () => {
                             />
                         </div>
                     ))}
-                </div>
+                </StyledTelemetryGroup>
             )}
         </DockTileWithToolbar>
     )
