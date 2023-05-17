@@ -111,7 +111,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -180,
             posLimit: 180
@@ -125,7 +125,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -125,
             posLimit: 125
@@ -139,7 +139,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -138,
             posLimit: 138
@@ -153,7 +153,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
@@ -167,7 +167,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -120,
             posLimit: 133.5
@@ -181,7 +181,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
@@ -196,7 +196,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -180,
             posLimit: 180
@@ -210,7 +210,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -125,
             posLimit: 125
@@ -224,7 +224,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -138,
             posLimit: 138
@@ -238,7 +238,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
@@ -252,7 +252,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -120,
             posLimit: 133.5
@@ -266,7 +266,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 160
                 }
             ],
-            scale: 10000,
+            scale: 100000,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
