@@ -39,7 +39,7 @@ export const SparklineScrolling = ({
     domain,
     duration
 }: SparklineScrollingProps) => {
-    const height = 200
+    const height = 100
     const xmargin = 20
     const ymargin = 20
     const scaleRef = useRef(null)
