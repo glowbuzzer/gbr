@@ -11,10 +11,31 @@ import {
     usePrefs
 } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { StyledWaypointsDiv } from "./util"
 import { Button } from "antd"
 import { DeleteOutlined, PushpinOutlined } from "@ant-design/icons"
 import * as React from "react"
+import styled from "styled-components"
+
+const StyledWaypointsDiv = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    .waypoint {
+        padding: 4px;
+
+        cursor: pointer;
+
+        :hover .delete {
+            visibility: visible;
+        }
+
+        .delete {
+            visibility: hidden;
+        }
+    }
+`
 
 const EMPTY_ARRAY = []
 /** @ignore - internal to the jog tile */
@@ -58,15 +79,21 @@ export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: Wayp
 
     return (
         <StyledWaypointsDiv>
-            <Button onClick={add}>Add Waypoint</Button>
-            {waypoints.map((w, i) => (
-                <div key={i}>
-                    <span onClick={() => onSelect(w)}>
-                        <PushpinOutlined /> {convert(w).join(", ")}
-                    </span>{" "}
-                    <DeleteOutlined className="delete" onClick={() => remove(i)} />
-                </div>
-            ))}
+            <div>
+                {waypoints.map((w, i) => (
+                    <div key={i} className="waypoint">
+                        <span onClick={() => onSelect(w)}>
+                            <PushpinOutlined /> {convert(w).join(", ")}
+                        </span>{" "}
+                        <DeleteOutlined className="delete" onClick={() => remove(i)} />
+                    </div>
+                ))}
+            </div>
+            <div>
+                <Button size="small" onClick={add}>
+                    Add Waypoint
+                </Button>
+            </div>
         </StyledWaypointsDiv>
     )
 }

@@ -5,24 +5,6 @@
 import styled from "styled-components"
 import { Space } from "antd"
 
-export const StyledWaypointsDiv = styled.div`
-    padding: 10px;
-
-    div {
-        font-weight: bold;
-        color: darkblue;
-        cursor: pointer;
-
-        :hover .delete {
-            display: inline;
-        }
-    }
-
-    .delete {
-        display: none;
-    }
-`
-
 export const StyledJogDiv = styled.div`
     .selectors {
         display: flex;
