@@ -1,27 +1,27 @@
 import * as THREE from "three"
 
 export class go_link implements Igo_link {
-    dh: go_dh /*!< if you have DH params and don't want to convert to PP */
+    dh /*!< if you have DH params and don't want to convert to PP */
     pk: go_pk /*!< if you have a parallel machine, e.g., hexapod or robot crane */
-    pp: go_pp /*!< if you have a serial machine, e.g., an industrial robot  */
+    pp /*!< if you have a serial machine, e.g., an industrial robot  */
     body: go_body /*!< the link's rigid body parameters */
     type: LinkParamRepresentation /*!< one of GO_LINK_DH,PK,PP  */
     quantity: LinkQuantities /*!< one of GO_QUANTITY_LENGTH,ANGLE */
     unrotate: number /*!< the unrotate for this link */
     constructor(
-        dh: go_dh = { a: 0, alpha: 0, d: 0, theta: 0 },
+        dh = { a: 0, alpha: 0, d: 0, theta: 0 },
         pk: go_pk = {
             base: { x: 0, y: 0, z: 0 },
             platform: { x: 0, y: 0, z: 0 },
             d: 0
         },
-        pp: go_pp = {
+        pp = {
             pose: {
                 tran: { x: 0, y: 0, z: 0 },
                 rot: { s: 1, x: 0, y: 0, z: 0 }
             }
         },
-        urdf: go_urdf = {
+        urdf = {
             pose: { tran: { x: 0, y: 0, z: 0 }, rot: { s: 1, x: 0, y: 0, z: 0 } },
             axis: { x: 0, y: 0, z: 0 }
         },
@@ -40,7 +40,7 @@ export class go_link implements Igo_link {
         this.dh = dh
         this.pk = pk
         this.pp = pp
-        this.urdf = urdf
+        // this.urdf = urdf
         this.body = body
         this.type = type
         this.quantity = quantity
@@ -338,48 +338,48 @@ interface Igo_link {
     quantity: LinkQuantities /*!< one of GO_QUANTITY_LENGTH,ANGLE */
 }
 
-export class go_link implements Igo_link {
-    dh: go_dh /*!< if you have DH params and don't want to convert to PP */
-    pk: go_pk /*!< if you have a parallel machine, e.g., hexapod or robot crane */
-    pp: go_pp /*!< if you have a serial machine, e.g., an industrial robot  */
-    body: go_body /*!< the link's rigid body parameters */
-    type: LinkParamRepresentation /*!< one of GO_LINK_DH,PK,PP  */
-    quantity: LinkQuantities /*!< one of GO_QUANTITY_LENGTH,ANGLE */
-    unrotate: number /*!< the unrotate for this link */
-    constructor(
-        dh: go_dh = { a: 0, alpha: 0, d: 0, theta: 0 },
-        pk: go_pk = {
-            base: { x: 0, y: 0, z: 0 },
-            platform: { x: 0, y: 0, z: 0 },
-            d: 0
-        },
-        pp: go_pp = {
-            pose: {
-                tran: { x: 0, y: 0, z: 0 },
-                rot: { s: 1, x: 0, y: 0, z: 0 }
-            }
-        },
-        body: go_body = {
-            mass: 0,
-            inertia: [
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0]
-            ]
-        },
-        type: LinkParamRepresentation = LinkParamRepresentation.GO_LINK_DH,
-        quantity: LinkQuantities = LinkQuantities.GO_QUANTITY_LENGTH,
-        unrotate: number = 0
-    ) {
-        this.dh = dh
-        this.pk = pk
-        this.pp = pp
-        this.body = body
-        this.type = type
-        this.quantity = quantity
-        this.unrotate = unrotate
-    }
-}
+// export class go_link implements Igo_link {
+//     dh: go_dh /*!< if you have DH params and don't want to convert to PP */
+//     pk: go_pk /*!< if you have a parallel machine, e.g., hexapod or robot crane */
+//     pp: go_pp /*!< if you have a serial machine, e.g., an industrial robot  */
+//     body: go_body /*!< the link's rigid body parameters */
+//     type: LinkParamRepresentation /*!< one of GO_LINK_DH,PK,PP  */
+//     quantity: LinkQuantities /*!< one of GO_QUANTITY_LENGTH,ANGLE */
+//     unrotate: number /*!< the unrotate for this link */
+//     constructor(
+//         dh: go_dh = { a: 0, alpha: 0, d: 0, theta: 0 },
+//         pk: go_pk = {
+//             base: { x: 0, y: 0, z: 0 },
+//             platform: { x: 0, y: 0, z: 0 },
+//             d: 0
+//         },
+//         pp: go_pp = {
+//             pose: {
+//                 tran: { x: 0, y: 0, z: 0 },
+//                 rot: { s: 1, x: 0, y: 0, z: 0 }
+//             }
+//         },
+//         body: go_body = {
+//             mass: 0,
+//             inertia: [
+//                 [0, 0, 0],
+//                 [0, 0, 0],
+//                 [0, 0, 0]
+//             ]
+//         },
+//         type: LinkParamRepresentation = LinkParamRepresentation.GO_LINK_DH,
+//         quantity: LinkQuantities = LinkQuantities.GO_QUANTITY_LENGTH,
+//         unrotate: number = 0
+//     ) {
+//         this.dh = dh
+//         this.pk = pk
+//         this.pp = pp
+//         this.body = body
+//         this.type = type
+//         this.quantity = quantity
+//         this.unrotate = unrotate
+//     }
+// }
 
 export class go_matrix {
     rows: number
