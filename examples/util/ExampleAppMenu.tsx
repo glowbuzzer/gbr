@@ -5,10 +5,16 @@
  */
 
 import { Menu } from "antd"
-import { DockViewMenu, PreferencesDialog, useDockLayoutContext } from "@glowbuzzer/controls"
+import {
+    DockViewMenu,
+    PreferencesDialog,
+    useDockLayoutContext,
+    useDockViewMenu
+} from "@glowbuzzer/controls"
 import { ReactComponent as Logo } from "../../images/tiny-logo.svg"
 import styled from "styled-components"
 import React, { useState } from "react"
+import { ItemType } from "antd/es/menu/hooks/useItems"
 
 const StyledMenuBar = styled.div`
     display: flex;
@@ -41,12 +47,39 @@ const StyledMenuBar = styled.div`
 
 export const ExampleAppMenu = ({ title = null }) => {
     const { perspectives, currentPerspective, changePerspective } = useDockLayoutContext()
+    const viewMenu = useDockViewMenu()
 
     const [showPrefs, setShowPrefs] = useState(false)
 
     // title for current perpsective (undefined if there is only a single perspective)
     const perspectiveTitle =
         perspectives.length > 1 && perspectives.find(p => p.id === currentPerspective)?.name
+
+    const menuItems: ItemType[] = [
+        {
+            key: "file",
+            label: "File",
+            children: [
+                {
+                    key: "file-preferences",
+                    label: "Preferences",
+                    onClick: () => setShowPrefs(true)
+                }
+            ]
+        }
+    ]
+    if (perspectives.length > 1) {
+        menuItems.push({
+            key: "perspective",
+            label: "Perspective",
+            children: perspectives.map(perspective => ({
+                key: perspective.id,
+                label: perspective.name,
+                onClick: () => changePerspective(perspective.id)
+            }))
+        })
+    }
+    menuItems.push(viewMenu)
 
     return (
         <StyledMenuBar>
@@ -58,26 +91,7 @@ export const ExampleAppMenu = ({ title = null }) => {
                     <span>{perspectiveTitle}</span>
                 </div>
             )}
-            <Menu mode="horizontal" theme="light" selectedKeys={[]}>
-                <Menu.SubMenu title="File" key="file">
-                    <Menu.Item key="file-preferences" onClick={() => setShowPrefs(true)}>
-                        Preferences
-                    </Menu.Item>
-                </Menu.SubMenu>
-                {perspectives.length > 1 && (
-                    <Menu.SubMenu title="Perspective" key="perspective">
-                        {perspectives.map(perspective => (
-                            <Menu.Item
-                                key={perspective.id}
-                                onClick={() => changePerspective(perspective.id)}
-                            >
-                                {perspective.name}
-                            </Menu.Item>
-                        ))}
-                    </Menu.SubMenu>
-                )}
-                <DockViewMenu />
-            </Menu>
+            <Menu mode="horizontal" theme="light" selectedKeys={[]} items={menuItems} />
         </StyledMenuBar>
     )
 }

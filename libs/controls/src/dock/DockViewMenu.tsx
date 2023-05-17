@@ -6,7 +6,7 @@ import React from "react"
 import { Menu, Space } from "antd"
 import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"
-import { MenuItemType } from "antd/es/menu/hooks/useItems"
+import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems"
 import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
 
 /**
@@ -25,6 +25,51 @@ import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
  * </Menu>
  * ```
  */
+export const useDockViewMenu = () => {
+    const { showTile, resetLayout } = useDockLayoutContext()
+    const { darkMode, setDarkMode } = useGlowbuzzerTheme()
+
+    const tiles = useDockTiles()
+
+    function toggle_dark_mode() {
+        setDarkMode(!darkMode)
+    }
+
+    const tileItems: ItemType[] = tiles.map(tile => ({
+        key: tile.id,
+        disabled: tile.enableClose === false,
+        icon: tile.visible ? <CheckOutlined /> : null,
+        onClick: () => showTile(tile.id, !tile.visible),
+        label: tile.name
+    }))
+
+    return {
+        key: "view-menu",
+        label: "View",
+        children: [
+            {
+                key: "view-menu-tools",
+                label: "Tools",
+                children: tileItems
+            },
+            {
+                type: "divider"
+            },
+            {
+                key: "dark-mode",
+                label: "Dark Mode",
+                icon: darkMode ? <CheckOutlined /> : null,
+                onClick: toggle_dark_mode
+            },
+            {
+                key: "reset-layout",
+                label: "Reset Layout",
+                onClick: resetLayout
+            }
+        ]
+    }
+}
+
 export const DockViewMenu = () => {
     // render antd menu which toggles visibility of the dock components
     const { showTile, resetLayout } = useDockLayoutContext()
