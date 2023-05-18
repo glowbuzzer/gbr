@@ -96,7 +96,7 @@ export const ThreeDimensionalSceneTile = ({
                         {noViewCube || <DefaultViewCube />}
                         {noLighting || <DefaultLighting />}
                         {noGridHelper || <DefaultGridHelper />}
-                        {hidePreview ? null : <WorkspaceDimensions />}
+                        {/*{hidePreview ? null : <WorkspaceDimensions />}*/}
                         {hideTrace ? null : (
                             <Trace
                                 kinematicsConfigurationIndex={kinematicsConfigurationIndex}
