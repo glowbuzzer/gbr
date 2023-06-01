@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import * as d3 from "d3"
 import styled from "styled-components"
 
@@ -17,6 +17,7 @@ type SparklineScrollingSeriesOptions = {
 }
 
 type SparklineScrollingProps = {
+    height?: number
     data: Datapoint[]
     domain: number[]
     options: SparklineScrollingSeriesOptions[]
@@ -32,14 +33,18 @@ const StyledDiv = styled.div`
     width: 100%;
 `
 
+function clamp(height) {
+    return Math.max(100, Math.min(height, 500)) || 200
+}
+
 /** @ignore - not currenly supported */
 export const SparklineScrolling = ({
+    height: desiredHeight,
     options,
     data,
     domain,
     duration
 }: SparklineScrollingProps) => {
-    const height = 200
     const xmargin = 20
     const ymargin = 20
     const scaleRef = useRef(null)
@@ -49,9 +54,7 @@ export const SparklineScrolling = ({
 
     const [width, setWidth] = useState(800)
 
-    // const now = useRef(0)
-
-    // let start_time = time - duration * 2 - time_frame
+    const height = useMemo(() => clamp(desiredHeight - 10), [desiredHeight])
 
     useEffect(() => {
         function resize(e: ResizeObserverEntry[]) {
@@ -61,9 +64,8 @@ export const SparklineScrolling = ({
             }
         }
 
-        const elem = elemRef.current
         const observer = new ResizeObserver(resize)
-        observer.observe(elem)
+        observer.observe(elemRef.current)
         return () => observer.disconnect()
     }, [])
 
@@ -150,7 +152,7 @@ export const SparklineScrolling = ({
             selection.attr("d", line).attr("transform", "translate(0," + ymargin + ")")
             selection.datum(data)
         })
-    }, [domain, data, width, options])
+    }, [domain, data, width, desiredHeight, options])
 
     useEffect(() => {
         const { xScale } = scaleRef.current
@@ -169,7 +171,7 @@ export const SparklineScrolling = ({
 
         const selection = d3.select(elemRef.current).select("g").selectAll(".x.axis")
         selection.call(xAxis)
-    }, [data, width])
+    }, [data, width, desiredHeight])
 
     return <StyledDiv ref={elemRef} />
 }

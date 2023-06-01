@@ -3,14 +3,13 @@
  */
 
 import * as React from "react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { SparklineScrolling } from "./SparklineScrolling"
 import styled from "styled-components"
-import { Button, InputNumber, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
+import { Button, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
-    JointConfig,
     KinematicsConfigurationConfig,
     TelemetryPVA,
     useJointConfigurationList,
@@ -19,11 +18,9 @@ import {
     useTelemetryData,
     useTelemetrySettings
 } from "@glowbuzzer/store"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import * as d3 from "d3"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { useLocalStorage } from "../util/LocalStorageHook"
 
 const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#444444"]
 
@@ -34,12 +31,28 @@ type SparklineJointsProps = {
 }
 
 const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: SparklineJointsProps) => {
+    const elemRef = useRef<HTMLDivElement>(null)
     const telemetry = useTelemetryData()
     const { plot } = useTelemetrySettings()
-    const jointConfigurations = useJointConfigurationList()
-    const participatingJoints: JointConfig[] = kinematicsConfiguration.participatingJoints.map(
-        n => jointConfigurations[n]
-    )
+    const [height, setHeight] = useState(0)
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                setHeight(entry.contentRect.height)
+            }
+        })
+
+        if (elemRef.current) {
+            resizeObserver.observe(elemRef.current)
+        }
+
+        return () => {
+            if (elemRef.current) {
+                resizeObserver.unobserve(elemRef.current)
+            }
+        }
+    }, [])
 
     const selectedJointColours = useMemo(() => {
         return kinematicsConfiguration.participatingJoints
@@ -85,14 +98,28 @@ const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: Sparkl
     }, [telemetry, kinematicsConfiguration, plot])
 
     return (
-        <SparklineScrolling
-            domain={domain}
-            options={selectedJointColours}
-            data={data}
-            duration={duration}
-        />
+        <div ref={elemRef} className="chart">
+            <SparklineScrolling
+                height={height}
+                domain={domain}
+                options={selectedJointColours}
+                data={data}
+                duration={duration}
+            />
+        </div>
     )
 }
+
+const StyledTelemetryGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: red;
+
+    > div {
+        flex-grow: 1;
+    }
+`
 
 const StyledCaptureState = styled.span`
     display: inline-block;
@@ -102,13 +129,31 @@ const StyledCaptureState = styled.span`
 
 const StyledTelemetryForKinematicsConfiguration = styled.div`
     user-select: none;
+    padding: 10px;
+    height: 100%;
+    margin-bottom: 4px;
+    background: ${props => props.theme.colorBgContainer};
     display: flex;
-    gap: 5px;
+    flex-direction: column;
 
-    align-items: center;
+    .controls {
+        display: flex;
+        gap: 5px;
 
-    .ant-tag:hover {
-        outline: 1px solid grey;
+        align-items: center;
+
+        .title {
+            flex-grow: 1;
+            text-align: right;
+        }
+
+        .ant-tag:hover {
+            outline: 1px solid grey;
+        }
+    }
+
+    .chart {
+        flex-grow: 1;
     }
 `
 
@@ -122,14 +167,14 @@ const StyledDuration = styled.div`
     }
 `
 
-const StyledAxisToggle = styled(Tag)<{ axisColor: string; selected: boolean }>`
+const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
     cursor: pointer;
     span {
         display: block;
         min-width: 18px;
         margin-bottom: 3px;
         text-align: center;
-        border-bottom: 2px solid ${props => (props.selected ? props.axisColor : "transparent")};
+        border-bottom: 2px solid ${props => (props.selected ? props.axiscolor : "transparent")};
     }
 `
 
@@ -144,13 +189,13 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
     }
 
     return (
-        <>
-            <StyledTelemetryForKinematicsConfiguration>
+        <StyledTelemetryForKinematicsConfiguration>
+            <div className="controls">
                 <div>
                     {kinematicsConfiguration.participatingJoints.map((joint, index) => (
                         <StyledAxisToggle
                             key={index}
-                            axisColor={axis_colors[index]}
+                            axiscolor={axis_colors[index]}
                             selected={selected[index]}
                             onClick={() => toggle_selected(index)}
                         >
@@ -158,13 +203,14 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
                         </StyledAxisToggle>
                     ))}
                 </div>
-            </StyledTelemetryForKinematicsConfiguration>
+                <div className="title">{kinematicsConfiguration.name}</div>
+            </div>
             <SparklineJoints
                 kinematicsConfiguration={kinematicsConfiguration}
                 selected={selected}
                 duration={duration}
             />
-        </>
+        </StyledTelemetryForKinematicsConfiguration>
     )
 }
 
@@ -176,6 +222,19 @@ export const TelemetryTile = () => {
     const capture = useTelemetryControls()
     const data = useTelemetryData()
     const joints = useJointConfigurationList()
+    const [isVisible, setIsVisible] = useState(!document.hidden)
+
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            setIsVisible(!document.hidden)
+        }
+
+        document.addEventListener("visibilitychange", handleVisibilityChange)
+
+        return () => {
+            document.removeEventListener("visibilitychange", handleVisibilityChange)
+        }
+    }, [])
 
     function download() {
         const dl =
@@ -297,16 +356,18 @@ export const TelemetryTile = () => {
                 </>
             }
         >
-            <StyledTileContent>
-                {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
-                    <div key={index}>
-                        <TelemetryForKinematicsConfiguration
-                            kinematicsConfiguration={kinematicsConfiguration}
-                            duration={capture.captureDuration}
-                        />
-                    </div>
-                ))}
-            </StyledTileContent>
+            {isVisible && (
+                <StyledTelemetryGroup>
+                    {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
+                        <div key={index}>
+                            <TelemetryForKinematicsConfiguration
+                                kinematicsConfiguration={kinematicsConfiguration}
+                                duration={capture.captureDuration}
+                            />
+                        </div>
+                    ))}
+                </StyledTelemetryGroup>
+            )}
         </DockTileWithToolbar>
     )
 }

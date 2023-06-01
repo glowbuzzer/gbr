@@ -84,7 +84,7 @@ function App() {
                     DemoTileDefinition
                 ]}
             >
-                <ExampleAppMenu />
+                <ExampleAppMenu title="Synchronised Moves" />
                 <DockLayout />
             </DockLayoutProvider>
         </GCodeContextProvider>

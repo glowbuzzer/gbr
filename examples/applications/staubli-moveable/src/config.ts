@@ -30,7 +30,7 @@ export const config: GlowbuzzerConfig = {
             translation: {
                 x: -1296.072088,
                 y: 420.201074,
-                z: 0
+                z: -150
             },
             rotation: {
                 x: -0.5294895069388674,
@@ -46,7 +46,7 @@ export const config: GlowbuzzerConfig = {
             translation: {
                 x: -498.843729,
                 y: 383.71176,
-                z: 0
+                z: -150
             },
             rotation: {
                 x: -0.7071099974887766,
@@ -62,7 +62,7 @@ export const config: GlowbuzzerConfig = {
             translation: {
                 x: 500.043961,
                 y: 383.719657,
-                z: 0
+                z: -150
             },
             rotation: {
                 x: -0.6743752406488375,
@@ -89,7 +89,7 @@ export const config: GlowbuzzerConfig = {
             }
         },
         {
-            name: "MoveablePlatform",
+            name: "Platform",
             positionReference: 1,
             parentFrameIndex: 0,
             translation: {
@@ -123,7 +123,7 @@ export const config: GlowbuzzerConfig = {
     ],
     joint: [
         {
-            name: "W",
+            name: "Wa",
             limits: [
                 {
                     vmax: 1,
@@ -137,7 +137,7 @@ export const config: GlowbuzzerConfig = {
             posLimit: 180
         },
         {
-            name: "S",
+            name: "Sh",
             limits: [
                 {
                     vmax: 1,
@@ -151,7 +151,7 @@ export const config: GlowbuzzerConfig = {
             posLimit: 125
         },
         {
-            name: "E",
+            name: "El",
             limits: [
                 {
                     vmax: 1,
@@ -165,7 +165,7 @@ export const config: GlowbuzzerConfig = {
             posLimit: 138
         },
         {
-            name: "W",
+            name: "Wr",
             limits: [
                 {
                     vmax: 1,
@@ -179,7 +179,7 @@ export const config: GlowbuzzerConfig = {
             posLimit: 270
         },
         {
-            name: "H",
+            name: "Ha",
             limits: [
                 {
                     vmax: 1,
@@ -193,7 +193,7 @@ export const config: GlowbuzzerConfig = {
             posLimit: 133.5
         },
         {
-            name: "T",
+            name: "To",
             limits: [
                 {
                     vmax: 1,

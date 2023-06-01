@@ -33,7 +33,6 @@ export const DemoTile = () => {
                 ? api
                       .moveLine(1000)
                       .duration(duration * 1000)
-                      // .rotationEuler(0, Math.PI / 2, 0)
                       .relative(true)
                       .promise()
                 : api
@@ -80,15 +79,15 @@ export const DemoTile = () => {
                     </Button>
                     <Tag>{STREAMSTATE[stream.state].substring(12)}</Tag>
                 </Space>
-                <Checkbox checked={tracking} onChange={() => setTracking(!tracking)}>
-                    Tracking Camera
-                </Checkbox>
                 <Space>
                     Move to start, then
                     <Select options={move_type_options} value={moveType} onChange={setMoveType} />
                     <span>for</span>
                     <PrecisionInput value={duration} onChange={setDuration} precision={0} /> second
                 </Space>
+                <Checkbox checked={tracking} onChange={() => setTracking(!tracking)}>
+                    Track Camera
+                </Checkbox>
             </Space>
         </div>
     )

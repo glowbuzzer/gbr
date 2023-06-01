@@ -50,7 +50,6 @@ export function useStatusProcessor(connection: WebSocket) {
     useEffect(() => {
         setTick(0)
         newConnection.current = true
-        console.log("Init status processor", configVersion)
     }, [connection, configVersion])
 
     useEffect(() => {

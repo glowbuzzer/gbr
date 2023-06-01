@@ -11,8 +11,9 @@ import { useFramesList, usePointsList, useSoloActivity } from "@glowbuzzer/store
 import { Dropdown, Menu } from "antd"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
+import { ItemType } from "antd/es/menu/hooks/useItems"
 
-const StyledMenu = styled(Menu)`
+const StyledMenuItem = styled.div`
     ${CssPointNameWithFrame}
 `
 
@@ -43,23 +44,25 @@ export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex })
     }
 
     // convert points to antd menu items
-    const items = points.map((point, index) => ({
+    const items: ItemType[] = points.map((point, index) => ({
         key: index,
         label: (
-            <div className="point-name">
-                <div className="name">{point.name}</div>
-                {frames[point.frameIndex] && (
-                    <div className="frame">
-                        <FramesIcon
-                            width={13}
-                            height={13}
-                            viewBox="0 0 48 48"
-                            transform="translate(0,2)"
-                        />{" "}
-                        {frames[point.frameIndex].name}
-                    </div>
-                )}
-            </div>
+            <StyledMenuItem>
+                <div className="point-name">
+                    <div className="name">{point.name}</div>
+                    {frames[point.frameIndex] && (
+                        <div className="frame">
+                            <FramesIcon
+                                width={13}
+                                height={13}
+                                viewBox="0 0 48 48"
+                                transform="translate(0,2)"
+                            />{" "}
+                            {frames[point.frameIndex].name}
+                        </div>
+                    )}
+                </div>
+            </StyledMenuItem>
         ),
         onClick: () => go(point)
     }))
@@ -67,7 +70,7 @@ export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex })
     return (
         <DockToolbarButtonGroup>
             <GlowbuzzerIcon useFill={true} Icon={HomeIcon} button onClick={go_home} />
-            <Dropdown trigger={["click"]} overlay={<StyledMenu items={items} />}>
+            <Dropdown trigger={["click"]} menu={{ items }}>
                 <StyledDownOutlined />
             </Dropdown>
         </DockToolbarButtonGroup>

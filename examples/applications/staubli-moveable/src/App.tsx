@@ -8,6 +8,7 @@ import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbu
 import { useAppState } from "./store"
 import React, { useEffect, useMemo, useRef } from "react"
 import { PerspectiveCamera, useGLTF } from "@react-three/drei"
+import { Kamdo } from "./Kamdo"
 
 const DEG90 = Math.PI / 2
 const TX40_KIN_CHAIN: RobotKinematicsChainElement[] = [
@@ -40,7 +41,6 @@ export const MoveableStaubliRobot = () => {
 
     const trackModel = useMemo(() => useGLTF("/assets/moveable_track.glb"), [])
     const baseModel = useMemo(() => useGLTF("/assets/moveable_base.glb"), [])
-    const suzanneModel = useMemo(() => useGLTF("/assets/suzanne.glb"), [])
 
     useEffect(() => {
         trackingCamera.current.position.set(0, 0, 300)
@@ -76,24 +76,16 @@ export const MoveableStaubliRobot = () => {
 
                     <PerspectiveCamera
                         ref={trackingCamera}
+                        near={1}
+                        far={10000}
                         makeDefault={tracking}
                         position={[0, 0, 0]}
                         rotation={[Math.PI, 0, 0]}
                     />
                 </BasicRobot>
             </group>
-            <primitive
-                scale={[400, 400, 400]}
-                rotation={[Math.PI / 2, 0, 0]}
-                position={[-500, 1800, 600]}
-                object={suzanneModel.scene}
-            />
-            <primitive
-                scale={[400, 400, 400]}
-                rotation={[Math.PI / 2, 0, 0]}
-                position={[500, 1800, 600]}
-                object={suzanneModel.scene.clone()}
-            />
+            <Kamdo position={[-500, 2000, 0]} />
+            <Kamdo position={[500, 2000, 0]} />
         </>
     )
 }
