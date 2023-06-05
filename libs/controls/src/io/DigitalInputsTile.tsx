@@ -4,8 +4,24 @@
 
 import React from "react"
 import { BitFieldDisplay } from "../dro"
-import { useDigitalInputBits, useDigitalInputList } from "@glowbuzzer/store"
+import { useDigitalInputBits, useDigitalInputList, useDigitalInputs } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { Tag } from "antd"
+
+import styled from "styled-components"
+
+const StyledDigitalInput = styled.div`
+    display: flex;
+    padding: 1px 0;
+    .label {
+        flex-grow: 1;
+    }
+
+    .ant-tag {
+        width: 40px;
+        text-align: center;
+    }
+`
 
 type DigitalInputsTileProps = {
     /**
@@ -19,17 +35,25 @@ type DigitalInputsTileProps = {
  */
 export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
     const dins = useDigitalInputList()
-    const bits = useDigitalInputBits()
+    const values = useDigitalInputs()
 
     const normalised_labels = dins?.map(
         (config, index) => labels[index] || config.name || index.toString()
     )
 
+    console.log("bits", values)
+
     return (
         <StyledTileContent>
-            {dins && (
-                <BitFieldDisplay bitCount={dins.length} value={bits} labels={normalised_labels} />
-            )}
+            {dins &&
+                dins.map((config, index) => (
+                    <StyledDigitalInput>
+                        <span className="label">{normalised_labels[index]}</span>
+                        <Tag color={values[index] ? "green" : "red"}>
+                            {values[index] ? "ON" : "OFF"}
+                        </Tag>
+                    </StyledDigitalInput>
+                ))}
         </StyledTileContent>
     )
 }

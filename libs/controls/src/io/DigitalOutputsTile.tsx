@@ -21,6 +21,10 @@ const StyledDiv = styled.div`
     .dout-label {
         flex-grow: 1;
     }
+    .ant-tag {
+        width: 40px;
+        text-align: center;
+    }
 `
 
 const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) => {
@@ -55,7 +59,9 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
                 onChange={handle_state_change}
             />
             <div>
-                <Tag>{dout.effectiveValue ? "ON" : "OFF"}</Tag>
+                <Tag color={dout.effectiveValue ? "green" : "red"}>
+                    {dout.effectiveValue ? "ON" : "OFF"}
+                </Tag>
             </div>
         </div>
     )
