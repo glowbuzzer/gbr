@@ -12,6 +12,8 @@ import { useEffect, useRef, useState } from "react"
 export type StateMachineDefinition = {
     /** The set of states keyed by state name */
     [index: string]: {
+        /** Optional label that can be used for display. */
+        label?: string
         /** Called when entering a state. Can optionally return a new state to transition to (by name, or name plus user-defined payload). */
         enter?():
             | void
@@ -24,11 +26,17 @@ export type StateMachineDefinition = {
          */
         exit?(): void
 
-        /** Possible transitions out of this state. The keys of the object are the target
+        /**
+         * Possible transitions out of this state. The keys of the object are the target
          * state names. The values are either a boolean, or a function returning boolean.
          * A transition is triggered when its value evaluates as true.
          */
         transitions?: { [index: string]: (() => boolean) | boolean }
+        /**
+         * Transitions that are possible from the `enter` function. This is optional and does
+         * not affect the state machine behaviour, but can be used to document and visualise the state machine.
+         */
+        implicitTransitions?: string[]
     }
 }
 
@@ -128,6 +136,12 @@ export class StateMachine {
     }
 }
 
+type StateMachineState = {
+    currentState: string
+    previousState?: string
+    userData: unknown
+    definition: StateMachineDefinition
+}
 /**
  * Evaluates the state machine given and returns current state, previous state and any user defined data associated with the latest transition.
  *
@@ -146,23 +160,26 @@ export const useStateMachine = (
     definition: StateMachineDefinition,
     initialState: string,
     dependencies
-): { currentState: string; previousState?: string; userData: unknown } => {
-    const [stateMachineState, setStateMachineState] = useState<{
-        currentState: string
-        previousState?: string
-        userData: unknown
-    }>({
+): StateMachineState => {
+    const [stateMachineState, setStateMachineState] = useState<StateMachineState>({
         currentState: initialState,
         previousState: undefined,
-        userData: undefined
+        userData: undefined,
+        definition
     })
-    const machine = useRef(new StateMachine(initialState, setStateMachineState))
+
+    function update(state: Pick<StateMachineState, "currentState" | "previousState" | "userData">) {
+        setStateMachineState({
+            ...state,
+            definition
+        })
+    }
+
+    const machine = useRef(new StateMachine(initialState, update))
 
     useEffect(() => {
         // every time the dependencies change, including the definition itself, we will evaluate the state machine
         machine.current.eval(definition)
-
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [...dependencies, definition])
 
     return stateMachineState
