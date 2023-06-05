@@ -864,6 +864,8 @@ export * from "./gbc_extra"
             
                         /**  Defines if the ouput signal is inverted */
                         inverted?:boolean;
+                        /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
+                        loopback?:number;
             }
             /** 
             Status of Digital Outs (dout)
