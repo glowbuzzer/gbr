@@ -28,8 +28,8 @@ const StyledDiv = styled.div`
 
     .bit-label {
         font-family: monospace;
-        font-size: 12px;
-        margin-left: -4px;
+        font-size: 14px;
+        margin-left: -2px;
         margin-right: -4px;
         padding-top: 4px;
         padding-bottom: 10px;
