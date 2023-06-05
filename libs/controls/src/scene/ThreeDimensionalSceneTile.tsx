@@ -21,10 +21,11 @@ import { ReactComponent as PointsIcon } from "@material-symbols/svg-400/outlined
 import { FramesDisplay } from "./FramesDisplay"
 import { DefaultPerspectiveCamera } from "./DefaultPerspectiveCamera"
 import { DefaultGridHelper } from "./DefaultGridHelper"
-import { ScaleProvider } from "./ScaleProvider"
+import { ScaleProvider, useScale } from "./ScaleProvider"
 import { DefaultViewCube } from "./DefaultViewCube"
 import { DefaultLighting } from "./DefaultLighting"
 import { PointsDisplay } from "./PointsDisplay"
+import { Vector3 } from "three"
 
 type ThreeDimensionalSceneTileProps = {
     /** The kinematics configuration to use */
@@ -43,6 +44,8 @@ type ThreeDimensionalSceneTileProps = {
     noGridHelper?: boolean
     /** Optional, If true no viewCube will be provided in the canvas */
     noViewCube?: boolean
+    /** Optional, initial camera position */
+    initialCameraPosition?: Vector3
     /** Optional react-three-fiber children to render */
     children?: React.ReactNode
 }
@@ -65,17 +68,14 @@ export const ThreeDimensionalSceneTile = ({
     noViewCube = false,
     hideTrace: defaultHideTrace = undefined,
     hidePreview: defaultHidePreview = undefined,
+    initialCameraPosition,
     children = undefined
 }: ThreeDimensionalSceneTileProps) => {
     const { reset } = useTrace(kinematicsConfigurationIndex)
-
     const { current, update } = usePrefs()
-
     const [hideTrace, setHideTrace] = useState(defaultHideTrace || false)
     const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
-
     const { segments, highlightLine, disabled } = usePreview()
-
     const ContextBridge = useContextBridge(ReactReduxContext)
 
     function toggle_preview() {
@@ -91,7 +91,7 @@ export const ThreeDimensionalSceneTile = ({
             <Canvas shadows frameloop="demand">
                 <ContextBridge>
                     <ScaleProvider>
-                        {noCamera || <DefaultPerspectiveCamera />}
+                        {noCamera || <DefaultPerspectiveCamera position={initialCameraPosition} />}
                         {noControls || <OrbitControls enableDamping={false} makeDefault />}
                         {noViewCube || <DefaultViewCube />}
                         {noLighting || <DefaultLighting />}
