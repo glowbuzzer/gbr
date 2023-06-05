@@ -5,9 +5,12 @@
 /**
  * This file provides a Redux store enhancer and hook that allows override of digital inputs.
  * This is useful during development to similate digital inputs from GBC where there are none.
+ * An alternative is to configure a digital output as a loopback to a digital input, which is
+ * more appropriate if you need GBC to react to the input (for example, by triggering the start
+ * of a move).
  */
-import React, {createContext, useContext, useMemo, useState} from "react"
-import {StoreEnhancer} from "@reduxjs/toolkit"
+import React, { createContext, useContext, useMemo, useState } from "react"
+import { StoreEnhancer } from "@reduxjs/toolkit"
 
 let values = []
 
@@ -58,7 +61,6 @@ export function useDigitalInputOverrides() {
     return context
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const digitalInputEnhancer: StoreEnhancer<any> = createStore => {
     return (rootReducer, preloadedState) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
