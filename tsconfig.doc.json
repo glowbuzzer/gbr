@@ -1,27 +1,28 @@
 {
-    //    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "target": "ES5",
         "lib": [
             "ES2020",
             "DOM"
         ],
+        "noEmit": true,
         "esModuleInterop": true,
         "downlevelIteration": true,
         //        "allowSyntheticDefaultImports": true,
-        "jsx": "react"
+        "jsx": "react",
         //        "target": "ES6",
         //        "downlevelIteration": true
-        //        "noResolve": true,
-        //        "skipLibCheck": true
+//                "noResolve": true,
+//                "skipLibCheck": true
     },
     "exclude": [
         //        "apps/**/**",
         //        "public/static/**/**",
-        "./node_modules/**"
+        "**/node_modules/**"
     ],
     "files": [
-        "./libs/store/src/index.ts"
+        "./libs/store/src/index.ts",
+//        "./test.ts"
     ]
     //    "include": [
     //        "./@glowbuzzer/store/**/*.ts"
