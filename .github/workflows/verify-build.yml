@@ -34,3 +34,6 @@ jobs:
 
             -   name: Verify react component docs
                 run: node react-docgen-verify.mjs
+
+            -   name: Verify typedoc
+                run: node typedoc-verify.mjs
