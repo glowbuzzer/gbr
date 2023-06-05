@@ -2,9 +2,9 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import React, { createContext, useContext } from "react"
+import React, { createContext, useContext, useMemo } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { ConfigProvider, theme } from "antd"
+import { ConfigProvider, theme as antdTheme, ThemeConfig } from "antd"
 import styled, { css, ThemeProvider } from "styled-components"
 
 type GlowbuzzerThemeContextType = {
@@ -72,25 +72,26 @@ const StyledGlowbuzzerApp = styled.div<{ darkMode: boolean }>`
 `
 
 const GlowbuzzerThemeInner = ({ children, darkMode }) => {
-    const { token } = theme.useToken()
+    const { token } = antdTheme.useToken()
     return (
         <ThemeProvider theme={token}>
             <StyledGlowbuzzerApp darkMode={darkMode}>{children}</StyledGlowbuzzerApp>
         </ThemeProvider>
     )
 }
-export const GlowbuzzerThemeProvider = ({ children }) => {
+export const GlowbuzzerThemeProvider = ({ children, theme = {} }) => {
     const [darkMode, setDarkMode] = useLocalStorage("darkMode", false)
 
-    const { token } = theme.useToken()
-    const custom_theme = darkMode
-        ? {
-              algorithm: [theme.darkAlgorithm],
-              token: {
-                  colorPrimary: "rgb(146, 84, 222)"
-              }
-          }
-        : {}
+    const custom_theme = useMemo<ThemeConfig>(() => {
+        return {
+            algorithm: darkMode ? [antdTheme.darkAlgorithm] : undefined,
+            token: {
+                colorPrimary: "rgb(146, 84, 222)",
+                colorLink: "rgb(146, 84, 222)",
+                ...theme
+            }
+        }
+    }, [darkMode, theme])
 
     return (
         <GlowbuzzerThemeContext.Provider value={{ darkMode, setDarkMode }}>
