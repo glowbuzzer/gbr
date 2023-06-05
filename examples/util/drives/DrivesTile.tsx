@@ -6,7 +6,7 @@ import React from "react"
 import { BitFieldDisplay, MotorVisualization, SegmentDisplay } from "@glowbuzzer/controls"
 import styled from "styled-components"
 import { JOINT_TYPE, useJoint, useJointConfigurationList, usePrefs } from "@glowbuzzer/store"
-import { useJointsForKinematicsConfiguration } from "../../../../libs/controls/src/util/hooks"
+import { useJointsForKinematicsConfiguration } from "../../../libs/controls/src/util/hooks"
 import { useRawJointPositions } from "@glowbuzzer/store"
 import { DriveConfigEditor } from "./DriveConfigEditor"
 
@@ -25,8 +25,7 @@ const StyledDiv = styled.div`
     }
 
     .dro {
-        display: flex;
-        gap: 4px;
+        text-align: center;
     }
 
     .status-word {
@@ -77,7 +76,8 @@ const DriveItem = ({ index }) => {
 }
 
 export const DrivesTile = () => {
-    const joints = useJointsForKinematicsConfiguration(0)
+    const joints = useJointConfigurationList()
+    // const joints = useJointsForKinematicsConfiguration(0)
 
     return (
         <StyledDiv>
