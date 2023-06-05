@@ -14,8 +14,9 @@ type CylindricalToolProps = {
     color?: number
 }
 
+// @ts-ignore
 /**
- * The CylindricalTool component renders a simple tool with a cylindrical shape. It can be added to the {@link BasicRobot} component.
+ * The CylindricalTool component renders a simple tool with a cylindrical shape. It can be added to the {@link ThreeDimensionalSceneTile} component.
  */
 export const CylindricalTool = forwardRef<Mesh>(
     ({ toolIndex, color = 0x666666 }: CylindricalToolProps, ref) => {
