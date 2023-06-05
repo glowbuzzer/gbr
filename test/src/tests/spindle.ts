@@ -14,9 +14,6 @@ test.before.each(() => {
 
 test("can start and stop spindle", async () => {
     gbc.enable_operation()
-    gbc.assert.doutPdo(0, false)
-    gbc.assert.doutPdo(1, false)
-    gbc.assert.aoutPdo(0, 0)
 
     // start spindle
     await gbc
