@@ -18,7 +18,7 @@ export const digitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = cre
     reducers: {
         status: (state, action) => {
             // called with status.dout from the json every time board sends status message
-            return [...action.payload]
+            return [...action.payload.status]
         }
     }
 })

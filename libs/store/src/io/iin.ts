@@ -13,7 +13,7 @@ export const integerInputsSlice: StatusUpdateSlice<number[]> = createSlice({
     initialState: [] as number[],
     reducers: {
         status: (state, action) => {
-            return [...action.payload]
+            return [...action.payload.status]
         }
     }
 })

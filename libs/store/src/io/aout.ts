@@ -17,7 +17,7 @@ export const analogOutputsSlice: StatusUpdateSlice<AnalogOutputStatus[]> = creat
     initialState: [] as AnalogOutputStatus[],
     reducers: {
         status: (state, action) => {
-            return [...action.payload]
+            return [...action.payload.status]
         }
     }
 })

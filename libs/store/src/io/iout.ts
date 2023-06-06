@@ -17,7 +17,7 @@ export const integerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[]> = cre
     initialState: [] as IntegerOutputStatus[],
     reducers: {
         status: (state, action) => {
-            return [...action.payload]
+            return [...action.payload.status]
         }
     }
 })

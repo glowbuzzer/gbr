@@ -29,6 +29,13 @@ import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
 import { useConfigVersion } from "../config"
 
+function status(status, heartbeat) {
+    return {
+        status,
+        heartbeat
+    }
+}
+
 /**
  * This hook handles status messages from GBC and updates the redux store. It also handles
  * startup behaviour on initial connection to GBC and the transition of GBC into the desired
@@ -42,7 +49,6 @@ export function useStatusProcessor(connection: WebSocket) {
     const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
     const { target, requestedTarget, heartbeat, nextControlWord, currentState } = machine
     const streams = useSelector<RootState, StreamSliceType[]>(state => state.stream, shallowEqual)
-    const kinematics = useKinematicsList()
 
     // we need to track if we've already done initial connection handling
     const newConnection = useRef(true)
@@ -146,16 +152,23 @@ export function useStatusProcessor(connection: WebSocket) {
     return function (msg: GlowbuzzerStatus) {
         // fan out parts of the status message to the appropriate slice
         if (msg.status) {
+            const heartbeat = msg.status.machine.heartbeat
             msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
             msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
             msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
             msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
-            msg.status.din && dispatch(digitalInputsSlice.actions.status(msg.status.din))
-            msg.status.dout && dispatch(digitalOutputsSlice.actions.status(msg.status.dout))
-            msg.status.ain && dispatch(analogInputsSlice.actions.status(msg.status.ain))
-            msg.status.aout && dispatch(analogOutputsSlice.actions.status(msg.status.aout))
-            msg.status.iin && dispatch(integerInputsSlice.actions.status(msg.status.iin))
-            msg.status.iout && dispatch(integerOutputsSlice.actions.status(msg.status.iout))
+            msg.status.din &&
+                dispatch(digitalInputsSlice.actions.status(status(msg.status.din, heartbeat)))
+            msg.status.dout &&
+                dispatch(digitalOutputsSlice.actions.status(status(msg.status.dout, heartbeat)))
+            msg.status.ain &&
+                dispatch(analogInputsSlice.actions.status(status(msg.status.ain, heartbeat)))
+            msg.status.aout &&
+                dispatch(analogOutputsSlice.actions.status(status(msg.status.aout, heartbeat)))
+            msg.status.iin &&
+                dispatch(integerInputsSlice.actions.status(status(msg.status.iin, heartbeat)))
+            msg.status.iout &&
+                dispatch(integerOutputsSlice.actions.status(status(msg.status.iout, heartbeat)))
             msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
             msg.status.kc && dispatch(traceSlice.actions.status(msg.status.kc))
         }
