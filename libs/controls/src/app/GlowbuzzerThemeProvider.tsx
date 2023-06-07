@@ -79,8 +79,24 @@ const GlowbuzzerThemeInner = ({ children, darkMode }) => {
         </ThemeProvider>
     )
 }
-export const GlowbuzzerThemeProvider = ({ children, theme = {} }) => {
-    const [darkMode, setDarkMode] = useLocalStorage("darkMode", false)
+
+type GlowbuzzerThemeProviderProps = {
+    children: React.ReactNode
+    theme?: ThemeConfig
+    darkModeDefault?: boolean
+}
+
+export const GlowbuzzerThemeProvider = ({
+    children,
+    theme = {},
+    darkModeDefault
+}: GlowbuzzerThemeProviderProps) => {
+    const darkModeSystemDefault =
+        !!window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+
+    const [darkModeUser, setDarkMode] = useLocalStorage("darkMode", undefined)
+
+    const darkMode = darkModeDefault ?? darkModeUser ?? darkModeSystemDefault
 
     const custom_theme = useMemo<ThemeConfig>(() => {
         return {
