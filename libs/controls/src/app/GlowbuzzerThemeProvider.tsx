@@ -82,7 +82,7 @@ const GlowbuzzerThemeInner = ({ children, darkMode }) => {
 
 type GlowbuzzerThemeProviderProps = {
     children: React.ReactNode
-    theme?: ThemeConfig
+    theme?: any // will be merged with the antd theme token
     darkModeDefault?: boolean
 }
 
