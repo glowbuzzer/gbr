@@ -17,14 +17,13 @@ import { ActivityApi } from "../activity"
 // }
 
 /**
- * Returns an object containing the state of, and methods to interact with, the execution of gcode in GBC.
+ * Returns a function you can use to send gcode to GBC. The gcode will be queued and executed over the current
+ * connection. By default activites will start executing immediately. However, streams can be configured to require
+ * an M2 "end program" activity to be sent. If this mode is enabled, and the amount of gcode sent exceeds the buffer capacity
+ * of GBC, processing will start as soon as the buffer is full and continue until no more gcode is sent. Otherwise,
+ * execution will start when an M2 is encountered.
  *
- * You can issue gcode using the `send` method, and it will be queued over the current connection. If the
- * amount of gcode sent exceeds the buffer capacity of GBC, processing will start as soon as the buffer is
- * full and continue until no more gcode is sent. Otherwise, execution will start when an M2 "end program"
- * is encountered. It is good practice to append M2 to all of your gcode.
- *
- * You can pause, resume and cancel gcode execution using the `setState` method.
+ * You can pause, resume and cancel gcode execution using the {@link useStream} hook.
  *
  * @param kinematicsConfigurationIndex The index of the kinematics configuration to use for the gcode
  */
