@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/glowbuzzer/gbr/compare/v1.7.3...v1.8.0) (2023-06-12)
+
+
+### Feature
+
+* ability to push new config ([79e158d](https://github.com/glowbuzzer/gbr/commit/79e158d1dffbbc8b06aa07a2a324059ff618f92b))
+* add heartbeat to slice status update calls ([c7b72b7](https://github.com/glowbuzzer/gbr/commit/c7b72b779b24831535311d3038a78daa21eb272d))
+* add initial automationware example ([79e158d](https://github.com/glowbuzzer/gbr/commit/79e158d1dffbbc8b06aa07a2a324059ff618f92b))
+* add optional default camera position ([496ee9a](https://github.com/glowbuzzer/gbr/commit/496ee9aa2fde21f9852a12534b12937c3afea9da))
+* add optional label and implicitTransitions to state machine definition (visualisation) ([6f6bdf3](https://github.com/glowbuzzer/gbr/commit/6f6bdf3a80934b2d3594e439572a4cea1316076b))
+* add precision buttons to cartesian and joint dro tiles ([169a946](https://github.com/glowbuzzer/gbr/commit/169a94649b0a7ee6645cc930640f96fdddfb21d9))
+* dark mode! ([2c22186](https://github.com/glowbuzzer/gbr/commit/2c22186a8ad58d644d881f1cfa318975c2301285))
+* improve telemetry tile ([f8c9629](https://github.com/glowbuzzer/gbr/commit/f8c962939ab48b3981be76c4bbaeb3f4181846c7))
+* resize telemetry chart according to available height ([84ff23d](https://github.com/glowbuzzer/gbr/commit/84ff23d9fc9a589806095783fad056051d380a18))
+* support dark mode set by system ([75d5e54](https://github.com/glowbuzzer/gbr/commit/75d5e54036c450e1f7e7db3effa576b11914c41e))
+
+
+### Bug Fix
+
+* better connection handling ([79e158d](https://github.com/glowbuzzer/gbr/commit/79e158d1dffbbc8b06aa07a2a324059ff618f92b))
+* fix antd 5.x menu warnings ([bb36a9e](https://github.com/glowbuzzer/gbr/commit/bb36a9ed972b8472973f2399f3e5bb71f32f19e9))
+* fix sliders and add explanatory note ([6ac1d6b](https://github.com/glowbuzzer/gbr/commit/6ac1d6b2fc3371684238c1cf9c975bb398d42187))
+* fix tests and add support for reset/restore joints during test config load ([10ef63d](https://github.com/glowbuzzer/gbr/commit/10ef63ddb3cddb6179d4f6990171678ccad971c2))
+* fix up spindle unit test ([3a36b8d](https://github.com/glowbuzzer/gbr/commit/3a36b8d139b46a0d556a9960e92d87f1684b278c))
+* fix up Typescript compile issues ([9ba2efb](https://github.com/glowbuzzer/gbr/commit/9ba2efb2e209013a486ac2e1f3dbf289f34a2b02))
+* migrate to new esbuild watch api approach ([de25b37](https://github.com/glowbuzzer/gbr/commit/de25b37b76930ad0bc1f5d1980776763708e01f2))
+* remove wrong type on theme prop ([74638ef](https://github.com/glowbuzzer/gbr/commit/74638efa101d797a974f3eb13b0c28cc0ee54892))
+
+
+### Chore
+
+* add menu bar title ([70eb8e2](https://github.com/glowbuzzer/gbr/commit/70eb8e219d884c84d9a4f0f770f0444150a90b24))
+* add note about loopback digital output ([eb5862e](https://github.com/glowbuzzer/gbr/commit/eb5862e442981c234696365d42d7cab86781db1b))
+* add precision to staubli dance ([51e0576](https://github.com/glowbuzzer/gbr/commit/51e057614bdfbf4e83a5bec4acd2df10916b6419))
+* add typedoc verify step ([66d7480](https://github.com/glowbuzzer/gbr/commit/66d7480bcdbf6f8897e5f3978bed7760be594d64))
+* change display style for digital input tile ([37708c6](https://github.com/glowbuzzer/gbr/commit/37708c653676020d75379ea5a77c9dc35325574e))
+* demo tweaks ([056d335](https://github.com/glowbuzzer/gbr/commit/056d3350b0595eb3daa2a618d6f783559795e93b))
+* export GlowbuzzerThemeProvider and provide theme override option ([539fc47](https://github.com/glowbuzzer/gbr/commit/539fc472f93e387718d23111f9e334e88cd377b9))
+* Fix laser demo ([f7c1f89](https://github.com/glowbuzzer/gbr/commit/f7c1f89de4cf0da28fb85fcadf8a0618c8fa57c3))
+* fix waypoints colors ([7d713de](https://github.com/glowbuzzer/gbr/commit/7d713def0e2d2134691a06cbdfb64e59da9fffd7))
+* gbc now sets simulate mode and fro on config load ([46813a0](https://github.com/glowbuzzer/gbr/commit/46813a02c9be06c6073d4ce962b6a8d56b0c2282))
+* move cylinder virtual position logic into store extraReducers ([7631ce2](https://github.com/glowbuzzer/gbr/commit/7631ce2fef74b6519d77cb6e61fa3e1b04f41705))
+* reduce logging ([b7f0f8c](https://github.com/glowbuzzer/gbr/commit/b7f0f8c0da2b3902b0112af5d3da8917fef3eb25))
+* remove appName ([bb4a8cf](https://github.com/glowbuzzer/gbr/commit/bb4a8cfa6014b7e4c6339b80c8ddd212685e738b))
+* remove compile errors ([1324aec](https://github.com/glowbuzzer/gbr/commit/1324aecdc7038ac572e941fa800fb7f0161ee661))
+* remove joint spinners tile and replace with drive config editor ([cffa10b](https://github.com/glowbuzzer/gbr/commit/cffa10b3fcf0bb0f8665a2aef17297e2621d6174))
+* replace suzanne with kamdo in moveable staubli demo ([a0a5893](https://github.com/glowbuzzer/gbr/commit/a0a5893f25c301f1a3970f957e3b8dd6333ac71b))
+* tweak joint dro ([196fb2a](https://github.com/glowbuzzer/gbr/commit/196fb2ac45e68213bdc8d044c46fe714e50b4c55))
+* tweak style ([95f02d4](https://github.com/glowbuzzer/gbr/commit/95f02d440a9c7592cdeb5d33a7e1ec7416582b01))
+* tweaks to TelemetryTile.tsx ([7edf347](https://github.com/glowbuzzer/gbr/commit/7edf3473c1dfeca526fc4250b8e269a1701cf623))
+* typedoc fix ([3e8e508](https://github.com/glowbuzzer/gbr/commit/3e8e50816b50ab88a9f5a9f6a095baf2883ce9cb))
+* update conveyor sorting example ([64449c3](https://github.com/glowbuzzer/gbr/commit/64449c3e3dfb6146d6ef88383b592dec7f19a7b2))
+* update doc ([16899fe](https://github.com/glowbuzzer/gbr/commit/16899fe20b70d5bb11ad915126c44471360fd08f))
+* update gbc.ts ([ac19c74](https://github.com/glowbuzzer/gbr/commit/ac19c749b9d4fe7f92fd61c4e9a49b05c01e3cdc))
+* update package versions and add typedoc-verify.mjs ([fe5eb0f](https://github.com/glowbuzzer/gbr/commit/fe5eb0f489d5f14c1d16c169203f55deb9ea2af5))
+* update typescript version ([3fd6736](https://github.com/glowbuzzer/gbr/commit/3fd6736880c24bb1123f7cc6f50f4ec0e1228085))
+* work on moveable staubli example ([3e65436](https://github.com/glowbuzzer/gbr/commit/3e65436755da2519f6ff7394349463f2568a5127))
+
 ## [1.7.3](https://github.com/glowbuzzer/gbr/compare/v1.7.2...v1.7.3) (2023-04-26)
 
 
