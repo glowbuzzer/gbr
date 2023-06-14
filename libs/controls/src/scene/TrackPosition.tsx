@@ -40,7 +40,7 @@ export const TrackPosition = ({ kinematicsConfigurationIndex, children }: TrackP
         const q = new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)
 
         return { p, q }
-    }, [, position, frameIndex, convertToFrame])
+    }, [position, frameIndex, convertToFrame])
 
     return (
         <group position={p} quaternion={q}>

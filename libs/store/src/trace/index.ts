@@ -89,14 +89,15 @@ export const useTrace = (kinematicsConfigurationIndex: number) => {
     const { path, enabled } = useSelector(({ trace }: RootState) => {
         const kc = trace.kcs[kinematicsConfigurationIndex]
         return {
-            path: kc?.path || [],
+            path: (kc?.path || []) as TraceElement[],
             enabled: kc?.enabled
         }
     }, shallowEqual)
+
     const dispatch = useDispatch()
 
     return {
-        path,
+        path: path as TraceElement[],
         enabled,
         reset() {
             dispatch(traceSlice.actions.reset(kinematicsConfigurationIndex))
