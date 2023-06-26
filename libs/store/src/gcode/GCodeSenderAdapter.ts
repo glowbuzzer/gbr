@@ -43,8 +43,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
 
     private canMergePrevious = false // determines if we are allowed to merge with previous
     private readonly context: GCodeContextType
-    private toolIndex = 0
-    private previousToolIndex = 0
+    private toolIndex: number
+    private nextToolIndex: number
     private readonly api: GCodeActivityProvider
     private spindleSpeed: number
 
@@ -54,6 +54,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         vmax: number,
         workspaceFrames: Record<number, number | null>,
         jointPositions: number[] = [],
+        toolIndex?: number,
         context?: GCodeContextType,
         simplifyTolerance = 0
     ) {
@@ -61,6 +62,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             jointPositions,
             {
                 translation: { x: null, y: null, z: null },
+                rotation: { x: null, y: null, z: null, w: null }, // important for KCs that don't support rotation
                 positionReference: POSITIONREFERENCE.ABSOLUTE,
                 frameIndex: 0
             },
@@ -70,6 +72,7 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
         this.api = new GCodeActivityProvider(kinematicsConfigurationIndex, buffer)
         this.vmax = vmax
         this.context = context
+        this.toolIndex = this.nextToolIndex = toolIndex || 0
         this.simplifyTolerance = simplifyTolerance
     }
 
@@ -248,9 +251,8 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     T(params) {
-        // just update the previous and current tool index
-        this.previousToolIndex = this.toolIndex
-        this.toolIndex = Number(params)
+        // just update the next tool index
+        this.nextToolIndex = Number(params)
     }
 
     M2(params, line: GCodeLine) {
@@ -291,15 +293,14 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
             // hard coded to first KC for now
             const builders = this.context.handleToolChange?.(
                 0,
-                this.previousToolIndex,
                 this.toolIndex,
+                this.nextToolIndex,
                 this.api
             )
             // builder promises will append activities to the buffer
             builders?.forEach(b => b.promise())
-        } else {
-            // tool offset is handled by G43
         }
+        this.toolIndex = this.nextToolIndex
     }
 
     // TODO: M7-M9 are coolant control and need aliasing
@@ -376,11 +377,13 @@ export class GCodeSenderAdapter extends GCodeInterpreter {
     }
 
     G43(params, line: GCodeLine) {
-        this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
+        // set tool offset
+        // this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
     }
 
     G49(params, line: GCodeLine) {
-        this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
+        // cancel tool offset
+        // this.push(this.api.setTag(line.lineNum).setToolOffset(params.H).command)
     }
 
     G61() {

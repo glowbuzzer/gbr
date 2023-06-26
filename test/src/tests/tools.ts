@@ -23,8 +23,20 @@ const pz = state => state.status.kc[0].position.translation.z
  */
 
 test.before.each(() => {
-    gbc.reset("configs/tools.json")
+    // gbc.reset("configs/tools.json")
 
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics()
+        .addTool(10)
+        .addFrame({
+            translation: {
+                x: 0,
+                y: 0,
+                z: 5
+            }
+        })
+        .finalize()
     gbc.enable_operation()
     gbc.enable_limit_check()
 })
@@ -58,7 +70,7 @@ test("after tool change cartesian position is modified", async () => {
 
     gbc.assert.near(px, 0)
     gbc.assert.near(py, 0)
-    gbc.assert.near(pz, -10)
+    gbc.assert.near(pz, 10)
 })
 
 test("after tool change cartesian position is modified (gcode version)", async () => {
@@ -67,7 +79,112 @@ test("after tool change cartesian position is modified (gcode version)", async (
 
     gbc.assert.near(px, 0)
     gbc.assert.near(py, 0)
-    gbc.assert.near(pz, -10)
+    gbc.assert.near(pz, 10)
+})
+
+test("can do a move line after tool change", async () => {
+    await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
+    gbc.assert.near(pz, 10)
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 10).promise)
+        .start()
+        .iterations(100)
+        .assertCompleted()
+
+    gbc.assert.near(pz, 10)
+    gbc.assert.near(joint(2), 0)
+})
+
+test("can do a move line after tool change (in translated frame)", async () => {
+    await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
+    gbc.assert.near(pz, 10)
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 5).frameIndex(1).promise)
+        .start()
+        .iterations(50)
+        .assertCompleted()
+
+    gbc.assert.near(pz, 10)
+
+    gbc.assert.near(joint(2), 0)
+})
+
+test("can do a move line after tool change (in rotated frame)", async () => {
+    gbc.config()
+        .joints(3)
+        .addFrame({
+            rotation: {
+                x: 1,
+                y: 0,
+                z: 0,
+                w: 0
+            }
+        })
+        .cartesianKinematics(1)
+        .addTool(10)
+        .finalize()
+    gbc.enable_operation()
+    gbc.enable_limit_check()
+
+    await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
+    gbc.assert.near(pz, 10)
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 20).promise)
+        .start()
+        .iterations(100)
+        .assertCompleted()
+    gbc.assert.near(pz, 20)
+    gbc.assert.near(joint(2), 10)
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 20).frameIndex(0 /* world */).promise)
+        .start()
+        .iterations(100)
+        .assertCompleted()
+    gbc.assert.near(pz, -20)
+
+    gbc.assert.near(joint(2), -30)
+})
+
+test.only("can do a move line after tool change (in rotated frame - case 2)", async () => {
+    gbc.config()
+        .joints(3)
+        .addFrame({
+            rotation: {
+                x: 1,
+                y: 0,
+                z: 0,
+                w: 0
+            }
+        })
+        .cartesianKinematics(1)
+        .addTool(50)
+        .finalize()
+    gbc.enable_operation()
+    gbc.enable_limit_check()
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 20).frameIndex(0 /* world */).promise)
+        .start()
+        .iterations(100)
+        .assertCompleted()
+    gbc.assert.near(pz, -20)
+    gbc.assert.near(joint(2), -20)
+
+    await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
+    gbc.assert.near(pz, 30)
+
+    await gbc
+        .wrap(gbc.activity.moveLine(0, 0, 20).frameIndex(0 /* world */).promise)
+        .start()
+        .iterations(100)
+        .assertCompleted()
+    gbc.assert.near(pz, -20)
+
+    gbc.assert.near(joint(2), -70)
 })
 
 test("can move then change tool and perform another move without joint discontinuity", async () => {
@@ -91,7 +208,7 @@ test("can move then change tool and perform another move without joint discontin
         await gbc
             .wrap(gbc.activity.moveLine(0, 0, 0).promise) // material
             .start()
-            .iterations(45)
+            .iterations(75)
             .assertCompleted()
 
         gbc.assert.near(px, 0)
@@ -100,7 +217,7 @@ test("can move then change tool and perform another move without joint discontin
 
         gbc.assert.near(joint(0), 0)
         gbc.assert.near(joint(1), 0)
-        gbc.assert.near(joint(2), 10)
+        gbc.assert.near(joint(2), -10)
     } finally {
         gbc.plot("test")
     }

@@ -126,11 +126,11 @@ export class ConfigBuilder {
         return this
     }
 
-    cartesianKinematics() {
+    cartesianKinematics(frameIndex = 0) {
         this.json.kinematicsConfiguration = [
             {
                 name: "cartesian",
-                frameIndex: 0,
+                frameIndex,
                 participatingJoints: [0, 1, 2],
                 participatingJointsCount: 3,
                 kinematicsConfigurationType: 4,

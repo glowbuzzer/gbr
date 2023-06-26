@@ -9,6 +9,7 @@ import { ActivityBuilder } from "../activity"
 import { useWorkspaceFrames } from "../frames"
 import { streamSlice } from "../stream"
 import { ActivityApi } from "../activity"
+import { useToolIndex } from "../kinematics"
 
 // const { load, save } = settings("gcode")
 
@@ -35,6 +36,7 @@ export function useGCode(kinematicsConfigurationIndex = 0): /** Send gcode to ex
     const context = useGCodeContext()
     const dispatch = useDispatch()
     const workspaceFrames = useWorkspaceFrames()
+    const toolIndex = useToolIndex(kinematicsConfigurationIndex)
 
     return (gcode, vmax: number) => {
         const buffer = []
@@ -45,6 +47,7 @@ export function useGCode(kinematicsConfigurationIndex = 0): /** Send gcode to ex
             vmax,
             workspaceFrames,
             [null, null, null, null, null, null],
+            toolIndex,
             context
         )
         interpreter.execute(gcode)

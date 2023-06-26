@@ -101,6 +101,7 @@ class GCodeInterpreter {
                     code === 1 ||
                     code === 2 ||
                     code === 3 ||
+                    code === 28 || // Home
                     code === 38.2 ||
                     code === 38.3 ||
                     code === 38.4 ||
@@ -154,7 +155,7 @@ class GCodeInterpreter {
                 continue
             }
 
-            const [current_position, target_position] = this.updatePositions(args)
+            const [current_position, target_position] = this.updatePositions(this.motionMode, args)
             if (typeof this[cmd] === "function") {
                 const func = this[cmd].bind(this)
                 func(args, data, current_position, target_position)
@@ -227,7 +228,12 @@ class GCodeInterpreter {
         return [{ ...prev }, { ...next }]
     }
 
-    private updatePositions(params) {
+    private updatePositions(motionMode: string, params) {
+        if (motionMode === "G28") {
+            // this is a hackaround for now to handle/ignore G28, which is a homing command
+            // where xyz should not update the position we're keeping track of
+            return [this.cartesianPosition, this.cartesianPosition]
+        }
         if (this.cartesianPosition.positionReference === POSITIONREFERENCE.RELATIVE) {
             this.cartesianPosition.translation = { x: 0, y: 0, z: 0 }
         } else {

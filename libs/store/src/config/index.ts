@@ -204,11 +204,6 @@ export function useConfigLoader() {
     }
 }
 
-const EMPTY_TOOL: ToolConfig = {
-    translation: { x: 0, y: 0, z: 0 },
-    rotation: { x: 0, y: 0, z: 0, w: 1 }
-}
-
 /**
  * Returns the configuration for the given tool index.
  *
@@ -216,7 +211,23 @@ const EMPTY_TOOL: ToolConfig = {
  */
 export function useToolConfig(toolIndex: number): ToolConfig {
     return useSelector((state: RootState) => {
-        return state.config.current.tool?.[toolIndex] ?? EMPTY_TOOL
+        const toolConfig = state.config.current.tool?.[toolIndex] || {
+            name: "unknown",
+            diameter: 10,
+            translation: {},
+            rotation: {}
+        }
+        // ensure there are some sensible defaults
+        return {
+            ...toolConfig,
+            translation: {
+                x: 0,
+                y: 0,
+                z: 0,
+                ...toolConfig.translation
+            },
+            rotation: toolConfig.rotation || { x: 0, y: 0, z: 0, w: 1 }
+        }
     }, deepEqual)
 }
 

@@ -152,6 +152,7 @@ export const StreamHandler = {
                 // buffer is not empty, so we need to send the next slice
                 if (!paused && capacity > 0) {
                     const items = buffer.slice(0, capacity)
+                    // console.log("sending stream slice, capacity=", capacity, "items=", items.length)
                     send(items)
                     dispatch(streamSlice.actions.consume({ streamIndex, count: items.length }))
                     return

@@ -8,6 +8,11 @@ import deepEqual from "fast-deep-equal"
 import { RootState } from "../root"
 import { useFrames } from "../frames"
 import { Quaternion, Vector3 } from "three"
+import {
+    CartesianPosition,
+    CartesianPositionsConfig,
+    GlowbuzzerKinematicsConfigurationStatus
+} from "../gbc"
 
 export type TraceElement = {
     x: number
@@ -22,7 +27,7 @@ export type TraceElement = {
 type TraceForKinematicsConfiguration = {
     path: TraceElement[]
     enabled?: boolean
-    last: unknown // record last status
+    last: GlowbuzzerKinematicsConfigurationStatus // record last status
 }
 
 type TraceSliceType = {
@@ -35,13 +40,14 @@ export const traceSlice: Slice<TraceSliceType> = createSlice({
     },
     reducers: {
         status(state, action) {
-            action.payload.forEach((kc, index) => {
+            action.payload.forEach((kc: GlowbuzzerKinematicsConfigurationStatus, index) => {
                 const { x, y, z } = kc.position.translation
 
-                state.kcs[index] ??= { path: [], last: undefined }
+                state.kcs[index] ??= { path: [], last: undefined, enabled: true }
                 const current = state.kcs[index]
 
                 if (!current.enabled) {
+                    console.log("not enabled")
                     return
                 }
                 if (current.last && deepEqual(current.last, kc)) {
@@ -86,19 +92,23 @@ export const traceSlice: Slice<TraceSliceType> = createSlice({
  * @ignore - Internal to the ThreeDimensionalScene tile
  */
 export const useTrace = (kinematicsConfigurationIndex: number) => {
-    const { path, enabled } = useSelector(({ trace }: RootState) => {
-        const kc = trace.kcs[kinematicsConfigurationIndex]
-        return {
-            path: (kc?.path || []) as TraceElement[],
-            enabled: kc?.enabled
+    const { path, enabled, last } = useSelector(
+        ({ trace }: RootState): TraceForKinematicsConfiguration => {
+            const kc = trace.kcs[kinematicsConfigurationIndex]
+            return {
+                path: kc?.path || [],
+                enabled: kc?.enabled,
+                last: kc?.last
+            } as TraceForKinematicsConfiguration
         }
-    }, shallowEqual)
+    )
 
     const dispatch = useDispatch()
 
     return {
-        path: path as TraceElement[],
+        path,
         enabled,
+        last,
         reset() {
             dispatch(traceSlice.actions.reset(kinematicsConfigurationIndex))
         },

@@ -18,7 +18,7 @@ type CylindricalToolProps = {
 /**
  * The CylindricalTool component renders a simple tool with a cylindrical shape. It can be added to the {@link ThreeDimensionalSceneTile} component.
  */
-export const CylindricalTool = forwardRef<Mesh>(
+export const CylindricalTool = forwardRef<Mesh, CylindricalToolProps>(
     ({ toolIndex, color = 0x666666 }: CylindricalToolProps, ref) => {
         const toolConfig = useToolConfig(toolIndex)
 
@@ -27,7 +27,7 @@ export const CylindricalTool = forwardRef<Mesh>(
         }
         const x = toolConfig?.translation?.x || 0
         const y = toolConfig?.translation?.y || 0
-        const z = toolConfig?.translation?.z || 0
+        const z = -toolConfig?.translation?.z || 0
 
         const toolDiameter = toolConfig.diameter / 2 || 0
 

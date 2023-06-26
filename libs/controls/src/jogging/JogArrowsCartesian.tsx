@@ -158,7 +158,11 @@ export const JogArrowsCartesian = ({
                           ortho_vector(2, direction)
                       )
 
-            return activity.params(move_params).promise().finally(preview.enable)
+            return activity
+                .frameIndex(frameIndex)
+                .params(move_params)
+                .promise()
+                .finally(preview.enable)
         }
     }
 
