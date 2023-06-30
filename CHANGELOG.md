@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.1](https://github.com/glowbuzzer/gbr/compare/v1.8.0...v1.8.1) (2023-06-30)
+
+
+### Chore
+
+* add cutter example (wip) ([a03e2fb](https://github.com/glowbuzzer/gbr/commit/a03e2fbfbfe60d2450b307ff243a231bf8ea7ea4))
+* update conveyor example ([bc26d67](https://github.com/glowbuzzer/gbr/commit/bc26d6736e1b01d408ce78156573cd1e4c1808e7))
+* updates to cnc example app ([4c0c89d](https://github.com/glowbuzzer/gbr/commit/4c0c89d612715df4590356483de0910c350306fb))
+
+
+### Bug Fix
+
+* issue with staubli example build ([bc26d67](https://github.com/glowbuzzer/gbr/commit/bc26d6736e1b01d408ce78156573cd1e4c1808e7))
+* issues with gcode g90 and others ([bc26d67](https://github.com/glowbuzzer/gbr/commit/bc26d6736e1b01d408ce78156573cd1e4c1808e7))
+
 ## [1.8.0](https://github.com/glowbuzzer/gbr/compare/v1.7.3...v1.8.0) (2023-06-12)
 
 
