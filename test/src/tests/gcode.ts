@@ -14,7 +14,17 @@ const pos = joint => state => state.status.joint[joint].actPos
 
 test.before.each(ctx => {
     console.log(ctx.__test__)
-    gbc.reset()
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics()
+        .addFrame({
+            name: "G55",
+            translation: {
+                x: 1
+            },
+            workspaceOffset: 1
+        })
+        .finalize()
     gbc.enable_operation()
 })
 
@@ -72,7 +82,7 @@ test("can handle null initial positions with frame translation", async () => {
             G55
             G0 X2
             M2`)
-        gbc.exec(30)
+        gbc.exec(50)
         gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         gbc.assert.near(pos(0), 3)
         gbc.assert.near(pos(1), 0)
@@ -148,7 +158,54 @@ test("doesn't blend line to rapid", async () => {
             )
             .verify()
     } finally {
-        gbc.plot("gcode-g1-to-g0")
+        gbc.plot("test")
+    }
+})
+
+test("blends line to arc", async () => {
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics(2)
+        .addFrame({
+            name: "Part",
+            translation: {
+                z: 20
+            }
+        })
+        .addFrame({
+            name: "cutter",
+            translation: {
+                z: 40
+            },
+            rotation: {
+                x: 1,
+                y: 0,
+                z: 0,
+                w: 0
+            }
+        })
+        .finalize()
+        .enable_operation()
+
+    try {
+        gbc.disable_limit_check()
+
+        gbc.send_gcode(
+            `
+                ; G64
+                G55
+                G1 X100 Y0 Z0
+                G3 X100.981 Y-0.195 I0 J1
+                G1 X101 Y0
+                M2
+            `
+        )
+            .exec(210)
+            .assert.near(s => s.status.kc[0].position.translation.z, 20 /* kc z minus part z */)
+            .assert.near(pos(0), 101)
+            .assert.near(pos(1), 0)
+    } finally {
+        gbc.plot("test")
     }
 })
 
@@ -200,6 +257,20 @@ test("F code modal doesn't affect G0", async () => {
         gbc.verify()
     } finally {
         // gbc.plot("gcode-g1-with-feedrate")
+    }
+})
+
+test.only("Codes that are not moves should not interfere with a previous move command on the same line", async () => {
+    try {
+        gbc.send_gcode(`
+            G00 G90 G54 X10 Y10
+            Z10
+            G01 Z0
+            M2
+            `)
+        gbc.exec(30).assert.near(pos(2), 0).exec(150).verify()
+    } finally {
+        gbc.plot("test")
     }
 })
 

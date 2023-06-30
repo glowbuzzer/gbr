@@ -71,7 +71,7 @@ export const RenderElkjs = ({ layout, currentState, nodeWidth, nodeHeight }: Ren
 
     // Render the layout
     return (
-        <StyledSvg width="100%" height="100%">
+        <StyledSvg width="100%" height="99%">
             <defs>
                 <marker
                     id="arrow"

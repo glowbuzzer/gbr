@@ -39,21 +39,21 @@ export const config: GlowbuzzerConfig = {
             finiteContinuous: JOINT_FINITECONTINUOUS.JOINT_CONTINUOUS,
             jointType: JOINT_TYPE.JOINT_PRISMATIC,
             limits: [DEFAULT_LINEAR_LIMITS],
-            scale: 1000
+            scale: 100000
         },
         {
             name: "1",
             finiteContinuous: JOINT_FINITECONTINUOUS.JOINT_CONTINUOUS,
             jointType: JOINT_TYPE.JOINT_PRISMATIC,
             limits: [DEFAULT_LINEAR_LIMITS],
-            scale: 1000
+            scale: 100000
         },
         {
             name: "2",
             finiteContinuous: JOINT_FINITECONTINUOUS.JOINT_CONTINUOUS,
             jointType: JOINT_TYPE.JOINT_PRISMATIC,
             limits: [DEFAULT_LINEAR_LIMITS],
-            scale: 1000
+            scale: 100000
         }
     ],
     kinematicsConfiguration: [
@@ -169,7 +169,7 @@ export const config: GlowbuzzerConfig = {
     frames: [
         {
             name: "World",
-            workspaceOffset: 1
+            workspaceOffset: 2
         },
         {
             name: "Spindle",
@@ -185,7 +185,7 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "Part",
-            workspaceOffset: 2,
+            workspaceOffset: 1,
             translation: {
                 z: 20
             }

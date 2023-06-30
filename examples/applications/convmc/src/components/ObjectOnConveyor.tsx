@@ -60,7 +60,7 @@ export const ObjectOnConveyor = () => {
             objectConveyor === Conveyor.CONVEYOR1 ? [joint1, 600] : [joint2, 100]
 
         const position = new Vector3(
-            baseOffset + (jointPos - objectInitialPosition),
+            objectZ === 0 ? baseOffset + (jointPos - objectInitialPosition) : 600,
             10 + objectY * 1000,
             y + objectZ
         )
@@ -89,6 +89,7 @@ export const ObjectOnConveyor = () => {
         return null
     }
 
+    console.log("object position", position)
     return (
         <group>
             <primitive

@@ -4,6 +4,7 @@
 
 import { parseStringSync } from "./GCodeParser"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
+import { and } from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements"
 
 /**
  * Code heavily adapted from https://github.com/cncjs/gcode-interpreter/blob/master/src/Interpreter.js
@@ -29,7 +30,7 @@ const fromPairs = pairs => {
 }
 
 const partitionWordsByGroup = (words = []) => {
-    const groups: unknown[][] = []
+    const groups: any[][] = []
 
     for (let i = 0; i < words.length; ++i) {
         const word = words[i]
@@ -41,7 +42,14 @@ const partitionWordsByGroup = (words = []) => {
         }
 
         if (groups.length > 0) {
-            groups[groups.length - 1].push(word)
+            const previous = groups[groups.length - 1]
+            const [letter, code] = previous[0]
+            if (letter === "G" && (code === 90 || code === 91 || (code >= 40 && code < 60))) {
+                // special case for some gcodes, because we don't want them to capture the X/Y/Z
+                groups.push([word])
+            } else {
+                previous.push(word)
+            }
         } else {
             groups.push([word])
         }
@@ -85,6 +93,7 @@ class GCodeInterpreter {
 
         for (let i = 0; i < groups.length; ++i) {
             const words = groups[i]
+
             const word = words[0] || []
             const letter = word[0]
             const code = word[1]
@@ -113,7 +122,8 @@ class GCodeInterpreter {
                 } else if (code === 91 /* relative */) {
                     this.cartesianPosition.positionReference = POSITIONREFERENCE.RELATIVE
                 } else if (code === 80) {
-                    this.motionMode = ""
+                    // not sure where this next line came from but causes problems
+                    // this.motionMode = ""
                 }
             } else if (letter === "M") {
                 cmd = "" + letter + code

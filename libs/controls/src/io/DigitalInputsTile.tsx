@@ -41,8 +41,6 @@ export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
         (config, index) => labels[index] || config.name || index.toString()
     )
 
-    console.log("bits", values)
-
     return (
         <StyledTileContent>
             {dins &&

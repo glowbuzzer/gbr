@@ -57,27 +57,12 @@ export const App = () => {
             newToolIndex: number,
             api: ActivityApi
         ): ActivityBuilder[] {
-            const currentToolLength = toolList[currentToolIndex].translation.z
-            const newToolLength = toolList[newToolIndex].translation.z
-            console.log(
-                "tool change from " + currentToolIndex + " to " + newToolIndex,
-                "lengths",
-                currentToolLength,
-                newToolLength
-            )
-            // if (newToolIndex === currentToolIndex) {
-            //     // nothing to do
-            //     return []
-            // }
             const SAFE_Z = 120
             function pos(toolIndex: number, toolSelected: boolean): PointsConfig {
+                // calculate the target xyz in world for the tool in the holder
+                // if the tool is currently in the spindle, we need to adjust for the tool length
                 const z =
-                    originZ +
-                    // holderToolOffsetZ +
-                    SAFE_Z +
-                    (toolSelected ? toolList[toolIndex].translation.z : 0) -
-                    32
-                console.log("pos", toolIndex, toolSelected, z)
+                    originZ + SAFE_Z + (toolSelected ? toolList[toolIndex].translation.z : 0) - 32
                 return {
                     translation: {
                         x: originX + (toolIndex - 1) * spacing + holderToolOffsetX,
@@ -99,6 +84,7 @@ export const App = () => {
                           api.moveToPosition(0, 0, -SAFE_Z).relative(true)
                       ]
                     : []
+
             return [
                 api.spindle(0, false),
                 api.moveToPosition(null, null, 0), // let's just get to a safe Z
