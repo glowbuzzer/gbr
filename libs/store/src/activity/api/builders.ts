@@ -20,6 +20,7 @@ import {
     PointsConfig,
     POSITIONREFERENCE,
     Quat,
+    ROTATIONINTERPOLATION,
     SetAoutActivityParams,
     SetDoutActivityParams,
     SetIoutActivityParams,
@@ -470,6 +471,9 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
     private _radius: number
     /** @ignore */
     private _plane: Quat
+    /** @ignore */
+    private _rotationInterpolation: ROTATIONINTERPOLATION =
+        ROTATIONINTERPOLATION.ROTATIONINTERPOLATION_SHORT_SLERP
 
     /** The direction of the arc (clockwise or counter-clockwise). */
     direction(direction: ARCDIRECTION) {
@@ -496,6 +500,12 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
         return this
     }
 
+    /** The rotation interpolation mode. */
+    rotationInterpolation(rotationInterpolation: ROTATIONINTERPOLATION) {
+        this._rotationInterpolation = rotationInterpolation
+        return this
+    }
+
     /** @ignore */
     protected build() {
         const arc: ArcsConfig = this._centre
@@ -514,6 +524,7 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
               }
         arc.destination = this.cartesianPosition
         arc.arcDirection = this._direction
+        arc.rotationInterpolation = this._rotationInterpolation
         if (this._plane) {
             arc.plane = this._plane
         }
