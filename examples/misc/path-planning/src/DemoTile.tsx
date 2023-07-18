@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { Button, Card, Space, Switch } from "antd"
+import { Button, Card, Select, Space, Switch } from "antd"
 import { appSlice, useAppState } from "./store"
 
 import styled from "styled-components"
@@ -10,13 +10,10 @@ import { PrecisionInput } from "../../../../libs/controls/src/util/components/Pr
 import React from "react"
 import { useDispatch } from "react-redux"
 import { Box3, Vector3 } from "three"
-import { Simulate } from "react-dom/test-utils"
-import { exec } from "uvu"
 import { useSoloActivity } from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`
     padding: 10px;
-
     .grid {
         display: grid;
         width: 100%;
@@ -37,13 +34,19 @@ const StyledDiv = styled.div`
 `
 
 export const DemoTile = () => {
-    const { box, path, clearance, showControls } = useAppState()
+    const { box, path, plannedPath, clearance, showControls, route } = useAppState()
     const activityApi = useSoloActivity(0)
 
     const dispatch = useDispatch()
 
     const position = box.min
     const dimensions = box.max.clone().sub(box.min)
+
+    const route_options = [
+        { value: 0b000011, label: "Around the Front" },
+        { value: 0b001100, label: "Around the Back" },
+        { value: 0b110000, label: "Over the Top" }
+    ]
 
     function update_position(axis: string, value: number) {
         const new_position = position.clone()
@@ -92,13 +95,18 @@ export const DemoTile = () => {
     }
 
     function reset() {
-        return activityApi.moveToPosition(0, -200, 200).rotationEuler(Math.PI, 0, 0).promise()
+        return activityApi.moveToPosition(200, 0, 150).rotationEuler(Math.PI, 0, 0).promise()
     }
 
     async function exec() {
-        for (const point of path) {
+        for (const point of plannedPath) {
             await activityApi.moveLine(point.x, point.y, point.z).frameIndex(0).promise()
         }
+        await activityApi.moveToPosition(200, 0, 150).promise()
+    }
+
+    function update_route(route) {
+        dispatch(appSlice.actions.setRoute(route))
     }
 
     return (
@@ -106,17 +114,19 @@ export const DemoTile = () => {
             <p>This is a demo of path planning with obstacle avoidance.</p>
             <p>You can move the obstacle in the scene using the inputs below.</p>
             <p>
-                The robot will try to follow the points defined in the configuration, in the order
-                they are given, but will plan around the obstacle.
+                The robot will try to follow the path given but avoid the obstacle using the
+                preferred routing mode.
             </p>
             <Space direction="vertical">
                 <Card size="small" title="Move">
-                    <Button size="small" onClick={reset}>
-                        Reset
-                    </Button>
-                    <Button size="small" onClick={exec}>
-                        Execute Moves
-                    </Button>
+                    <Space>
+                        <Button size="small" onClick={reset}>
+                            Reset
+                        </Button>
+                        <Button size="small" onClick={exec}>
+                            Execute Moves
+                        </Button>
+                    </Space>
                 </Card>
                 <Card size="small" title="Obstacle">
                     <div className="grid">
@@ -126,6 +136,7 @@ export const DemoTile = () => {
                                 <div className="input" key={axis}>
                                     {axis.toUpperCase()}{" "}
                                     <PrecisionInput
+                                        step={10}
                                         value={position[axis]}
                                         onChange={v => update_position(axis, v)}
                                         precision={0}
@@ -139,6 +150,7 @@ export const DemoTile = () => {
                                 <div className="input" key={"t-" + axis}>
                                     {axis.toUpperCase()}{" "}
                                     <PrecisionInput
+                                        step={10}
                                         value={dimensions[axis]}
                                         onChange={v => update_dimensions(axis, v)}
                                         precision={0}
@@ -150,6 +162,7 @@ export const DemoTile = () => {
                         <div>
                             C{" "}
                             <PrecisionInput
+                                step={5}
                                 value={clearance}
                                 onChange={update_clearance}
                                 precision={0}
@@ -181,6 +194,7 @@ export const DemoTile = () => {
                                     <div className="input" key={axis}>
                                         {axis.toUpperCase()}{" "}
                                         <PrecisionInput
+                                            step={10}
                                             value={p[axis]}
                                             onChange={v => update_point(i, axis, v)}
                                             precision={0}
@@ -200,6 +214,15 @@ export const DemoTile = () => {
                     <Button size="small" onClick={add_point}>
                         Add Point
                     </Button>
+                </Card>
+                <Card size="small" title="Preferred Route">
+                    <Select
+                        size="small"
+                        dropdownMatchSelectWidth={false}
+                        options={route_options}
+                        value={route}
+                        onChange={update_route}
+                    />
                 </Card>
             </Space>
         </StyledDiv>

@@ -7,7 +7,7 @@ import { GlowbuzzerConfig } from "@glowbuzzer/store"
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "STAUBLI TX40",
+            name: "PATH PLANNING",
             busCycleTime: 4
         }
     ],
@@ -29,7 +29,7 @@ export const config: GlowbuzzerConfig = {
         {
             name: "robot",
             translation: {
-                x: -100,
+                x: -50,
                 y: 0,
                 z: 325
             }
@@ -172,108 +172,6 @@ export const config: GlowbuzzerConfig = {
             translation: {
                 z: 0
             }
-        },
-        {
-            name: "tool1",
-            diameter: 20,
-            translation: {
-                z: 10
-            }
-        },
-        {
-            name: "tool2",
-            diameter: 30,
-            translation: {
-                z: 20
-            }
-        },
-        {
-            name: "tool3",
-            diameter: 10,
-            translation: {
-                z: 30
-            }
-        },
-        {
-            name: "tool4",
-            diameter: 50,
-            translation: {
-                z: 40
-            }
-        },
-        {
-            name: "offset_tool",
-            diameter: 15,
-            translation: {
-                y: 35,
-                z: 30
-            }
-        }
-    ],
-    din: [
-        {
-            name: "0"
-        },
-        {
-            name: "1"
-        },
-        {
-            name: "2"
-        },
-        {
-            name: "3"
-        }
-    ],
-    dout: [
-        {
-            name: "0"
-        },
-        {
-            name: "1"
-        },
-        {
-            name: "2"
-        },
-        {
-            name: "3"
-        },
-        {
-            name: "4"
-        },
-        {
-            name: "5"
-        },
-        {
-            name: "6"
-        },
-        {
-            name: "7"
-        },
-        {
-            name: "8"
-        },
-        {
-            name: "9"
-        }
-    ],
-    ain: [
-        {
-            name: "0"
-        }
-    ],
-    aout: [
-        {
-            name: "0"
-        }
-    ],
-    iin: [
-        {
-            name: "0"
-        }
-    ],
-    iout: [
-        {
-            name: "0"
         }
     ],
     fieldbus: [

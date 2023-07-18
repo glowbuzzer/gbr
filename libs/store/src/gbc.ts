@@ -45,6 +45,12 @@ export * from "./gbc_extra"
         /**  Position is to be super-imposed on the current move */
   MOVESUPERIMPOSED ,
     }
+    export enum ROTATIONINTERPOLATION {
+        /**  Use shortest SLERP between start and end rotations */
+  ROTATIONINTERPOLATION_SHORT_SLERP ,
+        /**  Use longest SLERP between start and end rotations */
+  ROTATIONINTERPOLATION_LONG_SLERP ,
+    }
     export enum TASK_STATE {
         /**  Task state is not started */
   TASK_NOTSTARTED ,
@@ -587,6 +593,8 @@ export * from "./gbc_extra"
                         destination?:CartesianPosition;
                         /**  Local rotation of arc, useful for plane switching */
                         plane?:Quat;
+                        /**  Whether to use shortest or longest SLERP between start and end rotations */
+                        rotationInterpolation?:ROTATIONINTERPOLATION;
     //              Start of Union
                         /**  Is the centre defined absolutely or relatively */
                          centre?: PositionAbsRel,

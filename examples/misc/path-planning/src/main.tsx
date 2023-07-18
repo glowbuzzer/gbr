@@ -33,11 +33,14 @@ import { DemoTile } from "./DemoTile"
 import { Demo } from "../../../applications/cnc/src/Demo"
 import { pathPlanningAppReducers } from "./store"
 import { config } from "./config"
+import { Vector3 } from "three"
+
+const camera_pos = new Vector3(2000, -2000, 2000)
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
-            <ThreeDimensionalSceneTile>
+            <ThreeDimensionalSceneTile hideTrace initialCameraPosition={camera_pos}>
                 <Scene />
             </ThreeDimensionalSceneTile>
         )
