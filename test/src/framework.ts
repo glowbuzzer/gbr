@@ -22,6 +22,8 @@ import {
 } from "../../libs/store/src/api"
 import { combineReducers, configureStore, EnhancedStore } from "@reduxjs/toolkit"
 import {
+    ActivityApi,
+    ActivityBuilder,
     activitySlice,
     FaultCode,
     jointsSlice,
@@ -407,7 +409,7 @@ export class GbcTest {
 
                 const tag = store_state.stream[0].tag
                 const streamState = store_state.stream[0].state
-                const activityState = this.gbc.get_streamed_activity_state()
+                const activityState = this.gbc.get_streamed_activity_state(0)
 
                 this.capture_state.push({
                     joints: joints_act_pos,
@@ -430,6 +432,12 @@ export class GbcTest {
 
     exec_double_cycle() {
         this.exec(2)
+    }
+
+    run(factory: (api: ActivityApi) => ActivityBuilder) {
+        const builder = factory(this.activity_api)
+        const activity = this.wrap(builder.promise)
+        return activity.run(1000)
     }
 
     wrap(factory: () => Promise<any>) {
@@ -455,6 +463,19 @@ export class GbcTest {
             start() {
                 factory().then(this.resolve).catch(this.reject)
                 return this
+            }
+
+            async run(max_iterations = 100) {
+                this.start()
+                let count = 0
+                while (count < max_iterations && !this.resolution?.completed) {
+                    self.exec(5)
+                    count += 5
+                    await nextTick()
+                }
+                if (count >= max_iterations) {
+                    throw new Error("Activity did not complete in max given iterations")
+                }
             }
 
             iterations(count: number, single_cycle = false) {

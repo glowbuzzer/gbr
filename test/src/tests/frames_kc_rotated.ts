@@ -27,7 +27,7 @@ test.before.each(() => {
     gbc.enable_limit_check()
 })
 
-test.only("move to position for kc rotated 180 in z", async () => {
+test("move to position for kc rotated 180 in z", async () => {
     try {
         const move = gbc.wrap(gbc.activity.moveToPosition(2, 2, 0).frameIndex(0).promise)
         await move.start().iterations(175).assertCompleted()

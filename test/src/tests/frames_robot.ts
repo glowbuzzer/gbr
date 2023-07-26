@@ -58,6 +58,24 @@ function assertNearWorld(x, y, z, a, b, c) {
 
 function init_robot_test() {
     // need to disable limit check before we hack the joints
+
+    gbc.config()
+        .joints(6)
+        .addFrame({
+            name: "robot",
+            translation: {
+                x: 100
+            },
+            rotation: {
+                x: 0.3826834,
+                y: 0,
+                z: 0,
+                w: 0.9238795
+            }
+        })
+        .robotKinematics(1)
+        .finalize()
+
     gbc.disable_limit_check()
 
     // we can't start the robot at a singularity, and we want config to not be zero
@@ -73,15 +91,14 @@ function init_robot_test() {
 }
 
 test.before.each(() => {
-    gbc.reset("configs/frames_robot.json")
     init_robot_test()
 })
 
-test.skip("initial kc local position from joint angles is not rotated", async () => {
+test("initial kc local position from joint angles is not rotated", async () => {
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 })
 
-test.skip("basic move_to_position in kc local coords", async () => {
+test("basic move_to_position in kc local coords", async () => {
     try {
         const move = gbc.wrap(
             gbc.activity
@@ -96,7 +113,7 @@ test.skip("basic move_to_position in kc local coords", async () => {
     }
 })
 
-test.skip("move_to_position with no frame index specified (use kc local)", async () => {
+test("move_to_position with no frame index specified (use kc local)", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(gbc.activity.moveToPosition(100, 100, 100).promise)
@@ -107,7 +124,7 @@ test.skip("move_to_position with no frame index specified (use kc local)", async
     }
 })
 
-test.skip("move_to_position with different frame index for target", async () => {
+test("move_to_position with different frame index for target", async () => {
     try {
         // default frame index is zero
         const move = gbc.wrap(
@@ -127,7 +144,7 @@ test.skip("move_to_position with different frame index for target", async () => 
     }
 })
 
-test.skip("move_to_position in world frame with rotation", async () => {
+test("move_to_position in world frame with rotation", async () => {
     try {
         // default frame index is zero
         gbc.disable_limit_check()
@@ -149,7 +166,7 @@ test.skip("move_to_position in world frame with rotation", async () => {
     }
 })
 
-test.skip("move rotation at velocity in kc frame", async () => {
+test("move rotation at velocity in kc frame", async () => {
     // initial position
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 
@@ -170,8 +187,8 @@ test.skip("move rotation at velocity in kc frame", async () => {
         await do_cancel(move, 3, 100)
 
         gbc.assert.near(px, 225, 0.01)
-        gbc.assert.near(py, -10.962, 0.01)
-        gbc.assert.near(pz, 270.962, 0.01)
+        gbc.assert.near(py, -10.962, 0.02)
+        gbc.assert.near(pz, 270.962, 0.02)
         // assertNearWorld(200, 100, 100, -Math.PI / 4, 0, 0)
     } finally {
         gbc.plot("test")

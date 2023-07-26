@@ -42,137 +42,103 @@ const py = state => state.status.kc[0].position.translation.y
 
 test("can run move arc to completion", async () => {
     try {
-        const move = gbc.wrap(
-            gbc.activity
+        await gbc.run(api =>
+            api
                 .moveArc()
                 .translation(1, 1, 0)
                 .centre(0, 1, 0)
-                .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
         )
-        await move
-            .start() //
-            .iterations(35)
-            .assertCompleted()
     } finally {
         gbc.plot("test")
     }
 })
 
 test("can run move arc in radius mode", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(1, 1, 0)
-            .radius(1)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
     try {
-        await move
-            .start() //
-            .iterations(35)
-            .assertCompleted()
+        await gbc.run(api =>
+            api.moveArc().translation(1, 1, 0).radius(1).direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
     } finally {
         gbc.plot("arc-primitive-radius-mode")
     }
 })
 
 test("can run move arc in radius mode with negative radius", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(1, 1, 0)
-            .radius(-1)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
     try {
-        await move
-            .start() //
-            .iterations(50)
-            .assertCompleted()
+        await gbc.run(api =>
+            api.moveArc().translation(1, 1, 0).radius(-1).direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
     } finally {
         gbc.plot("arc-primitive-radius-mode-negative")
     }
 })
 
 test("can run move arc to completion (quadrant 2)", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(-1, 1, 0)
-            .centre(-1, 0, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
-    await move
-        .start() //
-        .iterations(35)
-        .assertCompleted()
-
-    gbc.plot("arc-primitive-quad-2")
+    try {
+        await gbc.run(api =>
+            api
+                .moveArc()
+                .translation(-1, 1, 0)
+                .centre(-1, 0, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
+    } finally {
+        gbc.plot("arc-primitive-quad-2")
+    }
 })
 
 test("can run move arc to completion (quadrant 3)", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(-1, -1, 0)
-            .centre(0, -1, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
-    await move
-        .start() //
-        .iterations(35)
-        .assertCompleted()
-
-    gbc.plot("arc-primitive-quad-3")
+    try {
+        await gbc.run(api =>
+            api
+                .moveArc()
+                .translation(-1, -1, 0)
+                .centre(0, -1, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
+    } finally {
+        gbc.plot("arc-primitive-quad-3")
+    }
 })
 
 test("can run move arc to completion (quadrant 4)", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(1, -1, 0)
-            .centre(1, 0, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
-    await move
-        .start() //
-        .iterations(35)
-        .assertCompleted()
-
-    gbc.plot("arc-primitive-quad-4")
+    try {
+        await gbc.run(api =>
+            api
+                .moveArc()
+                .translation(1, -1, 0)
+                .centre(1, 0, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
+    } finally {
+        gbc.plot("arc-primitive-quad-4")
+    }
 })
 
 test("can run arc with same start and end point (full circle)", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(0, 0, 0)
-            .centre(15, 0, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
     try {
-        await move
-            .start() //
-            .iterations(160)
-            .assertCompleted()
+        await gbc.run(api =>
+            api
+                .moveArc()
+                .translation(0, 0, 0)
+                .centre(15, 0, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
     } finally {
         gbc.plot("arc-primitive-full-circle")
     }
 })
 
 test("can run tiny arc (large jmax) full circle", async () => {
-    const move = gbc.wrap(
-        gbc.activity
-            .moveArc()
-            .translation(0, 0, 0)
-            .centre(1, 0, 0)
-            .direction(ARCDIRECTION.ARCDIRECTION_CCW).promise
-    )
     try {
-        await move
-            .start() //
-            .iterations(65)
-            .assertCompleted()
+        await gbc.run(api =>
+            api
+                .moveArc()
+                .translation(0, 0, 0)
+                .centre(1, 0, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
     } finally {
         gbc.plot("arc-primitive-full-circle-small")
     }
@@ -239,6 +205,25 @@ test("move_arc in rotated frame (planar rotation specified)", async () => {
     }
 })
 
+// test("move_arc in different plane goes in expected direction", async () => {
+//     try {
+//         gbc.set_joints(10, 0, 0)
+//         const move = gbc.wrap(
+//             gbc.activity.moveArc(0, 0, 10).radius(10).plane(0, ROOT_5, 0, ROOT_5).promise
+//         )
+//         // run roughly half of the arc
+//         move.start().iterations(50)
+//         // we're not moving in y because we're in the XY plane
+//         gbc.assert.near(py, 0)
+//         // run rest of arc
+//         await move.iterations(50).assertCompleted()
+//
+//         assertNear(0, 0, 10, 0, 0, 0)
+//     } finally {
+//         gbc.plot("test")
+//     }
+// })
+
 test("move_arc in translated and rotated frame (planar rotation specified)", async () => {
     // we want to specify the end point in our current frame, but have the move
     // executed with a rotation, ie. run the arc outside the XY plane
@@ -256,6 +241,26 @@ test("move_arc in translated and rotated frame (planar rotation specified)", asy
         await move.iterations(50).assertCompleted()
 
         assertNear(30, 0, 10, 0, 0, 0)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("move arc when kc frame is non-zero and plane is specified", async () => {
+    gbc.config()
+        .joints(3)
+        .cartesianKinematics(1)
+        .addFrame({
+            translation: {
+                x: 100
+            }
+        })
+        .finalize()
+        .enable_operation()
+
+    try {
+        await gbc.run(api => api.moveToPosition(10, 0, 0))
+        await gbc.run(api => api.moveArc(0, 10, 0).centre(0, 0, 0).plane(0, 1, 0, 0))
     } finally {
         gbc.plot("test")
     }

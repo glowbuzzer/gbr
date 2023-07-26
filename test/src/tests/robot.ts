@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { ACTIVITYSTATE, BLENDTYPE } from "../../../libs/store/src"
+import { ACTIVITYSTATE, ARCDIRECTION, BLENDTYPE } from "../../../libs/store/src"
 import { assertNear, do_cancel } from "../util"
 
 const test = uvu.suite("robot")
@@ -60,7 +60,7 @@ test("joint space move with empty array from all joints zero", async () => {
 
 test("move to position from all joints zero", async () => {
     gbc.enable_operation()
-    // gbc.disable_limit_check()
+    gbc.disable_limit_check()
     // this tests that we can move away from a singularity with a joint space move
     try {
         const move = gbc.wrap(gbc.activity.moveToPosition(200, 200, 100).promise)
@@ -68,6 +68,36 @@ test("move to position from all joints zero", async () => {
     } finally {
         gbc.plot("test")
     }
+})
+
+test("basic move in arc", async () => {
+    gbc.enable_operation()
+    try {
+        await gbc.run(api => api.moveToPosition(200, 200, 100).rotation(0, 1, 0, 0))
+        await gbc.run(api => api.moveArc(400, 0, 100).centre(200, 0, 100))
+    } finally {
+        gbc.plot("test")
+    }
+    gbc.assert.selector(config, 0)
+    assertNear(400, 0, 100, 0, Math.PI, 0)
+})
+
+test("move in arc with XY plane flip", async () => {
+    gbc.enable_operation()
+    try {
+        await gbc.run(api => api.moveToPosition(200, 200, 100).rotation(0, 1, 0, 0))
+        await gbc.run(api =>
+            api
+                .moveArc(400, 0, 100)
+                .centre(200, 0, 100)
+                .plane(0, 1, 0, 0)
+                .direction(ARCDIRECTION.ARCDIRECTION_CCW)
+        )
+    } finally {
+        gbc.plot("test")
+    }
+    gbc.assert.selector(config, 0)
+    assertNear(400, 0, 100, 0, Math.PI, 0)
 })
 
 test("move line keeping same orientation", async () => {

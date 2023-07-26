@@ -260,7 +260,7 @@ test("F code modal doesn't affect G0", async () => {
     }
 })
 
-test.only("Codes that are not moves should not interfere with a previous move command on the same line", async () => {
+test("Codes that are not moves should not interfere with a previous move command on the same line", async () => {
     try {
         gbc.send_gcode(`
             G00 G90 G54 X10 Y10

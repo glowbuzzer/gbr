@@ -149,7 +149,7 @@ test("can do a move line after tool change (in rotated frame)", async () => {
     gbc.assert.near(joint(2), -30)
 })
 
-test.only("can do a move line after tool change (in rotated frame - case 2)", async () => {
+test("can do a move line after tool change (in rotated frame - case 2)", async () => {
     gbc.config()
         .joints(3)
         .addFrame({

@@ -7,7 +7,8 @@ import {
     FramesConfig,
     GlowbuzzerConfig,
     JOINT_FINITECONTINUOUS,
-    JOINT_TYPE
+    JOINT_TYPE,
+    Quat
 } from "../../libs/store/src"
 
 const DEFAULT_FIELDBUS_CONFIG = {
@@ -147,7 +148,7 @@ export class ConfigBuilder {
         return this
     }
 
-    robotKinematics() {
+    robotKinematics(frameIndex = 0) {
         // ensure joints are revolute with nice big limits
         this.json.joint = this.json.joint.map(j => ({
             ...j,
@@ -159,7 +160,7 @@ export class ConfigBuilder {
         this.json.kinematicsConfiguration = [
             {
                 name: "default",
-                frameIndex: 0,
+                frameIndex,
                 participatingJoints: [0, 1, 2, 3, 4, 5],
                 participatingJointsCount: 6,
                 kinematicsConfigurationType: 1,
@@ -198,6 +199,11 @@ export class ConfigBuilder {
         return this
     }
 
+    setFrame(index: number, param: FramesConfig) {
+        this.json.frames[index] = param
+        return this
+    }
+
     tasks(...params) {
         this.json.task = params
         return this
@@ -215,11 +221,14 @@ export class ConfigBuilder {
         return this
     }
 
-    addTool(length: number) {
+    addTool(length: number, x = 0, rotation: Quat = { x: 0, y: 0, z: 0, w: 1 }) {
         this.json.tool.push({
             translation: {
+                x,
+                y: 0,
                 z: length
-            }
+            },
+            rotation
         })
         return this
     }
