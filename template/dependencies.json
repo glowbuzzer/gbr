@@ -1,4 +1,5 @@
 {
+    "@babel/core": "detect",
     "@glowbuzzer/controls": "detect",
     "@glowbuzzer/store": "detect",
     "@types/node": "detect",
