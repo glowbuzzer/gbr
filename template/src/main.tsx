@@ -10,7 +10,7 @@ import {
     GlowbuzzerTileDefinitionList
 } from "@glowbuzzer/controls"
 
-import "antd/dist/antd.min.css"
+import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 
