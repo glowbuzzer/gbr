@@ -22,7 +22,7 @@ const StyledDiv = styled.div`
         flex-grow: 1;
 
         textarea {
-            height: 100%;
+            height: 100% !important;
             font-family: monospace;
             resize: none;
         }
