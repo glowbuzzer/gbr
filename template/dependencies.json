@@ -13,6 +13,7 @@
     "react": "detect",
     "react-dom": "detect",
     "react-is": "detect",
+    "styled-components": "detect",
     "three": "detect",
     "typescript": "detect",
     "vite": "detect"
