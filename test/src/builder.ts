@@ -128,12 +128,13 @@ export class ConfigBuilder {
     }
 
     cartesianKinematics(frameIndex = 0) {
+        const jointCount = this.json.joint.length || 3
         this.json.kinematicsConfiguration = [
             {
                 name: "cartesian",
                 frameIndex,
-                participatingJoints: [0, 1, 2],
-                participatingJointsCount: 3,
+                participatingJoints: Array.from({ length: jointCount }, (_, i) => i),
+                participatingJointsCount: jointCount,
                 kinematicsConfigurationType: 4,
                 extentsX: [-100, 100],
                 linearLimits: [

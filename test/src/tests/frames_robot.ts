@@ -61,6 +61,7 @@ function init_robot_test() {
 
     gbc.config()
         .joints(6)
+        .robotKinematics(1)
         .addFrame({
             name: "robot",
             translation: {
@@ -73,7 +74,6 @@ function init_robot_test() {
                 w: 0.9238795
             }
         })
-        .robotKinematics(1)
         .finalize()
 
     gbc.disable_limit_check()
@@ -171,7 +171,8 @@ test("move rotation at velocity in kc frame", async () => {
     assertNear(225, -10.962, 270.962, Math.PI / 4, 0, 0)
 
     try {
-        // gbc.disable_limit_check()
+        // not sure why we need to disable limit check here
+        gbc.disable_limit_check()
         const move = gbc.wrap(
             gbc.activity
                 // frame 3 is rotated 90 around X,

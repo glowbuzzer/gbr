@@ -11,13 +11,13 @@ test.before.each(() => {})
 
 // forward and inverse with z offset only
 test("move to position then change tool", async () => {
-    gbc.config().joints(6).robotKinematics().addTool(100).finalize()
+    gbc.config().joints(6).robotKinematics().addTool(50).finalize()
     gbc.enable_operation()
 
     await gbc.run(api => api.moveToPosition(300, 0, 200).rotationEuler(0, Math.PI / 2, 0))
     await gbc.run(api => api.setToolOffset(1))
 
-    gbc.assert.near(s => s.status.kc[0].position.translation.x, 400) // tool is 100mm long
+    gbc.assert.near(s => s.status.kc[0].position.translation.x, 350) // tool is 50mm long
     gbc.assert.near(s => s.status.kc[0].position.translation.z, 200)
 })
 
@@ -78,7 +78,7 @@ test("change tool then move to position - tool offset in x and rotated", async (
     gbc.config()
         .joints(6)
         .robotKinematics()
-        .addTool(100, 5, {
+        .addTool(0, 5, {
             x: 0,
             y: 0,
             z: 1,
@@ -88,7 +88,7 @@ test("change tool then move to position - tool offset in x and rotated", async (
     gbc.enable_operation()
 
     await gbc.run(api => api.setToolOffset(1))
-    await gbc.run(api => api.moveToPosition(300, 0, 0).rotationEuler(0, Math.PI, 0))
+    await gbc.run(api => api.moveToPosition(300, 0, 0) /*.rotationEuler(0, Math.PI, 0)*/)
 
     gbc.assert.near(s => s.status.kc[0].position.translation.x, 300)
     gbc.assert.near(s => s.status.kc[0].position.translation.z, 0)

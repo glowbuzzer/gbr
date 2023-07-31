@@ -73,14 +73,15 @@ test("after tool change cartesian position is modified", async () => {
     gbc.assert.near(pz, 10)
 })
 
-test("after tool change cartesian position is modified (gcode version)", async () => {
-    gbc.send_gcode("G43 H1\nM2")
-    gbc.exec(3)
-
-    gbc.assert.near(px, 0)
-    gbc.assert.near(py, 0)
-    gbc.assert.near(pz, 10)
-})
+// this test doesn't work because sender adapter no longer issues a tool change command
+// test.only("after tool change cartesian position is modified (gcode version)", async () => {
+//     gbc.send_gcode("G43 H1\nM2")
+//     gbc.exec(3)
+//
+//     gbc.assert.near(px, 0)
+//     gbc.assert.near(py, 0)
+//     gbc.assert.near(pz, 10)
+// })
 
 test("can do a move line after tool change", async () => {
     await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
@@ -128,25 +129,52 @@ test("can do a move line after tool change (in rotated frame)", async () => {
     gbc.enable_operation()
     gbc.enable_limit_check()
 
-    await gbc.wrap(gbc.activity.setToolOffset(1).promise).start().iterations(3).assertCompleted()
+    await gbc.run(api => api.setToolOffset(1))
     gbc.assert.near(pz, 10)
 
-    await gbc
-        .wrap(gbc.activity.moveLine(0, 0, 20).promise)
-        .start()
-        .iterations(100)
-        .assertCompleted()
+    await gbc.run(api => api.moveLine(0, 0, 20))
     gbc.assert.near(pz, 20)
     gbc.assert.near(joint(2), 10)
 
-    await gbc
-        .wrap(gbc.activity.moveLine(0, 0, 20).frameIndex(0 /* world */).promise)
-        .start()
-        .iterations(100)
-        .assertCompleted()
+    await gbc.run(api => api.moveLine(0, 0, 20).frameIndex(0 /* world */))
     gbc.assert.near(pz, -20)
 
     gbc.assert.near(joint(2), -30)
+})
+
+test("change tool then move to position - tool rotated", async () => {
+    gbc.config()
+        .joints(6)
+        .cartesianKinematics()
+        .addTool(0, 5, {
+            x: 0,
+            y: 0,
+            z: 1,
+            w: 0
+        }) // 180 degree rotation in Z
+        .finalize()
+    gbc.enable_operation()
+
+    // In this first scenario we move to a position, but don't specify the rotation,
+    // so the current rotation is used. Because the tool is rotated 180 in Z, the
+    // current position is pointing in the -X direction. Because of this we expect
+    // the joint to be at 105 (100 + 5)
+    await gbc.run(api => api.setToolOffset(1))
+    gbc.assert.near(s => {
+        console.log("q1", s.status.kc[0].position.rotation)
+        return s.status.kc[0].position.translation.x
+    }, 5)
+
+    await gbc.run(api => api.moveToPosition(100, 0, 0))
+
+    // tool is offset by 5 but also rotated 180 in Z, so joint should be at 305
+    gbc.assert.near(joint(0), 95)
+
+    gbc.assert.near(s => {
+        console.log("q2", s.status.kc[0].position.rotation)
+        return s.status.kc[0].position.translation.x
+    }, 100)
+    gbc.assert.near(s => s.status.kc[0].position.translation.z, 0)
 })
 
 test("can do a move line after tool change (in rotated frame - case 2)", async () => {

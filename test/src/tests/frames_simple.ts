@@ -108,13 +108,12 @@ test("move_to_position with different frame index (translation only)", async () 
 test("move_to_position with different frame index (translation and rotation)", async () => {
     try {
         // default frame index is zero
-        const move = gbc.wrap(
-            gbc.activity
+        await gbc.run(api =>
+            api
                 .moveToPosition(20, 10, 0)
-                // frame index with translation and rotation
-                .frameIndex(2).promise
+                // frame index with translation and rotation (90 deg around X)
+                .frameIndex(2)
         )
-        await move.start().iterations(75).assertCompleted()
         assertNear(30, 0, 10, 0, 0, 0)
     } finally {
         gbc.plot("test")
@@ -125,15 +124,12 @@ test("move_line in rotated frame", async () => {
     try {
         // kc frame index is zero (no translation)
         assertNear(10, 10, 0, 0, 0, 0)
-        const move = gbc.wrap(
-            gbc.activity
-                // frame 3 is rotated 90 around X
-                // we start at 10,0,10 in target frame and want to end up at
-                // 0,10,0 in target frame, which is 0,0,10 in kc local
-                .moveLine(0, 10, 0)
-                .frameIndex(3).promise
+        await gbc.run(api =>
+            // frame 3 is rotated 90 around X
+            // we start at 10,0,10 in target frame and want to end up at
+            // 0,10,0 in target frame, which is 0,0,10 in kc local
+            api.moveLine(0, 10, 0).frameIndex(3)
         )
-        await move.start().iterations(100).assertCompleted()
         assertNear(0, 0, 10, 0, 0, 0)
     } finally {
         gbc.plot("test")
