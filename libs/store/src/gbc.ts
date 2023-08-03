@@ -340,6 +340,10 @@ export * from "./gbc_extra"
                         busCycleTime?:number;
                         /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
                         statusFrequency?:number;
+                        /**  Whether one of the digital inputs should be treated as estop */
+                        estopEnabled?:boolean;
+                        /**  Which digital input should be treated as estop, if estopEnabled is true */
+                        estopInput?:number;
             }
             
             export type MachineStatus = {

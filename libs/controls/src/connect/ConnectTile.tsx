@@ -3,6 +3,7 @@
  */
 
 import * as React from "react"
+import { useState } from "react"
 import { Button, Radio, Space, Spin, Tag } from "antd"
 import {
     ConnectionState,
@@ -13,12 +14,11 @@ import {
     MACHINETARGET,
     possible_transitions,
     useConnection,
+    useEstop,
     useMachine,
     useOfflineConfig
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { useState } from "react"
-import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -42,6 +42,15 @@ const StyledDiv = styled.div`
 
         .label {
             flex-grow: 1;
+        }
+
+        .estop {
+            display: inline-block;
+            padding: 2px 8px;
+            margin: 0 12px;
+            color: ${props => props.theme.colorErrorText};
+            border: 1px dashed ${props => props.theme.colorErrorText};
+            border-radius: 5px;
         }
 
         .ant-radio-group {
@@ -98,6 +107,7 @@ export const ConnectTile = () => {
     const machine = useMachine()
     const { modified, usingLocalConfiguration, upload, discard } = useOfflineConfig()
     const [uploading, setUploading] = useState(false)
+    const estopActive = useEstop()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -234,7 +244,10 @@ export const ConnectTile = () => {
                 </div>
             </div>
             <div className="row">
-                <div className="label">Machine operation</div>
+                <div className="label">
+                    Machine operation
+                    {estopActive && <span className="estop">ESTOP</span>}
+                </div>
                 <div className="controls">
                     <Radio.Group
                         disabled={!connected || fault || fault_active || target_not_acquired}
@@ -247,7 +260,11 @@ export const ConnectTile = () => {
                         onChange={change_desired_state}
                     >
                         <Radio.Button value={DesiredState.STANDBY}>Disabled</Radio.Button>
-                        <Radio.Button className="danger" value={DesiredState.OPERATIONAL}>
+                        <Radio.Button
+                            className="danger"
+                            value={DesiredState.OPERATIONAL}
+                            disabled={estopActive}
+                        >
                             Enabled
                         </Radio.Button>
                     </Radio.Group>

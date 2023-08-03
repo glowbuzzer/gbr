@@ -18,7 +18,9 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "GENERIC CARTESIAN",
-            busCycleTime: 4
+            busCycleTime: 4,
+            estopEnabled: true,
+            estopInput: 1
         }
     ],
     stream: [
@@ -113,10 +115,18 @@ export const config: GlowbuzzerConfig = {
             ]
         }
     ],
-    din: [{}, {}, {}, {}],
+    din: [
+        {},
+        {
+            name: "ESTOP"
+        },
+        {},
+        {}
+    ],
     dout: [
         {
-            name: "DOUT 0"
+            name: "ESTOP (LOOPBACK)",
+            loopback: 1
         },
         {
             name: "DOUT 1"

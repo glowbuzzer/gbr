@@ -12,7 +12,7 @@ import {
 } from "./MachineStateHandler"
 import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
-import { GlowbuzzerMachineStatus, MACHINETARGET, OPERATION_ERROR } from "../gbc"
+import { GlowbuzzerMachineStatus, MachineConfig, MACHINETARGET, OPERATION_ERROR } from "../gbc"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 
@@ -136,6 +136,10 @@ export const machineSlice: Slice<
 /** Returns the current machine state using the CiA 402 state machine codes. */
 export function useMachineState(): MachineState {
     return useSelector<RootState, MachineState>(state => state.machine.currentState)
+}
+
+export function useMachineConfig(): MachineConfig {
+    return useSelector<RootState, MachineConfig>(state => state.config.current.machine?.[0])
 }
 
 /**
