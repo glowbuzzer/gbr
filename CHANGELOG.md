@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/glowbuzzer/gbr/compare/v1.8.1...v1.9.0) (2023-07-26)
+
+
+### Feature
+
+* add rotation interpolation option to arc builder ([1bdd43d](https://github.com/glowbuzzer/gbr/commit/1bdd43ddf905069aa3d839d6838d20e89b4596b4))
+
+
+### Bug Fix
+
+* add missing peer @babel/core to dependencies.json in template ([baa3e32](https://github.com/glowbuzzer/gbr/commit/baa3e32419825c01b3ba14cb3e16df114030e459))
+* fix height of config editor tile ([9470076](https://github.com/glowbuzzer/gbr/commit/94700763306a86e80c58d1b13e213a60c71ca3fa))
+* issue with app menu in template ([b65409d](https://github.com/glowbuzzer/gbr/commit/b65409d78ef90b59f619989a355d892a1eb0663e))
+* remove unused dependencies ([8624820](https://github.com/glowbuzzer/gbr/commit/8624820961f15ad81103f42464d09babdfc91c76))
+* remove unused dependencies ([7ecf36b](https://github.com/glowbuzzer/gbr/commit/7ecf36b06ef1b02b59a442afb93549ac0dd4632c))
+* switch to antd reset.css in glowbuzzer template ([dc21ece](https://github.com/glowbuzzer/gbr/commit/dc21ece8c529f3e41353eb7e3a62cdc90f058c6c))
+
+
+### Chore
+
+* add more tests around tool changes ([5344fa2](https://github.com/glowbuzzer/gbr/commit/5344fa27bfa009bff90a0025c7da68e9f68e7be7))
+* finish off path planning ([1bdd43d](https://github.com/glowbuzzer/gbr/commit/1bdd43ddf905069aa3d839d6838d20e89b4596b4))
+* improve test framework and re-enable failing tests ([faccb8c](https://github.com/glowbuzzer/gbr/commit/faccb8cc919f8e8ed09010c26a808b44d2d2b4fd))
+* path planning checkpoint ([ecba3db](https://github.com/glowbuzzer/gbr/commit/ecba3dba0ed3db75085e64ac252f68509b45f53f))
+* reorganise template app ([b65409d](https://github.com/glowbuzzer/gbr/commit/b65409d78ef90b59f619989a355d892a1eb0663e))
+* update and pin antd dependencies ([2603da9](https://github.com/glowbuzzer/gbr/commit/2603da910ba295b54b0fa5636777853311aee919))
+
 ## [1.8.1](https://github.com/glowbuzzer/gbr/compare/v1.8.0...v1.8.1) (2023-06-30)
 
 
