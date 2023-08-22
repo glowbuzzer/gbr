@@ -13,6 +13,7 @@ import {
     ACTIVITYSTATE,
     GlowbuzzerStatus,
     MACHINETARGET,
+    OPERATION_ERROR,
     SoloActivityApi,
     STREAMCOMMAND,
     TASK_COMMAND,
@@ -37,6 +38,16 @@ import { make_plot } from "./plot"
 import { GCodeSenderAdapter } from "../../libs/store/src/gcode/GCodeSenderAdapter"
 import { Quaternion, Vector3 } from "three"
 import { ConfigBuilder } from "./builder"
+
+class OperationError extends Error {
+    code: OPERATION_ERROR
+
+    constructor(code: OPERATION_ERROR, message: string) {
+        super(message)
+        this.code = code
+        Object.setPrototypeOf(this, new.target.prototype)
+    }
+}
 
 function nextTick() {
     return new Promise(resolve => process.nextTick(resolve))
@@ -452,12 +463,10 @@ export class GbcTest {
 
             resolve(value) {
                 this.resolution = value
-                // console.log("RESOLVE!!!", value)
             }
 
             reject(value) {
                 this.resolution = value
-                // console.log("REJECT!!!", value)
             }
 
             start() {
@@ -472,6 +481,12 @@ export class GbcTest {
                     self.exec(5)
                     count += 5
                     await nextTick()
+                }
+                if (self.status_msg.status.machine.operationError) {
+                    throw new OperationError(
+                        self.status_msg.status.machine.operationError,
+                        self.status_msg.status.machine.operationErrorMessage
+                    )
                 }
                 if (count >= max_iterations) {
                     throw new Error("Activity did not complete in max given iterations")

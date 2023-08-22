@@ -43,7 +43,6 @@ test("joint should follow the shortest distance between two points", async () =>
     )
     await move2.start().iterations(100).assertCompleted()
 
-    console.log(gbc.status.joint.map(j => j.actPos))
     assert.ok(gbc.status.joint[5].actPos < 0, "j6 should still be negative after second move")
 })
 

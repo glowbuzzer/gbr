@@ -161,7 +161,6 @@ test("change tool then move to position - tool rotated", async () => {
     // the joint to be at 105 (100 + 5)
     await gbc.run(api => api.setToolOffset(1))
     gbc.assert.near(s => {
-        console.log("q1", s.status.kc[0].position.rotation)
         return s.status.kc[0].position.translation.x
     }, 5)
 
@@ -171,7 +170,6 @@ test("change tool then move to position - tool rotated", async () => {
     gbc.assert.near(joint(0), 95)
 
     gbc.assert.near(s => {
-        console.log("q2", s.status.kc[0].position.rotation)
         return s.status.kc[0].position.translation.x
     }, 100)
     gbc.assert.near(s => s.status.kc[0].position.translation.z, 0)

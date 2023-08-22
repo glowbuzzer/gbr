@@ -33,7 +33,15 @@ function init_robot_test() {
 }
 
 test.before.each(() => {
-    gbc.reset("configs/tx40_config.json")
+    // gbc.reset("configs/tx40_config.json")
+    gbc.config()
+        .joints(6, {
+            vmax: 20,
+            amax: 400,
+            jmax: 8000
+        })
+        .robotKinematics()
+        .finalize()
     gbc.enable_limit_check()
 })
 
@@ -269,12 +277,8 @@ test("move to position with change in configuration followed by another move wit
 test("can run move joints followed by move to position", async () => {
     init_robot_test()
     try {
-        const move1 = gbc.wrap(gbc.activity.moveJoints([1, 1, 1, 1, 1, 1]).promise)
-        await move1.start().iterations(80).assertCompleted()
-        const move2 = gbc.wrap(
-            gbc.activity.moveToPosition(100, 250, 100).rotationEuler(Math.PI, 0, 0).promise
-        )
-        await move2.start().iterations(80).assertCompleted()
+        await gbc.run(api => api.moveJoints([1, 1, 1, 1, 1, 1]))
+        await gbc.run(api => api.moveToPosition(100, 250, 100).rotationEuler(Math.PI, 0, 0))
     } finally {
         gbc.plot("test")
     }

@@ -112,16 +112,10 @@ export class ConfigBuilder {
         return this.framework.reset_from_json(this.json, restoreJoints)
     }
 
-    joints(number: number) {
+    joints(number: number, limits = { vmax: 200, amax: 4000, jmax: 80000 }) {
         this.json.joint = Array.from({ length: number }, (_, i) => ({
             name: "joint" + i,
-            limits: [
-                {
-                    vmax: 200,
-                    amax: 4000,
-                    jmax: 80000
-                }
-            ],
+            limits: [limits],
             scale: 1000000
         }))
         return this
@@ -231,6 +225,30 @@ export class ConfigBuilder {
             },
             rotation
         })
+        return this
+    }
+
+    limitZ(min: number, max: number, kinematicsConfigurationIndex = 0) {
+        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].extentsZ = [min, max]
+        return this
+    }
+
+    cylindricalEnvelope(
+        innerRadius: number,
+        outerRadius: number,
+        kinematicsConfigurationIndex = 0
+    ) {
+        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].cylindricalEnvelope = [
+            innerRadius,
+            outerRadius
+        ]
+        return this
+    }
+
+    sphericalEnvelope(innerRadius: number, outerRadius: number, kinematicsConfigurationIndex = 0) {
+        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].sphericalEnvelope = {
+            radius: [innerRadius, outerRadius]
+        }
         return this
     }
 }
