@@ -33,7 +33,6 @@ import {
     SpindleConfig,
     StreamConfig,
     STREAMSTATE,
-    StreamStatus,
     TaskConfig,
     TaskStatus,
     ToolConfig

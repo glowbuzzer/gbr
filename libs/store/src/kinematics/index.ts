@@ -19,6 +19,7 @@ import {
     Quat,
     Vector3
 } from "../gbc"
+import { Vector3 as Vector3Type, Quaternion } from "three"
 import { useMemo } from "react"
 
 export const kinematicsSlice: Slice<GlowbuzzerKinematicsConfigurationStatus[]> = createSlice({
@@ -169,18 +170,18 @@ export const useKinematicsConfigurationPositions = () => {
  */
 export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: number) => {
     const config = useKinematicsConfiguration(kinematicsConfigurationIndex)
-    const state = useSelector(
-        ({ kinematics }: RootState) => kinematics[kinematicsConfigurationIndex],
+    const state = useSelector<RootState, GlowbuzzerKinematicsConfigurationStatus>(
+        ({ kinematics }) => kinematics[kinematicsConfigurationIndex],
         deepEqual
     )
     const frameIndex = config?.frameIndex
 
-    return useMemo<CartesianPositionsConfig>(() => {
+    return useMemo(() => {
         if (!state) {
             return {
                 position: {
-                    translation: { x: 0, y: 0, z: 0 },
-                    rotation: { x: 0, y: 0, z: 0, w: 1 },
+                    translation: new Vector3Type(),
+                    rotation: new Quaternion(),
                     positionReference: POSITIONREFERENCE.ABSOLUTE,
                     frameIndex: 0
                 },
@@ -189,9 +190,10 @@ export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: num
         }
 
         return {
-            configuration: state?.currentConfiguration,
+            configuration: state.configuration,
             position: {
-                ...state.position,
+                translation: new Vector3Type().copy(state.position.translation as any),
+                rotation: new Quaternion().copy(state.position.rotation as any),
                 frameIndex: frameIndex,
                 positionReference: POSITIONREFERENCE.ABSOLUTE
             }
