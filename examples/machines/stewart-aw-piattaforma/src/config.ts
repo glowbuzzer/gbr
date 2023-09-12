@@ -175,9 +175,9 @@ export const config: GlowbuzzerConfig = {
             ],
             angularLimits: [
                 {
-                    vmax: 0.1,
-                    amax: 1,
-                    jmax: 10
+                    vmax: 0.2,
+                    amax: 20,
+                    jmax: 200
                 }
             ],
             kinChainParams: {
