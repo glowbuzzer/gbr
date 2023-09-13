@@ -8,6 +8,7 @@ export default {
     ...defineExampleViteConfig(),
     server: {
         strictPort: true,
-        port: 7001
+        port: 7001,
+        host: true
     }
 }
