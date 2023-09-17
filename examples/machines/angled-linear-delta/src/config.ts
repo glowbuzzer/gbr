@@ -31,12 +31,12 @@ export const config: GlowbuzzerConfig = {
             jointType: 0,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 20,
+                    amax: 40,
+                    jmax: 80
                 }
             ],
-            scale: 10000000,
+            scale: 100000,
             negLimit: -0.1,
             posLimit: 146.8
         },
@@ -46,12 +46,12 @@ export const config: GlowbuzzerConfig = {
             jointType: 0,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 20,
+                    amax: 40,
+                    jmax: 80
                 }
             ],
-            scale: 10000000,
+            scale: 100000,
             negLimit: -0.1,
             posLimit: 146.8
         },
@@ -61,14 +61,48 @@ export const config: GlowbuzzerConfig = {
             jointType: 0,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 20,
+                    amax: 40,
+                    jmax: 80
                 }
             ],
-            scale: 10000000,
+            scale: 100000,
             negLimit: -0.1,
             posLimit: 146.8
+        }
+    ],
+    points: [
+        {
+            name: "point1",
+            frameIndex: 0,
+            translation: {
+                x: 70,
+                y: 0,
+                z: 180
+            },
+            rotation: {
+                x: 1,
+                y: 0,
+                z: 0,
+                w: 0
+            },
+            configuration: 0
+        },
+        {
+            name: "point2",
+            frameIndex: 0,
+            translation: {
+                x: 130,
+                y: 0,
+                z: 190
+            },
+            rotation: {
+                x: 1,
+                y: 0,
+                z: 0,
+                w: 0
+            },
+            configuration: 0
         }
     ],
     frames: [
@@ -97,19 +131,19 @@ export const config: GlowbuzzerConfig = {
             extentsZ: [-1000, 1000],
             linearLimits: [
                 {
-                    vmax: 20,
-                    amax: 40,
-                    jmax: 80
+                    vmax: 200,
+                    amax: 400,
+                    jmax: 800
                 },
                 {
-                    vmax: 20,
-                    amax: 40,
-                    jmax: 80
+                    vmax: 200,
+                    amax: 400,
+                    jmax: 800
                 },
                 {
-                    vmax: 20,
-                    amax: 40,
-                    jmax: 80
+                    vmax: 200,
+                    amax: 400,
+                    jmax: 800
                 }
             ],
             angularLimits: [
