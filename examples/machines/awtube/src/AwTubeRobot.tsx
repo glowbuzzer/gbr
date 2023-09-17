@@ -144,20 +144,33 @@ export const AwTubeRobot = ({ children }) => {
         toolRotation
     ] = jointPositions.map((p, i) => euler(p, axis_of_rotation[i]))
 
+    const j1RotationCorrection = Math.PI / 2
+
+    // apply the rotation corrections to the joints
+    shoulderRotation.x += j1RotationCorrection
+
     // get the translation from the frame, in order to position the robot
     const { x, y, z } = frame.translation
 
     // stack the parts together in nested groups to create the robot
     return (
-        <group position={[x, y, z]}>
-            <primitive object={base} rotation={partRotations.base0Rotation} />
+        <group position={[x, y, z]} rotation={[0, 0, Math.PI / 2]}>
+            <primitive
+                object={base}
+                rotation={partRotations.base0Rotation}
+                position={[
+                    -partTranslations.base0Translation[0],
+                    -partTranslations.base0Translation[1],
+                    -partTranslations.base0Translation[2]
+                ]}
+            />
             <group
                 rotation={baseRotation}
-                position={[
-                    partTranslations.base0Translation[0],
-                    partTranslations.base0Translation[1],
-                    partTranslations.base0Translation[2]
-                ]}
+                // position={[
+                //     partTranslations.base0Translation[0],
+                //     partTranslations.base0Translation[1],
+                //     partTranslations.base0Translation[2]
+                // ]}
             >
                 <primitive object={j0} rotation={partRotations.j0Rotation} />
                 <group

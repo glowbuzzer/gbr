@@ -63,7 +63,7 @@ export const config: GlowbuzzerConfig = {
             translation: {
                 x: 0,
                 y: 0,
-                z: 0
+                z: 117
             },
             rotation: {
                 x: 0,
@@ -188,8 +188,8 @@ export const config: GlowbuzzerConfig = {
                 numRows: 6,
                 numCols: 5,
                 data: [
-                    -90, 0, 0, 0, 0, 0, 0, -90, 725, 0, 90, 0, 90, 0, 0, -90, 0, 0, 0, 675, 90, 0,
-                    0, 0, 0, 0, 0, 0, 0, 358
+                    -90, 0, 0, 0, 0, 0, 0, -90, 525, 0, 90, 0, 90, 0, 0, -90, 0, 0, 0, 475, 90, 0,
+                    0, 0, 0, 0, 0, 0, 0, 328
                 ]
             }
         }
