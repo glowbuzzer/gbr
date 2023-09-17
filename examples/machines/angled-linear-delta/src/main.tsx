@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react"
+import React, {StrictMode, Suspense, useEffect, useMemo, useRef} from "react"
 
 /*
 offset in scene / groups - frames
@@ -35,7 +35,9 @@ import {
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { useGLTF, Environment, Cylinder } from "@react-three/drei"
+import {useGLTF, Environment, Cylinder} from "@react-three/drei"
+
+import {OscillatingMoveTileDefinition} from "../../../util/OscillatingMoveTile"
 
 import {
     GCodeContextProvider,
@@ -44,9 +46,9 @@ import {
     useKinematicsConfiguration,
     ActivityApi
 } from "@glowbuzzer/store"
-import { createRoot } from "react-dom/client"
+import {createRoot} from "react-dom/client"
 
-import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
+import {ExampleAppMenu} from "../../../util/ExampleAppMenu"
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
@@ -55,13 +57,13 @@ import {
     AngledLinearDeltaFk,
     AngledLinearDeltaIk
 } from "../../../util/kinematics/AngledLinearDeltaKin"
-import { DLE_DR_0001 } from "../../../util/kinematics/KinChainParams"
-import { EffectorPoints } from "./effectorPoints"
-import { config } from "./config"
-import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal"
-import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
+import {DLE_DR_0001} from "../../../util/kinematics/KinChainParams"
+import {EffectorPoints} from "./effectorPoints"
+import {config} from "./config"
+import {PlaneShinyMetal} from "../../../util/PlaneShinyMetal"
+import {DefaultEnvironment} from "../../../util/DefaultEnvironment"
 
-const AngledLinearDeltaRobot = ({ children = null }) => {
+const AngledLinearDeltaRobot = ({children = null}) => {
     const jointPositions = useJointPositions(0)
 
     const frameModel = useMemo(() => useGLTF("/assets/dle_dr_0001/IGUS_Delta_Frame.glb"), [])
@@ -178,8 +180,8 @@ const AngledLinearDeltaRobot = ({ children = null }) => {
     const rod6Ref = useRef(null)
     const groupRef = useRef(null)
 
-    const { frameIndex } = useKinematicsConfiguration(0)
-    const { translation, rotation } = useFrame(frameIndex, true)
+    const {frameIndex} = useKinematicsConfiguration(0)
+    const {translation, rotation} = useFrame(frameIndex, true)
     // const { translation, rotation } = useFrame(parentFrameIndex, true)
 
     console.log("translation", translation)
@@ -458,10 +460,10 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <AngledLinearDeltaRobot />
+                    <AngledLinearDeltaRobot/>
                 </Suspense>
-                <PlaneShinyMetal />
-                <DefaultEnvironment />
+                <PlaneShinyMetal/>
+                <DefaultEnvironment/>
             </ThreeDimensionalSceneTile>
         )
     })
@@ -478,7 +480,7 @@ function App() {
     }
 
     return (
-        <GCodeContextProvider value={{ handleToolChange }}>
+        <GCodeContextProvider value={{handleToolChange}}>
             <DockLayoutProvider
                 tiles={[
                     ConnectTileDefinition,
@@ -491,11 +493,12 @@ function App() {
                     FramesTileDefinition,
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
-                    CustomSceneTileDefinition
+                    CustomSceneTileDefinition,
+                    OscillatingMoveTileDefinition
                 ]}
             >
-                <ExampleAppMenu />
-                <DockLayout />
+                <ExampleAppMenu/>
+                <DockLayout/>
             </DockLayoutProvider>
         </GCodeContextProvider>
     )
@@ -505,7 +508,7 @@ const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
         <GlowbuzzerApp appName="angled-linear-delta" configuration={config}>
-            <App />
+            <App/>
         </GlowbuzzerApp>
     </StrictMode>
 )
