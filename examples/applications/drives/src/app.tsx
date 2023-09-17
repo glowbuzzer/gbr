@@ -12,7 +12,9 @@ import {
     FeedRateTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
-    TelemetryTileDefinition
+    TelemetryTileDefinition,
+    DigitalInputsTileDefinition,
+    DigitalOutputsTileDefinition
 } from "@glowbuzzer/controls"
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
@@ -37,7 +39,9 @@ export const App = () => {
                 FeedRateTileDefinition,
                 TelemetryMiddleCol,
                 DrivesTileDefinition,
-                DrivesOscillatingMoveTileDefinition
+                DrivesOscillatingMoveTileDefinition,
+                DigitalInputsTileDefinition,
+                DigitalOutputsTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives" />
