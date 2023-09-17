@@ -22,7 +22,7 @@ import { CartesianPositionTable } from "../util/components/CartesianPositionTabl
 import { Euler, Quaternion } from "three"
 import { message } from "antd"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
-import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
+import { useConfigLiveEdit } from "../config"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
@@ -93,7 +93,7 @@ export const PointsTile = () => {
     ) {
         return points.map((point, index) => {
             if (index === selected) {
-                const newVar = {
+                return {
                     name,
                     frameIndex:
                         positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : frameIndex,
@@ -101,7 +101,6 @@ export const PointsTile = () => {
                     rotation,
                     configuration: point.configuration
                 }
-                return newVar
             }
             return point
         })

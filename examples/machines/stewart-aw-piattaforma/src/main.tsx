@@ -18,6 +18,7 @@ import {
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
+    TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
@@ -32,6 +33,7 @@ import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal"
 import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
 import { StewartPlatform } from "./StewartPlatform"
 import { StewartPlatformDebug } from "./test/StewartPlatformDebug"
+import { PointsLoaderTile } from "./PointsLoaderTile"
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
@@ -47,6 +49,14 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
     })
     .build()
 
+const PointsLoaderTileDefinition = DockTileDefinitionBuilder()
+    .id("points-loader")
+    .name("Points Loader")
+    .placement(2, 1)
+    .render(() => <PointsLoaderTile />)
+    .enableWithoutConnection()
+    .build()
+
 const root = createRoot(document.getElementById("root"))
 root.render(
     <GlowbuzzerApp appName="stewart_platform" configuration={config}>
@@ -60,9 +70,11 @@ root.render(
                 ToolsTileDefinition,
                 PointsTileDefinition,
                 FramesTileDefinition,
-                ConfigEditTileDefinition,
                 FeedRateTileDefinition,
-                CustomSceneTileDefinition
+                ConfigEditTileDefinition,
+                CustomSceneTileDefinition,
+                PointsLoaderTileDefinition,
+                TelemetryTileDefinition
             ]}
         >
             <ExampleAppMenu title="Stewart Platform" />
