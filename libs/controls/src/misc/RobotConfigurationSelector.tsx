@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Tag } from "antd"
+import { Dropdown, Select, SelectProps, Tag } from "antd"
 import {
     ArrowDownOutlined,
     ArrowLeftOutlined,
@@ -20,6 +20,16 @@ const StyledDiv = styled.div`
     .ant-tag {
         cursor: pointer;
     }
+`
+
+const StyledSelect = styled(Select)`
+    transform: translateY(1px);
+`
+
+const StyledSelectLabel = styled.span`
+    display: flex;
+    gap: 10px;
+    margin: 0 -8px -2px 0;
 `
 
 type RobotConfigurationSelectorProps = {
@@ -56,6 +66,45 @@ export const RobotConfigurationSelector = ({
     const elbowSupported = supportedConfigurationBits & 0b010 || null
     const wristSupported = supportedConfigurationBits & 0b001 || null
 
+    const options: SelectProps["options"] = Array.from({
+        length: supportedConfigurationBits + 1
+    }).map((_, value) => {
+        const waist = value & 0b100
+        const elbow = value & 0b010
+        const wrist = value & 0b001
+
+        return {
+            value,
+            labelSimple: value,
+            label: (
+                <StyledSelectLabel>
+                    {value}{" "}
+                    <Tag>
+                        {waistSupported ? (
+                            waist ? (
+                                <ArrowRightOutlined />
+                            ) : (
+                                <ArrowLeftOutlined />
+                            )
+                        ) : null}
+                        {elbowSupported ? (
+                            elbow ? (
+                                <ArrowDownOutlined />
+                            ) : (
+                                <ArrowUpOutlined />
+                            )
+                        ) : null}
+                        {wristSupported ? (
+                            <ReloadOutlined
+                                style={wrist ? { transform: "scaleX(-1)" } : undefined}
+                            />
+                        ) : null}
+                    </Tag>
+                </StyledSelectLabel>
+            )
+        }
+    })
+
     return (
         <StyledDiv>
             {waistSupported && (
@@ -82,6 +131,16 @@ export const RobotConfigurationSelector = ({
                     Wrist <ReloadOutlined style={wrist ? { transform: "scaleX(-1)" } : undefined} />
                 </Tag>
             )}
+            <StyledSelect
+                size="small"
+                options={options}
+                value={value}
+                onChange={onChange}
+                tagRender={() => <>Y</>}
+                optionLabelProp={"labelSimple"}
+                popupMatchSelectWidth={false}
+                // dropdownRender={() => <>X</>}
+            />
         </StyledDiv>
     )
 }

@@ -25,7 +25,7 @@ const StyledDiv = styled.div`
 `
 
 /** @ignore - internal to the cartesian DRO tile */
-export const RobotConfigurationDro = ({ value, supportedConfigurationBits }) => {
+export const RobotConfigurationDro = ({ value, supportedConfigurationBits, showValue = true }) => {
     const waist = value & 0b100
     const elbow = value & 0b010
     const wrist = value & 0b001
@@ -47,6 +47,7 @@ export const RobotConfigurationDro = ({ value, supportedConfigurationBits }) => 
                     Wrist <ReloadOutlined style={wrist ? { transform: "scaleX(-1)" } : undefined} />
                 </Tag>
             )}
+            {showValue && <Tag>Config {value}</Tag>}
         </StyledDiv>
     )
 }
