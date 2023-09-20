@@ -155,7 +155,14 @@ export const config: GlowbuzzerConfig = {
             kinematicsConfigurationType: 11,
             extentsX: [-500, 500],
             extentsY: [-500, 500],
-            extentsZ: [0, 500],
+            extentsZ: [300, 500],
+            cylindricalEnvelope: [0, 50],
+            sphericalEnvelope: {
+                center: {
+                    z: 300
+                },
+                radius: [0, 75]
+            },
             linearLimits: [
                 {
                     vmax: 20,
