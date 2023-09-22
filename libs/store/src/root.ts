@@ -23,10 +23,10 @@ import { framesSlice } from "./frames"
 import { activitySlice } from "./activity"
 import { pointsSlice } from "./points"
 import { streamSlice } from "./stream"
+import { emstatSlice } from "./emstat"
 
 export const standardReducers = {
     config: configSlice.reducer,
-    // connection: connectionSlice.reducer,
     tasks: tasksSlice.reducer,
     activity: activitySlice.reducer,
     telemetry: telemetrySlice.reducer,
@@ -44,7 +44,8 @@ export const standardReducers = {
     stream: streamSlice.reducer,
     preview: previewSlice.reducer,
     trace: traceSlice.reducer,
-    kinematics: kinematicsSlice.reducer
+    kinematics: kinematicsSlice.reducer,
+    emstat: emstatSlice.reducer
 }
 
 export const rootReducer = combineReducers(standardReducers)

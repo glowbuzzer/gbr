@@ -23,6 +23,7 @@ import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { DrivesOscillatingMoveTileDefinition } from "./tiles"
 import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
+import { EmStatTileDefinition } from "@glowbuzzer/controls"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
@@ -41,7 +42,8 @@ export const App = () => {
                 DrivesTileDefinition,
                 DrivesOscillatingMoveTileDefinition,
                 DigitalInputsTileDefinition,
-                DigitalOutputsTileDefinition
+                DigitalOutputsTileDefinition,
+                EmStatTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives" />

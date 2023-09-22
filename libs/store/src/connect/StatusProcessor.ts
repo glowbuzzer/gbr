@@ -28,6 +28,7 @@ import { analogOutputsSlice } from "../io/aout"
 import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
 import { useConfigVersion } from "../config"
+import { emstatSlice } from "../emstat"
 
 function status(status, heartbeat) {
     return {
@@ -175,6 +176,7 @@ export function useStatusProcessor(connection: WebSocket) {
 
         msg.stream && dispatch(streamSlice.actions.status(msg.stream))
         msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
+        msg.emstat && dispatch(emstatSlice.actions.status(msg.emstat))
 
         // increment tick count
         setTick(current => {

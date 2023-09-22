@@ -4,22 +4,17 @@
 
 import * as React from "react"
 import { FC, ReactNode, useEffect, useRef } from "react"
-import { combineReducers, configureStore, Reducer, StoreEnhancer } from "@reduxjs/toolkit"
+import { Reducer, StoreEnhancer } from "@reduxjs/toolkit"
 import {
-    configSlice,
     ConfigState,
     ConnectionState,
-    framesSlice,
     GlowbuzzerConfig,
     initSettings,
-    prefsSlice,
-    standardReducers,
-    telemetrySlice,
     useConfigState,
     useConnection
 } from "@glowbuzzer/store"
-import styled, { css, ThemeProvider } from "styled-components"
-import { Button, GlobalToken, theme as antdTheme } from "antd"
+import styled, { css } from "styled-components"
+import { Button, GlobalToken } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import { Provider } from "react-redux"
 import { ConfigLiveEditProvider } from "../config"

@@ -24,5 +24,6 @@ export enum GlowbuzzerTileIdentifiers {
     TOOLS = "TOOLS",
     TASKS = "TASKS",
     TELEMETRY = "TELEMETRY",
-    STATE_MACHINE_TOOLS = "STATE_MACHINE_TOOLS"
+    STATE_MACHINE_TOOLS = "STATE_MACHINE_TOOLS",
+    EMSTAT = "EMSTAT"
 }
