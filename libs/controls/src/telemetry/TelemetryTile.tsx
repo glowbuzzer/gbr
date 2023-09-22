@@ -21,16 +21,29 @@ import {
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import * as d3 from "d3"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { useLocalStorage } from "../util/LocalStorageHook"
 
 const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#444444"]
 
+enum TelemetryVisibilityOptions {
+    SET = 0b01,
+    ACT = 0b10,
+    BOTH = 0b11
+}
+
 type SparklineJointsProps = {
     kinematicsConfiguration: KinematicsConfigurationConfig
+    view: TelemetryVisibilityOptions
     selected: boolean[]
     duration: number
 }
 
-const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: SparklineJointsProps) => {
+const SparklineJoints = ({
+    kinematicsConfiguration,
+    view,
+    selected,
+    duration
+}: SparklineJointsProps) => {
     const elemRef = useRef<HTMLDivElement>(null)
     const telemetry = useTelemetryData()
     const { plot } = useTelemetrySettings()
@@ -54,38 +67,43 @@ const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: Sparkl
         }
     }, [])
 
-    const selectedJointColours = useMemo(() => {
+    const selectedJointOptions = useMemo(() => {
         return kinematicsConfiguration.participatingJoints
             .map((_, i) => axis_colors[i])
             .filter((_, i) => selected[i])
-            .map(color => ({ color }))
-    }, [kinematicsConfiguration.participatingJoints, selected])
+            .map(color => {
+                switch (view) {
+                    case TelemetryVisibilityOptions.SET:
+                        return [{ color, dashArray: "" }]
+                    case TelemetryVisibilityOptions.ACT:
+                        return [{ color, dashArray: "2,2" }]
+                    case TelemetryVisibilityOptions.BOTH:
+                        return [
+                            { color, dashArray: "" },
+                            { color, dashArray: "2,2" }
+                        ]
+                }
+            })
+            .flat()
+    }, [kinematicsConfiguration.participatingJoints, selected, view])
 
     const { data, domain } = useMemo(() => {
-        let data = telemetry.map(d => ({
+        const data = telemetry.map(d => ({
             t: d.t,
             values: kinematicsConfiguration.participatingJoints
-                .map(index => d.joints[index])
+                .map(index => {
+                    switch (view) {
+                        case TelemetryVisibilityOptions.SET:
+                            return [d.set[index][plot]]
+                        case TelemetryVisibilityOptions.ACT:
+                            return [d.act[index][plot]]
+                        case TelemetryVisibilityOptions.BOTH:
+                            return [d.set[index][plot], d.act[index][plot]]
+                    }
+                })
                 .filter((_, i) => selected[i])
+                .flat()
         }))
-
-        if (plot >= TelemetryPVA.VEL) {
-            data = data.slice(1).map((d, index) => ({
-                t: d.t,
-                values: d.values.map(
-                    (v, axis) => (d.values[axis] - data[index].values[axis]) * 1000
-                )
-            }))
-        }
-
-        if (plot >= TelemetryPVA.ACC) {
-            data = data.slice(1).map((d, index) => ({
-                t: d.t,
-                values: d.values.map(
-                    (v, axis) => (d.values[axis] - data[index].values[axis]) * 1000
-                )
-            }))
-        }
 
         const domain = d3.extent(
             data.flatMap(d => {
@@ -95,14 +113,14 @@ const SparklineJoints = ({ kinematicsConfiguration, selected, duration }: Sparkl
             })
         )
         return { data, domain }
-    }, [telemetry, kinematicsConfiguration, plot])
+    }, [telemetry, kinematicsConfiguration, plot, view])
 
     return (
         <div ref={elemRef} className="chart">
             <SparklineScrolling
                 height={height}
                 domain={domain}
-                options={selectedJointColours}
+                options={selectedJointOptions}
                 data={data}
                 duration={duration}
             />
@@ -162,6 +180,7 @@ const StyledDuration = styled.div`
     gap: 5px;
     align-items: center;
     color: ${props => props.theme.colorText};
+
     .ant-slider {
         width: 150px;
     }
@@ -169,6 +188,7 @@ const StyledDuration = styled.div`
 
 const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
     cursor: pointer;
+
     span {
         display: block;
         min-width: 18px;
@@ -182,6 +202,10 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
     const joints = useJointConfigurationList()
     const [selected, setSelected] = useState(
         kinematicsConfiguration.participatingJoints.map(() => true)
+    )
+    const [view, setView] = useLocalStorage(
+        "viewTelemetrySetActBoth",
+        TelemetryVisibilityOptions.SET
     )
 
     function toggle_selected(index) {
@@ -203,11 +227,24 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
                         </StyledAxisToggle>
                     ))}
                 </div>
+                <div>
+                    <Radio.Group
+                        size="small"
+                        value={view}
+                        buttonStyle="solid"
+                        onChange={e => setView(e.target.value)}
+                    >
+                        <Radio.Button value={TelemetryVisibilityOptions.SET}>SET</Radio.Button>
+                        <Radio.Button value={TelemetryVisibilityOptions.ACT}>ACT</Radio.Button>
+                        <Radio.Button value={TelemetryVisibilityOptions.BOTH}>BOTH</Radio.Button>
+                    </Radio.Group>
+                </div>
                 <div className="title">{kinematicsConfiguration.name}</div>
             </div>
             <SparklineJoints
                 kinematicsConfiguration={kinematicsConfiguration}
                 selected={selected}
+                view={view}
                 duration={duration}
             />
         </StyledTelemetryForKinematicsConfiguration>
@@ -243,9 +280,9 @@ export const TelemetryTile = () => {
                 [["t", ...joints.map((_, i) => `j${i}`)]]
                     .concat(
                         data.map(d => {
-                            const values = d.joints.map((v, index) => {
+                            const values = d.set.map((v, index) => {
                                 if (joints[index].jointType === JOINT_TYPE.JOINT_REVOLUTE) {
-                                    return (v * 180) / Math.PI
+                                    return (v.p * 180) / Math.PI
                                 }
                                 return v
                             })
@@ -299,18 +336,6 @@ export const TelemetryTile = () => {
                                         <Button size="small" onClick={() => capture.startCapture()}>
                                             Capture
                                         </Button>
-                                        {/*
-                                        <InputNumber
-                                            size="small"
-                                            value={capture.captureDuration}
-                                            min={10}
-                                            max={2500}
-                                            step={10}
-                                            onChange={captureDuration =>
-                                                capture.setDuration(Number(captureDuration))
-                                            }
-                                        />
-*/}
                                     </Space>
                                 ),
                                 [CaptureState.WAITING]: (

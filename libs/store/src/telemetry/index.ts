@@ -6,13 +6,15 @@ import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
+import { GlowbuzzerStatus } from "../gbc_extra"
+import deepEqual from "fast-deep-equal"
 
 const { load, save } = settings("telemetry")
 
 export enum TelemetryPVA {
-    POS = 0x00,
-    VEL = 0x01,
-    ACC = 0x02
+    POS = "p",
+    VEL = "v",
+    ACC = "a"
 }
 export type TelemetrySettingsType = {
     captureDuration: number
@@ -27,18 +29,12 @@ export enum CaptureState {
     COMPLETE
 }
 
-type TelemetryEntry = {
-    t: number
-    m4cap: number
-    m7cap: number
-    m7wait: number
-    joints: number[]
-}
+type TelemetryEntry = GlowbuzzerStatus["telemetry"][0]
 
 type TelemetrySliceType = {
     settings: TelemetrySettingsType
     data: TelemetryEntry[]
-    lastCapture
+    lastCapture: TelemetryEntry
     captureState: CaptureState
     t: number
 }
@@ -102,7 +98,7 @@ export const telemetrySlice: Slice<
             } else if (state.captureState === CaptureState.WAITING && state.lastCapture) {
                 // if waiting for trigger, find the first bit of data that deviates from last capture
                 for (let n = 0; n < action.payload.length; n++) {
-                    if (!shallowEqual(state.lastCapture.joints, action.payload[n].joints)) {
+                    if (!deepEqual(state.lastCapture.set, action.payload[n].set)) {
                         state.captureState = CaptureState.CAPTURING
                         // clear data and append from this point in the incoming data
                         state.data.splice(0)

@@ -14,6 +14,7 @@ type Datapoint = {
 
 type SparklineScrollingSeriesOptions = {
     color: string
+    dashArray: string
 }
 
 type SparklineScrollingProps = {
@@ -128,6 +129,7 @@ export const SparklineScrolling = ({
                 .classed("line", true)
                 .style("fill", "none")
                 .style("stroke", o.color)
+                .style("stroke-dasharray", o.dashArray)
                 .style("stroke-width", "1.5px")
         )
 

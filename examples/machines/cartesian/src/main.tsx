@@ -23,6 +23,7 @@ import {
     JointJogTileDefinition,
     PointsTileDefinition,
     RobotKinematicsChainElement,
+    TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
@@ -223,6 +224,7 @@ function App() {
                     ConfigEditTileDefinition,
                     FeedRateTileDefinition,
                     GCodeTileDefinition,
+                    TelemetryTileDefinition,
                     CustomSceneTileDefinition
                 ]}
             >
