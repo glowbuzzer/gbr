@@ -4,4 +4,6 @@
 
 import { defineExampleViteConfig } from "../../vite.shared"
 
-export default defineExampleViteConfig()
+export default defineExampleViteConfig({
+    sharedAssetDirectories: ["environment", "tx40"]
+})

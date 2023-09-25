@@ -2,55 +2,41 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense, useRef, useMemo, useEffect, useState } from "react"
-import { createRoot } from "react-dom/client"
+import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react";
+import { createRoot } from "react-dom/client";
 import {
-    BasicRobot,
     CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
-    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
     GlowbuzzerApp,
-    CartesianJogTileDefinition,
-    JointJogTileDefinition,
     JointDroTileDefinition,
+    JointJogTileDefinition,
     PointsTileDefinition,
-    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
-} from "@glowbuzzer/controls"
+} from "@glowbuzzer/controls";
 
-import {
-    telemetrySlice,
-    useFrame,
-    useJointPositions,
-    useKinematicsConfiguration,
-    useToolIndex
-} from "@glowbuzzer/store"
+import { useFrame, useJointPositions, useKinematicsConfiguration, useToolIndex } from "@glowbuzzer/store";
 
-import * as THREE from "three"
+import * as THREE from "three";
 
-import { useGLTF, Cylinder, Environment } from "@react-three/drei"
-import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
+import { useGLTF } from "@react-three/drei";
+import { ExampleAppMenu } from "../../../util/ExampleAppMenu";
 
-import "antd/dist/reset.css"
-import "dseg/css/dseg.css"
-import "flexlayout-react/style/light.css"
-import {
-    baseCoordinates,
-    platformCoordinates,
-    fk_Stewart,
-    ik_Stewart
-} from "../../../util/kinematics/PrismaticStewartKin"
-import { config } from "./config"
-import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal"
-import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
+import "antd/dist/reset.css";
+import "dseg/css/dseg.css";
+import "flexlayout-react/style/light.css";
+import { baseCoordinates, fk_Stewart, ik_Stewart } from "../../../util/kinematics/PrismaticStewartKin";
+import { config } from "./config";
+import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal";
+import { DefaultEnvironment } from "../../../util/DefaultEnvironment";
 
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 325)
 

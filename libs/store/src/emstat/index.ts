@@ -3,7 +3,7 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { GlowbuzzerStatus, RootState } from "@glowbuzzer/store"
+import { GlowbuzzerStatus, RootState } from ".."
 import { useSelector } from "react-redux"
 
 type EmStatType = GlowbuzzerStatus["emstat"]

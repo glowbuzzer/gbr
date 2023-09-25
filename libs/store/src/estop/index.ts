@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { useDigitalInputs, useMachineConfig } from "@glowbuzzer/store"
+import { useDigitalInputs, useMachineConfig } from ".."
 
 export function useEstop(): boolean {
     const config = useMachineConfig()

@@ -1,3 +1,5 @@
+import { KinematicsConfigurationConfig } from "@glowbuzzer/store"
+
 export type DhMatrix = {
     alpha: number
     beta: number
@@ -48,14 +50,14 @@ export const staubli_tx40_dh: DhMatrix[] = [
     },
     {
         alpha: 0,
-        beta: 0,
+        beta: -90,
         theta: -90,
         a: 225,
         d: 0
     },
     {
         alpha: 90,
-        beta: 0,
+        beta: 90,
         theta: 90,
         a: 0,
         d: 35
@@ -82,6 +84,39 @@ export const staubli_tx40_dh: DhMatrix[] = [
         d: 65
     }
 ]
+
+// generic kinematics configuration for staubli tx40, just add name and frameIndex
+export const staubli_tx40_kin_chain_params = {
+    numRows: 6,
+    numCols: 5,
+    // reuse DH params above
+    data: staubli_tx40_dh.map(({ alpha, beta, theta, a, d }) => [alpha, beta, theta, a, d]).flat()
+}
+
+export const staubli_tx40_kinematics_configuration: KinematicsConfigurationConfig = {
+    participatingJoints: [0, 1, 2, 3, 4, 5],
+    participatingJointsCount: 6,
+    kinematicsConfigurationType: 1,
+    supportedConfigurationBits: 7,
+    extentsX: [-1000, 1000],
+    extentsY: [-1000, 1000],
+    extentsZ: [0, 840],
+    linearLimits: [
+        {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        }
+    ],
+    angularLimits: [
+        {
+            vmax: 1,
+            amax: 10,
+            jmax: 100
+        }
+    ],
+    kinChainParams: staubli_tx40_kin_chain_params
+}
 
 /* ts2_40
 

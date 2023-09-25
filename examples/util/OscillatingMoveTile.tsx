@@ -2,11 +2,17 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityBuilder, usePointsList, useSoloActivity } from "@glowbuzzer/store"
+import {
+    ActivityBuilder,
+    MachineState,
+    useMachine,
+    usePointsList,
+    useSoloActivity
+} from "@glowbuzzer/store"
 import { StyledTileContent } from "../../libs/controls/src/util/styles/StyledTileContent"
 import { Button, Input, Select, Space } from "antd"
 import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export const OscillatingMoveTile = () => {
     const points = usePointsList()
@@ -15,8 +21,17 @@ export const OscillatingMoveTile = () => {
     const [iterations, setIterations] = useState(1)
     const [moveType, setMoveType] = useState(0)
     const [running, setRunning] = useState(false)
+    const { currentState } = useMachine()
 
     const api = useSoloActivity(0)
+
+    useEffect(() => {
+        // ensure we cancel the move if we drop out of operation enabled
+        if (currentState !== MachineState.OPERATION_ENABLED) {
+            setRunning(false)
+            api.cancel()
+        }
+    }, [currentState])
 
     const point_options = points.map((p, index) => ({ key: index, label: p.name, value: index }))
     const move_options = [

@@ -2,14 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, useMemo } from "react"
+import React, { StrictMode } from "react"
 
-import { Euler, Vector3 } from "three"
+import { Euler } from "three"
 import { createRoot } from "react-dom/client"
 import { DemoMoveTile, HIGH_BLOCK_Z } from "./DemoMoveTile"
 import {
-    BasicRobot,
     CartesianDroTileDefinition,
+    CartesianJogTileDefinition,
     ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
@@ -17,70 +17,21 @@ import {
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     GlowbuzzerApp,
-    CartesianJogTileDefinition,
-    JointJogTileDefinition,
     JointDroTileDefinition,
-    RobotKinematicsChainElement,
+    JointJogTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition
 } from "@glowbuzzer/controls"
 
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
-import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
-import { Environment, useGLTF } from "@react-three/drei"
 
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { TriadHelper } from "@glowbuzzer/controls"
 import { config } from "./config"
 import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal"
 import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
-
-const DEG90 = Math.PI / 2
-const DEG180 = Math.PI
-
-const IGUS_KIN_CHAIN: RobotKinematicsChainElement[] = [
-    { moveable: true },
-    { rotateX: -DEG90, jointAngleAdjustment: -DEG90, moveable: true },
-    { rotateX: -DEG90, translateX: 0.35 },
-    { rotateX: DEG90, translateZ: 0.0119, moveable: true },
-    { rotateX: DEG90, translateX: 0.27 },
-    { rotateX: -DEG90, translateZ: -0.0165, moveable: true },
-    { rotateX: -DEG90, rotateY: DEG90, translateX: 0.17 },
-    { jointAngleAdjustment: -DEG180, moveable: true },
-    {
-        /* tool will be placed here */
-    }
-]
-
-const DEFAULT_POSITION = new Vector3(0, 0, 275)
-
-const IgusRobot = () => {
-    const { frameIndex } = useKinematicsConfiguration(0)
-    const { translation, rotation } = useFrame(frameIndex, false)
-
-    const jointPositions = useJointPositions(0)
-
-    // load the parts of the robot (links)
-    const parts = useMemo(
-        () => useGLTF([0, 1, 2, 3, 4, 5].map(j => `/assets/igus/L${j}.glb`)).map(m => m.scene),
-        []
-    )
-
-    return (
-        <BasicRobot
-            kinematicsChain={IGUS_KIN_CHAIN}
-            parts={parts}
-            jointPositions={jointPositions}
-            translation={translation || DEFAULT_POSITION}
-            rotation={rotation}
-            scale={1000}
-        >
-            <TriadHelper size={200} />
-        </BasicRobot>
-    )
-}
+import { IgusRobot } from "./IgusRobot"
 
 const Custom3dSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {

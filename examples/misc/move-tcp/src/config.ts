@@ -8,7 +8,7 @@ import { staubli_tx40_kinematics_configuration } from "../../../util/kinematics/
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "STAUBLI TX40",
+            name: "STAUBLI TX40 DRAGGABLE",
             busCycleTime: 4
         }
     ],

@@ -225,7 +225,7 @@ export const useKinematicsCartesianPosition = (kinematicsConfigurationIndex: num
 export function useJointPositions(kinematicsConfigurationIndex: number) {
     const rawJointPositions = useRawJointPositions()
     const { participatingJoints } = useKinematicsConfiguration(kinematicsConfigurationIndex)
-    return participatingJoints.map(j => rawJointPositions[j])
+    return participatingJoints.map(j => rawJointPositions[j] || 0)
 }
 
 /**

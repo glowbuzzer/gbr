@@ -3,6 +3,7 @@
  */
 
 import { GlowbuzzerConfig } from "@glowbuzzer/store"
+import { staubli_tx40_kin_chain_params } from "../../../util/kinematics/KinChainParams"
 
 const JOINT_SCALE = 1000000
 
@@ -245,14 +246,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 100
                 }
             ],
-            kinChainParams: {
-                numRows: 6,
-                numCols: 5,
-                data: [
-                    -90, 0, 0, 0, 0, 0, 0, -90, 225, 0, 90, 0, 90, 0, 35, -90, 0, 0, 0, 225, 90, 0,
-                    0, 0, 0, 0, 0, 0, 0, 65
-                ]
-            }
+            kinChainParams: staubli_tx40_kin_chain_params
         }
     ],
     fieldbus: [

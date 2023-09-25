@@ -139,7 +139,7 @@ export function useMachineState(): MachineState {
 }
 
 export function useMachineConfig(): MachineConfig {
-    return useSelector<RootState, MachineConfig>(state => state.config.current.machine?.[0])
+    return useSelector<RootState, MachineConfig>(state => state.config.current.machine?.[0] || {})
 }
 
 /**

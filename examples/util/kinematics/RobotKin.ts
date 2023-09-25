@@ -1,13 +1,11 @@
+// noinspection DuplicatedCode
+
 import { Cos, List, Power, Sin, Sqrt } from "./mathematica"
-import { MathUtils, Matrix3, Matrix4, Quaternion, Vector3 } from "three"
+import { Matrix3, Matrix4, Quaternion, Vector3 } from "three"
 import { generate_configs, toQuat } from "./kinematics_utils"
 import * as math from "mathjs"
-import { staubli_tx40_dh, DhMatrix } from "./KinChainParams"
-
-export enum Units {
-    DEGREES,
-    RADIANS
-}
+import { DhMatrix } from "./KinChainParams"
+import { degToRad } from "three/src/math/MathUtils"
 
 /*
 function toEuler(R: number[][]): [number, number, number] {
@@ -36,13 +34,15 @@ export function fk_tx40(
     position: [number, number, number]
     matrix: number[][]
 } {
-    let [theta1, theta2, theta3, theta4, theta5, theta6] = thetas
+    const [theta1, theta2, theta3, theta4, theta5, theta6] = thetas.map(
+        (t, i) => t + degToRad(dh[i].beta)
+    )
 
     const sing_theta2 = theta2 - Math.PI / 2
     const sing_theta3 = theta3 + Math.PI / 2
 
-    theta2 -= Math.PI / 2
-    theta3 += Math.PI / 2
+    // theta2 -= Math.PI / 2
+    // theta3 += Math.PI / 2
 
     // console.log("SING THETA2", sing_theta2)
     //
@@ -52,13 +52,13 @@ export function fk_tx40(
     // console.log("FOREARM INTERNAL", forearm_internal)
 
     if (Math.abs(sing_theta3) < 0.01) {
-        console.log("FOREARM BOUNDARY SING", sing_theta3)
+        // console.log("FOREARM BOUNDARY SING", sing_theta3)
     }
     if (Math.abs(forearm_internal) < 0.01) {
-        console.log("FOREARM INTERNAL SING", forearm_internal)
+        // console.log("FOREARM INTERNAL SING", forearm_internal)
     }
     if (Math.abs(theta5) < 0.01) {
-        console.log("WRIST SING", theta5)
+        // console.log("WRIST SING", theta5)
     }
 
     // const d1 = 225
@@ -79,17 +79,17 @@ export function fk_tx40(
 
     const dh_a1 = dh[0].a
     const dh_a2 = dh[1].a
-    const dh_d1 = dh[0].d
+    // const dh_d1 = dh[0].d
     const dh_d3 = dh[2].d
     const dh_d4 = dh[3].d
     const dh_d6 = dh[5].d
 
-    console.log("a1", dh_a1)
-    console.log("a2", dh_a2)
-    console.log("d1", dh_d1)
-    console.log("d3", dh_d3)
-    console.log("d4", dh_d4)
-    console.log("d6", dh_d6)
+    // console.log("a1", dh_a1)
+    // console.log("a2", dh_a2)
+    // console.log("d1", dh_d1)
+    // console.log("d3", dh_d3)
+    // console.log("d4", dh_d4)
+    // console.log("d6", dh_d6)
 
     const delta = dh_d4 * Sin(theta2 + theta3) + dh_a2 * Cos(theta2)
 
@@ -274,46 +274,35 @@ export function fk_tx40(
     }
 }
 
-export function matprint(title, mat: number[][]) {
-    const shape = [mat.length, mat[0].length]
-
-    function col(mat, i) {
-        return mat.map(row => row[i])
-    }
-
-    const colMaxes: number[] = []
-    for (let i = 0; i < shape[1]; i++) {
-        colMaxes.push(
-            Math.max.apply(
-                null,
-                col(mat, i).map(n => (n ? n.toFixed(3).length : 10))
-            )
-        )
-    }
-
-    for (let n = 0; n < mat.length; n++) {
-        const row = mat[n]
-        const args = row
-            .map(
-                (val, j) =>
-                    new Array(colMaxes[j] - val.toFixed(3).length + 1).join(" ") +
-                    val.toFixed(3) +
-                    "  "
-            )
-            .join("")
-    }
-}
-
-function atan2(a, b) {
-    // if (a == -0) {
-    //     a = 0;
-    // }
-    // if (b == -0) {
-    //     b = 0;
-    // }
-    // log.debug("atan: ",a,b);
-    return Math.atan2(a, b)
-}
+// export function matprint(title, mat: number[][]) {
+//     const shape = [mat.length, mat[0].length]
+//
+//     function col(mat, i) {
+//         return mat.map(row => row[i])
+//     }
+//
+//     const colMaxes: number[] = []
+//     for (let i = 0; i < shape[1]; i++) {
+//         colMaxes.push(
+//             Math.max.apply(
+//                 null,
+//                 col(mat, i).map(n => (n ? n.toFixed(3).length : 10))
+//             )
+//         )
+//     }
+//
+//     for (let n = 0; n < mat.length; n++) {
+//         const row = mat[n]
+//         const args = row
+//             .map(
+//                 (val, j) =>
+//                     new Array(colMaxes[j] - val.toFixed(3).length + 1).join(" ") +
+//                     val.toFixed(3) +
+//                     "  "
+//             )
+//             .join("")
+//     }
+// }
 
 // angles must be in RADs!
 export function ik_tx40(
@@ -322,7 +311,7 @@ export function ik_tx40(
     dh: DhMatrix[],
     configuration: number
 ): { all: number[][]; matching: number[] } {
-    const [x, y, z] = position.map(p => p / 1)
+    const [x, y, z] = position
     const [i, j, k, w] = orientation
 
     // console.log("RUN IK", x, y, z, w, i, j, k)
@@ -331,7 +320,7 @@ export function ik_tx40(
 
     const dh_a1 = dh[0].a
     const dh_a2 = dh[1].a
-    const dh_d1 = dh[0].d
+    // const dh_d1 = dh[0].d
     const dh_d3 = dh[2].d
     const dh_d4 = dh[3].d
     const dh_d6 = dh[5].d
@@ -365,7 +354,7 @@ export function ik_tx40(
 
     const { x: wx, y: wy, z: wz } = wcp
 
-    function gen_rot_matrix(theta, alpha_deg) {
+    function gen_rot_matrix(theta: number, alpha_deg: number) {
         const alpha = (alpha_deg * Math.PI) / 180
         return [
             [Cos(theta), -Sin(theta) * Cos(alpha), Sin(theta) * Sin(alpha)],
@@ -374,7 +363,7 @@ export function ik_tx40(
         ]
     }
 
-    function dot_all(matrices) {
+    function dot_all(matrices: any) {
         let r: any = undefined
         for (const m of matrices) {
             if (!r) {
@@ -396,13 +385,13 @@ export function ik_tx40(
     // const R06 = math.subset(T06, math.index([0, 1, 2], [0, 1, 2])) as number[][];
 
     const theta1 = () => {
-        const theta1a = atan2(wy, wx)
+        const theta1a = Math.atan2(wy, wx)
         const sqrt = wx * wx + wy * wy - dh_d3 * dh_d3
         const theta1c = Math.sqrt(Math.max(sqrt, 0))
-        return [theta1a - atan2(dh_d3, +theta1c), theta1a - atan2(dh_d3, -theta1c)]
+        return [theta1a - Math.atan2(dh_d3, +theta1c), theta1a - Math.atan2(dh_d3, -theta1c)]
     }
 
-    const theta2 = c => {
+    const theta2 = (c: number[]) => {
         const [theta1] = c
         const t1 =
             (Power(wx * Cos(theta1) + wy * Sin(theta1) - dh_a1, 2) +
@@ -410,59 +399,67 @@ export function ik_tx40(
                 Power(dh_d4, 2) +
                 Power(wz, 2)) /
             (2 * dh_a2)
-        const theta2a = atan2(wx * Cos(theta1) + wy * Sin(theta1) - dh_a1, wz)
+        const theta2a = Math.atan2(wx * Cos(theta1) + wy * Sin(theta1) - dh_a1, wz)
         const sqrt = Power(wx * Cos(theta1) + wy * Sin(theta1) - dh_a1, 2) + wz * wz - t1 * t1
         const theta2c = Math.sqrt(Math.max(sqrt, 0))
-        return [theta2a - atan2(t1, -theta2c), theta2a - atan2(t1, +theta2c)]
+        return [theta2a - Math.atan2(t1, -theta2c), theta2a - Math.atan2(t1, +theta2c)]
     }
 
-    const theta3 = c => {
+    const theta3 = (c: number[]) => {
         const [theta1, theta2] = c
         const atan_y = wx * Cos(theta1) + wy * Sin(theta1) - dh_a1 - dh_a2 * Cos(theta2)
         const atan_x = wz + dh_a2 * Sin(theta2)
-        return [atan2(atan_y, atan_x) - theta2]
+        return [Math.atan2(atan_y, atan_x) - theta2]
     }
 
-    const theta5 = c => {
+    const theta5 = (c: number[]) => {
         const R03 = dot_all([0, 1, 2].map(m => gen_rot_matrix(c[m], dhAlpha[m])))
         const R03T = math.transpose(R03) as number[][]
         const R36 = math.multiply(R03T, R06)
         const theta5a = R36[2][2]
         const theta5b = Sqrt(Power(R36[2][0], 2) + Power(R36[2][1], 2))
 
-        return [atan2(+theta5b, theta5a), atan2(-theta5b, theta5a)]
+        return [Math.atan2(+theta5b, theta5a), Math.atan2(-theta5b, theta5a)]
     }
 
-    const theta4 = c => {
+    const theta4 = (c: number[]) => {
         const [, , , theta5] = c
         const R03 = dot_all([0, 1, 2].map(m => gen_rot_matrix(c[m], dhAlpha[m])))
         const R03T = math.transpose(R03) as number[][]
         const R36 = math.multiply(R03T, R06)
 
-        return [atan2(R36[0][2] / Sin(theta5), -R36[1][2] / Sin(theta5)) - Math.PI / 2]
+        return [Math.atan2(R36[0][2] / Sin(theta5), -R36[1][2] / Sin(theta5)) - Math.PI / 2]
     }
 
-    const theta6 = c => {
+    const theta6 = (c: number[]) => {
         const [, , , theta5] = c
         const R03 = dot_all([0, 1, 2].map(m => gen_rot_matrix(c[m], dhAlpha[m])))
         const R03T = math.transpose(R03) as number[][]
         const R36 = math.multiply(R03T, R06) as number[][]
-        return [atan2(R36[2][1] / Sin(theta5), -R36[2][0] / Sin(theta5))]
+        return [Math.atan2(R36[2][1] / Sin(theta5), -R36[2][0] / Sin(theta5))]
     }
 
     const sequence = [theta1, theta2, theta3, theta5, theta4, theta6]
     const result = Array.from(generate_configs(0, [], sequence))
 
-    // hack to fix up resulting matrix
-    result.forEach(l => {
-        // fix up based on home angles in DH matrix
-        l[1] += Math.PI / 2 // TODO: use DH matrix
-        l[2] -= Math.PI / 2
-        // swap theta4 and theta5
-        const tmp = l[3]
-        l[3] = l[4]
-        l[4] = tmp
+    const all = result.map(r => {
+        const tmp = r[3]
+        r[3] = r[4]
+        r[4] = tmp
+        // add joint corrections
+        return r.map((v, i) => v - degToRad(dh[i].beta))
     })
+
+    // // hack to fix up resulting matrix
+    // result.forEach(l => {
+    //     // fix up based on home angles in DH matrix
+    //     l[1] += Math.PI / 2 // TODO: use DH matrix
+    //     l[2] -= Math.PI / 2
+    //     // swap theta4 and theta5
+    //     const tmp = l[3]
+    //     l[3] = l[4]
+    //     l[4] = tmp
+    // })
 
     // const rdeg = result.map(r => r.map(c => c * 180 / Math.PI));
     // matprint("Result (degs)", rdeg);
@@ -476,25 +473,27 @@ export function ik_tx40(
     100=1
 
      */
-    return { all: result, matching: result[configuration] }
+    return { all, matching: all[configuration] }
 }
 
 export function find_configuration_tx40(thetas: number[], dh: DhMatrix[]): number {
-    let [theta1, theta2, theta3, theta4, theta5, theta6] = thetas
+    const [_theta1, theta2, theta3, _theta4, theta5, _theta6] = thetas.map(
+        (t, i) => t + degToRad(dh[i].beta)
+    )
 
-    theta2 -= Math.PI / 2
-    theta3 += Math.PI / 2
+    // theta2 -= Math.PI / 2
+    // theta3 += Math.PI / 2
 
-    const dh_a1 = dh[0].a
+    // const dh_a1 = dh[0].a
     const dh_a2 = dh[1].a
-    const dh_d1 = dh[0].d
-    const dh_d3 = dh[2].d
+    // const dh_d1 = dh[0].d
+    // const dh_d3 = dh[2].d
     const dh_d4 = dh[3].d
-    const dh_d6 = dh[5].d
+    // const dh_d6 = dh[5].d
 
     const delta = dh_d4 * Math.sin(theta2 + theta3) + dh_a2 * Math.cos(theta2)
 
-    var configurationNumber = 0
+    let configurationNumber = 0
 
     if (delta < 0) {
         // BIT_SET(conf, 2);

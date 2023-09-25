@@ -2,7 +2,6 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-export * from "./BasicRobot"
 export * from "./CylindricalTool"
 export * from "./DefaultLighting"
 export * from "./DefaultPerspectiveCamera"
@@ -18,4 +17,3 @@ export * from "./ThreeDimensionalSceneTileDefinition"
 export * from "./Trace"
 export * from "./TrackPosition"
 export * from "./TriadHelper"
-export * from "./robots"

@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, {StrictMode, Suspense, useEffect, useMemo, useRef} from "react"
+import React, { StrictMode, Suspense, useEffect, useMemo, useRef } from "react";
 
 /*
 offset in scene / groups - frames
@@ -11,57 +11,49 @@ trig  calc
 120 magic numb
 
  */
-
 import {
-    BasicRobot,
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     ConnectTileDefinition,
-    CylindricalTool,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
     GlowbuzzerApp,
-    GlowbuzzerTileDefinitionList,
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
-    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
-} from "@glowbuzzer/controls"
+} from "@glowbuzzer/controls";
 
-import {useGLTF, Environment, Cylinder} from "@react-three/drei"
+import { useGLTF } from "@react-three/drei";
 
-import {OscillatingMoveTileDefinition} from "../../../util/OscillatingMoveTile"
+import { OscillatingMoveTileDefinition } from "../../../util/OscillatingMoveTile";
 
 import {
+    ActivityApi,
     GCodeContextProvider,
     useFrame,
     useJointPositions,
-    useKinematicsConfiguration,
-    ActivityApi
-} from "@glowbuzzer/store"
-import {createRoot} from "react-dom/client"
+    useKinematicsConfiguration
+} from "@glowbuzzer/store";
+import { createRoot } from "react-dom/client";
 
-import {ExampleAppMenu} from "../../../util/ExampleAppMenu"
-import "antd/dist/reset.css"
-import "dseg/css/dseg.css"
-import "flexlayout-react/style/light.css"
-import * as THREE from "three"
-import {
-    AngledLinearDeltaFk,
-    AngledLinearDeltaIk
-} from "../../../util/kinematics/AngledLinearDeltaKin"
-import {DLE_DR_0001} from "../../../util/kinematics/KinChainParams"
-import {EffectorPoints} from "./effectorPoints"
-import {config} from "./config"
-import {PlaneShinyMetal} from "../../../util/PlaneShinyMetal"
-import {DefaultEnvironment} from "../../../util/DefaultEnvironment"
+import { ExampleAppMenu } from "../../../util/ExampleAppMenu";
+import "antd/dist/reset.css";
+import "dseg/css/dseg.css";
+import "flexlayout-react/style/light.css";
+import * as THREE from "three";
+import { AngledLinearDeltaFk } from "../../../util/kinematics/AngledLinearDeltaKin";
+import { DLE_DR_0001 } from "../../../util/kinematics/KinChainParams";
+import { EffectorPoints } from "./effectorPoints";
+import { config } from "./config";
+import { PlaneShinyMetal } from "../../../util/PlaneShinyMetal";
+import { DefaultEnvironment } from "../../../util/DefaultEnvironment";
 
 const AngledLinearDeltaRobot = ({children = null}) => {
     const jointPositions = useJointPositions(0)

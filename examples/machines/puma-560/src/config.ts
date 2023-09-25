@@ -199,7 +199,7 @@ export const config: GlowbuzzerConfig = {
             supportedConfigurationBits: 7,
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
-            extentsZ: [0, 840],
+            extentsZ: [-1000, 1000],
             linearLimits: [
                 {
                     vmax: 200,

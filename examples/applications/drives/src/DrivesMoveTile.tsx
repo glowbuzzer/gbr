@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from "react"
 import { Button, Input, Space, Tabs, TabsProps } from "antd"
-import { useJointConfigurationList, useSoloActivity } from "@glowbuzzer/store"
+import { useJointConfigurationList, useMachine, useSoloActivity } from "@glowbuzzer/store"
 
 enum Activity {
     NONE,
@@ -20,6 +20,14 @@ export const DrivesMoveTile = () => {
 
     const joints = useJointConfigurationList()
     const api = useSoloActivity(0)
+    const { currentState } = useMachine()
+
+    useEffect(() => {
+        if (currentState !== "OPERATION_ENABLED") {
+            api.cancel()
+            setActivity(Activity.NONE)
+        }
+    }, [currentState])
 
     useEffect(() => {
         if (joints.length !== pos.length) {
@@ -33,10 +41,12 @@ export const DrivesMoveTile = () => {
     useEffect(() => {
         switch (activity) {
             case Activity.OSCILLATING_MOVE:
+                console.log("Starting oscillating move")
                 api.moveJoints(pos)
                     .promise()
                     .then(move => {
                         if (move.completed) {
+                            console.log("Returning oscillating move")
                             return api.moveJoints(pos.map(() => 0)).promise()
                         }
                     })

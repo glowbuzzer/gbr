@@ -2,40 +2,24 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { BasicRobot, RobotKinematicsChainElement, TriadHelper } from "@glowbuzzer/controls"
+import { TriadHelper } from "@glowbuzzer/controls"
 import { Camera, Euler, Vector3 } from "three"
-import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
+import { useJointPositions } from "@glowbuzzer/store"
 import { useAppState } from "./store"
 import React, { useEffect, useMemo, useRef } from "react"
 import { PerspectiveCamera, useGLTF } from "@react-three/drei"
 import { Kamdo } from "./Kamdo"
+import { StaubliRobot } from "../../../util/StaubliRobot"
 
-const DEG90 = Math.PI / 2
-const TX40_KIN_CHAIN: RobotKinematicsChainElement[] = [
-    { moveable: true },
-    { rotateX: -DEG90, moveable: true, jointAngleAdjustment: -DEG90 },
-    { rotateX: 0, translateX: 0.225, jointAngleAdjustment: DEG90, moveable: true },
-    { rotateX: DEG90, translateZ: 0.035, moveable: true },
-    { rotateX: -DEG90, translateZ: 0.225, moveable: true },
-    { rotateX: DEG90, moveable: true },
-    { translateZ: 0.065 }
-]
 const BASE_SCALE = 400
 const SCALE = new Vector3(BASE_SCALE, BASE_SCALE, BASE_SCALE)
 
 export const MoveableStaubliRobot = () => {
-    const { frameIndex } = useKinematicsConfiguration(0)
-    const { translation, rotation } = useFrame(frameIndex, false)
     const { tracking } = useAppState()
 
     const jointPositions = useJointPositions(0)
 
     // load the parts of the robot (links)
-    const parts = useMemo(
-        () => useGLTF([0, 1, 2, 3, 4, 5, 6].map(j => `/assets/tx40/L${j}.glb`)).map(m => m.scene),
-        []
-    )
-
     const baseRef = useRef()
     const trackingCamera = useRef<Camera>()
 
@@ -64,16 +48,8 @@ export const MoveableStaubliRobot = () => {
                     rotation={[0, Math.PI, Math.PI / 2]}
                     object={baseModel.scene}
                 />
-                <BasicRobot
-                    kinematicsChain={TX40_KIN_CHAIN}
-                    parts={parts}
-                    jointPositions={jointPositions}
-                    translation={translation}
-                    rotation={rotation}
-                    scale={1000}
-                >
+                <StaubliRobot kinematicsConfigurationIndex={0}>
                     {tracking || <TriadHelper size={200} />}
-
                     <PerspectiveCamera
                         ref={trackingCamera}
                         near={1}
@@ -82,7 +58,7 @@ export const MoveableStaubliRobot = () => {
                         position={[0, 0, 0]}
                         rotation={[Math.PI, 0, 0]}
                     />
-                </BasicRobot>
+                </StaubliRobot>
             </group>
             <Kamdo position={[-500, 2000, 0]} />
             <Kamdo position={[500, 2000, 0]} />
