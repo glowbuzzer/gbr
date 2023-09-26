@@ -169,7 +169,7 @@ export const config: GlowbuzzerConfig = {
             supportedConfigurationBits: 7,
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
-            extentsZ: [0, 840],
+            extentsZ: [0, 3000],
             linearLimits: [
                 {
                     vmax: 200,
@@ -188,8 +188,17 @@ export const config: GlowbuzzerConfig = {
                 numRows: 6,
                 numCols: 5,
                 data: [
-                    -90, 0, 0, 0, 0, 0, 0, -90, 725, 0, 90, 0, 90, 0, 0, -90, 0, 0, 0, 675, 90, 0,
-                    0, 0, 0, 0, 0, 0, 0, 358
+                    -90, 0, 0, 0, 0,
+
+                    0, 0, -90, 725, 0,
+
+                    90, 0, 90, 0, 0,
+
+                    -90, 0, 0, 0, 675,
+
+                    90, 0, 0, 0, 0,
+
+                    0, 0, 0, 0, 358
                 ]
             }
         }
