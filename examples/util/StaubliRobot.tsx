@@ -1,9 +1,11 @@
 import React, { ReactNode, useMemo } from "react"
-import { CylindricalTool } from "@glowbuzzer/controls"
 import { Quaternion, Vector3 } from "three"
-import { useFrame, useJointPositions, useKinematicsConfiguration } from "@glowbuzzer/store"
+import { useFrame, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { useGLTF } from "@react-three/drei"
-import { degToRad } from "three/src/math/MathUtils"
+import { KinematicsGroup } from "./kinematics/KinematicsGroup"
+import { KinChainProvider } from "./kinematics/KinChainProvider"
+import { TriadHelper } from "@glowbuzzer/controls"
+import { LayoutObjectGrid } from "./LayoutObjectGrid"
 
 const DEG90 = Math.PI / 2
 
@@ -17,7 +19,6 @@ export const StaubliRobot = ({
     children?: ReactNode
 }) => {
     const kinematicsConfiguration = useKinematicsConfiguration(kinematicsConfigurationIndex)
-    const currentJointPositions = useJointPositions(kinematicsConfigurationIndex)
     const { frameIndex } = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const { translation, rotation } = useFrame(frameIndex, false)
 
@@ -26,15 +27,8 @@ export const StaubliRobot = ({
         throw new Error("Invalid kin chain params for Staubli robot!")
     }
 
-    const jointOffsets = [0, 1, 2, 3, 4, 5].map(i => degToRad(dh.data[i * 5 + 1]))
-
-    // joint positions adjusted with joint offsets from dh matrix
-    const [j0, j1, j2, j3, j4, j5] = (jointPositions || currentJointPositions).map(
-        (v, i) => v + jointOffsets[i]
-    )
-
     // load the parts of the robot (links)
-    const [p0, p1, p2, p3, p4, p5, p6] = useMemo(
+    const [base, p0, p1, p2, p3, p4, p5] = useMemo(
         () =>
             useGLTF(
                 // @ts-ignore
@@ -55,44 +49,68 @@ export const StaubliRobot = ({
      * The joint rotations are applied to the inner group at each level (to the Z axis).
      */
     return (
-        <group position={position} quaternion={quaternion} scale={1000}>
-            <primitive object={p0} />
-            <group rotation={[0, 0, j0]}>
-                <primitive object={p1} />
-                <group rotation={[-DEG90, 0, 0]}>
-                    <group rotation={[0, 0, j1]}>
-                        <primitive object={p2} />
-                        <group position={[0.225, 0, 0]}>
-                            <group rotation={[0, 0, j2]}>
-                                <primitive object={p3} />
-                                <group position={[0, 0, 0.035]} rotation={[DEG90, 0, 0]}>
-                                    <group rotation={[0, 0, j3]}>
-                                        <primitive object={p4} />
-                                        <group position={[0, 0, 0.225]} rotation={[-DEG90, 0, 0]}>
-                                            <group rotation={[0, 0, j4]}>
-                                                <primitive object={p5} />
-                                                <group rotation={[DEG90, 0, 0]}>
-                                                    <group rotation={[0, 0, j5]}>
-                                                        <primitive object={p6} />
-                                                        <group
-                                                            position={[0, 0, 0.065]}
-                                                            scale={1 / 1000}
-                                                        >
-                                                            {children || (
-                                                                <CylindricalTool toolIndex={0} />
-                                                            )}
-                                                        </group>
-                                                    </group>
-                                                </group>
-                                            </group>
+        <KinChainProvider kinematicsConfigurationIndex={kinematicsConfigurationIndex}>
+            <LayoutObjectGrid objects={[base, p0, p1, p2, p3, p4, p5]} />
+
+            <group position={position} quaternion={quaternion} scale={1000}>
+                <primitive object={base} />
+                <KinematicsGroup jointIndex={0} part={p0}>
+                    <KinematicsGroup jointIndex={1} part={p1}>
+                        <KinematicsGroup jointIndex={2} part={p2}>
+                            <KinematicsGroup jointIndex={3} part={p3}>
+                                <KinematicsGroup jointIndex={4} part={p4}>
+                                    <KinematicsGroup jointIndex={5} part={p5}>
+                                        <group scale={1 / 1000}>
+                                            <TriadHelper size={200} />
                                         </group>
-                                    </group>
-                                </group>
-                            </group>
-                        </group>
-                    </group>
-                </group>
+                                    </KinematicsGroup>
+                                </KinematicsGroup>
+                            </KinematicsGroup>
+                        </KinematicsGroup>
+                    </KinematicsGroup>
+                </KinematicsGroup>
             </group>
-        </group>
+        </KinChainProvider>
     )
+    // return (
+    //     <group position={position} quaternion={quaternion} scale={1000}>
+    //         <primitive object={p0} />
+    //         <group rotation={[0, 0, j0]}>
+    //             <primitive object={p1} />
+    //             <group rotation={[-DEG90, 0, 0]}>
+    //                 <group rotation={[0, 0, j1]}>
+    //                     <primitive object={p2} />
+    //                     <group position={[0.225, 0, 0]}>
+    //                         <group rotation={[0, 0, j2]}>
+    //                             <primitive object={p3} />
+    //                             <group position={[0, 0, 0.035]} rotation={[DEG90, 0, 0]}>
+    //                                 <group rotation={[0, 0, j3]}>
+    //                                     <primitive object={p4} />
+    //                                     <group position={[0, 0, 0.225]} rotation={[-DEG90, 0, 0]}>
+    //                                         <group rotation={[0, 0, j4]}>
+    //                                             <primitive object={p5} />
+    //                                             <group rotation={[DEG90, 0, 0]}>
+    //                                                 <group rotation={[0, 0, j5]}>
+    //                                                     <primitive object={p6} />
+    //                                                     <group
+    //                                                         position={[0, 0, 0.065]}
+    //                                                         scale={1 / 1000}
+    //                                                     >
+    //                                                         {children || (
+    //                                                             <CylindricalTool toolIndex={0} />
+    //                                                         )}
+    //                                                     </group>
+    //                                                 </group>
+    //                                             </group>
+    //                                         </group>
+    //                                     </group>
+    //                                 </group>
+    //                             </group>
+    //                         </group>
+    //                     </group>
+    //                 </group>
+    //             </group>
+    //         </group>
+    //     </group>
+    // )
 }

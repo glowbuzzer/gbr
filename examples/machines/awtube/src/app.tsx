@@ -37,19 +37,25 @@ import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
 import { useGLTF } from "@react-three/drei"
 import { AwTubeRobot } from "./AwTubeRobot"
 import { LinkLengthTile } from "./LinkLengthTile"
+import { AwTubeRobot2 } from "./AwTubeRobot2"
+import { AwTubeRobot3 } from "./AwTubeRobot3"
+import { AwTubeRobot4 } from "./AwTubeRobot4"
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <AwTubeRobot>
+                    <AwTubeRobot4>
                         <TriadHelper size={400} />
                         <mesh>
                             <sphereBufferGeometry args={[10, 10, 10]} />
                             <meshStandardMaterial color="red" />
                         </mesh>
-                    </AwTubeRobot>
+                    </AwTubeRobot4>
+                    <group position={[1000, 0, 0]}>
+                        <AwTubeRobot>{null}</AwTubeRobot>
+                    </group>
                 </Suspense>
 
                 <PlaneShinyMetal />

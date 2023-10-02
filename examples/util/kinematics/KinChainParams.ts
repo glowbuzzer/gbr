@@ -50,14 +50,14 @@ export const staubli_tx40_dh: DhMatrix[] = [
     },
     {
         alpha: 0,
-        beta: -90,
+        beta: 0,
         theta: -90,
         a: 225,
         d: 0
     },
     {
         alpha: 90,
-        beta: 90,
+        beta: 0,
         theta: 90,
         a: 0,
         d: 35

@@ -107,9 +107,7 @@ const App = () => {
 
 const root = createRoot(document.getElementById("root"))
 root.render(
-    <StrictMode>
-        <GlowbuzzerApp appName="staubli" configuration={config}>
-            <App />
-        </GlowbuzzerApp>
-    </StrictMode>
+    <GlowbuzzerApp appName="staubli" configuration={config}>
+        <App />
+    </GlowbuzzerApp>
 )
