@@ -3,7 +3,7 @@
  */
 
 import React from "react"
-import { useEtherCATMasterStatus } from "@glowbuzzer/store"
+import { FaultCode, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
 import { Table } from "antd"
 
 enum CIA_STATE {
@@ -113,6 +113,21 @@ function convert_values(key: string, value: number | string | boolean, possibleE
         }
     }
 
+    //slave errors look like: "Time:1696018381.825 SDO slave:4 index:9999.00 error:06020000 The object does not exist in the object directory"
+    //search for "Time:" and replace the timestamp with a human readable date/time
+    if (typeof value === "string" && value.includes("Time:")) {
+        const timestampRegex = /Time:(\d+\.\d+)/
+        const match = value.match(timestampRegex)
+
+        if (match) {
+            const timestamp = parseFloat(match[1])
+            var newDate = new Date()
+            newDate.setTime(timestamp * 1000)
+            const dateString = newDate.toUTCString()
+            value = value.replace(timestampRegex, dateString)
+        }
+    }
+
     if (typeof value === "boolean") {
         if (value == false) {
             return "false"
@@ -163,16 +178,73 @@ const columns = [
 ]
 
 //empty ->flase
+function isBitSet(number: number, bitPosition: number): boolean {
+    const mask = 1 << bitPosition
+    return (number & mask) !== 0
+}
 
 export const EmStatTile = () => {
     const emstat = useEtherCATMasterStatus()
+    const machine = useMachine()
+
+    // if (isBitSet(machine.statusWord, 12)) {
+    //     return (
+    //         <div>
+    //             <h1>Machine is in fault</h1>
+    //         </div>
+    //     )
+    // }
+
     const tableRef = React.useRef(null)
     const tableData = to_table_data(emstat)
+
+    const activeFaultArray = Object.values(FaultCode)
+        .filter(k => typeof k === "number")
+        .filter((k: number) => machine.activeFault & k)
+        .map(k => ({
+            code: k,
+            description: FaultCode[k].substring("FAULT_CAUSE_".length)
+        }))
+
+    const activeFaultString = activeFaultArray.map(item => `${item.description}`).join(", ")
+
+    const historicFaultArray = Object.values(FaultCode)
+        .filter(k => typeof k === "number")
+        .filter((k: number) => machine.faultHistory & k)
+        .map(k => ({
+            code: k,
+            description: FaultCode[k].substring("FAULT_CAUSE_".length)
+        }))
+
+    const historicFaultString = historicFaultArray.map(item => `${item.description}`).join(", ")
+
+    const extraData = [
+        {
+            key: "/Homing required",
+            property: "Homing required",
+            value: "true"
+        },
+        {
+            key: "/Active fault",
+            property: "Active fault",
+            value: activeFaultString || "No fault"
+        },
+        {
+            key: "/Historic fault",
+            property: "Historic fault",
+            value: historicFaultString || "No fault"
+        }
+    ]
+
+    const updatedTableData = [...tableData, ...extraData]
+
+    // console.log(updatedTableData)
+
     return (
         <Table
             ref={tableRef}
             columns={columns}
-            dataSource={tableData}
+            dataSource={updatedTableData}
             rowKey="key"
             size="small"
             expandable={{ defaultExpandAllRows: true }}
