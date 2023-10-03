@@ -5,17 +5,7 @@
 import React from "react"
 import { FaultCode, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
 import { Table } from "antd"
-
-enum CIA_STATE {
-    "CIA NOT READY TO SWITCH ON",
-    "CIA SWITCH ON DISABLED",
-    "CIA READY TO SWITCH ON",
-    "CIA SWITCHED ON",
-    "CIA OPERATION ENABLED",
-    "CIA_QUICK STOP ACTIVE",
-    "CIA FAULT REACTION ACTIVE",
-    "CIA FAULT"
-}
+import { CIA_STATE, to_table_data_new } from "./dictionary"
 
 const EC_STATE = {
     0x0: "EC State: None",
@@ -121,7 +111,7 @@ function convert_values(key: string, value: number | string | boolean, possibleE
 
         if (match) {
             const timestamp = parseFloat(match[1])
-            var newDate = new Date()
+            const newDate = new Date()
             newDate.setTime(timestamp * 1000)
             const dateString = newDate.toUTCString()
             value = value.replace(timestampRegex, dateString)
@@ -236,9 +226,8 @@ export const EmStatTile = () => {
         }
     ]
 
-    const updatedTableData = [...tableData, ...extraData]
-
-    // console.log(updatedTableData)
+    // const updatedTableData = [...tableData, ...extraData]
+    const updatedTableData = to_table_data_new(emstat)
 
     return (
         <Table

@@ -5,13 +5,12 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { EmStatTile } from "./EmStatTile"
+import { DockTileDefinition, DockTileDefinitionBuilder } from "../dock"
 
-export const EmStatTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.EMSTAT,
-    name: "EtherCAT Master Status",
-    defaultPlacement: {
-        column: 0,
-        row: 2
-    },
-    render: () => createElement(EmStatTile, {}, null)
-}
+export const EmStatTileDefinition: DockTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.EMSTAT)
+    .name("EtherCAT Master Status")
+    .placement(1, 0)
+    .enableWithoutConnection()
+    .render(() => createElement(EmStatTile, {}, null))
+    .build()

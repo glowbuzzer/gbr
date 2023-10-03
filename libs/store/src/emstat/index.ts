@@ -7,6 +7,7 @@ import { GlowbuzzerStatus, RootState } from ".."
 import { useSelector } from "react-redux"
 
 type EmStatType = GlowbuzzerStatus["emstat"]
+
 export const emstatSlice: Slice<EmStatType> = createSlice({
     name: "emstat",
     initialState: null,
