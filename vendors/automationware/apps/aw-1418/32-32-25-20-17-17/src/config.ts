@@ -170,7 +170,7 @@ export const config: GlowbuzzerConfig = {
                     y: 0,
                     z: 0
                 },
-                radius: [0, 500]
+                radius: [500, 1400]
             },
             linearLimits: [
                 {
