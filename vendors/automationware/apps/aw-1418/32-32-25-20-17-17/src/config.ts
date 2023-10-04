@@ -164,7 +164,14 @@ export const config: GlowbuzzerConfig = {
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
             extentsZ: [500, 1400],
-            cylindricalEnvelope: [500, 1400],
+            sphericalEnvelope: {
+                center: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                radius: [0, 500]
+            },
             linearLimits: [
                 {
                     vmax: 10,
