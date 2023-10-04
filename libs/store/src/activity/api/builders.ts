@@ -10,6 +10,7 @@ import {
     ARCTYPE,
     CartesianPosition,
     DwellActivityParams,
+    MoveInstantStream,
     MoveJointsAtVelocityStream,
     MoveJointsStream,
     MoveLineStream,
@@ -358,6 +359,19 @@ export class MoveLineBuilder extends CartesianMoveBuilder {
         return {
             ...super.build(),
             line: this.cartesianPosition
+        }
+    }
+}
+
+export class MoveInstantBuilder extends CartesianMoveBuilder {
+    protected commandName = "moveInstant"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEINSTANT
+
+    /** @ignore */
+    protected build(): MoveInstantStream {
+        return {
+            ...super.build(),
+            position: this.cartesianPosition
         }
     }
 }

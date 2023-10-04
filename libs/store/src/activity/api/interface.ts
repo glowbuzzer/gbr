@@ -8,6 +8,7 @@ import {
     DwellActivityBuilder,
     IoutBuilder,
     MoveArcBuilder,
+    MoveInstantBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
     MoveLineBuilder,
@@ -56,6 +57,18 @@ export interface ActivityApi {
      * @param z Target z position
      */
     moveLine(x?: number, y?: number, z?: number): MoveLineBuilder
+
+    /** Move to a position instantaneously in cartesian space.
+     *
+     * Note that if you use this activity it is your responsibility to generate the points in such a way that the
+     * velocity, acceleration and jerk limits of the machine are not breached, and you must continue to send points
+     * until the machine is at a stop, otherwise an error will occur.
+     *
+     * @param x New x position
+     * @param y New y position
+     * @param z New z position
+     */
+    moveInstant(x?: number, y?: number, z?: number): MoveInstantBuilder
 
     /** Move in a straight line along the given vector. The velocity of the motion can be controlled using `moveParams`.
      *

@@ -11,6 +11,7 @@ import {
     EndProgramBuilder,
     IoutBuilder,
     MoveArcBuilder,
+    MoveInstantBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
     MoveLineBuilder,
@@ -70,7 +71,15 @@ export abstract class ActivityApiBase {
     }
 
     moveLine(x?: number, y?: number, z?: number) {
-        return new MoveLineBuilder(this)
+        return (
+            new MoveLineBuilder(this)
+                // .params(this.defaultMoveParameters)
+                .translation(nullify(x), nullify(y), nullify(z))
+        )
+    }
+
+    moveInstant(x?: number, y?: number, z?: number) {
+        return new MoveInstantBuilder(this)
             .params(this.defaultMoveParameters)
             .translation(nullify(x), nullify(y), nullify(z))
     }
