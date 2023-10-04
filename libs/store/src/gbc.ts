@@ -37,6 +37,7 @@ export * from "./gbc_extra"
         OPERATION_ERROR_INVALID_ROTATION,
         OPERATION_ERROR_CONFIG_RELOADED,
         OPERATION_ERROR_KINEMATICS_ENVELOPE_VIOLATION,
+        OPERATION_ERROR_KINEMATICS_NEAR_SINGULARITY,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
