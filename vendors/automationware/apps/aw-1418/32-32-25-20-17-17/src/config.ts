@@ -11,7 +11,7 @@ import { GlowbuzzerConfig } from "@glowbuzzer/store"
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "AWTUBE 1408-32-32-25-20-17-17",
+            name: "AWTUBE 14-40LP-40HP-32-25-125-20",
             busCycleTime: 4
         }
     ],
@@ -72,82 +72,82 @@ export const config: GlowbuzzerConfig = {
             name: "0",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
-            negLimit: -180,
-            posLimit: 180
+            negLimit: -80,
+            posLimit: 80
         },
         {
             name: "1",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
-            negLimit: -125,
-            posLimit: 125
+            negLimit: -40,
+            posLimit: 40
         },
         {
             name: "2",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
-            negLimit: -138,
-            posLimit: 138
+            negLimit: -40,
+            posLimit: 40
         },
         {
             name: "3",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
-            negLimit: -270,
-            posLimit: 270
+            negLimit: -170,
+            posLimit: 170
         },
         {
             name: "4",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
-            negLimit: -120,
-            posLimit: 133.5
+            negLimit: -80,
+            posLimit: 80
         },
         {
             name: "5",
             limits: [
                 {
-                    vmax: 1,
-                    amax: 8,
-                    jmax: 160
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
-            scale: 10000,
+            scale: 166886,
             jointType: 1,
             negLimit: -270,
             posLimit: 270
@@ -161,21 +161,29 @@ export const config: GlowbuzzerConfig = {
             participatingJointsCount: 6,
             kinematicsConfigurationType: 1,
             supportedConfigurationBits: 7,
-            extentsX: [-2000, 2000],
-            extentsY: [-2000, 2000],
-            extentsZ: [-200, 2000],
+            extentsX: [-1000, 1000],
+            extentsY: [-1000, 1000],
+            extentsZ: [500, 1400],
+            sphericalEnvelope: {
+                center: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                radius: [500, 1400]
+            },
             linearLimits: [
                 {
-                    vmax: 200,
-                    amax: 4000,
-                    jmax: 80000
+                    vmax: 10,
+                    amax: 200,
+                    jmax: 4000
                 }
             ],
             angularLimits: [
                 {
-                    vmax: 1,
-                    amax: 10,
-                    jmax: 100
+                    vmax: 0.05,
+                    amax: 0.5,
+                    jmax: 5
                 }
             ],
             kinChainParams: {
