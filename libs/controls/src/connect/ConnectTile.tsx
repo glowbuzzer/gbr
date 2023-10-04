@@ -4,7 +4,7 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { Button, Radio, Space, Spin, Tag } from "antd"
+import { Button, Radio, Space, Spin, Tag, message } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -108,6 +108,7 @@ export const ConnectTile = () => {
     const { modified, usingLocalConfiguration, upload, discard } = useOfflineConfig()
     const [uploading, setUploading] = useState(false)
     const estopActive = useEstop()
+    const [messageApi, messageContainer] = message.useMessage()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -119,7 +120,9 @@ export const ConnectTile = () => {
 
     function upload_config() {
         setUploading(true)
-        upload().finally(() => setUploading(false))
+        upload()
+            .catch(err => messageApi.error(err))
+            .finally(() => setUploading(false))
     }
 
     function fetch_remote() {
@@ -139,6 +142,7 @@ export const ConnectTile = () => {
 
     return (
         <StyledDiv>
+            {messageContainer}
             <div>
                 {modified ? (
                     connected ? (
