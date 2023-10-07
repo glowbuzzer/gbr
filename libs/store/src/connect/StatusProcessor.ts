@@ -94,19 +94,6 @@ export function useStatusProcessor(connection: WebSocket) {
                     heartbeat // echo the machine status heartbeat
                 })
             )
-
-            // if (target !== requestedTarget) {
-            //     // we are not in the desired target state (sim/live) so send a message to GBC to change state
-            //     safe_send(updateMachineTargetMsg(requestedTarget))
-            // }
-
-            // for (const [n, { froTarget }] of kinematics.entries()) {
-            //     if (froTarget === 0) {
-            //         console.log("Set fro to 100% for kc", n)
-            //         // set fro to 100% if not already set on connect
-            //         safe_send(updateFroMsg(n, 1))
-            //     }
-            // }
         }
 
         // end of initial connection handling
@@ -172,19 +159,14 @@ export function useStatusProcessor(connection: WebSocket) {
                 dispatch(integerOutputsSlice.actions.status(status(msg.status.iout, heartbeat)))
             msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
             msg.status.kc && dispatch(traceSlice.actions.status(msg.status.kc))
+
+            // we only want message with status property to increment the tick count, not ancillary items below
+            setTick(current => current + 1)
         }
 
+        // these might be sent at different frequencies by GBC
         msg.stream && dispatch(streamSlice.actions.status(msg.stream))
         msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
         msg.emstat && dispatch(emstatSlice.actions.status(msg.emstat))
-
-        // increment tick count
-        setTick(current => {
-            // if (current === 0) {
-            //     console.log("StatusProcessor: processing first status message", msg.status)
-            // }
-            //
-            return current + 1
-        })
     }
 }
