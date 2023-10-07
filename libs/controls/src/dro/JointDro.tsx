@@ -33,7 +33,7 @@ const StyledGrid = styled.div<{ cols }>`
     }
 `
 
-const JointDroItem = ({ index, warningThreshold, precision }) => {
+const JointDroItem = ({ index, warningThreshold, precision, value }) => {
     const prefs = usePrefs()
     const j = useJoint(index)
     const config = useJointConfigurationList()[index]
@@ -43,14 +43,13 @@ const JointDroItem = ({ index, warningThreshold, precision }) => {
     }
 
     const { name, finiteContinuous, negLimit, posLimit, jointType } = config
-    const { actPos } = j
     const showSlider = finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
     const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
 
     const units = prefs.getUnits(type)
     const min = prefs.fromSI(MathUtils.degToRad(negLimit), type)
     const max = prefs.fromSI(MathUtils.degToRad(posLimit), type)
-    const current = prefs.fromSI(actPos, type)
+    const current = prefs.fromSI(j[value], type)
     const warn_range = (posLimit - negLimit) * warningThreshold
     const warn =
         warn_range > 0 && (current < negLimit + warn_range || current > posLimit - warn_range)
@@ -85,6 +84,12 @@ const JointDroItem = ({ index, warningThreshold, precision }) => {
     )
 }
 
+export enum JointDroValue {
+    POS = "actPos",
+    VEL = "actVel",
+    TORQUE = "actTorque"
+}
+
 /**
  * Displays values of joints. By default will display all configured joints. If joints specify minimum and maximum values,
  * a gauge will be displayed showing the range of motion.
@@ -92,11 +97,13 @@ const JointDroItem = ({ index, warningThreshold, precision }) => {
 export const JointDro = ({
     jointsToDisplay,
     precision,
-    warningThreshold
+    warningThreshold,
+    value
 }: {
     jointsToDisplay?: number[]
     precision?: number
     warningThreshold: number
+    value: JointDroValue
 }) => {
     const count = useJointCount()
     const joints = jointsToDisplay ? jointsToDisplay : Array.from(Array(count).keys())
@@ -118,6 +125,7 @@ export const JointDro = ({
                     index={j}
                     warningThreshold={warningThreshold}
                     precision={precision}
+                    value={value}
                 />
             ))}
         </StyledGrid>

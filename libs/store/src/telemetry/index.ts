@@ -11,14 +11,16 @@ import deepEqual from "fast-deep-equal"
 
 const { load, save } = settings("telemetry")
 
-export enum TelemetryPVA {
+export enum TelemetryPVAT {
     POS = "p",
     VEL = "v",
-    ACC = "a"
+    ACC = "a",
+    TORQUE = "t"
 }
+
 export type TelemetrySettingsType = {
     captureDuration: number
-    plot: TelemetryPVA
+    plot: TelemetryPVAT
 }
 
 export enum CaptureState {
@@ -62,7 +64,7 @@ export const telemetrySlice: Slice<
         t: 0,
         settings: {
             captureDuration: 1000,
-            plot: TelemetryPVA.POS
+            plot: TelemetryPVAT.POS
         }
     } as TelemetrySliceType,
     reducers: {
@@ -176,7 +178,7 @@ export const useTelemetryControls = () => {
                 })
             )
         },
-        setPlot(value: TelemetryPVA) {
+        setPlot(value: TelemetryPVAT) {
             dispatch(
                 telemetrySlice.actions.settings({
                     plot: value

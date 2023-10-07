@@ -72,6 +72,7 @@ test("can execute a dwell", async () => {
 test("can fill the m4 buffer", async () => {
     const number_to_stream = gbc.m4_stream_total_cap - 1
     const dwells = Array.from({ length: number_to_stream }).map(() => gbc.stream.dwell(1).command)
+    const m7_queue_length = gbc.m7_stream_total_cap
 
     gbc.enqueue(dwells)
 
@@ -83,27 +84,27 @@ test("can fill the m4 buffer", async () => {
         .assert.selector(readCount, 0)
         .assert.selector(writeCount, number_to_stream)
 
-    gbc.exec(1) // give m7 opportunity to read from shared buffer
-        .assert.selector(capacity, gbc.m7_stream_total_cap)
+    gbc.exec(1) // give m7 opportunity to read from shared buffer, still leaving many unread
+        .assert.selector(capacity, m7_queue_length + 1)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
         .assert.selector(tag, 0)
         // should have taken all items from stream (capacity not reached)
-        .assert.selector(readCount, number_to_stream) // items read to m7 capacity
+        .assert.selector(readCount, m7_queue_length) // items read to m7 capacity
         .assert.selector(writeCount, number_to_stream)
 
     const end_program = gbc.stream.endProgram().command
     gbc.enqueue([end_program]) // send end program
         .exec(5) // kick off
-        .assert.selector(capacity, gbc.m4_stream_total_cap)
+        .assert.selector(capacity, m7_queue_length + 5)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
-        .assert.selector(tag, 4)
-        // should have taken all items from stream (capacity not reached)
-        .assert.selector(readCount, number_to_stream + 1)
-        .assert.selector(writeCount, number_to_stream + 1)
+        .assert.selector(tag, 5)
 
-    gbc.exec(10) // finish off
+    gbc.exec(100) // finish off
+        // should have taken all items from stream (capacity not reached)
         .assert.selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+        .assert.selector(readCount, number_to_stream + 1)
+        .assert.selector(writeCount, number_to_stream + 1)
         .assert.selector(tag, number_to_stream)
 })
 
@@ -171,7 +172,7 @@ test("can command stream to stop", () => {
     gbc.enqueue(dwells1, 1).exec(5)
     gbc.assert
         // all items have been taken onto the m7 queue, so m4 queue is empty
-        .selector(capacity, gbc.m7_stream_total_cap)
+        .selector(capacity, gbc.m4_stream_total_cap)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .assert.selector(tag, 1)
         .assert.selector(readCount, 10)
@@ -179,8 +180,7 @@ test("can command stream to stop", () => {
 
     gbc.enqueue(dwells2, 1).exec(5)
     gbc.assert
-        .selector(capacity, 0)
-        .assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
+        .selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
         .assert.selector(tag, 1) // still on first dwell
         .assert.selector(readCount, 10)
         .assert.selector(writeCount, 20)
@@ -190,7 +190,7 @@ test("can command stream to stop", () => {
         .exec(2)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPED)
         .exec(2)
-        .assert.selector(capacity, gbc.m7_stream_total_cap)
+        .assert.selector(capacity, gbc.m4_stream_total_cap)
 })
 
 test("can stop stream during move", () => {

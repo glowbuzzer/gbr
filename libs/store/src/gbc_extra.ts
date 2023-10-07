@@ -165,8 +165,8 @@ export type GlowbuzzerStatus = {
         m7cap: number
         m4cap: number
         m7wait: number
-        set: { p: number; v: number; a: number }[]
-        act: { p: number; v: number; a: number }[]
+        set: { p: number; v: number; a: number; t: number }[]
+        act: { p: number; v: number; a: number; t: number }[]
     }[]
     response: any // used for promise resolution
     emstat?: {

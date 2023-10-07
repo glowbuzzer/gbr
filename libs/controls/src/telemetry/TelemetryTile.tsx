@@ -11,7 +11,7 @@ import {
     CaptureState,
     JOINT_TYPE,
     KinematicsConfigurationConfig,
-    TelemetryPVA,
+    TelemetryPVAT,
     useJointConfigurationList,
     useKinematicsConfigurationList,
     useTelemetryControls,
@@ -300,7 +300,7 @@ export const TelemetryTile = () => {
         a.click()
     }
 
-    function update_pva(e: RadioChangeEvent) {
+    function update_pvat(e: RadioChangeEvent) {
         capture.setPlot(e.target.value)
     }
 
@@ -313,11 +313,12 @@ export const TelemetryTile = () => {
                             size="small"
                             value={capture.plot}
                             buttonStyle="solid"
-                            onChange={update_pva}
+                            onChange={update_pvat}
                         >
-                            <Radio.Button value={TelemetryPVA.POS}>Pos</Radio.Button>
-                            <Radio.Button value={TelemetryPVA.VEL}>Vel</Radio.Button>
-                            <Radio.Button value={TelemetryPVA.ACC}>Acc</Radio.Button>
+                            <Radio.Button value={TelemetryPVAT.POS}>Pos</Radio.Button>
+                            <Radio.Button value={TelemetryPVAT.VEL}>Vel</Radio.Button>
+                            <Radio.Button value={TelemetryPVAT.ACC}>Acc</Radio.Button>
+                            <Radio.Button value={TelemetryPVAT.TORQUE}>Torque</Radio.Button>
                         </Radio.Group>
                     </DockToolbarButtonGroup>
                     <DockToolbarButtonGroup>
