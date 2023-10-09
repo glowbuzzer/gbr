@@ -107,8 +107,8 @@ export const config: GlowbuzzerConfig = {
             ],
             scale: 166886,
             jointType: 1,
-            negLimit: -40,
-            posLimit: 40
+            negLimit: 50,
+            posLimit: 130
         },
         {
             name: "3",
@@ -135,8 +135,8 @@ export const config: GlowbuzzerConfig = {
             ],
             scale: 166886,
             jointType: 1,
-            negLimit: -80,
-            posLimit: 80
+            negLimit: -170,
+            posLimit: -10
         },
         {
             name: "5",
@@ -194,11 +194,11 @@ export const config: GlowbuzzerConfig = {
 
                     0, 0, -90, 525, 0,
 
-                    90, 0, 90, 0, 0,
+                    90, 0, 180, 0, 0,
 
                     -90, 0, 0, 0, 475,
 
-                    90, 0, 0, 0, 0,
+                    90, 0, 90, 0, 0,
 
                     0, 0, 0, 0, 328
                 ]
