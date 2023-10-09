@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Row, Slider } from "antd"
+import { Slider } from "antd"
 import { SegmentDisplay } from "./SegmentDisplay"
 import {
     JOINT_FINITECONTINUOUS,
@@ -33,7 +33,7 @@ const StyledGrid = styled.div<{ cols }>`
     }
 `
 
-const JointDroItem = ({ index, warningThreshold, precision, value }) => {
+const JointDroItem = ({ index, warningThreshold, precision, valueKey }) => {
     const prefs = usePrefs()
     const j = useJoint(index)
     const config = useJointConfigurationList()[index]
@@ -47,13 +47,16 @@ const JointDroItem = ({ index, warningThreshold, precision, value }) => {
     const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
 
     const units = prefs.getUnits(type)
-    const min = prefs.fromSI(MathUtils.degToRad(negLimit), type)
-    const max = prefs.fromSI(MathUtils.degToRad(posLimit), type)
-    const current = prefs.fromSI(j[value], type)
-    const warn_range = (posLimit - negLimit) * warningThreshold
+    const [min, max] = [negLimit, posLimit].map(limit =>
+        type === "angular" ? MathUtils.degToRad(limit) : limit
+    )
+    const current_in_si_units = j[valueKey]
+    const current = prefs.fromSI(current_in_si_units, type)
+    const warn_range = (max - min) * warningThreshold
     const warn =
-        warn_range > 0 && (current < negLimit + warn_range || current > posLimit - warn_range)
-    // const progress = (current / (max - min)) * 100
+        warn_range > 0 &&
+        valueKey === JointDroValueKey.POS &&
+        (current_in_si_units < min + warn_range || current_in_si_units > max - warn_range)
 
     return (
         <>
@@ -84,7 +87,7 @@ const JointDroItem = ({ index, warningThreshold, precision, value }) => {
     )
 }
 
-export enum JointDroValue {
+export enum JointDroValueKey {
     POS = "actPos",
     VEL = "actVel",
     TORQUE = "actTorque"
@@ -98,12 +101,12 @@ export const JointDro = ({
     jointsToDisplay,
     precision,
     warningThreshold,
-    value
+    valueKey
 }: {
     jointsToDisplay?: number[]
     precision?: number
     warningThreshold: number
-    value: JointDroValue
+    valueKey: JointDroValueKey
 }) => {
     const count = useJointCount()
     const joints = jointsToDisplay ? jointsToDisplay : Array.from(Array(count).keys())
@@ -125,7 +128,7 @@ export const JointDro = ({
                     index={j}
                     warningThreshold={warningThreshold}
                     precision={precision}
-                    value={value}
+                    valueKey={valueKey}
                 />
             ))}
         </StyledGrid>

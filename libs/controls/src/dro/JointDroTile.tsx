@@ -4,7 +4,7 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { JointDro, JointDroValue } from "./JointDro"
+import { JointDro, JointDroValueKey } from "./JointDro"
 import { useKinematicsConfiguration, useKinematicsConfigurationList } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
@@ -23,7 +23,7 @@ import { Radio } from "antd"
 export const JointDroTile = () => {
     const [selectedKc, setSelectedKc] = useLocalStorage("dro.joint.kc", 0)
     const [precision, setPrecision] = useLocalStorage("dro.joint.precision", 4)
-    const [valueToDisplay, setValueToDisplay] = useState(JointDroValue.POS)
+    const [valueToDisplay, setValueToDisplay] = useState(JointDroValueKey.POS)
 
     const kcs = useKinematicsConfigurationList()
     const kc = useKinematicsConfiguration(selectedKc)
@@ -47,9 +47,9 @@ export const JointDroTile = () => {
                         buttonStyle="solid"
                         onChange={update_value}
                     >
-                        <Radio.Button value={JointDroValue.POS}>Pos</Radio.Button>
-                        <Radio.Button value={JointDroValue.VEL}>Vel</Radio.Button>
-                        <Radio.Button value={JointDroValue.TORQUE}>Torque</Radio.Button>
+                        <Radio.Button value={JointDroValueKey.POS}>Pos</Radio.Button>
+                        <Radio.Button value={JointDroValueKey.VEL}>Vel</Radio.Button>
+                        <Radio.Button value={JointDroValueKey.TORQUE}>Torque</Radio.Button>
                     </Radio.Group>
 
                     <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
@@ -61,7 +61,7 @@ export const JointDroTile = () => {
                     warningThreshold={0.01}
                     jointsToDisplay={jointsToDisplay}
                     precision={precision}
-                    value={valueToDisplay}
+                    valueKey={valueToDisplay}
                 />
             </StyledTileContent>
         </DockTileWithToolbar>
