@@ -19,6 +19,7 @@ import {
     useOfflineConfig
 } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { GbcVersionCheck } from "../config/GbcVersionCheck"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -211,6 +212,8 @@ export const ConnectTile = () => {
                     )
                 ) : null}
             </div>
+
+            <GbcVersionCheck />
 
             <div className="row">
                 <div className="label">Machine</div>

@@ -33,6 +33,8 @@ export enum ConfigState {
 
 type ConfigSliceType = {
     state: ConfigState
+    gbcVersion: string
+    schemaVersion: string
     version: number
     modified: boolean
     usingLocalConfiguration: boolean
@@ -52,6 +54,8 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
     name: "config",
     initialState: {
         state: ConfigState.AWAITING_CONFIG as ConfigState,
+        gbcVersion: null,
+        schemaVersion: null,
         modified: false as boolean,
         usingLocalConfiguration: false,
         version: 1,
@@ -74,15 +78,16 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
         },
         /** Set config on connect - will not overwrite a locally modified config */
         setConfigFromRemote(state, action) {
+            const { gbcVersion, schemaVersion, ...config } = action.payload
+            state.gbcVersion = gbcVersion
+            state.schemaVersion = schemaVersion
             state.version++
             state.state = ConfigState.READY
-            state.modified =
-                state.usingLocalConfiguration && !deepEqual(state.current, action.payload)
-
+            state.modified = state.usingLocalConfiguration && !deepEqual(state.current, config)
             if (state.modified) {
-                state.remote = action.payload
+                state.remote = config
             } else {
-                state.current = action.payload
+                state.current = config
                 state.remote = null
             }
             persist(state)
@@ -158,6 +163,18 @@ export function useOfflineConfig() {
         upload(): Promise<void> {
             return loader(offline_config)
         }
+    }
+}
+
+/**
+ * Returns the version of the connected GBC, if available
+ */
+export function useGbcVersionInfo() {
+    const config = useSelector((state: RootState) => state.config)
+
+    return {
+        gbcVersion: config.gbcVersion,
+        schemaVersion: config.schemaVersion
     }
 }
 

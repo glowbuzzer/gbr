@@ -3,6 +3,8 @@
 
 export * from "./gbc_extra"
 
+export const GbcSchemaChecksum = "71620a775330e9e93a14eb9555bf3b80"
+
 // ENUMS
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,

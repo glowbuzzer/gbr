@@ -7,6 +7,7 @@
 import { Menu } from "antd"
 import {
     DockViewMenu,
+    GbcVersionPanel,
     PreferencesDialog,
     useDockLayoutContext,
     useDockViewMenu
@@ -26,9 +27,7 @@ const StyledMenuBar = styled.div`
     .title,
     .perspective-title {
         font-size: 1.5em;
-        display: inline-block;
         padding: 10px 10px 0 14px;
-        border-bottom: 1px solid ${props => props.theme.colorBorder};
 
         span {
             display: inline-block;
@@ -38,6 +37,13 @@ const StyledMenuBar = styled.div`
             font-size: 0.8em;
             border-radius: 15px;
         }
+    }
+
+    .title,
+    .perspective-title,
+    .version-info {
+        border-bottom: 1px solid ${props => props.theme.colorBorder};
+        display: inline-block;
     }
 
     .ant-menu {
@@ -92,6 +98,7 @@ export const ExampleAppMenu = ({ title = null }) => {
                 </div>
             )}
             <Menu mode="horizontal" theme="light" selectedKeys={[]} items={menuItems} />
+            <GbcVersionPanel />
         </StyledMenuBar>
     )
 }
