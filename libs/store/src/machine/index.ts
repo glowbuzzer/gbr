@@ -64,14 +64,14 @@ export type MachineSliceType = GlowbuzzerMachineStatus & MachineStateHandling
 const INITIAL_STATE = {
     requestedTarget: MACHINETARGET.MACHINETARGET_SIMULATION,
     target: undefined,
-    desiredState: DesiredState.OPERATIONAL,
+    desiredState: DesiredState.NONE,
     heartbeatReceived: true
 } as MachineSliceType
 
 export const machineSlice: Slice<
     MachineSliceType,
     {
-        init: CaseReducer<MachineSliceType>
+        init: CaseReducer<MachineSliceType, PayloadAction<MACHINETARGET>>
         status: CaseReducer<MachineSliceType, PayloadAction<GlowbuzzerMachineStatus>>
         setRequestedTarget: CaseReducer<MachineSliceType, PayloadAction<MACHINETARGET>>
         setDesiredState: CaseReducer<MachineSliceType, PayloadAction<DesiredState>>
@@ -80,7 +80,7 @@ export const machineSlice: Slice<
     name: "machine",
     initialState: INITIAL_STATE,
     reducers: {
-        init: () => INITIAL_STATE,
+        init: (state, action) => ({ ...INITIAL_STATE, requestedTarget: action.payload }),
         status: (state, action) => {
             // called with status.machine from the json every time GBC sends status message
             const {

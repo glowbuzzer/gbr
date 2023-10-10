@@ -158,8 +158,6 @@ export const EmStatTile = () => {
     // const updatedTableData = [...tableData, ...extraData]
     const updatedTableData = to_table_data_new(emstat)
 
-    console.log(emstat)
-
     return (
         <Table
             ref={tableRef}

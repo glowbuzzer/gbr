@@ -44,6 +44,7 @@ function status(status, heartbeat) {
  */
 export function useStatusProcessor(connection: WebSocket) {
     const [tick, setTick] = useState(0)
+    const [handledInitialTick, setHandledInitialTick] = useState(false)
 
     const configVersion = useConfigVersion()
     const dispatch = useDispatch()
@@ -56,8 +57,56 @@ export function useStatusProcessor(connection: WebSocket) {
 
     useEffect(() => {
         setTick(0)
+        setHandledInitialTick(false)
         newConnection.current = true
     }, [connection, configVersion])
+
+    useEffect(() => {
+        if (
+            !connection ||
+            handledInitialTick ||
+            target === null ||
+            !newConnection.current ||
+            connection.readyState !== WebSocket.OPEN
+        ) {
+            return
+        }
+
+        // function safe_send(msg) {
+        //     if (connection.readyState === WebSocket.OPEN) {
+        //         connection.send(msg)
+        //     }
+        // }
+
+        // we test if the tick count is non-zero, because we only want to do initial connection
+        // handling after we've received our first status message, as this populates the store with
+        // things like the number of kinematics configurations, streams, and so on
+        // if (tick === 1 && newConnection.current) {
+        console.log("StatusProcessor: perform initial connection handling", target, requestedTarget)
+
+        newConnection.current = false
+
+        dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
+        dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
+        dispatch(telemetrySlice.actions.init()) // reset telemetry
+        dispatch(machineSlice.actions.init(target)) // reset machine state, using current target from GBC
+
+        if (nextControlWord !== undefined) {
+            // logic wants to dictate new control word to GBC
+            console.log("StatusProcessor: send control word during init", nextControlWord)
+            connection.send(updateMachineControlWordMsg(nextControlWord))
+        }
+
+        // get a quick heartbeat over to GBC so it knows we are connected
+        connection.send(
+            updateMachineCommandMsg({
+                heartbeat // echo the machine status heartbeat
+            })
+        )
+        setHandledInitialTick(true)
+        // }
+        // end of initial connection handling
+    }, [connection, target, handledInitialTick])
 
     useEffect(() => {
         if (!connection) {
@@ -69,35 +118,6 @@ export function useStatusProcessor(connection: WebSocket) {
                 connection.send(msg)
             }
         }
-
-        // we test if the tick count is non-zero, because we only want to do initial connection
-        // handling after we've received our first status message, as this populates the store with
-        // things like the number of kinematics configurations, streams, and so on
-        if (tick === 1 && newConnection.current) {
-            console.log("StatusProcessor: perform initial connection handling")
-
-            newConnection.current = false
-
-            dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
-            dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
-            dispatch(telemetrySlice.actions.init()) // reset telemetry
-            dispatch(machineSlice.actions.init()) // reset machine state
-
-            if (nextControlWord !== undefined) {
-                // logic wants to dictate new control word to GBC
-                safe_send(updateMachineControlWordMsg(nextControlWord))
-            }
-
-            // get a quick heartbeat over to GBC so it knows we are connected
-            safe_send(
-                updateMachineCommandMsg({
-                    heartbeat // echo the machine status heartbeat
-                })
-            )
-        }
-
-        // end of initial connection handling
-        // start of per-tick handling
 
         for (const [streamIndex, stream] of streams.entries()) {
             if (stream.state === STREAMSTATE.STREAMSTATE_PAUSED_BY_ACTIVITY) {
@@ -124,7 +144,7 @@ export function useStatusProcessor(connection: WebSocket) {
                 })
             )
         }
-    }, [requestedTarget, target, connection, tick])
+    }, [tick, connection])
 
     useEffect(() => {
         if (
@@ -132,6 +152,7 @@ export function useStatusProcessor(connection: WebSocket) {
             connection &&
             connection.readyState === WebSocket.OPEN
         ) {
+            console.log("StatusProcessor: send control word", nextControlWord)
             // logic wants to dictate new control word to GBC
             connection.send(updateMachineControlWordMsg(nextControlWord))
         }
