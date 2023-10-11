@@ -13,6 +13,7 @@ import { useConnection } from "../connect"
 const { load, save } = settings("config")
 
 export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
+    machine: [{}],
     frames: [{}],
     kinematicsConfiguration: [
         {
@@ -131,6 +132,10 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
 /** @ignore */
 export function useConfigVersion(): number {
     return useSelector((state: RootState) => state.config.version)
+}
+
+export function useHeartbeatTimeout(): number {
+    return useSelector((state: RootState) => state.config.current.machine?.[0].heartbeatTimeout)
 }
 
 /** @ignore */

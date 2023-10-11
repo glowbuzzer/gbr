@@ -3,7 +3,12 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "71620a775330e9e93a14eb9555bf3b80"
+export const GbcSchemaChecksum = "72cb2c8e12c9fd37a3b6770c3d35b4e8"
+
+// CONSTANTS
+export const GbcConstants = {
+    DEFAULT_HLC_HEARTBEAT_TOLERANCE: 500,
+}
 
 // ENUMS
     export enum CONFIG_STATUS {
@@ -27,6 +32,7 @@ export const GbcSchemaChecksum = "71620a775330e9e93a14eb9555bf3b80"
     }
     export enum OPERATION_ERROR {
         OPERATION_ERROR_NONE,
+        OPERATION_ERROR_HLC_HEARTBEAT_LOST,
         OPERATION_ERROR_OPERATION_NOT_ENABLED,
         OPERATION_ERROR_INVALID_ARC,
         OPERATION_ERROR_TOOL_INDEX_OUT_OF_RANGE,
@@ -348,6 +354,8 @@ export const GbcSchemaChecksum = "71620a775330e9e93a14eb9555bf3b80"
                         estopEnabled?:boolean;
                         /**  Which digital input should be treated as estop, if estopEnabled is true */
                         estopInput?:number;
+                        /**  The amount of time (in bus cycles) before GBC will fault if it has not received a heartbeat */
+                        heartbeatTimeout?:number;
             }
             
             export type MachineStatus = {

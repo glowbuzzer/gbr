@@ -4,7 +4,7 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { Button, Radio, Space, Spin, Tag, message } from "antd"
+import { Button, message, Radio, Space, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -12,6 +12,7 @@ import {
     FaultCode,
     MachineState,
     MACHINETARGET,
+    OPERATION_ERROR,
     possible_transitions,
     useConnection,
     useEstop,
@@ -20,6 +21,7 @@ import {
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { GbcVersionCheck } from "../config/GbcVersionCheck"
+import { OperationErrorPanel } from "./OperationErrorPanel"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -92,7 +94,13 @@ const StyledDiv = styled.div`
     }
 
     .machine-message {
+        padding-top: 10px;
         text-align: center;
+    }
+
+    .reset-button {
+        text-align: center;
+        padding-top: 10px;
     }
 `
 
@@ -283,14 +291,6 @@ export const ConnectTile = () => {
                     <Tag>{connected ? MachineState[machine.currentState] : "None"}</Tag>
                 </div>
             </div>
-            {connected && fault && (
-                <div className="row">
-                    <div className="label" />
-                    <div className="controls">
-                        <Button onClick={issue_reset}>Reset Fault</Button>
-                    </div>
-                </div>
-            )}
             {fault_active && (
                 <div className="row">
                     <div className="label">Fault cause</div>
@@ -306,23 +306,41 @@ export const ConnectTile = () => {
                     </div>
                 </div>
             )}
-            {connected && fault && machine.faultHistory > 0 && (
-                <div className="row padded">
-                    <div className="label">Fault history</div>
-                    <div className="controls">
-                        {Object.values(FaultCode)
-                            .filter(k => typeof k === "number")
-                            .filter((k: number) => machine.faultHistory & k)
-                            .map(k => (
-                                <Tag key={k}>{FaultCode[k].substring("FAULT_CAUSE_".length)}</Tag>
-                            ))}
+            {connected &&
+                fault &&
+                machine.faultHistory > 0 &&
+                machine.operationError === OPERATION_ERROR.OPERATION_ERROR_NONE && (
+                    <div className="row padded">
+                        <div className="label">Fault history</div>
+                        <div className="controls">
+                            {Object.values(FaultCode)
+                                .filter(k => typeof k === "number")
+                                .filter((k: number) => machine.faultHistory & k)
+                                .map(k => (
+                                    <Tag key={k}>
+                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
+                                    </Tag>
+                                ))}
+                        </div>
                     </div>
+                )}
+
+            {connected && fault && (
+                <div className="reset-button">
+                    <Button onClick={issue_reset}>Reset Fault</Button>
                 </div>
             )}
 
+            {connected && (
+                <div className="machine-message">
+                    <OperationErrorPanel />
+                </div>
+            )}
+            {/*
             {machine.operationErrorMessage?.length > 0 && (
                 <div className="machine-message">{machine.operationErrorMessage}</div>
             )}
+*/}
             {connection.statusReceived || <h3>No status received</h3>}
             {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
         </StyledDiv>

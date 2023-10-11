@@ -16,7 +16,7 @@ import { kinematicsSlice, updateFroMsg, useKinematicsList } from "../kinematics"
 import { traceSlice } from "../trace"
 import { framesSlice } from "../frames"
 import { telemetrySlice } from "../telemetry"
-import { STREAMCOMMAND, STREAMSTATE } from "../gbc"
+import { GbcConstants, STREAMCOMMAND, STREAMSTATE } from "../gbc"
 import { GlowbuzzerStatus } from "../gbc_extra"
 import { tasksSlice } from "../tasks"
 import { activitySlice } from "../activity"
@@ -27,7 +27,7 @@ import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
 import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
-import { useConfigVersion } from "../config"
+import { useConfigVersion, useHeartbeatTimeout } from "../config"
 import { emstatSlice } from "../emstat"
 
 function status(status, heartbeat) {
@@ -47,6 +47,7 @@ export function useStatusProcessor(connection: WebSocket) {
     const [handledInitialTick, setHandledInitialTick] = useState(false)
 
     const configVersion = useConfigVersion()
+    const heartbeatTimeout = useHeartbeatTimeout()
     const dispatch = useDispatch()
     const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
     const { target, requestedTarget, heartbeat, nextControlWord, currentState } = machine
@@ -54,6 +55,7 @@ export function useStatusProcessor(connection: WebSocket) {
 
     // we need to track if we've already done initial connection handling
     const newConnection = useRef(true)
+    const lastHeartbeat = useRef(0)
 
     useEffect(() => {
         setTick(0)
@@ -103,6 +105,8 @@ export function useStatusProcessor(connection: WebSocket) {
                 heartbeat // echo the machine status heartbeat
             })
         )
+        lastHeartbeat.current = heartbeat
+
         setHandledInitialTick(true)
         // }
         // end of initial connection handling
@@ -136,15 +140,18 @@ export function useStatusProcessor(connection: WebSocket) {
             })
         }
 
-        if (tick % 50 === 0) {
-            // send heartbeat about every 5 seconds assuming status message is 10hz
+        // send heartbeat twice as often as required to allow for delays
+        const heartbeat_frequency = Math.ceil(
+            (heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE) / 2
+        )
+        console.log("check heartbeat", heartbeat, lastHeartbeat.current, heartbeat_frequency)
+        if (heartbeat > lastHeartbeat.current + heartbeat_frequency) {
             safe_send(
-                updateMachineCommandMsg({
-                    heartbeat // echo the machine status heartbeat
-                })
+                updateMachineCommandMsg({ heartbeat /* echo the machine status heartbeat */ })
             )
+            lastHeartbeat.current = heartbeat
         }
-    }, [tick, connection])
+    }, [heartbeat, connection])
 
     useEffect(() => {
         if (
