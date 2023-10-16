@@ -4,6 +4,7 @@
 
 import { AwTubeLoadedRobotParts, AwTubeRobotParts } from "./types"
 import { useGLTF } from "@react-three/drei"
+import { Group, Material, Mesh } from "three"
 
 /**
  * Loads the robot parts from the assets folder and attaches them to object property of the loaded parts

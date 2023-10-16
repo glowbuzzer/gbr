@@ -144,7 +144,6 @@ export function useStatusProcessor(connection: WebSocket) {
         const heartbeat_frequency = Math.ceil(
             (heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE) / 2
         )
-        console.log("check heartbeat", heartbeat, lastHeartbeat.current, heartbeat_frequency)
         if (heartbeat > lastHeartbeat.current + heartbeat_frequency) {
             safe_send(
                 updateMachineCommandMsg({ heartbeat /* echo the machine status heartbeat */ })

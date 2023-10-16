@@ -12,7 +12,6 @@ import {
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FramesTileDefinition,
-    GCodeTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
@@ -22,12 +21,22 @@ import {
     ToolsTileDefinition,
     TriadHelper
 } from "@glowbuzzer/controls"
-import { ExampleAppMenu } from "../../../../../../examples/util/ExampleAppMenu"
-import { PlaneShinyMetal } from "../../../../../../examples/util/PlaneShinyMetal"
+import { ExampleAppMenu } from "../../../../../examples/util/ExampleAppMenu"
+import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import React, { Suspense } from "react"
-import { AwTubeRobot, AwTubeRobotParts } from "@automationware/awtube"
-import { Base, Clamp, Flange, Joint, Link, Monobraccio, Spindle } from "@automationware/awtube"
+import {
+    AwTubeRobot,
+    AwTubeRobotParts,
+    Base,
+    Clamp,
+    Flange,
+    Joint,
+    Link,
+    Monobraccio,
+    Spindle
+} from "../../../lib/awtube"
 import { Environment } from "@react-three/drei"
+import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -50,28 +59,30 @@ const definition: AwTubeRobotParts = {
     s0: Spindle.M112
 }
 
+const LoadedAwTubeRobot = () => {
+    const parts = useLoadedRobotParts(definition)
+
+    return (
+        <AwTubeRobot parts={parts}>
+            <TriadHelper size={400} />
+            <mesh>
+                <sphereBufferGeometry args={[10, 10, 10]} />
+                <meshStandardMaterial color="red" />
+            </mesh>
+        </AwTubeRobot>
+    )
+}
+
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         // noinspection JSUnresolvedReference
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <AwTubeRobot definition={definition}>
-                        <TriadHelper size={400} />
-                        <mesh>
-                            <sphereBufferGeometry args={[10, 10, 10]} />
-                            <meshStandardMaterial color="red" />
-                        </mesh>
-                    </AwTubeRobot>
+                    <LoadedAwTubeRobot />
+                    <PlaneShinyMetal />
+                    <Environment files="/assets/environment/aerodynamics_workshop_1k.hdr" />
                 </Suspense>
-
-                <PlaneShinyMetal />
-                <Environment
-                    files={`${
-                        // @ts-ignore
-                        import.meta.env.BASE_URL
-                    }assets/environment/aerodynamics_workshop_1k.hdr`}
-                />
             </ThreeDimensionalSceneTile>
         )
     })
@@ -92,7 +103,6 @@ export const App = () => {
                 FramesTileDefinition,
                 ConfigEditTileDefinition,
                 FeedRateTileDefinition,
-                GCodeTileDefinition,
                 TelemetryTileDefinition
             ]}
         >

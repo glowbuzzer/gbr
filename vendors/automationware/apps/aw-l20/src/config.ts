@@ -189,17 +189,13 @@ export const config: GlowbuzzerConfig = {
             kinChainParams: {
                 numRows: 6,
                 numCols: 5,
+                // prettier-ignore
                 data: [
                     -90, 0, 0, 0, 0,
-
-                    0, 0, -90, 525, 0,
-
-                    90, 0, 180, 0, 0,
-
+                    0, 0, -90, 525, 0, // 0
+                    90, 0, 180, 0, 0, // 90
                     -90, 0, 0, 0, 475,
-
-                    90, 0, 90, 0, 0,
-
+                    90, 0, 90, 0, 0, // 90
                     0, 0, 0, 0, 328
                 ]
             }

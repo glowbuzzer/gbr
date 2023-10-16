@@ -23,7 +23,7 @@ import { useMemo } from "react"
 
 type AwTubeRobotProps = {
     children?: React.ReactNode
-    definition: AwTubeRobotParts
+    parts: AwTubeLoadedRobotParts
 }
 
 /**
@@ -31,7 +31,7 @@ type AwTubeRobotProps = {
  * @param definition The robot parts
  * @param children Any children to render at the end of the kinematic chain
  */
-export const AwTubeRobot = ({ children = null, definition }: AwTubeRobotProps) => {
+export const AwTubeRobot = ({ children = null, parts }: AwTubeRobotProps) => {
     const { frameIndex } = useKinematicsConfiguration(0)
     const { translation, rotation } = useFrame(frameIndex, false)
 
@@ -40,7 +40,7 @@ export const AwTubeRobot = ({ children = null, definition }: AwTubeRobotProps) =
     const quaternion = new Quaternion().copy(rotation as any)
 
     // load the parts
-    const parts = useMemo(() => useLoadedRobotParts(definition), [definition])
+    // const parts = useMemo(() => useLoadedRobotParts(definition), [definition])
 
     // prettier-ignore
     // Render the complete chain

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "72cb2c8e12c9fd37a3b6770c3d35b4e8"
+export const GbcSchemaChecksum = "1f6a1a894a41e9996483f6e76acf8c5d"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -792,6 +792,46 @@ export const GbcConstants = {
                         /**  Data for matrix */
                         data?:number[];
             }
+            /** Rigid body inertia for a kinematics configuration */
+            export type RigidBodyInertia = {
+            
+                        /**  Mass of rigid body */
+                        m?:number;
+                        /**  Center of mass of rigid body */
+                        h?:Vector3;
+                        /**  Moment of inertia about X axis */
+                        Ixx?:number;
+                        /**  Moment of inertia about Y axis */
+                        Iyy?:number;
+                        /**  Moment of inertia about Z axis */
+                        Izz?:number;
+                        /**  Moment of inertia about XY axis */
+                        Ixy?:number;
+                        /**  Moment of inertia about XZ axis */
+                        Ixz?:number;
+                        /**  Moment of inertia about YZ axis */
+                        Iyz?:number;
+            }
+            /** Inverse dynamic parameters for a kinematics configuration */
+            export type InverseDynamicParameters = {
+            
+                        /**  Rigid body inertia per joint for the kinematics configuration */
+                        rigidBodyInertia?:RigidBodyInertia[];
+                        
+                        jointMi?:number;
+                        
+                        jointOffset?:number;
+                        
+                        jointScale?:number;
+                        
+                        damping?:number;
+                        
+                        friction?:number;
+                        
+                        ns?:number;
+                        
+                        nj?:number;
+            }
             
             export type SphericalEnvelope = {
             
@@ -834,6 +874,8 @@ export const GbcConstants = {
                         angularLimits?:LimitConfiguration[];
                         /**  Matrix containing the DH parameters for the kinematics model */
                         kinChainParams?:MatrixInstanceDouble;
+                        /**  Inverse dynamic parameters for the kinematics model */
+                        idParams?:InverseDynamicParameters;
                         /**  Spherical envelope for the kinematics configuration */
                         sphericalEnvelope?:SphericalEnvelope;
                         /**  Inner and outer radius of cylindrical envelope (disabled by default) */
