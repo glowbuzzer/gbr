@@ -46,12 +46,14 @@ const JointDroItem = ({ index, warningThreshold, precision, valueKey }) => {
     const showSlider = finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
     const type = jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
 
-    const units = prefs.getUnits(type)
+    const is_torque = valueKey === JointDroValueKey.TORQUE
+
+    const units = is_torque ? "Nm" : prefs.getUnits(type)
     const [min, max] = [negLimit, posLimit].map(limit =>
         type === "angular" ? MathUtils.degToRad(limit) : limit
     )
     const current_in_si_units = j[valueKey]
-    const current = prefs.fromSI(current_in_si_units, type)
+    const current = is_torque ? current_in_si_units : prefs.fromSI(current_in_si_units, type)
     const warn_range = (max - min) * warningThreshold
     const warn =
         warn_range > 0 &&
