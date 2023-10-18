@@ -3,62 +3,53 @@
  */
 
 import { RcFile } from "antd/es/upload"
-import { Button, Slider, Space, Switch, Tag, Upload } from "antd"
+import { Button, Slider, Space, Switch, Tabs, Tag, Upload } from "antd"
 import { useState } from "react"
 import { Euler, Matrix3, Matrix4, Vector3 } from "three"
 import { useUrdfContext } from "./UrdfContextProvider"
 import * as math from "mathjs"
-import { map } from "mathjs"
+import styled from "styled-components"
 
-function fwd(vectors: number[][], values: number[]) {
-    // Create rotation matrix from eigenvectors
-    const rot = math.matrix(vectors)
+const StyledDiv = styled.div`
+    padding: 10px;
 
-    // Create diagonal inertia tensor in the principal axis frame
-    const diag = math.diag(values)
+    .grid {
+        display: inline-grid;
+        grid-template-columns: repeat(3, auto);
+        padding: 1px;
+        grid-gap: 1px;
+        text-align: right;
+        background: ${props => props.theme.colorBorder};
 
-    // Compute inertia tensor in the original frame: I = R * I' * R^T
-    const tmp = math.multiply(rot, diag)
-    const orig = math.multiply(tmp, math.transpose(rot))
+        div {
+            background: ${props => props.theme.colorBgBase};
+            padding: 2px 8px;
+        }
+    }
 
-    // Extract components ixx, ixy, ixz, iyy, iyz, izz from the original inertia tensor
-    //     const [[ixx, ixy, ixz], [_, iyy, iyz], [__, ___, izz]] = originalInertia.toArray();
+    .grid.col1 {
+        grid-template-columns: repeat(1, auto);
+    }
+`
 
-    console.log(orig)
-}
-
-fwd(
-    [
-        [0.9996324434183997, 2.6812827964051225e-2, 4.006285303095918e-3],
-        [2.6897549551752897e-2, -0.9993770336414858, -2.2848773666340513e-2],
-        [-3.3911492846243475e-3, -2.2948134706656433e-2, 0.9997309054040564]
-    ].reverse(),
-    [0.10033169846781069, 9.842420647294188e-2, 7.264109505924751e-2].reverse()
-)
-
-function i_to_matrix3(matrix: number[][], index = 0) {
-    console.log("inertiaTensor", matrix.toString())
-
+function decompose(matrix: number[][], index = 0) {
     const { vectors, values } = math.eigs(matrix)
 
     const normalizedVectors = vectors.map((vector: any) => math.divide(vector, math.norm(vector)))
-
-    // fwd(normalizedVectors as number[][], values as number[])
 
     const rotationMatrix = math.transpose(normalizedVectors as math.Matrix)
 
     // Form the rotation matrix
     const array = math.flatten(rotationMatrix) as unknown as number[]
-    // console.log("array from j", index, array)
-    // const m3 = new Matrix3().fromArray([0.0, 0.02, 1.0, 0.02, 1.0, -0.02, -1.0, 0.02, 0.0])
     const m3 = new Matrix3().fromArray(array)
-    // console.log("m3", m3.toArray(), m3.clone().transpose().toArray())
     const m4 = new Matrix4().setFromMatrix3(m3)
     const euler = new Euler().setFromRotationMatrix(m4)
 
-    console.log("vectors for j", index, vectors, euler.toArray())
-
-    return { values, euler }
+    return {
+        vectors: vectors as unknown as number[][],
+        values,
+        euler
+    }
 }
 
 function load_urdf(doc: Document) {
@@ -112,18 +103,25 @@ function load_urdf(doc: Document) {
             .map(name => inertia.attributes.getNamedItem(name).value)
             .map(parseFloat)
 
+        // console.log(
+        //     "joint",
+        //     index,
+        //     `ixx -> ${ixx}, ixy -> ${ixy}, ixz -> ${ixz}, iyy -> ${iyy}, iyz -> ${iyz}, izz -> ${izz}`
+        // )
         const inertiaTensor = [
-            [ixx, ixy, ixz],
-            [ixy, iyy, iyz],
-            [ixz, iyz, izz]
+            [ixx, ixy, -ixz],
+            [-ixy, iyy, -iyz],
+            [-ixz, -iyz, izz]
         ]
-        const { values, euler } = i_to_matrix3(inertiaTensor, index)
+        const { vectors, values, euler } = decompose(inertiaTensor, index)
 
         const { position: centreOfMass } = get_origin(inertial)
         return {
+            name: "Link " + (index + 1),
             position,
             rotation,
             centreOfMass,
+            eigenVectors: vectors,
             principleAxes: euler,
             principleMoments: values as number[],
             ixx,
@@ -138,18 +136,15 @@ function load_urdf(doc: Document) {
 
 export const UrdfTile = () => {
     const [urdfDoc, setUrdfDoc] = useState(null)
+    const { frames, options, setFrames, updateOptions } = useUrdfContext()
+
     const {
-        frames,
-        setFrames,
-        opacity,
-        setOpacity,
         showFrames,
         showCentresOfMass,
-        showAxesOfInertia,
-        setShowFrames,
-        setShowCentresOfMass,
-        setShowAxesOfInertia
-    } = useUrdfContext()
+        showPrincipleAxesOfInertia,
+        showInertiaCuboid,
+        modelOpacity
+    } = options
 
     async function before_upload(info: RcFile) {
         // function called when user selects a file to "upload" (actually just load into memory)
@@ -172,8 +167,28 @@ export const UrdfTile = () => {
         setFrames(load_urdf(urdfDoc))
     }
 
+    function setModelOpacity(modelOpacity: number) {
+        updateOptions({ modelOpacity })
+    }
+
+    function setShowFrames(showFrames: boolean) {
+        updateOptions({ showFrames })
+    }
+
+    function setShowCentresOfMass(showCentresOfMass: boolean) {
+        updateOptions({ showCentresOfMass })
+    }
+
+    function setShowPrincipleAxesOfInertia(showPrincipleAxesOfInertia: boolean) {
+        updateOptions({ showPrincipleAxesOfInertia })
+    }
+
+    function setShowInertiaCuboid(showInertiaCuboid: boolean) {
+        updateOptions({ showInertiaCuboid })
+    }
+
     return (
-        <div style={{ padding: "10px" }}>
+        <StyledDiv>
             <Space direction="vertical">
                 <Space>
                     <Upload beforeUpload={before_upload} showUploadList={false}>
@@ -184,7 +199,13 @@ export const UrdfTile = () => {
 
                 <div>
                     <div>Model Opacity</div>
-                    <Slider min={0} max={1} step={0.05} value={opacity} onChange={setOpacity} />
+                    <Slider
+                        min={0}
+                        max={1}
+                        step={0.05}
+                        value={modelOpacity}
+                        onChange={setModelOpacity}
+                    />
                 </div>
 
                 {frames.length > 0 && (
@@ -204,17 +225,55 @@ export const UrdfTile = () => {
                         <div>
                             <Switch
                                 size="small"
-                                checked={showAxesOfInertia}
-                                onChange={setShowAxesOfInertia}
+                                checked={showPrincipleAxesOfInertia}
+                                onChange={setShowPrincipleAxesOfInertia}
                             />{" "}
                             Show Axes of Inertia
+                        </div>
+                        <div>
+                            <Switch
+                                size="small"
+                                checked={showInertiaCuboid}
+                                onChange={setShowInertiaCuboid}
+                            />{" "}
+                            Show Inertia Cuboid
                         </div>
                     </>
                 )}
                 <Button size="small" onClick={recalc}>
-                    CALC
+                    RECALC
                 </Button>
+                {/*
+                <Table
+                    pagination={false}
+                    size="small"
+                    columns={[
+                        {
+                            title: "Frame",
+                            dataIndex: "name",
+                            key: "name"
+                        }
+                    ]}
+                    dataSource={frames}
+                />
+*/}
             </Space>
-        </div>
+            <Tabs>
+                {frames.map((frame, index) => (
+                    <Tabs.TabPane tab={frame.name} key={index}>
+                        <div className="grid">
+                            {frame.eigenVectors.flat().map((v, i) => (
+                                <div key={i}>{v.toFixed(2)}</div>
+                            ))}
+                        </div>
+                        <div className="grid col1">
+                            {frame.principleMoments.map((v, i) => (
+                                <div key={i}>{(v * 1e6).toFixed(2)}</div>
+                            ))}
+                        </div>
+                    </Tabs.TabPane>
+                ))}
+            </Tabs>
+        </StyledDiv>
     )
 }

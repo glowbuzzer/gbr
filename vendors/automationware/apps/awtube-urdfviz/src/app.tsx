@@ -73,9 +73,9 @@ function makeMeshesTransparent(group: Group, opacity: number = 0.5): void {
 }
 
 const LoadedAwTubeRobot = () => {
-    const { opacity } = useUrdfContext()
+    const { options } = useUrdfContext()
     const parts = useLoadedRobotParts(definition)
-    Object.values(parts).forEach(part => makeMeshesTransparent(part.object, opacity))
+    Object.values(parts).forEach(part => makeMeshesTransparent(part.object, options.modelOpacity))
 
     return (
         <>

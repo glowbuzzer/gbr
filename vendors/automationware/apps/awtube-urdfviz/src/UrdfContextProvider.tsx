@@ -6,6 +6,7 @@ import { createContext, useContext, useState } from "react"
 import { Euler, Vector3 } from "three"
 
 export type Frame = {
+    name: string
     position: Vector3
     rotation: Euler
     centreOfMass: Vector3
@@ -15,43 +16,45 @@ export type Frame = {
     iyy: number
     iyz: number
     izz: number
+    eigenVectors: number[][]
     principleAxes: Euler
     principleMoments: number[]
 }
 
-type UrdfContext = {
-    frames: Frame[]
-    opacity: number
+export type FrameOptions = {
+    modelOpacity: number
     showFrames: boolean
     showCentresOfMass: boolean
-    showAxesOfInertia: boolean
+    showPrincipleAxesOfInertia: boolean
+    showInertiaCuboid: boolean
+}
+
+type UrdfContext = {
+    frames: Frame[]
+    options: FrameOptions
     setFrames(frames: Frame[]): void
-    setOpacity(opacity: number): void
-    setShowFrames(showFrames: boolean): void
-    setShowCentresOfMass(showCentresOfMass: boolean): void
-    setShowAxesOfInertia(showAxesOfInertia: boolean): void
+    updateOptions(options: Partial<FrameOptions>): void
 }
 
 const UrdfContext = createContext<UrdfContext>(null)
 
 export const UrdfContextProvider = ({ children }) => {
     const [frames, setFrames] = useState<Frame[]>([])
-    const [opacity, setOpacity] = useState<number>(0.25)
-    const [showFrames, setShowFrames] = useState<boolean>(true)
-    const [showCentresOfMass, setShowCentresOfMass] = useState<boolean>(true)
-    const [showAxesOfInertia, setShowAxesOfInertia] = useState<boolean>(true)
+    const [options, setOptions] = useState<FrameOptions>({
+        modelOpacity: 0.25,
+        showFrames: true,
+        showCentresOfMass: true,
+        showPrincipleAxesOfInertia: true,
+        showInertiaCuboid: true
+    })
 
     const context = {
         frames,
-        opacity,
-        showFrames,
-        showCentresOfMass,
-        showAxesOfInertia,
+        options,
         setFrames,
-        setOpacity,
-        setShowFrames,
-        setShowCentresOfMass,
-        setShowAxesOfInertia
+        updateOptions: (options: Partial<FrameOptions>) => {
+            setOptions(current => ({ ...current, ...options }))
+        }
     }
 
     return <UrdfContext.Provider value={context}>{children}</UrdfContext.Provider>

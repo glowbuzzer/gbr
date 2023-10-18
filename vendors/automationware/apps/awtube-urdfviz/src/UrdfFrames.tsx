@@ -7,9 +7,11 @@ import { useUrdfContext } from "./UrdfContextProvider"
 import { CentreOfMassIndicator } from "./CentreOfMassIndicator"
 import React from "react"
 import { InertiaTriadHelper } from "./InertiaTriadHelper"
+import { InertiaCuboidHelper } from "./InertiaCuboidHelper"
 
 export const UrdfFrames = () => {
-    const { frames, showFrames, showCentresOfMass, showAxesOfInertia } = useUrdfContext()
+    const { frames, options } = useUrdfContext()
+    const { showFrames, showCentresOfMass, showPrincipleAxesOfInertia, showInertiaCuboid } = options
 
     function make_root() {
         return frames
@@ -22,10 +24,16 @@ export const UrdfFrames = () => {
                         <group position={frame.centreOfMass}>
                             <group rotation={frame.principleAxes}>
                                 {showCentresOfMass && <CentreOfMassIndicator />}
-                                {showAxesOfInertia && (
+                                {showPrincipleAxesOfInertia && (
                                     <InertiaTriadHelper
                                         size={0.04}
                                         moments={frame.principleMoments}
+                                    />
+                                )}
+                                {showInertiaCuboid && (
+                                    <InertiaCuboidHelper
+                                        size={0.001}
+                                        values={frame.principleMoments}
                                     />
                                 )}
                             </group>
@@ -38,9 +46,7 @@ export const UrdfFrames = () => {
 
     return (
         <>
-            <group position={[0, -0, 0]} scale={1000}>
-                {make_root()}
-            </group>
+            <group scale={1000}>{make_root()}</group>
         </>
     )
 }

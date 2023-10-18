@@ -2,6 +2,8 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
+import * as math from "mathjs"
+
 /**
  * NOT CURRENTLY USED - WRITTEN BY OUR FRIEND !!!!
  */
@@ -68,4 +70,21 @@ export function jacobiEigenSolver(a: number[][]): {
     }
 
     return { eigenvalues: [], eigenvectors: [] } // Didn't converge
+}
+
+function fwd(vectors: number[][], values: number[]) {
+    // Create rotation matrix from eigenvectors
+    const rot = math.matrix(vectors)
+
+    // Create diagonal inertia tensor in the principal axis frame
+    const diag = math.diag(values)
+
+    // Compute inertia tensor in the original frame: I = R * I' * R^T
+    const tmp = math.multiply(rot, diag)
+    const orig = math.multiply(tmp, math.transpose(rot))
+
+    // Extract components ixx, ixy, ixz, iyy, iyz, izz from the original inertia tensor
+    //     const [[ixx, ixy, ixz], [_, iyy, iyz], [__, ___, izz]] = originalInertia.toArray();
+
+    console.log(orig)
 }
