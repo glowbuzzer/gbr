@@ -94,9 +94,6 @@ export const machineSlice: Slice<
                 operationErrorMessage
             } = action.payload
 
-            if (state.target !== target) {
-                console.log("MachineSlice: target changed from", state.target, "to" + target)
-            }
             state.statusWord = statusWord
             state.controlWord = controlWord
             state.activeFault = activeFault
