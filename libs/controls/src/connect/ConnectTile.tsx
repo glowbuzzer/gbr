@@ -149,6 +149,8 @@ export const ConnectTile = () => {
         machine.setMachineControlWord(possible_transitions.FaultReset())
     }
 
+    const no_change_operation_mode = !connected || fault || fault_active || target_not_acquired
+
     return (
         <StyledDiv>
             {messageContainer}
@@ -265,7 +267,7 @@ export const ConnectTile = () => {
                 </div>
                 <div className="controls">
                     <Radio.Group
-                        disabled={!connected || fault || fault_active || target_not_acquired}
+                        disabled={no_change_operation_mode}
                         size={"small"}
                         value={
                             state === MachineState.OPERATION_ENABLED
@@ -278,7 +280,7 @@ export const ConnectTile = () => {
                         <Radio.Button
                             className="danger"
                             value={DesiredState.OPERATIONAL}
-                            disabled={estopActive}
+                            disabled={no_change_operation_mode || estopActive}
                         >
                             Enabled
                         </Radio.Button>
