@@ -4,9 +4,9 @@
 
 import React from "react"
 
-export const CentreOfMassIndicator = ({ position }) => {
+export const CentreOfMassIndicator = () => {
     return (
-        <mesh scale={0.015} position={position}>
+        <mesh scale={0.015}>
             <sphereBufferGeometry args={[1, 32, 32]} />
             <shaderMaterial
                 attach="material"

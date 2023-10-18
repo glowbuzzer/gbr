@@ -3,12 +3,13 @@
  */
 
 import { TriadHelper } from "@glowbuzzer/controls"
-import { Sphere } from "@react-three/drei"
 import { useUrdfContext } from "./UrdfContextProvider"
 import { CentreOfMassIndicator } from "./CentreOfMassIndicator"
+import React from "react"
+import { InertiaTriadHelper } from "./InertiaTriadHelper"
 
 export const UrdfFrames = () => {
-    const { frames, showFrames, showCentresOfMass } = useUrdfContext()
+    const { frames, showFrames, showCentresOfMass, showAxesOfInertia } = useUrdfContext()
 
     function make_root() {
         return frames
@@ -18,9 +19,17 @@ export const UrdfFrames = () => {
                 return (
                     <group {...frame}>
                         {showFrames && <TriadHelper size={0.2} />}
-                        {showCentresOfMass && (
-                            <CentreOfMassIndicator position={frame.centreOfMass} />
-                        )}
+                        <group position={frame.centreOfMass}>
+                            <group rotation={frame.principleAxes}>
+                                {showCentresOfMass && <CentreOfMassIndicator />}
+                                {showAxesOfInertia && (
+                                    <InertiaTriadHelper
+                                        size={0.04}
+                                        moments={frame.principleMoments}
+                                    />
+                                )}
+                            </group>
+                        </group>
                         {child}
                     </group>
                 )
@@ -29,11 +38,6 @@ export const UrdfFrames = () => {
 
     return (
         <>
-            {/*
-            <group position={[800, 400, 117 + 0.012 * 1000]} scale={1000}>
-                {make_root(kdl_frames)}
-            </group>
-*/}
             <group position={[0, -0, 0]} scale={1000}>
                 {make_root()}
             </group>

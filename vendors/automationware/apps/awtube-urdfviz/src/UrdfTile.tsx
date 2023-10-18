@@ -5,8 +5,61 @@
 import { RcFile } from "antd/es/upload"
 import { Button, Slider, Space, Switch, Tag, Upload } from "antd"
 import { useState } from "react"
-import { Euler, Vector3 } from "three"
+import { Euler, Matrix3, Matrix4, Vector3 } from "three"
 import { useUrdfContext } from "./UrdfContextProvider"
+import * as math from "mathjs"
+import { map } from "mathjs"
+
+function fwd(vectors: number[][], values: number[]) {
+    // Create rotation matrix from eigenvectors
+    const rot = math.matrix(vectors)
+
+    // Create diagonal inertia tensor in the principal axis frame
+    const diag = math.diag(values)
+
+    // Compute inertia tensor in the original frame: I = R * I' * R^T
+    const tmp = math.multiply(rot, diag)
+    const orig = math.multiply(tmp, math.transpose(rot))
+
+    // Extract components ixx, ixy, ixz, iyy, iyz, izz from the original inertia tensor
+    //     const [[ixx, ixy, ixz], [_, iyy, iyz], [__, ___, izz]] = originalInertia.toArray();
+
+    console.log(orig)
+}
+
+fwd(
+    [
+        [0.9996324434183997, 2.6812827964051225e-2, 4.006285303095918e-3],
+        [2.6897549551752897e-2, -0.9993770336414858, -2.2848773666340513e-2],
+        [-3.3911492846243475e-3, -2.2948134706656433e-2, 0.9997309054040564]
+    ].reverse(),
+    [0.10033169846781069, 9.842420647294188e-2, 7.264109505924751e-2].reverse()
+)
+
+function i_to_matrix3(matrix: number[][], index = 0) {
+    console.log("inertiaTensor", matrix.toString())
+
+    const { vectors, values } = math.eigs(matrix)
+
+    const normalizedVectors = vectors.map((vector: any) => math.divide(vector, math.norm(vector)))
+
+    // fwd(normalizedVectors as number[][], values as number[])
+
+    const rotationMatrix = math.transpose(normalizedVectors as math.Matrix)
+
+    // Form the rotation matrix
+    const array = math.flatten(rotationMatrix) as unknown as number[]
+    // console.log("array from j", index, array)
+    // const m3 = new Matrix3().fromArray([0.0, 0.02, 1.0, 0.02, 1.0, -0.02, -1.0, 0.02, 0.0])
+    const m3 = new Matrix3().fromArray(array)
+    // console.log("m3", m3.toArray(), m3.clone().transpose().toArray())
+    const m4 = new Matrix4().setFromMatrix3(m3)
+    const euler = new Euler().setFromRotationMatrix(m4)
+
+    console.log("vectors for j", index, vectors, euler.toArray())
+
+    return { values, euler }
+}
 
 function load_urdf(doc: Document) {
     if (!doc) {
@@ -51,8 +104,35 @@ function load_urdf(doc: Document) {
 
     return joints.map((j, index) => {
         const { position, rotation } = get_origin(j)
-        const { position: centreOfMass } = get_origin(get(links[index], "inertial"))
-        return { position, rotation, centreOfMass }
+
+        const inertial = get(links[index], "inertial")
+
+        const inertia = get(inertial, "inertia")
+        const [ixx, ixy, ixz, iyy, iyz, izz] = ["ixx", "ixy", "ixz", "iyy", "iyz", "izz"]
+            .map(name => inertia.attributes.getNamedItem(name).value)
+            .map(parseFloat)
+
+        const inertiaTensor = [
+            [ixx, ixy, ixz],
+            [ixy, iyy, iyz],
+            [ixz, iyz, izz]
+        ]
+        const { values, euler } = i_to_matrix3(inertiaTensor, index)
+
+        const { position: centreOfMass } = get_origin(inertial)
+        return {
+            position,
+            rotation,
+            centreOfMass,
+            principleAxes: euler,
+            principleMoments: values as number[],
+            ixx,
+            ixy,
+            ixz,
+            iyy,
+            iyz,
+            izz
+        }
     })
 }
 
@@ -65,8 +145,10 @@ export const UrdfTile = () => {
         setOpacity,
         showFrames,
         showCentresOfMass,
+        showAxesOfInertia,
         setShowFrames,
-        setShowCentresOfMass
+        setShowCentresOfMass,
+        setShowAxesOfInertia
     } = useUrdfContext()
 
     async function before_upload(info: RcFile) {
@@ -85,6 +167,10 @@ export const UrdfTile = () => {
 
     // const frames = load_urdf(urdfDoc)
     // console.log(frames)
+
+    function recalc() {
+        setFrames(load_urdf(urdfDoc))
+    }
 
     return (
         <div style={{ padding: "10px" }}>
@@ -115,8 +201,19 @@ export const UrdfTile = () => {
                             />{" "}
                             Show Centres of Mass
                         </div>
+                        <div>
+                            <Switch
+                                size="small"
+                                checked={showAxesOfInertia}
+                                onChange={setShowAxesOfInertia}
+                            />{" "}
+                            Show Axes of Inertia
+                        </div>
                     </>
                 )}
+                <Button size="small" onClick={recalc}>
+                    CALC
+                </Button>
             </Space>
         </div>
     )
