@@ -2,17 +2,13 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import {
-    updateMachineCommandMsg,
-    updateMachineControlWordMsg,
-    updateMachineTargetMsg
-} from "../machine/machine_api"
+import { updateMachineCommandMsg, updateMachineControlWordMsg } from "../machine/machine_api"
 import { useEffect, useRef, useState } from "react"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { machineSlice, MachineSliceType } from "../machine"
 import { RootState } from "../root"
 import { StreamHandler, streamSlice, StreamSliceType, updateStreamCommandMsg } from "../stream"
-import { kinematicsSlice, updateFroMsg, useKinematicsList } from "../kinematics"
+import { kinematicsSlice } from "../kinematics"
 import { traceSlice } from "../trace"
 import { framesSlice } from "../frames"
 import { telemetrySlice } from "../telemetry"
@@ -43,14 +39,13 @@ function status(status, heartbeat) {
  * state in the state machine.
  */
 export function useStatusProcessor(connection: WebSocket) {
-    const [tick, setTick] = useState(0)
     const [handledInitialTick, setHandledInitialTick] = useState(false)
 
     const configVersion = useConfigVersion()
     const heartbeatTimeout = useHeartbeatTimeout()
     const dispatch = useDispatch()
     const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
-    const { target, requestedTarget, heartbeat, nextControlWord, currentState } = machine
+    const { target, heartbeat, nextControlWord, currentState } = machine
     const streams = useSelector<RootState, StreamSliceType[]>(state => state.stream, shallowEqual)
 
     // we need to track if we've already done initial connection handling
@@ -58,7 +53,6 @@ export function useStatusProcessor(connection: WebSocket) {
     const lastHeartbeat = useRef(0)
 
     useEffect(() => {
-        setTick(0)
         setHandledInitialTick(false)
         newConnection.current = true
     }, [connection, configVersion])
@@ -67,7 +61,7 @@ export function useStatusProcessor(connection: WebSocket) {
         if (
             !connection ||
             handledInitialTick ||
-            target === null ||
+            !target ||
             !newConnection.current ||
             connection.readyState !== WebSocket.OPEN
         ) {
@@ -84,18 +78,16 @@ export function useStatusProcessor(connection: WebSocket) {
         // handling after we've received our first status message, as this populates the store with
         // things like the number of kinematics configurations, streams, and so on
         // if (tick === 1 && newConnection.current) {
-        console.log("StatusProcessor: perform initial connection handling", target, requestedTarget)
-
         newConnection.current = false
 
         dispatch(traceSlice.actions.reset(0)) // clear tool path on connect
         dispatch(framesSlice.actions.setActiveFrame(0)) // set active frame (equivalent to G54)
         dispatch(telemetrySlice.actions.init()) // reset telemetry
+
         dispatch(machineSlice.actions.init(target)) // reset machine state, using current target from GBC
 
         if (nextControlWord !== undefined) {
             // logic wants to dictate new control word to GBC
-            console.log("StatusProcessor: send control word during init", nextControlWord)
             connection.send(updateMachineControlWordMsg(nextControlWord))
         }
 
@@ -142,9 +134,9 @@ export function useStatusProcessor(connection: WebSocket) {
 
         // send heartbeat twice as often as required to allow for delays
         const heartbeat_frequency = Math.ceil(
-            (heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE) / 2
+            (heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE) * 0.5
         )
-        if (heartbeat > lastHeartbeat.current + heartbeat_frequency) {
+        if (!lastHeartbeat.current || heartbeat > lastHeartbeat.current + heartbeat_frequency) {
             safe_send(
                 updateMachineCommandMsg({ heartbeat /* echo the machine status heartbeat */ })
             )
@@ -158,7 +150,6 @@ export function useStatusProcessor(connection: WebSocket) {
             connection &&
             connection.readyState === WebSocket.OPEN
         ) {
-            console.log("StatusProcessor: send control word", nextControlWord)
             // logic wants to dictate new control word to GBC
             connection.send(updateMachineControlWordMsg(nextControlWord))
         }
@@ -186,9 +177,6 @@ export function useStatusProcessor(connection: WebSocket) {
                 dispatch(integerOutputsSlice.actions.status(status(msg.status.iout, heartbeat)))
             msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
             msg.status.kc && dispatch(traceSlice.actions.status(msg.status.kc))
-
-            // we only want message with status property to increment the tick count, not ancillary items below
-            setTick(current => current + 1)
         }
 
         // these might be sent at different frequencies by GBC
