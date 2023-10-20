@@ -50,7 +50,9 @@ export const StaubliRobot = ({
      */
     return (
         <KinChainProvider kinematicsConfigurationIndex={kinematicsConfigurationIndex}>
+            {/*
             <LayoutObjectGrid objects={[base, p0, p1, p2, p3, p4, p5]} />
+*/}
 
             <group position={position} quaternion={quaternion} scale={1000}>
                 <primitive object={base} />
@@ -60,9 +62,7 @@ export const StaubliRobot = ({
                             <KinematicsGroup jointIndex={3} part={p3}>
                                 <KinematicsGroup jointIndex={4} part={p4}>
                                     <KinematicsGroup jointIndex={5} part={p5}>
-                                        <group scale={1 / 1000}>
-                                            <TriadHelper size={200} />
-                                        </group>
+                                        <group scale={1 / 1000}>{children}</group>
                                     </KinematicsGroup>
                                 </KinematicsGroup>
                             </KinematicsGroup>
