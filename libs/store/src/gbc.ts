@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "1f6a1a894a41e9996483f6e76acf8c5d"
+export const GbcSchemaChecksum = "bdb775ccbdb30131062adccc588dff95"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -733,22 +733,22 @@ export const GbcConstants = {
                         jointType?:JOINT_TYPE;
                         /**  List of limits to be applied to the joint for different types of move */
                         limits?:LimitConfiguration[];
-                        /**  default scale factor to be applied to a joint's pos/vel/acc/torque before transfer to the fieldbus */
+                        /**  Default scale factor to be applied to a joint's pos/vel/acc/torque before transfer to the fieldbus */
                         scale?:number;
-                        /**  scale factor to be applied to a joint's position to/from the fieldbus */
+                        /**  Scale factor to be applied to a joint's position to/from the fieldbus */
                         scalePos?:number;
-                        /**  scale factor to be applied to a joint's velocity to/from the fieldbus */
+                        /**  Scale factor to be applied to a joint's velocity to/from the fieldbus */
                         scaleVel?:number;
-                        /**  scale factor to be applied to a joint's torque to/from the fieldbus */
+                        /**  Scale factor to be applied to a joint's torque to/from the fieldbus */
                         scaleTorque?:number;
-                        /**  TODO */
+                        /**  @ignore */
                         pow10?:number;
-                        /**  negative soft limit for the travel of the joint */
+                        /**  Negative soft limit for the travel of the joint, before scale/inverted flag is applied */
                         negLimit?:number;
-                        /**  positive soft limit for the travel of the joint */
+                        /**  Positive soft limit for the travel of the joint, before scale/inverted flag is applied */
                         posLimit?:number;
-                        /**  flags that a joint's motion is inverted */
-                        isInverted?:boolean;
+                        /**  Indicates that a joint's motion is inverted. Equivalent to using a negative scale factor */
+                        inverted?:boolean;
                         
                         finiteContinuous?:JOINT_FINITECONTINUOUS;
                         
@@ -791,6 +791,8 @@ export const GbcConstants = {
                         numCols?:number;
                         /**  Data for matrix */
                         data?:number[];
+                        /**  Array of flags indicating if the joint angle should be inverted during FK/IK kinematics */
+                        invJointAngles?:number[];
             }
             /** Rigid body inertia for a kinematics configuration */
             export type RigidBodyInertia = {
