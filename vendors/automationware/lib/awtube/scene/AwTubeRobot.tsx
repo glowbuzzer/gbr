@@ -24,6 +24,7 @@ import { useMemo } from "react"
 type AwTubeRobotProps = {
     children?: React.ReactNode
     parts: AwTubeLoadedRobotParts
+    showFrames?: boolean
 }
 
 /**
@@ -31,7 +32,7 @@ type AwTubeRobotProps = {
  * @param definition The robot parts
  * @param children Any children to render at the end of the kinematic chain
  */
-export const AwTubeRobot = ({ children = null, parts }: AwTubeRobotProps) => {
+export const AwTubeRobot = ({ children = null, parts, showFrames }: AwTubeRobotProps) => {
     const { frameIndex } = useKinematicsConfiguration(0)
     const { translation, rotation } = useFrame(frameIndex, false)
 
@@ -45,25 +46,25 @@ export const AwTubeRobot = ({ children = null, parts }: AwTubeRobotProps) => {
     // prettier-ignore
     // Render the complete chain
     return (
-    <AwTubeKinChainProvider kinematicsConfigurationIndex={0}>
-      <group position={position} quaternion={quaternion} scale={1000}>
-        <AwTubeBaseLink parts={parts} />
-        <AwKinematicsGroup jointIndex={0} link={<AwTubeLink1 parts={parts} />}>
-          <AwKinematicsGroup jointIndex={1} link={<AwTubeLink2 parts={parts} />}>
-            <AwKinematicsGroup jointIndex={2} link={<AwTubeLink3 parts={parts} />}>
-              <AwKinematicsGroup jointIndex={3} link={<AwTubeLink4 parts={parts} />}>
-                <AwKinematicsGroup jointIndex={4} link={<AwTubeLink5 parts={parts} />}>
-                  <AwKinematicsGroup jointIndex={5} link={<AwTubeLink6 parts={parts} />}>
-                    <group scale={1 / 1000}>
-                      {children}
-                    </group>
-                  </AwKinematicsGroup>
+        <AwTubeKinChainProvider kinematicsConfigurationIndex={0} showFrames={showFrames}>
+            <group position={position} quaternion={quaternion} scale={1000}>
+                <AwTubeBaseLink parts={parts} />
+                <AwKinematicsGroup jointIndex={0} link={<AwTubeLink1 parts={parts} />}>
+                    <AwKinematicsGroup jointIndex={1} link={<AwTubeLink2 parts={parts} />}>
+                        <AwKinematicsGroup jointIndex={2} link={<AwTubeLink3 parts={parts} />}>
+                            <AwKinematicsGroup jointIndex={3} link={<AwTubeLink4 parts={parts} />}>
+                                <AwKinematicsGroup jointIndex={4} link={<AwTubeLink5 parts={parts} />}>
+                                    <AwKinematicsGroup jointIndex={5} link={<AwTubeLink6 parts={parts} />}>
+                                        <group scale={1 / 1000}>
+                                            {children}
+                                        </group>
+                                    </AwKinematicsGroup>
+                                </AwKinematicsGroup>
+                            </AwKinematicsGroup>
+                        </AwKinematicsGroup>
+                    </AwKinematicsGroup>
                 </AwKinematicsGroup>
-              </AwKinematicsGroup>
-            </AwKinematicsGroup>
-          </AwKinematicsGroup>
-        </AwKinematicsGroup>
-      </group>
-    </AwTubeKinChainProvider>
-  );
+            </group>
+        </AwTubeKinChainProvider>
+    );
 }

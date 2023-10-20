@@ -10,6 +10,7 @@ export type Frame = {
     position: Vector3
     rotation: Euler
     centreOfMass: Vector3
+    axis: Vector3
     ixx: number
     ixy: number
     ixz: number
@@ -23,10 +24,13 @@ export type Frame = {
 
 export type FrameOptions = {
     modelOpacity: number
-    showFrames: boolean
+    showFramesURDF: boolean
+    showWorldPositionURDF: boolean
     showCentresOfMass: boolean
     showPrincipleAxesOfInertia: boolean
     showInertiaCuboid: boolean
+    showWorldPositionDH: boolean
+    showFramesDH: boolean
 }
 
 type UrdfContext = {
@@ -42,10 +46,13 @@ export const UrdfContextProvider = ({ children }) => {
     const [frames, setFrames] = useState<Frame[]>([])
     const [options, setOptions] = useState<FrameOptions>({
         modelOpacity: 0.25,
-        showFrames: true,
+        showFramesURDF: true,
+        showWorldPositionURDF: true,
         showCentresOfMass: true,
-        showPrincipleAxesOfInertia: true,
-        showInertiaCuboid: true
+        showPrincipleAxesOfInertia: false,
+        showInertiaCuboid: false,
+        showWorldPositionDH: true,
+        showFramesDH: false
     })
 
     const context = {

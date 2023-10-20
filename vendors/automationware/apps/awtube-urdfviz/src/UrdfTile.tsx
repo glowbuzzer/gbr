@@ -56,11 +56,11 @@ function load_urdf(doc: Document) {
     if (!doc) {
         return []
     }
-    console.log("doc", doc)
     // filter element children
     const links = Array.from(doc.documentElement.childNodes)
         .filter(node => node.nodeName === "link")
         .slice(1)
+
     const joints = Array.from(doc.documentElement.childNodes).filter(
         node => node.nodeName === "joint"
     )
@@ -71,14 +71,12 @@ function load_urdf(doc: Document) {
     if (joints.length !== 6) {
         throw new Error("Wrong number of joints - expected 6")
     }
-    console.log("links", ...links)
-    console.log("joints", ...joints)
 
     function get(j: ChildNode, name: string): HTMLElement {
         return Array.from(j.childNodes).find(node => node.nodeName === name) as HTMLElement
     }
 
-    function get_origin(j: ChildNode) {
+    function get_origin(j: ChildNode, withAxis = false) {
         const origin = get(j, "origin")
         if (!origin) {
             throw new Error("No origin found")
@@ -90,11 +88,17 @@ function load_urdf(doc: Document) {
             .map(parseFloat)
         const position = new Vector3(x, y, z)
         const rotation = new Euler(roll, pitch, yaw, "ZYX")
-        return { position, rotation }
+
+        const axis = get(j, "axis")?.attributes.getNamedItem("xyz").value.split(" ").map(parseFloat)
+        if (withAxis && !axis) {
+            throw new Error("No axis found for joint")
+        }
+
+        return { position, rotation, axis: withAxis ? new Vector3(...axis) : undefined }
     }
 
     return joints.map((j, index) => {
-        const { position, rotation } = get_origin(j)
+        const { position, rotation, axis } = get_origin(j, true)
 
         const inertial = get(links[index], "inertial")
 
@@ -109,17 +113,19 @@ function load_urdf(doc: Document) {
         //     `ixx -> ${ixx}, ixy -> ${ixy}, ixz -> ${ixz}, iyy -> ${iyy}, iyz -> ${iyz}, izz -> ${izz}`
         // )
         const inertiaTensor = [
-            [ixx, ixy, -ixz],
-            [-ixy, iyy, -iyz],
-            [-ixz, -iyz, izz]
+            [ixx, ixy, ixz],
+            [ixy, iyy, iyz],
+            [ixz, iyz, izz]
         ]
         const { vectors, values, euler } = decompose(inertiaTensor, index)
 
         const { position: centreOfMass } = get_origin(inertial)
+
         return {
             name: "Link " + (index + 1),
             position,
             rotation,
+            axis,
             centreOfMass,
             eigenVectors: vectors,
             principleAxes: euler,
@@ -139,11 +145,14 @@ export const UrdfTile = () => {
     const { frames, options, setFrames, updateOptions } = useUrdfContext()
 
     const {
-        showFrames,
+        showFramesURDF,
+        showWorldPositionURDF,
         showCentresOfMass,
         showPrincipleAxesOfInertia,
         showInertiaCuboid,
-        modelOpacity
+        modelOpacity,
+        showWorldPositionDH,
+        showFramesDH
     } = options
 
     async function before_upload(info: RcFile) {
@@ -160,19 +169,22 @@ export const UrdfTile = () => {
         return false
     }
 
-    // const frames = load_urdf(urdfDoc)
-    // console.log(frames)
-
     function recalc() {
-        setFrames(load_urdf(urdfDoc))
+        const frames = load_urdf(urdfDoc)
+        console.log("result", frames)
+        setFrames(frames)
     }
 
     function setModelOpacity(modelOpacity: number) {
         updateOptions({ modelOpacity })
     }
 
-    function setShowFrames(showFrames: boolean) {
-        updateOptions({ showFrames })
+    function setShowFrames(showFramesURDF: boolean) {
+        updateOptions({ showFramesURDF })
+    }
+
+    function setShowWorldPositionURDF(showWorldPositionURDF: boolean) {
+        updateOptions({ showWorldPositionURDF })
     }
 
     function setShowCentresOfMass(showCentresOfMass: boolean) {
@@ -187,14 +199,24 @@ export const UrdfTile = () => {
         updateOptions({ showInertiaCuboid })
     }
 
+    function setShowFramesDH(showFramesDH: boolean) {
+        updateOptions({ showFramesDH })
+    }
+
+    function setShowWorldPositionDH(showWorldPositionDH: boolean) {
+        updateOptions({ showWorldPositionDH })
+    }
+
+    const loaded = frames.length > 0
+
     return (
         <StyledDiv>
             <Space direction="vertical">
                 <Space>
                     <Upload beforeUpload={before_upload} showUploadList={false}>
-                        <Button size="small">Load URDF File</Button>
+                        <Button size="small">Upload URDF File</Button>
                     </Upload>
-                    {urdfDoc && <Tag color="green">URDF Loaded</Tag>}
+                    {loaded && <Tag color="green">URDF Loaded</Tag>}
                 </Space>
 
                 <div>
@@ -208,11 +230,25 @@ export const UrdfTile = () => {
                     />
                 </div>
 
-                {frames.length > 0 && (
+                <div>Options</div>
+
+                {loaded && (
                     <>
                         <div>
-                            <Switch size="small" checked={showFrames} onChange={setShowFrames} />{" "}
-                            Show Frames
+                            <Switch
+                                size="small"
+                                checked={showFramesURDF}
+                                onChange={setShowFrames}
+                            />{" "}
+                            URDF Frames
+                        </div>
+                        <div>
+                            <Switch
+                                size="small"
+                                checked={showWorldPositionURDF}
+                                onChange={setShowWorldPositionURDF}
+                            />{" "}
+                            URDF World Position
                         </div>
                         <div>
                             <Switch
@@ -220,7 +256,7 @@ export const UrdfTile = () => {
                                 checked={showCentresOfMass}
                                 onChange={setShowCentresOfMass}
                             />{" "}
-                            Show Centres of Mass
+                            Centres of Mass
                         </div>
                         <div>
                             <Switch
@@ -228,7 +264,7 @@ export const UrdfTile = () => {
                                 checked={showPrincipleAxesOfInertia}
                                 onChange={setShowPrincipleAxesOfInertia}
                             />{" "}
-                            Show Axes of Inertia
+                            Axes of Inertia
                         </div>
                         <div>
                             <Switch
@@ -236,44 +272,48 @@ export const UrdfTile = () => {
                                 checked={showInertiaCuboid}
                                 onChange={setShowInertiaCuboid}
                             />{" "}
-                            Show Inertia Cuboid
+                            Inertia Cuboids
                         </div>
                     </>
                 )}
+                <div>
+                    <Switch size="small" checked={showFramesDH} onChange={setShowFramesDH} /> DH
+                    Frames
+                </div>
+                <div>
+                    <Switch
+                        size="small"
+                        checked={showWorldPositionDH}
+                        onChange={setShowWorldPositionDH}
+                    />{" "}
+                    DH World Position
+                </div>
+                {/*
                 <Button size="small" onClick={recalc}>
                     RECALC
                 </Button>
-                {/*
-                <Table
-                    pagination={false}
-                    size="small"
-                    columns={[
-                        {
-                            title: "Frame",
-                            dataIndex: "name",
-                            key: "name"
-                        }
-                    ]}
-                    dataSource={frames}
-                />
 */}
+                {loaded ? (
+                    <Tabs>
+                        {frames.map((frame, index) => (
+                            <Tabs.TabPane tab={frame.name} key={index}>
+                                <div className="grid">
+                                    {frame.eigenVectors.flat().map((v, i) => (
+                                        <div key={i}>{v.toFixed(3)}</div>
+                                    ))}
+                                </div>
+                                <div className="grid col1">
+                                    {frame.principleMoments.map((v, i) => (
+                                        <div key={i}>{(v * 1e6).toFixed(3)}</div>
+                                    ))}
+                                </div>
+                            </Tabs.TabPane>
+                        ))}
+                    </Tabs>
+                ) : (
+                    <p>Load URDF file for more options</p>
+                )}
             </Space>
-            <Tabs>
-                {frames.map((frame, index) => (
-                    <Tabs.TabPane tab={frame.name} key={index}>
-                        <div className="grid">
-                            {frame.eigenVectors.flat().map((v, i) => (
-                                <div key={i}>{v.toFixed(2)}</div>
-                            ))}
-                        </div>
-                        <div className="grid col1">
-                            {frame.principleMoments.map((v, i) => (
-                                <div key={i}>{(v * 1e6).toFixed(2)}</div>
-                            ))}
-                        </div>
-                    </Tabs.TabPane>
-                ))}
-            </Tabs>
         </StyledDiv>
     )
 }

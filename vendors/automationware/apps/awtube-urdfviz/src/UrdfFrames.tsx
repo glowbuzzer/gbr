@@ -8,10 +8,19 @@ import { CentreOfMassIndicator } from "./CentreOfMassIndicator"
 import React from "react"
 import { InertiaTriadHelper } from "./InertiaTriadHelper"
 import { InertiaCuboidHelper } from "./InertiaCuboidHelper"
+import { useJointPositions } from "@glowbuzzer/store"
+import { WorldPosition } from "./WorldPosition"
 
 export const UrdfFrames = () => {
     const { frames, options } = useUrdfContext()
-    const { showFrames, showCentresOfMass, showPrincipleAxesOfInertia, showInertiaCuboid } = options
+    const { showFramesURDF, showCentresOfMass, showPrincipleAxesOfInertia, showInertiaCuboid } =
+        options
+    const joint_positions = useJointPositions(0)
+    const joints = joint_positions
+        .map((j, index) => {
+            return j * frames[index]?.axis.z
+        })
+        .reverse()
 
     function make_root() {
         return frames
@@ -20,28 +29,30 @@ export const UrdfFrames = () => {
             .reduce((child, frame, index) => {
                 return (
                     <group {...frame}>
-                        {showFrames && <TriadHelper size={0.2} />}
-                        <group position={frame.centreOfMass}>
-                            <group rotation={frame.principleAxes}>
-                                {showCentresOfMass && <CentreOfMassIndicator />}
-                                {showPrincipleAxesOfInertia && (
-                                    <InertiaTriadHelper
-                                        size={0.04}
-                                        moments={frame.principleMoments}
-                                    />
-                                )}
-                                {showInertiaCuboid && (
-                                    <InertiaCuboidHelper
-                                        size={0.001}
-                                        values={frame.principleMoments}
-                                    />
-                                )}
+                        <group rotation={[0, 0, joints[index]]}>
+                            {showFramesURDF && <TriadHelper size={0.2} />}
+                            <group position={frame.centreOfMass}>
+                                <group rotation={frame.principleAxes}>
+                                    {showCentresOfMass && <CentreOfMassIndicator />}
+                                    {showPrincipleAxesOfInertia && (
+                                        <InertiaTriadHelper
+                                            size={0.04}
+                                            moments={frame.principleMoments}
+                                        />
+                                    )}
+                                    {showInertiaCuboid && (
+                                        <InertiaCuboidHelper
+                                            size={0.001}
+                                            values={frame.principleMoments}
+                                        />
+                                    )}
+                                </group>
                             </group>
+                            {child}
                         </group>
-                        {child}
                     </group>
                 )
-            }, <></>)
+            }, <>{options.showWorldPositionURDF && frames.length > 0 && <WorldPosition title="URDF World" position="right" />}</>)
     }
 
     return (

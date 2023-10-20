@@ -5,7 +5,6 @@
 import {
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
-    ConfigEditTileDefinition,
     ConnectTileDefinition,
     DockLayout,
     DockLayoutProvider,
@@ -101,7 +100,6 @@ export const App = () => {
                 ToolsTileDefinition,
                 PointsTileDefinition,
                 FramesTileDefinition,
-                ConfigEditTileDefinition,
                 FeedRateTileDefinition,
                 TelemetryTileDefinition
             ]}

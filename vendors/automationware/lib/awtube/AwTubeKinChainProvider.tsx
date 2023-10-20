@@ -24,12 +24,18 @@ type DhMatrix = {
 
 type AwTubeKinChainContextType = {
     dh: DhMatrix[]
+    invJointAngles: number[]
+    showFrames?: boolean
     kinematicsConfigurationIndex: number
 }
 
 const AwTubeKinChainContext = createContext<AwTubeKinChainContextType>(null)
 
-export const AwTubeKinChainProvider = ({ children, kinematicsConfigurationIndex = 0 }) => {
+export const AwTubeKinChainProvider = ({
+    children,
+    kinematicsConfigurationIndex = 0,
+    showFrames = false
+}) => {
     const config = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const kinChainParams = config.kinChainParams
 
@@ -52,6 +58,8 @@ export const AwTubeKinChainProvider = ({ children, kinematicsConfigurationIndex 
         <AwTubeKinChainContext.Provider
             value={{
                 dh,
+                invJointAngles: kinChainParams.invJointAngles,
+                showFrames,
                 kinematicsConfigurationIndex
             }}
         >

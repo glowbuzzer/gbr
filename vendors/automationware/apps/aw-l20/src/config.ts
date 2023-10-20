@@ -107,8 +107,8 @@ export const config: GlowbuzzerConfig = {
             ],
             scale: 166886,
             jointType: 1,
-            negLimit: -130,
-            posLimit: -50
+            negLimit: 50,
+            posLimit: 130
         },
         {
             name: "3",
@@ -135,8 +135,8 @@ export const config: GlowbuzzerConfig = {
             ],
             scale: 166886,
             jointType: 1,
-            negLimit: -170,
-            posLimit: -10
+            negLimit: 10,
+            posLimit: 170
         },
         {
             name: "5",
@@ -196,8 +196,10 @@ export const config: GlowbuzzerConfig = {
                     90, 0, 180, 0, 0, // 90
                     -90, 0, 0, 0, 475,
                     90, 0, 90, 0, 0, // 90
-                    0, 0, 0, 0, 328
-                ]
+                    0, 0, -180, 0, 328
+                ],
+                // all joints are inverted from a kinematics perspective
+                invJointAngles: [-1, -1, -1, -1, -1, -1]
             }
         }
     ],

@@ -34,6 +34,7 @@ import { Group, Material, Mesh } from "three"
 import { UrdfTile } from "./UrdfTile"
 import { UrdfContextProvider, useUrdfContext } from "./UrdfContextProvider"
 import { CentreOfMassIndicator } from "./CentreOfMassIndicator"
+import { WorldPosition } from "./WorldPosition"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -79,11 +80,12 @@ const LoadedAwTubeRobot = () => {
 
     return (
         <>
-            <AwTubeRobot parts={parts}>
+            <AwTubeRobot parts={parts} showFrames={options.showFramesDH}>
                 <mesh>
                     <sphereBufferGeometry args={[10, 10, 10]} />
                     <meshStandardMaterial color="red" />
                 </mesh>
+                {options.showWorldPositionDH && <WorldPosition title="DH World" position="left" />}
             </AwTubeRobot>
         </>
     )
@@ -92,7 +94,7 @@ const LoadedAwTubeRobot = () => {
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
-            <ThreeDimensionalSceneTile>
+            <ThreeDimensionalSceneTile hideTrace hidePreview>
                 <Suspense fallback={null}>
                     <LoadedAwTubeRobot />
                     <UrdfFrames />
