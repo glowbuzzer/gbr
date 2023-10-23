@@ -78,3 +78,23 @@ export type AwTubeRobotParts = {
 export type AwTubeLoadedRobotParts = {
     [K in keyof AwTubeRobotParts]: LoadedPartDefinition<AwTubeRobotParts[K]>
 }
+
+export enum DigitalInputs {
+    SAFE_STOP,
+    SW_STOP,
+    POWER,
+    RC_LIGHT,
+    BR_CHOPPER_ERROR,
+    TOOL1,
+    TOOL2
+}
+
+export enum DigitalOutputs {
+    HEARTBIT_1,
+    HEARTBIT_2,
+    SAFE_STOP,
+    SW_STOP,
+    SPARE,
+    TOOL1,
+    TOOL2
+}

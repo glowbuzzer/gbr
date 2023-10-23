@@ -36,6 +36,7 @@ import {
 } from "../../../lib/awtube"
 import { Environment } from "@react-three/drei"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
+import { AwTubeTileDefinitionBuilder } from "../../../lib/awtube/AwTubeStatusTile"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -92,6 +93,11 @@ export const App = () => {
         <DockLayoutProvider
             tiles={[
                 CustomSceneTileDefinition,
+                AwTubeTileDefinitionBuilder({
+                    showSoftwareStop: true,
+                    showToolInputs: true,
+                    showToolOutputs: true
+                }),
                 ConnectTileDefinition,
                 CartesianJogTileDefinition,
                 CartesianDroTileDefinition,
