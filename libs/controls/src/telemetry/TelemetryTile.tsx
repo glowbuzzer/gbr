@@ -28,7 +28,8 @@ const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e3
 enum TelemetryVisibilityOptions {
     SET = 0b01,
     ACT = 0b10,
-    BOTH = 0b11
+    BOTH = 0b11,
+    DIFF = 0b100
 }
 
 type SparklineJointsProps = {
@@ -82,6 +83,8 @@ const SparklineJoints = ({
                             { color, dashArray: "" },
                             { color, dashArray: "2,2" }
                         ]
+                    case TelemetryVisibilityOptions.DIFF:
+                        return [{ color, dashArray: "" }]
                 }
             })
             .flat()
@@ -99,6 +102,8 @@ const SparklineJoints = ({
                             return [d.act[index][plot]]
                         case TelemetryVisibilityOptions.BOTH:
                             return [d.set[index][plot], d.act[index][plot]]
+                        case TelemetryVisibilityOptions.DIFF:
+                            return [d.set[index][plot] - d.act[index][plot]]
                     }
                 })
                 .filter((_, i) => selected[i])
@@ -237,6 +242,7 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
                         <Radio.Button value={TelemetryVisibilityOptions.SET}>SET</Radio.Button>
                         <Radio.Button value={TelemetryVisibilityOptions.ACT}>ACT</Radio.Button>
                         <Radio.Button value={TelemetryVisibilityOptions.BOTH}>BOTH</Radio.Button>
+                        <Radio.Button value={TelemetryVisibilityOptions.DIFF}>DIFF</Radio.Button>
                     </Radio.Group>
                 </div>
                 <div className="title">{kinematicsConfiguration.name}</div>
