@@ -87,3 +87,7 @@ export function useDigitalOutputState(index: number): [
         [index, value, connection]
     )
 }
+
+export function useDigitalOutputStates(): DigitalOutputStatus[] {
+    return useSelector(({ dout }: RootState) => dout, deepEqual)
+}
