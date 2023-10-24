@@ -3,7 +3,11 @@
  */
 
 import { GlowbuzzerConfig } from "@glowbuzzer/store"
-import { AwTubeL20KinChainParams, StandardAwTubeConfiguration } from "../../../lib/awtube/config"
+import {
+    AwTubeL20InverseDynamicParams,
+    AwTubeL20KinChainParams,
+    StandardAwTubeConfiguration
+} from "../../../lib/awtube/config"
 
 /**
  * This is the configuration for the AWTUBE L machine that can be pushed to the control if needed
@@ -171,6 +175,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 4000
                 }
             ],
+
             angularLimits: [
                 {
                     vmax: 0.05,
@@ -178,7 +183,8 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            ...AwTubeL20KinChainParams
+            ...AwTubeL20KinChainParams,
+            inverseDynamicParams: AwTubeL20InverseDynamicParams
         }
     ]
 }
