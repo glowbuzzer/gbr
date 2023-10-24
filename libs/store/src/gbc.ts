@@ -3,11 +3,12 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "bdb775ccbdb30131062adccc588dff95"
+export const GbcSchemaChecksum = "ca7368759a149aae76aed1fb702a6116"
 
 // CONSTANTS
 export const GbcConstants = {
     DEFAULT_HLC_HEARTBEAT_TOLERANCE: 500,
+    JOINT_CONTROL_WORD_CST_POS_VEL_DISABLE_BIT: 1,
 }
 
 // ENUMS
@@ -781,6 +782,8 @@ export const GbcConstants = {
             
                         /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
                         controlWord?:number;
+                        /**  Torque to be applied to the joint. Will override any other value set by an activity or inverse dynamics */
+                        setTorque?:number;
             }
             
             export type MatrixInstanceDouble = {
@@ -793,6 +796,24 @@ export const GbcConstants = {
                         data?:number[];
                         /**  Array of flags indicating if the joint angle should be inverted during FK/IK kinematics */
                         invJointAngles?:number[];
+            }
+            
+            export type RollPitchYaw = {
+            
+                        /**  Roll */
+                        r?:number;
+                        /**  Pitch */
+                        p?:number;
+                        /**  Yaw */
+                        y?:number;
+            }
+            /** URDF frame for a joint, used for inverse dynamics */
+            export type UrdfFrame = {
+            
+                        /**  Origin of frame */
+                        translation?:Vector3;
+                        /**  Roll, pitch, yaw of frame */
+                        rpy?:RollPitchYaw;
             }
             /** Rigid body inertia for a kinematics configuration */
             export type RigidBodyInertia = {
@@ -817,22 +838,22 @@ export const GbcConstants = {
             /** Inverse dynamic parameters for a kinematics configuration */
             export type InverseDynamicParameters = {
             
-                        /**  Rigid body inertia per joint for the kinematics configuration */
-                        rigidBodyInertia?:RigidBodyInertia[];
-                        
-                        jointMi?:number;
+                        /**  URDF frame for the joint */
+                        urdfFrame?:UrdfFrame;
+                        /**  Rigid body inertia for the joint */
+                        rigidBodyInertia?:RigidBodyInertia;
                         
                         jointOffset?:number;
                         
                         jointScale?:number;
                         
+                        jointInertia?:number;
+                        /**  Joint axis for the joint */
+                        jointAxis?:Vector3;
+                        
                         damping?:number;
                         
                         friction?:number;
-                        
-                        ns?:number;
-                        
-                        nj?:number;
             }
             
             export type SphericalEnvelope = {
@@ -877,7 +898,7 @@ export const GbcConstants = {
                         /**  Matrix containing the DH parameters for the kinematics model */
                         kinChainParams?:MatrixInstanceDouble;
                         /**  Inverse dynamic parameters for the kinematics model */
-                        idParams?:InverseDynamicParameters;
+                        inverseDynamicParams?:InverseDynamicParameters[];
                         /**  Spherical envelope for the kinematics configuration */
                         sphericalEnvelope?:SphericalEnvelope;
                         /**  Inner and outer radius of cylindrical envelope (disabled by default) */
