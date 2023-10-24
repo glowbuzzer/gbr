@@ -13,6 +13,7 @@ export const StyledStateIndicator = styled.div<{ negative?: boolean }>`
 
     > div {
         flex-grow: 1;
+        flex-basis: 0;
         text-align: center;
         margin: 1px;
         padding: 10px;
