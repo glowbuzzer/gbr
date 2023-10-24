@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "ca7368759a149aae76aed1fb702a6116"
+export const GbcSchemaChecksum = "1211da4f13f97fc9ce77f8de5c08695c"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -207,6 +207,14 @@ export const GbcConstants = {
   JOINT_FINITE ,
         /**  Joint is infinite (no travel limits) */
   JOINT_CONTINUOUS ,
+    }
+    export enum JOINT_DIRECT_TORQUE_MODE {
+        /**  Direct torque control is off */
+  JOINT_DIRECT_TORQUE_MODE_OFF ,
+        /**  Torque mode is additive and commanded torque will be applied in addition to gravity compensation */
+  JOINT_DIRECT_TORQUE_MODE_ADDITIVE ,
+        /**  Torque mode is override and commanded torque will be applied instead of gravity compensation */
+  JOINT_DIRECT_TORQUE_MODE_OVERRIDE ,
     }
     export enum KC_KINEMATICSCONFIGURATIONTYPE {
         /**  The kinematics configuration will have no kinematics model (algorithm) applied */
@@ -414,89 +422,6 @@ export const GbcConstants = {
             
                         
                         streamCommand?:STREAMCOMMAND;
-            }
-            /** 
-            Layout of fieldbus RxPdo
-             */
-            export type FieldbusTxPdoLayout = {
-            
-                        /**  Offset (in bytes) in the fieldbus process data to the machine control word (CiA 402) */
-                        machineControlWordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the GBC control word  */
-                        gbcControlWordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the HLC (High-Level-Control) control word */
-                        hlcControlWordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint control word */
-                        jointControlwordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint set position word */
-                        jointSetPositionOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint set velocity word */
-                        jointSetVelocityOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint set torque world */
-                        jointSetTorqueOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
-                        heartbeatOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
-                        digitalOffset?:number;
-                        /**  Number of digital (ins/outs) used in the fieldbus process data */
-                        digitalCount?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
-                        analogOffset?:number;
-                        /**  Number of analog (ins/outs) used in the fieldbus process data */
-                        analogCount?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
-                        integerOffset?:number;
-                        /**  Number of integer (ins/outs) used in the fieldbus process data */
-                        integerCount?:number;
-            }
-            /** 
-            Layout of fieldbus TxPdo
-             */
-            export type FieldbusRxPdoLayout = {
-            
-                        /**  Offset (in bytes) in the fieldbus process data to the machine status word (CiA 402) */
-                        machineStatusWordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the active fault word */
-                        activeFaultOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the fault history word */
-                        faultHistoryOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint status word */
-                        jointStatuswordOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint actual position word */
-                        jointActualPositionOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint actual velocity word */
-                        jointActualVelocityOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the joint actual torque word */
-                        jointActualTorqueOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the heartbeat values */
-                        heartbeatOffset?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the digital (ins/outs) values */
-                        digitalOffset?:number;
-                        /**  Number of digital (ins/outs) used in the fieldbus process data */
-                        digitalCount?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the analog (ins/outs) values */
-                        analogOffset?:number;
-                        /**  Number of analog (ins/outs) used in the fieldbus process data */
-                        analogCount?:number;
-                        /**  Offset (in bytes) in the fieldbus process data to the integer (ins/outs) values */
-                        integerOffset?:number;
-                        /**  Number of integer (ins/outs) used in the fieldbus process data */
-                        integerCount?:number;
-            }
-            /** 
-            Configuration parameters for fieldbus
-             */
-            export type FieldbusConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
-            
-                        /**  Number of joints stored in the fieldbus process data */
-                        jointCount?:number;
-                        /**  TxPdo object */
-                        TxPdo?:FieldbusTxPdoLayout;
-                        /**  RxPdo object */
-                        RxPdo?:FieldbusRxPdoLayout;
             }
             /** 
             Configuration parameters for move parameters
@@ -782,8 +707,10 @@ export const GbcConstants = {
             
                         /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
                         controlWord?:number;
-                        /**  Torque to be applied to the joint. Will override any other value set by an activity or inverse dynamics */
+                        /**  Torque to be applied to the joint. Exact behaviour depends on the direct torque mode */
                         setTorque?:number;
+                        /**  Direct torque mode to be used for the joint, if enabled */
+                        directTorqueMode?:JOINT_DIRECT_TORQUE_MODE;
             }
             
             export type MatrixInstanceDouble = {
