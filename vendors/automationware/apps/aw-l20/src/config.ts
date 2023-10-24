@@ -73,10 +73,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 3.414,
             jointType: 1,
             negLimit: -80,
-            posLimit: 80
+            posLimit: 80,
+            inverted: true
         },
         {
             name: "1",
@@ -87,10 +90,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 2.54,
             jointType: 1,
             negLimit: -40,
-            posLimit: 40
+            posLimit: 40,
+            inverted: true
         },
         {
             name: "2",
@@ -101,10 +107,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 4.3,
             jointType: 1,
             negLimit: 50,
-            posLimit: 130
+            posLimit: 130,
+            inverted: false
         },
         {
             name: "3",
@@ -115,10 +124,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 4.3,
             jointType: 1,
             negLimit: -170,
-            posLimit: 170
+            posLimit: 170,
+            inverted: true
         },
         {
             name: "4",
@@ -129,10 +141,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 3.414,
             jointType: 1,
             negLimit: 10,
-            posLimit: 170
+            posLimit: 170,
+            inverted: true
         },
         {
             name: "5",
@@ -143,10 +158,13 @@ export const config: GlowbuzzerConfig = {
                     jmax: 5
                 }
             ],
-            scale: 166886,
+            scalePos: 166886,
+            scaleVel: 9549,
+            scaleTorque: 16.07,
             jointType: 1,
             negLimit: -270,
-            posLimit: 270
+            posLimit: 270,
+            inverted: true
         }
     ],
     kinematicsConfiguration: [
