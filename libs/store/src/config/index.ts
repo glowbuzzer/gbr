@@ -138,6 +138,10 @@ export function useHeartbeatTimeout(): number {
     return useSelector((state: RootState) => state.config.current.machine?.[0].heartbeatTimeout)
 }
 
+export function useBusCycleTime(): number {
+    return useSelector((state: RootState) => state.config.current.machine?.[0].busCycleTime)
+}
+
 /** @ignore */
 export function useConfigState() {
     const dispatch = useDispatch()

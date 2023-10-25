@@ -23,7 +23,7 @@ import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
 import { integerInputsSlice } from "../io/iin"
 import { integerOutputsSlice } from "../io/iout"
-import { useConfigVersion, useHeartbeatTimeout } from "../config"
+import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../config"
 import { emstatSlice } from "../emstat"
 
 function status(status, heartbeat) {
@@ -43,6 +43,7 @@ export function useStatusProcessor(connection: WebSocket) {
 
     const configVersion = useConfigVersion()
     const heartbeatTimeout = useHeartbeatTimeout()
+    const busCycleTime = useBusCycleTime()
     const dispatch = useDispatch()
     const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
     const { target, heartbeat, nextControlWord, currentState } = machine
@@ -132,10 +133,11 @@ export function useStatusProcessor(connection: WebSocket) {
             })
         }
 
+        const heartbeat_frequency_ms =
+            heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE
+
         // send heartbeat twice as often as required to allow for delays
-        const heartbeat_frequency = Math.ceil(
-            (heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE) * 0.5
-        )
+        const heartbeat_frequency = heartbeat_frequency_ms / busCycleTime / 2
         if (!lastHeartbeat.current || heartbeat > lastHeartbeat.current + heartbeat_frequency) {
             safe_send(
                 updateMachineCommandMsg({ heartbeat /* echo the machine status heartbeat */ })
