@@ -97,7 +97,16 @@ const SparklineJoints = ({
                 .map(index => {
                     switch (view) {
                         case TelemetryVisibilityOptions.SET:
-                            return [d.set[index][plot]]
+                            switch (plot) {
+                                case TelemetryPVAT.POS:
+                                    return d.set[index].p
+                                case TelemetryPVAT.VEL:
+                                    return d.set[index].v
+                                case TelemetryPVAT.TORQUE:
+                                    return d.set[index].t + d.set[index].to
+                                default:
+                                    return 0
+                            }
                         case TelemetryVisibilityOptions.ACT:
                             return [d.act[index][plot]]
                         case TelemetryVisibilityOptions.BOTH:
