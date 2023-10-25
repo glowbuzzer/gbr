@@ -14,6 +14,20 @@ export enum CIA_STATE {
     "CIA FAULT"
 }
 
+export enum MOO {
+    "CIA MOO OP DISABLED", //0
+    "CIA MOO PROFILE POS", //1
+    "CIA MOO PROFILE VEL", //2
+    "INVALID MOO (3)", // Placeholder for 3 (not defined)
+    "INVALID MOO (4)", // Placeholder for 4 (not defined)
+    "INVALID MOO (5)", // Placeholder for 5 (not defined)
+    "CIA MOO HOMING", //6
+    "INVALID MOO (7)", // Placeholder for 7 (not defined)
+    "CIA MOO CSP", //8
+    "CIA MOO CSV", //9
+    "CIA MOO CST" //10
+}
+
 export enum CIA_COMMAND {
     "CIA SHUTDOWN",
     "CIA SWITCH ON",
@@ -110,6 +124,10 @@ function CiaStateToString(value: CIA_STATE) {
     return CIA_STATE[value]
 }
 
+function MooToString(value: MOO) {
+    return MOO[value]
+}
+
 function BoolToString(value: boolean) {
     return value ? "True" : "False"
 }
@@ -156,6 +174,14 @@ const dictionary: DictionaryNode = {
                 das: {
                     name: "Drive CIA State",
                     convert: CiaStateToString
+                },
+                dcmo: {
+                    name: "Drive commanded Mode of Operation",
+                    convert: MooToString
+                },
+                damo: {
+                    name: "Drive actual Mode of Operation",
+                    convert: MooToString
                 },
                 dcs: {
                     name: "Drive CIA Command",
