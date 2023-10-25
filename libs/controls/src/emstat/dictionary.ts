@@ -143,86 +143,86 @@ const dictionary: DictionaryNode = {
     type: "object",
     children: {
         mst: {
-            name: "XMachine CIA State",
+            name: "Machine CIA State",
             convert: CiaStateToString
         },
         dct: {
-            name: "XDrive count"
+            name: "Drive count"
         },
         Drives: {
             type: "array",
             nameProperty: "Drive name",
             children: {
                 das: {
-                    name: "XDrive CIA State",
+                    name: "Drive CIA State",
                     convert: CiaStateToString
                 },
                 dcs: {
-                    name: "XDrive CIA Command",
+                    name: "Drive CIA Command",
                     convert: CiaCommandToString
                 },
                 dem: {
-                    name: "XDrive error message",
+                    name: "Drive error message",
                     convert: ToDateString
                 }
             }
         },
         sct: {
-            name: "XNumber of slaves"
+            name: "Number of slaves"
         },
         Slaves: {
             type: "array",
             nameProperty: "Slave name",
             children: {
                 sno: {
-                    name: "XSlave number"
+                    name: "Slave number"
                 },
                 sobi: {
-                    name: "XSlave Obits"
+                    name: "Slave Obits"
                 },
                 sibi: {
-                    name: "XSlave Ibits"
+                    name: "Slave Ibits"
                 },
                 soby: {
-                    name: "XSlave Obytes"
+                    name: "Slave Obytes"
                 },
                 siby: {
-                    name: "XSlave Ibytes"
+                    name: "Slave Ibytes"
                 },
 
                 sdc: {
-                    name: "XSlave hasDC",
+                    name: "Slave hasDC",
                     convert: BoolToString
                 },
 
                 ss: {
-                    name: "XSlave state",
+                    name: "Slave state",
                     convert: EcStateToString
                 },
                 sa: {
-                    name: "XSlave Address (hex)",
+                    name: "Slave Address (hex)",
                     convert: ToHex
                 },
                 sal: {
-                    name: "XSlave ALstatuscode",
+                    name: "Slave ALstatuscode",
                     convert: AlStatusCodeToString
                 }
             }
         },
 
         eer: {
-            name: "XEtherCAT error",
+            name: "EtherCAT error",
             convert: BoolToString
         },
         seno: {
-            name: "XNumber of slave errors"
+            name: "Number of slave errors"
         },
         SlaveErrors: {
             type: "array",
             nameProperty: "Slave errors"
         },
         Smb: {
-            name: "XShared memory busy count"
+            name: "Shared memory busy count"
         }
 
         // ...
