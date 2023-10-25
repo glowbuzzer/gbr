@@ -7,7 +7,7 @@ export const GbcSchemaChecksum = "1211da4f13f97fc9ce77f8de5c08695c"
 
 // CONSTANTS
 export const GbcConstants = {
-    DEFAULT_HLC_HEARTBEAT_TOLERANCE: 500,
+    DEFAULT_HLC_HEARTBEAT_TOLERANCE: 2000,
     JOINT_CONTROL_WORD_CST_POS_VEL_DISABLE_BIT: 1,
 }
 
@@ -363,7 +363,7 @@ export const GbcConstants = {
                         estopEnabled?:boolean;
                         /**  Which digital input should be treated as estop, if estopEnabled is true */
                         estopInput?:number;
-                        /**  The amount of time (in bus cycles) before GBC will fault if it has not received a heartbeat */
+                        /**  The amount of time (in milliseconds) before GBC will fault if it has not received a heartbeat, default 2000 */
                         heartbeatTimeout?:number;
             }
             

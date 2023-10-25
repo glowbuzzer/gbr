@@ -14,7 +14,6 @@ import {
     DoutCommand,
     DoutConfig,
     DoutStatus,
-    FieldbusConfig,
     FramesConfig,
     IinConfig,
     IoutCommand,
@@ -78,7 +77,6 @@ export type GlowbuzzerConfig = {
     din?: DinConfig[]
     ain?: AinConfig[]
     iin?: IinConfig[]
-    fieldbus?: FieldbusConfig[]
     spindle?: SpindleConfig[]
     tool?: ToolConfig[]
 }
@@ -168,7 +166,7 @@ export type GlowbuzzerStatus = {
         m4cap: number
         m7wait: number
         // these are the set and act values on the joints
-        set: { p: number; v: number; a: number; t: number }[]
+        set: { p: number; v: number; a: number; t: number; to: number }[]
         act: { p: number; v: number; a: number; t: number }[]
     }[]
     response: any // used for promise resolution
