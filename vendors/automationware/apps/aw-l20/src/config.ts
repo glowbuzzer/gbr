@@ -17,7 +17,7 @@ export const config: GlowbuzzerConfig = {
     ...StandardAwTubeConfiguration,
     machine: [
         {
-            name: "AWTUBE 14-40LP-40HP-32-25-125-20",
+            name: "AWTUBE L20",
             busCycleTime: 4
         }
     ],
