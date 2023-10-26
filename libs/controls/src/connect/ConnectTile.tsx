@@ -77,30 +77,48 @@ const StyledDiv = styled.div`
 
         .controls {
             min-width: 180px;
-            text-align: right;
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+            align-items: center;
 
             .ant-tag {
-                min-width: 180px;
                 text-align: center;
-                margin: 0 0 2px 0;
+                flex-grow: 1;
+                margin-inline-end: 0;
             }
-
-            .ant-btn {
-                padding: 0;
-                height: inherit;
-                min-width: 180px;
+            .ant-btn,
+            .ant-radio-group {
+                flex-grow: 1;
             }
+            //text-align: right;
+            //
+            //.ant-tag {
+            //    min-width: 180px;
+            //    text-align: center;
+            //    margin: 0 0 2px 0;
+            //}
+            //
+            //.ant-btn {
+            //    padding: 0;
+            //    height: inherit;
+            //    min-width: 180px;
+            //}
         }
     }
 
     .machine-message {
-        padding-top: 10px;
-        text-align: center;
-    }
+        display: flex;
+        .ant-tag {
+            flex-grow: 1;
+            text-align: center;
+            white-space: inherit;
+            padding: 10px;
+            font-size: 1em;
+        }
 
-    .reset-button {
-        text-align: center;
         padding-top: 10px;
+        text-align: center;
     }
 `
 
@@ -144,6 +162,7 @@ export const ConnectTile = () => {
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
     const target_not_acquired = machine.target !== machine.requestedTarget
+    const op = machine.currentState === MachineState.OPERATION_ENABLED
 
     function issue_reset() {
         machine.setMachineControlWord(possible_transitions.FaultReset())
@@ -234,7 +253,7 @@ export const ConnectTile = () => {
                 </div>
             </div>
             <div className="row">
-                <div className="label">Change mode</div>
+                <div className="label">Change Mode</div>
                 <div className="controls">
                     <Radio.Group
                         disabled={connection.state !== ConnectionState.CONNECTED}
@@ -261,8 +280,23 @@ export const ConnectTile = () => {
                 </div>
             </div>
             <div className="row">
+                <div className="label">Current State</div>
+                <div className="controls">
+                    <Tag color={fault || fault_active ? "red" : op ? "green" : undefined}>
+                        {connected ? MachineState[machine.currentState] || "Unknown" : "None"}
+                    </Tag>
+                    {connected && fault && (
+                        <div className="reset-button">
+                            <Button size="small" onClick={issue_reset}>
+                                Reset
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            </div>
+            <div className="row">
                 <div className="label">
-                    Machine operation
+                    Machine Operation
                     {estopActive && <span className="estop">ESTOP</span>}
                 </div>
                 <div className="controls">
@@ -285,12 +319,6 @@ export const ConnectTile = () => {
                             Enabled
                         </Radio.Button>
                     </Radio.Group>
-                </div>
-            </div>
-            <div className="row">
-                <div className="label">Current state</div>
-                <div className="controls">
-                    <Tag>{connected ? MachineState[machine.currentState] : "None"}</Tag>
                 </div>
             </div>
             {fault_active && (
@@ -327,15 +355,14 @@ export const ConnectTile = () => {
                     </div>
                 )}
 
-            {connected && fault && (
-                <div className="reset-button">
-                    <Button onClick={issue_reset}>Reset Fault</Button>
-                </div>
-            )}
-
             {connected && (
                 <div className="machine-message">
                     <OperationErrorPanel />
+                    {/*
+                    DON'T THINK THESE ARE USEFUL
+                    {connection.statusReceived || <Tag color="red">No status received</Tag>}
+                    {machine.heartbeatReceived || <Tag color="red">Lost heartbeat</Tag>}
+*/}
                 </div>
             )}
             {/*
@@ -343,8 +370,6 @@ export const ConnectTile = () => {
                 <div className="machine-message">{machine.operationErrorMessage}</div>
             )}
 */}
-            {connection.statusReceived || <h3>No status received</h3>}
-            {machine.heartbeatReceived || <h3>Lost heartbeat</h3>}
         </StyledDiv>
     )
 }

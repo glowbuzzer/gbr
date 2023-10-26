@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react"
 import { MachineState, OPERATION_ERROR, useConnection, useMachine } from "@glowbuzzer/store"
 import { Tag } from "antd"
 
-export const OperationErrorPanel = ({ onAutoReset }) => {
+export const OperationErrorPanel = () => {
     const machine = useMachine()
 
     if (machine.operationError === OPERATION_ERROR.OPERATION_ERROR_NONE) {
