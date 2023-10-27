@@ -119,18 +119,11 @@ const SparklineJoints = ({
                 .flat()
         }))
 
-        const domain = d3
-            .extent(
-                data.flatMap(d => {
-                    return d.values.map(n => {
-                        return n * 1.5
-                    })
-                })
-            )
-            .sort()
-        console.log("domain", domain)
+        const [min, max] = d3.extent(data.flatMap(d => d.values)).sort()
+        const extent = Math.abs(max - min)
+        const domain = [min - extent * 0.1, max + extent * 0.1]
         return { data, domain }
-    }, [telemetry, kinematicsConfiguration, plot, view])
+    }, [telemetry, kinematicsConfiguration, plot, view, selected])
 
     return (
         <div ref={elemRef} className="chart">
@@ -215,7 +208,7 @@ const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
     }
 `
 
-const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration }) => {
+const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration, visible }) => {
     const joints = useJointConfigurationList()
     const [selected, setSelected] = useState(
         kinematicsConfiguration.participatingJoints.map(() => true)
@@ -260,12 +253,14 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
                 </div>
                 <div className="title">{kinematicsConfiguration.name}</div>
             </div>
-            <SparklineJoints
-                kinematicsConfiguration={kinematicsConfiguration}
-                selected={selected}
-                view={view}
-                duration={duration}
-            />
+            {visible && (
+                <SparklineJoints
+                    kinematicsConfiguration={kinematicsConfiguration}
+                    selected={selected}
+                    view={view}
+                    duration={duration}
+                />
+            )}
         </StyledTelemetryForKinematicsConfiguration>
     )
 }
@@ -401,18 +396,17 @@ export const TelemetryTile = () => {
                 </>
             }
         >
-            {isVisible && (
-                <StyledTelemetryGroup>
-                    {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
-                        <div key={index}>
-                            <TelemetryForKinematicsConfiguration
-                                kinematicsConfiguration={kinematicsConfiguration}
-                                duration={capture.captureDuration}
-                            />
-                        </div>
-                    ))}
-                </StyledTelemetryGroup>
-            )}
+            <StyledTelemetryGroup>
+                {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
+                    <div key={index}>
+                        <TelemetryForKinematicsConfiguration
+                            kinematicsConfiguration={kinematicsConfiguration}
+                            duration={capture.captureDuration}
+                            visible={isVisible}
+                        />
+                    </div>
+                ))}
+            </StyledTelemetryGroup>
         </DockTileWithToolbar>
     )
 }
