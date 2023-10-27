@@ -27,4 +27,4 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: us-west-2
             - run: |
-                  aws s3 cp repository_backup.tar.gz s3://backup.glowbuzzer.com/${{ github.repository }}_$(date +%Y-%m-%d).tar.gz
+                  aws s3 cp repository_backup.tar.gz s3://backup.glowbuzzer.com/${{ github.repository }}.tar.gz
