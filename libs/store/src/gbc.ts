@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "4135dbab12c61c242a11492de8f92251"
+export const GbcSchemaChecksum = "dd2a251591e22c3e6dbfd038e1f41cbc"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -237,6 +237,18 @@ export const GbcConstants = {
   JOINT_PRISMATIC ,
         /**  Joint type is revolute (rotary) - radians units */
   JOINT_REVOLUTE ,
+    }
+    export enum JOINT_MODEOFOPERATION {
+        /**  Joint is to be controlled in position mode */
+  JOINT_MODEOFOPERATION_CSP ,
+        /**  Joint is to be controlled in velocity mode */
+  JOINT_MODEOFOPERATION_CSV ,
+        /**  Joint is to be controlled in torque mode */
+  JOINT_MODEOFOPERATION_CST ,
+        /**  Joint is to be controlled in homing mode */
+  JOINT_MODEOFOPERATION_HOMING ,
+        /**  Joint is to be controlled in direct torque mode */
+  JOINT_MODEOFOPERATION_CST_DIRECT ,
     }
     export enum JOINT_FINITECONTINUOUS {
         /**  Joint is finite (defined limits on travel) */
@@ -683,6 +695,22 @@ export const GbcConstants = {
                         /**  Command object for task */
                         taskCommand?:TASK_COMMAND;
             }
+            /** Configuration parameters for a PID controller */
+            export type PidConfig = {
+            
+                        /**  Proportional gain */
+                        kp?:number;
+                        /**  Integral gain */
+                        ki?:number;
+                        /**  Derivative gain */
+                        kd?:number;
+                        /**  Maximum value of the integral term */
+                        maxIntegral?:number;
+                        /**  Minimum value of the integral term */
+                        minIntegral?:number;
+                        /**  Sample time in milliseconds */
+                        sampleTime?:number;
+            }
             /** 
             Configuration parameters for joint
              */
@@ -693,6 +721,8 @@ export const GbcConstants = {
             
                         
                         jointType?:JOINT_TYPE;
+                        /**  The control mode for the joint (default is position mode) */
+                        mode?:JOINT_MODEOFOPERATION;
                         /**  List of limits to be applied to the joint for different types of move */
                         limits?:LimitConfiguration[];
                         /**  Default scale factor to be applied to a joint's pos/vel/acc/torque before transfer to the fieldbus */
@@ -721,6 +751,8 @@ export const GbcConstants = {
                         correspondingJointNumberOnPhysicalFieldbus?:number;
                         
                         correspondingJointNumberOnVirtualFieldbus?:number;
+                        /**  PID configuration for the joint, where 0 index is for CSV, and the other two are for CST */
+                        pidConfig?:PidConfig[];
             }
             /** 
             Status of joint

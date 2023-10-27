@@ -4,7 +4,7 @@
 
 import * as React from "react"
 import { useState } from "react"
-import { Button, message, Radio, Space, Spin, Tag } from "antd"
+import { Alert, Button, message, Radio, Space, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
@@ -132,7 +132,7 @@ const StyledDiv = styled.div`
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
-    const { modified, usingLocalConfiguration, upload, discard } = useOfflineConfig()
+    const { modified, usingLocalConfiguration, readonly, upload, discard } = useOfflineConfig()
     const [uploading, setUploading] = useState(false)
     const estopActive = useEstop()
     const [messageApi, messageContainer] = message.useMessage()
@@ -178,7 +178,17 @@ export const ConnectTile = () => {
                     connected ? (
                         <div className="config-info">
                             <Space>
-                                {usingLocalConfiguration ? (
+                                {readonly && usingLocalConfiguration ? (
+                                    <>
+                                        <Alert
+                                            type="error"
+                                            style={{ textAlign: "center" }}
+                                            message="Your project uses a local configuration but GBC is
+                                            using a read-only configuration specified on the command line. The read-only
+                                            configuration takes precedence and has been loaded."
+                                        />
+                                    </>
+                                ) : usingLocalConfiguration ? (
                                     <>
                                         <div>
                                             Local configuration provided does not match remote. You

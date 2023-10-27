@@ -34,6 +34,7 @@ export enum ConfigState {
 
 type ConfigSliceType = {
     state: ConfigState
+    readonly: boolean
     gbcVersion: string
     schemaVersion: string
     version: number
@@ -55,6 +56,7 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
     name: "config",
     initialState: {
         state: ConfigState.AWAITING_CONFIG as ConfigState,
+        readonly: false as boolean,
         gbcVersion: null,
         schemaVersion: null,
         modified: false as boolean,
@@ -79,13 +81,14 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
         },
         /** Set config on connect - will not overwrite a locally modified config */
         setConfigFromRemote(state, action) {
-            const { gbcVersion, schemaVersion, ...config } = action.payload
+            const { gbcVersion, schemaVersion, readonly, ...config } = action.payload
+            state.readonly = readonly
             state.gbcVersion = gbcVersion
             state.schemaVersion = schemaVersion
             state.version++
             state.state = ConfigState.READY
             state.modified = state.usingLocalConfiguration && !deepEqual(state.current, config)
-            if (state.modified) {
+            if (state.modified && !readonly) {
                 state.remote = config
             } else {
                 state.current = config
@@ -155,17 +158,21 @@ export function useConfigState() {
 /** @ignore */
 export function useOfflineConfig() {
     const loader = useConfigLoader()
-    const modified = useSelector((state: RootState) => state.config.modified, shallowEqual)
-    const offline_config = useSelector((state: RootState) => state.config.current, deepEqual)
-    const usingLocalConfiguration = useSelector(
-        (state: RootState) => state.config.usingLocalConfiguration,
+    const { modified, usingLocalConfiguration, readonly } = useSelector(
+        (state: RootState) => ({
+            modified: state.config.modified,
+            usingLocalConfiguration: state.config.usingLocalConfiguration,
+            readonly: state.config.readonly
+        }),
         shallowEqual
     )
+    const offline_config = useSelector((state: RootState) => state.config.current, deepEqual)
     const dispatch = useDispatch()
 
     return {
         modified,
         usingLocalConfiguration,
+        readonly,
         discard() {
             dispatch(configSlice.actions.discardOfflineConfig(null))
         },

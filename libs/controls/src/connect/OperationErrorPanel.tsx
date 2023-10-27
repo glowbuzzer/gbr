@@ -4,7 +4,7 @@
 
 import React, { useEffect, useState } from "react"
 import { MachineState, OPERATION_ERROR, useConnection, useMachine } from "@glowbuzzer/store"
-import { Tag } from "antd"
+import { Alert } from "antd"
 
 export const OperationErrorPanel = () => {
     const machine = useMachine()
@@ -25,13 +25,15 @@ export const OperationErrorPanel = () => {
         if (in_fault) {
             // past fault
             return (
-                <Tag color="orange">
-                    There was an error sending heartbeat. Reset fault to continue
-                </Tag>
+                <Alert
+                    style={{ width: "100%" }}
+                    type="warning"
+                    message="There was an error sending heartbeat. Reset fault to continue"
+                />
             )
         }
-        return <Tag color="red">Client failed to send heartbeat within timeout</Tag>
+        return <Alert type="error" message="Client failed to send heartbeat within timeout" />
     }
 
-    return <Tag color={in_fault ? "orange" : "red"}>{machine.operationErrorMessage}</Tag>
+    return <Alert type={in_fault ? "warning" : "error"} message={machine.operationErrorMessage} />
 }
