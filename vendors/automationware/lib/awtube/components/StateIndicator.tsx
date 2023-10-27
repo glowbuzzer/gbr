@@ -8,14 +8,18 @@ type StateIndicatorProps = {
     label: React.ReactNode
     value: boolean
     negative?: boolean
+    inverted?: boolean
     hideWhenInactive?: boolean
 }
 export const StateIndicator = ({
     label,
-    value,
+    value: _value,
     negative,
+    inverted,
     hideWhenInactive
 }: StateIndicatorProps) => {
+    const value = inverted ? !_value : _value
+
     if (hideWhenInactive && !value) {
         return null
     }

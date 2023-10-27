@@ -48,30 +48,18 @@ export const AwTubeStatusTile = ({
                 }
                 value={inputs[DigitalInputs.POWER]}
             />
-            <SplitStateIndicator
-                items={[
-                    {
-                        label: "Safe Stop Received",
-                        value: inputs[DigitalInputs.SAFE_STOP]
-                    },
-                    {
-                        label: "Safe Stop Confirmed",
-                        value: outputs[DigitalOutputs.SAFE_STOP]?.effectiveValue
-                    }
-                ]}
+            <StateIndicator
+                label={"SAFE STOP"}
+                negative
+                inverted
+                value={inputs[DigitalInputs.SAFE_STOP]}
             />
             {showSoftwareStop && (
-                <SplitStateIndicator
-                    items={[
-                        {
-                            label: "Software Stop Received",
-                            value: inputs[DigitalInputs.SW_STOP]
-                        },
-                        {
-                            label: "Software Stop Confirmed",
-                            value: outputs[DigitalOutputs.SW_STOP]?.effectiveValue
-                        }
-                    ]}
+                <StateIndicator
+                    label={"SOFTWARE STOP"}
+                    negative
+                    inverted
+                    value={inputs[DigitalInputs.SW_STOP]}
                 />
             )}
             {showToolInputs && (
