@@ -4,7 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { DesiredState, FaultCode } from "../../../libs/store/src"
+import { DesiredState, FAULT_CAUSE } from "../../../libs/store/src"
 
 const test = uvu.suite("core")
 
@@ -23,12 +23,12 @@ test("can transition from OPERATION_ENABLED to STANDBY", () => {
 // this is hard to test in gbc-node
 test.skip("can trigger an error when move not enabled", () => {
     gbc.wrap(gbc.activity.moveLine(10, 10).promise).start().iterations(2)
-    gbc.assert.faultReactionActive(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
+    gbc.assert.faultReactionActive(FAULT_CAUSE.FAULT_CAUSE_GBC_OPERATION_ERROR_BIT_NUM)
     gbc.exec(1)
-    gbc.assert.fault(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
+    gbc.assert.fault(FAULT_CAUSE.FAULT_CAUSE_GBC_OPERATION_ERROR_BIT_NUM)
     gbc.exec(5)
     // fault should persist in history
-    gbc.assert.fault(FaultCode.FAULT_CAUSE_GBC_INTERNAL_ERROR)
+    gbc.assert.fault(FAULT_CAUSE.FAULT_CAUSE_GBC_OPERATION_ERROR_BIT_NUM)
 })
 
 test.skip("can error and will give a message in status", async () => {

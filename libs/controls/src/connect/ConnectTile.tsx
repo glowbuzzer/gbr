@@ -9,10 +9,9 @@ import {
     ConnectionState,
     DesiredState,
     determine_machine_state,
-    FaultCode,
+    FAULT_CAUSE,
     MachineState,
     MACHINETARGET,
-    OPERATION_ERROR,
     possible_transitions,
     useConnection,
     useEstop,
@@ -22,6 +21,7 @@ import {
 import styled from "styled-components"
 import { GbcVersionCheck } from "../config/GbcVersionCheck"
 import { OperationErrorPanel } from "./OperationErrorPanel"
+import { filter_fault_causes } from "../util/faults"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -325,35 +325,24 @@ export const ConnectTile = () => {
                 <div className="row">
                     <div className="label">Fault cause</div>
                     <div className="controls">
-                        {Object.values(FaultCode)
-                            .filter(k => typeof k === "number")
-                            .filter((k: number) => machine.activeFault & k)
-                            .map(k => (
-                                <Tag key={k} color="red">
-                                    {FaultCode[k].substring("FAULT_CAUSE_".length)}
-                                </Tag>
-                            ))}
+                        {filter_fault_causes(machine.activeFault).map(({ code, description }) => (
+                            <Tag key={code} color="red">
+                                {description}
+                            </Tag>
+                        ))}
                     </div>
                 </div>
             )}
-            {connected &&
-                fault &&
-                machine.faultHistory > 0 &&
-                machine.operationError === OPERATION_ERROR.OPERATION_ERROR_NONE && (
-                    <div className="row padded">
-                        <div className="label">Fault history</div>
-                        <div className="controls">
-                            {Object.values(FaultCode)
-                                .filter(k => typeof k === "number")
-                                .filter((k: number) => machine.faultHistory & k)
-                                .map(k => (
-                                    <Tag key={k}>
-                                        {FaultCode[k].substring("FAULT_CAUSE_".length)}
-                                    </Tag>
-                                ))}
-                        </div>
+            {connected && fault && machine.faultHistory > 0 && (
+                /*machine.operationError === OPERATION_ERROR.OPERATION_ERROR_NONE && */ <div className="row padded">
+                    <div className="label">Fault history</div>
+                    <div className="controls">
+                        {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
+                            <Tag key={code}>{description}</Tag>
+                        ))}
                     </div>
-                )}
+                </div>
+            )}
 
             {connected && (
                 <div className="machine-message">

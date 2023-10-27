@@ -3,9 +3,10 @@
  */
 
 import React from "react"
-import { FaultCode, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
+import { FAULT_CAUSE, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
 import { Table } from "antd"
-import { CIA_STATE, EC_STATE, EC_ALSTATUSCODE, to_table_data_new } from "./dictionary"
+import { to_table_data_new } from "./dictionary"
+import { filter_fault_causes } from "../util/faults"
 
 // function convert_state(key: string, value: number) {
 //     if (!key.endsWith("state")) {
@@ -117,24 +118,10 @@ export const EmStatTile = () => {
     const tableRef = React.useRef(null)
     // const tableData = to_table_data(emstat)
 
-    const activeFaultArray = Object.values(FaultCode)
-        .filter(k => typeof k === "number")
-        .filter((k: number) => machine.activeFault & k)
-        .map(k => ({
-            code: k,
-            description: FaultCode[k].substring("FAULT_CAUSE_".length)
-        }))
-
+    const activeFaultArray = filter_fault_causes(machine.activeFault)
     const activeFaultString = activeFaultArray.map(item => `${item.description}`).join(", ")
 
-    const historicFaultArray = Object.values(FaultCode)
-        .filter(k => typeof k === "number")
-        .filter((k: number) => machine.faultHistory & k)
-        .map(k => ({
-            code: k,
-            description: FaultCode[k].substring("FAULT_CAUSE_".length)
-        }))
-
+    const historicFaultArray = filter_fault_causes(machine.faultHistory)
     const historicFaultString = historicFaultArray.map(item => `${item.description}`).join(", ")
 
     const extraData = [

@@ -11,6 +11,7 @@ import {
 import * as assert from "uvu/assert"
 import {
     ACTIVITYSTATE,
+    FAULT_CAUSE,
     GlowbuzzerStatus,
     MACHINETARGET,
     OPERATION_ERROR,
@@ -26,7 +27,6 @@ import {
     ActivityApi,
     ActivityBuilder,
     activitySlice,
-    FaultCode,
     jointsSlice,
     kinematicsSlice,
     StreamingActivityApi,
@@ -227,14 +227,14 @@ export class GbcTest {
                 }
                 return this
             },
-            faultReactionActive: (code: FaultCode) => {
-                const active = this.status_msg.status.machine.activeFault & code
-                assert.ok(active, "Fault not found (active fault): " + FaultCode[code])
+            faultReactionActive: (code: FAULT_CAUSE) => {
+                const active = this.status_msg.status.machine.activeFault & (1 << code)
+                assert.ok(active, "Fault not found (active fault): " + FAULT_CAUSE[code])
                 return this
             },
-            fault: (code: FaultCode) => {
-                const active = this.status_msg.status.machine.faultHistory & code
-                assert.ok(active, "Fault not found (fault history): " + FaultCode[code])
+            fault: (code: FAULT_CAUSE) => {
+                const active = this.status_msg.status.machine.faultHistory & (1 << code)
+                assert.ok(active, "Fault not found (fault history): " + FAULT_CAUSE[code])
                 return this
             }
         }

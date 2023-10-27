@@ -119,13 +119,16 @@ const SparklineJoints = ({
                 .flat()
         }))
 
-        const domain = d3.extent(
-            data.flatMap(d => {
-                return d.values.map(n => {
-                    return n * 1.1
+        const domain = d3
+            .extent(
+                data.flatMap(d => {
+                    return d.values.map(n => {
+                        return n * 1.5
+                    })
                 })
-            })
-        )
+            )
+            .sort()
+        console.log("domain", domain)
         return { data, domain }
     }, [telemetry, kinematicsConfiguration, plot, view])
 
@@ -217,6 +220,7 @@ const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration
     const [selected, setSelected] = useState(
         kinematicsConfiguration.participatingJoints.map(() => true)
     )
+
     const [view, setView] = useLocalStorage(
         "viewTelemetrySetActBoth",
         TelemetryVisibilityOptions.SET

@@ -2,15 +2,17 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { useDigitalInputs, useMachineConfig } from ".."
+import { MACHINETARGET, useDigitalInputs, useMachine, useMachineConfig } from ".."
 
 export function useEstop(): boolean {
     const config = useMachineConfig()
+    const { target } = useMachine()
     const inputs = useDigitalInputs()
 
-    if (!config.estopEnabled) {
+    if (target !== MACHINETARGET.MACHINETARGET_FIELDBUS || !config.estopEnabled) {
         return false
     }
 
-    return inputs[config.estopInput]
+    const value = inputs[config.estopInput]
+    return !value // low means we are in estop
 }
