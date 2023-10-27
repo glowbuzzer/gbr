@@ -9,6 +9,7 @@ import {
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    EmStatTileDefinition,
     FeedRateTileDefinition,
     FramesTileDefinition,
     JointDroTileDefinition,
@@ -107,7 +108,8 @@ export const App = () => {
                 PointsTileDefinition,
                 FramesTileDefinition,
                 FeedRateTileDefinition,
-                TelemetryTileDefinition
+                TelemetryTileDefinition,
+                EmStatTileDefinition
             ]}
         >
             <ExampleAppMenu title="AutomationWare AW-TUBE" />
