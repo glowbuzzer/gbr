@@ -1,0 +1,30 @@
+name: Backup to S3
+
+on:
+    push:
+        branches:
+            - dev
+#    schedule:
+#        - cron: '0 0 * * *'  # Every day at midnight
+
+jobs:
+    backup:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Clone repository
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git clone --mirror https://${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+                  cd $(basename "${{ github.repository }}").git
+                  tar czf ../repository_backup.tar.gz .
+
+            - name: Upload to S3
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-west-2
+            - run: |
+                  aws s3 cp repository_backup.tar.gz s3://backup.glowbuzzer.com/${{ github.repository }}_$(date +%Y-%m-%d).tar.gz
