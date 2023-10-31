@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "dd2a251591e22c3e6dbfd038e1f41cbc"
+export const GbcSchemaChecksum = "46e3787c5c4e6e04f50b5e8b39605448"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -31,6 +31,7 @@ export const GbcConstants = {
         FAULT_CAUSE_GBC_TO_PLC_CON_ERROR_BIT_NUM           = (15),
         FAULT_CAUSE_MOVE_NOT_OP_EN_BIT_NUM                 = (16),
         FAULT_CAUSE_CST_CSV_POSITION_LIMIT_ERROR_BIT_NUM   = (17),
+        FAULT_CAUSE_CST_CSV_VELOCITY_LIMIT_ERROR_BIT_NUM   = (18),
     }
     export enum STATUS_WORD_GBEM {
         STATUS_WORD_GBEM_ALIVE_BIT_NUM                      = (16),
@@ -239,16 +240,16 @@ export const GbcConstants = {
   JOINT_REVOLUTE ,
     }
     export enum JOINT_MODEOFOPERATION {
+        /**  Joint mode of operation is none */
+  JOINT_MODEOFOPERATION_NONE   = 0 ,
         /**  Joint is to be controlled in position mode */
-  JOINT_MODEOFOPERATION_CSP ,
+  JOINT_MODEOFOPERATION_CSP    = 1 ,
         /**  Joint is to be controlled in velocity mode */
-  JOINT_MODEOFOPERATION_CSV ,
+  JOINT_MODEOFOPERATION_CSV    = 2 ,
         /**  Joint is to be controlled in torque mode */
-  JOINT_MODEOFOPERATION_CST ,
+  JOINT_MODEOFOPERATION_CST    = 4 ,
         /**  Joint is to be controlled in homing mode */
-  JOINT_MODEOFOPERATION_HOMING ,
-        /**  Joint is to be controlled in direct torque mode */
-  JOINT_MODEOFOPERATION_CST_DIRECT ,
+  JOINT_MODEOFOPERATION_HOMING = 8 ,
     }
     export enum JOINT_FINITECONTINUOUS {
         /**  Joint is finite (defined limits on travel) */
@@ -256,13 +257,13 @@ export const GbcConstants = {
         /**  Joint is infinite (no travel limits) */
   JOINT_CONTINUOUS ,
     }
-    export enum JOINT_DIRECT_TORQUE_MODE {
-        /**  Direct torque control is off */
-  JOINT_DIRECT_TORQUE_MODE_OFF ,
-        /**  Torque mode is additive and commanded torque will be applied in addition to gravity compensation */
-  JOINT_DIRECT_TORQUE_MODE_ADDITIVE ,
-        /**  Torque mode is override and commanded torque will be applied instead of gravity compensation */
-  JOINT_DIRECT_TORQUE_MODE_OVERRIDE ,
+    export enum JOINT_TORQUE_MODE {
+        /**  Torque is automatically controlled according to position (when in JOINT_MODEOFOPERATION_CST) */
+  JOINT_TORQUE_MODE_DEFAULT   = 0 ,
+        /**  If JOINT_MODEOFOPERATION_CST is supported, drive will switch to this mode and gravity compensation will be applied */
+  JOINT_TORQUE_MODE_GRAVITY   = 1 ,
+        /**  @ignore - not supported yet */
+  JOINT_TORQUE_MODE_DIRECT    = 2 ,
     }
     export enum KC_KINEMATICSCONFIGURATIONTYPE {
         /**  The kinematics configuration will have no kinematics model (algorithm) applied */
@@ -721,10 +722,14 @@ export const GbcConstants = {
             
                         
                         jointType?:JOINT_TYPE;
-                        /**  The control mode for the joint (default is position mode) */
-                        mode?:JOINT_MODEOFOPERATION;
                         /**  List of limits to be applied to the joint for different types of move */
                         limits?:LimitConfiguration[];
+                        /**  Default control mode for the joint */
+                        preferredMode?:JOINT_MODEOFOPERATION;
+                        /**  Bitwise combination of supported modes */
+                        supportedModes?:number;
+                        /**  Bitwise combination of supported torque modes */
+                        supportedTorqueModes?:number;
                         /**  Default scale factor to be applied to a joint's pos/vel/acc/torque before transfer to the fieldbus */
                         scale?:number;
                         /**  Scale factor to be applied to a joint's position to/from the fieldbus */
@@ -777,8 +782,8 @@ export const GbcConstants = {
                         controlWord?:number;
                         /**  Torque to be applied to the joint. Exact behaviour depends on the direct torque mode */
                         setTorque?:number;
-                        /**  Direct torque mode to be used for the joint, if enabled */
-                        directTorqueMode?:JOINT_DIRECT_TORQUE_MODE;
+                        /**  Torque mode to be used for the joint */
+                        torqueMode?:JOINT_TORQUE_MODE;
             }
             
             export type MatrixInstanceDouble = {

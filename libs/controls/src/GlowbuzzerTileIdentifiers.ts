@@ -19,6 +19,7 @@ export enum GlowbuzzerTileIdentifiers {
     INTEGER_OUTPUTS = "INTEGER_OUTPUTS",
     CARTESIAN_DRO = "CARTESIAN_DRO",
     JOINT_DRO = "JOINT_DRO",
+    JOINT_TORQUE_MODES = "JOINT_TORQUE_MODES",
     FRAMES = "FRAMES",
     POINTS = "POINTS",
     TOOLS = "TOOLS",
