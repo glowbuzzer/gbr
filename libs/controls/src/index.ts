@@ -4,6 +4,7 @@
 
 export * from "./dock"
 export * from "./dro"
+export * from "./joints"
 export * from "./tasks"
 export * from "./io"
 export * from "./prefs"

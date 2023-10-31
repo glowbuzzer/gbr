@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig } from "@glowbuzzer/store"
+import { GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE } from "@glowbuzzer/store"
 import {
     AwTubeL20InverseDynamicParams,
     AwTubeL20KinChainParams,
@@ -79,7 +79,13 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: -80,
             posLimit: 80,
-            inverted: true
+            inverted: true,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes:
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY |
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_DIRECT
         },
         {
             name: "1",
@@ -96,7 +102,11 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: -40,
             posLimit: 40,
-            inverted: true
+            inverted: true,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
         },
         {
             name: "2",
@@ -113,7 +123,11 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: 50,
             posLimit: 130,
-            inverted: false
+            inverted: false,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
         },
         {
             name: "3",
@@ -130,7 +144,11 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: -170,
             posLimit: 170,
-            inverted: true
+            inverted: true,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
         },
         {
             name: "4",
@@ -147,7 +165,11 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: 10,
             posLimit: 170,
-            inverted: true
+            inverted: true,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
         },
         {
             name: "5",
@@ -164,7 +186,11 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             negLimit: -270,
             posLimit: 270,
-            inverted: true
+            inverted: true,
+            supportedModes:
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
+                JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
+            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
         }
     ],
     kinematicsConfiguration: [
