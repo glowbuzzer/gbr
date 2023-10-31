@@ -13,5 +13,8 @@ export const TelemetryTileDefinition = {
         column: 0,
         row: 2
     },
+    config: {
+        enableWithoutConnection: true
+    },
     render: () => createElement(TelemetryTile, {}, null)
 }

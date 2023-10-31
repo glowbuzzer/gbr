@@ -3,146 +3,28 @@
  */
 
 import * as React from "react"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { SparklineScrolling } from "./SparklineScrolling"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Button, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
-    KinematicsConfigurationConfig,
     TelemetryPVAT,
     useJointConfigurationList,
     useKinematicsConfigurationList,
     useTelemetryControls,
-    useTelemetryData,
-    useTelemetrySettings
+    useTelemetryData
 } from "@glowbuzzer/store"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import * as d3 from "d3"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { useLocalStorage } from "../util/LocalStorageHook"
-
-const axis_colors = ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#444444"]
-
-enum TelemetryVisibilityOptions {
-    SET = 0b01,
-    ACT = 0b10,
-    BOTH = 0b11,
-    DIFF = 0b100
-}
-
-type SparklineJointsProps = {
-    kinematicsConfiguration: KinematicsConfigurationConfig
-    view: TelemetryVisibilityOptions
-    selected: boolean[]
-    duration: number
-}
-
-const SparklineJoints = ({
-    kinematicsConfiguration,
-    view,
-    selected,
-    duration
-}: SparklineJointsProps) => {
-    const elemRef = useRef<HTMLDivElement>(null)
-    const telemetry = useTelemetryData()
-    const { plot } = useTelemetrySettings()
-    const [height, setHeight] = useState(0)
-
-    useEffect(() => {
-        const resizeObserver = new ResizeObserver(entries => {
-            for (let entry of entries) {
-                setHeight(entry.contentRect.height)
-            }
-        })
-
-        if (elemRef.current) {
-            resizeObserver.observe(elemRef.current)
-        }
-
-        return () => {
-            if (elemRef.current) {
-                resizeObserver.unobserve(elemRef.current)
-            }
-        }
-    }, [])
-
-    const selectedJointOptions = useMemo(() => {
-        return kinematicsConfiguration.participatingJoints
-            .map((_, i) => axis_colors[i])
-            .filter((_, i) => selected[i])
-            .map(color => {
-                switch (view) {
-                    case TelemetryVisibilityOptions.SET:
-                        return [{ color, dashArray: "" }]
-                    case TelemetryVisibilityOptions.ACT:
-                        return [{ color, dashArray: "2,2" }]
-                    case TelemetryVisibilityOptions.BOTH:
-                        return [
-                            { color, dashArray: "" },
-                            { color, dashArray: "2,2" }
-                        ]
-                    case TelemetryVisibilityOptions.DIFF:
-                        return [{ color, dashArray: "" }]
-                }
-            })
-            .flat()
-    }, [kinematicsConfiguration.participatingJoints, selected, view])
-
-    const { data, domain } = useMemo(() => {
-        const data = telemetry.map(d => ({
-            t: d.t,
-            values: kinematicsConfiguration.participatingJoints
-                .map(index => {
-                    switch (view) {
-                        case TelemetryVisibilityOptions.SET:
-                            switch (plot) {
-                                case TelemetryPVAT.POS:
-                                    return d.set[index].p
-                                case TelemetryPVAT.VEL:
-                                    return d.set[index].v
-                                case TelemetryPVAT.TORQUE:
-                                    return d.set[index].t + d.set[index].to
-                                default:
-                                    return 0
-                            }
-                        case TelemetryVisibilityOptions.ACT:
-                            return [d.act[index][plot]]
-                        case TelemetryVisibilityOptions.BOTH:
-                            return [d.set[index][plot], d.act[index][plot]]
-                        case TelemetryVisibilityOptions.DIFF:
-                            return [d.set[index][plot] - d.act[index][plot]]
-                    }
-                })
-                .filter((_, i) => selected[i])
-                .flat()
-        }))
-
-        const [min, max] = d3.extent(data.flatMap(d => d.values)).sort()
-        const extent = Math.abs(max - min)
-        const domain = [min - extent * 0.1, max + extent * 0.1]
-        return { data, domain }
-    }, [telemetry, kinematicsConfiguration, plot, view, selected])
-
-    return (
-        <div ref={elemRef} className="chart">
-            <SparklineScrolling
-                height={height}
-                domain={domain}
-                options={selectedJointOptions}
-                data={data}
-                duration={duration}
-            />
-        </div>
-    )
-}
+import { TelemetryForKinematicsConfiguration } from "./TelemetryForKinematicsConfiguration"
+import { Sparkline2 } from "./Sparkline2"
 
 const StyledTelemetryGroup = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: red;
+    //background: red;
 
     > div {
         flex-grow: 1;
@@ -155,36 +37,6 @@ const StyledCaptureState = styled.span`
     user-select: none;
 `
 
-const StyledTelemetryForKinematicsConfiguration = styled.div`
-    user-select: none;
-    padding: 10px;
-    height: 100%;
-    margin-bottom: 4px;
-    background: ${props => props.theme.colorBgContainer};
-    display: flex;
-    flex-direction: column;
-
-    .controls {
-        display: flex;
-        gap: 5px;
-
-        align-items: center;
-
-        .title {
-            flex-grow: 1;
-            text-align: right;
-        }
-
-        .ant-tag:hover {
-            outline: 1px solid grey;
-        }
-    }
-
-    .chart {
-        flex-grow: 1;
-    }
-`
-
 const StyledDuration = styled.div`
     display: flex;
     gap: 5px;
@@ -195,75 +47,6 @@ const StyledDuration = styled.div`
         width: 150px;
     }
 `
-
-const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
-    cursor: pointer;
-
-    span {
-        display: block;
-        min-width: 18px;
-        margin-bottom: 3px;
-        text-align: center;
-        border-bottom: 2px solid ${props => (props.selected ? props.axiscolor : "transparent")};
-    }
-`
-
-const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, duration, visible }) => {
-    const joints = useJointConfigurationList()
-    const [selected, setSelected] = useState(
-        kinematicsConfiguration.participatingJoints.map(() => true)
-    )
-
-    const [view, setView] = useLocalStorage(
-        "viewTelemetrySetActBoth",
-        TelemetryVisibilityOptions.SET
-    )
-
-    function toggle_selected(index) {
-        setSelected(selected.map((v, i) => (i === index ? !v : v)))
-    }
-
-    return (
-        <StyledTelemetryForKinematicsConfiguration>
-            <div className="controls">
-                <div>
-                    {kinematicsConfiguration.participatingJoints.map((joint, index) => (
-                        <StyledAxisToggle
-                            key={index}
-                            axiscolor={axis_colors[index]}
-                            selected={selected[index]}
-                            onClick={() => toggle_selected(index)}
-                        >
-                            <span>{joints[joint].name}</span>
-                        </StyledAxisToggle>
-                    ))}
-                </div>
-                <div>
-                    <Radio.Group
-                        size="small"
-                        value={view}
-                        buttonStyle="solid"
-                        onChange={e => setView(e.target.value)}
-                    >
-                        <Radio.Button value={TelemetryVisibilityOptions.SET}>SET</Radio.Button>
-                        <Radio.Button value={TelemetryVisibilityOptions.ACT}>ACT</Radio.Button>
-                        <Radio.Button value={TelemetryVisibilityOptions.BOTH}>BOTH</Radio.Button>
-                        <Radio.Button value={TelemetryVisibilityOptions.DIFF}>DIFF</Radio.Button>
-                    </Radio.Group>
-                </div>
-                <div className="title">{kinematicsConfiguration.name}</div>
-            </div>
-            {visible && (
-                <SparklineJoints
-                    kinematicsConfiguration={kinematicsConfiguration}
-                    selected={selected}
-                    view={view}
-                    duration={duration}
-                />
-            )}
-        </StyledTelemetryForKinematicsConfiguration>
-    )
-}
 
 /**
  * @ignore
