@@ -34,7 +34,7 @@ import { ExampleAppMenu } from "../../../../../examples/util/ExampleAppMenu"
 import React, { Suspense, useMemo } from "react"
 import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import { DefaultEnvironment } from "../../../../../examples/util/DefaultEnvironment"
-import { useGLTF } from "@react-three/drei"
+import { Sphere, useGLTF } from "@react-three/drei"
 import { AwTubeRobot } from "./AwTubeRobot"
 import { LinkLengthTile } from "./LinkLengthTile"
 
@@ -45,10 +45,9 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
                 <Suspense fallback={null}>
                     <AwTubeRobot>
                         <TriadHelper size={400} />
-                        <mesh>
-                            <sphereBufferGeometry args={[10, 10, 10]} />
+                        <Sphere scale={10}>
                             <meshStandardMaterial color="red" />
-                        </mesh>
+                        </Sphere>
                     </AwTubeRobot>
                 </Suspense>
 

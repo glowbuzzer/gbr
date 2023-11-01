@@ -6,47 +6,28 @@ import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
-import { GlowbuzzerStatus } from "../gbc_extra"
 import deepEqual from "fast-deep-equal"
+import { useMemo } from "react"
+import {
+    CaptureState,
+    TelemetryDomainProvider,
+    TelemetryEntry,
+    TelemetryGenerator,
+    TelemetryPVAT,
+    TelemetrySelector,
+    TelemetrySettingsType,
+    TelemetryVisibilityOptions
+} from "./types"
+import {
+    append_telemetry_items,
+    telemetry_circular_buffer,
+    telemetry_cached_domains,
+    get_telemetry_values,
+    MAX_SAMPLES,
+    reset_telemetry_state
+} from "./storage"
 
 const { load, save } = settings("telemetry")
-
-export enum TelemetryPVAT {
-    POS = "p",
-    VEL = "v",
-    ACC = "a",
-    TORQUE = "t"
-}
-
-export type TelemetrySettingsType = {
-    captureDuration: number
-    plot: TelemetryPVAT
-}
-
-export enum CaptureState {
-    RUNNING,
-    PAUSED,
-    WAITING,
-    CAPTURING,
-    COMPLETE
-}
-
-type TelemetryEntry = GlowbuzzerStatus["telemetry"][0]
-// type TelemetrySet = TelemetryEntry["set"][0]
-
-const MAX_SAMPLES = 3000
-const data: TelemetryEntry[] = Array(MAX_SAMPLES)
-
-// this doesn't work when we want to diff set and act values
-// // maintain a list of domains for each telemetry type
-// const EMPTY_DOMAINS = {
-//     p: [0, 0],
-//     v: [0, 0],
-//     a: [0, 0],
-//     t: [0, 0],
-//     to: [0, 0]
-// }
-// const domains: { [key in keyof TelemetrySet]: number[] } = EMPTY_DOMAINS
 
 type TelemetrySliceType = {
     settings: TelemetrySettingsType
@@ -55,62 +36,6 @@ type TelemetrySliceType = {
     start: number
     count: number
     t: number
-}
-
-function reset(state: TelemetrySliceType) {
-    state.start = 0
-    state.count = 0
-    state.lastCapture = null
-    // Object.assign(domains, EMPTY_DOMAINS)
-}
-
-// function update_domains(entry: TelemetryEntry) {
-//     for (const e of entry.set) {
-//         for (const key in e) {
-//             const set = e[key]
-//             const act = entry.act[key] || 0 // torque offset `to` is not in act
-//             const domain = domains[key]
-//             domain[0] = Math.min(domain[0], Math.min(set, act))
-//             domain[1] = Math.max(domain[1], Math.max(set, act))
-//         }
-//     }
-// }
-
-function append(state: TelemetrySliceType, payload: TelemetryEntry[]) {
-    const count = payload.length
-    payload.forEach((d, index) => {
-        const pos = (state.start + state.count + index) % MAX_SAMPLES
-        // const cos = Math.cos(d.t / 50)
-        // const sin = Math.sin(d.t / 50)
-        data[pos] = {
-            ...d
-            // set: [
-            //     {
-            //         p: cos,
-            //         v: -sin,
-            //         a: -cos,
-            //         t: sin,
-            //         to: 0
-            //     }
-            // ],
-            // act: [
-            //     {
-            //         p: sin,
-            //         v: cos,
-            //         a: -sin,
-            //         t: -cos
-            //     }
-            // ]
-        }
-    })
-    const new_count = state.count + count
-    if (new_count >= MAX_SAMPLES) {
-        const overflow = new_count - MAX_SAMPLES
-        state.start = (state.start + overflow) % MAX_SAMPLES
-        state.count = MAX_SAMPLES
-    } else {
-        state.count = new_count
-    }
 }
 
 export const telemetrySlice: Slice<
@@ -150,7 +75,7 @@ export const telemetrySlice: Slice<
             save(state.settings)
         },
         init(state) {
-            reset(state)
+            reset_telemetry_state(state)
         },
         data(state, action) {
             const count = action.payload.length
@@ -158,15 +83,16 @@ export const telemetrySlice: Slice<
                 state.captureState === CaptureState.RUNNING ||
                 state.captureState === CaptureState.CAPTURING
             ) {
-                append(state, action.payload)
+                append_telemetry_items(state, action.payload)
             } else if (state.captureState === CaptureState.WAITING && state.lastCapture) {
-                // if waiting for trigger, find the first bit of data that deviates from last capture
+                // if waiting for trigger, find the first item of data that deviates from last capture
+                // TODO: ?: we use `set` property but could be `act` also that triggers capture
                 for (let n = 0; n < count; n++) {
                     if (!deepEqual(state.lastCapture.set, action.payload[n].set)) {
                         state.captureState = CaptureState.CAPTURING
                         // clear data and append from this point in the incoming data
-                        reset(state)
-                        append(state, action.payload.slice(n))
+                        reset_telemetry_state(state)
+                        append_telemetry_items(state, action.payload.slice(n))
                         break
                     }
                 }
@@ -186,15 +112,15 @@ export const telemetrySlice: Slice<
         },
         resume(state) {
             state.captureState = CaptureState.RUNNING
-            reset(state)
+            reset_telemetry_state(state)
         },
         startCapture(state) {
             state.captureState = CaptureState.WAITING
-            reset(state)
+            reset_telemetry_state(state)
         },
         cancelCapture(state) {
             state.captureState = CaptureState.PAUSED
-            reset(state)
+            reset_telemetry_state(state)
         }
     }
 })
@@ -247,19 +173,18 @@ export const useTelemetryControls = () => {
     }
 }
 
-export type TelemetryGenerator = <T>(
-    domain: [number, number?],
-    mapFn: (e: TelemetryEntry) => T
-) => IterableIterator<T>
-
 /**
  * @ignore - Internal to TelemetryTile
+ *
+ * Returns a view/accessors onto the circular buffer of telemetry data
  */
 export function useTelemetryData(): {
     firstTimecode: number
     lastTimecode: number
     count: number
     data: TelemetryGenerator
+    selector: TelemetrySelector
+    domains: TelemetryDomainProvider
 } {
     const { start, count } = useSelector<RootState, Pick<TelemetrySliceType, "start" | "count">>(
         ({ telemetry: { start, count } }) => ({ start, count }),
@@ -268,29 +193,31 @@ export function useTelemetryData(): {
 
     const last = (start + count - 1) % MAX_SAMPLES
 
-    return {
-        firstTimecode: data[start]?.t,
-        lastTimecode: data[last]?.t,
-        count,
-        *data<T>(domain: [number, number?], mapFn: (e: TelemetryEntry) => T): IterableIterator<T> {
-            if (domain[0] < 0) {
-                domain[0] = Math.max(0, count + domain[0])
-            }
-            if (domain[1] === undefined) {
-                domain[1] = count
-            }
-
-            const [start_index, end_index] = domain
-            for (let i = start_index; i < end_index; i++) {
-                const e = data[(start + i) % MAX_SAMPLES]
-                if (!e) {
-                    console.log("no data", start, i, count)
-                    continue
+    return useMemo(() => {
+        return {
+            firstTimecode: telemetry_circular_buffer[start]?.t,
+            lastTimecode: telemetry_circular_buffer[last]?.t,
+            count,
+            *data(selection: [number, number?]): IterableIterator<TelemetryEntry> {
+                if (selection[0] < 0) {
+                    selection[0] = Math.max(0, count + selection[0])
                 }
-                yield mapFn(e)
+                if (selection[1] === undefined) {
+                    selection[1] = count
+                }
+
+                const [start_index, end_index] = selection
+                for (let i = start_index; i < end_index; i++) {
+                    const e = telemetry_circular_buffer[(start + i) % MAX_SAMPLES]
+                    yield e
+                }
+            },
+            selector: get_telemetry_values,
+            domains(jointIndex: number, plot: TelemetryPVAT, view: TelemetryVisibilityOptions) {
+                return telemetry_cached_domains[jointIndex]?.[plot]?.[view] || [0, 0]
             }
         }
-    }
+    }, [start, count])
 }
 
 /**
@@ -300,3 +227,13 @@ export function useTelemetrySettings(): TelemetrySettingsType {
     return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual)
         .settings
 }
+
+export * from "./types"
+
+// export {
+//     TelemetryEntry,
+//     TelemetryGenerator,
+//     TelemetryPVAT,
+//     TelemetrySelector,
+//     TelemetryVisibilityOptions
+// } from "./types"

@@ -12,7 +12,7 @@ import { ReactComponent as SettingsIcon } from "@material-symbols/svg-400/outlin
 import { QuestionCircleOutlined } from "@ant-design/icons"
 import { useConnection } from "@glowbuzzer/store"
 import { DockTileWrapper } from "./DockTileWrapper"
-import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import { useGlowbuzzerTheme } from "../app"
 import styled from "styled-components"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
@@ -50,13 +50,13 @@ function gradient(darkMode: boolean) {
         ${color1} 100%
     )`
 }
-const StyledDockTileDimmer = styled.div<{ darkMode: boolean }>`
+const StyledDockTileDimmer = styled.div<{ $darkMode: boolean }>`
     position: absolute;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    background-image: ${props => gradient(props.darkMode)};
+    background-image: ${props => gradient(props.$darkMode)};
     background-size: 6px 6px;
     opacity: 0.2;
 `
@@ -90,7 +90,7 @@ export const DockLayout = () => {
         return (
             <Suspense>
                 {tile}
-                <StyledDockTileDimmer darkMode={darkMode} />
+                <StyledDockTileDimmer $darkMode={darkMode} />
             </Suspense>
         )
     }

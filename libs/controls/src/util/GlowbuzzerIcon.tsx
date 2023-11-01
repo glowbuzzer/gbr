@@ -5,7 +5,6 @@
 import styled from "styled-components"
 import * as React from "react"
 import { Tooltip } from "antd"
-import { ReactNode } from "react"
 
 export type CustomIconProps = {
     name?: string
@@ -32,7 +31,7 @@ export function custom_icon_classes(props: CustomIconProps, ...classes: string[]
         .join(" ")
 }
 
-export const StyledIcon = styled.span<{ useFill: boolean }>`
+export const StyledIcon = styled.span<{ $useFill: boolean }>`
     padding: 2px;
     user-select: none;
 
@@ -41,7 +40,7 @@ export const StyledIcon = styled.span<{ useFill: boolean }>`
         height: 1.5em;
 
         path {
-            fill: ${props => (props.useFill ? props.theme.colorText : undefined)};
+            fill: ${props => (props.$useFill ? props.theme.colorText : undefined)};
             stroke: ${props => props.theme.colorText};
         }
     }
@@ -77,7 +76,7 @@ export const GlowbuzzerIcon = (props: CustomIconProps) => {
     const classes = custom_icon_classes(props, name, "anticon")
     const el = (
         <StyledIcon
-            useFill={useFill}
+            $useFill={useFill}
             className={classes}
             onClick={disabled ? undefined : props.onClick}
             onMouseDown={e => (props.onClick ? e.stopPropagation() : undefined)}

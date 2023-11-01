@@ -27,7 +27,7 @@ import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import React, { Suspense } from "react"
 import { AwTubeRobot, AwTubeRobotParts } from "@automationware/awtube"
 import { Base, Clamp, Flange, Joint, Link, Monobraccio, Spindle } from "@automationware/awtube"
-import { Environment } from "@react-three/drei"
+import { Environment, Sphere } from "@react-three/drei"
 import { UrdfFrames } from "./UrdfFrames"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 import { Group, Material, Mesh } from "three"
@@ -81,10 +81,9 @@ const LoadedAwTubeRobot = () => {
     return (
         <>
             <AwTubeRobot parts={parts} showFrames={options.showFramesDH}>
-                <mesh>
-                    <sphereBufferGeometry args={[10, 10, 10]} />
+                <Sphere scale={10}>
                     <meshStandardMaterial color="red" />
-                </mesh>
+                </Sphere>
                 {options.showWorldPositionDH && <WorldPosition title="DH World" position="left" />}
             </AwTubeRobot>
         </>

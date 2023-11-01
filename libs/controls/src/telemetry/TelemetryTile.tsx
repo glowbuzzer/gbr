@@ -18,17 +18,12 @@ import {
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { TelemetryForKinematicsConfiguration } from "./TelemetryForKinematicsConfiguration"
-import { Sparkline2 } from "./Sparkline2"
 
 const StyledTelemetryGroup = styled.div`
     display: flex;
     flex-direction: column;
     height: 100%;
-    //background: red;
-
-    > div {
-        flex-grow: 1;
-    }
+    //background: green;
 `
 
 const StyledCaptureState = styled.span`
@@ -76,6 +71,7 @@ export const TelemetryTile = () => {
             btoa(
                 [["t", ...joints.map((_, i) => `j${i}`)]]
                     .concat(
+                        // TODO: H: rework csv download
                         data.map(d => {
                             const values = d.set.map((v, index) => {
                                 if (joints[index].jointType === JOINT_TYPE.JOINT_REVOLUTE) {
@@ -167,7 +163,7 @@ export const TelemetryTile = () => {
                                 step={250}
                                 tooltip={{ placement: "bottom" }}
                             />
-                            <span>{capture.captureDuration}ms</span>
+                            <span>{capture.captureDuration} samples</span>
                         </StyledDuration>
                     </DockToolbarButtonGroup>
                     <Space>
@@ -181,13 +177,11 @@ export const TelemetryTile = () => {
         >
             <StyledTelemetryGroup>
                 {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
-                    <div key={index}>
-                        <TelemetryForKinematicsConfiguration
-                            kinematicsConfiguration={kinematicsConfiguration}
-                            duration={capture.captureDuration}
-                            visible={isVisible}
-                        />
-                    </div>
+                    <TelemetryForKinematicsConfiguration
+                        key={index}
+                        kinematicsConfiguration={kinematicsConfiguration}
+                        visible={isVisible}
+                    />
                 ))}
             </StyledTelemetryGroup>
         </DockTileWithToolbar>

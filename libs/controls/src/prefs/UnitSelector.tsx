@@ -33,7 +33,7 @@ export const UnitSelector = ({ type }: { type: "linear" | "angular" }) => {
     const units = type === "linear" ? linear_units : angular_units
 
     return (
-        <Select defaultValue={pref} onChange={change} dropdownMatchSelectWidth={200}>
+        <Select defaultValue={pref} onChange={change} popupMatchSelectWidth={200}>
             {Object.keys(units).map(k => (
                 <Option key={k} value={k}>
                     {units[k]}

@@ -36,7 +36,7 @@ import {
     Monobraccio,
     Spindle
 } from "../../../lib/awtube"
-import { Environment } from "@react-three/drei"
+import { Environment, Sphere } from "@react-three/drei"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 import { AwTubeTileDefinitionBuilder } from "../../../lib/awtube/AwTubeStatusTile"
 
@@ -67,10 +67,9 @@ const LoadedAwTubeRobot = () => {
     return (
         <AwTubeRobot parts={parts}>
             <TriadHelper size={400} />
-            <mesh>
-                <sphereBufferGeometry args={[10, 10, 10]} />
+            <Sphere scale={10}>
                 <meshStandardMaterial color="red" />
-            </mesh>
+            </Sphere>
         </AwTubeRobot>
     )
 }

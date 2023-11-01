@@ -27,11 +27,11 @@ declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
 }
 
-const GlowbuzzerDimmerStyle = styled.div<{ visible: boolean }>`
+const GlowbuzzerDimmerStyle = styled.div<{ $visible: boolean }>`
     display: none;
 
     ${props =>
-        props.visible &&
+        props.$visible &&
         css`
             display: block;
             position: fixed;
@@ -102,7 +102,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     return (
         <div>
             <GlowbuzzerDimmerStyle
-                visible={
+                $visible={
                     !(connection.connected && configState === ConfigState.READY) &&
                     connection.autoConnect
                 }

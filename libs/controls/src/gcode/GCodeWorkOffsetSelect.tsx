@@ -75,7 +75,7 @@ export const GCodeWorkOffsetSelect = () => {
                 onChange={setActiveFrame}
                 optionLabelProp="display"
                 bordered={false}
-                dropdownMatchSelectWidth={false}
+                popupMatchSelectWidth={false}
             />
         </>
     )

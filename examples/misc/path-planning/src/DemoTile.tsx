@@ -218,7 +218,7 @@ export const DemoTile = () => {
                 <Card size="small" title="Preferred Route">
                     <Select
                         size="small"
-                        dropdownMatchSelectWidth={false}
+                        popupMatchSelectWidth={false}
                         options={route_options}
                         value={route}
                         onChange={update_route}

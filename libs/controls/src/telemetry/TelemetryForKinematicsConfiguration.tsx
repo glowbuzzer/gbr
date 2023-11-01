@@ -2,14 +2,14 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { useJointConfigurationList } from "@glowbuzzer/store"
+import { TelemetryVisibilityOptions, useJointConfigurationList } from "@glowbuzzer/store"
 import * as React from "react"
 import { useState } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { axis_colors, SparklineJoints, TelemetryVisibilityOptions } from "./SparklineJoints"
 import { Radio, Tag } from "antd"
 import styled from "styled-components"
-import { Sparkline2 } from "./Sparkline2"
+import { TelemetryChartCombined } from "./TelemetryChartCombined"
+import { axis_colors } from "./update"
 
 const StyledTelemetryForKinematicsConfiguration = styled.div`
     user-select: none;
@@ -17,8 +17,10 @@ const StyledTelemetryForKinematicsConfiguration = styled.div`
     height: 100%;
     margin-bottom: 4px;
     background: ${props => props.theme.colorBgContainer};
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
+    //background: grey;
 
     .controls {
         display: flex;
@@ -35,11 +37,8 @@ const StyledTelemetryForKinematicsConfiguration = styled.div`
             outline: 1px solid grey;
         }
     }
-
-    .chart {
-        flex-grow: 1;
-    }
 `
+
 const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
     cursor: pointer;
 
@@ -51,11 +50,7 @@ const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
         border-bottom: 2px solid ${props => (props.selected ? props.axiscolor : "transparent")};
     }
 `
-export const TelemetryForKinematicsConfiguration = ({
-    kinematicsConfiguration,
-    duration,
-    visible
-}) => {
+export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, visible }) => {
     const joints = useJointConfigurationList()
     const [selected, setSelected] = useState(
         kinematicsConfiguration.participatingJoints.map(() => true)
@@ -101,19 +96,11 @@ export const TelemetryForKinematicsConfiguration = ({
                 <div className="title">{kinematicsConfiguration.name}</div>
             </div>
             {visible && (
-                <Sparkline2
+                <TelemetryChartCombined
                     kinematicsConfiguration={kinematicsConfiguration}
                     selected={selected}
                     view={view}
                 />
-                /*
-                <SparklineJoints
-                    kinematicsConfiguration={kinematicsConfiguration}
-                    selected={selected}
-                    view={view}
-                    duration={duration}
-                />
-*/
             )}
         </StyledTelemetryForKinematicsConfiguration>
     )

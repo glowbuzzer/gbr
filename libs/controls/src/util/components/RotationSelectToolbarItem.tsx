@@ -7,19 +7,25 @@ import * as React from "react"
 import styled from "styled-components"
 
 import { ReactComponent as RotationIcon } from "../../icons/rotation.svg"
-import { dockDropdownStyle } from "../../dock/styles"
 
 const StyledSelect = styled(Select)`
+    height: 20px;
+
+    .ant-select-selector {
+        padding-left: 2px !important;
+    }
+
     &.ant-select-open svg path {
         opacity: 0.2;
     }
+
     .ant-select-selection-item span {
         display: inline-block;
         padding-left: 4px;
     }
-    ${dockDropdownStyle}
+
     svg {
-        transform: translateY(1px);
+        transform: translate(0, 3px);
 
         path {
             stroke: ${props => props.theme.colorText};
@@ -84,7 +90,8 @@ export const RotationSelectToolbarItem = ({ value, onChange }: RotationSelectToo
             value={value}
             onChange={onChange}
             optionLabelProp="display"
-            dropdownMatchSelectWidth={false}
+            popupMatchSelectWidth={false}
+            bordered={false}
             dropdownStyle={{ maxHeight: 400, overflow: "auto", minWidth: 200 }}
         />
     )

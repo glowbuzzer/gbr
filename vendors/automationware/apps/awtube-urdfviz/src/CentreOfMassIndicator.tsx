@@ -3,21 +3,22 @@
  */
 
 import React from "react"
+import { Sphere } from "@react-three/drei"
 
 export const CentreOfMassIndicator = () => {
     return (
-        <mesh scale={0.015}>
-            <sphereBufferGeometry args={[1, 32, 32]} />
-            <shaderMaterial
-                attach="material"
-                vertexShader={`
+        <group scale={0.015}>
+            <Sphere scale={1}>
+                <shaderMaterial
+                    attach="material"
+                    vertexShader={`
           varying vec3 vNormal;
           void main() {
             vNormal = normal;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
           }
         `}
-                fragmentShader={`
+                    fragmentShader={`
                 varying vec3 vNormal;
                 void main() {
                   vec3 color;
@@ -35,7 +36,8 @@ export const CentreOfMassIndicator = () => {
                   gl_FragColor = vec4(color, 1.0);
                 }
         `}
-            />
-        </mesh>
+                />
+            </Sphere>
+        </group>
     )
 }

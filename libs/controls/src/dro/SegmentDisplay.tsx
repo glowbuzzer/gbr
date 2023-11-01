@@ -18,7 +18,7 @@ type SegmentDisplayProps = {
 }
 
 // noinspection CssNoGenericFontName
-const StyledSegmentDisplay = styled.span<{ error }>`
+const StyledSegmentDisplay = styled.span<{ $error }>`
     font-family: DSEG7-Classic;
     font-size: 20px;
     //text-align: center;
@@ -34,7 +34,7 @@ const StyledSegmentDisplay = styled.span<{ error }>`
 
     .foreground {
         z-index: 1000;
-        color: ${props => (props.error ? "red" : "inherit")};
+        color: ${props => (props.$error ? "red" : "inherit")};
     }
 `
 
@@ -56,7 +56,7 @@ export const SegmentDisplay = ({ value, toFixed, width, error }: SegmentDisplayP
         .join("")
 
     return (
-        <StyledSegmentDisplay error={error}>
+        <StyledSegmentDisplay $error={error}>
             <span className="background">{padding}</span>
             <span className="foreground">{text}</span>
         </StyledSegmentDisplay>

@@ -48,7 +48,7 @@ export const KinematicsDropdown = ({ value, placeholder, onChange }: KinematicsD
             onChange={onChange}
             placeholder={placeholder}
             optionLabelProp="display"
-            dropdownMatchSelectWidth={false}
+            popupMatchSelectWidth={false}
             dropdownStyle={{ maxHeight: 400, overflow: "auto", minWidth: 200 }}
         />
     )

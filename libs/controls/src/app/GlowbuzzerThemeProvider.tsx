@@ -14,11 +14,11 @@ type GlowbuzzerThemeContextType = {
 
 const GlowbuzzerThemeContext = createContext<GlowbuzzerThemeContextType>(null)
 
-const StyledGlowbuzzerApp = styled.div<{ darkMode: boolean }>`
+const StyledGlowbuzzerApp = styled.div<{ $darkMode: boolean }>`
     // these are copied from flexlayout-react/style/dark.css, allowing us to switch dynamically
     .flexlayout__layout {
         ${props =>
-            props.darkMode &&
+            props.$darkMode &&
             css`
                 --color-text: #eeeeee;
                 --color-background: black;
@@ -75,7 +75,7 @@ const GlowbuzzerThemeInner = ({ children, darkMode }) => {
     const { token } = antdTheme.useToken()
     return (
         <ThemeProvider theme={token}>
-            <StyledGlowbuzzerApp darkMode={darkMode}>{children}</StyledGlowbuzzerApp>
+            <StyledGlowbuzzerApp $darkMode={darkMode}>{children}</StyledGlowbuzzerApp>
         </ThemeProvider>
     )
 }

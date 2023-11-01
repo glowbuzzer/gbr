@@ -6,9 +6,9 @@ import React from "react"
 import styled, { css } from "styled-components"
 import { Divider, Space } from "antd"
 
-const StyledDockToolbar = styled.div<{ floating: boolean }>`
+const StyledDockToolbar = styled.div<{ $floating: boolean }>`
     ${props =>
-        props.floating &&
+        props.$floating &&
         css`
             position: absolute;
             top: 0;
@@ -68,7 +68,7 @@ export const DockToolbar = ({
     children
 }) => {
     return (
-        <StyledDockToolbar floating={floating}>
+        <StyledDockToolbar $floating={floating}>
             <StyledSpace split={<Divider type="vertical" />}>{children}</StyledSpace>
         </StyledDockToolbar>
     )
