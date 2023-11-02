@@ -48,6 +48,7 @@ const Boxy = props => {
 }
 
 function SwitchModel(props) {
+    // @ts-ignore
     const { nodes, materials } = useGLTF("/switch.glb")
     const switchCube = nodes.Cube as THREE.Mesh
     const switchSphere = nodes.Sphere as THREE.Mesh
@@ -65,6 +66,7 @@ function SwitchModel(props) {
 }
 
 function Switch({ x, set }) {
+    // @ts-ignore
     const { nodes, materials } = useGLTF("/models/switch.glb")
 
     const switchCube = nodes.Cube as THREE.Mesh
