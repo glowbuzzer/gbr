@@ -4,7 +4,7 @@
 
 // @ts-ignore
 import { ReactComponent } from "./estop.svg"
-import { useEstop } from "../../../../../libs/store/src"
+import { useEstop } from "@glowbuzzer/store"
 
 export const EStopButton = ({ size }) => {
     const active = useEstop()

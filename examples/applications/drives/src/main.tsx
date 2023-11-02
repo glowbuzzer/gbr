@@ -5,7 +5,6 @@
 import { createRoot } from "react-dom/client"
 import React, { StrictMode } from "react"
 import { GlowbuzzerApp } from "@glowbuzzer/controls"
-import { ConnectionProvider } from "../../../../libs/controls/src/app/ConnectionProvider"
 import { App } from "./app"
 import { config } from "./config"
 
