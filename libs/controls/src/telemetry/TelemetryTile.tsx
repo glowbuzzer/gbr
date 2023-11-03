@@ -18,6 +18,7 @@ import {
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { TelemetryForKinematicsConfiguration } from "./TelemetryForKinematicsConfiguration"
+import { generate_telemetry_download } from "./download"
 
 const StyledTelemetryGroup = styled.div`
     display: flex;
@@ -49,7 +50,7 @@ const StyledDuration = styled.div`
 export const TelemetryTile = () => {
     const kinematicsConfigurations = useKinematicsConfigurationList()
     const capture = useTelemetryControls()
-    const data = useTelemetryData()
+    const { data } = useTelemetryData()
     const joints = useJointConfigurationList()
     const [isVisible, setIsVisible] = useState(!document.hidden)
 
@@ -65,36 +66,12 @@ export const TelemetryTile = () => {
         }
     }, [])
 
-    function download() {
-        const dl =
-            "data:application/octet-stream;charset=utf-16le;base64," +
-            btoa(
-                [["t", ...joints.map((_, i) => `j${i}`)]]
-                    .concat(
-                        // TODO: H: rework csv download
-                        data.map(d => {
-                            const values = d.set.map((v, index) => {
-                                if (joints[index].jointType === JOINT_TYPE.JOINT_REVOLUTE) {
-                                    return (v.p * 180) / Math.PI
-                                }
-                                return v
-                            })
-                            return [d.t, ...values].map(v => v.toString())
-                        })
-                    )
-                    .map(line => line.join(","))
-                    .join("\n")
-            )
-
-        const a = document.createElement("a")
-        document.body.appendChild(a)
-        a.download = "telemetry.csv"
-        a.href = dl
-        a.click()
-    }
-
     function update_pvat(e: RadioChangeEvent) {
         capture.setPlot(e.target.value)
+    }
+
+    function download() {
+        generate_telemetry_download(joints, data)
     }
 
     return (
