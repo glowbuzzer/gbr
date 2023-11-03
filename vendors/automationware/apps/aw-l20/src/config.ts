@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE } from "@glowbuzzer/store"
+import {GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE} from "@glowbuzzer/store"
 import {
     AwTubeL20InverseDynamicParams,
     AwTubeL20KinChainParams,
@@ -69,8 +69,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -80,6 +80,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -80,
             posLimit: 80,
             inverted: true,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
@@ -92,8 +93,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -103,6 +104,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -40,
             posLimit: 40,
             inverted: true,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
@@ -113,8 +115,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -124,6 +126,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: 50,
             posLimit: 130,
             inverted: false,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
@@ -134,8 +137,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -145,6 +148,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -170,
             posLimit: 170,
             inverted: true,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
@@ -155,8 +159,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -166,6 +170,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: 10,
             posLimit: 170,
             inverted: true,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
@@ -176,8 +181,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 5
+                    amax: 0.25,
+                    jmax: 0.5
                 }
             ],
             scalePos: 166886,
@@ -187,6 +192,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -270,
             posLimit: 270,
             inverted: true,
+            preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
