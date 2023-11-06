@@ -61,7 +61,6 @@ export class ConfigBuilder {
                     busCycleTime: 4
                 }
             ],
-            fieldbus: [DEFAULT_FIELDBUS_CONFIG],
             stream: [
                 {
                     name: "default",

@@ -15,8 +15,7 @@ program
 program.parse(process.argv)
 const { lib, plot } = program.opts()
 
-const addon = require(lib && lib.startsWith("/")
-    ? lib
-    : `../../../${lib}/libs/gbc-node/gbc-node.node`)
+const req = require
+const addon = req(lib && lib.startsWith("/") ? lib : `../../../${lib}/libs/gbc-node/gbc-node.node`)
 
 export const gbc = new GbcTest(addon, plot)

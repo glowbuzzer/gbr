@@ -3,8 +3,8 @@
  */
 
 import * as uvu from "uvu"
-import { gbc } from "../../gbc"
 import { DesiredState, FAULT_CAUSE } from "../../../libs/store/src"
+import { gbc } from "../../gbc"
 
 const test = uvu.suite("core")
 
