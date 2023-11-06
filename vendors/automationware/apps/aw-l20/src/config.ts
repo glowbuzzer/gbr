@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import {GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE} from "@glowbuzzer/store"
+import { GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE } from "@glowbuzzer/store"
 import {
     AwTubeL20InverseDynamicParams,
     AwTubeL20KinChainParams,
@@ -69,8 +69,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    amax: 0.5,
+                    jmax: 1
                 }
             ],
             scalePos: 166886,
@@ -115,8 +115,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    amax: 0.5,
+                    jmax: 1
                 }
             ],
             scalePos: 166886,
@@ -137,8 +137,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    amax: 0.5,
+                    jmax: 1
                 }
             ],
             scalePos: 166886,
@@ -159,8 +159,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    amax: 0.5,
+                    jmax: 1
                 }
             ],
             scalePos: 166886,
@@ -181,8 +181,8 @@ export const config: GlowbuzzerConfig = {
             limits: [
                 {
                     vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    amax: 0.5,
+                    jmax: 1
                 }
             ],
             scalePos: 166886,
@@ -220,9 +220,9 @@ export const config: GlowbuzzerConfig = {
             },
             linearLimits: [
                 {
-                    vmax: 10,
-                    amax: 200,
-                    jmax: 4000
+                    vmax: 20,
+                    amax: 100,
+                    jmax: 2000
                 }
             ],
 
