@@ -91,19 +91,6 @@ const StyledDiv = styled.div`
             .ant-radio-group {
                 flex-grow: 1;
             }
-            //text-align: right;
-            //
-            //.ant-tag {
-            //    min-width: 180px;
-            //    text-align: center;
-            //    margin: 0 0 2px 0;
-            //}
-            //
-            //.ant-btn {
-            //    padding: 0;
-            //    height: inherit;
-            //    min-width: 180px;
-            //}
         }
     }
 
@@ -364,6 +351,7 @@ export const ConnectTile = () => {
 */}
                 </div>
             )}
+            <Button onClick={upload_config}>Upload</Button>
             {/*
             {machine.operationErrorMessage?.length > 0 && (
                 <div className="machine-message">{machine.operationErrorMessage}</div>

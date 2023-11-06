@@ -32,8 +32,20 @@ export const OperationErrorPanel = () => {
                 />
             )
         }
-        return <Alert type="error" message="Client failed to send heartbeat within timeout" />
+        return (
+            <Alert
+                style={{ width: "100%" }}
+                type="error"
+                message="Client failed to send heartbeat within timeout"
+            />
+        )
     }
 
-    return <Alert type={in_fault ? "warning" : "error"} message={machine.operationErrorMessage} />
+    return (
+        <Alert
+            style={{ width: "100%" }}
+            type={in_fault ? "warning" : "error"}
+            message={machine.operationErrorMessage}
+        />
+    )
 }
