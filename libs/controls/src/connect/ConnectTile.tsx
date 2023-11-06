@@ -351,7 +351,10 @@ export const ConnectTile = () => {
 */}
                 </div>
             )}
+            {/*
+            FOR TESTING CONFIG UPLOAD ONLY
             <Button onClick={upload_config}>Upload</Button>
+*/}
             {/*
             {machine.operationErrorMessage?.length > 0 && (
                 <div className="machine-message">{machine.operationErrorMessage}</div>
