@@ -39,6 +39,7 @@ import {
 import { Environment, Sphere } from "@react-three/drei"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 import { AwTubeTileDefinitionBuilder } from "../../../lib/awtube/AwTubeStatusTile"
+import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -110,7 +111,8 @@ export const App = () => {
                 FramesTileDefinition,
                 FeedRateTileDefinition,
                 TelemetryTileDefinition,
-                EmStatTileDefinition
+                EmStatTileDefinition,
+                SimpleMoveTileDefinition
             ]}
         >
             <ExampleAppMenu title="AutomationWare AW-TUBE" />
