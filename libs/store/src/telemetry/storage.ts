@@ -37,7 +37,12 @@ export function get_telemetry_values(
         case TelemetryVisibilityOptions.ACT:
             return [item.act[index][plot]]
         case TelemetryVisibilityOptions.BOTH:
-            return [item.set[index][plot], item.act[index][plot]]
+            switch (plot) {
+                case TelemetryPVAT.TORQUE:
+                    return [item.set[index].t + item.set[index].to, item.act[index].t]
+                default:
+                    return [item.set[index][plot], item.act[index][plot]]
+            }
         case TelemetryVisibilityOptions.DIFF:
             return [item.set[index][plot] - item.act[index][plot]]
     }
