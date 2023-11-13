@@ -28,7 +28,7 @@ export const OperationErrorPanel = () => {
                 <Alert
                     style={{ width: "100%" }}
                     type="warning"
-                    message="There was an error sending heartbeat. Reset fault to continue"
+                    message="Heartbeat failure. Reset fault to continue"
                 />
             )
         }
