@@ -16,7 +16,8 @@ import {
     useConnection,
     useEstop,
     useMachine,
-    useOfflineConfig
+    useOfflineConfig,
+    useSimilationOnlyConfiguration
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { GbcVersionCheck } from "../config/GbcVersionCheck"
@@ -123,6 +124,7 @@ export const ConnectTile = () => {
     const [uploading, setUploading] = useState(false)
     const estopActive = useEstop()
     const [messageApi, messageContainer] = message.useMessage()
+    const simulationOnly = useSimilationOnlyConfiguration()
 
     function change_target(e) {
         machine.setDesiredMachineTarget(e.target.value)
@@ -250,7 +252,7 @@ export const ConnectTile = () => {
                 </div>
             </div>
             <div className="row">
-                <div className="label">Change Mode</div>
+                <div className="label">Change Mode {simulationOnly && <Tag>SIM ONLY</Tag>}</div>
                 <div className="controls">
                     <Radio.Group
                         disabled={connection.state !== ConnectionState.CONNECTED}
@@ -262,6 +264,7 @@ export const ConnectTile = () => {
                             Simulate
                         </Radio.Button>
                         <Radio.Button
+                            disabled={simulationOnly}
                             className="danger"
                             value={MACHINETARGET.MACHINETARGET_FIELDBUS}
                         >

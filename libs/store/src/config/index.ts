@@ -35,6 +35,7 @@ export enum ConfigState {
 type ConfigSliceType = {
     state: ConfigState
     readonly: boolean
+    simulationOnly: boolean
     gbcVersion: string
     schemaVersion: string
     version: number
@@ -57,6 +58,7 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
     initialState: {
         state: ConfigState.AWAITING_CONFIG as ConfigState,
         readonly: false as boolean,
+        simulationOnly: false as boolean,
         gbcVersion: null,
         schemaVersion: null,
         modified: false as boolean,
@@ -81,8 +83,10 @@ export const configSlice: Slice<ConfigSliceType> = createSlice({
         },
         /** Set config on connect - will not overwrite a locally modified config */
         setConfigFromRemote(state, action) {
-            const { gbcVersion, schemaVersion, readonly, ...config } = action.payload
+            const { gbcVersion, schemaVersion, readonly, simulationOnly, ...config } =
+                action.payload
             state.readonly = readonly
+            state.simulationOnly = simulationOnly
             state.gbcVersion = gbcVersion
             state.schemaVersion = schemaVersion
             state.version++
@@ -194,6 +198,10 @@ export function useGbcVersionInfo() {
     }
 }
 
+export function useSimilationOnlyConfiguration() {
+    return useSelector((state: RootState) => state.config.simulationOnly)
+}
+
 /**
  * Returns the current configuration as provided by GBC.
  */
@@ -213,27 +221,18 @@ export function useConfigLoader() {
     const config = useConfig()
     const dispatch = useDispatch()
 
-    return (change: Partial<GlowbuzzerConfig>): Promise<void> => {
+    return async (change: Partial<GlowbuzzerConfig>): Promise<void> => {
         const next: GlowbuzzerConfig = {
             ...config,
             ...change
         }
         if (connection.connected) {
-            return connection.request("load config", { config: next }).then(() => {
-                dispatch(configSlice.actions.setConfig(next))
-                // return new Promise(
-                //     resolve =>
-                //     // setTimeout(() => {
-                //     //     // we want to get a new status through after loading the config before checking for fro, etc
-                //     //     // (after config is loaded gbc does a full reset)
-                //     //     resolve()
-                //     // }, 1000)
-                // )
-            })
+            await connection.request("load config", { config: next })
+            dispatch(configSlice.actions.setConfig(next))
+        } else {
+            // just do the dispatch, but config is now cached
+            dispatch(configSlice.actions.setOfflineConfig(next))
         }
-        // just do the dispatch, but config is now cached
-        dispatch(configSlice.actions.setOfflineConfig(next))
-        return Promise.resolve()
     }
 }
 
