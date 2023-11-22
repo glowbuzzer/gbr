@@ -68,9 +68,9 @@ export const config: GlowbuzzerConfig = {
             name: "0",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 1
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -92,9 +92,9 @@ export const config: GlowbuzzerConfig = {
             name: "1",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.25,
-                    jmax: 0.5
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -114,9 +114,9 @@ export const config: GlowbuzzerConfig = {
             name: "2",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 1
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -136,9 +136,9 @@ export const config: GlowbuzzerConfig = {
             name: "3",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 1
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -158,9 +158,9 @@ export const config: GlowbuzzerConfig = {
             name: "4",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 1
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -180,9 +180,9 @@ export const config: GlowbuzzerConfig = {
             name: "5",
             limits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
-                    jmax: 1
+                    vmax: 0.25,
+                    amax: 2.5,
+                    jmax: 5
                 }
             ],
             scalePos: 166886,
@@ -220,16 +220,16 @@ export const config: GlowbuzzerConfig = {
             },
             linearLimits: [
                 {
-                    vmax: 20,
-                    amax: 100,
-                    jmax: 2000
+                    vmax: 200,
+                    amax: 1000,
+                    jmax: 20000
                 }
             ],
 
             angularLimits: [
                 {
-                    vmax: 0.05,
-                    amax: 0.5,
+                    vmax: 0.25,
+                    amax: 2.5,
                     jmax: 5
                 }
             ],

@@ -22,6 +22,7 @@ import {
     SpindleActivityBuilder,
     ToolOffsetBuilder
 } from "./builders"
+import { useEffect } from "react"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
 function nullify(v?: number) {
@@ -174,16 +175,23 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
 
     /** @ignore */
     updateStream(tag: number, state: STREAMSTATE) {
-        // we take a simple approach to stream handling...
-        // if we are idle, then we can resolve any pending promises
-        // if we are not idle, then we can only resolve promises that are older than the current tag
         const { promiseFifo } = this
 
-        while (
-            promiseFifo.length &&
-            (state === STREAMSTATE.STREAMSTATE_IDLE || promiseFifo[0].tag < tag)
-        ) {
-            // resolve any old activities that have been superceded by a later tag
+        console.log("stream state change", tag, STREAMSTATE[state])
+        const idle = state === STREAMSTATE.STREAMSTATE_IDLE
+
+        // if the stream is idle and the tag is zero, it indicates the stream was reset,
+        // for example, because we dropped out of OP, in which case we reject any outstanding promises
+        if (idle && tag === 0) {
+            while (promiseFifo.length) {
+                promiseFifo.shift()?.reject({ tag, completed: false })
+            }
+        }
+
+        // stream is either active or complete
+        // if complete (idle) we can resolve all promises
+        // if active, we can resolve any promises up to the active tag
+        while (promiseFifo.length && (idle || promiseFifo[0].tag < tag)) {
             promiseFifo.shift()?.resolve({ tag, completed: true })
         }
     }

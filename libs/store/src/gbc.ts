@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "46e3787c5c4e6e04f50b5e8b39605448"
+export const GbcSchemaChecksum = "c0c2c1fb42a7f4bdda74c2ce10769590"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -863,6 +863,16 @@ export const GbcConstants = {
                         /**  Inner and outer radius of spherical envelope (disabled by default) */
                         radius?:number[];
             }
+            
+            export type VelocityScaling = {
+            
+                        /**  Whether auto velocity scaling is enabled */
+                        enabled?:boolean;
+                        /**  Trigger to activate velocity scaling */
+                        trigger?:TriggerOnDigitalInput;
+                        /**  Scale factor when active, between 0 and 1 */
+                        scaleFactor?:number;
+            }
             /** Configuration parameters for a kinematics configuration */
             export type KinematicsConfigurationConfig = {
             
@@ -895,6 +905,8 @@ export const GbcConstants = {
                         linearLimits?:LimitConfiguration[];
                         /**  List of angular limits to be applied to the kinematics configuration for different types of move */
                         angularLimits?:LimitConfiguration[];
+                        /**  Auto velocity scaling parameters for the kinematics configuration */
+                        velocityScaling?:VelocityScaling;
                         /**  Matrix containing the DH parameters for the kinematics model */
                         kinChainParams?:MatrixInstanceDouble;
                         /**  Inverse dynamic parameters for the kinematics model */
@@ -962,6 +974,16 @@ export const GbcConstants = {
                         actValue?:boolean;
             }
             /** 
+            Command for a digital input
+             */
+            export type DinCommand = {
+            
+                        /**  Defines if the digital input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the digital input */
+                        setValue?:boolean;
+            }
+            /** 
             Configuration parameters for Digital Outs (dout)
              */
             export type DoutConfig = {
@@ -1014,6 +1036,16 @@ export const GbcConstants = {
                         actValue?:number;
             }
             /** 
+            Command for an analog input
+             */
+            export type AinCommand = {
+            
+                        /**  Defines if the analog input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the analog input */
+                        setValue?:boolean;
+            }
+            /** 
             Configuration parameters for Analog Outs (aout - floats)
              */
             export type AoutConfig = {
@@ -1058,6 +1090,16 @@ export const GbcConstants = {
             
                         /**  value of iin */
                         actValue?:number;
+            }
+            /** 
+            Command for an integer input
+             */
+            export type IinCommand = {
+            
+                        /**  Defines if the integer input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the integer input */
+                        setValue?:boolean;
             }
             
             export type IoutConfig = {

@@ -123,7 +123,7 @@ export function useStatusProcessor(connection: WebSocket) {
             }
 
             // update buffered streams with latest from GBC, which may trigger more items
-            // to be send from the queue (if there is capacity)
+            // to be sent from the queue (if there is capacity)
             StreamHandler.update(dispatch, streamIndex, stream, currentState, items => {
                 safe_send(
                     JSON.stringify({

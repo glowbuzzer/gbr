@@ -13,7 +13,7 @@ export const StandardAwTubeConfiguration: GlowbuzzerConfig = {
         { name: "Braking Chopper Error" },
         { name: "Tool 1" },
         { name: "Tool 2" },
-        { name: "SPARE 1" }
+        { name: "UNUSED 7" }
     ],
     dout: [
         { name: "SW HEARTBIT 1" },

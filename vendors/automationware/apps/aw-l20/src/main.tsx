@@ -12,7 +12,7 @@ import "flexlayout-react/style/light.css"
 import { config } from "./config"
 import { App } from "./app"
 
-console.log(JSON.stringify(config, null, 2))
+// console.log(JSON.stringify(config, null, 2))
 
 const root = createRoot(document.getElementById("root"))
 root.render(

@@ -39,6 +39,27 @@ export const SimpleMoveTile = () => {
         ])
     }
 
+    async function go_updown() {
+        await send(api => [
+            api
+                .moveToPosition()
+                .translation(822.212686, 0, 591.427618)
+                .rotation(0.881767, 0, 0.471685, 0)
+                .configuration(0)
+                .promise(),
+            ...Array.from({ length: 5 }).flatMap(() => [
+                api.moveLine(0, 0, -200).relative().promise(),
+                api
+                    .moveLine(0, 0, 200)
+                    .relative()
+                    .promise()
+                    .then(r => {
+                        console.log("move up completed", JSON.stringify(r))
+                    })
+            ])
+        ])
+    }
+
     return (
         <div style={{ padding: "10px" }}>
             <Space direction="vertical">
@@ -49,6 +70,11 @@ export const SimpleMoveTile = () => {
                 <div>Click the button below to perform move line</div>
                 <Button size="small" onClick={go_line}>
                     PERFORM MOVE LINE
+                </Button>
+
+                <div>Click the button below to perform move up/down 5 times</div>
+                <Button size="small" onClick={go_updown}>
+                    PERFORM UP/DOWN
                 </Button>
             </Space>
         </div>
