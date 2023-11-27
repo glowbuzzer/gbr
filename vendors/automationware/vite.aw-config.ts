@@ -28,7 +28,9 @@ export default function defineAutomationWareViteConfig() {
                         dest: "./assets"
                     },
                     {
-                        src: normalizePath(resolve(root, "vendors/automationware/assets/awtube")),
+                        src: normalizePath(
+                            resolve(root, "vendors/automationware/assets/awtube-parts-v2")
+                        ),
                         dest: "./assets"
                     }
                 ]
