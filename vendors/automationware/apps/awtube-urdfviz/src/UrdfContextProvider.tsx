@@ -4,6 +4,7 @@
 
 import { createContext, useContext, useState } from "react"
 import { Euler, Vector3 } from "three"
+import { useLocalStorage } from "../../../../../libs/controls/src/util/LocalStorageHook"
 
 export type Frame = {
     name: string
@@ -45,13 +46,13 @@ const UrdfContext = createContext<UrdfContext>(null)
 export const UrdfContextProvider = ({ children }) => {
     const [frames, setFrames] = useState<Frame[]>([])
     const [options, setOptions] = useState<FrameOptions>({
-        modelOpacity: 0.25,
+        modelOpacity: 1,
         showFramesURDF: true,
         showWorldPositionURDF: true,
         showCentresOfMass: true,
         showPrincipleAxesOfInertia: false,
         showInertiaCuboid: false,
-        showWorldPositionDH: true,
+        showWorldPositionDH: false,
         showFramesDH: false
     })
 

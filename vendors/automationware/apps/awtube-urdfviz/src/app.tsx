@@ -22,60 +22,39 @@ import {
     ToolsTileDefinition,
     TriadHelper
 } from "@glowbuzzer/controls"
-import { ExampleAppMenu } from "../../../../../examples/util/ExampleAppMenu"
 import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
-import React, { Suspense } from "react"
-import { AwTubeRobot, AwTubeRobotParts } from "@automationware/awtube"
-import { Base, Clamp, Flange, Joint, Link, Monobraccio, Spindle } from "@automationware/awtube"
+import React, { Suspense, useEffect } from "react"
+import { AwTubeRobot } from "@automationware/awtube"
 import { Environment, Sphere } from "@react-three/drei"
 import { UrdfFrames } from "./UrdfFrames"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 import { Group, Material, Mesh } from "three"
 import { UrdfTile } from "./UrdfTile"
 import { UrdfContextProvider, useUrdfContext } from "./UrdfContextProvider"
-import { CentreOfMassIndicator } from "./CentreOfMassIndicator"
 import { WorldPosition } from "./WorldPosition"
-
-// construct the robot definition from the parts
-const definition: AwTubeRobotParts = {
-    b0: Base.MM219,
-    j0: Joint.J32,
-    c0: Clamp.J32_J32,
-    j1: Joint.J32,
-    f0: Flange.J32,
-    l0: Link.MM127_302,
-    f1: Flange.J32,
-    j2: Joint.J32,
-    c1: Clamp.J32_J25,
-    j3: Joint.J25,
-    f2: Flange.J25,
-    l1: Link.MM100_283,
-    f3: Flange.J25,
-    j4: Joint.J25,
-    m0: Monobraccio.M220,
-    j5: Joint.J20,
-    s0: Spindle.M112
-}
+import { AppMenu } from "./AppMenu"
+import { useAwTubeModel } from "./model/ModelProvider"
+import { Perf } from "r3f-perf"
 
 function makeMeshesTransparent(group: Group, opacity: number = 0.5): void {
     group.traverse(object => {
+        const transparent = opacity < 1
         if (object instanceof Mesh) {
-            if (object.material instanceof Material) {
-                object.material.transparent = true
-                object.material.opacity = opacity
-            } else if (Array.isArray(object.material)) {
-                object.material.forEach(mat => {
-                    mat.transparent = true
-                    mat.opacity = opacity
-                })
-            }
+            const materials = [object.material].flat()
+            materials.forEach(mat => {
+                mat.transparent = transparent
+                mat.opacity = transparent ? opacity : 1
+                mat.needsUpdate = true
+            })
         }
     })
 }
 
 const LoadedAwTubeRobot = () => {
     const { options } = useUrdfContext()
+    const { parts: definition } = useAwTubeModel()
     const parts = useLoadedRobotParts(definition)
+
     Object.values(parts).forEach(part => makeMeshesTransparent(part.object, options.modelOpacity))
 
     return (
@@ -84,6 +63,7 @@ const LoadedAwTubeRobot = () => {
                 <Sphere scale={10}>
                     <meshStandardMaterial color="red" />
                 </Sphere>
+                <TriadHelper size={50} />
                 {options.showWorldPositionDH && <WorldPosition title="DH World" position="left" />}
             </AwTubeRobot>
         </>
@@ -95,8 +75,14 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile hideTrace hidePreview>
                 <Suspense fallback={null}>
+                    {/*
+                    <PartGrid definition={definition} />
+*/}
                     <LoadedAwTubeRobot />
                     <UrdfFrames />
+                    {/*
+                    <Perf matrixUpdate deepAnalyze overClock antialias={false} />
+*/}
                 </Suspense>
 
                 <PlaneShinyMetal />
@@ -136,7 +122,7 @@ export const App = () => {
                     TelemetryTileDefinition
                 ]}
             >
-                <ExampleAppMenu title="AwTube URDF Visualizer" />
+                <AppMenu />
                 <DockLayout />
             </DockLayoutProvider>
         </UrdfContextProvider>
