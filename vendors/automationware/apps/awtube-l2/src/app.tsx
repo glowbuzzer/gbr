@@ -30,33 +30,33 @@ import {
     AwTubeRobotParts,
     Base,
     Clamp,
-    Flange,
     Joint,
     Link,
     Monobraccio,
+    Plate,
     Spindle
 } from "../../../lib/awtube"
 import { Environment, Sphere } from "@react-three/drei"
 import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
 import { AwTubeTileDefinitionBuilder } from "../../../lib/awtube/AwTubeStatusTile"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
+import { PartGrid } from "./PartGrid"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
     b0: Base.MM219,
-    j0: Joint.J32,
-    c0: Clamp.J32_J32,
-    j1: Joint.J32,
-    f0: Flange.J32,
-    l0: Link.MM127_302,
-    f1: Flange.J32,
+    j0: Joint.J40LP,
+    p0: Plate.J40,
+    c0: Clamp.J40_J40,
+    j1: Joint.J40HP,
+    l0: Link.L125_314,
     j2: Joint.J32,
     c1: Clamp.J32_J25,
     j3: Joint.J25,
-    f2: Flange.J25,
-    l1: Link.MM100_283,
-    f3: Flange.J25,
+    p1: Plate.J25,
+    l1: Link.L100_294,
     j4: Joint.J25,
+    p2: Plate.J25,
     m0: Monobraccio.M220,
     j5: Joint.J20,
     s0: Spindle.M112
@@ -82,6 +82,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
                     <LoadedAwTubeRobot />
+                    <PartGrid definition={definition} />
                     <PlaneShinyMetal />
                     <Environment files="/assets/environment/aerodynamics_workshop_1k.hdr" />
                 </Suspense>
