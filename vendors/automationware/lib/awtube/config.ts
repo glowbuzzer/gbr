@@ -37,7 +37,7 @@ export const StandardAwTubeConfiguration: GlowbuzzerConfig = {
     ]
 }
 
-export const AwTubeL20KinChainParams = {
+export const AwTubeL2KinChainParams = {
     kinChainParams: {
         numRows: 6,
         numCols: 5,
@@ -55,7 +55,25 @@ export const AwTubeL20KinChainParams = {
     }
 }
 
-export const AwTubeL20InverseDynamicParams = [
+export const AwTubeLKinChainParams = {
+    kinChainParams: {
+        numRows: 6,
+        numCols: 5,
+        // prettier-ignore
+        data: [
+            -90, 0, 0, 0, 0,
+            0, 0, -90, 725, 0, // 0
+            90, 0, 180, 0, 0, // 90
+            -90, 0, 0, 0, 675,
+            90, 0, 90, 0, 0, // 90
+            0, 0, -180, 0, 328
+        ],
+        // all joints are inverted from a kinematics perspective
+        invJointAngles: [-1, -1, -1, -1, -1, -1]
+    }
+}
+
+export const AwTubeL2InverseDynamicParams = [
     {
         urdfFrame: {
             translation: {

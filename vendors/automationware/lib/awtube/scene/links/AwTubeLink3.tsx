@@ -10,13 +10,13 @@ export const AwTubeLink3 = ({ parts }: { parts: AwTubeLoadedRobotParts }) => {
     return (
         <group>
             <group position={[0, 0, j2.moveableFlangeFromCentreLine + c1.thickness]}>
-                <primitive object={c1.object} rotation={[-Math.PI / 2, 0, 0]} />
+                <primitive object={c1.object} rotation={[Math.PI / 2, 0, 0]} />
 
                 <group
                     position={[0, 0, -c1.thickness - j3.fixedFlangeFromCentreLine]}
                     rotation={[-Math.PI / 2, 0, -Math.PI / 2]}
                 >
-                    <primitive object={j3.object} rotation={[-Math.PI / 2, 0, 0]} />
+                    <primitive object={j3.object} rotation={[Math.PI / 2, 0, 0]} />
                 </group>
             </group>
         </group>

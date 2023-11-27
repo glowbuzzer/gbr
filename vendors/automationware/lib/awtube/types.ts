@@ -38,37 +38,30 @@ export type PartDefinitionForLink = PartDefinition & {
     length: number
 }
 
-export type PartDefinitionForFlange = PartDefinition & {
-    // distance from the face of the flange to the inserted tube end point
-    offset: number
-}
+export type PartDefinitionForPlate = PartDefinition & {}
 
 export type PartDefinitionForClamp = PartDefinition & {
     // distance between the two faces of the clamp
     thickness: number
 }
 
-export type PartDefinitionForSpindle = PartDefinition & {
-    // distance between the top of the spindle and the face mounted to the joint
-    thickness: number
-}
+export type PartDefinitionForSpindle = PartDefinition & {}
 
 // these are the parts that make up a robot, before the model files are loaded
 export type AwTubeRobotParts = {
     b0: PartDefinitionForBase
     j0: PartDefinitionForJoint
+    p0: PartDefinitionForPlate
     c0: PartDefinitionForClamp
     j1: PartDefinitionForJoint
-    f0: PartDefinitionForFlange
     l0: PartDefinitionForLink
-    f1: PartDefinitionForFlange
     j2: PartDefinitionForJoint
     c1: PartDefinitionForClamp
     j3: PartDefinitionForJoint
-    f2: PartDefinitionForFlange
+    p1: PartDefinitionForPlate
     l1: PartDefinitionForLink
-    f3: PartDefinitionForFlange
     j4: PartDefinitionForJoint
+    p2: PartDefinitionForPlate
     m0: PartDefinitionForMonobraccio
     j5: PartDefinitionForJoint
     s0: PartDefinitionForSpindle

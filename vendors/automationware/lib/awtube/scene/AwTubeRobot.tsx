@@ -3,14 +3,10 @@
  */
 
 import * as React from "react"
-import { Base, Clamp, Flange, Joint, Link, Monobraccio, Spindle } from "./parts"
-import { TriadHelper } from "@glowbuzzer/controls"
 import { useFrame, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
-import { AwTubeLoadedRobotParts, AwTubeRobotParts } from "../types"
-import { useLoadedRobotParts } from "../hooks"
+import { AwTubeLoadedRobotParts } from "../types"
 import { AwKinematicsGroup } from "./AwKinematicsGroup"
-import { Sphere } from "@react-three/drei"
 import { AwTubeBaseLink } from "./links/AwTubeBaseLink"
 import { AwTubeLink1 } from "./links/AwTubeLink1"
 import { AwTubeLink2 } from "./links/AwTubeLink2"
@@ -19,7 +15,6 @@ import { AwTubeLink4 } from "./links/AwTubeLink4"
 import { AwTubeLink5 } from "./links/AwTubeLink5"
 import { AwTubeLink6 } from "./links/AwTubeLink6"
 import { AwTubeKinChainProvider } from "../AwTubeKinChainProvider"
-import { useMemo } from "react"
 
 type AwTubeRobotProps = {
     children?: React.ReactNode
