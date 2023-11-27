@@ -221,7 +221,7 @@ export function useConfigLoader() {
     const config = useConfig()
     const dispatch = useDispatch()
 
-    return async (change: Partial<GlowbuzzerConfig>): Promise<void> => {
+    return async (change: Partial<GlowbuzzerConfig>, overwriteCurrent = false): Promise<void> => {
         const next: GlowbuzzerConfig = {
             ...config,
             ...change
@@ -232,6 +232,9 @@ export function useConfigLoader() {
         } else {
             // just do the dispatch, but config is now cached
             dispatch(configSlice.actions.setOfflineConfig(next))
+            if (overwriteCurrent) {
+                dispatch(configSlice.actions.setConfig(next))
+            }
         }
     }
 }
