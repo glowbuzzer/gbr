@@ -4,11 +4,10 @@
 
 import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, STREAMSTATE } from "../../gbc"
 import {
+    ActivityPromiseResult,
     AoutBuilder,
-    CancelActivityBuilder,
     DoutBuilder,
     DwellActivityBuilder,
-    EndProgramBuilder,
     IoutBuilder,
     MoveArcBuilder,
     MoveInstantBuilder,
@@ -18,11 +17,9 @@ import {
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
-    PauseProgramBuilder,
     SpindleActivityBuilder,
     ToolOffsetBuilder
 } from "./builders"
-import { useEffect } from "react"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
 function nullify(v?: number) {
@@ -47,7 +44,7 @@ export abstract class ActivityApiBase {
     abstract get nextTag(): number
 
     /** @ignore */
-    abstract execute(command)
+    abstract execute(command: any): any
 
     dwell(ticksToDwell: number) {
         return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
@@ -142,7 +139,7 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
     private promiseFifo: { tag: number; resolve; reject }[] = []
 
     /** @ignore */
-    protected createPromise(tag: number, send: () => void): Promise<number> {
+    protected createPromise(tag: number, send: () => void): Promise<ActivityPromiseResult> {
         return new Promise((resolve, reject) => {
             this.promiseFifo.push({ tag, resolve, reject })
             send()

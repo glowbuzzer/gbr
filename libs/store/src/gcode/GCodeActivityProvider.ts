@@ -2,8 +2,8 @@
  * Copyright (c) 2022-2023. Glowbuzzer. All rights reserved
  */
 
-import { ActivityApiBase } from "../activity/api/base"
-import { EndProgramBuilder, PauseProgramBuilder } from "../activity/api/builders"
+import { ActivityApiBase } from ".."
+import { ActivityPromiseResult, EndProgramBuilder, PauseProgramBuilder } from ".."
 
 /** @ignore - internal to the GCodeSenderAdapter */
 export class GCodeActivityProvider extends ActivityApiBase {
@@ -25,8 +25,9 @@ export class GCodeActivityProvider extends ActivityApiBase {
         return this
     }
 
-    execute(command) {
+    execute(command: any): Promise<ActivityPromiseResult> {
         this.buffer.push(command)
+        return Promise.resolve({ tag: this._tag, completed: true })
     }
 
     endProgram() {
