@@ -177,7 +177,6 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
     updateStream(tag: number, state: STREAMSTATE) {
         const { promiseFifo } = this
 
-        console.log("stream state change", tag, STREAMSTATE[state])
         const idle = state === STREAMSTATE.STREAMSTATE_IDLE
 
         // if the stream is idle and the tag is zero, it indicates the stream was reset,

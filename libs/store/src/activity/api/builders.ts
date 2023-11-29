@@ -33,13 +33,15 @@ import {
 } from "../../gbc"
 import { Euler, EulerOrder, Quaternion } from "three"
 
+export type ActivityPromiseResult = { tag: number; completed: boolean }
+
 /** @ignore */
 export interface ActivityController {
     get kinematicsConfigurationIndex(): number
 
     get nextTag(): number
 
-    execute(command: ActivityStreamItem)
+    execute(command: ActivityStreamItem): Promise<ActivityPromiseResult>
 }
 
 export abstract class ActivityBuilder {
@@ -86,7 +88,7 @@ export abstract class ActivityBuilder {
     /**
      * Executes the activity and returns a promise that will be resolved when the activity is complete.
      */
-    promise(): Promise<{ tag: number; completed: boolean }> {
+    promise(): Promise<ActivityPromiseResult> {
         return this.controller.execute(this.command)
     }
 

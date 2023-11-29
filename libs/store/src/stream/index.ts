@@ -17,7 +17,7 @@ import { useConnection } from "../connect"
 import { StreamingActivityApi } from "./api"
 import { useEffect, useMemo } from "react"
 import { useDefaultMoveParameters } from "../config"
-import { ActivityApi } from "../activity"
+import { ActivityApi, ActivityBuilder, ActivityPromiseResult } from "../activity"
 
 // there is one of these per stream configured
 export type StreamSliceType = {
@@ -63,6 +63,14 @@ function changed(state, status) {
         }
     }
     return false
+}
+
+function promisify(activity: ActivityGeneratorReturnType) {
+    if (activity instanceof ActivityBuilder) {
+        return activity.promise()
+    } else {
+        return activity
+    }
 }
 
 export const streamSlice: Slice<StreamSliceType[]> = createSlice({
@@ -193,6 +201,8 @@ export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
     })
 }
 
+type ActivityGeneratorReturnType = ActivityBuilder | Promise<any>
+
 /**
  * Provides access to the streamed activity API and the current state of the stream.
  *
@@ -202,18 +212,20 @@ export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
  *
  * The stream will normally run automatically, but can be stopped, paused and resumed using the sendCommand method.
  *
- * The send method is used to send activities to the stream. It takes a callback that receives an {@link ActivityApi}.
- * The api provides factory methods for creating activities, each of which has a `promise` method. The callback should return an
- * array of these promises. Each of the individual promises will be resolved when an activity completes.
- * In addition the send method itself returns a promise that resolves when all the activities have completed.
+ * The `execute` method is used to send activities to the stream. It takes a callback that receives an {@link ActivityApi}.
+ * The api provides factory methods (builders) for creating activities, each of which has a `promise` method. The callback should return an
+ * array of these promises or the builder directly. Each of the individual promises will be resolved when an activity completes.
+ * In addition the send method itself returns a promise that resolves when all the activities have completed. Note that the promises
+ * for individual activities are not resolved with precise timing as the next activity in the queue may have started. If you need
+ * the precise state of the machine after the activity completes, you should split up activities and await completion of each one.
  *
  * Example:
  * ```
- * const { send } = useStream(0)
- * await send(api => [
- *    api.moveLine(10,0,0).promise(),
- *    api.moveLine(10,10,0).promise().then(() => console.log("starting arc")),
- *    api.moveArc(0,0,0).centre(10,0,0).direction(ARCDIRECTION.CCW).promise()
+ * const { execute } = useStream(0)
+ * await execute(api => [
+ *    api.moveLine(10,0,0), // direct return of builder
+ *    api.moveLine(10,10,0).promise().then(() => console.log("starting arc")), // return of promise
+ *    api.moveArc(0,0,0).centre(10,0,0).direction(ARCDIRECTION.CCW)
  * ])
  *
  * ```
@@ -235,14 +247,23 @@ export const useStream = (
     queued: number
     /** The number of items that are currently buffered on the client waiting to be sent */
     pending: number
-    /** Send activities to the stream using the api */
-    send(
-        fn: (api: ActivityApi) => Promise<any>[]
-    ): Promise<({ tag: number; completed: boolean } | void)[]>
+    /** @deprecated. Use `execute` method instead */
+    send(fn: (api: ActivityApi) => Promise<any>[]): Promise<(ActivityPromiseResult | void)[]>
+    /**
+     * Execute one or more activities on the machine. The function you provide receives an API you can use to create activities
+     * using a fluent builder pattern. You can return a single activity or an array of activities to execute in sequence.
+     * For each activity you can return the builder directly or the promise returned by the builder's `promise` method.
+     *
+     * @returns A promise that resolves when all the activities have completed.
+     */
+    execute(
+        fn: (api: ActivityApi) => ActivityGeneratorReturnType[] | ActivityGeneratorReturnType
+    ): Promise<ActivityPromiseResult[] | ActivityPromiseResult>
+    // api: StreamingActivityApi
     /** Send a stream command, for example pause, resume and cancel */
-    sendCommand(state: STREAMCOMMAND)
+    sendCommand(state: STREAMCOMMAND): void
     /** Reset the local stream queue */
-    reset()
+    reset(): void
 } => {
     const { state, tag, time, capacity, queued, pending } = useSelector(
         (state: RootState) =>
@@ -279,7 +300,21 @@ export const useStream = (
         queued,
         pending,
         send(factory: (api: ActivityApi) => Promise<any>[]) {
+            // deprecated in favour of `execute`
             return Promise.all(factory(api))
+        },
+        execute(
+            factory: (
+                api: ActivityApi
+            ) => ActivityGeneratorReturnType | ActivityGeneratorReturnType[]
+        ) {
+            const activities = factory(api)
+            if (!Array.isArray(activities)) {
+                return promisify(activities) // single activity
+            }
+
+            // multiple activities, so promisify each one and return promise for all
+            return Promise.all(activities.map(promisify))
         },
         sendCommand(streamCommand: STREAMCOMMAND) {
             connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
