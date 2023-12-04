@@ -25,8 +25,10 @@ test("can get digital input from fieldbus", async () => {
 test("can set digital output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.doutPdo(0, false)
-    await gbc.wrap(gbc.activity.setDout(0, true).promise).start().iterations(1).assertCompleted()
+    gbc.assert.selector(state => state.status.dout[0].effectiveValue, false)
+    await gbc.run(api => api.setDout(0, true))
     gbc.assert.doutPdo(0, true)
+    gbc.assert.selector(state => state.status.dout[0].effectiveValue, true)
 })
 
 test("can get analog input from fieldbus", async () => {
@@ -42,8 +44,10 @@ test("can get analog input from fieldbus", async () => {
 test("can set analog output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.aoutPdo(0, 0.0)
-    await gbc.wrap(gbc.activity.setAout(0, 1.234).promise).start().iterations(1).assertCompleted()
+    gbc.assert.selector(state => state.status.aout[0].effectiveValue, 0.0)
+    await gbc.run(api => api.setAout(0, 1.234))
     gbc.assert.aoutPdo(0, 1.234)
+    gbc.assert.selector(state => state.status.aout[0].effectiveValue, 1.234)
 })
 
 test("can get integer input from fieldbus", async () => {
@@ -59,8 +63,10 @@ test("can get integer input from fieldbus", async () => {
 test("can set integer output on fieldbus", async () => {
     gbc.enable_operation()
     gbc.assert.ioutPdo(0, 0)
-    await gbc.wrap(gbc.activity.setIout(0, 42).promise).start().iterations(1).assertCompleted()
+    gbc.assert.selector(state => state.status.iout[0].effectiveValue, 0)
+    await gbc.run(api => api.setIout(0, 42))
     gbc.assert.ioutPdo(0, 42)
+    gbc.assert.selector(state => state.status.iout[0].effectiveValue, 42)
 })
 
 export const io = test

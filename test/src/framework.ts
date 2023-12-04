@@ -267,7 +267,13 @@ export class GbcTest {
     }
 
     private get status_msg(): GlowbuzzerStatus {
-        return JSON.parse(this.gbc.status())
+        try {
+            return JSON.parse(this.gbc.status())
+        } catch (e) {
+            console.log("Error parsing status", e)
+            console.log(this.gbc.status())
+            throw e
+        }
     }
 
     disable_limit_check() {
