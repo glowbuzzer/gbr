@@ -16,12 +16,17 @@ import {
  * This file provides the complete catalog of available parts that can be used to construct a robot.
  */
 
-export const Base: Record<"MM219", PartDefinitionForBase> = {
+export const Base: Record<"MM219" | "MM219_27", PartDefinitionForBase> = {
     MM219: {
         filename: "bases/base_219.glb",
         thickness: 0.025
+    },
+    MM219_27: {
+        filename: "bases/base_219.glb",
+        thickness: 0.027
     }
 }
+
 export const Joint: Record<"J40LP" | "J40HP" | "J32" | "J25" | "J20", PartDefinitionForJoint> = {
     J40LP: {
         filename: "joints/joint_j40_lp.glb",
