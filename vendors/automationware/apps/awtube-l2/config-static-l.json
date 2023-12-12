@@ -1,0 +1,550 @@
+{
+    "din": [
+        {
+            "name": "Safe Stop"
+        },
+        {
+            "name": "Software Stop"
+        },
+        {
+            "name": "Arm 48V Supply"
+        },
+        {
+            "name": "RC Light Signal"
+        },
+        {
+            "name": "Braking Chopper Error"
+        },
+        {
+            "name": "Tool 1"
+        },
+        {
+            "name": "Tool 2"
+        },
+        {
+            "name": "SPARE 1"
+        }
+    ],
+    "dout": [
+        {
+            "name": "SW HEARTBIT 1"
+        },
+        {
+            "name": "SW HEARTBIT 2"
+        },
+        {
+            "name": "Safe Stop Feedback"
+        },
+        {
+            "name": "Software Stop Feedback"
+        },
+        {
+            "name": "SPARE 1"
+        },
+        {
+            "name": "Tool 1"
+        },
+        {
+            "name": "Tool 2"
+        },
+        {
+            "name": "SPARE 2"
+        }
+    ],
+    "iout": [
+        {
+            "name": "RGB Lights"
+        }
+    ],
+    "stream": [
+        {
+            "name": "default"
+        }
+    ],
+    "soloActivity": [
+        {
+            "name": "default"
+        }
+    ],
+    "machine": [
+        {
+            "name": "AWTUBE L2",
+            "busCycleTime": 4,
+            "heartbeatTimeout": 2000
+        }
+    ],
+    "points": [
+        {
+            "name": "point1",
+            "frameIndex": 0,
+            "translation": {
+                "x": 210,
+                "y": 210,
+                "z": 400
+            },
+            "rotation": {
+                "x": 1,
+                "y": 0,
+                "z": 0,
+                "w": 0
+            },
+            "configuration": 0
+        }
+    ],
+    "frames": [
+        {
+            "name": "World",
+            "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "rotation": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "w": 1
+            }
+        },
+        {
+            "name": "Robot",
+            "translation": {
+                "x": 0,
+                "y": 0,
+                "z": 117
+            }
+        }
+    ],
+    "joint": [
+        {
+            "name": "0",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 3.414,
+            "jointType": 1,
+            "negLimit": -80,
+            "posLimit": 80,
+            "inverted": true,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 3
+        },
+        {
+            "name": "1",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 2.54,
+            "jointType": 1,
+            "negLimit": -60,
+            "posLimit": 60,
+            "inverted": true,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 1
+        },
+        {
+            "name": "2",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 3.414,
+            "jointType": 1,
+            "negLimit": 30,
+            "posLimit": 150,
+            "inverted": false,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 1
+        },
+        {
+            "name": "3",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 4.3,
+            "jointType": 1,
+            "negLimit": -170,
+            "posLimit": 170,
+            "inverted": true,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 1
+        },
+        {
+            "name": "4",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 4.3,
+            "jointType": 1,
+            "negLimit": 10,
+            "posLimit": 170,
+            "inverted": true,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 1
+        },
+        {
+            "name": "5",
+            "limits": [
+                {
+                    "vmax": 0.1,
+                    "amax": 1,
+                    "jmax": 2
+                }
+            ],
+            "scalePos": 166886,
+            "scaleVel": 9549,
+            "scaleTorque": 16.07,
+            "jointType": 1,
+            "negLimit": -250,
+            "posLimit": 250,
+            "inverted": true,
+            "preferredMode": 1,
+            "supportedModes": 5,
+            "supportedTorqueModes": 3
+        }
+    ],
+    "kinematicsConfiguration": [
+        {
+            "name": "default",
+            "frameIndex": 1,
+            "participatingJoints": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+            ],
+            "participatingJointsCount": 6,
+            "kinematicsConfigurationType": 1,
+            "supportedConfigurationBits": 7,
+            "extentsX": [
+                -1500,
+                1500
+            ],
+            "extentsY": [
+                -1500,
+                1500
+            ],
+            "extentsZ": [
+                500,
+                1900
+            ],
+            "sphericalEnvelope": {
+                "center": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "radius": [
+                    500,
+                    1900
+                ]
+            },
+            "linearLimits": [
+                {
+                    "vmax": 20,
+                    "amax": 100,
+                    "jmax": 2000
+                }
+            ],
+            "angularLimits": [
+                {
+                    "vmax": 0.05,
+                    "amax": 0.5,
+                    "jmax": 5
+                }
+            ],
+            "kinChainParams": {
+                "numRows": 6,
+                "numCols": 5,
+                "data": [
+                    -90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -90,
+                    725,
+                    0,
+                    90,
+                    0,
+                    180,
+                    0,
+                    0,
+                    -90,
+                    0,
+                    0,
+                    0,
+                    675.1,
+                    90,
+                    0,
+                    90,
+                    0,
+                    0,
+                    0,
+                    0,
+                    -180,
+                    0,
+                    358
+                ],
+                "invJointAngles": [
+                    -1,
+                    -1,
+                    -1,
+                    -1,
+                    -1,
+                    -1
+                ]
+            },
+            "inverseDynamicParams": [
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0.027
+                        },
+                        "rpy": {
+                            "r": 0,
+                            "p": 0,
+                            "y": 0
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 17.54,
+                        "h": {
+                            "x": -0.00013,
+                            "y": 0.00663,
+                            "z": 0.07684
+                        },
+                        "Ixx": 0.10203065,
+                        "Iyy": 0.09488583,
+                        "Izz": 0.07829875,
+                        "Ixy": -0.00009667,
+                        "Ixz": -0.0002755,
+                        "Iyz": 0.00156605
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                },
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0,
+                            "y": 0.1045,
+                            "z": 0.092
+                        },
+                        "rpy": {
+                            "r": 1.5708,
+                            "p": 0,
+                            "y": 3.1416
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 41.72,
+                        "h": {
+                            "x": 0,
+                            "y": 0.32974,
+                            "z": 0.12617
+                        },
+                        "Ixx": 4.81647567,
+                        "Iyy": 0.22867819,
+                        "Izz": 4.75410991,
+                        "Ixy": 0.00000843,
+                        "Ixz": 0.00003458,
+                        "Iyz": 0.09189188
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                },
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0,
+                            "y": 0.725,
+                            "z": 0.0505
+                        },
+                        "rpy": {
+                            "r": -3.1416,
+                            "p": 0,
+                            "y": -3.1416
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 10.35,
+                        "h": {
+                            "x": -0.00081,
+                            "y": -0.00027,
+                            "z": 0.13277
+                        },
+                        "Ixx": 0.04130279,
+                        "Iyy": 0.05668427,
+                        "Izz": 0.04177278,
+                        "Ixy": 0.00014957,
+                        "Ixz": -0.00034767,
+                        "Iyz": 0.00006713
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                },
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0.0875,
+                            "y": 0,
+                            "z": 0.155
+                        },
+                        "rpy": {
+                            "r": -1.5708,
+                            "p": 0,
+                            "y": -1.5708
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 10.89,
+                        "h": {
+                            "x": 0.00026,
+                            "y": 0.00074,
+                            "z": 0.51757
+                        },
+                        "Ixx": 0.29013778,
+                        "Iyy": 0.27467056,
+                        "Izz": 0.03989313,
+                        "Ixy": -0.00017683,
+                        "Ixz": 0.00020047,
+                        "Iyz": -0.00072886
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                },
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0,
+                            "y": 0.0925,
+                            "z": 0.5876
+                        },
+                        "rpy": {
+                            "r": 1.5708,
+                            "p": -1.5708,
+                            "y": 0
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 5.96,
+                        "h": {
+                            "x": -0.0002,
+                            "y": -0.21443,
+                            "z": 0.06453
+                        },
+                        "Ixx": 0.05264588,
+                        "Iyy": 0.0229457,
+                        "Izz": 0.04374921,
+                        "Ixy": 0.00007835,
+                        "Ixz": 0.00022917,
+                        "Iyz": -0.01281194
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                },
+                {
+                    "urdfFrame": {
+                        "translation": {
+                            "x": 0,
+                            "y": -0.358,
+                            "z": 0.0924
+                        },
+                        "rpy": {
+                            "r": 1.5708,
+                            "p": 0,
+                            "y": 0
+                        }
+                    },
+                    "rigidBodyInertia": {
+                        "m": 0.41,
+                        "h": {
+                            "x": 0,
+                            "y": 0.00011,
+                            "z": -0.0257
+                        },
+                        "Ixx": 0.0003283,
+                        "Iyy": 0.00032996,
+                        "Izz": 0.00054011,
+                        "Ixy": -3.9e-7,
+                        "Ixz": 2.1e-7,
+                        "Iyz": 9.2e-7
+                    },
+                    "jointAxis": {
+                        "x": 0,
+                        "y": 0,
+                        "z": -1
+                    },
+                    "damping": 1,
+                    "friction": 0.1
+                }
+            ]
+        }
+    ]
+}
