@@ -64,9 +64,9 @@ export const AwTubeLKinChainParams = {
             -90, 0, 0, 0, 0,
             0, 0, -90, 725, 0, // 0
             90, 0, 180, 0, 0, // 90
-            -90, 0, 0, 0, 675,
+            -90, 0, 0, 0, 675.1,
             90, 0, 90, 0, 0, // 90
-            0, 0, -180, 0, 328
+            0, 0, -180, 0, 358
         ],
         // all joints are inverted from a kinematics perspective
         invJointAngles: [-1, -1, -1, -1, -1, -1]
