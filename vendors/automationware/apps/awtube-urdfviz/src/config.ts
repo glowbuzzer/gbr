@@ -48,7 +48,7 @@ const frames = [
         translation: {
             x: 0,
             y: 0,
-            z: 117
+            z: 119
         }
     }
 ]

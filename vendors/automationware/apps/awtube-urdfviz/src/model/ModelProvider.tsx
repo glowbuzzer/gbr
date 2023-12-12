@@ -50,7 +50,7 @@ const definition_l2: AwTubeRobotParts = {
 }
 
 const definition_l: AwTubeRobotParts = {
-    b0: Base.MM219,
+    b0: Base.MM219_27,
     j0: Joint.J40LP,
     p0: Plate.J40,
     c0: Clamp.J40_J40,
@@ -63,7 +63,7 @@ const definition_l: AwTubeRobotParts = {
     l1: Link.L100_494,
     j4: Joint.J25,
     p2: Plate.J25,
-    m0: Monobraccio.M220,
+    m0: Monobraccio.M250,
     j5: Joint.J20,
     s0: Spindle.M112
 }
