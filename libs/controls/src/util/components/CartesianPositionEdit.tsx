@@ -149,17 +149,18 @@ export const CartesianPositionEdit = ({
     }
 
     function toggle_relative() {
+        const nextPositionReference =
+            positionReference === POSITIONREFERENCE.RELATIVE
+                ? POSITIONREFERENCE.ABSOLUTE
+                : POSITIONREFERENCE.RELATIVE
         const update = {
-            positionReference:
-                positionReference === POSITIONREFERENCE.RELATIVE
-                    ? POSITIONREFERENCE.ABSOLUTE
-                    : POSITIONREFERENCE.RELATIVE,
+            positionReference: nextPositionReference,
             frameIndex:
-                positionReference === POSITIONREFERENCE.ABSOLUTE
+                nextPositionReference === POSITIONREFERENCE.RELATIVE
                     ? /* will be relative */ frameIndex || 0
                     : undefined
         }
-        setPositionReference(update.positionReference)
+        setPositionReference(nextPositionReference)
         setFrameIndex(update.frameIndex)
         handle_change(update)
     }
