@@ -451,10 +451,10 @@ export class GbcTest {
         this.exec(2)
     }
 
-    run(factory: (api: ActivityApi) => ActivityBuilder) {
+    run(factory: (api: ActivityApi) => ActivityBuilder, max_iterations = 1000) {
         const builder = factory(this.activity_api)
         const activity = this.wrap(builder.promise)
-        return activity.run(1000)
+        return activity.run(max_iterations)
     }
 
     wrap(factory: () => Promise<any>) {

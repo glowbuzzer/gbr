@@ -13,6 +13,7 @@ import {
     MoveInstantBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
+    MoveJointsInterpolatedBuilder,
     MoveLineBuilder,
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
@@ -60,6 +61,18 @@ export abstract class ActivityApiBase {
         return new MoveJointsBuilder(this)
             .params(this.defaultMoveParameters)
             .joints(jointPositionArray)
+    }
+
+    moveJointsInterpolated(
+        timecode: number,
+        jointPositionArray: number[],
+        jointVelocityArray: number[]
+    ) {
+        return new MoveJointsInterpolatedBuilder(this)
+            .params(this.defaultMoveParameters)
+            .timecode(timecode)
+            .positions(jointPositionArray)
+            .velocities(jointVelocityArray)
     }
 
     moveJointsAtVelocity(jointVelocityArray: number[]) {

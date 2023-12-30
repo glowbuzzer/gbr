@@ -11,6 +11,7 @@ import {
     MoveInstantBuilder,
     MoveJointsAtVelocityBuilder,
     MoveJointsBuilder,
+    MoveJointsInterpolatedBuilder,
     MoveLineBuilder,
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
@@ -38,6 +39,16 @@ export interface ActivityApi {
      * @param jointPositionArray Array of joint positions
      */
     moveJoints(jointPositionArray: number[]): MoveJointsBuilder
+
+    /** Move joints to specified positions and velocities interpolated. All joints in the kinematic configuration should be specified, or they will default to zero.
+     *
+     * @param jointPositionArray Array of joint positions
+     * @param jointVelocityArray Array of joint velocities
+     */
+    moveJointsInterpolated(
+        jointPositionArray: number[],
+        jointVelocityArray: number[]
+    ): MoveJointsInterpolatedBuilder
 
     /** Move joints at the specified velocities. All joints in the kinematic configuration should be specified, or they will default to zero (no motion).
      *

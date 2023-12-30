@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "c0c2c1fb42a7f4bdda74c2ce10769590"
+export const GbcSchemaChecksum = "ca0d5d77013572dd22828a4452a4acb7"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -166,8 +166,8 @@ export const GbcConstants = {
   ACTIVITYTYPE_DWELL ,
         /**  Start/stop spindle */
   ACTIVITYTYPE_SPINDLE ,
-        /**  @ignore Reserved for future use */
-  ACTIVITYTYPE_RESERVED2 ,
+        /**  Move joints to given end position and velocity using interpolation */
+  ACTIVITYTYPE_MOVEJOINTSINTERPOLATED ,
         /**  @ignore Reserved for future use */
   ACTIVITYTYPE_RESERVED3 ,
         /**  @ignore Reserved for future use */
@@ -915,6 +915,8 @@ export const GbcConstants = {
                         sphericalEnvelope?:SphericalEnvelope;
                         /**  Inner and outer radius of cylindrical envelope (disabled by default) */
                         cylindricalEnvelope?:number[];
+                        /**  Interpolation interval for the kinematics configuration in milliseconds. Must be a multiple of the bus cycle time */
+                        interpolationInterval?:number;
             }
             /** Status of a kinematics configuration */
             export type KinematicsConfigurationStatus = {
@@ -1161,6 +1163,46 @@ export const GbcConstants = {
                         positionReference?:POSITIONREFERENCE;
                         
                         jointPositionArray?:number[];
+                        
+                        moveParams?:MoveParametersConfig;
+            }
+            /** 
+            Parameters for move joints interpolated activity
+             */
+            export type MoveJointsInterpolatedActivityParams = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Array of joint positions */
+                        jointPositionArray?:number[];
+                        /**  Array of joint velocities */
+                        jointVelocityArray?:number[];
+                        /**  Timecode for the move */
+                        timecode?:number;
+                        /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
+                        moveParamsIndex?:number;
+            }
+            /** @ignore */
+            export type MoveJointsInterpolatedActivityStatus = {
+            
+            }
+            /** @ignore */
+            export type MoveJointsInterpolatedActivityCommand = {
+            
+            }
+            /** 
+            Parameters for a streamed move joints interpolated activity
+             */
+            export type MoveJointsInterpolatedStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        jointPositionArray?:number[];
+                        /**  Array of joint velocities */
+                        jointVelocityArray?:number[];
+                        /**  Timecode for the move */
+                        timecode?:number;
                         
                         moveParams?:MoveParametersConfig;
             }
@@ -1658,6 +1700,8 @@ export const GbcConstants = {
     //              Start of Union
                         /**  Configuration parameters for move joints activity */
                          moveJoints?: MoveJointsActivityParams,
+                        /**  Configuration parameters for move joints activity */
+                         moveJointsInterpolated?: MoveJointsInterpolatedActivityParams,
                         /**  Configuration parameters for move joints at velocity activity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityParams,
                         /**  Configuration parameters for move line activity */
@@ -1701,6 +1745,8 @@ export const GbcConstants = {
                         /**  @ignore */
                          moveJoints?: MoveJointsActivityStatus,
                         /**  @ignore */
+                         moveJointsInterpolated?: MoveJointsInterpolatedActivityStatus,
+                        /**  @ignore */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityStatus,
                         /**  @ignore */
                          moveLine?: MoveLineActivityStatus,
@@ -1740,6 +1786,8 @@ export const GbcConstants = {
     //              Start of Union
                         /**  Move joints command object for activity */
                          moveJoints?: MoveJointsActivityCommand,
+                        /**  Move joints command object for activity */
+                         moveJointsInterpolated?: MoveJointsInterpolatedActivityCommand,
                         /**  Move joints at velocity command object for activity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityCommand,
                         /**  Move line command object for activity */
@@ -1786,6 +1834,8 @@ export const GbcConstants = {
     //              Start of Union
                         /**  Parameters for a streamed move joints */
                          moveJoints?: MoveJointsStream,
+                        /**  Parameters for a streamed move joints interpolated */
+                         moveJointsInterpolated?: MoveJointsInterpolatedStream,
                         /**  Parameters for a streamed move joints at velocity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityStream,
                         /**  Parameters for a streamed move line */

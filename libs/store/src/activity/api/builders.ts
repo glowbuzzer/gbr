@@ -12,6 +12,7 @@ import {
     DwellActivityParams,
     MoveInstantStream,
     MoveJointsAtVelocityStream,
+    MoveJointsInterpolatedStream,
     MoveJointsStream,
     MoveLineStream,
     MoveParametersConfig,
@@ -404,6 +405,40 @@ export class MoveJointsBuilder extends SimpleMoveBuilder {
             ...super.build(),
             jointPositionArray: this.jointPositionArray,
             positionReference: this._positionReference
+        }
+    }
+}
+
+export class MoveJointsInterpolatedBuilder extends SimpleMoveBuilder {
+    protected commandName = "moveJointsInterpolated"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSINTERPOLATED
+    private _timecode: number
+    private jointPositionArray: number[]
+    private jointVelocityArray: number[]
+
+    timecode(value: number) {
+        this._timecode = value
+        return this
+    }
+
+    /** Target joint values. If null is passed for some values, these joints will not be moved. */
+    positions(values: number[]) {
+        this.jointPositionArray = values
+        return this
+    }
+
+    velocities(values: number[]) {
+        this.jointVelocityArray = values
+        return this
+    }
+
+    /** @ignore */
+    protected build(): MoveJointsInterpolatedStream {
+        return {
+            ...super.build(),
+            timecode: this._timecode,
+            jointPositionArray: this.jointPositionArray,
+            jointVelocityArray: this.jointVelocityArray
         }
     }
 }
