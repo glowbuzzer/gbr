@@ -7,7 +7,7 @@ import {
     AwTubeL2InverseDynamicParams,
     AwTubeL2KinChainParams,
     StandardAwTubeConfiguration
-} from "../../../lib/awtube/config"
+} from "@glowbuzzer/awlib"
 
 /**
  * This is the configuration for the AWTUBE L machine that can be pushed to the control if needed

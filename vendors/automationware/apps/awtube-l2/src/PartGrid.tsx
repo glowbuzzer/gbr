@@ -2,9 +2,9 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { AwTubeRobotParts } from "@automationware/awtube"
+import { AwTubeRobotParts } from "@glowbuzzer/awlib"
 import { TriadHelper } from "@glowbuzzer/controls"
-import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
+import { useLoadedRobotParts } from "@glowbuzzer/awlib"
 
 export const PartGrid = ({ definition }: { definition: AwTubeRobotParts }) => {
     const parts = useLoadedRobotParts(definition)

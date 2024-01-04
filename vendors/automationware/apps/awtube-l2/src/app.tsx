@@ -35,12 +35,17 @@ import {
     Monobraccio,
     Plate,
     Spindle
-} from "../../../lib/awtube"
+} from "@glowbuzzer/awlib"
 import { Environment, Sphere } from "@react-three/drei"
-import { useLoadedRobotParts } from "../../../lib/awtube/hooks"
-import { AwTubeTileDefinitionBuilder } from "../../../lib/awtube/AwTubeStatusTile"
-import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
+import { useLoadedRobotParts } from "@glowbuzzer/awlib"
+import { AwTubeStatusTileDefinitionBuilder } from "@glowbuzzer/awlib"
+import { SimpleMoveTile, SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { PartGrid } from "./PartGrid"
+import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
+import { Color } from "three"
+import { useThree } from "@react-three/fiber"
+import { Perf } from "r3f-perf"
+import { MM219 } from "../../../awlib/src/scene/parts/bases/base_219"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -62,6 +67,7 @@ const definition: AwTubeRobotParts = {
     s0: Spindle.M112
 }
 
+/*
 const LoadedAwTubeRobot = () => {
     const parts = useLoadedRobotParts(definition)
 
@@ -74,6 +80,16 @@ const LoadedAwTubeRobot = () => {
         </AwTubeRobot>
     )
 }
+*/
+
+function SimpleEnvironment() {
+    const { scene } = useThree()
+
+    // Set a simple color or gradient as your environment
+    scene.background = new Color(0x000000) // Replace with your desired color
+
+    return null
+}
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
@@ -81,14 +97,29 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <LoadedAwTubeRobot />
+                    <AwTubeRobot parts={definition} />
+                    {/*
                     <PartGrid definition={definition} />
+*/}
                     <PlaneShinyMetal />
+                    {/*
+                    <Perf matrixUpdate deepAnalyze overClock antialias={false} />
+*/}
+
                     <Environment files="/assets/environment/aerodynamics_workshop_1k.hdr" />
+                    {/*
+                    <SimpleEnvironment />
+*/}
                 </Suspense>
             </ThreeDimensionalSceneTile>
         )
     })
+    .build()
+
+const InterpolatedMoveTileDefinition = DockTileDefinitionBuilder()
+    .id("aw-interpolated-move")
+    .name("Interpolated Move")
+    .render(() => <InterpolatedMoveTile />)
     .build()
 
 export const App = () => {
@@ -96,7 +127,7 @@ export const App = () => {
         <DockLayoutProvider
             tiles={[
                 CustomSceneTileDefinition,
-                AwTubeTileDefinitionBuilder({
+                AwTubeStatusTileDefinitionBuilder({
                     showSoftwareStop: true,
                     showToolInputs: true,
                     showToolOutputs: true
@@ -113,7 +144,8 @@ export const App = () => {
                 FeedRateTileDefinition,
                 TelemetryTileDefinition,
                 EmStatTileDefinition,
-                SimpleMoveTileDefinition
+                SimpleMoveTileDefinition,
+                InterpolatedMoveTileDefinition
             ]}
         >
             <ExampleAppMenu title="AutomationWare AW-TUBE" />
