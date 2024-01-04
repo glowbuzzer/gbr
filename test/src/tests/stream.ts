@@ -205,7 +205,7 @@ test("can stop stream during move", () => {
     gbc.streamCommand(STREAMCOMMAND.STREAMCOMMAND_STOP)
         .exec(5)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPING)
-        .exec(20) // it takes a while to shift the fro to zero
+        .exec(25) // it takes a while to shift the fro to zero
         .assert.selector(state, STREAMSTATE.STREAMSTATE_STOPPED)
 
     // move was not complete when stream stopped, but has now been removed from the queue so stream should be idle
