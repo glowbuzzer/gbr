@@ -13,7 +13,7 @@
       "@glowbuzzer/store": [
         "../../libs/store/src/index.ts"
       ],
-      "@automationware/awtube": ["./lib/awtube/index.ts"]
+      "@glowbuzzer/awlib": ["./awlib/src/index.ts"]
     }
   }
 }
