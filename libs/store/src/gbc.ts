@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "812015ad18899b1c4c0d046228ab269e"
+export const GbcSchemaChecksum = "307de018b1b335b387e0a04864dd63aa"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -915,8 +915,6 @@ export const GbcConstants = {
                         sphericalEnvelope?:SphericalEnvelope;
                         /**  Inner and outer radius of cylindrical envelope (disabled by default) */
                         cylindricalEnvelope?:number[];
-                        /**  Interpolation interval for the kinematics configuration in milliseconds. Must be a multiple of the bus cycle time */
-                        interpolationInterval?:number;
             }
             /** Status of a kinematics configuration */
             export type KinematicsConfigurationStatus = {
