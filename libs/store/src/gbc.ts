@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "ca0d5d77013572dd22828a4452a4acb7"
+export const GbcSchemaChecksum = "812015ad18899b1c4c0d046228ab269e"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -1201,8 +1201,8 @@ export const GbcConstants = {
                         jointPositionArray?:number[];
                         /**  Array of joint velocities */
                         jointVelocityArray?:number[];
-                        /**  Timecode for the move */
-                        timecode?:number;
+                        /**  Duration of the move */
+                        duration?:number;
                         
                         moveParams?:MoveParametersConfig;
             }

@@ -412,12 +412,12 @@ export class MoveJointsBuilder extends SimpleMoveBuilder {
 export class MoveJointsInterpolatedBuilder extends SimpleMoveBuilder {
     protected commandName = "moveJointsInterpolated"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSINTERPOLATED
-    private _timecode: number
+    private _duration: number
     private jointPositionArray: number[]
     private jointVelocityArray: number[]
 
-    timecode(value: number) {
-        this._timecode = value
+    duration(value: number) {
+        this._duration = value
         return this
     }
 
@@ -436,7 +436,7 @@ export class MoveJointsInterpolatedBuilder extends SimpleMoveBuilder {
     protected build(): MoveJointsInterpolatedStream {
         return {
             ...super.build(),
-            timecode: this._timecode,
+            duration: this._duration,
             jointPositionArray: this.jointPositionArray,
             jointVelocityArray: this.jointVelocityArray
         }

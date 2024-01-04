@@ -42,10 +42,12 @@ export interface ActivityApi {
 
     /** Move joints to specified positions and velocities interpolated. All joints in the kinematic configuration should be specified, or they will default to zero.
      *
+     * @param duration Duration of the move in seconds
      * @param jointPositionArray Array of joint positions
      * @param jointVelocityArray Array of joint velocities
      */
     moveJointsInterpolated(
+        duration: number,
         jointPositionArray: number[],
         jointVelocityArray: number[]
     ): MoveJointsInterpolatedBuilder

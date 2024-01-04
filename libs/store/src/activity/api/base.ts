@@ -64,13 +64,13 @@ export abstract class ActivityApiBase {
     }
 
     moveJointsInterpolated(
-        timecode: number,
+        duration: number,
         jointPositionArray: number[],
         jointVelocityArray: number[]
     ) {
         return new MoveJointsInterpolatedBuilder(this)
             .params(this.defaultMoveParameters)
-            .timecode(timecode)
+            .duration(duration)
             .positions(jointPositionArray)
             .velocities(jointVelocityArray)
     }
