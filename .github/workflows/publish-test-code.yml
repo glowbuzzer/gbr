@@ -6,6 +6,7 @@ on:
         paths:
             - ".github/workflows/publish-test-code.yml"
             - "package.json"
+            - "pnpm-lock.yaml"
             - "libs/**"
             - "test/**"
 
