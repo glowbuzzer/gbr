@@ -45,7 +45,6 @@ import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { Color } from "three"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
-import { MM219 } from "../../../awlib/src/scene/parts/bases/base_219"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -67,7 +66,6 @@ const definition: AwTubeRobotParts = {
     s0: Spindle.M112
 }
 
-/*
 const LoadedAwTubeRobot = () => {
     const parts = useLoadedRobotParts(definition)
 
@@ -80,7 +78,6 @@ const LoadedAwTubeRobot = () => {
         </AwTubeRobot>
     )
 }
-*/
 
 function SimpleEnvironment() {
     const { scene } = useThree()
@@ -97,7 +94,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
         return (
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
-                    <AwTubeRobot parts={definition} />
+                    <LoadedAwTubeRobot />
                     {/*
                     <PartGrid definition={definition} />
 */}

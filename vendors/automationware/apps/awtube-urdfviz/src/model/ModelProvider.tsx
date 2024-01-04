@@ -14,7 +14,7 @@ import {
     Monobraccio,
     Plate,
     Spindle
-} from "@automationware/awtube"
+} from "@glowbuzzer/awlib"
 
 export enum AwTubeModel {
     AWTUBE_L = "awtube-l",
