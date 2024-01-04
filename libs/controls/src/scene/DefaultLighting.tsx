@@ -19,7 +19,7 @@ export const DefaultLighting = () => {
                 position={[0, 0, distance]}
                 color={"white"}
                 ref={pointLightRef}
-                castShadow={true}
+                castShadow={false}
                 distance={distance * 2}
                 shadow-mapSize-height={512}
                 shadow-mapSize-width={512}
