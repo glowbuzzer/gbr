@@ -4,11 +4,10 @@
 
 import { GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE } from "@glowbuzzer/store"
 import {
-    AwTubeL2InverseDynamicParams,
     AwTubeL2KinChainParams,
     AwTubeLKinChainParams,
     StandardAwTubeConfiguration
-} from "../../../lib/awtube/config"
+} from "@glowbuzzer/awlib"
 
 const points = [
     {
