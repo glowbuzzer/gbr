@@ -92,5 +92,5 @@
             "@types/webxr": "0.5.2"
         }
     },
-    "version": "1.10.0"
+    "version": "1.11.0"
 }
