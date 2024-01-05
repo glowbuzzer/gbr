@@ -2,6 +2,48 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://github.com/glowbuzzer/gbr/compare/v1.10.0...v1.11.0) (2024-01-04)
+
+
+### Feature
+
+* Add `execute` method to stream hook (cleaner API for executing activities) ([d9e272d](https://github.com/glowbuzzer/gbr/commit/d9e272dfbf588f5febcc34b361cdb9cbd825bd85))
+
+
+### Bug Fix
+
+* fix minor type issues ([b575234](https://github.com/glowbuzzer/gbr/commit/b5752346e733a58d1d67b7c6edcf66fd57ec33dd))
+* relative toggle issue in CartesianPositionEdit.tsx ([5596db9](https://github.com/glowbuzzer/gbr/commit/5596db9aa7f0655fa35967eda2fdcc87206be2f4))
+
+
+### Chore
+
+* add extra joint types to aw assets ([4c8840c](https://github.com/glowbuzzer/gbr/commit/4c8840c36a396b0475a34332502b6c0ba2c656a3))
+* add InterpolatedMoveTile.tsx ([e9c6ed0](https://github.com/glowbuzzer/gbr/commit/e9c6ed069752b1edd05390591ba4556f0e07eac6))
+* add move joints interpolated tests ([b9e88ce](https://github.com/glowbuzzer/gbr/commit/b9e88ceffbe6b57cf463751ea1f0d423910d62cd))
+* add optimised glb process ([1fb93d9](https://github.com/glowbuzzer/gbr/commit/1fb93d9c8a1b53a6c60477e49f94acf8ecf0e570))
+* add static AwTube L config-static-l.json ([a4d28a2](https://github.com/glowbuzzer/gbr/commit/a4d28a2ad516692bc62b59524ca5f93f1bfa1b9c))
+* add suspend-react dependency ([cdad0a8](https://github.com/glowbuzzer/gbr/commit/cdad0a8883dead1ff607695655fe6fa7155e1099))
+* add thicker base to AwTube parts.ts ([487782d](https://github.com/glowbuzzer/gbr/commit/487782de37637b55980b367a5573f45d2635cc90))
+* change auto install peers option ([86626b8](https://github.com/glowbuzzer/gbr/commit/86626b8e0e4ce3a28452869caec2da3d5882e1ca))
+* commit awlib submodule hash ([b6ce4f0](https://github.com/glowbuzzer/gbr/commit/b6ce4f0a0fa5cef74b0d0b138c2b705be9f4172b))
+* fix name on publish-packages-beta.yml workflow ([8bee09c](https://github.com/glowbuzzer/gbr/commit/8bee09cf148671e202ae00cb1c4f1196f4ef60d6))
+* fix up tests ([da36d82](https://github.com/glowbuzzer/gbr/commit/da36d82204dee9b8505bd3b9266466fef69e061c))
+* initial work on move joints interpolated ([e10f9fd](https://github.com/glowbuzzer/gbr/commit/e10f9fdca77363250fe509df606b0427f33eefb9))
+* re-build test code ([1efdd08](https://github.com/glowbuzzer/gbr/commit/1efdd08a7c8cd05146b31c7ab4c71536af6ba261))
+* remove defunct lib folder ([e1cd27a](https://github.com/glowbuzzer/gbr/commit/e1cd27a51b81acd1c77dc91ccfd07a994f8f2d9b))
+* remove fieldbus from config.ts ([a7879fc](https://github.com/glowbuzzer/gbr/commit/a7879fccfbba96f9fc2dcd38aa739aea4954d963))
+* remove shadows from DefaultLighting.tsx ([72ea010](https://github.com/glowbuzzer/gbr/commit/72ea010e75f31b23dba9bc11066ba82910dffb23))
+* replace timecode with duration in interpolated joint move activity ([0b9e475](https://github.com/glowbuzzer/gbr/commit/0b9e475e109e4e9c1129cadcf8c85187560c1067))
+* split out awlib as a git submodule ([1fb93d9](https://github.com/glowbuzzer/gbr/commit/1fb93d9c8a1b53a6c60477e49f94acf8ecf0e570))
+* switch to awlib alias ([69b590a](https://github.com/glowbuzzer/gbr/commit/69b590a20fb96e933c67226e761fc3973b4967e9))
+* update awlib hash ([fdbcd76](https://github.com/glowbuzzer/gbr/commit/fdbcd76d912a621bb6a6b953348ada8740db894f))
+* update AwTube assets ([fab3059](https://github.com/glowbuzzer/gbr/commit/fab30595c43dd358ab6417c693f492c764865210))
+* update DH for AwTube L ([b3000c9](https://github.com/glowbuzzer/gbr/commit/b3000c95ec7b3d5fb94a5d549c20900c3cf15ca9))
+* update gbc.ts ([6780b9b](https://github.com/glowbuzzer/gbr/commit/6780b9bf1482711c8252178e3e4c1f3ffbad0cf0))
+* update urdfviz app for AwTube L ([9ace36e](https://github.com/glowbuzzer/gbr/commit/9ace36e1bc3424b815ae8bcbd6ef91fa32b70e38))
+* use suspend-react to load glb files from base64 ([062f2a8](https://github.com/glowbuzzer/gbr/commit/062f2a800c21635f30014511ad77593c439e01d6))
+
 ## [1.10.0](https://github.com/glowbuzzer/gbr/compare/v1.9.0...v1.10.0) (2023-11-27)
 
 
