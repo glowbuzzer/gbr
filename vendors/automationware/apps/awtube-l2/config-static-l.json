@@ -68,7 +68,7 @@
     ],
     "machine": [
         {
-            "name": "AWTUBE L2",
+            "name": "AWTUBE L",
             "busCycleTime": 4,
             "heartbeatTimeout": 2000
         }
@@ -434,7 +434,7 @@
                     "jointAxis": {
                         "x": 0,
                         "y": 0,
-                        "z": -1
+                        "z": 1
                     },
                     "damping": 1,
                     "friction": 0.1
