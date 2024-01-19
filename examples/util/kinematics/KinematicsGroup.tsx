@@ -4,7 +4,6 @@
 
 import { useDhMatrix } from "./KinChainProvider"
 import { useJointPositions } from "@glowbuzzer/store"
-import { TriadHelper } from "@glowbuzzer/controls"
 
 export const KinematicsGroup = ({ jointIndex, part, children = null }) => {
     const { dh, kinematicsConfigurationIndex } = useDhMatrix()

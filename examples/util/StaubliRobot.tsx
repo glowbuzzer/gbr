@@ -4,10 +4,6 @@ import { useFrame, useKinematicsConfiguration } from "@glowbuzzer/store"
 import { useGLTF } from "@react-three/drei"
 import { KinematicsGroup } from "./kinematics/KinematicsGroup"
 import { KinChainProvider } from "./kinematics/KinChainProvider"
-import { TriadHelper } from "@glowbuzzer/controls"
-import { LayoutObjectGrid } from "./LayoutObjectGrid"
-
-const DEG90 = Math.PI / 2
 
 export const StaubliRobot = ({
     kinematicsConfigurationIndex,
@@ -72,45 +68,4 @@ export const StaubliRobot = ({
             </group>
         </KinChainProvider>
     )
-    // return (
-    //     <group position={position} quaternion={quaternion} scale={1000}>
-    //         <primitive object={p0} />
-    //         <group rotation={[0, 0, j0]}>
-    //             <primitive object={p1} />
-    //             <group rotation={[-DEG90, 0, 0]}>
-    //                 <group rotation={[0, 0, j1]}>
-    //                     <primitive object={p2} />
-    //                     <group position={[0.225, 0, 0]}>
-    //                         <group rotation={[0, 0, j2]}>
-    //                             <primitive object={p3} />
-    //                             <group position={[0, 0, 0.035]} rotation={[DEG90, 0, 0]}>
-    //                                 <group rotation={[0, 0, j3]}>
-    //                                     <primitive object={p4} />
-    //                                     <group position={[0, 0, 0.225]} rotation={[-DEG90, 0, 0]}>
-    //                                         <group rotation={[0, 0, j4]}>
-    //                                             <primitive object={p5} />
-    //                                             <group rotation={[DEG90, 0, 0]}>
-    //                                                 <group rotation={[0, 0, j5]}>
-    //                                                     <primitive object={p6} />
-    //                                                     <group
-    //                                                         position={[0, 0, 0.065]}
-    //                                                         scale={1 / 1000}
-    //                                                     >
-    //                                                         {children || (
-    //                                                             <CylindricalTool toolIndex={0} />
-    //                                                         )}
-    //                                                     </group>
-    //                                                 </group>
-    //                                             </group>
-    //                                         </group>
-    //                                     </group>
-    //                                 </group>
-    //                             </group>
-    //                         </group>
-    //                     </group>
-    //                 </group>
-    //             </group>
-    //         </group>
-    //     </group>
-    // )
 }
