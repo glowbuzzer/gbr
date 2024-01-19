@@ -378,40 +378,5 @@ export const config: GlowbuzzerConfig = {
     ain: [],
     aout: [],
     iin: [],
-    iout: [],
-    fieldbus: [
-        {
-            jointCount: 12,
-            RxPdo: {
-                machineStatusWordOffset: 0,
-                activeFaultOffset: 4,
-                faultHistoryOffset: 8,
-                heartbeatOffset: 12,
-                jointStatuswordOffset: 16,
-                jointActualPositionOffset: 40,
-                jointActualVelocityOffset: 88,
-                jointActualTorqueOffset: 136,
-                digitalOffset: 184,
-                digitalCount: 64,
-                analogOffset: 192,
-                integerOffset: 192,
-                integerCount: 2
-            },
-            TxPdo: {
-                machineControlWordOffset: 0,
-                gbcControlWordOffset: 4,
-                hlcControlWordOffset: 8,
-                heartbeatOffset: 12,
-                jointControlwordOffset: 16,
-                jointSetPositionOffset: 40,
-                jointSetVelocityOffset: 88,
-                jointSetTorqueOffset: 136,
-                digitalOffset: 184,
-                digitalCount: 64,
-                analogOffset: 192,
-                integerOffset: 192,
-                integerCount: 2
-            }
-        }
-    ]
+    iout: []
 }
