@@ -25,6 +25,7 @@ export function custom_icon_classes(props: CustomIconProps, ...classes: string[]
         props.hidden && "hidden",
         props.disabled && "disabled",
         props.checked && "checked",
+        props.checked !== undefined && "toggle",
         ...classes
     ]
         .filter(s => s)
