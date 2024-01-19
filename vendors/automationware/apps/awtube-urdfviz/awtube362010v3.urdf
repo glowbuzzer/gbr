@@ -1,24 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+<!--
+  ~ Copyright (c) 2024. Glowbuzzer. All rights reserved
+  -->
+
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
-  name="awtube32010v2">
+  name="awtube362010v3">
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="-1 2 0.01132"
+        xyz="0 0 0.0122"
         rpy="0 0 0" />
       <mass
-        value="18" />
+        value="1.95" />
       <inertia
-        ixx="0.0066546"
+        ixx="0.0069682"
         ixy="-2.18E-06"
-        ixz="1.3E-07"
-        iyy="0.00665"
-        iyz="-3.2E-07"
-        izz="0.01397" />
+        ixz="1.4E-07"
+        iyy="0.00696385"
+        iyz="-34E-07"
+        izz="0.01362583" />
     </inertial>
     <visual>
       <origin
@@ -26,7 +30,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/base_link.STL" />
+          filename="package://awtube362010v3/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +44,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/base_link.STL" />
+          filename="package://awtube362010v3/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -48,17 +52,17 @@
     name="link1">
     <inertial>
       <origin
-        xyz="2E-05 0.00337 0.0783"
+        xyz="0 0.00689 0.075"
         rpy="0 0 0" />
       <mass
-        value="17.11" />
+        value="16.69" />
       <inertia
-        ixx="0.1"
-        ixy="4.912E-05"
-        ixz="9.505E-05"
-        iyy="0.098412"
-        iyz="0.00059172"
-        izz="0.072655" />
+        ixx="0.10217919"
+        ixy="5.16E-05"
+        ixz="7.53E-06"
+        iyy="0.09590711"
+        iyz="0.00170785"
+        izz="0.07689061" />
     </inertial>
     <visual>
       <origin
@@ -66,7 +70,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link1.STL" />
+          filename="package://awtube362010v3/meshes/link1.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +84,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link1.STL" />
+          filename="package://awtube362010v3/meshes/link1.STL" />
       </geometry>
     </collision>
   </link>
@@ -109,17 +113,17 @@
     name="link2">
     <inertial>
       <origin
-        xyz="0 0.221 0.127"
+        xyz="0 0.22573 0.12924"
         rpy="0 0 0" />
       <mass
-        value="37.96" />
+        value="39.11" />
       <inertia
-        ixx="2.44"
-        ixy="0.0001276"
-        ixz="2.68E-06"
-        iyy="0.2244"
-        iyz="5.2692E-17"
-        izz="2.37" />
+        ixx="2.53770133"
+        ixy="0.00036004"
+        ixz="2.83E-06"
+        iyy="0.23568053"
+        iyz="0.11447746"
+        izz="2.45787606" />
     </inertial>
     <visual>
       <origin
@@ -127,7 +131,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link2.STL" />
+          filename="package://awtube362010v3/meshes/link2.STL" />
       </geometry>
       <material
         name="">
@@ -141,7 +145,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link2.STL" />
+          filename="package://awtube362010v3/meshes/link2.STL" />
       </geometry>
     </collision>
   </link>
@@ -170,17 +174,17 @@
     name="link3">
     <inertial>
       <origin
-        xyz="-0.00146 -0.00018 0.12024"
+        xyz="-0.00435 -0.00024 0.12101"
         rpy="0 0 0" />
       <mass
-        value="11.27" />
+        value="11.63" />
       <inertia
-        ixx="0.058471"
-        ixy="0.0001181"
-        ixz="-0.00059134"
-        iyy="0.075782"
-        iyz="1.52E-05"
-        izz="0.048306" />
+        ixx="0.05939058"
+        ixy="0.00020876"
+        ixz="-0.00172215"
+        iyy="0.07945952"
+        iyz="-7.78E-06"
+        izz="0.05197227" />
     </inertial>
     <visual>
       <origin
@@ -188,7 +192,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link3.STL" />
+          filename="package://awtube362010v3/meshes/link3.STL" />
       </geometry>
       <material
         name="">
@@ -202,7 +206,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link3.STL" />
+          filename="package://awtube362010v3/meshes/link3.STL" />
       </geometry>
     </collision>
   </link>
@@ -231,17 +235,17 @@
     name="link4">
     <inertial>
       <origin
-        xyz="0.00019 -0.00169 0.353"
+        xyz="0.00026 -0.00501 0.35486"
         rpy="0 0 0" />
       <mass
-        value="9.75" />
+        value="10.12" />
       <inertia
-        ixx="1.0831"
-        ixy="-0.000105"
-        ixz="3.162E-05"
-        iyy="0.090958"
-        iyz="-0.00057054"
-        izz="0.039951" />
+        ixx="0.11192934"
+        ixy="-0.00019588"
+        ixz="5.362E-05"
+        iyy="0.09184952"
+        iyz="-0.00165351"
+        izz="0.04359029" />
     </inertial>
     <visual>
       <origin
@@ -249,7 +253,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link4.STL" />
+          filename="package://awtube362010v3/meshes/link4.STL" />
       </geometry>
       <material
         name="">
@@ -263,7 +267,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link4.STL" />
+          filename="package://awtube362010v3/meshes/link4.STL" />
       </geometry>
     </collision>
   </link>
@@ -292,25 +296,25 @@
     name="link5">
     <inertial>
       <origin
-        xyz="2E-05 0.195 -0.06264"
+        xyz="0 -0.1926 0.06426"
         rpy="0 0 0" />
       <mass
-        value="5.22" />
+        value="5.53" />
       <inertia
-        ixx="0.04194"
-        ixy="3.48E-06"
-        ixz="-1.969E-05"
-        iyy="0.020419"
-        iyz="-0.0112"
-        izz="0.034237" />
+        ixx="0.04307947"
+        ixy="-1.218E-05"
+        ixz="1.734E-05"
+        iyy="0.0072992"
+        iyz="-0.01088632"
+        izz="0.03471329" />
     </inertial>
     <visual>
       <origin
         xyz="0 0 0"
-        rpy="0 3.14 3.14" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link5.STL" />
+          filename="package://awtube362010v3/meshes/link5.STL" />
       </geometry>
       <material
         name="">
@@ -321,10 +325,10 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 3.14 3.14" />
+        rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link5.STL" />
+          filename="package://awtube362010v3/meshes/link5.STL" />
       </geometry>
     </collision>
   </link>
@@ -339,7 +343,7 @@
     <child
       link="link5" />
     <axis
-      xyz="0 0 -1" />
+      xyz="0 0 1" />
     <limit
       lower="-1.6"
       upper="1.6"
@@ -353,17 +357,17 @@
     name="link6">
     <inertial>
       <origin
-        xyz="-0.00010981 1E-05 -0.0257"
+        xyz="0 -0.00011 -0.0257"
         rpy="0 0 0" />
       <mass
         value="0.41" />
       <inertia
-        ixx="0.00033"
-        ixy="-1.2E-07"
-        ixz="9.4E-07"
-        iyy="0.000328"
-        iyz="6E-08"
-        izz="0.00054" />
+        ixx="0.00032842"
+        ixy="-5.9E-07"
+        ixz="-3.2E-07"
+        iyy="0.00032983"
+        iyz="-8.9E-07"
+        izz="0.00054011" />
     </inertial>
     <visual>
       <origin
@@ -371,7 +375,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/link6.STL" />
+          filename="package://awtube362010v3/meshes/link6.STL" />
       </geometry>
       <material
         name="">
@@ -385,7 +389,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://awtube32010v2/meshes/controllo/link6.STL" />
+          filename="package://awtube362010v3/meshes/link6.STL" />
       </geometry>
     </collision>
   </link>
