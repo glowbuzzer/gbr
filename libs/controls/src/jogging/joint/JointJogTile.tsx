@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
-import { JogMode } from "./types"
+import { JogMode } from "../types"
 import React, { useState } from "react"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { JogModeRadioButtons } from "./JogModeRadioButtons"
-import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
+import { DockToolbarButtonGroup } from "../../dock/DockToolbar"
+import { JogModeRadioButtons } from "../JogModeRadioButtons"
+import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
 import { JogJointsPanel } from "./JogJointsPanel"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
-import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { StyledTileContent } from "../../util/styles/StyledTileContent"
+import { JogLimitsToolbarButton } from "../JogLimitsToolbarButton"
 import { Tag } from "antd"
 import { useKinematics } from "@glowbuzzer/store"
 

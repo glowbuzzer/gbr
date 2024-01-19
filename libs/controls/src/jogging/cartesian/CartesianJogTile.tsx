@@ -1,22 +1,26 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
-import { JogMode } from "./types"
+import { JogMode } from "../types"
 import React, { useEffect, useState } from "react"
 import { PositionMode } from "./JogGotoCartesian"
 import { JogCartesianPanel } from "./JogCartesianPanel"
-import { JogModeRadioButtons } from "./JogModeRadioButtons"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
-import { FramesDropdown } from "../frames"
-import { JogHomeSplitButton } from "./JogHomeSplitButton"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { JogLimitsToolbarButton } from "./JogLimitsToolbarButton"
-import { JogTileItem } from "./util"
+import { JogModeRadioButtons } from "../JogModeRadioButtons"
+import { DockToolbarButtonGroup } from "../../dock/DockToolbar"
+import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
+import { FramesDropdown } from "../../frames"
+import { JogHomeSplitButton } from "../JogHomeSplitButton"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { JogLimitsToolbarButton } from "../JogLimitsToolbarButton"
+import { JogTileItem } from "../util"
 import { Radio, Tag } from "antd"
 import { useKinematics, useKinematicsConfiguration } from "@glowbuzzer/store"
-import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
+import { RobotConfigurationSelector } from "../../misc/RobotConfigurationSelector"
+import { GlowbuzzerIcon } from "../../util/GlowbuzzerIcon"
+import { useLocalStorage } from "../../util/LocalStorageHook"
+import { XyIcon } from "../../icons/XyIcon"
+import { ReactComponent as SpeedIcon } from "@material-symbols/svg-400/outlined/speed.svg"
 
 /**
  * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
@@ -24,8 +28,13 @@ import { RobotConfigurationSelector } from "../misc/RobotConfigurationSelector"
  * reference frame can be selected from a dropdown.
  */
 export const CartesianJogTile = () => {
-    const [jogMode, setJogMode] = useState(JogMode.CONTINUOUS)
-    const [positionMode, setPositionMode] = useState(PositionMode.POSITION)
+    const [jogMode, setJogMode] = useLocalStorage("jog.mode", JogMode.CONTINUOUS)
+    const [positionMode, setPositionMode] = useLocalStorage(
+        "jog.position.mode",
+        PositionMode.POSITION
+    )
+    const [lockXy, setLockXy] = useLocalStorage("jog.lock.xy", false)
+    const [lockSpeed, setLockSpeed] = useLocalStorage("jog.lock.speed", false)
     const [robotConfiguration, setRobotConfiguration] = useState(0)
 
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
@@ -47,6 +56,26 @@ export const CartesianJogTile = () => {
                         frameIndex={frameIndex}
                     />
                     <JogModeRadioButtons mode={jogMode} onChange={setJogMode} />
+                    {jogMode === JogMode.CONTINUOUS && (
+                        <DockToolbarButtonGroup>
+                            <GlowbuzzerIcon
+                                useFill={true}
+                                Icon={XyIcon}
+                                button
+                                title="Lock XY"
+                                checked={lockXy}
+                                onClick={() => setLockXy(!lockXy)}
+                            />
+                            <GlowbuzzerIcon
+                                useFill={true}
+                                Icon={SpeedIcon}
+                                button
+                                title="Lock Full Speed"
+                                checked={lockSpeed}
+                                onClick={() => setLockSpeed(!lockSpeed)}
+                            />
+                        </DockToolbarButtonGroup>
+                    )}
                     <DockToolbarButtonGroup>
                         <KinematicsDropdown
                             value={kinematicsConfigurationIndex}
@@ -87,6 +116,8 @@ export const CartesianJogTile = () => {
             <JogCartesianPanel
                 jogMode={jogMode}
                 positionMode={positionMode}
+                lockXy={lockXy}
+                lockSpeed={lockSpeed}
                 kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                 robotConfiguration={robotConfiguration}
                 frameIndex={frameIndex}

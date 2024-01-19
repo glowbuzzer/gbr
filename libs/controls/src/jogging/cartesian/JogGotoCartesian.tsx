@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
 import React from "react"
@@ -12,8 +12,8 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { StyledJogDiv } from "./util"
-import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
+import { StyledJogDiv } from "../util"
+import { JogGotoInputPanel, JogGotoItem } from "../JogGotoInputPanel"
 
 export enum PositionMode {
     POSITION,

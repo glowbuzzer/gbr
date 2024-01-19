@@ -1,15 +1,18 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
-import { JogMode } from "./types"
-import { JogArrowsCartesian } from "./JogArrowsCartesian"
+import { JogMode } from "../types"
+import { JogStepCartesian } from "./JogStepCartesian"
 import { JogGotoCartesian, PositionMode } from "./JogGotoCartesian"
 import React from "react"
+import { JogTouchCartesian } from "./JogTouchCartesian"
 
 type JogCartesianPanelProps = {
     jogMode: JogMode
     positionMode: PositionMode
+    lockXy: boolean
+    lockSpeed: boolean
     kinematicsConfigurationIndex: number
     frameIndex: number
     robotConfiguration: number
@@ -22,8 +25,10 @@ export const JogCartesianPanel = (props: JogCartesianPanelProps) => {
 
     switch (props.jogMode) {
         case JogMode.CONTINUOUS:
+            return <JogTouchCartesian {...otherProps} />
+
         case JogMode.STEP:
-            return <JogArrowsCartesian jogSpeed={100} jogMode={jogMode} {...otherProps} />
+            return <JogStepCartesian jogSpeed={100} jogMode={jogMode} {...otherProps} />
 
         case JogMode.GOTO:
             return <JogGotoCartesian jogSpeed={100} {...otherProps} disabled={false} />

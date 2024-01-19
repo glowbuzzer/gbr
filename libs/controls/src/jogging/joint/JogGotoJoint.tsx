@@ -1,10 +1,10 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
 import { Radio } from "antd"
 import React, { useEffect, useMemo, useState } from "react"
-import { useLocalStorage } from "../util/LocalStorageHook"
+import { useLocalStorage } from "../../util/LocalStorageHook"
 import {
     JOINT_TYPE,
     LIMITPROFILE,
@@ -16,9 +16,9 @@ import {
     usePreview,
     useSoloActivity
 } from "@glowbuzzer/store"
-import { JogTileItem, StyledJogDiv } from "./util"
-import { JogGotoInputPanel, JogGotoItem } from "./JogGotoInputPanel"
-import { WaypointsJoints } from "./WaypointsJoints"
+import { JogTileItem, StyledJogDiv } from "../util"
+import { JogGotoInputPanel, JogGotoItem } from "../JogGotoInputPanel"
+import { WaypointsJoints } from "../WaypointsJoints"
 
 enum Mode {
     POSITION,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
 import * as React from "react"
@@ -18,8 +18,8 @@ import {
     ArrowRightOutlined,
     ArrowUpOutlined
 } from "@ant-design/icons"
-import { useLocalStorage } from "../util/LocalStorageHook"
-import { JogDirection, JogMode } from "./types"
+import { useLocalStorage } from "../../util/LocalStorageHook"
+import { JogDirection, JogMode } from "../types"
 import { PositionMode } from "./JogGotoCartesian"
 import { useEffect, useRef } from "react"
 
@@ -50,7 +50,7 @@ const StyledInput = styled(Input)`
     display: inline-block;
 `
 
-type JogArrowsCartesianProps = {
+type JogStepCartesianProps = {
     jogMode: JogMode
     positionMode: PositionMode
     jogSpeed: number
@@ -60,15 +60,16 @@ type JogArrowsCartesianProps = {
 }
 
 /** @ignore - internal to the jog tile */
-export const JogArrowsCartesian = ({
+export const JogStepCartesian = ({
     jogMode,
     positionMode,
     jogSpeed,
     kinematicsConfigurationIndex,
     frameIndex,
     disabled
-}: JogArrowsCartesianProps) => {
+}: JogStepCartesianProps) => {
     const preview = usePreview()
+    const motion = useSoloActivity(kinematicsConfigurationIndex)
     const [jogStep, setJogStep] = useLocalStorage(
         "jog.cartesian.step." + PositionMode[positionMode],
         positionMode === PositionMode.POSITION ? 100 : 0.1
@@ -117,8 +118,6 @@ export const JogArrowsCartesian = ({
             document.removeEventListener("keyup", onKeyUp)
         }
     }, [jogMode, stepJog, startJog, stopJog])
-
-    const motion = useSoloActivity(kinematicsConfigurationIndex)
 
     function updateJogStep(e) {
         setJogStep(e.target.value)

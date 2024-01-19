@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-export * from "./CartesianJogTile"
-export * from "./CartesianJogTileDefinition"
-export * from "./JointJogTile"
-export * from "./JointJogTileDefinition"
+export * from "./cartesian/CartesianJogTile"
+export * from "./cartesian/CartesianJogTileDefinition"
+export * from "./joint/JointJogTile"
+export * from "./joint/JointJogTileDefinition"

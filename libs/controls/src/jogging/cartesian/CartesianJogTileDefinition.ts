@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2022-2024. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
+import { GlowbuzzerTileIdentifiers } from "../../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { CartesianJogTile } from "./CartesianJogTile"
 
