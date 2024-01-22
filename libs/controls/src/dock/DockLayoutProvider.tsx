@@ -10,6 +10,9 @@ import { StyledDockLayout } from "./styles"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { ReactNode } from "react"
 import { useAppName } from "../app"
+import { StatusTray } from "../status/StatusTray"
+import { StatusBar } from "../status/StatusBar"
+import { StatusTrayProvider } from "../status/StatusTrayProvider"
 
 type DockLayoutProviderProps = {
     /** The tiles that are available in the dock layout. */
@@ -42,6 +45,10 @@ export const DockLayoutProvider = ({
     return (
         <StyledDockLayout>
             <DockLayoutContext.Provider value={context}>{children}</DockLayoutContext.Provider>
+            <StatusTrayProvider>
+                <StatusBar />
+                <StatusTray />
+            </StatusTrayProvider>
         </StyledDockLayout>
     )
 }

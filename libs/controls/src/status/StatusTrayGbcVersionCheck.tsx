@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ * Copyright (c) 2023-2024. Glowbuzzer. All rights reserved
  */
 
 import React from "react"
 import { GbcSchemaChecksum, useConnection, useGbcVersionInfo } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Tag } from "antd"
+import { StatusTrayItem } from "./StatusTrayItem"
+import { DismissType } from "./StatusTrayProvider"
 
 const GBC_SUPPORTED_VERSION = [1, 9 /* add patch version to enforce upgrade for patch release */]
 
@@ -24,19 +26,17 @@ const StyledDiv = styled.div`
 export function check_gbc_version(
     gbcVersion: string,
     schemaVersion: string
-): { supported: boolean; message?: string; color: "red" | "orange" | "green" } {
+): { supported: boolean; message?: string } {
     if (gbcVersion === "dev") {
         return {
-            supported: true,
-            color: "orange"
+            supported: true
         }
     }
 
     if (schemaVersion !== GbcSchemaChecksum) {
         return {
             supported: false,
-            message: "Schema version mismatch. You may be connected to an incompatible GBC version",
-            color: "red"
+            message: "Schema version mismatch. You may be connected to an incompatible GBC version"
         }
     }
 
@@ -52,24 +52,24 @@ export function check_gbc_version(
     if (major !== supported_major) {
         return {
             supported: false,
-            color: "red",
             message: `GBC major version is not supported. Version ${supported_major}.x.x is required`
         }
     }
     if (minor < supported_minor || patch < supported_patch) {
         return {
             supported: false,
-            color: "red",
             message: `GBC version is not supported. Version ${supported_version} or later is required`
         }
     }
     return {
-        supported: true,
-        color: "green"
+        supported: true
     }
 }
 
-export const GbcVersionCheck = () => {
+/**
+ * Check if GBC version is supported and display a warning if not
+ */
+export const StatusTrayGbcVersionCheck = () => {
     const { gbcVersion, schemaVersion } = useGbcVersionInfo()
     const { connected } = useConnection()
 
@@ -83,8 +83,8 @@ export const GbcVersionCheck = () => {
     }
 
     return (
-        <StyledDiv>
-            <Tag color="red">{message}</Tag>
-        </StyledDiv>
+        <StatusTrayItem id="gbc-version-mismatch" dismissable={DismissType.DISMISSABLE}>
+            <div style={{ color: "orange" }}>{message}</div>
+        </StatusTrayItem>
     )
 }

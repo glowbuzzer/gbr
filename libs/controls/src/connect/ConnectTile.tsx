@@ -3,35 +3,23 @@
  */
 
 import * as React from "react"
-import { useState } from "react"
-import { Alert, Button, message, Radio, Space, Spin, Tag } from "antd"
+import { Button, Radio, Spin, Tag } from "antd"
 import {
     ConnectionState,
     DesiredState,
     determine_machine_state,
-    FAULT_CAUSE,
     MachineState,
     MACHINETARGET,
     possible_transitions,
     useConnection,
     useEstop,
     useMachine,
-    useOfflineConfig,
     useSimilationOnlyConfiguration
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { GbcVersionCheck } from "../config/GbcVersionCheck"
-import { OperationErrorPanel } from "./OperationErrorPanel"
-import { filter_fault_causes } from "../util/faults"
 
 const StyledDiv = styled.div`
     padding: 5px;
-
-    .config-info {
-        margin: -5px -5px 5px -5px;
-        background: rgba(0, 0, 0, 0.05);
-        padding: 5px 10px;
-    }
 
     .row {
         &.padded {
@@ -114,16 +102,12 @@ const StyledDiv = styled.div`
  * The connect tile allows you to connect and disconnect from a running GBC, and interact with the basic state of the machine.
  *
  * To change the connection url, use the settings cog in the top right of the tile. Once connected you can switch
- * between simulation and live running, and enable or disable operation. If any faults have occurred these are displayed
- * and you can reset the fault ready and continue operation.
+ * between simulation and live running, and enable or disable operation.
  */
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
-    const { modified, usingLocalConfiguration, readonly, upload, discard } = useOfflineConfig()
-    const [uploading, setUploading] = useState(false)
     const estopActive = useEstop()
-    const [messageApi, messageContainer] = message.useMessage()
     const simulationOnly = useSimilationOnlyConfiguration()
 
     function change_target(e) {
@@ -132,17 +116,6 @@ export const ConnectTile = () => {
 
     function change_desired_state(e) {
         machine.setDesiredState(e.target.value)
-    }
-
-    function upload_config() {
-        setUploading(true)
-        upload()
-            .catch(err => messageApi.error(err))
-            .finally(() => setUploading(false))
-    }
-
-    function fetch_remote() {
-        discard()
     }
 
     const state = determine_machine_state(machine.statusWord)
@@ -161,96 +134,6 @@ export const ConnectTile = () => {
 
     return (
         <StyledDiv>
-            {messageContainer}
-            <div>
-                {modified ? (
-                    connected ? (
-                        <div className="config-info">
-                            <Space>
-                                {readonly && usingLocalConfiguration ? (
-                                    <>
-                                        <Alert
-                                            type="error"
-                                            style={{ textAlign: "center" }}
-                                            message="Your project uses a local configuration but GBC is
-                                            using a read-only configuration specified on the command line. The read-only
-                                            configuration takes precedence and has been loaded."
-                                        />
-                                    </>
-                                ) : usingLocalConfiguration ? (
-                                    <>
-                                        <div>
-                                            Local configuration provided does not match remote. You
-                                            should upload a new configuration.
-                                        </div>
-                                        <Space direction="vertical">
-                                            <Button
-                                                size="small"
-                                                style={{ width: "100%" }}
-                                                onClick={upload_config}
-                                                disabled={uploading}
-                                            >
-                                                Upload
-                                            </Button>
-                                            <Button
-                                                size="small"
-                                                style={{ width: "100%" }}
-                                                onClick={fetch_remote}
-                                            >
-                                                Fetch
-                                            </Button>
-                                        </Space>
-                                    </>
-                                ) : (
-                                    <>
-                                        <div>
-                                            Configuration has been modified since you last
-                                            connected. You should save or discard your local
-                                            changes.
-                                        </div>
-                                        <Space direction="vertical">
-                                            <Button
-                                                size="small"
-                                                style={{ width: "100%" }}
-                                                onClick={upload_config}
-                                                disabled={uploading}
-                                            >
-                                                Save
-                                            </Button>
-                                            <Button size="small" onClick={discard}>
-                                                Discard
-                                            </Button>
-                                        </Space>
-                                    </>
-                                )}
-                            </Space>
-                        </div>
-                    ) : usingLocalConfiguration ? null : (
-                        <div className="config-info">
-                            <Space size={"small"}>
-                                <div>
-                                    Configuration has been modified since last connect. You need to
-                                    connect in order to save your local changes.
-                                </div>
-                                <Button size="small" onClick={discard}>
-                                    Discard
-                                </Button>
-                            </Space>
-                        </div>
-                    )
-                ) : null}
-            </div>
-
-            <GbcVersionCheck />
-
-            <div className="row">
-                <div className="label">Machine</div>
-                <div className="controls">
-                    <Tag color={connected ? undefined : "red"}>
-                        {connected ? machine.name || "Unknown" : "Not Connected"}
-                    </Tag>
-                </div>
-            </div>
             <div className="row">
                 <div className="label">Change Mode {simulationOnly && <Tag>SIM ONLY</Tag>}</div>
                 <div className="controls">
@@ -280,21 +163,6 @@ export const ConnectTile = () => {
                 </div>
             </div>
             <div className="row">
-                <div className="label">Current State</div>
-                <div className="controls">
-                    <Tag color={fault || fault_active ? "red" : op ? "green" : undefined}>
-                        {connected ? MachineState[machine.currentState] || "Unknown" : "None"}
-                    </Tag>
-                    {connected && fault && (
-                        <div className="reset-button">
-                            <Button size="small" onClick={issue_reset}>
-                                Reset
-                            </Button>
-                        </div>
-                    )}
-                </div>
-            </div>
-            <div className="row">
                 <div className="label">
                     Machine Operation
                     {estopActive && <span className="estop">ESTOP</span>}
@@ -321,48 +189,21 @@ export const ConnectTile = () => {
                     </Radio.Group>
                 </div>
             </div>
-            {fault_active && (
-                <div className="row">
-                    <div className="label">Fault cause</div>
-                    <div className="controls">
-                        {filter_fault_causes(machine.activeFault).map(({ code, description }) => (
-                            <Tag key={code} color="red">
-                                {description}
-                            </Tag>
-                        ))}
-                    </div>
+            <div className="row">
+                <div className="label">Current State</div>
+                <div className="controls">
+                    <Tag color={fault || fault_active ? "red" : op ? "green" : undefined}>
+                        {connected ? MachineState[machine.currentState] || "Unknown" : "None"}
+                    </Tag>
+                    {connected && fault && (
+                        <div className="reset-button">
+                            <Button size="small" onClick={issue_reset}>
+                                Reset
+                            </Button>
+                        </div>
+                    )}
                 </div>
-            )}
-            {connected && fault && machine.faultHistory > 0 && (
-                /*machine.operationError === OPERATION_ERROR.OPERATION_ERROR_NONE && */ <div className="row padded">
-                    <div className="label">Fault history</div>
-                    <div className="controls">
-                        {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
-                            <Tag key={code}>{description}</Tag>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {connected && (
-                <div className="machine-message">
-                    <OperationErrorPanel />
-                    {/*
-                    DON'T THINK THESE ARE USEFUL
-                    {connection.statusReceived || <Tag color="red">No status received</Tag>}
-                    {machine.heartbeatReceived || <Tag color="red">Lost heartbeat</Tag>}
-*/}
-                </div>
-            )}
-            {/*
-            FOR TESTING CONFIG UPLOAD ONLY
-            <Button onClick={upload_config}>Upload</Button>
-*/}
-            {/*
-            {machine.operationErrorMessage?.length > 0 && (
-                <div className="machine-message">{machine.operationErrorMessage}</div>
-            )}
-*/}
+            </div>
         </StyledDiv>
     )
 }
