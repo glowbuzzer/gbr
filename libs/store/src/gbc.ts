@@ -1195,7 +1195,7 @@ export const GbcConstants = {
             
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-                        
+                        /**  ${DOC_jointPositionArray} */
                         jointPositionArray?:number[];
                         /**  Array of joint velocities */
                         jointVelocityArray?:number[];
