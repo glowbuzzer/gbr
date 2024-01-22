@@ -5,12 +5,15 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
+    configSlice,
     Frame,
     FramesConfig,
+    GlowbuzzerConfig,
     PointsConfig,
     POSITIONREFERENCE,
     Quat,
-    useConfigLoader,
+    useConfig,
+    useConnection,
     useFrames,
     useFramesList,
     useSelectedFrame,
@@ -20,9 +23,10 @@ import { message, TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
-import { useConfigLiveEdit } from "../config/ConfigLiveEditProvider"
+import { useConfigLiveEdit } from "../config"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
+import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     display: inline-block;
@@ -30,18 +34,35 @@ const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
 `
 
+function useFramesLoader() {
+    const connection = useConnection()
+    const config = useConfig()
+    const dispatch = useDispatch()
+
+    return async ({ frames }: { frames: FramesConfig[] }) => {
+        if (!connection.connected) {
+            throw new Error("You must be connected to store frames")
+        }
+        const next: GlowbuzzerConfig = {
+            ...config,
+            frames
+        }
+        dispatch(configSlice.actions.setConfig(next))
+    }
+}
+
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
  */
 export const FramesTile = () => {
     // Note that `asList` is in tree order, whereas `frames` is in the order given in the config file (not necessarily the same)
     const { frames: editedFrames, setFrames, clearFrames } = useConfigLiveEdit()
-    const { asTree, asList } = useFrames(editedFrames)
+    const { asTree } = useFrames(editedFrames)
     const frames = useFramesList(editedFrames)
     const [selected, setSelected] = useSelectedFrame()
     const [editMode, setEditMode] = useState(false)
 
-    const loader = useConfigLoader()
+    const loader = useFramesLoader()
 
     function transform_frame(frames: Frame[]): TreeDataNode[] {
         if (!frames) {
@@ -123,9 +144,8 @@ export const FramesTile = () => {
             translation
         }: CartesianPosition
     ) {
-        const frameIndex = asList[selected].index
         const overrides: FramesConfig[] = frames_with_modification(
-            frameIndex,
+            selected,
             name,
             positionReference,
             parentFrameIndex,
@@ -144,9 +164,8 @@ export const FramesTile = () => {
             translation
         }: CartesianPosition
     ) {
-        const frameIndex = asList[selected].index
         const next: FramesConfig[] = frames_with_modification(
-            frameIndex,
+            selected,
             name,
             positionReference,
             parentFrameIndex,
@@ -181,8 +200,7 @@ export const FramesTile = () => {
     }
 
     function delete_frame() {
-        const frameIndex = asList[selected].index
-        const next: PointsConfig[] = frames.filter((_, index) => index !== frameIndex)
+        const next: PointsConfig[] = frames.filter((_, index) => index !== selected)
         loader({
             frames: next
         }).then(() => {
@@ -199,8 +217,8 @@ export const FramesTile = () => {
 
     return editMode ? (
         <CartesianPositionEdit
-            name={asList[selected].name}
-            value={frame_to_cartesian_position(asList[selected].index)}
+            name={frames[selected].name}
+            value={frame_to_cartesian_position(selected)}
             onSave={save_frames}
             onChange={update_frame}
             onCancel={cancel_edit}
@@ -208,7 +226,10 @@ export const FramesTile = () => {
     ) : (
         <CartesianPositionTable
             selected={selected}
-            setSelected={setSelected}
+            setSelected={v => {
+                console.log("selected", v)
+                setSelected(v)
+            }}
             items={treeData}
             onEdit={() => setEditMode(true)}
             onAdd={add_frame}

@@ -5,11 +5,14 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
+    configSlice,
     FramesConfig,
+    GlowbuzzerConfig,
     PointsConfig,
     POSITIONREFERENCE,
     Quat,
-    useConfigLoader,
+    useConfig,
+    useConnection,
     useFramesList,
     usePointsList,
     useSelectedPoint,
@@ -23,10 +26,29 @@ import { Euler, Quaternion } from "three"
 import { message } from "antd"
 import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
 import { useConfigLiveEdit } from "../config"
+import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
 `
+
+function usePointsLoader() {
+    const connection = useConnection()
+    const config = useConfig()
+    const dispatch = useDispatch()
+
+    return async ({ points }: { points: PointsConfig[] }) => {
+        if (!connection.connected) {
+            throw new Error("You must be connected to store points")
+        }
+        const next: GlowbuzzerConfig = {
+            ...config,
+            points
+        }
+        await connection.request("load points", { points })
+        dispatch(configSlice.actions.setConfig(next))
+    }
+}
 
 /**
  * The points tile shows a simple table of all configured points.
@@ -38,7 +60,7 @@ export const PointsTile = () => {
 
     const points = usePointsList(editedPoints)
     const frames = useFramesList()
-    const loader = useConfigLoader()
+    const loader = usePointsLoader()
 
     function transform_point(point: PointsConfig, index: number) {
         {
