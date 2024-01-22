@@ -2,25 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useRef, useState } from "react"
+import React, { useMemo, useRef, useState } from "react"
 import { Sphere } from "@react-three/drei"
 import { CartesianPositionPopover } from "./CartesianPositionPopover"
 import { ThreeEvent } from "@react-three/fiber"
 import { MeshBasicMaterial, Quaternion, Vector3 } from "three"
 import { useScale } from "./ScaleProvider"
 import { TriadHelper } from "./TriadHelper"
-
-const mat_semi_transparent = new MeshBasicMaterial({
-    color: 0x000000,
-    transparent: true,
-    opacity: 0.2
-})
-
-const mat_solid_black = new MeshBasicMaterial({
-    color: 0x000000,
-    transparent: true,
-    opacity: 0.7
-})
+import { useTheme } from "styled-components"
 
 type CartesianPositionTriadDisplayProps = {
     name: string
@@ -42,8 +31,24 @@ export const CartesianPositionTriadDisplay = ({
 }: CartesianPositionTriadDisplayProps) => {
     const { extent } = useScale()
     const [hoverPoint, setHoverPoint] = useState<Vector3>(null)
+    const token = useTheme()
 
     const debounceTimer = useRef(null)
+
+    const [mat_solid_black, mat_semi_transparent] = useMemo(() => {
+        return [
+            new MeshBasicMaterial({
+                color: token.colorText,
+                transparent: true,
+                opacity: 0.7
+            }),
+            new MeshBasicMaterial({
+                color: token.colorText,
+                transparent: true,
+                opacity: 0.2
+            })
+        ]
+    }, [token])
 
     const sphere_size = extent / 200
 

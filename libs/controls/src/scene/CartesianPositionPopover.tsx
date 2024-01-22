@@ -6,16 +6,17 @@ import { usePrefs } from "@glowbuzzer/store"
 import { Euler, Quaternion, Vector3 } from "three"
 import { Html } from "@react-three/drei"
 import React from "react"
-import styled from "styled-components"
+import styled, { useTheme } from "styled-components"
 import { ReactComponent as TranslationIcon } from "../icons/translation.svg"
 import { ReactComponent as RotationIcon } from "../icons/rotation.svg"
 
-const StyledDiv = styled.div`
+const StyledDiv = styled.div<{ $background; $color }>`
     margin-top: 10px;
     padding: 5px;
     user-select: none;
     white-space: nowrap;
-    background: rgba(255, 255, 255, 0.9);
+    background: ${props => props.$background};
+    color: ${props => props.$color}
     border: 1px solid rgba(0, 0, 0, 0.1);
 
     .title {
@@ -51,6 +52,7 @@ export const CartesianPositionPopover = ({
     point
 }: CartesianPositionPopoverProps) => {
     const { getUnits, fromSI } = usePrefs()
+    const theme = useTheme()
 
     const euler = new Euler().setFromQuaternion(
         new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w)
@@ -60,17 +62,17 @@ export const CartesianPositionPopover = ({
 
     return (
         <Html position={point}>
-            <StyledDiv>
+            <StyledDiv $background={theme.colorBgContainer} $color={theme.colorText}>
                 <div className="title">{name}</div>
 
                 <div className="grid">
-                    <TranslationIcon height={20} />
+                    <TranslationIcon height={20} fill={theme.colorText} />
                     <div>{x.toFixed(2)}</div>
                     <div>{y.toFixed(2)}</div>
                     <div>{z.toFixed(2)}</div>
                     <div className="units">{getUnits("linear")}</div>
 
-                    <RotationIcon height={20} />
+                    <RotationIcon height={20} fill={theme.colorText} />
                     <div>{rx.toFixed(2)}</div>
                     <div>{ry.toFixed(2)}</div>
                     <div>{rz.toFixed(2)}</div>
