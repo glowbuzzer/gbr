@@ -5,7 +5,7 @@
 import * as React from "react"
 import { PositionMode } from "./JogGotoCartesian"
 import styled from "styled-components"
-import { usePreview, useSoloActivity } from "@glowbuzzer/store"
+import { useConnection, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
 
 const StyledDiv = styled.div`
@@ -37,29 +37,36 @@ export const JogTouchCartesian = ({
 }: JogTouchCartesianProps) => {
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
+    const { connected } = useConnection()
 
     async function jog_xy_start(vx: number, vy: number) {
-        preview.disable()
-        if (positionMode === PositionMode.POSITION) {
-            await motion.moveVectorAtVelocity(vx, vy, 0).promise()
-        } else {
-            await motion.moveRotationAtVelocity(vx, vy, 0).promise()
+        if (connected) {
+            preview.disable()
+            if (positionMode === PositionMode.POSITION) {
+                await motion.moveVectorAtVelocity(vx, vy, 0).promise()
+            } else {
+                await motion.moveRotationAtVelocity(vx, vy, 0).promise()
+            }
+            preview.enable()
         }
-        preview.enable()
     }
 
     async function jog_z_start(_vx: number, vy: number) {
-        preview.disable()
-        if (positionMode === PositionMode.POSITION) {
-            await motion.moveVectorAtVelocity(0, 0, vy).promise()
-        } else {
-            await motion.moveRotationAtVelocity(0, 0, vy).promise()
+        if (connected) {
+            preview.disable()
+            if (positionMode === PositionMode.POSITION) {
+                await motion.moveVectorAtVelocity(0, 0, vy).promise()
+            } else {
+                await motion.moveRotationAtVelocity(0, 0, vy).promise()
+            }
+            preview.enable()
         }
-        preview.enable()
     }
 
     function jog_end() {
-        return motion.cancel().promise()
+        if (connected) {
+            return motion.cancel().promise()
+        }
     }
 
     return (
