@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
      Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
@@ -179,7 +179,7 @@
         ixy="0.00014957"
         ixz="-0.00034767"
         iyy="0.05668427"
-        iyz="6.713E-05"
+        iyz="-6.713E-05"
         izz="0.04177278" />
     </inertial>
     <visual>
@@ -211,13 +211,13 @@
     type="revolute">
     <origin
       xyz="0 0.725 0.0505"
-      rpy="-3.1416 0 -3.1416" />
+      rpy="-3.1416 0 3.1416" />
     <parent
       link="awtube3_link2" />
     <child
       link="awtube3_link3" />
     <axis
-      xyz="0 0 -1" />
+      xyz="0 0 1" />
     <limit
       lower="-3.14"
       upper="3.14"
@@ -231,7 +231,7 @@
     name="awtube3_link4">
     <inertial>
       <origin
-        xyz="0.00026 0.00074 0.51757"
+        xyz="0.00026 -0.00074 0.51757"
         rpy="0 0 0" />
       <mass
         value="10.89" />
@@ -299,7 +299,7 @@
       <inertia
         ixx="0.05264588"
         ixy="7.835E-05"
-        ixz="0.00022917"
+        ixz="-0.00022917"
         iyy="0.0229457"
         iyz="-0.01281194"
         izz="0.04374921" />
