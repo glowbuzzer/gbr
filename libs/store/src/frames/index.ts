@@ -9,6 +9,7 @@ import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree2, change_reference_frame } from "../util/frame_utils"
 import { FramesConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
+import { useMemo } from "react"
 
 const { load, save } = settings("frames")
 
@@ -43,32 +44,29 @@ export const useFrames = (overrides?: FramesConfig[]) => {
     const config = useConfig()
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
 
-    // const test = build_tree2(config.frames)
-    // console.log(test)
+    return useMemo(() => {
+        const asTree = build_tree2(overrides || config.frames)
+        const asList = build_list(asTree)
 
-    const asTree = build_tree2(overrides || config.frames)
-    const asList = build_list(asTree)
-
-    // console.log("FRAME", asList[0].absolute.translation)
-
-    return {
-        raw: config.frames,
-        asTree,
-        asList,
-        overrides,
-        active: activeFrame,
-        convertToFrame(
-            translation: Vector3,
-            rotation: Quat,
-            fromIndex: number | "world",
-            toIndex: number | "world"
-        ) {
-            return change_reference_frame(asList, translation, rotation, fromIndex, toIndex)
-        },
-        setActiveFrame(index: number) {
-            dispatch(framesSlice.actions.setActiveFrame(index))
+        return {
+            raw: config.frames,
+            asTree,
+            asList,
+            overrides,
+            active: activeFrame,
+            convertToFrame(
+                translation: Vector3,
+                rotation: Quat,
+                fromIndex: number | "world",
+                toIndex: number | "world"
+            ) {
+                return change_reference_frame(asList, translation, rotation, fromIndex, toIndex)
+            },
+            setActiveFrame(index: number) {
+                dispatch(framesSlice.actions.setActiveFrame(index))
+            }
         }
-    }
+    }, [config, activeFrame, overrides])
 }
 
 /**
