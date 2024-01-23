@@ -18,6 +18,18 @@ const StyledDiv = styled.div`
     .message {
         margin-left: 4px;
     }
+
+    .errors {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+
+        .error-message {
+            font-weight: bold;
+            color: red;
+            padding: 6px 0;
+        }
+    }
 `
 
 /**
@@ -44,20 +56,23 @@ export const StatusTrayFaults = () => {
             dismissable={fault_active ? DismissType.NOT_DISMISSIBLE : DismissType.REQUIRE_RESET}
         >
             <StyledDiv>
-                <div>
+                <div className="errors">
                     {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
                         <Tag color="red" key={code}>
                             {description}
                         </Tag>
                     ))}
+                    <div className="error-message">
+                        {machine.operationError ===
+                        OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
+                            ? "Heartbeat lost"
+                            : machine.operationErrorMessage}
+                    </div>
                 </div>
                 <div className="message">
                     {fault_active
                         ? "Fault currently active and cannot be reset. "
                         : "A fault occurred and must be reset. "}
-                    {machine.operationError === OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
-                        ? "Heartbeat lost"
-                        : machine.operationErrorMessage}
                 </div>
             </StyledDiv>
         </StatusTrayItem>
