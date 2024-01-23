@@ -15,6 +15,25 @@ type GlowbuzzerThemeContextType = {
 const GlowbuzzerThemeContext = createContext<GlowbuzzerThemeContextType>(null)
 
 const StyledGlowbuzzerApp = styled.div<{ $darkMode: boolean }>`
+    ::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: ${props => props.theme.colorBgContainer};
+        border-radius: 0;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: ${props => props.theme.colorPrimaryBorder};
+        border-radius: 5px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    ::-webkit-scrollbar-corner {
+        background: ${props => props.theme.colorBgContainer};
+    }
+
     // these are copied from flexlayout-react/style/dark.css, allowing us to switch dynamically
     .flexlayout__layout {
         ${props =>
