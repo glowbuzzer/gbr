@@ -6,6 +6,8 @@ import {
     AoutBuilder,
     DoutBuilder,
     DwellActivityBuilder,
+    GenericDoutBuilder,
+    GenericIoutBuilder,
     IoutBuilder,
     MoveArcBuilder,
     MoveInstantBuilder,
@@ -120,7 +122,15 @@ export interface ActivityApi {
      * @param index The digital output to set
      * @param value The value to set
      */
-    setDout(index: number, value: boolean): DoutBuilder
+    setDout(index: number, value: boolean): GenericDoutBuilder
+
+    /**
+     * Set an external digital output. Completes in a single cycle.
+     *
+     * @param index The digital output to set
+     * @param value The value to set
+     */
+    setExternalDout(index: number, value: boolean): GenericDoutBuilder
 
     /**
      * Set an analog output. Completes in a single cycle.
@@ -136,7 +146,31 @@ export interface ActivityApi {
      * @param index The integer output to set
      * @param value The value to set
      */
-    setIout(index: number, value: number): IoutBuilder
+    setIout(index: number, value: number): GenericIoutBuilder
+
+    /**
+     * Set an unsigned integer output. Completes in a single cycle.
+     *
+     * @param index The integer output to set
+     * @param value The value to set
+     */
+    setUiout(index: number, value: number): GenericIoutBuilder
+
+    /**
+     * Set an external integer output. Completes in a single cycle.
+     *
+     * @param index The integer output to set
+     * @param value The value to set
+     */
+    setExternalIout(index: number, value: number): GenericIoutBuilder
+
+    /**
+     * Set an external unsigned integer output. Completes in a single cycle.
+     *
+     * @param index The integer output to set
+     * @param value The value to set
+     */
+    setExternalUiout(index: number, value: number): GenericIoutBuilder
 
     /**
      * Sets the current tool offset. This is used to calculate the position of the tool tip and is typically

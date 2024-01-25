@@ -8,7 +8,8 @@ export enum TelemetryPVAT {
     POS = "p",
     VEL = "v",
     ACC = "a",
-    TORQUE = "t"
+    TORQUE = "t",
+    CONTROL_EFFORT = "e"
 }
 
 export enum TelemetryVisibilityOptions {

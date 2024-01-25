@@ -134,7 +134,7 @@ export const useTelemetryControls = () => {
         shallowEqual
     )
     const lastCapture = useSelector((state: RootState) => state.telemetry.lastCapture, shallowEqual)
-    const { captureDuration, plot } = useSelector(
+    const { captureDuration, plot }: TelemetrySettingsType = useSelector(
         (state: RootState) => state.telemetry.settings,
         shallowEqual
     )

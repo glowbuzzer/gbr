@@ -8,6 +8,9 @@ import {
     AoutBuilder,
     DoutBuilder,
     DwellActivityBuilder,
+    ExternalDoutBuilder,
+    ExternalIoutBuilder,
+    ExternalUioutBuilder,
     IoutBuilder,
     MoveArcBuilder,
     MoveInstantBuilder,
@@ -19,8 +22,10 @@ import {
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
     SpindleActivityBuilder,
-    ToolOffsetBuilder
+    ToolOffsetBuilder,
+    UioutBuilder
 } from "./builders"
+import { ActivityApi } from "./interface"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
 function nullify(v?: number) {
@@ -28,7 +33,7 @@ function nullify(v?: number) {
 }
 
 /** @ignore */
-export abstract class ActivityApiBase {
+export abstract class ActivityApiBase implements ActivityApi {
     /** @ignore */
     public readonly kinematicsConfigurationIndex: number
     private readonly defaultMoveParameters: MoveParametersConfig
@@ -117,12 +122,28 @@ export abstract class ActivityApiBase {
         return new DoutBuilder(this).dout(index).value(value)
     }
 
+    setExternalDout(index: number, value: boolean) {
+        return new ExternalDoutBuilder(this).dout(index).value(value)
+    }
+
     setAout(index: number, value: number) {
         return new AoutBuilder(this).aout(index).value(value)
     }
 
     setIout(index: number, value: number) {
         return new IoutBuilder(this).iout(index).value(value)
+    }
+
+    setUiout(index: number, value: number) {
+        return new UioutBuilder(this).iout(index).value(value)
+    }
+
+    setExternalIout(index: number, value: number) {
+        return new ExternalIoutBuilder(this).iout(index).value(value)
+    }
+
+    setExternalUiout(index: number, value: number) {
+        return new ExternalUioutBuilder(this).iout(index).value(value)
     }
 
     setToolOffset(toolIndex: number): ToolOffsetBuilder {

@@ -3,8 +3,7 @@
  */
 
 import React from "react"
-import { BitFieldDisplay } from "../dro"
-import { useDigitalInputBits, useDigitalInputList, useDigitalInputs } from "@glowbuzzer/store"
+import { useDigitalInputList, useDigitalInputs } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { Tag } from "antd"
 

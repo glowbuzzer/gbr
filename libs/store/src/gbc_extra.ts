@@ -14,6 +14,12 @@ import {
     DoutCommand,
     DoutConfig,
     DoutStatus,
+    ExternalDinConfig,
+    ExternalDoutConfig,
+    ExternalIinConfig,
+    ExternalIoutConfig,
+    ExternalUiinConfig,
+    ExternalUioutConfig,
     FramesConfig,
     IinConfig,
     IoutCommand,
@@ -28,13 +34,16 @@ import {
     MachineStatus,
     MoveParametersConfig,
     PointsConfig,
+    SafetyDinConfig,
     SoloActivityConfig,
     SpindleConfig,
     StreamConfig,
     STREAMSTATE,
     TaskConfig,
     TaskStatus,
-    ToolConfig
+    ToolConfig,
+    UiinConfig,
+    UioutConfig
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
@@ -74,11 +83,20 @@ export type GlowbuzzerConfig = {
     dout?: DoutConfig[]
     aout?: AoutConfig[]
     iout?: IoutConfig[]
+    uiout?: UioutConfig[]
     din?: DinConfig[]
+    safetyDin?: SafetyDinConfig[]
     ain?: AinConfig[]
     iin?: IinConfig[]
+    uiin?: UiinConfig[]
     spindle?: SpindleConfig[]
     tool?: ToolConfig[]
+    externalDin?: ExternalDinConfig[]
+    externalIin?: ExternalIinConfig[]
+    externalUuin?: ExternalUiinConfig[]
+    externalDout?: ExternalDoutConfig[]
+    externalIout?: ExternalIoutConfig[]
+    externalUiout?: ExternalUioutConfig[]
 }
 
 export type GlowbuzzerMachineStatus = MachineStatus & {
@@ -147,16 +165,37 @@ export type GlowbuzzerStatus = {
         ain: number[]
         /** The current state of all integer inputs. */
         iin: number[]
+        /** The current state of all unsigned integer inputs. */
+        uiin: number[]
         /** The current state of all digital inputs. */
         din: boolean[]
+        /** The current state of all safe digital inputs. */
+        safetyDin: boolean[]
         /** The current state of all analog outputs. */
         aout: AnalogOutputStatus[]
         /** The current state of all integer outputs. */
         iout: IntegerOutputStatus[]
+        /** The current state of all unsigned integer outputs. */
+        uiout: IntegerOutputStatus[]
         /** The current state of all digital outputs. */
         dout: DigitalOutputStatus[]
         /** The current state of all tasks. */
         tasks: TaskStatus[]
+        /** The current state of external IO. */
+        external: {
+            /** The current state of external integer inputs. */
+            iin: number[]
+            /** The current state of external unsigned integer inputs. */
+            uiin: number[]
+            /** The current state of external digital inputs. */
+            din: boolean[]
+            /** The current state of external integer outputs. */
+            iout: IntegerOutputStatus[]
+            /** The current state of external unsigned integer outputs. */
+            uiout: IntegerOutputStatus[]
+            /** The current state of external digital outputs. */
+            dout: DigitalOutputStatus[]
+        }
     }
     telemetry: {
         // timestamp
@@ -167,7 +206,7 @@ export type GlowbuzzerStatus = {
         m7wait: number
         // these are the set and act values on the joints
         set: { p: number; v: number; a: number; t: number; to: number }[]
-        act: { p: number; v: number; a: number; t: number }[]
+        act: { p: number; v: number; t: number; e: number }[]
     }[]
     response: any // used for promise resolution
     emstat?: {

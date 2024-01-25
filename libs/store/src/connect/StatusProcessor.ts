@@ -17,12 +17,12 @@ import { GlowbuzzerStatus } from "../gbc_extra"
 import { tasksSlice } from "../tasks"
 import { activitySlice } from "../activity"
 import { jointsSlice } from "../joints"
-import { digitalInputsSlice } from "../io/din"
+import { digitalInputsSlice, safetyDigitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice } from "../io/dout"
 import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
-import { integerInputsSlice } from "../io/iin"
-import { integerOutputsSlice } from "../io/iout"
+import { integerInputsSlice, unsignedIntegerInputsSlice } from "../io/iin"
+import { integerOutputsSlice, unsignedIntegerOutputsSlice } from "../io/iout"
 import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../config"
 import { emstatSlice } from "../emstat"
 
@@ -167,6 +167,10 @@ export function useStatusProcessor(connection: WebSocket) {
             msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))
             msg.status.din &&
                 dispatch(digitalInputsSlice.actions.status(status(msg.status.din, heartbeat)))
+            msg.status.safetyDin &&
+                dispatch(
+                    safetyDigitalInputsSlice.actions.status(status(msg.status.safetyDin, heartbeat))
+                )
             msg.status.dout &&
                 dispatch(digitalOutputsSlice.actions.status(status(msg.status.dout, heartbeat)))
             msg.status.ain &&
@@ -175,8 +179,16 @@ export function useStatusProcessor(connection: WebSocket) {
                 dispatch(analogOutputsSlice.actions.status(status(msg.status.aout, heartbeat)))
             msg.status.iin &&
                 dispatch(integerInputsSlice.actions.status(status(msg.status.iin, heartbeat)))
+            msg.status.uiin &&
+                dispatch(
+                    unsignedIntegerInputsSlice.actions.status(status(msg.status.uiin, heartbeat))
+                )
             msg.status.iout &&
                 dispatch(integerOutputsSlice.actions.status(status(msg.status.iout, heartbeat)))
+            msg.status.uiout &&
+                dispatch(
+                    unsignedIntegerOutputsSlice.actions.status(status(msg.status.uiout, heartbeat))
+                )
             msg.status.kc && dispatch(kinematicsSlice.actions.status(msg.status.kc))
             msg.status.kc && dispatch(traceSlice.actions.status(msg.status.kc))
         }

@@ -89,6 +89,9 @@ export const TelemetryTile = () => {
                             <Radio.Button value={TelemetryPVAT.VEL}>Vel</Radio.Button>
                             <Radio.Button value={TelemetryPVAT.ACC}>Acc</Radio.Button>
                             <Radio.Button value={TelemetryPVAT.TORQUE}>Torque</Radio.Button>
+                            <Radio.Button value={TelemetryPVAT.CONTROL_EFFORT}>
+                                Control Effort
+                            </Radio.Button>
                         </Radio.Group>
                     </DockToolbarButtonGroup>
                     <DockToolbarButtonGroup>

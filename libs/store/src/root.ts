@@ -12,12 +12,22 @@ import { jointsSlice } from "./joints"
 import { traceSlice } from "./trace"
 import { kinematicsSlice } from "./kinematics"
 import { previewSlice } from "./preview"
-import { digitalInputsSlice } from "./io/din"
-import { digitalOutputsSlice } from "./io/dout"
+import { digitalInputsSlice, externalDigitalInputsSlice, safetyDigitalInputsSlice } from "./io/din"
+import { digitalOutputsSlice, externalDigitalOutputsSlice } from "./io/dout"
 import { analogInputsSlice } from "./io/ain"
 import { analogOutputsSlice } from "./io/aout"
-import { integerInputsSlice } from "./io/iin"
-import { integerOutputsSlice } from "./io/iout"
+import {
+    externalIntegerInputsSlice,
+    externalUnsignedIntegerInputsSlice,
+    integerInputsSlice,
+    unsignedIntegerInputsSlice
+} from "./io/iin"
+import {
+    externalIntegerOutputsSlice,
+    externalUnsignedIntegerOutputsSlice,
+    integerOutputsSlice,
+    unsignedIntegerOutputsSlice
+} from "./io/iout"
 import { tasksSlice } from "./tasks"
 import { framesSlice } from "./frames"
 import { activitySlice } from "./activity"
@@ -36,11 +46,20 @@ export const standardReducers = {
     points: pointsSlice.reducer,
     frames: framesSlice.reducer,
     din: digitalInputsSlice.reducer,
+    safetyDin: safetyDigitalInputsSlice.reducer,
+    externalDin: externalDigitalInputsSlice.reducer,
     dout: digitalOutputsSlice.reducer,
+    externalDout: externalDigitalOutputsSlice.reducer,
     ain: analogInputsSlice.reducer,
     aout: analogOutputsSlice.reducer,
     iin: integerInputsSlice.reducer,
+    uiin: unsignedIntegerInputsSlice.reducer,
+    externalIin: externalIntegerInputsSlice.reducer,
+    externalUiin: externalUnsignedIntegerInputsSlice.reducer,
     iout: integerOutputsSlice.reducer,
+    uiout: unsignedIntegerOutputsSlice.reducer,
+    externalIout: externalIntegerOutputsSlice.reducer,
+    externalUiout: externalUnsignedIntegerOutputsSlice.reducer,
     stream: streamSlice.reducer,
     preview: previewSlice.reducer,
     trace: traceSlice.reducer,

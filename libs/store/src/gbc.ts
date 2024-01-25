@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "307de018b1b335b387e0a04864dd63aa"
+export const GbcSchemaChecksum = "8d13bb9226582541094f667d409baaf4"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -168,20 +168,20 @@ export const GbcConstants = {
   ACTIVITYTYPE_SPINDLE ,
         /**  Move joints to given end position and velocity using interpolation */
   ACTIVITYTYPE_MOVEJOINTSINTERPOLATED ,
-        /**  @ignore Reserved for future use */
-  ACTIVITYTYPE_RESERVED3 ,
-        /**  @ignore Reserved for future use */
-  ACTIVITYTYPE_RESERVED4 ,
+        /**  Set an unsigned digital out */
+  ACTIVITYTYPE_SET_UIOUT ,
+        /**  Set a signed external digital out */
+  ACTIVITYTYPE_SET_EXTERNAL_IOUT ,
         /**  @ignore Gear in a master and slave specifying position */
   ACTIVITYTYPE_GEARINPOS ,
         /**  @ignore Gear in a master and slave specifying velocity */
   ACTIVITYTYPE_GEARINVELO ,
-        /**  @ignore Switch a robot's configuration */
-  ACTIVITYTYPE_RESERVED5 ,
+        /**  Set an external digital out */
+  ACTIVITYTYPE_SET_EXTERNAL_DOUT ,
         /**  Set tool offset */
   ACTIVITYTYPE_TOOLOFFSET ,
-        /**  @ignore Latch the value of a position */
-  ACTIVITYTYPE_LATCH ,
+        /**  Set an unsigned external digital out */
+  ACTIVITYTYPE_SET_EXTERNAL_UIOUT ,
         /**  @ignore Internal stress test activity */
   ACTIVITYTYPE_STRESSTEST ,
     }
@@ -377,6 +377,12 @@ export const GbcConstants = {
         TRIGGERACTION_NONE,
         TRIGGERACTION_CANCEL,
         TRIGGERACTION_START,
+    }
+    export enum DIN_SAFETY_TYPE {
+        /**  The digital input is not a safety input */
+  DIN_SAFETY_TYPE_NORMAL ,
+        /**  The digital input is a safety input */
+  DIN_SAFETY_TYPE_HIDDEN ,
     }
 
 
@@ -619,6 +625,8 @@ export const GbcConstants = {
                         
                         input?:number;
                         
+                        safeInput?:boolean;
+                        
                         when?:TRIGGERTYPE;
             }
             
@@ -772,6 +780,8 @@ export const GbcConstants = {
                         actVel?:number;
                         /**  Actual torque of the joint */
                         actTorque?:number;
+                        /**  Actual control effort of the joint */
+                        actControlEffort?:number;
             }
             /** 
             Command parameters for joint
@@ -966,7 +976,7 @@ export const GbcConstants = {
                         inverted?:boolean;
             }
             /** 
-            Status of Digital In
+            Status of a digital input
              */
             export type DinStatus = {
             
@@ -984,7 +994,61 @@ export const GbcConstants = {
                         setValue?:boolean;
             }
             /** 
-            Configuration parameters for Digital Outs (dout)
+            Configuration parameters for a safety digital input
+             */
+            export type SafetyDinConfig = {
+            
+                        /**  Defines if the input signal is inverted */
+                        inverted?:boolean;
+                        /**  The type of safety input */
+                        type?:DIN_SAFETY_TYPE;
+            }
+            /** 
+            Status of a safety digital input
+             */
+            export type SafetyDinStatus = {
+            
+                        /**  State of the safety digital input */
+                        actValue?:boolean;
+            }
+            /** 
+            Command for a safety digital input
+             */
+            export type SafetyDinCommand = {
+            
+                        /**  Defines if the digital input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the digital input */
+                        setValue?:boolean;
+            }
+            /** 
+            Configuration parameters for an external digital input
+             */
+            export type ExternalDinConfig = {
+            
+                        /**  Defines if the input signal is inverted */
+                        inverted?:boolean;
+            }
+            /** 
+            Status of an external digital input
+             */
+            export type ExternalDinStatus = {
+            
+                        /**  State of the safety digital input */
+                        actValue?:boolean;
+            }
+            /** 
+            Command for an external digital input
+             */
+            export type ExternalDinCommand = {
+            
+                        /**  Defines if the digital input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the digital input */
+                        setValue?:boolean;
+            }
+            /** 
+            Configuration parameters for a digital output
              */
             export type DoutConfig = {
             
@@ -997,21 +1061,77 @@ export const GbcConstants = {
                         loopback?:number;
             }
             /** 
-            Status of Digital Outs (dout)
+            Status of a digital output
              */
             export type DoutStatus = {
             
-                        /**  State of the Digital Out */
+                        /**  State of the digital output */
                         effectiveValue?:boolean;
             }
             /** 
-            Command for Digital Outs (dout)
+            Command for a safety digital output
              */
             export type DoutCommand = {
             
-                        /**  Defines if the Dout state is to be overridden */
+                        /**  Defines if the digital output state is to be overridden */
                         override?:boolean;
-                        /**  State of the Digital Out */
+                        /**  State of the digital output to be set */
+                        setValue?:boolean;
+            }
+            /** 
+            Configuration parameters for a safety digital output
+             */
+            export type SafetyDoutConfig = {
+            
+                        /**  Defines if the ouput signal is inverted */
+                        inverted?:boolean;
+                        /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
+                        loopback?:number;
+            }
+            /** 
+            Status of a safety digital output
+             */
+            export type SafetyDoutStatus = {
+            
+                        /**  State of the digital output */
+                        effectiveValue?:boolean;
+            }
+            /** 
+            Command for a safety digital output
+             */
+            export type SafetyDoutCommand = {
+            
+                        /**  Defines if the digital output state is to be overridden */
+                        override?:boolean;
+                        /**  State of the digital output to be set */
+                        setValue?:boolean;
+            }
+            /** 
+            Configuration parameters for an external digital output
+             */
+            export type ExternalDoutConfig = {
+            
+                        /**  Defines if the ouput signal is inverted */
+                        inverted?:boolean;
+                        /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
+                        loopback?:number;
+            }
+            /** 
+            Status of an external digital output
+             */
+            export type ExternalDoutStatus = {
+            
+                        /**  State of the digital output */
+                        effectiveValue?:boolean;
+            }
+            /** 
+            Command for an external digital output
+             */
+            export type ExternalDoutCommand = {
+            
+                        /**  Defines if the digital output state is to be overridden */
+                        override?:boolean;
+                        /**  State of the digital output to be set */
                         setValue?:boolean;
             }
             /** 
@@ -1043,7 +1163,7 @@ export const GbcConstants = {
                         /**  Defines if the analog input state is to be overridden */
                         override?:boolean;
                         /**  State of the analog input */
-                        setValue?:boolean;
+                        setValue?:number;
             }
             /** 
             Configuration parameters for Analog Outs (aout - floats)
@@ -1074,8 +1194,30 @@ export const GbcConstants = {
                         /**  Desired value of the analog out (ignored if override not set) */
                         setValue?:number;
             }
+            /** @ignore */
+            export type UiinConfig = {
+            
+            }
             /** 
-            Configuration parameters for an integer input
+            Status of an unsigned integer input
+             */
+            export type UiinStatus = {
+            
+                        /**  value of iin */
+                        actValue?:number;
+            }
+            /** 
+            Command for an unsigned integer input
+             */
+            export type UiinCommand = {
+            
+                        /**  Defines if the integer input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the integer input */
+                        setValue?:number;
+            }
+            /** 
+            Configuration parameters for a signed integer input
              */
             export type IinConfig = {
             
@@ -1084,7 +1226,7 @@ export const GbcConstants = {
             
             }
             /** 
-            Status of an integer input
+            Status of a signed integer input
              */
             export type IinStatus = {
             
@@ -1092,34 +1234,152 @@ export const GbcConstants = {
                         actValue?:number;
             }
             /** 
-            Command for an integer input
+            Command for a signed integer input
              */
             export type IinCommand = {
             
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
-                        setValue?:boolean;
+                        setValue?:number;
             }
+            /** 
+            Configuration parameters for an unsigned integer input
+             */
+            export type ExternalUiinConfig = {
             
+            }
+            /** 
+            Status of an unsigned integer input
+             */
+            export type ExternalUiinStatus = {
+            
+                        /**  value of iin */
+                        actValue?:number;
+            }
+            /** 
+            Command for an external unsigned integer input
+             */
+            export type ExternalUiinCommand = {
+            
+                        /**  Defines if the integer input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the integer input */
+                        setValue?:number;
+            }
+            /** 
+            Configuration parameters for a signed integer input
+             */
+            export type ExternalIinConfig = {
+            
+            }
+            /** 
+            Status of a external signed integer input
+             */
+            export type ExternalIinStatus = {
+            
+                        /**  value of iin */
+                        actValue?:number;
+            }
+            /** 
+            Command for a external signed integer input
+             */
+            export type ExternalIinCommand = {
+            
+                        /**  Defines if the integer input state is to be overridden */
+                        override?:boolean;
+                        /**  State of the integer input */
+                        setValue?:number;
+            }
+            /** @ignore */
+            export type UioutConfig = {
+            
+            }
+            /** 
+            Status of an unsigned integer output
+             */
+            export type UioutStatus = {
+            
+                        /**  Effective value of the integer output */
+                        effectiveValue?:number;
+            }
+            /** 
+            Command for an unsigned integer output
+             */
+            export type UioutCommand = {
+            
+                        /**  Override the value of the integer output */
+                        override?:boolean;
+                        /**  Value to set the integer output to */
+                        setValue?:number;
+            }
+            /** @ignore */
             export type IoutConfig = {
             
                     /** Name for this configuration item */
                     name?: string
             
             }
-            
+            /** 
+            Status of a signed integer output
+             */
             export type IoutStatus = {
             
-                        /**  Effective value of the iout (integer out) */
+                        /**  Effective value of the integer output */
                         effectiveValue?:number;
             }
-            
+            /** 
+            Command for a signed integer output
+             */
             export type IoutCommand = {
             
-                        /**  Override the value of the iout (integer out) set by the HLC */
+                        /**  Override the value of the integer output */
                         override?:boolean;
-                        /**  Value to set the iout (integer out) to */
+                        /**  Value to set the integer output to */
+                        setValue?:number;
+            }
+            /** @ignore */
+            export type ExternalUioutConfig = {
+            
+            }
+            /** 
+            Status of an external unsigned integer output
+             */
+            export type ExternalUioutStatus = {
+            
+                        /**  Effective value of the integer output */
+                        effectiveValue?:number;
+            }
+            /** 
+            Command for an unsigned integer output
+             */
+            export type ExternalUioutCommand = {
+            
+                        /**  Override the value of the integer output */
+                        override?:boolean;
+                        /**  Value to set the integer output to */
+                        setValue?:number;
+            }
+            /** @ignore */
+            export type ExternalIoutConfig = {
+            
+            }
+            /** 
+            Status of an external signed integer output
+             */
+            export type ExternalIoutStatus = {
+            
+                        /**  Effective value of the integer output */
+                        effectiveValue?:number;
+            }
+            /** 
+            Command for an external signed integer output
+             */
+            export type ExternalIoutCommand = {
+            
+                        /**  Override the value of the integer output */
+                        override?:boolean;
+                        /**  Value to set the integer output to */
                         setValue?:number;
             }
             /** 
@@ -1515,6 +1775,24 @@ export const GbcConstants = {
             
             }
             /** 
+            Parameters for a set unsigned integer output activity
+             */
+            export type SetUioutActivityParams = {
+            
+                        /**  The index of the integer output to set */
+                        ioutToSet?:number;
+                        /**  The value to set */
+                        valueToSet?:number;
+            }
+            /** @ignore */
+            export type SetUioutActivityStatus = {
+            
+            }
+            /** @ignore */
+            export type SetUioutActivityCommand = {
+            
+            }
+            /** 
             Parameters for a dwell activity
              */
             export type DwellActivityParams = {
@@ -1720,10 +1998,18 @@ export const GbcConstants = {
                          gearInVelo?: GearInVeloActivityParams,
                         /**  Configuration parameters for set dout activity */
                          setDout?: SetDoutActivityParams,
-                        /**  Configuration parameters for set aout activity */
+                        /**  Configuration parameters for set external dout activity */
+                         setExternalDout?: SetDoutActivityParams,
+                        /**  Configuration parameters for set analog out activity */
                          setAout?: SetAoutActivityParams,
-                        /**  Configuration parameters for set aout activity */
+                        /**  Configuration parameters for set integer out activity */
                          setIout?: SetIoutActivityParams,
+                        /**  Configuration parameters for set unsigned integer out activity */
+                         setUiout?: SetUioutActivityParams,
+                        /**  Configuration parameters for set external integer out activity */
+                         setExternalIout?: SetIoutActivityParams,
+                        /**  Configuration parameters for set external unsigned integer out activity */
+                         setExternalUiout?: SetUioutActivityParams,
                         /**  Configuration parameters for dwell activity */
                          dwell?: DwellActivityParams,
                         /**  Configuration parameters for spindle activity */
@@ -1765,9 +2051,17 @@ export const GbcConstants = {
                         /**  @ignore */
                          setDout?: SetDoutActivityStatus,
                         /**  @ignore */
+                         setExternalDout?: SetDoutActivityStatus,
+                        /**  @ignore */
                          setAout?: SetAoutActivityStatus,
                         /**  @ignore */
                          setIout?: SetIoutActivityStatus,
+                        /**  @ignore */
+                         setUiout?: SetUioutActivityStatus,
+                        /**  @ignore */
+                         setExternalIout?: SetIoutActivityStatus,
+                        /**  @ignore */
+                         setExternalUiout?: SetUioutActivityStatus,
                         /**  @ignore */
                          dwell?: DwellActivityStatus,
                         /**  @ignore */
@@ -1807,9 +2101,17 @@ export const GbcConstants = {
                         /**  @ignore - no command properties */
                          setDout?: SetDoutActivityCommand,
                         /**  @ignore - no command properties */
+                         setExternalDout?: SetDoutActivityCommand,
+                        /**  @ignore - no command properties */
                          setAout?: SetAoutActivityCommand,
                         /**  @ignore - no command properties */
                          setIout?: SetIoutActivityCommand,
+                        /**  @ignore - no command properties */
+                         setUiout?: SetUioutActivityCommand,
+                        /**  @ignore - no command properties */
+                         setExternalIout?: SetIoutActivityCommand,
+                        /**  @ignore - no command properties */
+                         setExternalUiout?: SetUioutActivityCommand,
                         /**  Set dwell command object for activity */
                          dwell?: DwellActivityCommand,
                         /**  Set spindle command object for activity */
@@ -1850,10 +2152,18 @@ export const GbcConstants = {
                          moveToPosition?: MoveToPositionStream,
                         /**  Parameters for a streamed set dout */
                          setDout?: SetDoutActivityParams,
+                        /**  Parameters for a streamed set external dout */
+                         setExternalDout?: SetDoutActivityParams,
                         /**  Parameters for a streamed set aout */
                          setAout?: SetAoutActivityParams,
                         /**  Parameters for a streamed set iout */
                          setIout?: SetIoutActivityParams,
+                        /**  Parameters for a streamed set unsigned iout */
+                         setUiout?: SetUioutActivityParams,
+                        /**  Parameters for a streamed set external iout */
+                         setExternalIout?: SetIoutActivityParams,
+                        /**  Parameters for a streamed set external unsigned iout */
+                         setExternalUiout?: SetUioutActivityParams,
                         /**  Parameters for a streamed dwell */
                          dwell?: DwellActivityParams,
                         /**  Parameters for a streamed spindle change */

@@ -2,7 +2,12 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { TelemetryVisibilityOptions, useJointConfigurationList } from "@glowbuzzer/store"
+import {
+    TelemetryPVAT,
+    TelemetryVisibilityOptions,
+    useJointConfigurationList,
+    useTelemetryControls
+} from "@glowbuzzer/store"
 import * as React from "react"
 import { useState } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
@@ -51,12 +56,13 @@ const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
     }
 `
 export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, visible }) => {
+    const { plot } = useTelemetryControls()
     const joints = useJointConfigurationList()
     const [selected, setSelected] = useState(
         kinematicsConfiguration.participatingJoints.map(() => true)
     )
 
-    const [view, setView] = useLocalStorage(
+    const [desired_view, setView] = useLocalStorage(
         "viewTelemetrySetActBoth",
         TelemetryVisibilityOptions.SET
     )
@@ -64,6 +70,15 @@ export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, v
     function toggle_selected(index) {
         setSelected(selected.map((v, i) => (i === index ? !v : v)))
     }
+
+    const view =
+        plot === TelemetryPVAT.ACC
+            ? TelemetryVisibilityOptions.SET
+            : plot === TelemetryPVAT.CONTROL_EFFORT
+            ? TelemetryVisibilityOptions.ACT
+            : desired_view
+
+    const disabled = plot === TelemetryPVAT.ACC || plot === TelemetryPVAT.CONTROL_EFFORT
 
     return (
         <StyledTelemetryForKinematicsConfiguration>
@@ -86,6 +101,7 @@ export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, v
                         value={view}
                         buttonStyle="solid"
                         onChange={e => setView(e.target.value)}
+                        disabled={disabled}
                     >
                         <Radio.Button value={TelemetryVisibilityOptions.SET}>SET</Radio.Button>
                         <Radio.Button value={TelemetryVisibilityOptions.ACT}>ACT</Radio.Button>

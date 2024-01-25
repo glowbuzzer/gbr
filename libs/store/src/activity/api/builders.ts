@@ -601,9 +601,7 @@ abstract class SetOutputBuilder extends ActivityBuilder {
     }
 }
 
-export class DoutBuilder extends SetOutputBuilder {
-    protected commandName = "setDout"
-    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT
+export abstract class GenericDoutBuilder extends SetOutputBuilder {
     private _doutToSet: number
 
     /** The index of the digital output to set. */
@@ -619,6 +617,16 @@ export class DoutBuilder extends SetOutputBuilder {
             ...super.build()
         }
     }
+}
+
+export class DoutBuilder extends GenericDoutBuilder {
+    protected commandName = "setDout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT
+}
+
+export class ExternalDoutBuilder extends GenericDoutBuilder {
+    protected commandName = "setExternalDout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT
 }
 
 export class AoutBuilder extends SetOutputBuilder {
@@ -641,9 +649,7 @@ export class AoutBuilder extends SetOutputBuilder {
     }
 }
 
-export class IoutBuilder extends SetOutputBuilder {
-    protected commandName = "setIout"
-    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT
+export abstract class GenericIoutBuilder extends SetOutputBuilder {
     private _ioutToSet: number
 
     /** The index of the integer output to set. */
@@ -659,6 +665,26 @@ export class IoutBuilder extends SetOutputBuilder {
             ...super.build()
         }
     }
+}
+
+export class IoutBuilder extends GenericIoutBuilder {
+    protected commandName = "setIout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT
+}
+
+export class UioutBuilder extends GenericIoutBuilder {
+    protected commandName = "setUiout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_UIOUT
+}
+
+export class ExternalIoutBuilder extends GenericIoutBuilder {
+    protected commandName = "setExternalIout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_IOUT
+}
+
+export class ExternalUioutBuilder extends GenericIoutBuilder {
+    protected commandName = "setExternalUiout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT
 }
 
 export class ToolOffsetBuilder extends ActivityBuilder {

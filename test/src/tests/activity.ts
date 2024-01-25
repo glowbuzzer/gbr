@@ -30,8 +30,12 @@ test("can run move joints to completion", async () => {
 })
 
 test("can cancel move joints", async () => {
-    const move = gbc.wrap(gbc.activity.moveJoints([100]).promise)
-    await do_cancel(move)
+    try {
+        const move = gbc.wrap(gbc.activity.moveJoints([100]).promise)
+        await do_cancel(move)
+    } finally {
+        gbc.plot("test")
+    }
 })
 
 test("can run short cartesian move to completion", async () => {
