@@ -1,8 +1,14 @@
 /*
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
-
 // noinspection JSUnusedGlobalSymbols
+
+import {
+    FSOE_MASTER_HIGH_LEVEL_STATE,
+    FSOE_SLAVE_HIGH_LEVEL_STATE,
+    FSOE_SLAVE_TYPE
+} from "@glowbuzzer/store"
+
 export enum CIA_STATE {
     "CIA NOT READY TO SWITCH ON",
     "CIA SWITCH ON DISABLED",
@@ -108,8 +114,32 @@ export const EC_ALSTATUSCODE = {
     0xffff: "Unknown"
 }
 
+function NumberToStringBlocksOfEight(value: number) {
+    const binaryString = value ? value.toString(2) : "0"
+
+    // Split the binary string into blocks of 8 bits
+    const binaryBlocks = binaryString.match(/.{1,8}/g)
+
+    // Join the blocks with a space for better readability
+    const result = binaryBlocks ? binaryBlocks.join(" ") : "00000000"
+
+    return result
+}
+
 function AlStatusCodeToString(value: number) {
     return EC_ALSTATUSCODE[value] || "Unknown"
+}
+
+function FsoeHighLevelStateToString(value: number) {
+    return FSOE_SLAVE_HIGH_LEVEL_STATE[value] || "Unknown"
+}
+
+function FsoeSlaveTypeToString(value: number) {
+    return FSOE_SLAVE_TYPE[value] || "Unknown"
+}
+
+function FsoeMasterHighLevelStateTypeToString(value: number) {
+    return FSOE_MASTER_HIGH_LEVEL_STATE[value] || "Unknown"
 }
 
 function EcStateToString(value: number) {
@@ -130,6 +160,14 @@ function MooToString(value: MOO) {
 
 function BoolToString(value: boolean) {
     return value ? "True" : "False"
+}
+
+function SafetyStateToString(value: boolean) {
+    return value ? "Safety Fault" : "No Safety fault"
+}
+
+function NumberToBinaryString(value: number) {
+    return value ? NumberToStringBlocksOfEight(value) : "0"
 }
 
 function ToHex(value: number) {
@@ -164,6 +202,54 @@ const dictionary: DictionaryNode = {
             name: "Machine CIA State",
             convert: CiaStateToString
         },
+        mcst: {
+            name: "Machine CIA Command",
+            convert: CiaCommandToString
+        },
+        mss: {
+            name: "Safety state",
+            convert: SafetyStateToString
+        },
+        bsbs: {
+            name: "EtherCAT master: Boot successful",
+            convert: BoolToString
+        },
+        bssf: {
+            name: "EtherCAT master: Found slaves on network",
+            convert: BoolToString
+        },
+        bsasm: {
+            name: "EtherCAT master: All slaves matched config.",
+            convert: BoolToString
+        },
+        bsaso: {
+            name: "EtherCAT master: All slaves EtherCAT state op",
+            convert: BoolToString
+        },
+        bsasso: {
+            name: "EtherCAT master: All slaves EtherCAT state safe-op",
+            convert: BoolToString
+        },
+        bsasp: {
+            name: "EtherCAT master: All slaves EtherCAT state pre-op",
+            convert: BoolToString
+        },
+
+        m_se: {
+            name: "Machine section"
+        },
+        d_se: {
+            name: "Drives section"
+        },
+        s_se: {
+            name: "Slaves section"
+        },
+        sa_se: {
+            name: "Safety section"
+        },
+        st_se: {
+            name: "Stats section"
+        },
         dct: {
             name: "Drive count"
         },
@@ -171,6 +257,9 @@ const dictionary: DictionaryNode = {
             type: "array",
             nameProperty: "Drive name",
             children: {
+                dsn: {
+                    name: "Drive secondary name"
+                },
                 das: {
                     name: "Drive CIA State",
                     convert: CiaStateToString
@@ -187,6 +276,41 @@ const dictionary: DictionaryNode = {
                     name: "Drive CIA Command",
                     convert: CiaCommandToString
                 },
+
+                dail: {
+                    name: "Active internal limit",
+                    convert: BoolToString
+                },
+                dhil: {
+                    name: "Historic internal limit",
+                    convert: BoolToString
+                },
+                dafe: {
+                    name: "Active follow error",
+                    convert: BoolToString
+                },
+                dhfe: {
+                    name: "Historic follow error",
+                    convert: BoolToString
+                },
+                daw: {
+                    name: "Active warning",
+                    convert: BoolToString
+                },
+                dhw: {
+                    name: "Historic warning",
+                    convert: BoolToString
+                },
+
+                daf: {
+                    name: "Active fault",
+                    convert: BoolToString
+                },
+                dhf: {
+                    name: "Historic fault",
+                    convert: BoolToString
+                },
+
                 dem: {
                     name: "Drive error message",
                     convert: ToDateString
@@ -195,6 +319,10 @@ const dictionary: DictionaryNode = {
         },
         sct: {
             name: "Number of slaves"
+        },
+        eer: {
+            name: "EtherCAT check found error",
+            convert: BoolToString
         },
         Slaves: {
             type: "array",
@@ -236,10 +364,6 @@ const dictionary: DictionaryNode = {
             }
         },
 
-        eer: {
-            name: "EtherCAT error",
-            convert: BoolToString
-        },
         seno: {
             name: "Number of slave errors"
         },
@@ -247,10 +371,48 @@ const dictionary: DictionaryNode = {
             type: "array",
             nameProperty: "Slave errors"
         },
-        Smb: {
+        fsoesc: {
+            name: "FSoE slave count"
+        },
+        fsoemsn: {
+            name: "FSoE master slave number"
+        },
+        fsoemhl: {
+            name: "FSoE master high-level state",
+            convert: FsoeMasterHighLevelStateTypeToString
+        },
+        fsoemec: {
+            name: "FSoE master error code"
+        },
+
+        SafeSlaves: {
+            type: "array",
+            nameProperty: "FSoE Slave name",
+            children: {
+                fsoest: {
+                    name: "FSoE Slave Type",
+                    convert: FsoeSlaveTypeToString
+                },
+                fsoesno: {
+                    name: "FSoE Slave Number"
+                },
+                fsoescid: {
+                    name: "FSoE Slave Connection ID"
+                },
+
+                fsoess: {
+                    name: "FSoE Slave State",
+                    convert: NumberToBinaryString
+                },
+                foeshls: {
+                    name: "FSoE Slave High-Level State",
+                    convert: FsoeHighLevelStateToString
+                }
+            }
+        },
+        smb: {
             name: "Shared memory busy count"
         }
-
         // ...
     }
 }

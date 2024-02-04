@@ -2,20 +2,20 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { combineReducers } from "@reduxjs/toolkit"
-import { configSlice } from "./config"
+import {combineReducers} from "@reduxjs/toolkit"
+import {configSlice} from "./config"
 // import { connectionSlice } from "./connect"
-import { telemetrySlice } from "./telemetry"
-import { prefsSlice } from "./prefs"
-import { machineSlice } from "./machine"
-import { jointsSlice } from "./joints"
-import { traceSlice } from "./trace"
-import { kinematicsSlice } from "./kinematics"
-import { previewSlice } from "./preview"
-import { digitalInputsSlice, externalDigitalInputsSlice, safetyDigitalInputsSlice } from "./io/din"
-import { digitalOutputsSlice, externalDigitalOutputsSlice } from "./io/dout"
-import { analogInputsSlice } from "./io/ain"
-import { analogOutputsSlice } from "./io/aout"
+import {telemetrySlice} from "./telemetry"
+import {prefsSlice} from "./prefs"
+import {machineSlice} from "./machine"
+import {jointsSlice} from "./joints"
+import {traceSlice} from "./trace"
+import {kinematicsSlice} from "./kinematics"
+import {previewSlice} from "./preview"
+import {digitalInputsSlice, externalDigitalInputsSlice, safetyDigitalInputsSlice} from "./io/din"
+import {digitalOutputsSlice, externalDigitalOutputsSlice, safetyDigitalOutputsSlice} from "./io/dout"
+import {analogInputsSlice} from "./io/ain"
+import {analogOutputsSlice} from "./io/aout"
 import {
     externalIntegerInputsSlice,
     externalUnsignedIntegerInputsSlice,
@@ -28,12 +28,12 @@ import {
     integerOutputsSlice,
     unsignedIntegerOutputsSlice
 } from "./io/iout"
-import { tasksSlice } from "./tasks"
-import { framesSlice } from "./frames"
-import { activitySlice } from "./activity"
-import { pointsSlice } from "./points"
-import { streamSlice } from "./stream"
-import { emstatSlice } from "./emstat"
+import {tasksSlice} from "./tasks"
+import {framesSlice} from "./frames"
+import {activitySlice} from "./activity"
+import {pointsSlice} from "./points"
+import {streamSlice} from "./stream"
+import {emstatSlice} from "./emstat"
 
 export const standardReducers = {
     config: configSlice.reducer,
@@ -49,6 +49,7 @@ export const standardReducers = {
     safetyDin: safetyDigitalInputsSlice.reducer,
     externalDin: externalDigitalInputsSlice.reducer,
     dout: digitalOutputsSlice.reducer,
+    safetyDout: safetyDigitalOutputsSlice.reducer,
     externalDout: externalDigitalOutputsSlice.reducer,
     ain: analogInputsSlice.reducer,
     aout: analogOutputsSlice.reducer,

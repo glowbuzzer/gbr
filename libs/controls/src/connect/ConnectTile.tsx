@@ -165,7 +165,7 @@ export const ConnectTile = () => {
             <div className="row">
                 <div className="label">
                     Machine Operation
-                    {estopActive && <span className="estop">ESTOP</span>}
+                    {estopActive && <span className="estop">SAFETY</span>}
                 </div>
                 <div className="controls">
                     <Radio.Group

@@ -11,10 +11,11 @@ import { useConfig } from "../config"
 import { useConnection } from "../connect"
 import { StatusUpdateSlice } from "../util/redux"
 import { DigitalOutputStatus } from "../gbc_extra"
+import { SafetyDigitalOutputStatus } from "../gbc_extra"
 
 function useGenericDigitalOutputState(
     index: number,
-    type: "dout" | "externalDout"
+    type: "dout" | "safetyDout" | "externalDout"
 ): [
     {
         /** The current effective value */
@@ -75,12 +76,29 @@ export const digitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = cre
     }
 })
 
+export const safetyDigitalOutputsSlice: StatusUpdateSlice<SafetyDigitalOutputStatus[]> =
+    createSlice({
+        name: "safetyDout",
+        initialState: [] as SafetyDigitalOutputStatus[],
+        reducers: {
+            status: (state, action) => {
+                // called with status.dout from the json every time board sends status message
+                return [...action.payload.status]
+            }
+        }
+    })
+
 /**
  * Returns the list of configured digital outputs. The indexes of items in the list can be used with {@link useDigitalOutputState} to get and manipulate the output.
  */
 export function useDigitalOutputList() {
     const config = useConfig()
     return config.dout
+}
+
+export function useSafetyDigitalOutputList() {
+    const config = useConfig()
+    return config.safetyDout
 }
 
 /**
@@ -105,8 +123,26 @@ export function useDigitalOutputState(index: number): [
     return useGenericDigitalOutputState(index, "dout")
 }
 
+export function useSafetyDigitalOutputState(index: number): [
+    {
+        /** The current effective value */
+        effectiveValue?: boolean
+        /** The desired value */
+        setValue?: boolean
+        /** Whether the desired value should override the value last set by an activity */
+        override?: boolean
+    },
+    (setValue: boolean, override?: boolean) => void
+] {
+    return useGenericDigitalOutputState(index, "safetyDout")
+}
+
 export function useDigitalOutputStates(): DigitalOutputStatus[] {
     return useSelector(({ dout }: RootState) => dout, deepEqual)
+}
+
+export function useSafetyDigitalOutputStates(): SafetyDigitalOutputStatus[] {
+    return useSelector(({ safetyDout }: RootState) => safetyDout, deepEqual)
 }
 
 export const externalDigitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[]> = createSlice({

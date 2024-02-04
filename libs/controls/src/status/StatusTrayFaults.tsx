@@ -71,7 +71,7 @@ export const StatusTrayFaults = () => {
                 </div>
                 <div className="message">
                     {fault_active
-                        ? "Fault currently active and cannot be reset. "
+                        ? "Fault currently active, automatic reset attempted, manual intervention may be required (e.g. safety reset) "
                         : "A fault occurred and must be reset. "}
                 </div>
             </StyledDiv>

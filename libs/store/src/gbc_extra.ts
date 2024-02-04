@@ -14,6 +14,9 @@ import {
     DoutCommand,
     DoutConfig,
     DoutStatus,
+    SafetyDoutCommand,
+    SafetyDoutConfig,
+    SafetyDoutStatus,
     ExternalDinConfig,
     ExternalDoutConfig,
     ExternalIinConfig,
@@ -81,6 +84,7 @@ export type GlowbuzzerConfig = {
     stream?: StreamConfig[]
     soloActivity?: SoloActivityConfig[]
     dout?: DoutConfig[]
+    safetyDout?: SafetyDoutConfig[]
     aout?: AoutConfig[]
     iout?: IoutConfig[]
     uiout?: UioutConfig[]
@@ -122,6 +126,8 @@ export type GlowbuzzerKinematicsConfigurationStatus = Pick<
 export type AnalogOutputStatus = Required<AoutStatus & AoutCommand>
 export type IntegerOutputStatus = Required<IoutStatus & IoutCommand>
 export type DigitalOutputStatus = Required<DoutStatus & DoutCommand>
+export type SafetyDigitalOutputStatus = Required<SafetyDoutStatus & SafetyDoutCommand>
+
 
 export type GlowbuzzerStatus = {
     /**
@@ -179,6 +185,8 @@ export type GlowbuzzerStatus = {
         uiout: IntegerOutputStatus[]
         /** The current state of all digital outputs. */
         dout: DigitalOutputStatus[]
+        /** The current state of all safe digital outputs. */
+        safetyDout: SafetyDigitalOutputStatus[]
         /** The current state of all tasks. */
         tasks: TaskStatus[]
         /** The current state of external IO. */

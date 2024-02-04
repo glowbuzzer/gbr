@@ -110,13 +110,34 @@ export const DriveConfigEditor = ({ index }) => {
                         onChange={e => update_config({ posLimit: Number(e.target.value) })}
                     />
                 </Form.Item>
-                <Form.Item label="Scale">
+                <Form.Item label="Scale Pos">
                     <Input
                         type={"number"}
-                        value={editedJointConfig.scale}
+                        value={editedJointConfig.scalePos}
                         onChange={e => update_config({ scale: Number(e.target.value) })}
                     />
                 </Form.Item>
+                <Form.Item label="Scale Vel">
+                    <Input
+                        type={"number"}
+                        value={editedJointConfig.scaleVel}
+                        onChange={e => update_config({ scale: Number(e.target.value) })}
+                    />
+                </Form.Item>
+                <Form.Item label="Scale Torque">
+                    <Input
+                        type={"number"}
+                        value={editedJointConfig.scaleTorque}
+                        onChange={e => update_config({ scale: Number(e.target.value) })}
+                    />
+                </Form.Item>
+                {/*<Form.Item label="Scale">*/}
+                {/*    <Input*/}
+                {/*        type={"number"}*/}
+                {/*        value={editedJointConfig.scale}*/}
+                {/*        onChange={e => update_config({scale: Number(e.target.value)})}*/}
+                {/*    />*/}
+                {/*</Form.Item>*/}
                 <Form.Item label="Limits">
                     <Select
                         options={joint_limit_options}
