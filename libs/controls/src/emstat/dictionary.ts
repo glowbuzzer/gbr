@@ -312,8 +312,10 @@ const dictionary: DictionaryNode = {
                 },
 
                 dem: {
-                    name: "Drive error message",
-                    convert: ToDateString
+                    name: "Drive error message"
+                },
+                dhem: {
+                    name: "Drive historic error message"
                 }
             }
         },
@@ -358,18 +360,18 @@ const dictionary: DictionaryNode = {
                     convert: ToHex
                 },
                 sal: {
-                    name: "Slave ALstatuscode",
+                    name: "Slave ALStatuscode",
                     convert: AlStatusCodeToString
                 }
             }
         },
 
         seno: {
-            name: "Number of slave errors"
+            name: "Number of slave emergency messages"
         },
         SlaveErrors: {
             type: "array",
-            nameProperty: "Slave errors"
+            nameProperty: "Slave emergency messages"
         },
         fsoesc: {
             name: "FSoE slave count"
