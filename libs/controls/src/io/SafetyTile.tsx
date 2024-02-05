@@ -49,7 +49,7 @@ type SafetyInputsTileProps = {
  */
 export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
     //Saftey Dout 0 is used acknowledge the restart
-    const [dout, setDout] = useSafetyDigitalOutputState(1)
+    const [dout, setDout] = useSafetyDigitalOutputState(0)
 
     const safetyDins = useSafetyDigitalInputList()
     const safetyValues = useSafetyDigitalInputs()
