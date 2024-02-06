@@ -3,10 +3,11 @@
  */
 
 import React from "react"
-import { FAULT_CAUSE, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
-import { Table } from "antd"
-import { to_table_data_new } from "./dictionary"
+import { FAULT_CAUSE, useConnection, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
+import { message, Table } from "antd"
+import { to_table_data } from "./dictionary"
 import { filter_fault_causes } from "../util/faults"
+
 import styled from "styled-components"
 
 const hexToRgb = hex =>
@@ -53,6 +54,11 @@ const StyledTable = styled(Table)`
 }
 `
 
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import Icon from "antd/es/icon"
+import { SaveOutlined } from "@ant-design/icons"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+
 const columns = [
     {
         title: "Property",
@@ -73,63 +79,51 @@ function isBitSet(number: number, bitPosition: number): boolean {
 
 export const EmStatTile = () => {
     const emstat = useEtherCATMasterStatus()
-    const machine = useMachine()
+    const [messageApi, messageContext] = message.useMessage()
 
-    // if (isBitSet(machine.statusWord, 12)) {
-    //     return (
-    //         <div>
-    //             <h1>Machine is in fault</h1>
-    //         </div>
-    //     )
-    // }
+    const { connected, request } = useConnection()
 
     const tableRef = React.useRef(null)
-    // const tableData = to_table_data(emstat)
 
-    // const activeFaultArray = filter_fault_causes(machine.activeFault)
-    // const activeFaultString = activeFaultArray.map(item => `${item.description}`).join(", ")
-    //
-    // const historicFaultArray = filter_fault_causes(machine.faultHistory)
-    // const historicFaultString = historicFaultArray.map(item => `${item.description}`).join(", ")
-
-    // const extraData = [
-    //     {
-    //         key: "/Homing required",
-    //         property: "Homing required",
-    //         value: "true"
-    //     },
-    //     {
-    //         key: "/Active fault",
-    //         property: "Active fault",
-    //         value: activeFaultString || "No fault"
-    //     },
-    //     {
-    //         key: "/Historic fault",
-    //         property: "Historic fault",
-    //         value: historicFaultString || "No fault"
-    //     }
-    // ]
-
-    // const updatedTableData = [...tableData, ...extraData]
-    const updatedTableData = to_table_data_new(emstat)
+    const updatedTableData = to_table_data(emstat)
 
     const getRowClassName = (record, index) => {
         return record.key.endsWith("_se") ? "highlight-row" : "normal"
     }
 
-    // console.log(updatedTableData)
+    async function download_drive_logs() {
+        await request("download drive logs", { enable: true })
+        await new Promise(resolve => setTimeout(resolve, 1000))
+        await request("download drive logs", { enable: false })
+        messageApi.success("Drive logs download triggered")
+    }
 
     return (
-        <StyledTable
-            ref={tableRef}
-            rowClassName={getRowClassName}
-            columns={columns}
-            dataSource={updatedTableData}
-            rowKey="key"
-            size="small"
-            expandable={{ defaultExpandAllRows: true }}
-            pagination={false}
-            showHeader={false}
-        />
+        <>
+            {messageContext}
+            <DockToolbar>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        useFill
+                        Icon={SaveOutlined}
+                        button
+                        disabled={!connected}
+                        onClick={download_drive_logs}
+                        title="Download Drive Logs"
+                    />
+                </DockToolbarButtonGroup>
+            </DockToolbar>
+            <Table
+                ref={tableRef}
+                rowClassName={getRowClassName}
+                columns={columns}
+                dataSource={updatedTableData}
+                rowKey="key"
+                size="small"
+                expandable={{ defaultExpandAllRows: true }}
+                pagination={false}
+                showHeader={false}
+            />
+        </>
     )
 }

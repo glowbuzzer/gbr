@@ -3,7 +3,7 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
@@ -41,7 +41,7 @@ export function useDigitalInputState(index: number): boolean {
  * Returns a list with the current state of each digital input as `true` or `false`
  */
 export function useDigitalInputs(): boolean[] {
-    return useSelector((state: RootState) => state.din)
+    return useSelector((state: RootState) => state.din, shallowEqual)
 }
 
 export const safetyDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
