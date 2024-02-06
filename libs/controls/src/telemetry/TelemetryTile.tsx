@@ -5,11 +5,12 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { Button, Radio, RadioChangeEvent, Slider, Space, Tag } from "antd"
+import { Button, message, Radio, RadioChangeEvent, Slider, Space, Tag, Upload } from "antd"
 import {
     CaptureState,
     JOINT_TYPE,
     TelemetryPVAT,
+    telemetrySlice,
     useJointConfigurationList,
     useKinematicsConfigurationList,
     useTelemetryControls,
@@ -18,7 +19,11 @@ import {
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { TelemetryForKinematicsConfiguration } from "./TelemetryForKinematicsConfiguration"
-import { generate_telemetry_download } from "./download"
+import { generate_telemetry_download, parse_telemetry_csv } from "./download"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { CloudDownloadOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
+import { ReactComponent as FileOpenIcon } from "@material-symbols/svg-400/outlined/folder_open.svg"
+import { useDispatch } from "react-redux"
 
 const StyledTelemetryGroup = styled.div`
     display: flex;
@@ -27,7 +32,7 @@ const StyledTelemetryGroup = styled.div`
     //background: green;
 `
 
-const StyledCaptureState = styled.span`
+const StyledCaptureState = styled(Tag)`
     display: inline-block;
     color: grey;
     user-select: none;
@@ -40,7 +45,7 @@ const StyledDuration = styled.div`
     color: ${props => props.theme.colorText};
 
     .ant-slider {
-        width: 150px;
+        width: 100px;
     }
 `
 
@@ -53,6 +58,7 @@ export const TelemetryTile = () => {
     const { data } = useTelemetryData()
     const joints = useJointConfigurationList()
     const [isVisible, setIsVisible] = useState(!document.hidden)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         const handleVisibilityChange = () => {
@@ -70,9 +76,22 @@ export const TelemetryTile = () => {
         capture.setPlot(e.target.value)
     }
 
+    function before_upload(info) {
+        info.arrayBuffer().then((buffer: ArrayBuffer) => {
+            const csv = new TextDecoder("utf-8").decode(buffer)
+            const data = parse_telemetry_csv(csv)
+            dispatch(telemetrySlice.actions.restore(data))
+        })
+        return false
+    }
+
     function download() {
         generate_telemetry_download(joints, data)
     }
+
+    const can_download_upload =
+        capture.captureState === CaptureState.COMPLETE ||
+        capture.captureState === CaptureState.PAUSED
 
     return (
         <DockTileWithToolbar
@@ -118,17 +137,9 @@ export const TelemetryTile = () => {
                                     </Button>
                                 ),
                                 [CaptureState.COMPLETE]: (
-                                    <Space>
-                                        <Button size="small" onClick={download}>
-                                            Download
-                                        </Button>
-                                        <Button
-                                            size="small"
-                                            onClick={() => capture.cancelCapture()}
-                                        >
-                                            Reset
-                                        </Button>
-                                    </Space>
+                                    <Button size="small" onClick={() => capture.cancelCapture()}>
+                                        Reset
+                                    </Button>
                                 )
                             }[capture.captureState]
                         }
@@ -145,6 +156,32 @@ export const TelemetryTile = () => {
                             />
                             <span>{capture.captureDuration} samples</span>
                         </StyledDuration>
+                    </DockToolbarButtonGroup>
+                    <DockToolbarButtonGroup>
+                        <Space>
+                            <GlowbuzzerIcon
+                                useFill
+                                Icon={CloudDownloadOutlined}
+                                onClick={download}
+                                button
+                                title="Download Telemetry to File"
+                                disabled={!can_download_upload}
+                            />
+                            <Upload
+                                beforeUpload={before_upload}
+                                maxCount={1}
+                                showUploadList={false}
+                                disabled={!can_download_upload}
+                            >
+                                <GlowbuzzerIcon
+                                    useFill={true}
+                                    Icon={FolderOpenOutlined}
+                                    button
+                                    title="Load Telemetry from File"
+                                    disabled={!can_download_upload}
+                                />
+                            </Upload>
+                        </Space>
                     </DockToolbarButtonGroup>
                     <Space>
                         <StyledCaptureState>

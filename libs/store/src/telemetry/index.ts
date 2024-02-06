@@ -47,6 +47,7 @@ export const telemetrySlice: Slice<
         resume: CaseReducer<TelemetrySliceType>
         startCapture: CaseReducer<TelemetrySliceType>
         cancelCapture: CaseReducer<TelemetrySliceType>
+        restore: CaseReducer<TelemetrySliceType, PayloadAction<TelemetryEntry[]>>
         data: CaseReducer<TelemetrySliceType, PayloadAction<TelemetryEntry[]>>
         settings: CaseReducer<TelemetrySliceType, PayloadAction<Partial<TelemetrySettingsType>>>
     }
@@ -106,6 +107,11 @@ export const telemetrySlice: Slice<
             }
 
             state.lastCapture = action.payload[count - 1]
+        },
+        restore(state, action) {
+            reset_telemetry_state(state)
+            append_telemetry_items(state, action.payload.slice(0))
+            state.captureState = CaptureState.PAUSED
         },
         pause(state) {
             state.captureState = CaptureState.PAUSED
