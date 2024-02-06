@@ -42,3 +42,4 @@ dist
 /create-react-app/cra-template-glowbuzzer-typescript/template.json
 /create-react-app/cra-template-glowbuzzer-typescript/package.json
 .vite-cache
+.vitest

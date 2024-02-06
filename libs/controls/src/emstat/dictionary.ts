@@ -255,17 +255,13 @@ const dictionary: DictionaryNode = {
     }
 }
 
-export function to_table_data_new(
-    obj,
-    parentKey = "",
-    dict: DictionaryNode | undefined = dictionary
-) {
+export function to_table_data(obj, parentKey = "", dict: DictionaryNode | undefined = dictionary) {
     const result = []
 
     for (const key in obj) {
         if (typeof obj[key] === "object" && obj[key] !== null) {
             const child_dict = dict?.type === "array" ? dict : dict?.children?.[key]
-            const children = to_table_data_new(obj[key], key, child_dict)
+            const children = to_table_data(obj[key], key, child_dict)
             result.push({
                 key: parentKey + "/" + key,
                 property: obj[key][dict?.nameProperty] || key,

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "8d13bb9226582541094f667d409baaf4"
+export const GbcSchemaChecksum = "b8fa2ad72f9b056597374db9d0ded458"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -13,7 +13,7 @@ export const GbcConstants = {
 
 // ENUMS
     export enum FAULT_CAUSE {
-        FAULT_CAUSE_ESTOP_BIT_NUM                          = (0),
+        FAULT_CAUSE_SAFETY_BIT_NUM                          = (0),
         FAULT_CAUSE_DRIVE_FAULT_BIT_NUM                    = (1),
         FAULT_CAUSE_GBC_FAULT_REQUEST_BIT_NUM              = (2),
         FAULT_CAUSE_HEARTBEAT_LOST_BIT_NUM                 = (3),
@@ -22,7 +22,7 @@ export const GbcConstants = {
         FAULT_CAUSE_DRIVE_FOLLOW_ERROR_BIT_NUM             = (6),
         FAULT_CAUSE_DRIVE_NO_REMOTE_BIT_NUM                = (7),
         FAULT_CAUSE_ECAT_BIT_NUM                           = (8),
-        FAULT_CAUSE_DRIVE_ALARM_BIT_NUM                    = (9),
+        FAULT_CAUSE_DRIVE_WARNING_BIT_NUM                  = (9),
         FAULT_CAUSE_GBC_OPERATION_ERROR_BIT_NUM            = (10),
         FAULT_CAUSE_DRIVE_MOOERROR_BIT_NUM                 = (11),
         FAULT_CAUSE_ECAT_SLAVE_ERROR_BIT_NUM               = (12),
@@ -30,8 +30,8 @@ export const GbcConstants = {
         FAULT_CAUSE_HOMING_ERROR_BIT_NUM                   = (14),
         FAULT_CAUSE_GBC_TO_PLC_CON_ERROR_BIT_NUM           = (15),
         FAULT_CAUSE_MOVE_NOT_OP_EN_BIT_NUM                 = (16),
-        FAULT_CAUSE_CST_CSV_POSITION_LIMIT_ERROR_BIT_NUM   = (17),
-        FAULT_CAUSE_CST_CSV_VELOCITY_LIMIT_ERROR_BIT_NUM   = (18),
+        FAULT_CAUSE_DRIVE_STATE_MISMATCH_BIT_NUM           = (17),
+        FAULT_CAUSE_FSOE_ERROR_BIT_NUM                     = (18),
     }
     export enum STATUS_WORD_GBEM {
         STATUS_WORD_GBEM_ALIVE_BIT_NUM                      = (16),
@@ -48,6 +48,37 @@ export const GbcConstants = {
         CONTROL_WORD_GBEM_START_HOMING_BIT_NUM             = (17),
         CONTROL_WORD_GBC_REQUEST_FAULT_BIT_NUM             = (18),
         CONTROL_WORD_GBEM_REBOOT_BIT_NUM                   = (20),
+        CONTROL_WORD_GBEM_DOWNLOAD_DRIVE_LOGS_BIT_NUM      = (21),
+    }
+    export enum FSOE_SLAVE_HIGH_LEVEL_STATE {
+        FSOE_SLAVE_HIGH_LEVEL_STATE_NONE                   = (0),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_PROCESS_DATA           = (1),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_RESET                  = (2),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_SESSION                = (3),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_CONNECTION             = (4),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_PARAMETER              = (5),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_FAILSAFEDATA           = (6),
+        FSOE_SLAVE_HIGH_LEVEL_STATE_UNKNOWN                = (7),
+    }
+    export enum FSOE_SLAVE_TYPE {
+        FSOE_SLAVE_TYPE_NONE                               = (0),
+        FSOE_SLAVE_TYPE_SYNAPTICON                         = (1),
+        FSOE_SLAVE_TYPE_EL1904                             = (2),
+        FSOE_SLAVE_TYPE_EL2904                             = (3),
+        FSOE_SLAVE_TYPE_SCU_1_EC                           = (4),
+        FSOE_SLAVE_TYPE_EL6900                             = (5),
+        FSOE_SLAVE_TYPE_EL6910                             = (6),
+    }
+    export enum FSOE_MASTER_HIGH_LEVEL_STATE {
+        FSOE_MASTER_HIGH_LEVEL_STATE_NONE                  = (0),
+        FSOE_MASTER_HIGH_LEVEL_STATE_START_UP              = (1),
+        FSOE_MASTER_HIGH_LEVEL_STATE_SENDCONFIG            = (2),
+        FSOE_MASTER_HIGH_LEVEL_STATE_STARTUP_BUS           = (3),
+        FSOE_MASTER_HIGH_LEVEL_STATE_RUN                   = (4),
+        FSOE_MASTER_HIGH_LEVEL_STATE_STOP                  = (5),
+        FSOE_MASTER_HIGH_LEVEL_STATE_ERROR                 = (6),
+        FSOE_MASTER_HIGH_LEVEL_STATE_ALARM                 = (7),
+        FSOE_MASTER_HIGH_LEVEL_STATE_NO_NETWORK            = (8),
     }
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,
@@ -998,6 +1029,9 @@ export const GbcConstants = {
              */
             export type SafetyDinConfig = {
             
+                    /** Name for this configuration item */
+                    name?: string
+            
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
                         /**  The type of safety input */
@@ -1082,6 +1116,9 @@ export const GbcConstants = {
             Configuration parameters for a safety digital output
              */
             export type SafetyDoutConfig = {
+            
+                    /** Name for this configuration item */
+                    name?: string
             
                         /**  Defines if the ouput signal is inverted */
                         inverted?:boolean;
