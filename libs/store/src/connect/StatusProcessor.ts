@@ -33,12 +33,17 @@ function status(status, heartbeat) {
     }
 }
 
+type WebSocketLike = {
+    readyState: number
+    send: (msg: string) => void
+}
+
 /**
  * This hook handles status messages from GBC and updates the redux store. It also handles
  * startup behaviour on initial connection to GBC and the transition of GBC into the desired
  * state in the state machine.
  */
-export function useStatusProcessor(connection: WebSocket) {
+export function useStatusProcessor(connection: WebSocketLike) {
     const [handledInitialTick, setHandledInitialTick] = useState(false)
 
     const configVersion = useConfigVersion()
@@ -68,12 +73,6 @@ export function useStatusProcessor(connection: WebSocket) {
         ) {
             return
         }
-
-        // function safe_send(msg) {
-        //     if (connection.readyState === WebSocket.OPEN) {
-        //         connection.send(msg)
-        //     }
-        // }
 
         // we test if the tick count is non-zero, because we only want to do initial connection
         // handling after we've received our first status message, as this populates the store with

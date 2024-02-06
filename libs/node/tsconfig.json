@@ -1,0 +1,18 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "jsx": "react",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "downlevelIteration": true,
+        "paths": {
+            "@glowbuzzer/store": ["./libs/store/src/index.ts"],
+            "react-redux": ["./src/framework/react-redux.ts"],
+            "react": ["./src/framework/react.ts"]
+        }
+    },
+    "files": ["src/node.spec.ts"],
+    "include": []
+}
