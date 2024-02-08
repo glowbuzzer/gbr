@@ -3,12 +3,20 @@
  */
 
 import React from "react"
-import { FAULT_CAUSE, useConnection, useEtherCATMasterStatus, useMachine } from "@glowbuzzer/store"
+import {
+    MachineState,
+    MACHINETARGET,
+    useConnection,
+    useEtherCATMasterStatus,
+    useMachine
+} from "@glowbuzzer/store"
 import { message, Table } from "antd"
 import { to_table_data } from "./dictionary"
-import { filter_fault_causes } from "../util/faults"
 
 import styled from "styled-components"
+import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { SaveOutlined } from "@ant-design/icons"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 
 const hexToRgb = hex =>
     hex
@@ -54,11 +62,6 @@ const StyledTable = styled(Table)`
 }
 `
 
-import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
-import Icon from "antd/es/icon"
-import { SaveOutlined } from "@ant-design/icons"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-
 const columns = [
     {
         title: "Property",
@@ -82,6 +85,12 @@ export const EmStatTile = () => {
     const [messageApi, messageContext] = message.useMessage()
 
     const { connected, request } = useConnection()
+    const machine = useMachine()
+
+    const download_enabled =
+        connected &&
+        machine.target === MACHINETARGET.MACHINETARGET_FIELDBUS &&
+        machine.currentState !== MachineState.OPERATION_ENABLED
 
     const tableRef = React.useRef(null)
 
@@ -107,7 +116,7 @@ export const EmStatTile = () => {
                         useFill
                         Icon={SaveOutlined}
                         button
-                        disabled={!connected}
+                        disabled={!download_enabled}
                         onClick={download_drive_logs}
                         title="Download Drive Logs"
                     />
