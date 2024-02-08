@@ -61,6 +61,7 @@ export const FramesTile = () => {
     const frames = useFramesList(editedFrames)
     const [selected, setSelected] = useSelectedFrame()
     const [editMode, setEditMode] = useState(false)
+    const [messageApi, messageContext] = message.useMessage()
 
     const loader = useFramesLoader()
 
@@ -177,7 +178,7 @@ export const FramesTile = () => {
         }).then(() => {
             clearFrames()
             setEditMode(false)
-            return message.success("Frames updated")
+            return messageApi.success("Frames updated")
         })
     }
 
@@ -215,25 +216,29 @@ export const FramesTile = () => {
 
     const treeData = transform_frame(asTree)
 
-    return editMode ? (
-        <CartesianPositionEdit
-            name={frames[selected].name}
-            value={frame_to_cartesian_position(selected)}
-            onSave={save_frames}
-            onChange={update_frame}
-            onCancel={cancel_edit}
-        />
-    ) : (
-        <CartesianPositionTable
-            selected={selected}
-            setSelected={v => {
-                console.log("selected", v)
-                setSelected(v)
-            }}
-            items={treeData}
-            onEdit={() => setEditMode(true)}
-            onAdd={add_frame}
-            onDelete={delete_frame}
-        />
+    return (
+        <>
+            {messageContext}
+            {editMode ? (
+                <CartesianPositionEdit
+                    name={frames[selected].name}
+                    value={frame_to_cartesian_position(selected)}
+                    onSave={save_frames}
+                    onChange={update_frame}
+                    onCancel={cancel_edit}
+                />
+            ) : (
+                <CartesianPositionTable
+                    selected={selected}
+                    setSelected={v => {
+                        setSelected(v)
+                    }}
+                    items={treeData}
+                    onEdit={() => setEditMode(true)}
+                    onAdd={add_frame}
+                    onDelete={delete_frame}
+                />
+            )}
+        </>
     )
 }
