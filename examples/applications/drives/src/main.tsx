@@ -7,12 +7,15 @@ import React, { StrictMode } from "react"
 import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { App } from "./app"
 import { config } from "./config"
+import { SerialCommunicationsProvider } from "../../../../libs/controls/src/serial/SerialCommunicationsProvider"
 
 const root = createRoot(document.getElementById("root"))
 root.render(
     <StrictMode>
         <GlowbuzzerApp appName="drives" configuration={config}>
-            <App />
+            <SerialCommunicationsProvider>
+                <App />
+            </SerialCommunicationsProvider>
         </GlowbuzzerApp>
     </StrictMode>
 )

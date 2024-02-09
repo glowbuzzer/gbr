@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "1addf55133876e7060065e7d81958488"
+export const GbcSchemaChecksum = "3a50cd43ee49362d67686f17e66a33d2"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -48,6 +48,7 @@ export const GbcConstants = {
         CONTROL_WORD_GBEM_START_HOMING_BIT_NUM             = (17),
         CONTROL_WORD_GBC_REQUEST_FAULT_BIT_NUM             = (18),
         CONTROL_WORD_GBEM_REBOOT_BIT_NUM                   = (20),
+        CONTROL_WORD_GBEM_DOWNLOAD_DRIVE_LOGS_BIT_NUM      = (21),
     }
     export enum FSOE_SLAVE_HIGH_LEVEL_STATE {
         FSOE_SLAVE_HIGH_LEVEL_STATE_NONE                   = (0),
@@ -413,6 +414,17 @@ export const GbcConstants = {
   DIN_SAFETY_TYPE_NORMAL ,
         /**  The digital input is a safety input */
   DIN_SAFETY_TYPE_HIDDEN ,
+    }
+    export enum SERIAL_CONTROL_WORD {
+        SERIAL_TRANSMIT_REQUEST_BIT_NUM                     = (0),
+        SERIAL_RECEIVE_ACCEPTED_BIT_NUM                     = (1),
+        SERIAL_INIT_REQUEST_BIT_NUM                         = (2),
+    }
+    export enum SERIAL_STATUS_WORD {
+        SERIAL_TRANSMIT_ACCEPTED_BIT_NUM                    = (0),
+        SERIAL_RECEIVE_REQUEST_BIT_NUM                      = (1),
+        SERIAL_INIT_ACCEPTED_BIT_NUM                        = (2),
+        SERIAL_ERROR_BIT_NUM                                = (3),
     }
 
 
@@ -2279,6 +2291,34 @@ export const GbcConstants = {
                         rotation?:Quat;
                         /**  Diameter of the tool */
                         diameter?:number;
+            }
+            /** @ignore */
+            export type SerialConfig = {
+            
+            }
+            /** 
+            Status of serial communication
+             */
+            export type SerialStatus = {
+            
+                        /**  Status word for serial communication */
+                        statusWord?:number;
+                        /**  Length of the data received */
+                        length?:number;
+                        /**  Data received over serial communication */
+                        data?:number[];
+            }
+            /** 
+            Command for serial communication
+             */
+            export type SerialCommand = {
+            
+                        /**  Control word for serial communication */
+                        controlWord?:number;
+                        /**  Length of the data to send */
+                        length?:number;
+                        /**  Data to send over serial communication */
+                        data?:number[];
             }
 
 // TS-ONLY STRUCTS

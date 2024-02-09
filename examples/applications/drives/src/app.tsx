@@ -6,24 +6,24 @@ import React from "react"
 import {
     ConfigEditTileDefinition,
     ConnectTileDefinition,
+    DigitalInputsTileDefinition,
+    DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    EmStatTileDefinition,
     FeedRateTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
-    TelemetryTileDefinition,
-    DigitalInputsTileDefinition,
-    DigitalOutputsTileDefinition
+    TelemetryTileDefinition
 } from "@glowbuzzer/controls"
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { DrivesOscillatingMoveTileDefinition } from "./tiles"
+import { DrivesOscillatingMoveTileDefinition, SerialCommsTileDefinition } from "./tiles"
 import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
-import { EmStatTileDefinition } from "@glowbuzzer/controls"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
@@ -40,6 +40,7 @@ export const App = () => {
                 FeedRateTileDefinition,
                 TelemetryMiddleCol,
                 DrivesTileDefinition,
+                SerialCommsTileDefinition,
                 DrivesOscillatingMoveTileDefinition,
                 DigitalInputsTileDefinition,
                 DigitalOutputsTileDefinition,

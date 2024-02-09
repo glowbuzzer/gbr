@@ -46,7 +46,10 @@ import {
     TaskStatus,
     ToolConfig,
     UiinConfig,
-    UioutConfig
+    UioutConfig,
+    SerialCommand,
+    SerialConfig,
+    SerialStatus
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
@@ -101,6 +104,7 @@ export type GlowbuzzerConfig = {
     externalDout?: ExternalDoutConfig[]
     externalIout?: ExternalIoutConfig[]
     externalUiout?: ExternalUioutConfig[]
+    serial?: SerialConfig[]
 }
 
 export type GlowbuzzerMachineStatus = MachineStatus & {
@@ -127,7 +131,6 @@ export type AnalogOutputStatus = Required<AoutStatus & AoutCommand>
 export type IntegerOutputStatus = Required<IoutStatus & IoutCommand>
 export type DigitalOutputStatus = Required<DoutStatus & DoutCommand>
 export type SafetyDigitalOutputStatus = Required<SafetyDoutStatus & SafetyDoutCommand>
-
 
 export type GlowbuzzerStatus = {
     /**
@@ -204,6 +207,7 @@ export type GlowbuzzerStatus = {
             /** The current state of external digital outputs. */
             dout: DigitalOutputStatus[]
         }
+        serial?: SerialStatus
     }
     telemetry: {
         // timestamp
