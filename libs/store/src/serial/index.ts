@@ -8,7 +8,7 @@ import { useConfig } from "../config"
 import { useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { useConnection } from "@glowbuzzer/store"
+import { MachineState, useConnection, useMachineState } from "@glowbuzzer/store"
 
 type SerialSliceState = SerialStatus & {
     controlWord: number
@@ -51,6 +51,9 @@ export function useSerialCommunicationEffect(
     callback: (status: SerialSliceState) => void,
     ignoreControlWord = false
 ) {
+    const { connected } = useConnection()
+    const machineState = useMachineState()
+
     const status = useSelector(
         (state: RootState) => state.serial,
         // the data can only change when the status word changes (tx/rx bit change), or (optionally) the control word we've sent
@@ -59,8 +62,10 @@ export function useSerialCommunicationEffect(
     )
 
     useEffect(() => {
-        callback(status)
-    }, [status])
+        if (connected && machineState === MachineState.OPERATION_ENABLED) {
+            callback(status)
+        }
+    }, [status, connected, machineState])
 }
 
 /**
