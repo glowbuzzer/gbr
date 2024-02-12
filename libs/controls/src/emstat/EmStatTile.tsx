@@ -122,7 +122,7 @@ export const EmStatTile = () => {
                     />
                 </DockToolbarButtonGroup>
             </DockToolbar>
-            <Table
+            <StyledTable
                 ref={tableRef}
                 rowClassName={getRowClassName}
                 columns={columns}
