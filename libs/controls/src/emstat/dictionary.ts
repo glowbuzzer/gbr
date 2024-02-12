@@ -131,19 +131,20 @@ function AlStatusCodeToString(value: number) {
 }
 
 function FsoeHighLevelStateToString(value: number) {
-    return FSOE_SLAVE_HIGH_LEVEL_STATE[value] || "Unknown"
+    return (FSOE_SLAVE_HIGH_LEVEL_STATE[value] || "UNKNOWN").substring(28)
 }
 
 function FsoeSlaveTypeToString(value: number) {
-    return FSOE_SLAVE_TYPE[value] || "Unknown"
+    return (FSOE_SLAVE_TYPE[value] || "UNKNOWN").substring(16)
 }
 
 function FsoeMasterHighLevelStateTypeToString(value: number) {
-    return FSOE_MASTER_HIGH_LEVEL_STATE[value] || "Unknown"
+    // return FSOE_MASTER_HIGH_LEVEL_STATE[value] || "Unknown"
+    return (FSOE_MASTER_HIGH_LEVEL_STATE[value] || "UNKNOWN").substring(29)
 }
 
 function EcStateToString(value: number) {
-    return EC_STATE[value] || "Unknown"
+    return EC_STATE[value] || "UNKNOWN"
 }
 
 function CiaCommandToString(value: number) {
@@ -161,6 +162,10 @@ function MooToString(value: MOO) {
 function BoolToString(value: boolean) {
     return value ? "True" : "False"
 }
+
+// function BoolToString(value: boolean, obj: any) {
+//     return value ? "True" : "False";
+// }
 
 function SafetyStateToString(value: boolean) {
     return value ? "Safety Fault" : "No Safety fault"
@@ -192,7 +197,8 @@ type DictionaryNode = {
     type?: "array" | "object"
     name?: string
     nameProperty?: string
-    convert?(value: any): string
+    // convert?(value: any): string
+    convert?(value: any, obj: any): string
 }
 
 const dictionary: DictionaryNode = {
@@ -437,7 +443,8 @@ export function to_table_data(obj, parentKey = "", dict: DictionaryNode | undefi
             result.push({
                 key: parentKey + "/" + key,
                 property: leaf_dict?.name || key,
-                value: leaf_dict?.convert?.(obj[key]) || obj[key]
+                // value: leaf_dict?.convert?.(obj[key]) || obj[key]
+                value: leaf_dict?.convert?.(obj[key], obj) || obj[key]
             })
         }
     }
