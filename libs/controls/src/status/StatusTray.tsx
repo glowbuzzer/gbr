@@ -26,9 +26,11 @@ const StyledDiv = styled.div<{ $visible: boolean }>`
         min-width: 500px;
         margin: 0 auto;
         height: 100%;
-        border: 2px solid ${props => props.theme.colorWarningBorder};
+        border: 2px solid ${props => props.theme.colorBorder};
+        // add fuzzy border outside
+        box-shadow: 0 0 10px 10px ${props => props.theme.yellow4};
         border-bottom: none;
-        background: ${props => props.theme.colorBgContainer};
+        background: ${props => props.theme.yellow4};
     }
 `
 
