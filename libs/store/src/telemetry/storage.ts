@@ -73,7 +73,8 @@ function update_telemetry_domains(items: TelemetryEntry[]) {
         TelemetryPVAT.POS,
         TelemetryPVAT.VEL,
         TelemetryPVAT.ACC,
-        TelemetryPVAT.TORQUE
+        TelemetryPVAT.TORQUE,
+        TelemetryPVAT.CONTROL_EFFORT
     ]) {
         for (const view of [
             TelemetryVisibilityOptions.SET,
@@ -107,6 +108,7 @@ export function append_telemetry_items(
     state: { start: number; count: number },
     items: TelemetryEntry[]
 ) {
+    console.log("append", items)
     const count = items.length
     items.forEach((d, index) => {
         const pos = (state.start + state.count + index) % MAX_SAMPLES
