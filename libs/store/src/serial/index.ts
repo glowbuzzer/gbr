@@ -101,6 +101,7 @@ export function useSerialCommunication(): {
     const config = useConfig()
     const { send, connected } = useConnection()
     const status = useSelector((state: RootState) => state.serial.statusWord)
+    const cw = useSelector((state: RootState) => state.serial.controlWord)
     const dispatch = useDispatch()
 
     if (!config.serial?.length) {
@@ -137,8 +138,9 @@ export function useSerialCommunication(): {
             },
             sendData(data: number[]) {
                 // xor the transmit bit of the current status
-                const controlWord =
-                    status ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
+                // const controlWord =
+                //     status ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
+                const controlWord = cw ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
 
                 if (!connected) {
                     throw new Error("Not connected, serial communication not possible")
