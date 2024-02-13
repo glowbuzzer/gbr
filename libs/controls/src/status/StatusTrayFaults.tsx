@@ -26,7 +26,7 @@ const StyledDiv = styled.div`
 
         .error-message {
             font-weight: bold;
-            color: red;
+            color: ${props => props.theme.colorErrorText};
             padding: 6px 0;
         }
     }
