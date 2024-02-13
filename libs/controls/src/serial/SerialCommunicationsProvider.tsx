@@ -38,7 +38,7 @@ export const SerialCommunicationsProvider = ({ children }) => {
         } else {
             setInitState(InitState.NONE)
         }
-    }, [connected, machineState, sendControlWord])
+    }, [connected, machineState])
 
     useSerialCommunicationEffect(status => {
         if (status.statusWord & (1 << SERIAL_STATUS_WORD.SERIAL_INIT_ACCEPTED_BIT_NUM)) {
@@ -46,7 +46,7 @@ export const SerialCommunicationsProvider = ({ children }) => {
             setInitState(InitState.READY)
             sendControlWord(0) // unset the init request bit
         }
-    }, true)
+    }, false)
 
     useSerialCommunicationEffect(status => {
         if (
