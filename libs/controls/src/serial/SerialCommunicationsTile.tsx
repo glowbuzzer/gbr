@@ -4,10 +4,13 @@
 
 import * as React from "react"
 import styled from "styled-components"
-import { Button, Input, Space, Timeline } from "antd"
+import { Button, Input, Space, Tag, Timeline } from "antd"
 import { useState } from "react"
-import { useSerialCommunication, useSerialCommunicationReceive } from "@glowbuzzer/store"
-import { useSerialCommunicationReadyState } from "../../../../libs/controls/src/serial/SerialCommunicationsProvider"
+import {
+    useSerialCommunication,
+    useSerialCommunicationReceive,
+    useSerialCommunicationReadyState
+} from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -37,11 +40,13 @@ type Message = {
     value: number[]
 }
 
-export const SerialCommsTile = () => {
+export const SerialCommunicationsTile = () => {
     const [messages, setMessages] = useState<Message[]>([])
     const [hex, setHex] = useState<string>("")
     const ready = useSerialCommunicationReadyState()
     const { sendData } = useSerialCommunication()
+
+    const can_send = ready && !!hex.length
 
     useSerialCommunicationReceive(data => {
         setMessages(current => [
@@ -86,12 +91,13 @@ export const SerialCommsTile = () => {
                     value={hex}
                     onChange={update_hex}
                 />
-                <Button size="small" onClick={send_message} disabled={!ready}>
+                <Button size="small" onClick={send_message} disabled={!can_send}>
                     Send
                 </Button>
                 <Button size="small" onClick={() => setMessages([])} disabled={!messages.length}>
                     Clear
                 </Button>
+                {ready || <Tag color="red">Not initialised</Tag>}
             </div>
             <Timeline
                 mode="alternate"

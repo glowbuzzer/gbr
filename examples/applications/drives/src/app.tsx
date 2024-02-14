@@ -22,8 +22,9 @@ import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { DrivesOscillatingMoveTileDefinition, SerialCommsTileDefinition } from "./tiles"
+import { DrivesOscillatingMoveTileDefinition } from "./tiles"
 import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
+import { SerialCommunicationsTileDefinition } from "../../../../libs/controls/src/serial/SerialCommunicationsTileDefinition"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
@@ -40,7 +41,7 @@ export const App = () => {
                 FeedRateTileDefinition,
                 TelemetryMiddleCol,
                 DrivesTileDefinition,
-                SerialCommsTileDefinition,
+                SerialCommunicationsTileDefinition,
                 DrivesOscillatingMoveTileDefinition,
                 DigitalInputsTileDefinition,
                 DigitalOutputsTileDefinition,

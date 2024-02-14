@@ -12,6 +12,7 @@ import { MachineState, useConnection, useMachineState } from "@glowbuzzer/store"
 
 type SerialSliceState = SerialStatus & {
     controlWord: number
+    initialized: boolean
 }
 
 export const serialSlice: Slice<
@@ -19,6 +20,7 @@ export const serialSlice: Slice<
     {
         status: CaseReducer<SerialSliceState, PayloadAction<SerialStatus>>
         setControlWord: CaseReducer<SerialSliceState, PayloadAction<number>>
+        init: CaseReducer<SerialSliceState, PayloadAction<boolean>>
     }
 > = createSlice({
     name: "serial",
@@ -26,17 +28,21 @@ export const serialSlice: Slice<
         statusWord: 0,
         controlWord: 0,
         length: 0,
-        data: []
+        data: [],
+        initialized: false
     } as SerialSliceState,
     reducers: {
         status(state, action) {
-            return { controlWord: state.controlWord, ...action.payload }
+            return { ...state, ...action.payload }
         },
         setControlWord(state, action: PayloadAction<number>) {
             return {
                 ...state,
                 controlWord: action.payload
             }
+        },
+        init(state, action: PayloadAction<boolean>) {
+            return { ...state, initialized: action.payload }
         }
     }
 })
@@ -45,20 +51,15 @@ export const serialSlice: Slice<
  * Low level hook to trigger a callback whenever the serial status changes, and optionally the control word that has been sent
  *
  * @param callback Function to call with complete serial status when the status word or control word changes
- * @param ignoreControlWord If true, the callback will only be called when the status word changes
  */
-export function useSerialCommunicationEffect(
-    callback: (status: SerialSliceState) => void,
-    ignoreControlWord = false
-) {
+export function useSerialCommunicationEffect(callback: (status: SerialSliceState) => void) {
     const { connected } = useConnection()
     const machineState = useMachineState()
 
     const status = useSelector(
         (state: RootState) => state.serial,
-        // the data can only change when the status word changes (tx/rx bit change), or (optionally) the control word we've sent
-        (a, b) =>
-            a.statusWord === b.statusWord && (ignoreControlWord || a.controlWord === b.controlWord)
+        // the data can only change when the status word changes (tx/rx bit change), or the control word we've sent
+        (a, b) => a.statusWord === b.statusWord && a.controlWord === b.controlWord
     )
 
     useEffect(() => {
@@ -77,14 +78,17 @@ export function useSerialCommunicationReceive(callback: (data: number[], length:
     const status = useSelector(
         (root: RootState) => root.serial,
         // the data can only change when the status word changes (tx/rx bit change)
-        (a, b) => a.statusWord === b.statusWord && a.controlWord === b.controlWord
+        (a, b) =>
+            a.statusWord === b.statusWord &&
+            a.controlWord === b.controlWord &&
+            a.initialized === b.initialized
     )
 
     useEffect(() => {
         // called whenever the control or status words change
         const send = status.controlWord & (1 << SERIAL_CONTROL_WORD.SERIAL_RECEIVE_ACCEPTED_BIT_NUM)
         const recv = status.statusWord & (1 << SERIAL_STATUS_WORD.SERIAL_RECEIVE_REQUEST_BIT_NUM)
-        if (send !== recv) {
+        if (send !== recv && status.initialized) {
             // we have an outstanding receive (SerialCommunicationProvider will do the ack)
             callback(status.data, status.length)
         }
@@ -100,8 +104,8 @@ export function useSerialCommunication(): {
 } {
     const config = useConfig()
     const { send, connected } = useConnection()
-    const status = useSelector((state: RootState) => state.serial.statusWord)
-    const cw = useSelector((state: RootState) => state.serial.controlWord)
+    const statusWord = useSelector((state: RootState) => state.serial.statusWord)
+    const controlWord = useSelector((state: RootState) => state.serial.controlWord)
     const dispatch = useDispatch()
 
     if (!config.serial?.length) {
@@ -137,10 +141,9 @@ export function useSerialCommunication(): {
                 dispatch(serialSlice.actions.setControlWord(controlWord))
             },
             sendData(data: number[]) {
-                // xor the transmit bit of the current status
-                // const controlWord =
-                //     status ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
-                const controlWord = cw ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
+                // xor the transmit bit of the current control word
+                const nextControlWord =
+                    controlWord ^ (1 << SERIAL_CONTROL_WORD.SERIAL_TRANSMIT_REQUEST_BIT_NUM)
 
                 if (!connected) {
                     throw new Error("Not connected, serial communication not possible")
@@ -151,7 +154,7 @@ export function useSerialCommunication(): {
                             serial: {
                                 [0]: {
                                     command: {
-                                        controlWord,
+                                        controlWord: nextControlWord,
                                         length: data.length,
                                         data
                                     } as SerialCommand
@@ -160,8 +163,12 @@ export function useSerialCommunication(): {
                         }
                     })
                 )
-                dispatch(serialSlice.actions.setControlWord(controlWord))
+                dispatch(serialSlice.actions.setControlWord(nextControlWord))
             }
         }
-    }, [send, connected, status, dispatch])
+    }, [send, connected, statusWord, controlWord, dispatch])
+}
+
+export function useSerialCommunicationReadyState() {
+    return useSelector((state: RootState) => state.serial.initialized)
 }

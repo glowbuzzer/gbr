@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "3a50cd43ee49362d67686f17e66a33d2"
+export const GbcSchemaChecksum = "7df9ad202e58f8400b30d5087b90126f"
 
 // CONSTANTS
 export const GbcConstants = {

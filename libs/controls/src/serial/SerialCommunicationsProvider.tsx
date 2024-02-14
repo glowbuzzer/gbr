@@ -2,78 +2,61 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react"
-import { useContext, useEffect } from "react"
+import { useEffect } from "react"
 import {
     MachineState,
+    RootState,
     SERIAL_CONTROL_WORD,
     SERIAL_STATUS_WORD,
+    serialSlice,
     useConnection,
     useMachineState,
     useSerialCommunication,
     useSerialCommunicationEffect
 } from "@glowbuzzer/store"
+import { useDispatch, useSelector } from "react-redux"
 
-const SerialCommunicationsContext = React.createContext<boolean>(null)
-
-enum InitState {
-    NONE,
-    INIT,
-    READY
-}
-
-export const SerialCommunicationsProvider = ({ children }) => {
-    const [initState, setInitState] = React.useState(InitState.NONE)
+export const SerialCommunicationsProvider = ({ children = null }) => {
     const { connected } = useConnection()
     const machineState = useMachineState()
     const { sendControlWord } = useSerialCommunication()
+    const dispatch = useDispatch()
+    const init_done = useSelector((state: RootState) => state.serial.initialized)
 
     useEffect(() => {
-        if (connected && machineState === MachineState.OPERATION_ENABLED) {
-            if (initState === InitState.NONE) {
-                console.log("SEND SERIAL INIT REQUEST")
-                setInitState(InitState.INIT)
-                sendControlWord(1 << SERIAL_CONTROL_WORD.SERIAL_INIT_REQUEST_BIT_NUM)
-            }
+        if (connected && machineState === MachineState.OPERATION_ENABLED && !init_done) {
+            console.log("SEND SERIAL INIT REQUEST")
+            sendControlWord(1 << SERIAL_CONTROL_WORD.SERIAL_INIT_REQUEST_BIT_NUM)
         } else {
-            setInitState(InitState.NONE)
+            dispatch(serialSlice.actions.init(false))
         }
     }, [connected, machineState])
 
     useSerialCommunicationEffect(status => {
-        if (status.statusWord & (1 << SERIAL_STATUS_WORD.SERIAL_INIT_ACCEPTED_BIT_NUM)) {
+        if (
+            // !init_done &&
+            status.statusWord &
+            (1 << SERIAL_STATUS_WORD.SERIAL_INIT_ACCEPTED_BIT_NUM)
+        ) {
             console.log("SERIAL INIT ACCEPTED")
-            setInitState(InitState.READY)
+            dispatch(serialSlice.actions.init(true))
             sendControlWord(0) // unset the init request bit
         }
-    }, false)
+    })
 
     useSerialCommunicationEffect(status => {
-        if (
-            (status.statusWord & (1 << SERIAL_STATUS_WORD.SERIAL_RECEIVE_REQUEST_BIT_NUM)) !==
-            (status.controlWord & (1 << SERIAL_CONTROL_WORD.SERIAL_RECEIVE_ACCEPTED_BIT_NUM))
-        ) {
-            console.log("SYNC SERIAL RECEIVE REQUEST")
+        const recv = status.statusWord & (1 << SERIAL_STATUS_WORD.SERIAL_RECEIVE_REQUEST_BIT_NUM)
+        const recv_ack =
+            status.controlWord & (1 << SERIAL_CONTROL_WORD.SERIAL_RECEIVE_ACCEPTED_BIT_NUM)
+
+        if (recv !== recv_ack) {
             const controlWord =
                 status.controlWord ^ (1 << SERIAL_CONTROL_WORD.SERIAL_RECEIVE_ACCEPTED_BIT_NUM)
 
+            console.log("SET CONTROL WORD", controlWord)
             sendControlWord(controlWord)
         }
     })
 
-    return (
-        <SerialCommunicationsContext.Provider value={initState === InitState.READY}>
-            {children}
-        </SerialCommunicationsContext.Provider>
-    )
-}
-
-export function useSerialCommunicationReadyState() {
-    const context = useContext(SerialCommunicationsContext)
-    if (context === null) {
-        throw new Error(
-            "useSerialCommunicationsReadyState must be used within a SerialCommunicationsProvider"
-        )
-    }
-    return context
+    return children
 }
