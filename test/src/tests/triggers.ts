@@ -12,10 +12,11 @@ import {
 } from "../../../libs/store/src/activity/api/triggers"
 import {
     ACTIVITYSTATE,
+    ACTIVITYTYPE,
     TASK_COMMAND,
     TASK_STATE,
     TRIGGERACTION,
-    TRIGGERTYPE
+    TRIGGERON
 } from "../../../libs/store/src"
 
 const test = uvu.suite("triggers")
@@ -31,8 +32,8 @@ test.before.each(() => {
                 activityCount: 1,
                 triggers: [
                     {
-                        type: 2,
-                        action: 2,
+                        type: TRIGGERON.TRIGGERON_DIGITAL_INPUT,
+                        action: TRIGGERACTION.TRIGGERACTION_START,
                         digital: {
                             input: 1,
                             when: 0
@@ -46,8 +47,8 @@ test.before.each(() => {
                 activityCount: 1,
                 triggers: [
                     {
-                        type: 2,
-                        action: 1,
+                        type: TRIGGERON.TRIGGERON_DIGITAL_INPUT,
+                        action: TRIGGERACTION.TRIGGERACTION_CANCEL,
                         digital: {
                             input: 2,
                             when: 0
@@ -59,14 +60,14 @@ test.before.each(() => {
         .activities(
             {
                 name: "activity1",
-                activityType: 14,
+                activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
                 dwell: {
                     ticksToDwell: 10
                 }
             },
             {
                 name: "activity2",
-                activityType: 14,
+                activityType: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
                 dwell: {
                     ticksToDwell: 10
                 }

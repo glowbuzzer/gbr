@@ -8,7 +8,8 @@ import {
     GlowbuzzerConfig,
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
-    Quat
+    Quat,
+    TaskConfig
 } from "../../libs/store/src"
 
 const DEFAULT_FIELDBUS_CONFIG = {
@@ -198,7 +199,7 @@ export class ConfigBuilder {
         return this
     }
 
-    tasks(...params) {
+    tasks(...params: TaskConfig[]) {
         this.json.task = params
         return this
     }
