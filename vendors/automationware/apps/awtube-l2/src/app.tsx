@@ -45,6 +45,8 @@ import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { Color } from "three"
 import { useThree } from "@react-three/fiber"
 import { Perf } from "r3f-perf"
+import { SerialCommunicationsTileDefinition } from "../../../../../libs/controls/src/serial/SerialCommunicationsTileDefinition"
+import { SerialCommunicationsProvider } from "../../../../../libs/controls/src/serial/SerialCommunicationsProvider"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
@@ -129,6 +131,7 @@ export const App = () => {
                     showToolInputs: true,
                     showToolOutputs: true
                 }),
+                SerialCommunicationsTileDefinition,
                 ConnectTileDefinition,
                 CartesianJogTileDefinition,
                 CartesianDroTileDefinition,

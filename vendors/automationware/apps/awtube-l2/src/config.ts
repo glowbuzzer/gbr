@@ -236,5 +236,10 @@ export const config: GlowbuzzerConfig = {
             ...AwTubeL2KinChainParams,
             inverseDynamicParams: AwTubeL2InverseDynamicParams
         }
+    ],
+    serial: [
+        {
+            name: "default"
+        }
     ]
 }
