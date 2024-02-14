@@ -40,6 +40,10 @@ type Message = {
     value: number[]
 }
 
+/**
+ * A tile to send and serial communications and display received data. This provides an example how to handle
+ * serial communications, and is not intended for production use.
+ */
 export const SerialCommunicationsTile = () => {
     const [messages, setMessages] = useState<Message[]>([])
     const [hex, setHex] = useState<string>("")

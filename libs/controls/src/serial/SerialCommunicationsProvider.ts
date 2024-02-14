@@ -16,6 +16,12 @@ import {
 } from "@glowbuzzer/store"
 import { useDispatch, useSelector } from "react-redux"
 
+/**
+ * Provides coordination for serial communications. This component should be placed at the root of the application, and there
+ * should only be one instance. It is responsible for initializing the serial communications, and acknowledging received data.
+ *
+ * @param children By default this component does not render any children, but it can be used to wrap the entire application
+ */
 export const SerialCommunicationsProvider = ({ children = null }) => {
     const { connected } = useConnection()
     const machineState = useMachineState()

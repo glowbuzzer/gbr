@@ -8,7 +8,7 @@ import { useConfig } from "../config"
 import { useEffect, useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { MachineState, useConnection, useMachineState } from "@glowbuzzer/store"
+import { MachineState, useConnection, useMachineState } from ".."
 
 type SerialSliceState = SerialStatus & {
     controlWord: number
