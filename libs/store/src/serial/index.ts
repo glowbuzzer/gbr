@@ -99,8 +99,16 @@ export function useSerialCommunicationReceive(callback: (data: number[], length:
  * Hook to send control words and data over the serial connection
  */
 export function useSerialCommunication(): {
-    sendData(data: number[]): void
+    /**
+     * Send a control word over the serial connection
+     * @param controlWord The control word to send
+     */
     sendControlWord: (controlWord: number) => void
+    /**
+     * Send data over the serial connection
+     * @param data An array of bytes to send
+     */
+    sendData(data: number[]): void
 } {
     const config = useConfig()
     const { send, connected } = useConnection()
@@ -108,23 +116,17 @@ export function useSerialCommunication(): {
     const controlWord = useSelector((state: RootState) => state.serial.controlWord)
     const dispatch = useDispatch()
 
-    if (!config.serial?.length) {
-        return {
-            sendControlWord() {
-                throw new Error("Serial communication not configured")
-            },
-            sendData() {
-                throw new Error("Serial communication not configured")
-            }
-        }
-    }
-
     return useMemo(() => {
         return {
             sendControlWord: (controlWord: number) => {
                 if (!connected) {
                     throw new Error("Not connected, serial communication not possible")
                 }
+
+                if (!config.serial?.length) {
+                    throw new Error("Serial communication not configured")
+                }
+
                 send(
                     JSON.stringify({
                         command: {
@@ -140,6 +142,7 @@ export function useSerialCommunication(): {
                 )
                 dispatch(serialSlice.actions.setControlWord(controlWord))
             },
+
             sendData(data: number[]) {
                 // xor the transmit bit of the current control word
                 const nextControlWord =
@@ -148,6 +151,11 @@ export function useSerialCommunication(): {
                 if (!connected) {
                     throw new Error("Not connected, serial communication not possible")
                 }
+
+                if (!config.serial?.length) {
+                    throw new Error("Serial communication not configured")
+                }
+
                 send(
                     JSON.stringify({
                         command: {
@@ -166,7 +174,7 @@ export function useSerialCommunication(): {
                 dispatch(serialSlice.actions.setControlWord(nextControlWord))
             }
         }
-    }, [send, connected, statusWord, controlWord, dispatch])
+    }, [config, send, connected, statusWord, controlWord, dispatch])
 }
 
 export function useSerialCommunicationReadyState() {
