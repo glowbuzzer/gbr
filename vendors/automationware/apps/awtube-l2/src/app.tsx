@@ -16,6 +16,7 @@ import {
     JointJogTileDefinition,
     JointTorqueModesTileDefinition,
     PointsTileDefinition,
+    SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
@@ -28,25 +29,21 @@ import React, { Suspense } from "react"
 import {
     AwTubeRobot,
     AwTubeRobotParts,
+    AwTubeStatusTileDefinitionBuilder,
     Base,
     Clamp,
     Joint,
     Link,
     Monobraccio,
     Plate,
-    Spindle
+    Spindle,
+    useLoadedRobotParts
 } from "@glowbuzzer/awlib"
 import { Environment, Sphere } from "@react-three/drei"
-import { useLoadedRobotParts } from "@glowbuzzer/awlib"
-import { AwTubeStatusTileDefinitionBuilder } from "@glowbuzzer/awlib"
-import { SimpleMoveTile, SimpleMoveTileDefinition } from "./SimpleMoveTile"
-import { PartGrid } from "./PartGrid"
+import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { Color } from "three"
 import { useThree } from "@react-three/fiber"
-import { Perf } from "r3f-perf"
-import { SerialCommunicationsTileDefinition } from "../../../../../libs/controls/src/serial/SerialCommunicationsTileDefinition"
-import { SerialCommunicationsProvider } from "../../../../../libs/controls/src/serial/SerialCommunicationsProvider"
 
 // construct the robot definition from the parts
 const definition: AwTubeRobotParts = {
