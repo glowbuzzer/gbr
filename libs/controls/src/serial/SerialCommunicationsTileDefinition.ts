@@ -3,7 +3,7 @@
  */
 
 import React from "react"
-import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
+import { DockTileDefinitionBuilder } from ".."
 import { SerialCommunicationsTile } from "./SerialCommunicationsTile"
 
 export const SerialCommunicationsTileDefinition = DockTileDefinitionBuilder()
