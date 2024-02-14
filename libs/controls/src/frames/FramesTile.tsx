@@ -230,9 +230,7 @@ export const FramesTile = () => {
             ) : (
                 <CartesianPositionTable
                     selected={selected}
-                    setSelected={v => {
-                        setSelected(v)
-                    }}
+                    setSelected={setSelected}
                     items={treeData}
                     onEdit={() => setEditMode(true)}
                     onAdd={add_frame}
