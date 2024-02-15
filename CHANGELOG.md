@@ -2,6 +2,64 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.12.0](https://github.com/glowbuzzer/gbr/compare/v1.11.0...v1.12.0) (2024-02-14)
+
+
+### Feature
+
+* **#102:** Support FSoE safety ([7cddf87](https://github.com/glowbuzzer/gbr/commit/7cddf8730c8c38e2797a40c20d275c4105c341b3))
+* **#134:** Ability to save and reload telemetry ([9cbe9f2](https://github.com/glowbuzzer/gbr/commit/9cbe9f23f5ec2831e698e005296ddc64cf704560))
+* **#135:** touch-enabled jog controls ([6549960](https://github.com/glowbuzzer/gbr/commit/65499600adfd6905c16d1107bd4f2906081ae8e6))
+* **#137:** Allow editing of points and frames ([8c5f559](https://github.com/glowbuzzer/gbr/commit/8c5f559e7a0a2ab72e6dad3d738221fbe0e46241))
+* **#140:** Add status bar and status tray with notifications ([3770c7e](https://github.com/glowbuzzer/gbr/commit/3770c7ed0e04f9eb63a6f925bd024ea2f7653f26))
+* **#142:** Download drive logs in EmStatTile.tsx ([ee15a1b](https://github.com/glowbuzzer/gbr/commit/ee15a1b75e1546616c39acf01e4df663a39ec3b6))
+* **#143:** Serial communications support ([61ef8da](https://github.com/glowbuzzer/gbr/commit/61ef8daa90d85ce52e53ba8a7652fab5c11eeb18))
+
+
+### Bug Fix
+
+* **#132:** Issue with forward references in frame config ([e523d59](https://github.com/glowbuzzer/gbr/commit/e523d59df513e6e0a9078e8d8b4b6d0c26a64cd6))
+* **#138:** Fix frame hierarchy editing ([8c5f559](https://github.com/glowbuzzer/gbr/commit/8c5f559e7a0a2ab72e6dad3d738221fbe0e46241))
+* **#144:** control effort not appearing in telemetry tile ([6749478](https://github.com/glowbuzzer/gbr/commit/67494789d1eb90cc3552631b81ee27ea9d285fc0))
+* avoid early return in useSerialCommunication as it causes different hook count error ([e463eb1](https://github.com/glowbuzzer/gbr/commit/e463eb1a0fa3ad1d3aff505861bcef4ea01d4b6b))
+* export new serial comms components from controls project ([1c3bea2](https://github.com/glowbuzzer/gbr/commit/1c3bea27ddcdd4634dd84dbff6199081ae65489b))
+* fix issues with serial comms handling ([5fb68c8](https://github.com/glowbuzzer/gbr/commit/5fb68c8b437221459b0622d1711ed28b0440273e))
+* Fix style issue on points display in scene ([5476e4e](https://github.com/glowbuzzer/gbr/commit/5476e4e7b2529e02f73c41426d1435112127f665))
+* Only try to send jog activities when connected ([c0f67c2](https://github.com/glowbuzzer/gbr/commit/c0f67c2c575d4e8e55eba680ad9cc237311f19dd))
+* remove self-reference in @glowbuzzer/controls ([7c1beaa](https://github.com/glowbuzzer/gbr/commit/7c1beaaf5f706f29085026a97979ab26173df058))
+* trigger serial comms effect when entering OP ([bfe1eab](https://github.com/glowbuzzer/gbr/commit/bfe1eabe8b789239ac7784da8001536eb86571e5))
+
+
+### Chore
+
+* Add back styled sections ([faea89d](https://github.com/glowbuzzer/gbr/commit/faea89de375647f6822944e4dd3cdec573b31159))
+* add new activities for unsigned integers and externals ([fc6916d](https://github.com/glowbuzzer/gbr/commit/fc6916d92dbb6990d081f653ea98b2d5bdf6f163))
+* add new hooks for unsigned integers and safety inputs, and externals ([fc6916d](https://github.com/glowbuzzer/gbr/commit/fc6916d92dbb6990d081f653ea98b2d5bdf6f163))
+* add serial comms to awtube-l2 app ([ea542ad](https://github.com/glowbuzzer/gbr/commit/ea542ad833c3fbf34e0d3858819ca0006342b1b3))
+* add spacing between toolbar buttons ([e954b80](https://github.com/glowbuzzer/gbr/commit/e954b801af60cbda73ba89fd5c42325e05e6967c))
+* add toggle class to GlowbuzzerIcon.tsx ([9fa6ba7](https://github.com/glowbuzzer/gbr/commit/9fa6ba7735508024389cd8ab9d02316a854f765c))
+* cleanup imports ([e6663d3](https://github.com/glowbuzzer/gbr/commit/e6663d3f3a4a8698e56cb1d8facc3c2648338329))
+* Correct AW joint config ([c7be552](https://github.com/glowbuzzer/gbr/commit/c7be552e03de2a507b8a6ecdfced02fb444657d4))
+* fix AwTube-L dynamics params ([c83dac5](https://github.com/glowbuzzer/gbr/commit/c83dac5db39ec358d85854a25617e5e09ce1cbd4))
+* fix component generation and add doc ([13827a5](https://github.com/glowbuzzer/gbr/commit/13827a59ca81bc41eda857f3cdc14f7fa18947c2))
+* improve StatusTrayFaults.tsx styling ([4182bc5](https://github.com/glowbuzzer/gbr/commit/4182bc548835799fb758ee3da5c4d9b4d2362430))
+* improve style in StatusTray.tsx ([cdafb81](https://github.com/glowbuzzer/gbr/commit/cdafb81656decb5f3ac994ca7b4b684d572f445d))
+* make status tray more visible ([778f916](https://github.com/glowbuzzer/gbr/commit/778f916b6b0029624572008491e8666ffed30fb0))
+* memoize useFrames hook ([c6922ae](https://github.com/glowbuzzer/gbr/commit/c6922aefcc3074b5224abac815052d1dd26891dc))
+* modify default scrollbar style ([2405ccd](https://github.com/glowbuzzer/gbr/commit/2405ccd629edea3e623ada5dbfc6dd82b6786264))
+* only allow trigger of drive logs when target is fieldbus and not OP_ENABLED ([d342f27](https://github.com/glowbuzzer/gbr/commit/d342f271812065af61c037c2dc630d32e46f933d))
+* Reformat string appearances ([a28a75a](https://github.com/glowbuzzer/gbr/commit/a28a75a598c52e2ba4c4c0cbeabf7d33fb034d9c))
+* remove fieldbus layout ([a54c70a](https://github.com/glowbuzzer/gbr/commit/a54c70a42a1ce7a12066bb937da1fd476c976b63))
+* rename urdf files ([38a3f34](https://github.com/glowbuzzer/gbr/commit/38a3f3474d09d8bbd651db0638e7024c67e1627d))
+* trivial changes to tests ([45785ad](https://github.com/glowbuzzer/gbr/commit/45785ad18f06261ea9a9aaaf01c671f7f64598cc))
+* update awlib submodule hash ([9f5b188](https://github.com/glowbuzzer/gbr/commit/9f5b18849ea5c3be1578a8f8868e3f7422985ab5))
+* update awlib submodule hash ([6ae7c8c](https://github.com/glowbuzzer/gbr/commit/6ae7c8c8c5a4489f286e0ac97879b8d6cd83a79b))
+* update generated gbc.ts ([ff7fc66](https://github.com/glowbuzzer/gbr/commit/ff7fc66b6bdca457ac31b354543986e1a97cf2b7))
+* Update restart acknowledge bit number ([eb21ef8](https://github.com/glowbuzzer/gbr/commit/eb21ef8f02d238a884e70dbda5fc010136b5c9e4))
+* Update serial comms behavior ([c270f47](https://github.com/glowbuzzer/gbr/commit/c270f4738a3ec7179609a47a57329aeb7a20afb8))
+* Update serial comms behavior ([5ec5517](https://github.com/glowbuzzer/gbr/commit/5ec5517355858ec94329b09568f351f1b85a559b))
+* Update Slave emergency name in emstat ([bc8e52f](https://github.com/glowbuzzer/gbr/commit/bc8e52f35f2a734ccc1d7a34bae4c52b028f5418))
+
 ## [1.11.0](https://github.com/glowbuzzer/gbr/compare/v1.10.0...v1.11.0) (2024-01-04)
 
 
