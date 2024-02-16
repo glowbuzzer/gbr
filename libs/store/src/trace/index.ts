@@ -88,6 +88,7 @@ export const traceSlice: Slice<TraceSliceType> = createSlice({
     }
 })
 
+const EMPTY_ARRAY = []
 /**
  * @ignore - Internal to the ThreeDimensionalScene tile
  */
@@ -96,11 +97,12 @@ export const useTrace = (kinematicsConfigurationIndex: number) => {
         ({ trace }: RootState): TraceForKinematicsConfiguration => {
             const kc = trace.kcs[kinematicsConfigurationIndex]
             return {
-                path: kc?.path || [],
+                path: kc?.path || EMPTY_ARRAY,
                 enabled: kc?.enabled,
                 last: kc?.last
             } as TraceForKinematicsConfiguration
-        }
+        },
+        shallowEqual
     )
 
     const dispatch = useDispatch()
