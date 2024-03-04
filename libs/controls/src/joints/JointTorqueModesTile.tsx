@@ -157,7 +157,8 @@ export const JointTorqueModesTile = () => {
     const disabled = !connection.connected || state !== MachineState.OPERATION_ENABLED
 
     function toggle_zerog() {
-        setZerog(!zerog)
+        const next = !zerog
+        setZerog(next)
         connection.send(
             JSON.stringify({
                 command: {
@@ -172,7 +173,7 @@ export const JointTorqueModesTile = () => {
                                 {
                                     command: {
                                         torqueMode:
-                                            zerog && zero_g_supported
+                                            next && zero_g_supported
                                                 ? JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
                                                 : JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_DEFAULT
                                     } as JointCommand
