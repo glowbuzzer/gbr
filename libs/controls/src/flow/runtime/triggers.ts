@@ -12,15 +12,15 @@ import {
     TriggerOnUnsignedIntegerInput,
     TRIGGERTYPE
 } from "@glowbuzzer/store"
-import { MachineStateAll } from "./types"
+import { MachineInputsState } from "./types"
 
 export abstract class ClientSideTrigger<T = unknown, S = unknown> {
     protected initialValue: T
 
     constructor(
         protected branch: FlowBranch,
-        init: MachineStateAll = null,
-        protected select: (state: MachineStateAll) => T = null,
+        init: MachineInputsState = null,
+        protected select: (state: MachineInputsState) => T = null,
         private selectTrigger: (branch: FlowBranch) => S = null
     ) {
         this.initialValue = select?.(init)
@@ -34,7 +34,7 @@ export abstract class ClientSideTrigger<T = unknown, S = unknown> {
         return this.selectTrigger(this.branch)
     }
 
-    public abstract triggered(state: MachineStateAll): boolean
+    public abstract triggered(state: MachineInputsState): boolean
 }
 
 export class ImmediateTrigger extends ClientSideTrigger {
@@ -44,7 +44,7 @@ export class ImmediateTrigger extends ClientSideTrigger {
 }
 
 export class DigitalInputTrigger extends ClientSideTrigger<boolean, TriggerOnDigitalInput> {
-    triggered(state: MachineStateAll): boolean {
+    triggered(state: MachineInputsState): boolean {
         const now = this.select(state)
         switch (this.trigger.when) {
             case TRIGGERTYPE.TRIGGERTYPE_FALLING:
@@ -57,7 +57,7 @@ export class DigitalInputTrigger extends ClientSideTrigger<boolean, TriggerOnDig
 }
 
 export class TimerTrigger extends ClientSideTrigger<number> {
-    triggered(state: MachineStateAll): boolean {
+    triggered(state: MachineInputsState): boolean {
         const now = this.select(state)
         return now - this.initialValue >= this.branch.trigger.timer.delay
     }
@@ -67,7 +67,7 @@ export class NumericInputTrigger extends ClientSideTrigger<
     number,
     TriggerOnIntegerInput | TriggerOnUnsignedIntegerInput | TriggerOnAnalogInput
 > {
-    triggered(state: MachineStateAll): boolean {
+    triggered(state: MachineInputsState): boolean {
         const now = this.select(state)
         const threshold = this.trigger.value
         switch (this.trigger.when) {

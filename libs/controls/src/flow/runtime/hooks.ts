@@ -4,6 +4,7 @@
 
 import {
     Flow,
+    MachineState,
     STREAMCOMMAND,
     STREAMSTATE,
     useAnalogInputs,
@@ -15,15 +16,16 @@ import {
     useIntegerInputs,
     useMachine,
     useMachineConfig,
+    useMachineState,
     useSafetyDigitalInputs,
     useStream,
     useUnsignedIntegerInputs
 } from "@glowbuzzer/store"
 import { useEffect, useMemo, useState } from "react"
 import { ClientSideTrigger, triggerFactory } from "./triggers"
-import { FlowState, MachineStateAll } from "./types"
+import { FlowState, MachineInputsState } from "./types"
 
-function useFlowTriggerInputsState(): MachineStateAll {
+function useFlowTriggerInputsState(): MachineInputsState {
     const digitalInputs = useDigitalInputs()
     const safetyDigitalInputs = useSafetyDigitalInputs()
     const analogInputs = useAnalogInputs()
@@ -66,22 +68,35 @@ type FlowRuntimeReturn = {
     reset?: () => void
 }
 
-export function useFlowRuntime2(selectedFlowIndex: number): FlowRuntimeReturn {
+export function useFlowRuntime(selectedFlowIndex: number): FlowRuntimeReturn {
     const flows = useFlows()
     const { state: stream_state, execute, sendCommand, tag, reset } = useStream(0)
     const { busCycleTime } = useMachineConfig()
-    const input_state = useFlowTriggerInputsState()
     const { connected } = useConnection()
+    const machine_state = useMachineState()
+    const input_state = useFlowTriggerInputsState()
 
     const [activeFlow, setActiveFlow] = useState<Flow>(null)
     const [triggerNextFlow, setTriggerNextFlow] = useState(false)
     const [triggersPaused, setTriggersPaused] = useState(false)
     const [triggers, setTriggers] = useState<ClientSideTrigger[]>()
 
+    useEffect(() => {
+        if (!connected || machine_state !== MachineState.OPERATION_ENABLED) {
+            // reset all
+            reset() // stream buffer
+            setActiveFlow(null)
+            setTriggerNextFlow(false)
+            setTriggersPaused(false)
+            setTriggers(null)
+        }
+    }, [connected, machine_state])
+
     const state = useMemo(() => {
         if (!connected) {
             return FlowState.OFFLINE
         }
+        // merge stream state with wait state betwen flows (client-side triggers)
         switch (stream_state) {
             case STREAMSTATE.STREAMSTATE_IDLE:
                 return triggerNextFlow
@@ -102,24 +117,21 @@ export function useFlowRuntime2(selectedFlowIndex: number): FlowRuntimeReturn {
         }
     }, [connected, stream_state, activeFlow, triggerNextFlow])
 
-    function exec(flow: Flow) {
-        execute(api => flow.activities.map(activity => api.from(activity)))
-            .then(() => {
-                console.log("FLOW ENDED", flow.name, "BRANCHES", flow.branches.length)
-                if (flow.branches?.length) {
-                    setTriggerNextFlow(true)
-                }
-            })
-            .catch(() => {
-                console.log("EXCEPTION RECEIVED")
-                setActiveFlow(null)
-            })
-    }
-
+    // start the active flow when it changes
     useEffect(() => {
         if (activeFlow) {
-            console.log("START FLOW", activeFlow.name)
-            exec(activeFlow)
+            // console.log("START FLOW", activeFlow.name)
+            execute(api => activeFlow.activities.map(activity => api.from(activity)))
+                .then(() => {
+                    // console.log("FLOW ENDED", flow.name, "BRANCHES", flow.branches.length)
+                    if (activeFlow.branches?.length) {
+                        setTriggerNextFlow(true)
+                    }
+                })
+                .catch(() => {
+                    // console.log("EXCEPTION RECEIVED")
+                    setActiveFlow(null)
+                })
         }
     }, [activeFlow])
 
@@ -139,28 +151,17 @@ export function useFlowRuntime2(selectedFlowIndex: number): FlowRuntimeReturn {
 
     useEffect(() => {
         if (triggers && !triggersPaused) {
-            // console.log("check triggers!")
-            // find the first trigger that has fired
+            // find the first trigger that has fired, if any
             const trigger = triggers.find(trigger => trigger.triggered(input_state))
             if (trigger) {
-                console.log(
-                    "TRIGGER NEXT FLOW!",
-                    activeFlow.name,
-                    "to",
-                    flows[trigger.flowIndex].name,
-                    triggers.length
-                )
+                // console.log("TRIGGER NEXT FLOW", flows[trigger.flowIndex].name)
                 setTriggerNextFlow(false)
                 setActiveFlow(flows[trigger.flowIndex])
             }
         }
     }, [input_state, triggers, triggersPaused])
 
-    const result: FlowRuntimeReturn = {
-        activeFlow,
-        state
-    }
-
+    // create some convenience functions for controlling the stream and other state
     const start_stream = () => {
         setActiveFlow(flows[selectedFlowIndex])
         setTriggerNextFlow(false)
@@ -175,6 +176,13 @@ export function useFlowRuntime2(selectedFlowIndex: number): FlowRuntimeReturn {
         setTriggerNextFlow(false)
     }
 
+    // by default no actions are available
+    const result: FlowRuntimeReturn = {
+        activeFlow,
+        state
+    }
+
+    // determine which actions are available based on the current state
     switch (state) {
         case FlowState.IDLE:
             result.start = start_stream
@@ -210,5 +218,6 @@ export function useFlowRuntime2(selectedFlowIndex: number): FlowRuntimeReturn {
             }
             break
     }
+
     return result
 }

@@ -4,7 +4,7 @@
 
 import { STREAMSTATE } from "@glowbuzzer/store"
 
-export type MachineStateAll = {
+export type MachineInputsState = {
     analogInputs: number[]
     digitalInputs: boolean[]
     safetyDigitalInputs: boolean[]
