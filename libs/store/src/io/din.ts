@@ -25,7 +25,7 @@ export const digitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
  */
 export function useDigitalInputList() {
     const config = useConfig()
-    return config.din
+    return config.din || []
 }
 
 /**
@@ -61,7 +61,7 @@ export const safetyDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlic
  */
 export function useSafetyDigitalInputList() {
     const config = useConfig()
-    return config.safetyDin
+    return config.safetyDin || []
 }
 
 /**

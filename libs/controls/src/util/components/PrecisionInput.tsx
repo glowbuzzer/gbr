@@ -1,28 +1,74 @@
-import React, { useEffect, useRef, WheelEvent } from "react"
-import { InputNumber } from "antd"
-
 /*
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+import React, { useEffect, useRef, WheelEvent } from "react"
+import { InputNumber } from "antd"
+import styled from "styled-components"
+
+const StyledInputNumber = styled(InputNumber)<{ $width?: number }>`
+    width: ${props => (props.$width ? `${props.$width + 2}em` : "none")};
+`
+
+function clamp(value: number, min: number, max: number) {
+    return Math.min(Math.max(value, min || Number.MIN_VALUE), max || Number.MAX_VALUE)
+}
+
 type PrecisionInputProps = {
     value: number
-    onChange: (value: number) => void
+    onChange?: (value: number) => void
     precision: number
     step?: number
+    min?: number
+    max?: number
+    width?: number
 }
-export const PrecisionInput = ({ value, onChange, precision, step }: PrecisionInputProps) => {
+export const PrecisionInput = ({
+    value,
+    onChange,
+    precision,
+    step,
+    min,
+    max,
+    width
+}: PrecisionInputProps) => {
     const [valueString, setValueString] = React.useState(value.toFixed(precision))
     const valueRef = useRef(value) // initial value
+    const timerValueStringRef = useRef(null)
+    const timerValueRef = useRef(null)
 
     useEffect(() => {
         if (!Number.isNaN(valueString)) {
-            onChange(Number(valueString))
+            const value = clamp(Number(valueString), min, max)
+            onChange(value)
         }
     }, [valueString])
 
     useEffect(() => {
-        setValueString(value.toFixed(precision))
+        clearTimeout(timerValueStringRef.current)
+        if (!Number.isNaN(valueString)) {
+            // ensure we are clamped, but give a delay in case the user is mid-edit
+            const value = Number(valueString)
+            if (value < min) {
+                timerValueStringRef.current = setTimeout(
+                    () => setValueString(min.toFixed(precision)),
+                    300
+                )
+            }
+            if (value > max) {
+                timerValueStringRef.current = setTimeout(
+                    () => setValueString(max.toFixed(precision)),
+                    300
+                )
+            }
+        }
+    }, [valueString])
+
+    useEffect(() => {
+        clearTimeout(timerValueRef.current)
+        timerValueRef.current = setTimeout(() => {
+            setValueString(value.toFixed(precision))
+        }, 750)
     }, [value])
 
     useEffect(() => {
@@ -66,13 +112,16 @@ export const PrecisionInput = ({ value, onChange, precision, step }: PrecisionIn
     }
 
     return (
-        <InputNumber
+        <StyledInputNumber
             value={valueString}
             onStep={step ? handle_step : undefined}
             size="small"
             step={1 / Math.pow(10, precision)}
+            min={min}
+            max={max}
             onWheel={handle_wheel}
             onChange={update_value}
+            $width={width}
         />
     )
 }

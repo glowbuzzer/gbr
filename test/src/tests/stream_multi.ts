@@ -35,7 +35,7 @@ test("can execute empty program", async () => {
 })
 
 test("can execute a dwell", async () => {
-    const dwell = gbc.stream.dwell(5).command
+    const dwell = gbc.stream.dwell(20).command
     const end_program = gbc.stream.endProgram().command
 
     gbc.enqueue([dwell, end_program], 1).exec(1)

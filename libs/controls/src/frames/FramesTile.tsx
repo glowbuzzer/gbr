@@ -7,9 +7,7 @@ import {
     CartesianPosition,
     configSlice,
     Frame,
-    FramesConfig,
     GlowbuzzerConfig,
-    PointsConfig,
     POSITIONREFERENCE,
     Quat,
     useConfig,
@@ -22,7 +20,7 @@ import {
 import { message, TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
-import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
+import { CartesianPositionEditFullWithToolbar } from "../util/components/CartesianPositionEditFullWithToolbar"
 import { useConfigLiveEdit } from "../config"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -39,7 +37,7 @@ function useFramesLoader() {
     const config = useConfig()
     const dispatch = useDispatch()
 
-    return async ({ frames }: { frames: FramesConfig[] }) => {
+    return async ({ frames }: { frames: GlowbuzzerConfig["frames"] }) => {
         if (!connection.connected) {
             throw new Error("You must be connected to store frames")
         }
@@ -130,7 +128,7 @@ export const FramesTile = () => {
                     parentFrameIndex,
                     translation,
                     rotation
-                } as FramesConfig
+                }
             }
             return frame
         })
@@ -145,7 +143,7 @@ export const FramesTile = () => {
             translation
         }: CartesianPosition
     ) {
-        const overrides: FramesConfig[] = frames_with_modification(
+        const overrides: GlowbuzzerConfig["frames"] = frames_with_modification(
             selected,
             name,
             positionReference,
@@ -165,7 +163,7 @@ export const FramesTile = () => {
             translation
         }: CartesianPosition
     ) {
-        const next: FramesConfig[] = frames_with_modification(
+        const next: GlowbuzzerConfig["frames"] = frames_with_modification(
             selected,
             name,
             positionReference,
@@ -183,7 +181,7 @@ export const FramesTile = () => {
     }
 
     function add_frame() {
-        const next: FramesConfig[] = [
+        const next: GlowbuzzerConfig["frames"] = [
             ...frames,
             {
                 name: "New Frame",
@@ -201,7 +199,7 @@ export const FramesTile = () => {
     }
 
     function delete_frame() {
-        const next: PointsConfig[] = frames.filter((_, index) => index !== selected)
+        const next: GlowbuzzerConfig["points"] = frames.filter((_, index) => index !== selected)
         loader({
             frames: next
         }).then(() => {
@@ -220,7 +218,7 @@ export const FramesTile = () => {
         <>
             {messageContext}
             {editMode ? (
-                <CartesianPositionEdit
+                <CartesianPositionEditFullWithToolbar
                     name={frames[selected].name}
                     value={frame_to_cartesian_position(selected)}
                     onSave={save_frames}

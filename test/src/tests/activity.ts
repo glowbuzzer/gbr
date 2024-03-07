@@ -113,7 +113,7 @@ test("can run move joints followed by move to position", async () => {
 })
 
 test("can run dwell", async () => {
-    const dwell = gbc.wrap(gbc.activity.dwell(100).promise)
+    const dwell = gbc.wrap(gbc.activity.dwell(400).promise)
     await dwell.start().iterations(50).assertNotResolved()
     await dwell.iterations(60).assertCompleted()
 })

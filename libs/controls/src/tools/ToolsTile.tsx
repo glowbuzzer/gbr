@@ -43,6 +43,8 @@ export const ToolsTile = () => {
         return api.setToolOffset(index).promise()
     }
 
+    const { units, precision } = getUnits("linear")
+
     return (
         <StyledTileContent>
             {tools?.map((config, index) => (
@@ -50,8 +52,7 @@ export const ToolsTile = () => {
                     <div className="name">{config.name}</div>
                     {index === toolIndex && <RightOutlined />}
                     <Tag>
-                        {fromSI(config.translation?.z || 0, "linear").toFixed(2)}{" "}
-                        {getUnits("linear")}
+                        {fromSI(config.translation?.z || 0, "linear").toFixed(precision)} {units}
                     </Tag>
                     {config.diameter && (
                         <Tag>
@@ -65,7 +66,7 @@ export const ToolsTile = () => {
                                     strokeWidth={1}
                                 />
                             </svg>
-                            {fromSI(config.diameter || 0, "linear").toFixed(2)} {getUnits("linear")}
+                            {fromSI(config.diameter || 0, "linear").toFixed(precision)} {units}
                         </Tag>
                     )}
                     <Button

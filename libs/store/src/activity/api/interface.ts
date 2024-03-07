@@ -3,12 +3,11 @@
  */
 
 import {
+    ActivityStreamItemBuilder,
     AoutBuilder,
-    DoutBuilder,
     DwellActivityBuilder,
     GenericDoutBuilder,
     GenericIoutBuilder,
-    IoutBuilder,
     MoveArcBuilder,
     MoveInstantBuilder,
     MoveJointsAtVelocityBuilder,
@@ -21,11 +20,11 @@ import {
     SpindleActivityBuilder,
     ToolOffsetBuilder
 } from "./builders"
-import { SPINDLEDIRECTION } from "../../gbc"
+import { ActivityStreamItem, SPINDLEDIRECTION } from "../../gbc"
 
 export interface ActivityApi {
     /** Dwell for a number of cycles */
-    dwell(ticksToDwell: number): DwellActivityBuilder
+    dwell(msToDwell: number): DwellActivityBuilder
 
     /** Move in an arc.
      *
@@ -189,18 +188,16 @@ export interface ActivityApi {
      * @param direction
      */
     spindle(
-        spindleIndex,
+        spindleIndex: number,
         enable?: boolean,
         speed?: number,
         direction?: SPINDLEDIRECTION
     ): SpindleActivityBuilder
 
     /**
-     * Run activities in sequence. The activities provided will be executed in order.
+     * Create an activity from an existing activity stream item. A builder is created that can be executed as part of a stream.
      *
-     * If any activity is cancelled, the rest of the sequence will be cancelled.
-     *
-     * @param builders The array of builders to execute
+     * @param activity The activity that is used to initialise the builder
      */
-    // sequence(...builders: ActivityBuilder[]): Promise<void>
+    from(activity: ActivityStreamItem): ActivityStreamItemBuilder
 }

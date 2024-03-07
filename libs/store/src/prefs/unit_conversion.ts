@@ -3,6 +3,7 @@
  */
 
 export const ConversionFactors = {
+    m: 1000,
     mm: 1,
     in: 25.4,
     rad: 1,

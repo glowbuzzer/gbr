@@ -103,7 +103,7 @@ for (const project of projects) {
         const external_libs = [
             '@glowbuzzer/store',
             // react and redux
-            'react', 'react-dom', 'react-redux', '@reduxjs/toolkit',
+            'react', 'react-dom', 'react-redux', '@reduxjs/toolkit', "redux-undo",
             // antd
             'antd', '@ant-design/icons',
             // styles

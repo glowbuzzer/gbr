@@ -323,7 +323,7 @@ export const config: GlowbuzzerConfig = {
             name: "dwell for 20",
             activityType: 13,
             dwell: {
-                ticksToDwell: 20
+                msToDwell: 20
             }
         }
     ]

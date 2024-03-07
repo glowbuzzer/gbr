@@ -2,12 +2,21 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { combineReducers, configureStore, Reducer, StoreEnhancer } from "@reduxjs/toolkit"
+import {
+    AnyAction,
+    combineReducers,
+    configureStore,
+    Middleware,
+    Reducer,
+    StoreEnhancer
+} from "@reduxjs/toolkit"
 import {
     configSlice,
     framesSlice,
     GlowbuzzerConfig,
     prefsSlice,
+    RootState,
+    settings,
     standardReducers,
     telemetrySlice
 } from "@glowbuzzer/store"
@@ -22,8 +31,23 @@ export const GlowbuzzerAppLifecycle = new (class {
             return import.meta.hot.data.store
         }
 
-        const middleware = getDefault => {
-            return getDefault({ immutableCheck: false, serializableCheck: false })
+        const flowStorage = settings("flows")
+
+        const localStorageMiddleware: Middleware<{}, RootState> =
+            store => next => (action: AnyAction) => {
+                const result = next(action)
+                if (action.type.startsWith("flow/")) {
+                    const state = store.getState()
+                    flowStorage.save(state.flow.present)
+                }
+                return result
+            }
+
+        const middleware = (getDefault: (options: any) => Middleware[]) => {
+            return getDefault({
+                immutableCheck: false,
+                serializableCheck: false
+            }).concat(localStorageMiddleware)
         }
 
         const store = configureStore({

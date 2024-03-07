@@ -7,8 +7,8 @@ import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { DownOutlined } from "@ant-design/icons"
 import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { useFramesList, usePointsList, useSoloActivity } from "@glowbuzzer/store"
-import { Dropdown, Menu } from "antd"
+import { PointsConfig, useFramesList, usePointsList, useSoloActivity } from "@glowbuzzer/store"
+import { Dropdown } from "antd"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import { ItemType } from "antd/es/menu/hooks/useItems"
@@ -30,7 +30,7 @@ export const JogHomeSplitButton = ({ kinematicsConfigurationIndex, frameIndex })
     const frames = useFramesList()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
-    function go(point) {
+    function go(point: PointsConfig) {
         // we'll use the currently selected frame if none is specified by the point
         return motion.moveToPosition().frameIndex(frameIndex).setFromPoint(point).promise()
     }

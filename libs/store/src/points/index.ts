@@ -3,7 +3,7 @@
  */
 
 import { useConfig } from "../config"
-import { PointsConfig } from "../gbc"
+import { GlowbuzzerConfig } from "../gbc"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
@@ -28,11 +28,11 @@ export const pointsSlice: Slice<PointsSliceType> = createSlice({
  * Provides access to the points that have been configured. The overrides parameter is used by GBR for dynamic editing of points
  * and should not generally be used by applications.
  */
-export function usePointsList(overrides?: PointsConfig[]) {
+export function usePointsList(overrides?: GlowbuzzerConfig["points"]): GlowbuzzerConfig["points"] {
     const config = useConfig()
     // normalise points
     return (
-        (overrides || config.points)?.map<PointsConfig>(p => ({
+        (overrides || config.points)?.map(p => ({
             ...p,
             translation: {
                 x: 0,

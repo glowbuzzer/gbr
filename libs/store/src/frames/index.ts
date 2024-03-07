@@ -8,7 +8,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { useConfig } from "../config"
 import { RootState } from "../root"
 import { build_list, build_tree2, change_reference_frame } from "../util/frame_utils"
-import { FramesConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
+import { FramesConfig, GlowbuzzerConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
 import { useMemo } from "react"
 
 const { load, save } = settings("frames")
@@ -72,7 +72,7 @@ export const useFrames = (overrides?: FramesConfig[]) => {
 /**
  * Provides a list of the currently configured frames.
  */
-export function useFramesList(overrides?: FramesConfig[]): FramesConfig[] {
+export function useFramesList(overrides?: GlowbuzzerConfig["frames"]): GlowbuzzerConfig["frames"] {
     const config = useConfig()
 
     // make sure the frames have sensible defaults for missing properties
@@ -97,7 +97,6 @@ export function useFrame(index: number, useDefaults = true): FramesConfig {
             ? {
                   translation: { x: 0, y: 0, z: 0 },
                   rotation: { x: 0, y: 0, z: 0, w: 1 },
-                  name: "unknown",
                   positionReference: POSITIONREFERENCE.ABSOLUTE
               }
             : {})

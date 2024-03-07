@@ -75,10 +75,10 @@ export const JogGotoInputPanel = ({
     const { toSI, getUnits } = usePrefs()
     const [values, setValues] = useLocalStorage<string[]>(localStorageKey, EMPTY_ARRAY)
 
-    const linearUnits = getUnits("linear")
+    const { units: linearUnits } = getUnits("linear")
     const linearUnitsRef = useRef(linearUnits)
 
-    const angularUnits = getUnits("angular")
+    const { units: angularUnits } = getUnits("angular")
     const angularUnitsRef = useRef(angularUnits)
 
     useEffect(() => {
@@ -130,31 +130,34 @@ export const JogGotoInputPanel = ({
 
     return (
         <StyledDiv>
-            {items.map(({ key, type, label }, index) => (
-                <div key={index}>
-                    <Input
-                        size="small"
-                        className={invalid[index] ? "invalid" : ""}
-                        addonAfter={getUnits(type)}
-                        value={values[index]}
-                        onChange={e => update_position(index, e.target.value)}
-                    />
-                    <Button
-                        size="small"
-                        onClick={() => goto(key, index)}
-                        disabled={disabled || invalid[index]}
-                    >
-                        Go to {label}
-                    </Button>
-                    <Button
-                        size="small"
-                        onClick={() => update_position(index, "0")}
-                        disabled={disabled}
-                    >
-                        Zero
-                    </Button>
-                </div>
-            ))}
+            {items.map(({ key, type, label }, index) => {
+                const { units } = getUnits(type)
+                return (
+                    <div key={index}>
+                        <Input
+                            size="small"
+                            className={invalid[index] ? "invalid" : ""}
+                            addonAfter={units}
+                            value={values[index]}
+                            onChange={e => update_position(index, e.target.value)}
+                        />
+                        <Button
+                            size="small"
+                            onClick={() => goto(key, index)}
+                            disabled={disabled || invalid[index]}
+                        >
+                            Go to {label}
+                        </Button>
+                        <Button
+                            size="small"
+                            onClick={() => update_position(index, "0")}
+                            disabled={disabled}
+                        >
+                            Zero
+                        </Button>
+                    </div>
+                )
+            })}
             {items.length > 1 && (
                 <div>
                     <Button

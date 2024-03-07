@@ -14,9 +14,6 @@ import {
     DoutCommand,
     DoutConfig,
     DoutStatus,
-    SafetyDoutCommand,
-    SafetyDoutConfig,
-    SafetyDoutStatus,
     ExternalDinConfig,
     ExternalDoutConfig,
     ExternalIinConfig,
@@ -38,6 +35,11 @@ import {
     MoveParametersConfig,
     PointsConfig,
     SafetyDinConfig,
+    SafetyDoutCommand,
+    SafetyDoutConfig,
+    SafetyDoutStatus,
+    SerialConfig,
+    SerialStatus,
     SoloActivityConfig,
     SpindleConfig,
     StreamConfig,
@@ -46,13 +48,16 @@ import {
     TaskStatus,
     ToolConfig,
     UiinConfig,
-    UioutConfig,
-    SerialCommand,
-    SerialConfig,
-    SerialStatus
+    UioutConfig
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
+
+export type WithName<T> = T & { name?: string }
+
+type WithNameForArrayElements<T> = {
+    [P in keyof T]: T[P] extends Array<infer U> ? WithName<U>[] : T[P]
+}
 
 /**
  * The configuration uploaded to GBC and which is retrieved by GBR on connection. Each key has a list of configuration objects for that part of the configuration.
@@ -75,7 +80,7 @@ import {
  *
  * See the individual types for each configuration item for further details.
  */
-export type GlowbuzzerConfig = {
+export type GlowbuzzerConfig = WithNameForArrayElements<{
     machine?: MachineConfig[]
     kinematicsConfiguration?: KinematicsConfigurationConfig[]
     moveParameters?: MoveParametersConfig[]
@@ -100,12 +105,12 @@ export type GlowbuzzerConfig = {
     tool?: ToolConfig[]
     externalDin?: ExternalDinConfig[]
     externalIin?: ExternalIinConfig[]
-    externalUuin?: ExternalUiinConfig[]
+    externalUiin?: ExternalUiinConfig[]
     externalDout?: ExternalDoutConfig[]
     externalIout?: ExternalIoutConfig[]
     externalUiout?: ExternalUioutConfig[]
     serial?: SerialConfig[]
-}
+}>
 
 export type GlowbuzzerMachineStatus = MachineStatus & {
     /** The error message if an error has occurred. */

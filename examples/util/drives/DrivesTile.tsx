@@ -6,7 +6,6 @@ import React from "react"
 import { BitFieldDisplay, MotorVisualization, SegmentDisplay } from "@glowbuzzer/controls"
 import styled from "styled-components"
 import { JOINT_TYPE, useJoint, useJointConfigurationList, usePrefs } from "@glowbuzzer/store"
-import { useJointsForKinematicsConfiguration } from "../../../libs/controls/src/util/hooks"
 import { useRawJointPositions } from "@glowbuzzer/store"
 import { DriveConfigEditor } from "./DriveConfigEditor"
 
@@ -44,19 +43,19 @@ const StyledDiv = styled.div`
 const DriveItem = ({ index }) => {
     const joints = useJointConfigurationList()
     const jointConfig = joints[index]
-    const prefs = usePrefs()
+    const { fromSI, getUnits } = usePrefs()
     const type = jointConfig.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
     const positions = useRawJointPositions()
     const jointStatus = useJoint(index)
 
-    const units = prefs.getUnits(type)
-    const current = prefs.fromSI(positions[index], type)
+    const { units, precision } = getUnits(type)
+    const current = fromSI(positions[index], type)
 
     return (
         <div key={index} className="motor">
             <MotorVisualization width={250} value={positions[index] || 0} />
             <div className="dro">
-                <SegmentDisplay value={current} toFixed={4} width={12} />
+                <SegmentDisplay value={current} toFixed={precision} width={12} />
                 {units}
             </div>
 

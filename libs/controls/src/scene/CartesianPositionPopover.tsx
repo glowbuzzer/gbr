@@ -60,6 +60,9 @@ export const CartesianPositionPopover = ({
     const [x, y, z] = translation.toArray().map(v => fromSI(v, "linear"))
     const [rx, ry, rz] = euler.toArray().map(v => fromSI(Number(v), "angular"))
 
+    const { units: linear_units, precision: linear_precision } = getUnits("linear")
+    const { units: angular_units, precision: angular_precision } = getUnits("angular")
+
     return (
         <Html position={point}>
             <StyledDiv $background={theme.colorBgContainer} $color={theme.colorText}>
@@ -67,16 +70,16 @@ export const CartesianPositionPopover = ({
 
                 <div className="grid">
                     <TranslationIcon height={20} fill={theme.colorText} />
-                    <div>{x.toFixed(2)}</div>
-                    <div>{y.toFixed(2)}</div>
-                    <div>{z.toFixed(2)}</div>
-                    <div className="units">{getUnits("linear")}</div>
+                    <div>{x.toFixed(linear_precision)}</div>
+                    <div>{y.toFixed(linear_precision)}</div>
+                    <div>{z.toFixed(linear_precision)}</div>
+                    <div className="units">{linear_units}</div>
 
                     <RotationIcon height={20} fill={theme.colorText} />
-                    <div>{rx.toFixed(2)}</div>
-                    <div>{ry.toFixed(2)}</div>
-                    <div>{rz.toFixed(2)}</div>
-                    <div className="units">{getUnits("angular")}</div>
+                    <div>{rx.toFixed(angular_precision)}</div>
+                    <div>{ry.toFixed(angular_precision)}</div>
+                    <div>{rz.toFixed(angular_precision)}</div>
+                    <div className="units">{angular_units}</div>
                 </div>
             </StyledDiv>
         </Html>

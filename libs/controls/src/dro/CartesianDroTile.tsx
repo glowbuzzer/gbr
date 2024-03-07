@@ -9,7 +9,7 @@ import {
     useKinematicsOffset
 } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { Dropdown, Menu, message } from "antd"
+import { Dropdown, message } from "antd"
 import { Euler, Quaternion } from "three"
 import { DownOutlined } from "@ant-design/icons"
 import * as React from "react"
@@ -22,11 +22,10 @@ import { ReactComponent as ResetDRO } from "@material-symbols/svg-400/outlined/b
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import styled from "styled-components"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
-import { FramesDropdown } from "../frames/FramesDropdown"
+import { FramesDropdown } from "../frames"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { RobotConfigurationDro } from "./RobotConfigurationDro"
-import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 
 const StyledDownOutlined = styled(DownOutlined)`
     display: inline-block;
@@ -198,7 +197,6 @@ export const CartesianDroTile = ({
 
                     <DockToolbarButtonGroup>
                         <GlowbuzzerIcon
-                            useFill={true}
                             Icon={ZeroDRO}
                             button
                             title={"Zero DRO"}
@@ -206,7 +204,6 @@ export const CartesianDroTile = ({
                         />
                         <GlowbuzzerIcon
                             Icon={ResetDRO}
-                            useFill={true}
                             button
                             title={"Reset DRO"}
                             onClick={reset_dro}
@@ -217,7 +214,6 @@ export const CartesianDroTile = ({
                         {clipboardMode === true ? (
                             <>
                                 <GlowbuzzerIcon
-                                    useFill={true}
                                     title={tooltip}
                                     Icon={CopyIcon}
                                     button
@@ -249,7 +245,6 @@ export const CartesianDroTile = ({
                             />
                         )}
                     </DockToolbarButtonGroup>
-                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
                 </>
             }
         >
@@ -266,7 +261,6 @@ export const CartesianDroTile = ({
                     kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                     frameIndex={frameIndex}
                     warningThreshold={0.01}
-                    precision={precision}
                 />
             </StyledTileContent>
         </DockTileWithToolbar>

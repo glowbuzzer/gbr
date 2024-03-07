@@ -34,10 +34,6 @@ type CartesianDisplayProps = {
      * A number between zero and 1 representing the fraction of the overall range of travel within which a warning will be displayed.
      */
     warningThreshold?: number
-    /**
-     * Number of decimal places to show for each value.
-     */
-    precision: number
 }
 
 const types = {
@@ -73,8 +69,7 @@ export const CartesianDro = ({
     kinematicsConfigurationIndex,
     frameIndex,
     select,
-    warningThreshold,
-    precision
+    warningThreshold
 }: CartesianDisplayProps) => {
     const kinematics = useKinematics(kinematicsConfigurationIndex)
     const {
@@ -146,7 +141,6 @@ export const CartesianDro = ({
                         value={pos[k]}
                         type={types[k]}
                         error={should_warn()}
-                        precision={precision}
                     />
                 )
             })}

@@ -13,10 +13,11 @@ import { useConnection } from "../connect"
 const { load, save } = settings("config")
 
 export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
-    machine: [{}],
-    frames: [{}],
+    machine: [{ name: "default" }],
+    frames: [{ name: "default" }],
     kinematicsConfiguration: [
         {
+            name: "default",
             linearLimits: [{}],
             participatingJoints: [],
             extentsX: [-100, 100],
@@ -269,7 +270,7 @@ export function useToolConfig(toolIndex: number): ToolConfig {
 /**
  * Returns the configuration for all tools.
  */
-export function useToolList(): ToolConfig[] {
+export function useToolList(): GlowbuzzerConfig["tool"] {
     return useSelector((state: RootState) => state.config.current.tool, deepEqual)
 }
 
@@ -278,7 +279,7 @@ export function useToolList(): ToolConfig[] {
  */
 export function useDefaultMoveParameters(): MoveParametersConfig {
     return useSelector((state: RootState) => {
-        const v = state.config.current.moveParameters?.[0] || {}
+        const v = state.config.current.moveParameters?.[0] || { name: "default" }
         // strip the name from move params as it's not valid in websocket message to gbc
         const { name, ...props } = v
         return props

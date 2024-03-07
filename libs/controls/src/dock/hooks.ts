@@ -2,14 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { useContext, useState } from "react"
+import { createElement, useContext, useState } from "react"
 import { DockLayoutContext, DockLayoutContextType } from "./DockLayoutContext"
 import { DockTileDefinition } from "./DockTileDefinition"
-import { add_tile } from "./util"
+import { add_tile, is_touch_device } from "./util"
 import { Actions, IJsonModel, Model, TabNode } from "flexlayout-react"
 import { DockPerspective } from "./types"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { DockPerspectiveLayoutProviderProps } from "./DockPerspectiveLayoutProvider"
+import { TestDummyTile } from "./TestDummyTile"
 
 const DOCK_MODEL_TEMPLATE: IJsonModel = {
     global: {
@@ -17,7 +18,7 @@ const DOCK_MODEL_TEMPLATE: IJsonModel = {
         borderBarSize: 1,
         borderSize: 1,
         tabBorderWidth: 1,
-        splitterSize: 5
+        splitterSize: is_touch_device() ? 15 : 5
     },
     borders: [],
     layout: {
@@ -143,6 +144,13 @@ export function useDockContext(
             }
         }
         return definition
+        // use this for testing to render simple content in every tile
+        // return {
+        //     ...definition,
+        //     render() {
+        //         return createElement(TestDummyTile)
+        //     }
+        // }
     }
 
     return {

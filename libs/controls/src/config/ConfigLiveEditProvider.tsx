@@ -10,14 +10,14 @@
  */
 
 import React, { createContext, useContext, useEffect, useState } from "react"
-import { FramesConfig, PointsConfig } from "@glowbuzzer/store"
+import { FramesConfig, GlowbuzzerConfig, PointsConfig } from "@glowbuzzer/store"
 
 type ConfigLiveEditContextType = {
-    points?: PointsConfig[]
-    frames?: FramesConfig[]
+    points?: GlowbuzzerConfig["points"]
+    frames?: GlowbuzzerConfig["frames"]
 
-    setPoints: (points: PointsConfig[]) => void
-    setFrames: (frames: FramesConfig[]) => void
+    setPoints: (points: GlowbuzzerConfig["points"]) => void
+    setFrames: (frames: GlowbuzzerConfig["frames"]) => void
 
     clearPoints: () => void
     clearFrames: () => void
@@ -26,8 +26,8 @@ type ConfigLiveEditContextType = {
 const ConfigLiveEditContext = createContext<ConfigLiveEditContextType | null>(null)
 
 export const ConfigLiveEditProvider = ({ children }) => {
-    const [points, setPoints] = useState<PointsConfig[]>()
-    const [frames, setFrames] = useState<FramesConfig[]>()
+    const [points, setPoints] = useState<GlowbuzzerConfig["points"]>()
+    const [frames, setFrames] = useState<GlowbuzzerConfig["frames"]>()
 
     const context = {
         points,

@@ -10,7 +10,6 @@ import { useLocalStorage } from "../util/LocalStorageHook"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
-import { PrecisionToolbarButtonGroup } from "../util/components/PrecisionToolbarButtonGroup"
 import { Radio } from "antd"
 
 /**
@@ -22,7 +21,6 @@ import { Radio } from "antd"
  */
 export const JointDroTile = () => {
     const [selectedKc, setSelectedKc] = useLocalStorage("dro.joint.kc", 0)
-    const [precision, setPrecision] = useLocalStorage("dro.joint.precision", 4)
     const [valueToDisplay, setValueToDisplay] = useState(JointDroValueKey.POS)
 
     const kcs = useKinematicsConfigurationList()
@@ -51,8 +49,6 @@ export const JointDroTile = () => {
                         <Radio.Button value={JointDroValueKey.VEL}>Vel</Radio.Button>
                         <Radio.Button value={JointDroValueKey.TORQUE}>Torque</Radio.Button>
                     </Radio.Group>
-
-                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
                 </>
             }
         >
@@ -60,7 +56,6 @@ export const JointDroTile = () => {
                 <JointDro
                     warningThreshold={0.01}
                     jointsToDisplay={jointsToDisplay}
-                    precision={precision}
                     valueKey={valueToDisplay}
                 />
             </StyledTileContent>

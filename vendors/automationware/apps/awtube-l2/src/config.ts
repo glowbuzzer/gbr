@@ -21,6 +21,66 @@ export const config: GlowbuzzerConfig = {
             busCycleTime: 4
         }
     ],
+    din: [
+        {
+            name: "Digital 1"
+        }
+    ],
+    ain: [
+        {
+            name: "Analog 1"
+        }
+    ],
+    iin: [
+        {
+            name: "Integer 1"
+        }
+    ],
+    uiin: [
+        {
+            name: "Unsigned Int 1"
+        }
+    ],
+    externalIin: [
+        {
+            name: "External Int 1"
+        }
+    ],
+    externalUiin: [
+        {
+            name: "External Unsigned Int 1"
+        }
+    ],
+    aout: [
+        {
+            name: "default"
+        }
+    ],
+    iout: [
+        {
+            name: "default"
+        }
+    ],
+    uiout: [
+        // {
+        //     name: "default"
+        // }
+    ],
+    externalDout: [
+        {
+            name: "default"
+        }
+    ],
+    externalIout: [
+        {
+            name: "default"
+        }
+    ],
+    externalUiout: [
+        {
+            name: "default"
+        }
+    ],
     points: [
         {
             name: "point1",

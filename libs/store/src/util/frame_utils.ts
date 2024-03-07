@@ -3,7 +3,7 @@
  */
 
 import * as THREE from "three"
-import { FramesConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
+import { GlowbuzzerConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
 
 type FrameConfig = {
     translation: THREE.Vector3
@@ -76,7 +76,7 @@ type Subset<K> = {
  *
  * @param frames The raw list of frames in the config containing translation and rotation (quaternion) info
  */
-export function build_tree2(frames: FramesConfig[]): Frame[] {
+export function build_tree2(frames: GlowbuzzerConfig["frames"]): Frame[] {
     // we want to build a valid tree of frames, with no cycles and where forward refs are allowed
 
     function link(frame: Subset<Frame>, parent: Subset<Frame>) {

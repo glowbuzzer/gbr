@@ -16,7 +16,8 @@ import {
     useFramesList,
     usePointsList,
     useSelectedPoint,
-    Vector3
+    Vector3,
+    WithName
 } from "@glowbuzzer/store"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -24,7 +25,7 @@ import styled from "styled-components"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
 import { Euler, Quaternion } from "three"
 import { message } from "antd"
-import { CartesianPositionEdit } from "../util/components/CartesianPositionEdit"
+import { CartesianPositionEditFullWithToolbar } from "../util/components/CartesianPositionEditFullWithToolbar"
 import { useConfigLiveEdit } from "../config"
 import { useDispatch } from "react-redux"
 
@@ -37,7 +38,7 @@ function usePointsLoader() {
     const config = useConfig()
     const dispatch = useDispatch()
 
-    return async ({ points }: { points: PointsConfig[] }) => {
+    return async ({ points }: { points: GlowbuzzerConfig["points"] }) => {
         if (!connection.connected) {
             throw new Error("You must be connected to store points")
         }
@@ -62,7 +63,7 @@ export const PointsTile = () => {
     const frames = useFramesList()
     const loader = usePointsLoader()
 
-    function transform_point(point: PointsConfig, index: number) {
+    function transform_point(point: WithName<PointsConfig>, index: number) {
         {
             const { name, frameIndex, translation, rotation } = point
             const { x, y, z } = translation ?? { x: 0, y: 0, z: 0 }
@@ -212,7 +213,7 @@ export const PointsTile = () => {
     }
 
     return editMode ? (
-        <CartesianPositionEdit
+        <CartesianPositionEditFullWithToolbar
             name={points[selected].name}
             value={point_to_cartesian_position(points[selected])}
             onSave={save_points}

@@ -45,6 +45,10 @@ export interface ActivityController {
     execute(command: ActivityStreamItem): Promise<ActivityPromiseResult>
 }
 
+function extract<T>(arg: T, keys: (keyof T)[]) {
+    return Object.fromEntries(keys.map(key => [key, arg[key]]))
+}
+
 export abstract class ActivityBuilder {
     /** @ignore */
     tag: number
@@ -142,18 +146,18 @@ export class PauseProgramBuilder extends ActivityBuilder {
 export class DwellActivityBuilder extends ActivityBuilder {
     protected commandName = "dwell"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_DWELL
-    private _ticksToDwell: number
+    private _msToDwell: number
 
     /** Number of ticks to dwell. */
-    ticksToDwell(ticksToDwell: number) {
-        this._ticksToDwell = ticksToDwell
+    msToDwell(msToDwell: number) {
+        this._msToDwell = msToDwell
         return this
     }
 
     /** @ignore */
     protected build(): DwellActivityParams {
         return {
-            ticksToDwell: this._ticksToDwell
+            msToDwell: this._msToDwell
         }
     }
 }
@@ -295,8 +299,11 @@ abstract class MoveBuilder extends MoveWithFrameBuilder {
      */
     setFromCartesianPosition(cartesianPosition: CartesianPosition) {
         this._positionReference = cartesianPosition.positionReference
-        this._translation = cartesianPosition.translation
-        this._rotation = cartesianPosition.rotation
+        // position passed in can contain THREE representations of the position,
+        // and this causes issues serializing to redux store, for example, so we extract
+        // only the properties we actually need
+        this._translation = extract(cartesianPosition.translation, ["x", "y", "z"])
+        this._rotation = extract(cartesianPosition.rotation, ["x", "y", "z", "w"])
         this._frameIndex = cartesianPosition.frameIndex
         return this
     }
@@ -584,24 +591,24 @@ export class MoveArcBuilder extends CartesianMoveBuilder {
     }
 }
 
-abstract class SetOutputBuilder extends ActivityBuilder {
-    private _valueToSet
+abstract class SetOutputBuilder<T> extends ActivityBuilder {
+    private _valueToSet: T
 
     /** The value to set. */
-    value(value) {
+    value(value: T) {
         this._valueToSet = value
         return this
     }
 
     /** @ignore */
-    protected build(): { valueToSet? } {
+    protected build(): { valueToSet?: T } {
         return {
             valueToSet: this._valueToSet
         }
     }
 }
 
-export abstract class GenericDoutBuilder extends SetOutputBuilder {
+export abstract class GenericDoutBuilder extends SetOutputBuilder<boolean> {
     private _doutToSet: number
 
     /** The index of the digital output to set. */
@@ -629,7 +636,7 @@ export class ExternalDoutBuilder extends GenericDoutBuilder {
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT
 }
 
-export class AoutBuilder extends SetOutputBuilder {
+export class AoutBuilder extends SetOutputBuilder<number> {
     protected commandName = "setAout"
     protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT
     private _aoutToSet: number
@@ -649,7 +656,7 @@ export class AoutBuilder extends SetOutputBuilder {
     }
 }
 
-export abstract class GenericIoutBuilder extends SetOutputBuilder {
+export abstract class GenericIoutBuilder extends SetOutputBuilder<number> {
     private _ioutToSet: number
 
     /** The index of the integer output to set. */
@@ -702,5 +709,31 @@ export class ToolOffsetBuilder extends ActivityBuilder {
         return {
             toolIndex: this._toolIndex
         }
+    }
+}
+
+export class ActivityStreamItemBuilder extends ActivityBuilder {
+    constructor(
+        controller: ActivityController,
+        private readonly activity: ActivityStreamItem
+    ) {
+        super(controller)
+    }
+
+    protected get activityType(): ACTIVITYTYPE {
+        return this.activity.activityType
+    }
+
+    get command(): ActivityStreamItem {
+        return { ...this.activity, tag: this.controller.nextTag }
+    }
+
+    protected build() {
+        throw new Error("Unsupported operation")
+    }
+
+    protected get commandName(): string {
+        // already exists in the given activity stream item
+        return null
     }
 }

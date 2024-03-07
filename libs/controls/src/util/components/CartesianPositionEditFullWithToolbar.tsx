@@ -56,7 +56,7 @@ function to_euler(q: Quat): Euler {
     return new Euler().setFromQuaternion(quaternion)
 }
 
-type CartesianPositionEditProps = {
+type CartesianPositionEditFullWithToolbarProps = {
     name: string
 
     /** The current position */
@@ -70,13 +70,13 @@ type CartesianPositionEditProps = {
     onCancel(): void
 }
 
-export const CartesianPositionEdit = ({
+export const CartesianPositionEditFullWithToolbar = ({
     name: currentName,
     value,
     onChange,
     onSave,
     onCancel
-}: CartesianPositionEditProps) => {
+}: CartesianPositionEditFullWithToolbarProps) => {
     const [name, setName] = useState(currentName)
     const [positionReference, setPositionReference] = useState<
         CartesianPosition["positionReference"]
@@ -166,95 +166,84 @@ export const CartesianPositionEdit = ({
     }
 
     return (
-        <DockTileWithToolbar
-            toolbar={<PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />}
-        >
-            <StyledTileContent>
-                <StyledDiv>
-                    <div className="grid">
-                        <div>Name</div>
-                        <div>
-                            <Input
-                                size="small"
-                                value={name}
-                                onChange={e => setName(e.target.value)}
+        <StyledTileContent>
+            <StyledDiv>
+                <div className="grid">
+                    <div>Name</div>
+                    <div>
+                        <Input size="small" value={name} onChange={e => setName(e.target.value)} />
+                    </div>
+                    <div />
+                    <div />
+                    <div />
+
+                    <div>Translation</div>
+                    {["x", "y", "z"].map(axis => (
+                        <div className="input" key={"t-" + axis}>
+                            {axis.toUpperCase()}{" "}
+                            <PrecisionInput
+                                value={fromSI(translation[axis], "linear")}
+                                onChange={v =>
+                                    update_translation({
+                                        ...translation,
+                                        [axis]: toSI(v, "linear")
+                                    })
+                                }
+                                precision={precision}
                             />
                         </div>
-                        <div />
-                        <div />
-                        <div />
-
-                        <div>Translation</div>
-                        {["x", "y", "z"].map(axis => (
-                            <div className="input" key={"t-" + axis}>
-                                {axis.toUpperCase()}{" "}
-                                <PrecisionInput
-                                    value={fromSI(translation[axis], "linear")}
-                                    onChange={v =>
-                                        update_translation({
-                                            ...translation,
-                                            [axis]: toSI(v, "linear")
-                                        })
-                                    }
-                                    precision={precision}
-                                />
-                            </div>
-                        ))}
-                        <div>{current.units_linear}</div>
-                        <div>Rotation</div>
-                        {["x", "y", "z"].map(axis => (
-                            <div className="input" key={"r-" + axis}>
-                                {axis.toUpperCase()}{" "}
-                                <PrecisionInput
-                                    value={fromSI(rotationEuler[axis], "angular")}
-                                    onChange={v => {
-                                        const next = rotationEuler.clone()
-                                        next[axis] = toSI(v, "angular")
-                                        update_rotation(next)
-                                    }}
-                                    precision={precision}
-                                />
-                            </div>
-                        ))}
-                        <div>{current.units_angular}</div>
-                    </div>
-                    <div className="frame">
-                        <Space>
-                            <Checkbox
-                                checked={positionReference === POSITIONREFERENCE.RELATIVE}
-                                onChange={toggle_relative}
-                            >
-                                Relative to frame
-                            </Checkbox>
-                            {positionReference === POSITIONREFERENCE.RELATIVE && (
-                                <FramesDropdown
-                                    value={frameIndex || 0}
-                                    onChange={update_frame_index}
-                                />
-                            )}
-                        </Space>
-                        {kinematicsConfigurations.length < 2 ? (
-                            <Button size="small" onClick={() => update_from_kc(0)}>
-                                Set from current position
-                            </Button>
-                        ) : (
-                            <KinematicsDropdown
-                                value={null}
-                                placeholder="Set from current position"
-                                onChange={update_from_kc}
+                    ))}
+                    <div>{current.units_linear}</div>
+                    <div>Rotation</div>
+                    {["x", "y", "z"].map(axis => (
+                        <div className="input" key={"r-" + axis}>
+                            {axis.toUpperCase()}{" "}
+                            <PrecisionInput
+                                value={fromSI(rotationEuler[axis], "angular")}
+                                onChange={v => {
+                                    const next = rotationEuler.clone()
+                                    next[axis] = toSI(v, "angular")
+                                    update_rotation(next)
+                                }}
+                                precision={precision}
                             />
+                        </div>
+                    ))}
+                    <div>{current.units_angular}</div>
+                </div>
+                <div className="frame">
+                    <Space>
+                        <Checkbox
+                            checked={positionReference === POSITIONREFERENCE.RELATIVE}
+                            onChange={toggle_relative}
+                        >
+                            Relative to frame
+                        </Checkbox>
+                        {positionReference === POSITIONREFERENCE.RELATIVE && (
+                            <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
                         )}
-                    </div>
-                    <div className="actions">
-                        <Space>
-                            <Button type="primary" onClick={save}>
-                                Save
-                            </Button>
-                            <Button onClick={onCancel}>Cancel</Button>
-                        </Space>
-                    </div>
-                </StyledDiv>
-            </StyledTileContent>
-        </DockTileWithToolbar>
+                    </Space>
+                    {kinematicsConfigurations.length < 2 ? (
+                        <Button size="small" onClick={() => update_from_kc(0)}>
+                            Set from current position
+                        </Button>
+                    ) : (
+                        <KinematicsDropdown
+                            value={null}
+                            placeholder="Set from current position"
+                            onChange={update_from_kc}
+                        />
+                    )}
+                </div>
+                <div className="actions">
+                    <Space>
+                        <Button type="primary" onClick={save}>
+                            Save
+                        </Button>
+                        <Button onClick={onCancel}>Cancel</Button>
+                    </Space>
+                </div>
+            </StyledDiv>
+        </StyledTileContent>
     )
 }

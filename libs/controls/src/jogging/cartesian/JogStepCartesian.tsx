@@ -3,6 +3,7 @@
  */
 
 import * as React from "react"
+import { useEffect, useRef } from "react"
 import styled from "styled-components"
 import { Button, Input } from "antd"
 import {
@@ -21,7 +22,6 @@ import {
 import { useLocalStorage } from "../../util/LocalStorageHook"
 import { JogDirection, JogMode } from "../types"
 import { PositionMode } from "./JogGotoCartesian"
-import { useEffect, useRef } from "react"
 
 const ArrowsDiv = styled.div`
     display: flex;
@@ -76,6 +76,10 @@ export const JogStepCartesian = ({
     )
     const { getUnits, toSI } = usePrefs()
     const jogging = useRef(false)
+
+    const { units, precision } = getUnits(
+        positionMode === PositionMode.POSITION ? "linear" : "angular"
+    )
 
     useEffect(() => {
         const fn = (index, direction) => {
@@ -250,7 +254,7 @@ export const JogStepCartesian = ({
                 onChange={updateJogStep}
                 disabled={jogMode !== JogMode.STEP}
                 addonBefore={"Distance"}
-                addonAfter={getUnits(positionMode === PositionMode.POSITION ? "linear" : "angular")}
+                addonAfter={units}
             />
         </>
     )

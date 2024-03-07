@@ -33,8 +33,8 @@ const StyledGrid = styled.div<{ cols }>`
     }
 `
 
-const JointDroItem = ({ index, warningThreshold, precision, valueKey }) => {
-    const prefs = usePrefs()
+const JointDroItem = ({ index, warningThreshold, valueKey }) => {
+    const { fromSI, getUnits } = usePrefs()
     const j = useJoint(index)
     const config = useJointConfigurationList()[index]
 
@@ -48,12 +48,12 @@ const JointDroItem = ({ index, warningThreshold, precision, valueKey }) => {
 
     const is_torque = valueKey === JointDroValueKey.TORQUE
 
-    const units = is_torque ? "Nm" : prefs.getUnits(type)
+    const { units, precision } = is_torque ? { units: "Nm", precision: 3 } : getUnits(type)
     const [min, max] = [negLimit, posLimit].map(limit =>
         type === "angular" ? MathUtils.degToRad(limit) : limit
     )
     const current_in_si_units = j[valueKey]
-    const current = is_torque ? current_in_si_units : prefs.fromSI(current_in_si_units, type)
+    const current = is_torque ? current_in_si_units : fromSI(current_in_si_units, type)
     const warn_range = (max - min) * warningThreshold
     const warn =
         warn_range > 0 &&
@@ -101,12 +101,10 @@ export enum JointDroValueKey {
  */
 export const JointDro = ({
     jointsToDisplay,
-    precision,
     warningThreshold,
     valueKey
 }: {
     jointsToDisplay?: number[]
-    precision?: number
     warningThreshold: number
     valueKey: JointDroValueKey
 }) => {
@@ -129,7 +127,6 @@ export const JointDro = ({
                     key={j}
                     index={j}
                     warningThreshold={warningThreshold}
-                    precision={precision}
                     valueKey={valueKey}
                 />
             ))}

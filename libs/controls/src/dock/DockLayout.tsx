@@ -14,6 +14,7 @@ import { useConnection } from "@glowbuzzer/store"
 import { DockTileWrapper } from "./DockTileWrapper"
 import { useGlowbuzzerTheme } from "../app"
 import styled from "styled-components"
+import { is_touch_device } from "./util"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
@@ -23,7 +24,6 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
             <GlowbuzzerIcon
                 key="settings-btn"
                 name="settings"
-                useFill={true}
                 Icon={SettingsIcon}
                 button
                 title="Settings"
@@ -138,7 +138,7 @@ export const DockLayout = () => {
             model={model}
             factory={connection_aware_factory}
             font={{ size: "12px" }}
-            realtimeResize={true}
+            realtimeResize={!is_touch_device()}
             onModelChange={updateModel}
             onRenderTabSet={render_tab_set}
         />

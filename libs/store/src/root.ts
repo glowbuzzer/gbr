@@ -39,6 +39,9 @@ import { pointsSlice } from "./points"
 import { streamSlice } from "./stream"
 import { emstatSlice } from "./emstat"
 import { serialSlice } from "./serial"
+import undoable from "redux-undo"
+import { flowSlice } from "./flow"
+import { monitorSlice } from "./monitor"
 
 export const standardReducers = {
     config: configSlice.reducer,
@@ -71,9 +74,14 @@ export const standardReducers = {
     trace: traceSlice.reducer,
     kinematics: kinematicsSlice.reducer,
     emstat: emstatSlice.reducer,
-    serial: serialSlice.reducer
+    serial: serialSlice.reducer,
+    flow: undoable(flowSlice.reducer),
+    monitor: monitorSlice.reducer
 }
 
-export const rootReducer = combineReducers(standardReducers)
-
-export type RootState = ReturnType<typeof rootReducer>
+// export const rootReducer = combineReducers(standardReducers)
+type StandardReducers = typeof standardReducers
+export type RootState = {
+    [K in keyof StandardReducers]: ReturnType<StandardReducers[K]>
+}
+// export type RootState = ReturnType<typeof rootReducer>

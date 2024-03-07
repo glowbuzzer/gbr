@@ -103,24 +103,27 @@ export const JogStepJoint = ({
 
     return (
         <div>
-            {joints.map(({ config, index: physical_index }, logical_index) => (
-                <JointSliderDiv key={logical_index}>
-                    <Button onClick={() => jogStep(logical_index, -steps[logical_index])}>
-                        <DoubleLeftOutlined />
-                    </Button>
-                    <Input
-                        value={steps[logical_index]}
-                        onChange={e => updateJogStep(logical_index, e)}
-                        addonBefore={config.name}
-                        addonAfter={getUnits(
-                            config.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
-                        )}
-                    />
-                    <Button onClick={() => jogStep(logical_index, steps[logical_index])}>
-                        <DoubleRightOutlined />
-                    </Button>
-                </JointSliderDiv>
-            ))}
+            {joints.map(({ config, index: physical_index }, logical_index) => {
+                const { units } = getUnits(
+                    config.jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
+                )
+                return (
+                    <JointSliderDiv key={logical_index}>
+                        <Button onClick={() => jogStep(logical_index, -steps[logical_index])}>
+                            <DoubleLeftOutlined />
+                        </Button>
+                        <Input
+                            value={steps[logical_index]}
+                            onChange={e => updateJogStep(logical_index, e)}
+                            addonBefore={config.name}
+                            addonAfter={units}
+                        />
+                        <Button onClick={() => jogStep(logical_index, steps[logical_index])}>
+                            <DoubleRightOutlined />
+                        </Button>
+                    </JointSliderDiv>
+                )
+            })}
         </div>
     )
 }

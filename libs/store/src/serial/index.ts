@@ -120,11 +120,13 @@ export function useSerialCommunication(): {
         return {
             sendControlWord: (controlWord: number) => {
                 if (!connected) {
-                    throw new Error("Not connected, serial communication not possible")
+                    console.log("Not connected, serial communication not possible")
+                    return
                 }
 
                 if (!config.serial?.length) {
-                    throw new Error("Serial communication not configured")
+                    console.log("Serial communication not configured")
+                    return
                 }
 
                 send(

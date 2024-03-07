@@ -38,8 +38,11 @@ export const CartesianPositionTable = ({
     onAdd,
     onDelete
 }: CartesianPositionTableProps) => {
-    const { fromSI } = usePrefs()
-    const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
+    const { fromSI, getUnits } = usePrefs()
+    const { units: linear_units, precision: linear_precision } = getUnits("linear")
+    const { units: angular_units, precision: angular_precision } = getUnits("angular")
+
+    // const [precision, setPrecision] = usePref<number>("positionPrecision", 2)
     const [rotationDisplay, setRotationDisplay] = usePref("rotationDisplay", RotationDisplay.EULER)
 
     const columns: ColumnType<any>[] = [
@@ -56,7 +59,7 @@ export const CartesianPositionTable = ({
             title: key.toUpperCase(),
             ellipsis: true,
             dataIndex: key,
-            render: (value: number) => fromSI(value, "linear").toFixed(precision),
+            render: (value: number) => fromSI(value, "linear").toFixed(linear_precision),
             align: "right" as "right"
         }))
     ]
@@ -69,7 +72,7 @@ export const CartesianPositionTable = ({
                     title: "q" + key.toUpperCase(),
                     ellipsis: true,
                     dataIndex: "q" + key,
-                    render: (value: number) => value.toFixed(precision),
+                    render: (value: number) => value.toFixed(2),
                     align: "right" as "right"
                 }))
             )
@@ -81,7 +84,7 @@ export const CartesianPositionTable = ({
                     title: key.toUpperCase(),
                     ellipsis: true,
                     dataIndex: key,
-                    render: (value: number) => fromSI(value, "angular").toFixed(precision),
+                    render: (value: number) => fromSI(value, "angular").toFixed(angular_precision),
                     align: "right" as "right"
                 }))
             )
@@ -160,7 +163,6 @@ export const CartesianPositionTable = ({
                             )}
                         </DockToolbarButtonGroup>
                     )}
-                    <PrecisionToolbarButtonGroup value={precision} onChange={setPrecision} />
                     <RotationSelectToolbarItem
                         value={(rotationDisplay || RotationDisplay.NONE) as RotationDisplay}
                         onChange={setRotationDisplay}

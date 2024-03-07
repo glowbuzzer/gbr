@@ -3,7 +3,7 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
@@ -19,13 +19,20 @@ export const integerInputsSlice: StatusUpdateSlice<number[]> = createSlice({
 })
 
 /**
- * Returns the list of configured integer input names. The index of names in the list can be used with {@link useIntegerInputState}.
+ * Returns the list of configured integer inputs. The index of items in the list can be used with {@link useIntegerInputState}.
  *
- * @returns The list of configured integer input names.
+ * @returns The configuration of all integer inputs.
  */
 export function useIntegerInputList() {
     const config = useConfig()
     return config.iin
+}
+
+/**
+ * Returns the state of all integer inputs.
+ */
+export function useIntegerInputs() {
+    return useSelector((state: RootState) => state.iin, shallowEqual)
 }
 
 /**
@@ -55,6 +62,11 @@ export const unsignedIntegerInputsSlice: StatusUpdateSlice<number[]> = createSli
 export function useUnsignedIntegerInputList() {
     const config = useConfig()
     return config.uiin
+}
+
+/** Returns the list of unsigned integer input values */
+export function useUnsignedIntegerInputs() {
+    return useSelector((state: RootState) => state.uiin, shallowEqual)
 }
 
 /**
@@ -88,6 +100,11 @@ export function useExternalIntegerInputList() {
     return config.externalIin
 }
 
+/** Returns the list of external integer input values */
+export function useExternalIntegerInputs() {
+    return useSelector((state: RootState) => state.externalIin, shallowEqual)
+}
+
 /**
  * Returns the state of an integer input
  *
@@ -114,7 +131,12 @@ export const externalUnsignedIntegerInputsSlice: StatusUpdateSlice<number[]> = c
  */
 export function useExternalUnsignedIntegerInputList() {
     const config = useConfig()
-    return config.externalUuin
+    return config.externalUiin
+}
+
+/** Returns the list of external unsigned integer input values */
+export function useExternalUnsignedIntegerInputs() {
+    return useSelector((state: RootState) => state.externalUiin, shallowEqual)
 }
 
 /**

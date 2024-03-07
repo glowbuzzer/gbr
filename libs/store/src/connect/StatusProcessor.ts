@@ -26,6 +26,7 @@ import { integerOutputsSlice, unsignedIntegerOutputsSlice } from "../io/iout"
 import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../config"
 import { emstatSlice } from "../emstat"
 import { serialSlice } from "../serial"
+import { monitorSlice } from "../monitor"
 
 function status(status, heartbeat) {
     return {
@@ -163,6 +164,7 @@ export function useStatusProcessor(connection: WebSocket) {
         if (msg.status) {
             const heartbeat = msg.status.machine.heartbeat
             msg.status.machine && dispatch(machineSlice.actions.status(msg.status.machine))
+            msg.status.machine && dispatch(monitorSlice.actions.status(msg.status.machine))
             msg.status.tasks && dispatch(tasksSlice.actions.status(msg.status.tasks))
             msg.status.activity && dispatch(activitySlice.actions.status(msg.status.activity))
             msg.status.joint && dispatch(jointsSlice.actions.status(msg.status.joint))

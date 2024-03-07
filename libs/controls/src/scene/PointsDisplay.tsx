@@ -3,13 +3,13 @@
  */
 
 import React from "react"
-import { PointsConfig, useFrames, usePointsList, useSelectedPoint } from "@glowbuzzer/store"
+import { GlowbuzzerConfig, useFrames, usePointsList, useSelectedPoint } from "@glowbuzzer/store"
 import { Quaternion, Vector3 } from "three"
 import { CartesianPositionTriadDisplay } from "./CartesianPositionTriadDisplay"
 import { useConfigLiveEdit } from "../config"
 
 type PointDisplayProps = {
-    point: PointsConfig
+    point: GlowbuzzerConfig["points"][0]
     selected: boolean
     onSelected(): void
 }

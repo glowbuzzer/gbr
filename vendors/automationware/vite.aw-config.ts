@@ -20,7 +20,8 @@ console.log("Using cache dir", cacheDir)
 export default function defineAutomationWareViteConfig() {
     return defineConfig({
         server: {
-            host: true
+            host: true,
+            port: 5175
         },
         cacheDir,
         plugins: [

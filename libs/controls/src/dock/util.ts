@@ -2,6 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
+export function is_touch_device() {
+    return (
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0 ||
+        (navigator as any).msMaxTouchPoints > 0 ||
+        window.matchMedia("(hover: none) and (pointer: coarse)").matches
+    )
+}
+
 export function add_tile(modelJson, tile) {
     const { column, row } = tile.defaultPlacement ?? { column: 2, row: 0 }
 

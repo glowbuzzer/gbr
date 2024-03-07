@@ -45,9 +45,10 @@ export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: Wayp
     const kcConfig = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const { fromSI, getUnits } = usePrefs()
 
-    // determine precision (toFixed decimal places)
-    const dpl = getUnits("linear") === "mm" ? 0 : 2
-    const dpa = getUnits("angular") === "deg" ? 0 : 2
+    const precisions = {
+        [JOINT_TYPE.JOINT_PRISMATIC]: getUnits("linear").precision,
+        [JOINT_TYPE.JOINT_REVOLUTE]: getUnits("angular").precision
+    }
 
     const [waypoints, setWaypoints] = useLocalStorage(
         `waypoints.joint.${kinematicsConfigurationIndex}`,
@@ -73,7 +74,7 @@ export const WaypointsJoints = ({ kinematicsConfigurationIndex, onSelect }: Wayp
                 fromSI(
                     w[index],
                     jointType === JOINT_TYPE.JOINT_REVOLUTE ? "angular" : "linear"
-                ).toFixed(jointType === JOINT_TYPE.JOINT_REVOLUTE ? dpa : dpl)
+                ).toFixed(precisions[jointType])
             )
     }
 

@@ -184,22 +184,22 @@ export function updateStreamCommandMsg(streamIndex: number, streamCommand: STREA
     })
 }
 
-export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
-    const streams = status.map((_, i) => ({
-        [i]: {
-            command: {
-                streamCommand
-            }
-        }
-    }))
-    return JSON.stringify({
-        command: {
-            stream: {
-                ...streams
-            }
-        }
-    })
-}
+// export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
+//     const streams = status.map((_, i) => ({
+//         [i]: {
+//             command: {
+//                 streamCommand
+//             }
+//         }
+//     }))
+//     return JSON.stringify({
+//         command: {
+//             stream: {
+//                 ...streams
+//             }
+//         }
+//     })
+// }
 
 type ActivityGeneratorReturnType = ActivityBuilder | Promise<any>
 

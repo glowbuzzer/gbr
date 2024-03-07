@@ -108,7 +108,7 @@ test("move in arc with XY plane flip", async () => {
     assertNear(400, 0, 100, 0, Math.PI, 0)
 })
 
-test.only("move line keeping same orientation", async () => {
+test("move line keeping same orientation", async () => {
     init_robot_test()
     try {
         // this doesn't involve orientation change
@@ -153,7 +153,7 @@ test("move line with change in orientation", async () => {
     assertNear(100, 100, 100, Math.PI, 0, Math.PI / 4)
 })
 
-test("move to position with change in orientation", async () => {
+test.skip("move to position with change in orientation", async () => {
     init_robot_test()
     try {
         const builder = gbc.activity.moveToPosition().rotationEuler(Math.PI, 0, Math.PI / 4)

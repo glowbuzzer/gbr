@@ -5,7 +5,7 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import {
-    SpindleConfig,
+    GlowbuzzerConfig,
     useAnalogOutputState,
     useConfig,
     useDigitalOutputState
@@ -37,7 +37,12 @@ const StyledDiv = styled.div`
     }
 `
 
-const SpindleItem = ({ spindleConfig, index }: { spindleConfig: SpindleConfig; index: number }) => {
+type SpindleItemProps = {
+    spindleConfig: GlowbuzzerConfig["spindle"][0]
+    index: number
+}
+
+const SpindleItem = ({ spindleConfig, index }: SpindleItemProps) => {
     const [enabled, setEnabled] = useDigitalOutputState(spindleConfig.enableDigitalOutIndex)
     const [speed, setSpeed] = useAnalogOutputState(spindleConfig.speedAnalogOutIndex)
     const [direction, setDirection] = useDigitalOutputState(spindleConfig.directionDigitalOutIndex)

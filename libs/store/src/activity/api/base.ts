@@ -2,9 +2,16 @@
  * Copyright (c) 2022-2023. Glowbuzzer. All rights reserved
  */
 
-import { ACTIVITYSTATE, MoveParametersConfig, SPINDLEDIRECTION, STREAMSTATE } from "../../gbc"
+import {
+    ACTIVITYSTATE,
+    ActivityStreamItem,
+    MoveParametersConfig,
+    SPINDLEDIRECTION,
+    STREAMSTATE
+} from "../../gbc"
 import {
     ActivityPromiseResult,
+    ActivityStreamItemBuilder,
     AoutBuilder,
     DoutBuilder,
     DwellActivityBuilder,
@@ -29,7 +36,7 @@ import { ActivityApi } from "./interface"
 
 // some functions can take null as a parameter to indicate that current value should be used (eg. xyz position on move)
 function nullify(v?: number) {
-    return v === null || isNaN(v /* null is not NaN */) ? null : v
+    return v === null || Number.isNaN(v /* null is not NaN */) ? null : v
 }
 
 /** @ignore */
@@ -52,8 +59,8 @@ export abstract class ActivityApiBase implements ActivityApi {
     /** @ignore */
     abstract execute(command: any): any
 
-    dwell(ticksToDwell: number) {
-        return new DwellActivityBuilder(this).ticksToDwell(ticksToDwell)
+    dwell(msToDwell: number) {
+        return new DwellActivityBuilder(this).msToDwell(msToDwell)
     }
 
     moveArc(x?: number, y?: number, z?: number) {
@@ -162,6 +169,10 @@ export abstract class ActivityApiBase implements ActivityApi {
             .speed(speed)
             .direction(direction)
     }
+
+    from(activity: ActivityStreamItem): ActivityStreamItemBuilder {
+        return new ActivityStreamItemBuilder(this, activity)
+    }
 }
 
 /**
@@ -209,6 +220,7 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
         const { promiseFifo } = this
 
         const idle = state === STREAMSTATE.STREAMSTATE_IDLE
+        const stopped = state === STREAMSTATE.STREAMSTATE_STOPPED
 
         // if the stream is idle and the tag is zero, it indicates the stream was reset,
         // for example, because we dropped out of OP, in which case we reject any outstanding promises
@@ -218,11 +230,16 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
             }
         }
 
-        // stream is either active or complete
-        // if complete (idle) we can resolve all promises
+        // stream is either active, complete or stopped
         // if active, we can resolve any promises up to the active tag
-        while (promiseFifo.length && (idle || promiseFifo[0].tag < tag)) {
-            promiseFifo.shift()?.resolve({ tag, completed: true })
+        // if complete (idle) we can resolve all promises
+        // if stopped we can reject all promises
+        while (promiseFifo.length && (idle || stopped || promiseFifo[0].tag < tag)) {
+            if (stopped) {
+                promiseFifo.shift()?.reject({ tag, completed: false })
+            } else {
+                promiseFifo.shift()?.resolve({ tag, completed: true })
+            }
         }
     }
 }

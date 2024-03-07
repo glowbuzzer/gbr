@@ -8,7 +8,7 @@ import { Tooltip } from "antd"
 
 export type CustomIconProps = {
     name?: string
-    useFill: boolean
+    useFill?: boolean // default true
     Icon
     onClick?(): void
     button?: boolean
@@ -50,11 +50,10 @@ export const StyledIcon = styled.span<{ $useFill: boolean }>`
         cursor: pointer;
         opacity: 0.7;
         border-radius: 3px;
-
-        :hover {
-            opacity: 1;
-            outline: 1px solid rgba(0, 0, 0, 0.2);
-        }
+    }
+    &.button:hover {
+        opacity: 1;
+        outline: 1px solid ${props => props.theme.colorBorder};
     }
 
     &.hidden {
@@ -77,7 +76,7 @@ export const GlowbuzzerIcon = (props: CustomIconProps) => {
     const classes = custom_icon_classes(props, name, "anticon")
     const el = (
         <StyledIcon
-            $useFill={useFill}
+            $useFill={useFill === undefined ? true : useFill}
             className={classes}
             onClick={disabled ? undefined : props.onClick}
             onMouseDown={e => (props.onClick ? e.stopPropagation() : undefined)}

@@ -24,29 +24,26 @@ type DroItemProps = {
      * Whether the value is in error (shown in a different colour)
      */
     error?: boolean
-    /**
-     * Number of decimal places to show for each value.
-     */
-    precision: number
 }
 
 /**
  * Displays a single DRO item with label and optional error state.
  */
-export const DroItem = ({ label, value, type, error, precision }: DroItemProps) => {
-    const prefs = usePrefs()
+export const DroItem = ({ label, value, type, error }: DroItemProps) => {
+    const { getUnits, fromSI } = usePrefs()
+    const { units, precision } = getUnits(type)
 
     return (
         <>
             <div className="label">{label}</div>
             <div className="value">
                 <SegmentDisplay
-                    value={prefs.fromSI(value, type)}
+                    value={fromSI(value, type)}
                     toFixed={precision}
                     width={12}
                     error={error}
                 />
-                {prefs.getUnits(type)}
+                {units}
             </div>
         </>
     )

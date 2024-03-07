@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "7df9ad202e58f8400b30d5087b90126f"
+export const GbcSchemaChecksum = "62172c29a3503f7cad7be996ee5f2888"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -397,8 +397,16 @@ export const GbcConstants = {
   TRIGGERON_ANALOG_INPUT ,
         /**  Trigger on digital input */
   TRIGGERON_DIGITAL_INPUT ,
+        /**  Trigger on safe digital input */
+  TRIGGERON_SAFE_DIGITAL_INPUT ,
+        /**  Trigger on unsigned integer input */
+  TRIGGERON_UNSIGNED_INTEGER_INPUT ,
         /**  Trigger on integer input */
   TRIGGERON_INTEGER_INPUT ,
+        /**  Trigger on unsigned integer input */
+  TRIGGERON_EXTERNAL_UNSIGNED_INTEGER_INPUT ,
+        /**  Trigger on integer input */
+  TRIGGERON_EXTERNAL_INTEGER_INPUT ,
         /**  Trigger on countdown timer */
   TRIGGERON_TIMER ,
         /**  Trigger on absolute clock value */
@@ -449,9 +457,6 @@ export const GbcConstants = {
             
             export type MachineConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  The bus cycle time (in milliseconds) */
                         busCycleTime?:number;
                         /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
@@ -498,9 +503,6 @@ export const GbcConstants = {
             
             export type StreamConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  Indicates that buffer must be full or end program activity issued before stream will start executing */
                         enableEndProgram?:boolean;
             }
@@ -524,9 +526,6 @@ export const GbcConstants = {
             Configuration parameters for move parameters
              */
             export type MoveParametersConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Vmax (max velocity) for move */
                         vmax?:number;
@@ -667,9 +666,17 @@ export const GbcConstants = {
                         
                         input?:number;
                         
-                        safeInput?:boolean;
-                        
                         when?:TRIGGERTYPE;
+            }
+            
+            export type TriggerOnUnsignedIntegerInput = {
+            
+                        
+                        input?:number;
+                        
+                        when?:GTLT;
+                        
+                        value?:number;
             }
             
             export type TriggerOnIntegerInput = {
@@ -706,6 +713,8 @@ export const GbcConstants = {
                         
                          digital?: TriggerOnDigitalInput,
                         
+                         unsignedInteger?: TriggerOnUnsignedIntegerInput,
+                        
                          integer?: TriggerOnIntegerInput,
                         
                          timer?: TriggerOnTimer,
@@ -717,9 +726,6 @@ export const GbcConstants = {
             Config parameters for Tasks
              */
             export type TaskConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Number of activities in this task */
                         activityCount?:number;
@@ -766,9 +772,6 @@ export const GbcConstants = {
             Configuration parameters for joint
              */
             export type JointConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         
                         jointType?:JOINT_TYPE;
@@ -922,14 +925,13 @@ export const GbcConstants = {
                         enabled?:boolean;
                         /**  Trigger to activate velocity scaling */
                         trigger?:TriggerOnDigitalInput;
+                        /**  Whether the trigger is a safe input */
+                        safeInput?:boolean;
                         /**  Scale factor when active, between 0 and 1 */
                         scaleFactor?:number;
             }
             /** Configuration parameters for a kinematics configuration */
             export type KinematicsConfigurationConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Kinematics configuration type. That is, the kinematics model that will be used. Used as discriminator for the union */
                         kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
@@ -1011,9 +1013,6 @@ export const GbcConstants = {
              */
             export type DinConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
@@ -1039,9 +1038,6 @@ export const GbcConstants = {
             Configuration parameters for a safety digital input
              */
             export type SafetyDinConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
@@ -1097,9 +1093,6 @@ export const GbcConstants = {
              */
             export type DoutConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  Defines if the ouput signal is inverted */
                         inverted?:boolean;
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
@@ -1127,9 +1120,6 @@ export const GbcConstants = {
             Configuration parameters for a safety digital output
              */
             export type SafetyDoutConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Defines if the ouput signal is inverted */
                         inverted?:boolean;
@@ -1187,9 +1177,6 @@ export const GbcConstants = {
              */
             export type AinConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  @ignore Flag to indicate this analog input should control the position of a virtual axis (joint) */
                         useForVirtualAxis?:boolean;
                         /**  @ignore Index of joint used for virtual axis (sim) */
@@ -1217,9 +1204,6 @@ export const GbcConstants = {
             Configuration parameters for Analog Outs (aout - floats)
              */
             export type AoutConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
             }
             /** 
@@ -1268,9 +1252,6 @@ export const GbcConstants = {
             Configuration parameters for a signed integer input
              */
             export type IinConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
             }
             /** 
@@ -1363,9 +1344,6 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type IoutConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
             }
             /** 
@@ -1845,8 +1823,8 @@ export const GbcConstants = {
              */
             export type DwellActivityParams = {
             
-                        /**  Number of ticks that you want to wait for */
-                        ticksToDwell?:number;
+                        /**  Number of milliseconds that you want to wait for */
+                        msToDwell?:number;
             }
             /** @ignore */
             export type DwellActivityStatus = {
@@ -1864,9 +1842,6 @@ export const GbcConstants = {
             Configuration for a spindle
              */
             export type SpindleConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Index of the digital output used to turn on the spindle */
                         enableDigitalOutIndex?:number;
@@ -2013,9 +1988,6 @@ export const GbcConstants = {
             This is a union discriminated by activityType. 
              */
             export type ActivityConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  IMPORTANT: This is the discriminator for the union */
                         activityType?:ACTIVITYTYPE;
@@ -2225,9 +2197,6 @@ export const GbcConstants = {
             
             export type SoloActivityConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
             }
             export type SoloActivityStatus = ActivityStatus
             export type SoloActivityCommand = ActivityStreamItem
@@ -2235,9 +2204,6 @@ export const GbcConstants = {
             Configuration parameters for frame
              */
             export type FramesConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Translation of the frame */
                         translation?:Vector3;
@@ -2265,9 +2231,6 @@ export const GbcConstants = {
              */
             export type PointsConfig = {
             
-                    /** Name for this configuration item */
-                    name?: string
-            
                         /**  Frame for point */
                         frameIndex?:number;
                         /**  Translation (location) of the point */
@@ -2281,9 +2244,6 @@ export const GbcConstants = {
             Configuration parameters for a tool
              */
             export type ToolConfig = {
-            
-                    /** Name for this configuration item */
-                    name?: string
             
                         /**  Translation of the tool */
                         translation?:Vector3;

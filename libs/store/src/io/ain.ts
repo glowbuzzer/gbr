@@ -3,7 +3,7 @@
  */
 
 import { createSlice } from "@reduxjs/toolkit"
-import { useSelector } from "react-redux"
+import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
@@ -25,7 +25,11 @@ export const analogInputsSlice: StatusUpdateSlice<number[]> = createSlice({
  */
 export function useAnalogInputList() {
     const config = useConfig()
-    return config.ain
+    return config.ain || []
+}
+
+export function useAnalogInputs(): number[] {
+    return useSelector((state: RootState) => state.ain, shallowEqual)
 }
 
 /**

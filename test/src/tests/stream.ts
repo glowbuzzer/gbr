@@ -47,7 +47,7 @@ test("can execute empty program", async () => {
 })
 
 test("can execute a dwell", async () => {
-    const dwell = gbc.stream.dwell(5).command
+    const dwell = gbc.stream.dwell(20).command
     const end_program = gbc.stream.endProgram().command
 
     gbc.enqueue([dwell, end_program]).exec(1)
@@ -109,8 +109,8 @@ test("can fill the m4 buffer", async () => {
 })
 
 test("will start executing when m7 buffer is full", () => {
-    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(2).command)
-    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(2).command)
+    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(8).command)
+    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(8).command)
 
     gbc.assert // was issue with reset, so let's do some extra checking at start
         .selector(capacity, gbc.m4_stream_total_cap)
@@ -136,8 +136,8 @@ test("will start executing when m7 buffer is full", () => {
 })
 
 test("can stream one program after another", () => {
-    const dwells1 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(2).command)
-    const dwells2 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(2).command)
+    const dwells1 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(8).command)
+    const dwells2 = Array.from({ length: 5 }).map(() => gbc.stream.dwell(8).command)
 
     // exec first program to completion
     gbc.enqueue([...dwells1, gbc.stream.endProgram().command])
@@ -166,8 +166,8 @@ test("can command stream to stop", () => {
     const readCount = state => state.stream[1].readCount
     const writeCount = state => state.stream[1].writeCount
 
-    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(20).command)
-    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(20).command)
+    const dwells1 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(40).command)
+    const dwells2 = Array.from({ length: 10 }).map(() => gbc.stream.dwell(5).command)
 
     gbc.enqueue(dwells1, 1).exec(5)
     gbc.assert
