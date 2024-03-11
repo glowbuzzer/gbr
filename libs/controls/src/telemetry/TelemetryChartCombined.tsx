@@ -84,8 +84,8 @@ export const TelemetryChartCombined = ({
                 (a, b) => [Math.min(a[0], b[0]), Math.max(a[1], b[1])],
                 [Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY]
             ) // get single min/max
-        const [from, to] = domain.sort()
-        const interval = Math.abs(to - from)
+        const [from, to] = domain.sort((a, b) => a - b)
+        const interval = to - from
         setDomain([from - interval * 0.05, to + interval * 0.05]) // expand by 5%
     }, [lastTimecode, selected, view, plot])
 

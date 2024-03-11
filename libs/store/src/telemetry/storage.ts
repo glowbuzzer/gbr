@@ -108,7 +108,6 @@ export function append_telemetry_items(
     state: { start: number; count: number },
     items: TelemetryEntry[]
 ) {
-    console.log("append", items)
     const count = items.length
     items.forEach((d, index) => {
         const pos = (state.start + state.count + index) % MAX_SAMPLES
