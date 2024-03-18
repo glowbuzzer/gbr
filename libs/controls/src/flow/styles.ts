@@ -13,7 +13,7 @@ export const StyledFlowSettingItem = styled.div`
     //text-transform: uppercase;
     border: 1px dashed ${props => props.theme.colorPrimaryBorder};
     background-color: ${props => props.theme.colorPrimaryBg};
-    color: ${props => props.theme.colorTextTertiary};
+    color: ${props => props.theme.colorTextSecondary};
     white-space: nowrap;
 
     > div {

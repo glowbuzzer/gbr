@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "62172c29a3503f7cad7be996ee5f2888"
+export const GbcSchemaChecksum = "e9b59e74189eec8e883d28465af09402"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -213,8 +213,8 @@ export const GbcConstants = {
   ACTIVITYTYPE_TOOLOFFSET ,
         /**  Set an unsigned external digital out */
   ACTIVITYTYPE_SET_EXTERNAL_UIOUT ,
-        /**  @ignore Internal stress test activity */
-  ACTIVITYTYPE_STRESSTEST ,
+        /**  Set mass of the current payload */
+  ACTIVITYTYPE_SET_PAYLOAD ,
     }
     export enum ACTIVITYSTATE {
         /**  Activity is inactive (not being executed) */
@@ -418,10 +418,22 @@ export const GbcConstants = {
         TRIGGERACTION_START,
     }
     export enum DIN_SAFETY_TYPE {
-        /**  The digital input is not a safety input */
-  DIN_SAFETY_TYPE_NORMAL ,
-        /**  The digital input is a safety input */
-  DIN_SAFETY_TYPE_HIDDEN ,
+        /**  The digital input is a reserved input */
+  DIN_SAFETY_TYPE_RESERVED ,
+        /**  The digital input represents an acknowledgeable safety fault */
+  DIN_SAFETY_TYPE_ACKNOWLEDGEABLE ,
+        /**  The digital input represents an unacknowledgeable safety fault */
+  DIN_SAFETY_TYPE_UNACKNOWLEDGEABLE ,
+        /**  The digital input represents the overall safety state of a machine */
+  DIN_SAFETY_TYPE_OVERALL_STATE ,
+        /**  The digital input represents the deadman switch */
+  DIN_SAFETY_TYPE_DEAD_MAN ,
+        /**  The digital input represents the keyswitch */
+  DIN_SAFETY_TYPE_KEYSWITCH ,
+        /**  The digital input represents the safe position valid signal */
+  DIN_SAFETY_TYPE_SAFE_POS_VALID ,
+        /**  The digital input represents the muted signal */
+  DIN_SAFETY_TYPE_MUTED ,
     }
     export enum SERIAL_CONTROL_WORD {
         SERIAL_TRANSMIT_REQUEST_BIT_NUM                     = (0),
@@ -811,6 +823,8 @@ export const GbcConstants = {
                         correspondingJointNumberOnVirtualFieldbus?:number;
                         /**  PID configuration for the joint, where 0 index is for CSV, and the other two are for CST */
                         pidConfig?:PidConfig[];
+                        /**  The threshold at which the joint is considered to be moving */
+                        dynamicsVelocityThreshold?:number;
             }
             /** 
             Status of joint
@@ -1007,6 +1021,8 @@ export const GbcConstants = {
                         translation?:Vector3;
                         /**  Optional logical rotation applied to all moves */
                         rotation?:Quat;
+                        /**  Payload currently carried by the kinematics configuration */
+                        payload?:number;
             }
             /** 
             Configuration parameters for a digital input
@@ -1969,20 +1985,20 @@ export const GbcConstants = {
                         updatedSlaveSyncPosition?:CartesianPosition;
             }
             /** @ignore */
-            export type StressTestActivityParams = {
+            export type SetPayloadActivityStatus = {
             
             }
             /** @ignore */
-            export type StressTestActivityStatus = {
+            export type SetPayloadActivityCommand = {
             
             }
-            /** @ignore */
-            export type StressTestActivityCommand = {
+            /** Set the current payload (mass) */
+            export type SetPayloadActivityParams = {
             
-            }
-            /** @ignore */
-            export type StressTestActivityStream = {
-            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        /**  Mass of the payload */
+                        mass?:number;
             }
             /** 
             This is a union discriminated by activityType. 
@@ -2034,8 +2050,6 @@ export const GbcConstants = {
                          dwell?: DwellActivityParams,
                         /**  Configuration parameters for spindle activity */
                          spindle?: SpindleActivityParams,
-                        /**  Configuration parameters for stress test activity */
-                         stressTest?: StressTestActivityParams,
     //              End of Union
             }
             /** Status of an activity */
@@ -2086,8 +2100,6 @@ export const GbcConstants = {
                          dwell?: DwellActivityStatus,
                         /**  @ignore */
                          spindle?: SpindleActivityStatus,
-                        /**  @ignore */
-                         stressTest?: StressTestActivityStatus,
     //              End of Union
             }
             /** 
@@ -2136,8 +2148,10 @@ export const GbcConstants = {
                          dwell?: DwellActivityCommand,
                         /**  Set spindle command object for activity */
                          spindle?: SpindleActivityCommand,
-                        /**  Set stress test command object for activity */
-                         stressTest?: StressTestActivityCommand,
+                        /**  Parameters for a streamed setting of tool offset */
+                         setToolOffset?: ToolOffsetActivityParams,
+                        /**  Parameters for a streamed setting of payload */
+                         setPayload?: SetPayloadActivityParams,
     //              End of Union
             }
             /** 
@@ -2190,8 +2204,8 @@ export const GbcConstants = {
                          spindle?: SpindleActivityParams,
                         /**  Parameters for a streamed setting of tool offset */
                          setToolOffset?: ToolOffsetActivityParams,
-                        /**  Parameters for a streamed stress test */
-                         stressTest?: StressTestActivityStream,
+                        /**  Parameters for a streamed setting of payload */
+                         setPayload?: SetPayloadActivityParams,
     //              End of Union
             }
             
@@ -2251,6 +2265,8 @@ export const GbcConstants = {
                         rotation?:Quat;
                         /**  Diameter of the tool */
                         diameter?:number;
+                        /**  Rigid body params for the tool */
+                        rigidBodyInertia?:RigidBodyInertia;
             }
             /** @ignore */
             export type SerialConfig = {

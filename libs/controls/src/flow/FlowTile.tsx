@@ -3,7 +3,6 @@
  */
 
 import * as React from "react"
-import { useState } from "react"
 import styled from "styled-components"
 import { ActivityStreamItem, Flow, FlowBranch, flowSlice, useFlows } from "@glowbuzzer/store"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
@@ -18,6 +17,8 @@ import { FlowBranchesDisplay } from "./display/FlowBranchesDisplay"
 import { FlowBasicSettingsDisplay } from "./display/FlowBasicSettingsDisplay"
 import { FlowRuntimeControls } from "./FlowRuntimeControls"
 import { FlowActivitiesDisplay } from "./display/FlowActivitiesDisplay"
+import { FlowRuntimeDisplay } from "./FlowRuntimeDisplay"
+import { useFlowContext } from "./FlowContextProvider"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -55,7 +56,7 @@ const StyledEmpty = styled.div`
 
 export const FlowTile = () => {
     const flows = useFlows()
-    const [selectedFlowIndex, setSelectedFlowIndex] = useState(0)
+    const { active, selectedFlowIndex, setSelectedFlowIndex } = useFlowContext()
 
     const [editingActivity, setEditingActivity] = React.useState<{
         flow: number
@@ -81,7 +82,7 @@ export const FlowTile = () => {
     }
 
     function delete_flow() {
-        setSelectedFlowIndex(current => Math.min(flows.length - 2, current))
+        setSelectedFlowIndex(Math.min(flows.length - 2, selectedFlowIndex))
         dispatch(flowSlice.actions.deleteFlow(selectedFlowIndex))
     }
 
@@ -112,9 +113,9 @@ export const FlowTile = () => {
         )
     }
 
-    const activities = flows[selectedFlowIndex]?.activities || []
-
-    return (
+    return active ? (
+        <FlowRuntimeDisplay />
+    ) : (
         <DockTileWithToolbar
             toolbar={
                 <>
@@ -126,7 +127,7 @@ export const FlowTile = () => {
                     ></Select>
                     <GlowbuzzerIcon Icon={AddIcon} button title="New Flow" onClick={add_flow} />
                     <FlowUndoRedoButtons />
-                    <FlowRuntimeControls selectedFlowIndex={selectedFlowIndex} />
+                    <FlowRuntimeControls />
                 </>
             }
         >

@@ -8,6 +8,7 @@ import { useStatusTrayVisible } from "./StatusTrayProvider"
 import { StatusTrayModifiedConfiguration } from "./StatusTrayModifiedConfiguration"
 import { StatusTrayFaults } from "./StatusTrayFaults"
 import { StatusTrayGbcVersionCheck } from "./StatusTrayGbcVersionCheck"
+import { StatusTrayHandGuidedMode } from "../handguided/StatusTrayHandGuidedMode"
 
 const StyledDiv = styled.div<{ $visible: boolean }>`
     position: absolute;
@@ -41,6 +42,7 @@ export const StatusTray = () => {
     return (
         <StyledDiv $visible={visible}>
             <div className="tray">
+                <StatusTrayHandGuidedMode />
                 <StatusTrayModifiedConfiguration />
                 <StatusTrayFaults />
                 <StatusTrayGbcVersionCheck />

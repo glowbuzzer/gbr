@@ -3,9 +3,9 @@
  */
 
 import * as React from "react"
-import { useJointsForKinematicsConfiguration } from "../../util/hooks"
+import { useJointsForKinematicsConfigurationList, useMotionAllowed } from "../../util/hooks"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
-import { LIMITPROFILE, useConnection, usePreview, useSoloActivity } from "@glowbuzzer/store"
+import { LIMITPROFILE, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import styled from "styled-components"
 
 const StyledDiv = styled.div`
@@ -38,8 +38,8 @@ type JogTouchJointProps = {
 }
 
 export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointProps) => {
-    const joints = useJointsForKinematicsConfiguration(kinematicsConfigurationIndex)
-    const { connected } = useConnection()
+    const joints = useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex)
+    const enabled = useMotionAllowed()
 
     return (
         <StyledDiv>
@@ -49,9 +49,6 @@ export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointPro
                     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
                     async function jog_start(vx: number) {
-                        if (!connected) {
-                            return
-                        }
                         const velos = joints.map(({ config }, logical_index) => {
                             const vmax =
                                 config.limits[LIMITPROFILE.LIMITPROFILE_JOGGING]?.vmax ||
@@ -68,9 +65,6 @@ export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointPro
                     }
 
                     function jog_end() {
-                        if (!connected) {
-                            return
-                        }
                         return motion.cancel().promise()
                     }
 
@@ -82,6 +76,7 @@ export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointPro
                                 lockSpeed={false}
                                 onJogStart={jog_start}
                                 onJogEnd={jog_end}
+                                disabled={!enabled}
                             />
                         </React.Fragment>
                     )

@@ -2,7 +2,6 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { combineReducers } from "@reduxjs/toolkit"
 import { configSlice } from "./config"
 // import { connectionSlice } from "./connect"
 import { telemetrySlice } from "./telemetry"
@@ -42,6 +41,7 @@ import { serialSlice } from "./serial"
 import undoable from "redux-undo"
 import { flowSlice } from "./flow"
 import { monitorSlice } from "./monitor"
+import { overrideable } from "./overrideable"
 
 export const standardReducers = {
     config: configSlice.reducer,
@@ -53,8 +53,8 @@ export const standardReducers = {
     joints: jointsSlice.reducer,
     points: pointsSlice.reducer,
     frames: framesSlice.reducer,
-    din: digitalInputsSlice.reducer,
-    safetyDin: safetyDigitalInputsSlice.reducer,
+    din: overrideable<boolean>(digitalInputsSlice),
+    safetyDin: overrideable<boolean>(safetyDigitalInputsSlice),
     externalDin: externalDigitalInputsSlice.reducer,
     dout: digitalOutputsSlice.reducer,
     safetyDout: safetyDigitalOutputsSlice.reducer,

@@ -73,7 +73,7 @@ export const FlowTriggerDisplay = ({ trigger }: { trigger: TriggerParams }) => {
         case TRIGGERON.TRIGGERON_NONE:
             return (
                 <StyledFlowSettingItem>
-                    <div>IMMEDIATE</div>
+                    <div>IMMEDIATE START</div>
                 </StyledFlowSettingItem>
             )
         case TRIGGERON.TRIGGERON_DIGITAL_INPUT:

@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { DockTileDefinitionBuilder, GlowbuzzerTileIdentifiers } from "@glowbuzzer/controls"
+import { DockTileDefinitionBuilder, GlowbuzzerTileIdentifiers } from ".."
 import { PayloadTile } from "./PayloadTile"
 
 export const PayloadTileDefinition = DockTileDefinitionBuilder()

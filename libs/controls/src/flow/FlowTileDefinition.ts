@@ -3,13 +3,14 @@
  */
 
 import { DockTileDefinitionBuilder } from ".."
-import React from "react"
+import React, { createElement } from "react"
 import { FlowTile } from "./FlowTile"
+import { FlowContextProvider } from "./FlowContextProvider"
 
 export const FlowTileDefinition = DockTileDefinitionBuilder()
     .id("flow")
     .name("Flow Maker")
     .placement(1, 1)
-    .render(() => React.createElement(FlowTile))
+    .render(() => createElement(FlowContextProvider, { children: createElement(FlowTile) }))
     .enableWithoutConnection()
     .build()

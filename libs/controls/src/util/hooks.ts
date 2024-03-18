@@ -2,14 +2,33 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { useJointConfigurationList, useKinematicsConfiguration } from "@glowbuzzer/store"
+import {
+    JointConfig,
+    useConnection,
+    useJointConfigurationList,
+    useKinematicsConfiguration,
+    useMachineState,
+    WithName
+} from "@glowbuzzer/store"
+import { useHandGuidedMode } from "../handguided/hooks"
 
-export function useJointsForKinematicsConfiguration(kineamticsConfigurationIndex: number) {
+export function useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex: number): {
+    index: number
+    config: WithName<JointConfig>
+}[] {
     const joints = useJointConfigurationList()
-    const kinematicsConfiguration = useKinematicsConfiguration(kineamticsConfigurationIndex)
+    const kinematicsConfiguration = useKinematicsConfiguration(kinematicsConfigurationIndex)
 
     return kinematicsConfiguration.participatingJoints.map(jointIndex => ({
         index: jointIndex,
         config: joints[jointIndex]
     }))
+}
+
+export function useMotionAllowed(): boolean {
+    const { connected } = useConnection()
+    const machineState = useMachineState()
+    const { handGuidedModeActive } = useHandGuidedMode()
+
+    return connected && machineState === "OPERATION_ENABLED" && !handGuidedModeActive
 }

@@ -13,6 +13,7 @@ import {
     TRIGGERTYPE
 } from "@glowbuzzer/store"
 import { MachineInputsState } from "./types"
+import { now } from "three/examples/jsm/libs/tween.module"
 
 export abstract class ClientSideTrigger<T = unknown, S = unknown> {
     protected initialValue: T
@@ -34,6 +35,10 @@ export abstract class ClientSideTrigger<T = unknown, S = unknown> {
         return this.selectTrigger(this.branch)
     }
 
+    public handlePaused(state: MachineInputsState) {
+        // sub-classes can override to maintain internal state while paused
+    }
+
     public abstract triggered(state: MachineInputsState): boolean
 }
 
@@ -46,19 +51,28 @@ export class ImmediateTrigger extends ClientSideTrigger {
 export class DigitalInputTrigger extends ClientSideTrigger<boolean, TriggerOnDigitalInput> {
     triggered(state: MachineInputsState): boolean {
         const now = this.select(state)
+        const before = this.initialValue
+        this.initialValue = now // we want to catch falling/rising from new baseline
         switch (this.trigger.when) {
             case TRIGGERTYPE.TRIGGERTYPE_FALLING:
-                return this.initialValue && !now
+                return before && !now
             default:
                 // rising edge
-                return this.initialValue && now
+                return !before && now
         }
+    }
+
+    handlePaused(state: MachineInputsState) {
+        // while paused, we want to track the last value, because we want to
+        // catch the next edge, and not just rely on the state when paused
+        this.initialValue = this.select(state)
     }
 }
 
 export class TimerTrigger extends ClientSideTrigger<number> {
     triggered(state: MachineInputsState): boolean {
         const now = this.select(state)
+        // TODO: how should this behave when triggers are paused?!
         return now - this.initialValue >= this.branch.trigger.timer.delay
     }
 }

@@ -3,29 +3,20 @@
  */
 
 import {
-    Flow,
-    MachineState,
-    STREAMCOMMAND,
     STREAMSTATE,
     useAnalogInputs,
-    useConnection,
     useDigitalInputs,
     useExternalIntegerInputs,
     useExternalUnsignedIntegerInputs,
-    useFlows,
     useIntegerInputs,
     useMachine,
-    useMachineConfig,
-    useMachineState,
     useSafetyDigitalInputs,
-    useStream,
     useUnsignedIntegerInputs
 } from "@glowbuzzer/store"
-import { useEffect, useMemo, useState } from "react"
-import { ClientSideTrigger, triggerFactory } from "./triggers"
+import { useMemo } from "react"
 import { FlowState, MachineInputsState } from "./types"
 
-function useFlowTriggerInputsState(): MachineInputsState {
+export function useFlowTriggerInputsState(): MachineInputsState {
     const digitalInputs = useDigitalInputs()
     const safetyDigitalInputs = useSafetyDigitalInputs()
     const analogInputs = useAnalogInputs()
@@ -59,165 +50,36 @@ function useFlowTriggerInputsState(): MachineInputsState {
     )
 }
 
-type FlowRuntimeReturn = {
-    activeFlow: Flow
-    state: FlowState
-    start?: () => void
-    stop?: () => void
-    pause?: () => void
-    reset?: () => void
-}
-
-export function useFlowRuntime(selectedFlowIndex: number): FlowRuntimeReturn {
-    const flows = useFlows()
-    const { state: stream_state, execute, sendCommand, tag, reset } = useStream(0)
-    const { busCycleTime } = useMachineConfig()
-    const { connected } = useConnection()
-    const machine_state = useMachineState()
-    const input_state = useFlowTriggerInputsState()
-
-    const [activeFlow, setActiveFlow] = useState<Flow>(null)
-    const [triggerNextFlow, setTriggerNextFlow] = useState(false)
-    const [triggersPaused, setTriggersPaused] = useState(false)
-    const [triggers, setTriggers] = useState<ClientSideTrigger[]>()
-
-    useEffect(() => {
-        if (!connected || machine_state !== MachineState.OPERATION_ENABLED) {
-            // reset all
-            reset() // stream buffer
-            setActiveFlow(null)
-            setTriggerNextFlow(false)
-            setTriggersPaused(false)
-            setTriggers(null)
-        }
-    }, [connected, machine_state])
-
-    const state = useMemo(() => {
-        if (!connected) {
-            return FlowState.OFFLINE
-        }
-        // merge stream state with wait state betwen flows (client-side triggers)
-        switch (stream_state) {
-            case STREAMSTATE.STREAMSTATE_IDLE:
-                return triggerNextFlow
-                    ? triggersPaused
-                        ? FlowState.PAUSED
-                        : FlowState.WAITING
-                    : FlowState.IDLE
-            case STREAMSTATE.STREAMSTATE_ACTIVE:
-                return FlowState.ACTIVE
-            case STREAMSTATE.STREAMSTATE_PAUSED:
-                return FlowState.PAUSED
-            case STREAMSTATE.STREAMSTATE_STOPPING:
-                return FlowState.STOPPING
-            case STREAMSTATE.STREAMSTATE_STOPPED:
-                return FlowState.STOPPED
-            default:
-                return FlowState.OFFLINE
-        }
-    }, [connected, stream_state, activeFlow, triggerNextFlow])
-
-    // start the active flow when it changes
-    useEffect(() => {
-        if (activeFlow) {
-            // console.log("START FLOW", activeFlow.name)
-            execute(api => activeFlow.activities.map(activity => api.from(activity)))
-                .then(() => {
-                    // console.log("FLOW ENDED", flow.name, "BRANCHES", flow.branches.length)
-                    if (activeFlow.branches?.length) {
-                        setTriggerNextFlow(true)
-                    }
-                })
-                .catch(() => {
-                    // console.log("EXCEPTION RECEIVED")
-                    setActiveFlow(null)
-                })
-        }
-    }, [activeFlow])
-
-    // Note that this effect deliberately omits the dynamic machine (input) state, because we want to capture the state
-    // at the time the flow ends, not when it subsequently changes.
-    useEffect(() => {
-        // console.log("CHECK FOR TRIGGER NEXT FLOW", activeFlow?.name, triggerNextFlow)
-        if (activeFlow && triggerNextFlow) {
-            // capture input states at the moment the flow ends
-            // console.log("CAPTURE STATE AND INIT TRIGGERS")
-            const triggers = activeFlow.branches.map(triggerFactory(input_state, busCycleTime))
-            setTriggers(triggers)
-        } else {
-            setTriggers(null)
-        }
-    }, [activeFlow, triggerNextFlow])
-
-    useEffect(() => {
-        if (triggers && !triggersPaused) {
-            // find the first trigger that has fired, if any
-            const trigger = triggers.find(trigger => trigger.triggered(input_state))
-            if (trigger) {
-                // console.log("TRIGGER NEXT FLOW", flows[trigger.flowIndex].name)
-                setTriggerNextFlow(false)
-                setActiveFlow(flows[trigger.flowIndex])
-            }
-        }
-    }, [input_state, triggers, triggersPaused])
-
-    // create some convenience functions for controlling the stream and other state
-    const start_stream = () => {
-        setActiveFlow(flows[selectedFlowIndex])
-        setTriggerNextFlow(false)
+export function useFlowDerivedState(
+    connected: boolean,
+    state: STREAMSTATE,
+    triggerNextFlow: boolean,
+    triggersPaused: boolean,
+    error: boolean
+) {
+    if (!connected) {
+        return FlowState.OFFLINE
     }
-    const resume_stream = () => sendCommand(STREAMCOMMAND.STREAMCOMMAND_RUN)
-    const pause_stream = () => sendCommand(STREAMCOMMAND.STREAMCOMMAND_PAUSE)
-    const pause_triggers = () => setTriggersPaused(true)
-    const resume_triggers = () => setTriggersPaused(false)
-    const stop_stream = () => sendCommand(STREAMCOMMAND.STREAMCOMMAND_STOP)
-    const stop_triggers = () => {
-        setActiveFlow(null)
-        setTriggerNextFlow(false)
+    if (error) {
+        return FlowState.ERROR
     }
-
-    // by default no actions are available
-    const result: FlowRuntimeReturn = {
-        activeFlow,
-        state
-    }
-
-    // determine which actions are available based on the current state
+    // merge stream state with wait state betwen flows (client-side triggers)
     switch (state) {
-        case FlowState.IDLE:
-            result.start = start_stream
-            break
-        case FlowState.ACTIVE:
-            if (stream_state === STREAMSTATE.STREAMSTATE_ACTIVE) {
-                result.stop = stop_stream
-                result.pause = pause_stream
-            } else {
-                result.pause = pause_triggers
-                result.stop = stop_triggers
-            }
-            break
-        case FlowState.PAUSED:
-            if (stream_state === STREAMSTATE.STREAMSTATE_PAUSED) {
-                result.start = resume_stream
-                result.stop = stop_stream
-            } else {
-                result.start = resume_triggers
-                result.stop = stop_triggers
-            }
-            break
-        case FlowState.WAITING:
-            result.stop = stop_triggers
-            result.pause = pause_triggers
-            break
-        case FlowState.STOPPING:
-            break
-        case FlowState.STOPPED:
-            result.reset = () => {
-                reset()
-                sendCommand(STREAMCOMMAND.STREAMCOMMAND_RUN)
-            }
-            break
+        case STREAMSTATE.STREAMSTATE_IDLE:
+            return triggerNextFlow
+                ? triggersPaused
+                    ? FlowState.PAUSED
+                    : FlowState.WAITING_ON_TRIGGER
+                : FlowState.IDLE
+        case STREAMSTATE.STREAMSTATE_ACTIVE:
+            return FlowState.ACTIVE
+        case STREAMSTATE.STREAMSTATE_PAUSED:
+            return FlowState.PAUSED
+        case STREAMSTATE.STREAMSTATE_STOPPING:
+            return FlowState.STOPPING
+        case STREAMSTATE.STREAMSTATE_STOPPED:
+            return FlowState.STOPPED
+        default:
+            return FlowState.OFFLINE
     }
-
-    return result
 }

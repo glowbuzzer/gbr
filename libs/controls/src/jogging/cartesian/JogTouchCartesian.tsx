@@ -7,6 +7,7 @@ import { PositionMode } from "./JogGotoCartesian"
 import styled from "styled-components"
 import { useConnection, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
+import { useMotionAllowed } from "../../util/hooks"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -38,6 +39,7 @@ export const JogTouchCartesian = ({
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const { connected } = useConnection()
+    const disabled = !useMotionAllowed()
 
     async function jog_xy_start(vx: number, vy: number) {
         if (connected) {
@@ -77,6 +79,7 @@ export const JogTouchCartesian = ({
                 lockSpeed={lockSpeed}
                 onJogStart={jog_xy_start}
                 onJogEnd={jog_end}
+                disabled={disabled}
             />
             <JogTouchWidget
                 mode={JogTouchWidgetMode.VERTICAL}
@@ -84,6 +87,7 @@ export const JogTouchCartesian = ({
                 lockSpeed={lockSpeed}
                 onJogStart={jog_z_start}
                 onJogEnd={jog_end}
+                disabled={disabled}
             />
         </StyledDiv>
     )

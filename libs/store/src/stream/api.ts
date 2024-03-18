@@ -31,6 +31,10 @@ export class StreamingActivityApi
         return this.currentTag++
     }
 
+    reset() {
+        this.currentTag = 1
+    }
+
     /** @ignore */
     execute(command: ActivityStreamItem) {
         return this.createPromise(command.tag, () => this._send(command))

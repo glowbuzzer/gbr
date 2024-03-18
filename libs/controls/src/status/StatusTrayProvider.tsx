@@ -9,7 +9,8 @@ import { useLocalStorage } from "../util/LocalStorageHook"
 export enum DismissType {
     NOT_DISMISSIBLE,
     REQUIRE_RESET,
-    DISMISSABLE
+    DISMISSABLE,
+    MINIMIZABLE
 }
 
 type StatusTrayRegisteredItem = {

@@ -7,7 +7,7 @@ import { TriggerParams } from "@glowbuzzer/store"
 import { StyledFlowSettingItem } from "../styles"
 import { FlowTriggerDisplay } from "./FlowTriggerDisplay"
 
-export const FlowTriggersDisplay = ({ triggers }: { triggers: TriggerParams[] }) => {
+export const FlowActivityTriggersDisplay = ({ triggers }: { triggers: TriggerParams[] }) => {
     return (
         <div>
             {!!triggers?.length ? (
@@ -16,7 +16,7 @@ export const FlowTriggersDisplay = ({ triggers }: { triggers: TriggerParams[] })
                 })
             ) : (
                 <StyledFlowSettingItem>
-                    <div>None</div>
+                    <div>IMMEDIATE START</div>
                 </StyledFlowSettingItem>
             )}
         </div>

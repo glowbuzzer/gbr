@@ -7,19 +7,30 @@ import { useConnection, useMachine } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { ConnectStatusIndicator } from "./ConnectStatusIndicator"
 import { useStatusTrayDismissedItems } from "./StatusTrayProvider"
-import { Button } from "antd"
+import { Button, Divider, Space } from "antd"
+import { useHandGuidedMode } from "../handguided/hooks"
+import { ReactComponent as HandIcon } from "@material-symbols/svg-400/outlined/pan_tool.svg"
+import { ReactComponent as HandIconDisabled } from "@material-symbols/svg-400/outlined/do_not_touch.svg"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 
-const StyledDiv = styled.div`
-    //z-index: 100;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+const StyledSpace = styled(Space)`
     font-size: 0.8em;
+    font-weight: bold;
 
-    > div {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    .ant-space.enabled {
+        color: ${props => props.theme.green5};
+        path {
+            fill: ${props => props.theme.green5};
+            stroke: ${props => props.theme.green5};
+        }
+    }
+
+    .ant-space.disabled {
+        color: ${props => props.theme.red5};
+        path {
+            fill: ${props => props.theme.red5};
+            stroke: ${props => props.theme.red5};
+        }
     }
 `
 
@@ -30,13 +41,20 @@ export const StatusBar = () => {
     const { connected } = useConnection()
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
     const { name } = useMachine()
+    const { keyswitchEngaged, handGuidedModeActive } = useHandGuidedMode()
 
     return (
-        <StyledDiv>
-            <div>
+        <StyledSpace split={<Divider type="vertical" />}>
+            <Space>
                 <ConnectStatusIndicator connected={connected} />
                 {connected ? <div>{name} CONNECTED</div> : <>NOT CONNECTED</>}
-            </div>
+            </Space>
+            {keyswitchEngaged && (
+                <Space className={handGuidedModeActive ? "enabled" : "disabled"}>
+                    <GlowbuzzerIcon Icon={handGuidedModeActive ? HandIcon : HandIconDisabled} />
+                    HAND GUIDED MODE
+                </Space>
+            )}
             {!!dismissed.length && (
                 <div>
                     <Button size="small" type="dashed" onClick={undismissAll}>{`${
@@ -44,6 +62,6 @@ export const StatusBar = () => {
                     } hidden notification${dismissed.length > 1 ? "s" : ""}`}</Button>
                 </div>
             )}
-        </StyledDiv>
+        </StyledSpace>
     )
 }

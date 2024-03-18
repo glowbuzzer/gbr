@@ -28,6 +28,7 @@ import {
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
+    SetPayloadBuilder,
     SpindleActivityBuilder,
     ToolOffsetBuilder,
     UioutBuilder
@@ -155,6 +156,10 @@ export abstract class ActivityApiBase implements ActivityApi {
 
     setToolOffset(toolIndex: number): ToolOffsetBuilder {
         return new ToolOffsetBuilder(this).toolIndex(toolIndex)
+    }
+
+    setPayload(mass: number): SetPayloadBuilder {
+        return new SetPayloadBuilder(this).mass(mass)
     }
 
     spindle(

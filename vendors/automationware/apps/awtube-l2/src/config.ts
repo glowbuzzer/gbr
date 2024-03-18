@@ -2,12 +2,50 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig, JOINT_MODEOFOPERATION, JOINT_TORQUE_MODE } from "@glowbuzzer/store"
+import {
+    DIN_SAFETY_TYPE,
+    DinConfig,
+    GlowbuzzerConfig,
+    JOINT_MODEOFOPERATION,
+    JOINT_TORQUE_MODE,
+    SafetyDinConfig,
+    WithName
+} from "@glowbuzzer/store"
 import {
     AwTubeL2InverseDynamicParams,
     AwTubeL2KinChainParams,
     StandardAwTubeConfiguration
 } from "@glowbuzzer/awlib"
+
+const safety_dins = `
+0\tsafety_state\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE}
+1\tsafety_error
+2\trestart_ack_needed
+3\tpause_motion
+4\treduce_speed
+5\tsafe_pos_valid
+6\thand_guided_mode_keyswitch\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH}
+7\thand_guided_mode_deadman\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN}
+8\tmute_safety_function
+9\tactive_fault_machine_swm
+10\tactive_fault_machine_sls
+11\tactive_fault_machine_slp
+12\tactive_fault_pause_violation
+13\tactive_fault_drive_drives_sto
+14\tactive_fault_drive_drives_sos
+15\tactive_fault_drive_drives_ss1
+16\tactive_fault_drive_drives_ss2
+17\tactive_fault_drive_drives_sls1
+18\tactive_fault_drive_drives_sbc
+19\tactive_fault_drive_drives_over_temp`
+
+const safety_din_array: WithName<SafetyDinConfig>[] = safety_dins
+    .trim()
+    .split("\n")
+    .map(line => {
+        const [, name, type] = line.trim().split("\t")
+        return { name, type: Number(type) || DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE }
+    })
 
 /**
  * This is the configuration for the AWTUBE L machine that can be pushed to the control if needed
@@ -26,6 +64,7 @@ export const config: GlowbuzzerConfig = {
             name: "Digital 1"
         }
     ],
+    safetyDin: safety_din_array,
     ain: [
         {
             name: "Analog 1"

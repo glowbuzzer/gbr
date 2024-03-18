@@ -17,6 +17,7 @@ import {
     MoveRotationAtVelocityBuilder,
     MoveToPositionBuilder,
     MoveVectorAtVelocityBuilder,
+    SetPayloadBuilder,
     SpindleActivityBuilder,
     ToolOffsetBuilder
 } from "./builders"
@@ -178,6 +179,13 @@ export interface ActivityApi {
      * @param toolIndex
      */
     setToolOffset(toolIndex: number): ToolOffsetBuilder
+
+    /**
+     * Sets the current payload.
+     *
+     * @param mass The mass of the payload.
+     */
+    setPayload(mass: number): SetPayloadBuilder
 
     /**
      * Control the spindle.

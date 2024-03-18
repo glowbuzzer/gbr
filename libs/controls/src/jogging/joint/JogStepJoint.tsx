@@ -18,7 +18,7 @@ import { MathUtils } from "three"
 import { Button, Input, Slider } from "antd"
 import { DoubleLeftOutlined, DoubleRightOutlined } from "@ant-design/icons"
 import { useLocalStorage } from "../../util/LocalStorageHook"
-import { useJointsForKinematicsConfiguration } from "../../util/hooks"
+import { useJointsForKinematicsConfigurationList } from "../../util/hooks"
 
 const JointSliderDiv = styled.div`
     display: flex;
@@ -70,7 +70,7 @@ export const JogStepJoint = ({
     const { getUnits, toSI } = usePrefs()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const preview = usePreview()
-    const joints = useJointsForKinematicsConfiguration(kinematicsConfigurationIndex)
+    const joints = useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex)
 
     // we need to memoize this to avoid use local storage doing work on every render,
     // due to change in initial value

@@ -17,6 +17,8 @@ import {
     IoutBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
+    SetPayloadBuilder,
+    ToolOffsetBuilder,
     UioutBuilder
 } from "@glowbuzzer/store"
 
@@ -70,8 +72,8 @@ export function toActivityTypeString(type: ACTIVITYTYPE) {
             return "Tool Offset"
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT:
             return "Set External Unsigned Integer Output"
-        case ACTIVITYTYPE.ACTIVITYTYPE_STRESSTEST:
-            return "Stress Test"
+        case ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD:
+            return "Set Payload"
         default:
             return "Unknown"
     }
@@ -107,6 +109,7 @@ const controller = new (class implements ActivityController {
         return 0
     }
 })()
+
 export const ActivityFactoryList: ActivityTypeEntry[] = [
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
@@ -150,5 +153,13 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
         factory: () => new DwellActivityBuilder(controller).msToDwell(1000).command
+    },
+    {
+        type: ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET,
+        factory: () => new ToolOffsetBuilder(controller).toolIndex(0).command
+    },
+    {
+        type: ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD,
+        factory: () => new SetPayloadBuilder(controller).mass(0).command
     }
 ]

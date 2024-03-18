@@ -17,6 +17,7 @@ import {
     JointJogTileDefinition,
     JointTorqueModesTileDefinition,
     MonitorTileDefinition,
+    PayloadTileDefinition,
     PointsTileDefinition,
     SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
@@ -44,8 +45,7 @@ import {
 import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
-import { Color } from "three"
-import { useThree } from "@react-three/fiber"
+import { DevInputOverridesTileDefinition } from "../../../../../libs/controls/src/io/overrides/DevInputOverridesTileDefinition"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -99,15 +99,6 @@ const LoadedAwTubeRobot = () => {
     )
 }
 
-function SimpleEnvironment() {
-    const { scene } = useThree()
-
-    // Set a simple color or gradient as your environment
-    scene.background = new Color(0x000000) // Replace with your desired color
-
-    return null
-}
-
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         // noinspection JSUnresolvedReference
@@ -115,18 +106,8 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
                     <LoadedAwTubeRobot />
-                    {/*
-                    <PartGrid definition={definition} />
-*/}
                     <PlaneShinyMetal />
-                    {/*
-                    <Perf matrixUpdate deepAnalyze overClock antialias={false} />
-*/}
-
                     <Environment files="/assets/environment/aerodynamics_workshop_1k.hdr" />
-                    {/*
-                    <SimpleEnvironment />
-*/}
                 </Suspense>
             </ThreeDimensionalSceneTile>
         )
@@ -165,6 +146,8 @@ export const App = () => {
                 SimpleMoveTileDefinition,
                 FlowTileDefinition,
                 MonitorTileDefinition,
+                DevInputOverridesTileDefinition,
+                PayloadTileDefinition,
                 InterpolatedMoveTileDefinition
             ]}
         >

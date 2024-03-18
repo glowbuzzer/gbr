@@ -712,6 +712,24 @@ export class ToolOffsetBuilder extends ActivityBuilder {
     }
 }
 
+export class SetPayloadBuilder extends ActivityBuilder {
+    protected commandName = "setPayload"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD
+    private _mass: number
+
+    mass(value: number) {
+        this._mass = value
+        return this
+    }
+
+    /** @ignore */
+    protected build() {
+        return {
+            mass: this._mass
+        }
+    }
+}
+
 export class ActivityStreamItemBuilder extends ActivityBuilder {
     constructor(
         controller: ActivityController,
@@ -725,7 +743,7 @@ export class ActivityStreamItemBuilder extends ActivityBuilder {
     }
 
     get command(): ActivityStreamItem {
-        return { ...this.activity, tag: this.controller.nextTag }
+        return { ...this.activity, tag: this.tag }
     }
 
     protected build() {

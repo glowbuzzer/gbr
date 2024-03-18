@@ -4,17 +4,13 @@
 
 import * as React from "react"
 import { Button, Space, Tag } from "antd"
-import { useFlowRuntime } from "./runtime/hooks"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 import { FlowState } from "./runtime/types"
+import { useFlowContext } from "./FlowContextProvider"
 
-type FlowRunControlsProps = {
-    selectedFlowIndex: number
-}
-
-export const FlowRuntimeControls = ({ selectedFlowIndex }: FlowRunControlsProps) => {
-    const { activeFlow, state, start, stop, pause, reset } = useFlowRuntime(selectedFlowIndex)
+export const FlowRuntimeControls = () => {
+    const { state, start, stop, reset, pause } = useFlowContext()
 
     return (
         <Space>

@@ -21,10 +21,7 @@ const StyledDiv = styled.div`
         border-bottom: 2px dotted ${props => props.theme.colorWarningBorder};
     }
 
-    color: ${props => props.theme.colorTextLabel};
-
-    //padding: 0 0 0 10px;
-    //margin: 8px 0 12px 0;
+    color: ${props => props.theme.colorTextSecondary};
 
     .content {
         flex-grow: 1;
@@ -74,22 +71,25 @@ export const StatusTrayItem = ({
         return null
     }
 
+    const show_actions = dismissable || actions
     return (
         <StyledDiv>
             <div className="content">{children}</div>
-            <div className="actions">
-                {dismissable === DismissType.REQUIRE_RESET && (
-                    <Button size="small" onClick={reset}>
-                        Reset Fault
-                    </Button>
-                )}
-                {dismissable === DismissType.DISMISSABLE && (
-                    <Button size="small" onClick={() => dismissItem(id)}>
-                        Dismiss
-                    </Button>
-                )}
-                {actions}
-            </div>
+            {show_actions && (
+                <div className="actions">
+                    {dismissable === DismissType.REQUIRE_RESET && (
+                        <Button size="small" onClick={reset}>
+                            Reset Fault
+                        </Button>
+                    )}
+                    {dismissable === DismissType.DISMISSABLE && (
+                        <Button size="small" onClick={() => dismissItem(id)}>
+                            Dismiss
+                        </Button>
+                    )}
+                    {actions}
+                </div>
+            )}
         </StyledDiv>
     )
 }

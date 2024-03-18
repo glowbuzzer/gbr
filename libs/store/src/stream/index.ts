@@ -320,6 +320,7 @@ export const useStream = (
             connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
         },
         reset() {
+            api.reset()
             dispatch(streamSlice.actions.reset(streamIndex))
         }
     }

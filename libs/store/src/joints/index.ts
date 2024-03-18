@@ -7,7 +7,7 @@ import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useConfig } from "../config"
-import { JointConfig } from "../gbc"
+import { JointConfig, WithName } from "../gbc"
 import deepEqual from "fast-deep-equal"
 import { useMemo } from "react"
 
@@ -31,9 +31,7 @@ export const jointsSlice: Slice<JointsState> = createSlice({
 })
 
 /** Returns an array of all configured joints with joint names, retrieved using {@link useConfig} */
-export function useJointConfigurationList(): ({
-    name: string
-} & JointConfig)[] {
+export function useJointConfigurationList(): WithName<JointConfig>[] {
     const config = useConfig()
     // convert keyed object to array
     return useMemo(

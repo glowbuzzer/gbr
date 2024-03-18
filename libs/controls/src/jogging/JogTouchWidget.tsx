@@ -4,12 +4,18 @@
 
 import * as React from "react"
 import { PointerEventHandler, TouchEventHandler, useEffect } from "react"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 
 const radius = 80
 const sm = 15
 
-const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number }>`
+const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number; disabled: boolean }>`
+    ${props =>
+        props.disabled &&
+        css`
+            pointer-events: none;
+        `}
+
     // animate x and y position of circle
 
     circle.animate {
@@ -19,15 +25,18 @@ const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number }>`
     }
 
     circle.large {
-        fill: ${props => props.theme.colorPrimaryBg};
+        fill: ${props =>
+            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
     }
 
     circle.small {
-        fill: ${props => props.theme.colorPrimary};
+        fill: ${props =>
+            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
     }
 
     path {
-        stroke: ${props => props.theme.colorPrimary};
+        stroke: ${props =>
+            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
         stroke-opacity: 0.3;
         fill: none;
     }
@@ -41,7 +50,8 @@ const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number }>`
     }
 
     path.solo-control {
-        fill: ${props => props.theme.colorPrimaryBg};
+        fill: ${props =>
+            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
     }
 `
 
@@ -63,6 +73,7 @@ type JogTouchWidgetProps = {
     lockSpeed: boolean
     onJogStart(vx: number, vy: number): void
     onJogEnd(): void
+    disabled?: boolean
 }
 
 export const JogTouchWidget = ({
@@ -70,7 +81,8 @@ export const JogTouchWidget = ({
     lockXy,
     lockSpeed,
     onJogStart,
-    onJogEnd
+    onJogEnd,
+    disabled
 }: JogTouchWidgetProps) => {
     const { width, height, lock_xy, pointer_info } = (() => {
         switch (mode) {
@@ -249,7 +261,7 @@ export const JogTouchWidget = ({
     }
 
     return (
-        <StyledCartesianTouchSvg width={width} height={height}>
+        <StyledCartesianTouchSvg width={width} height={height} disabled={disabled}>
             {mode === JogTouchWidgetMode.XY ? (
                 <circle className="large" cx={width / 2} cy={height / 2} r={radius} {...events} />
             ) : mode === JogTouchWidgetMode.VERTICAL ? (
