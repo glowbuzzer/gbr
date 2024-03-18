@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/glowbuzzer/gbr/compare/v1.12.0...v1.13.0) (2024-03-18)
+
+
+### Feature
+
+* **#153:** Flow Maker (no code) feature ([89c8839](https://github.com/glowbuzzer/gbr/commit/89c883967073f6ca5c7dba84938daca3c6f90ec1))
+* **#159:** Runtime mode for flow maker ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* **#160:** Ability to override inputs during development ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* **#161:** Hand guided mode initial version ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* Add monitoring to track latency between HMI and GBC ([89c8839](https://github.com/glowbuzzer/gbr/commit/89c883967073f6ca5c7dba84938daca3c6f90ec1))
+* add payload tile ([2893886](https://github.com/glowbuzzer/gbr/commit/2893886a9a2f2ac8fef83a9b349067caabd65546))
+
+
+### Bug Fix
+
+* **#149:** fix issue with useTrace hook ([ffc9e92](https://github.com/glowbuzzer/gbr/commit/ffc9e92fde9c915a507720a7778033987b2c962e))
+* **#151:** fix issue with zerog tile inverted enter/exit button ([a2590fd](https://github.com/glowbuzzer/gbr/commit/a2590fd4c3af6aee70979c450c58750ae35d3866))
+* **#156:** Sort telemetry domains correctly ([8961a80](https://github.com/glowbuzzer/gbr/commit/8961a8087589b74943971d457ce0ca76ef1847cd))
+
+
+### Chore
+
+* fix up cnc app config.ts ([0ea9bed](https://github.com/glowbuzzer/gbr/commit/0ea9bed2db6da2b45f55e5c6d6e8ef0ac1b7c928))
+* refactor and comment flow maker runtime code ([5073682](https://github.com/glowbuzzer/gbr/commit/5073682ebb15fffb0f3482e086a48da07072f769))
+* update awlib hash ([fc66f3d](https://github.com/glowbuzzer/gbr/commit/fc66f3dc2566ebfc131edd56e59692eacf9ae65e))
+* update node version ([de75bab](https://github.com/glowbuzzer/gbr/commit/de75baba58e55e6250d2769d561a323478b71208))
+* update PNPM version ([b397891](https://github.com/glowbuzzer/gbr/commit/b39789175b93041734fdfdcb20f1f0f38b79eb17))
+
 ## [1.12.0](https://github.com/glowbuzzer/gbr/compare/v1.11.0...v1.12.0) (2024-02-14)
 
 
