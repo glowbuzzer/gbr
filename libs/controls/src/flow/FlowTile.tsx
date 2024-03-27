@@ -4,9 +4,16 @@
 
 import * as React from "react"
 import styled from "styled-components"
-import { ActivityStreamItem, Flow, FlowBranch, flowSlice, useFlows } from "@glowbuzzer/store"
+import {
+    ActivityStreamItem,
+    Flow,
+    FlowBranch,
+    flowSlice,
+    FlowType,
+    useFlows
+} from "@glowbuzzer/store"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { Button, Flex, Select } from "antd"
+import { Button, Dropdown, Flex, Select } from "antd"
 import { ItemType } from "antd/es/menu/hooks/useItems"
 import { FlowUndoRedoButtons } from "./FlowUndoRedoButtons"
 import { ReactComponent as AddIcon } from "@material-symbols/svg-400/outlined/add.svg"
@@ -19,6 +26,7 @@ import { FlowRuntimeControls } from "./FlowRuntimeControls"
 import { FlowActivitiesDisplay } from "./display/FlowActivitiesDisplay"
 import { FlowRuntimeDisplay } from "./FlowRuntimeDisplay"
 import { useFlowContext } from "./FlowContextProvider"
+import { FlowIntegrationDisplay } from "./display/FlowIntegrationDisplay"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -94,24 +102,41 @@ export const FlowTile = () => {
         dispatch(flowSlice.actions.updateBranches({ flow: selectedFlowIndex, branches }))
     }
 
-    function add_flow() {
-        dispatch(flowSlice.actions.addFlow())
+    function add_flow(type: FlowType) {
+        dispatch(flowSlice.actions.addFlow({ type }))
         setSelectedFlowIndex(flows.length)
     }
+
+    const add_flow_items = [
+        {
+            key: "regular",
+            value: "regular",
+            label: "Activity Sequence",
+            onClick: () => add_flow(FlowType.REGULAR)
+        },
+        {
+            key: "integration",
+            value: "integration",
+            label: "Integration",
+            onClick: () => add_flow(FlowType.INTEGRATION)
+        }
+    ]
 
     if (!flows.length) {
         return (
             <StyledEmpty>
                 <div className="description">
                     Flows allow you to create complex sequences of activities, including dynamic
-                    triggers and branching
+                    triggers, external integrations and branching
                 </div>
-                <Button type="primary" onClick={add_flow}>
-                    Create Flow
-                </Button>
+                <Dropdown menu={{ items: add_flow_items }} trigger={["click"]}>
+                    <Button type="primary">Create Flow</Button>
+                </Dropdown>
             </StyledEmpty>
         )
     }
+
+    const flow = flows[selectedFlowIndex]
 
     return active ? (
         <FlowRuntimeDisplay />
@@ -125,7 +150,9 @@ export const FlowTile = () => {
                         value={selectedFlowIndex}
                         onChange={value => setSelectedFlowIndex(value)}
                     ></Select>
-                    <GlowbuzzerIcon Icon={AddIcon} button title="New Flow" onClick={add_flow} />
+                    <Dropdown menu={{ items: add_flow_items }} trigger={["click"]}>
+                        <GlowbuzzerIcon Icon={AddIcon} button />
+                    </Dropdown>
                     <FlowUndoRedoButtons />
                     <FlowRuntimeControls />
                 </>
@@ -143,10 +170,14 @@ export const FlowTile = () => {
                         onChange={save_flow_edit}
                         onDelete={delete_flow}
                     />
-                    <FlowActivitiesDisplay
-                        selectedFlowIndex={selectedFlowIndex}
-                        onEditActivity={setEditingActivity}
-                    />
+                    {flow.type === FlowType.REGULAR ? (
+                        <FlowActivitiesDisplay
+                            selectedFlowIndex={selectedFlowIndex}
+                            onEditActivity={setEditingActivity}
+                        />
+                    ) : (
+                        <FlowIntegrationDisplay selectedFlowIndex={selectedFlowIndex} />
+                    )}
                     <FlowBranchesDisplay
                         selectedFlowIndex={selectedFlowIndex}
                         branches={flows[selectedFlowIndex].branches}

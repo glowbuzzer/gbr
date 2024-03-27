@@ -28,15 +28,15 @@ const DISCONNECTED_STATE: ConnectionProviderPrivateState = {
 }
 
 export const ConnectionProvider = ({ children }) => {
-    const [state, setState] = useState<ConnectionProviderPrivateState>(DISCONNECTED_STATE)
-
     const dispatch = useDispatch()
+    const handler = useRequestHandler()
 
     const [url, setUrl] = useState()
-
+    const [state, setState] = useState<ConnectionProviderPrivateState>(DISCONNECTED_STATE)
     const { connectionState, connection, autoConnect } = state
+    const [lastStatus, setLastStatus] = useState<GlowbuzzerStatus["status"]>(null)
+
     const process_status = useStatusProcessor(connection)
-    const handler = useRequestHandler()
 
     const autoConnectRef = useRef(false)
     const appReloadRef = useRef(false)
@@ -45,11 +45,14 @@ export const ConnectionProvider = ({ children }) => {
         console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
 
         websocket.onmessage = msg => {
-            const status: GlowbuzzerStatus = JSON.parse(msg.data)
-            if (status.response) {
-                handler.response(status.response)
+            const message: GlowbuzzerStatus = JSON.parse(msg.data)
+            if (message.status) {
+                setLastStatus(message.status)
+            }
+            if (message.response) {
+                handler.response(message.response)
             } else {
-                process_status(status)
+                process_status(message)
             }
         }
 
@@ -132,6 +135,7 @@ export const ConnectionProvider = ({ children }) => {
             autoConnect,
             state: connectionState,
             statusReceived: true,
+            lastStatus,
             connected: connectionState === ConnectionState.CONNECTED,
             connect,
             reconnect() {

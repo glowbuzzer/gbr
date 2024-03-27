@@ -14,6 +14,8 @@ import {
     ExternalDoutBuilder,
     ExternalIoutBuilder,
     ExternalUioutBuilder,
+    FlowIntegration,
+    GlowbuzzerStatus,
     IoutBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
@@ -96,7 +98,7 @@ type ActivityTypeEntry = {
 // Dummy controller used when adding activities via builders.
 // These activities cannot be executed directly and the tags will be updated
 // when the flow is actually executed.
-const controller = new (class implements ActivityController {
+const dummy_controller = new (class implements ActivityController {
     execute(): Promise<ActivityPromiseResult> {
         throw new Error("Method not implemented")
     }
@@ -114,52 +116,79 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_MOVETOPOSITION,
         factory: p =>
-            new MoveToPositionBuilder(controller)
+            new MoveToPositionBuilder(dummy_controller)
                 .configuration(p.configuration)
                 .setFromCartesianPosition(p.position).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_MOVELINE,
-        factory: p => new MoveLineBuilder(controller).setFromCartesianPosition(p.position).command
+        factory: p =>
+            new MoveLineBuilder(dummy_controller).setFromCartesianPosition(p.position).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT,
-        factory: () => new DoutBuilder(controller).dout(0).value(true).command
+        factory: () => new DoutBuilder(dummy_controller).dout(0).value(true).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT,
-        factory: () => new IoutBuilder(controller).iout(0).value(0).command
+        factory: () => new IoutBuilder(dummy_controller).iout(0).value(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT,
-        factory: () => new AoutBuilder(controller).aout(0).value(0).command
+        factory: () => new AoutBuilder(dummy_controller).aout(0).value(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_UIOUT,
-        factory: () => new UioutBuilder(controller).iout(0).value(0).command
+        factory: () => new UioutBuilder(dummy_controller).iout(0).value(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT,
-        factory: () => new ExternalDoutBuilder(controller).dout(0).value(true).command
+        factory: () => new ExternalDoutBuilder(dummy_controller).dout(0).value(true).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_IOUT,
-        factory: () => new ExternalIoutBuilder(controller).iout(0).value(0).command
+        factory: () => new ExternalIoutBuilder(dummy_controller).iout(0).value(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT,
-        factory: () => new ExternalUioutBuilder(controller).iout(0).value(0).command
+        factory: () => new ExternalUioutBuilder(dummy_controller).iout(0).value(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
-        factory: () => new DwellActivityBuilder(controller).msToDwell(1000).command
+        factory: () => new DwellActivityBuilder(dummy_controller).msToDwell(1000).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET,
-        factory: () => new ToolOffsetBuilder(controller).toolIndex(0).command
+        factory: () => new ToolOffsetBuilder(dummy_controller).toolIndex(0).command
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD,
-        factory: () => new SetPayloadBuilder(controller).mass(0).command
+        factory: () => new SetPayloadBuilder(dummy_controller).mass(0).command
     }
 ]
+
+export async function call_http_endpoint(
+    flow: FlowIntegration,
+    status: GlowbuzzerStatus["status"]
+) {
+    if (flow.endpoint === "https://example.com") {
+        // vaguely useful for testing
+        return [
+            new MoveLineBuilder(dummy_controller).translation(200, 0, 0).relative().command,
+            new MoveLineBuilder(dummy_controller).translation(0, 200, 0).relative().command,
+            new MoveLineBuilder(dummy_controller).translation(-200, 0, 0).relative().command,
+            new MoveLineBuilder(dummy_controller).translation(0, -200, 0).relative().command
+        ]
+    }
+    const result = await fetch(flow.endpoint, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(status)
+    })
+    if (result.status !== 200) {
+        throw new Error(`Failed to execute integration: ${result.statusText}`)
+    }
+    return result.json()
+}

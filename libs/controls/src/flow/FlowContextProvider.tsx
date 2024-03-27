@@ -5,12 +5,15 @@
 import * as React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import {
+    ActivityStreamItem,
     Flow,
+    FlowType,
     MachineState,
     STREAMCOMMAND,
     STREAMSTATE,
     useConnection,
     useFlows,
+    useLastStatus,
     useMachineConfig,
     useMachineState,
     useStream
@@ -19,11 +22,19 @@ import { FlowState } from "./runtime/types"
 import { ClientSideTrigger, triggerFactory } from "./runtime/triggers"
 import { useFlowDerivedState, useFlowTriggerInputsState } from "./runtime/hooks"
 
+import { call_http_endpoint } from "./util"
+
+type CompletedFlow = {
+    flow: Flow
+    activities: ActivityStreamItem[]
+}
+
 type FlowContextType = {
     selectedFlowIndex: number
     setSelectedFlowIndex(index: number): void
     activeFlow: Flow
-    completedFlows: Flow[]
+    completedFlows: CompletedFlow[]
+    activities: ActivityStreamItem[]
     tag: number
     active: boolean
     state: FlowState
@@ -41,18 +52,20 @@ export const FlowContextProvider = ({ children }) => {
     const { state: stream_state, execute, sendCommand, tag, reset: stream_reset } = useStream(0)
     const { busCycleTime } = useMachineConfig()
     const { connected } = useConnection()
+    const status = useLastStatus()
     const machine_state = useMachineState()
     const input_state = useFlowTriggerInputsState()
 
     const [selectedFlowIndex, setSelectedFlowIndex] = useState(0)
     const [activeFlow, setActiveFlow] = useState<Flow>(null)
-    const [completedFlows, setCompletedFlows] = useState<Flow[]>([])
+    const [completedFlows, setCompletedFlows] = useState<CompletedFlow[]>([])
     const [iteration, setIteration] = useState(1)
     const [triggerNextFlow, setTriggerNextFlow] = useState(false)
     const [triggersPaused, setTriggersPaused] = useState(false)
     const [triggers, setTriggers] = useState<ClientSideTrigger[]>()
     const [error, setError] = useState(false)
     const [lastTag, setLastTag] = useState(0)
+    const [activities, setActivities] = useState<ActivityStreamItem[]>([])
 
     const state = useFlowDerivedState(
         connected,
@@ -88,24 +101,38 @@ export const FlowContextProvider = ({ children }) => {
     // start the active flow when it changes
     useEffect(() => {
         if (activeFlow) {
-            reset()
-            execute(api => activeFlow.activities.map(activity => api.from(activity)))
-                .then(() => {
-                    if (iteration < activeFlow.repeat) {
-                        setIteration(current => current + 1)
+            async function execute_active_flow() {
+                reset()
+                const activities: ActivityStreamItem[] = []
+                switch (activeFlow.type) {
+                    case FlowType.REGULAR:
+                        activities.push(...activeFlow.activities)
+                        break
+
+                    case FlowType.INTEGRATION:
+                        const fetched = await call_http_endpoint(activeFlow, status)
+                        activities.push(...fetched)
+                        break
+                }
+
+                setActivities(activities)
+                await execute(api => activities.map(activity => api.from(activity)))
+
+                if (iteration < activeFlow.repeat) {
+                    setIteration(current => current + 1)
+                } else {
+                    setCompletedFlows(flows => [...flows, { flow: activeFlow, activities }])
+                    if (activeFlow.branches?.length) {
+                        setTriggerNextFlow(true)
                     } else {
-                        setCompletedFlows(flows => [...flows, activeFlow])
-                        if (activeFlow.branches?.length) {
-                            setTriggerNextFlow(true)
-                        } else {
-                            // end of the line
-                            reset(true)
-                        }
+                        // end of the line
+                        reset(true)
                     }
-                })
-                .catch(() => {
-                    setError(true)
-                })
+                }
+            }
+            execute_active_flow().catch(() => {
+                setError(true)
+            })
         }
     }, [activeFlow, iteration])
 
@@ -163,6 +190,7 @@ export const FlowContextProvider = ({ children }) => {
         selectedFlowIndex,
         setSelectedFlowIndex,
         activeFlow,
+        activities,
         completedFlows,
         state,
         tag: lastTag,

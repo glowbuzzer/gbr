@@ -9,7 +9,7 @@ import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { useFlowContext } from "./FlowContextProvider"
 import styled from "styled-components"
 import { FlowState } from "./runtime/types"
-import { Flow, useFlows } from "@glowbuzzer/store"
+import { ActivityStreamItem, useFlows } from "@glowbuzzer/store"
 import { FlowTriggerDisplay } from "./display/FlowTriggerDisplay"
 import { FlowActivityDisplay } from "./display/FlowActivityDisplay"
 
@@ -33,12 +33,34 @@ const StyledDiv = styled.div`
 `
 
 type FlowRuntimeFlowDisplayProps = {
-    flow: Flow
+    activities: ActivityStreamItem[]
     tag?: number
     state?: FlowState
 }
 
-const FlowRuntimeFlowDisplay = ({ flow, tag, state }: FlowRuntimeFlowDisplayProps) => {
+const FlowRuntimeCompletedDisplay = ({ activities }: { activities: ActivityStreamItem[] }) => {
+    return (
+        <Steps direction="vertical">
+            {activities.map((activity, index) => {
+                return (
+                    <Steps.Step
+                        key={index}
+                        status="finish"
+                        title={
+                            <div>
+                                <Flex gap="small">
+                                    <FlowActivityDisplay item={activity} />
+                                </Flex>
+                            </div>
+                        }
+                    />
+                )
+            })}
+        </Steps>
+    )
+}
+
+const FlowRuntimeFlowDisplay = ({ activities, tag, state }: FlowRuntimeFlowDisplayProps) => {
     const error = state === FlowState.ERROR
 
     function determine_step_status(index: number, tag?: number): StepProps["status"] {
@@ -56,7 +78,7 @@ const FlowRuntimeFlowDisplay = ({ flow, tag, state }: FlowRuntimeFlowDisplayProp
     }
     return (
         <Steps direction="vertical">
-            {flow.activities.map((activity, index) => {
+            {activities.map((activity, index) => {
                 const step_status = determine_step_status(index, tag)
                 return (
                     <Steps.Step
@@ -78,7 +100,7 @@ const FlowRuntimeFlowDisplay = ({ flow, tag, state }: FlowRuntimeFlowDisplayProp
 
 export const FlowRuntimeDisplay = () => {
     const flows = useFlows()
-    const { activeFlow, completedFlows, state, tag, close } = useFlowContext()
+    const { activeFlow, activities, completedFlows, state, tag, close } = useFlowContext()
 
     return (
         <DockTileWithToolbar
@@ -90,9 +112,9 @@ export const FlowRuntimeDisplay = () => {
         >
             <StyledDiv>
                 <Flex vertical gap="small">
-                    {completedFlows.map((flow, index) => (
+                    {completedFlows.map(({ flow, activities }, index) => (
                         <Card key={index} size="small" title={`Completed Flow: "${flow.name}"`}>
-                            <FlowRuntimeFlowDisplay flow={flow} />
+                            <FlowRuntimeCompletedDisplay activities={activities} />
                         </Card>
                     ))}
                     {activeFlow && (
@@ -107,7 +129,11 @@ export const FlowRuntimeDisplay = () => {
                                     ))}
                                 </div>
                             ) : (
-                                <FlowRuntimeFlowDisplay flow={activeFlow} tag={tag} state={state} />
+                                <FlowRuntimeFlowDisplay
+                                    activities={activities}
+                                    tag={tag}
+                                    state={state}
+                                />
                             )}
                         </Card>
                     )}

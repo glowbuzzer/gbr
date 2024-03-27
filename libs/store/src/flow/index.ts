@@ -5,32 +5,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
-import { ActivityStreamItem, TriggerParams } from "../gbc"
+import { ActivityStreamItem } from "../gbc"
 import { useMemo } from "react"
 import { ActionCreators } from "redux-undo"
 import { settings } from "../util/settings"
+import { Flow, FlowBranch, FlowIntegration, FlowRegular, FlowType } from "./types"
 
 const { load } = settings("flows")
-
-export type FlowBranch = {
-    flowIndex: number
-    trigger: Omit<TriggerParams, "action">
-}
-
-export type Flow = {
-    name: string
-    description?: string
-    repeat?: number
-    activities: ActivityStreamItem[]
-    branches: FlowBranch[]
-}
 
 type FlowSliceState = {
     flows: Flow[]
 }
 
 type FlowSliceReducers = {
-    addFlow: (state: FlowSliceState) => void
+    addFlow: (state: FlowSliceState, action: PayloadAction<{ type: Flow["type"] }>) => void
     updateFlow: (
         state: FlowSliceState,
         action: PayloadAction<{ index: number; flow: Flow }>
@@ -64,6 +52,13 @@ type FlowSliceReducers = {
     ): void
 }
 
+function regular_flow(flow: Flow) {
+    if (flow.type !== "regular") {
+        throw new Error("Invalid flow type. Expected regular flow")
+    }
+    return flow
+}
+
 export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
     name: "flow",
     initialState: () =>
@@ -71,12 +66,25 @@ export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
             flows: []
         }),
     reducers: {
-        addFlow: state => {
-            state.flows.push({
-                name: `Flow ${state.flows.length + 1}`,
-                activities: [],
-                branches: []
-            })
+        addFlow: (state, action) => {
+            switch (action.payload.type) {
+                case FlowType.INTEGRATION:
+                    state.flows.push({
+                        type: FlowType.INTEGRATION,
+                        name: `Integration ${state.flows.length + 1}`,
+                        endpoint: "",
+                        branches: []
+                    })
+                    break
+                case FlowType.REGULAR:
+                default:
+                    state.flows.push({
+                        type: FlowType.REGULAR,
+                        name: `Sequence ${state.flows.length + 1}`,
+                        activities: [],
+                        branches: []
+                    })
+            }
         },
         updateFlow: (state, action) => {
             state.flows[action.payload.index] = action.payload.flow
@@ -98,14 +106,16 @@ export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
                 .filter((_, i) => i !== index)
         },
         addActivity: (state, action) => {
-            state.flows[action.payload.flow].activities.push(action.payload.activity)
+            const flow = regular_flow(state.flows[action.payload.flow])
+            flow.activities.push(action.payload.activity)
         },
         updateActivity(state, action) {
-            state.flows[action.payload.flow].activities[action.payload.index] =
-                action.payload.activity
+            const flow = regular_flow(state.flows[action.payload.flow])
+            flow.activities[action.payload.index] = action.payload.activity
         },
         deleteActivity(state, action) {
-            state.flows[action.payload.flow].activities.splice(action.payload.index, 1)
+            const flow = regular_flow(state.flows[action.payload.flow])
+            flow.activities.splice(action.payload.index, 1)
         },
         updateBranches(state, action) {
             state.flows[action.payload.flow].branches = action.payload.branches
@@ -115,6 +125,18 @@ export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
 
 export const useFlows = () => {
     return useSelector((state: RootState) => state.flow.present.flows)
+}
+
+export function useFlow<T extends FlowType>(
+    index: number,
+    type: T
+): T extends FlowType.REGULAR ? FlowRegular : FlowIntegration {
+    const flows = useFlows()
+    const flow = flows[index]
+    if (flow?.type !== type) {
+        throw new Error(`Invalid flow type. Expected ${type} flow`)
+    }
+    return flow as T extends FlowType.REGULAR ? FlowRegular : FlowIntegration // we have verified the type
 }
 
 export const useFlowUndo = () => {
@@ -129,3 +151,5 @@ export const useFlowUndo = () => {
         }
     }, [past, future])
 }
+
+export * from "./types"

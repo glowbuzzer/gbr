@@ -1,5 +1,6 @@
 import { MessageResponse } from "./RequestResponseHandler"
 import React from "react"
+import { GlowbuzzerStatus } from "../gbc_extra"
 
 export enum ConnectionState {
     DISCONNECTED = "DISCONNECTED",
@@ -17,15 +18,17 @@ export type GlowbuzzerConnectionContextType = {
     /** Reconnect to the last connected url */
     reconnect(): void
     /** Send a message to the remote websocket */
-    send(msg): void
+    send(msg: string): void
     /** Send a request to the remote websocket and return a promise that resolves when the request has been completed */
-    request(type, body): Promise<MessageResponse>
+    request(type: string, body: string): Promise<MessageResponse>
     /** The current connection state */
     state: ConnectionState
     /** Whether status messages are being received */
     statusReceived: boolean
     /** Whether the connection should be reestablished automatically if it drops */
     autoConnect: boolean
+    /** The last status message received */
+    lastStatus: GlowbuzzerStatus["status"]
 }
 
 export const GlowbuzzerConnectionContext =
@@ -41,6 +44,14 @@ export function useConnection() {
     }
 
     return context
+}
+
+export function useLastStatus() {
+    const context = React.useContext(GlowbuzzerConnectionContext)
+    if (!context) {
+        throw new Error("useConnection must be used within a ConnectionProvider")
+    }
+    return context.lastStatus
 }
 
 export * from "./StatusProcessor"

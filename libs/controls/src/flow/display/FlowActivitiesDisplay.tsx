@@ -8,14 +8,14 @@ import { PlusOutlined, UnorderedListOutlined } from "@ant-design/icons"
 import { FlowTeachControls } from "../FlowTeachControls"
 import { FlowAddActivityDropdown } from "../FlowAddActivityDropdown"
 import { FlowActivityDisplay } from "./FlowActivityDisplay"
-import { ActivityStreamItem, flowSlice, useFlows } from "@glowbuzzer/store"
+import { ActivityStreamItem, flowSlice, FlowType, useFlow } from "@glowbuzzer/store"
 import { useDispatch } from "react-redux"
 
 export const FlowActivitiesDisplay = ({ selectedFlowIndex, onEditActivity }) => {
     const dispatch = useDispatch()
 
-    const flows = useFlows()
-    const activities = flows[selectedFlowIndex].activities
+    const flow = useFlow(selectedFlowIndex, FlowType.REGULAR)
+    const activities = flow.activities
 
     function delete_activity(index: number) {
         dispatch(flowSlice.actions.deleteActivity({ flow: selectedFlowIndex, index }))

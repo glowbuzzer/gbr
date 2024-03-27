@@ -3,7 +3,6 @@
  */
 
 import { configSlice } from "./config"
-// import { connectionSlice } from "./connect"
 import { telemetrySlice } from "./telemetry"
 import { prefsSlice } from "./prefs"
 import { machineSlice } from "./machine"
