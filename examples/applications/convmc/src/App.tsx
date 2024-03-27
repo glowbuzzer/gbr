@@ -42,6 +42,8 @@ import { sortingAppConfig } from "./sortingAppConfig"
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
+import { StatusTray } from "../../../../libs/controls/src/status/StatusTray"
+import { StatusTrayProvider } from "../../../../libs/controls/src/status/StatusTrayProvider"
 
 // custom tiles for this app
 enum AppTile {
@@ -116,17 +118,20 @@ export const App = () => {
             additionalReducers={sortingAppReducers}
             configuration={sortingAppConfig}
         >
-            <DigitalInputMockProvider>
-                <SimulationController />
-                <DockPerspectiveLayoutProvider
-                    tiles={AVAILABLE_COMPONENTS}
-                    perspectives={perspectives}
-                    defaultPerspective="development"
-                >
-                    <ExampleAppMenu title="Conveyors" />
-                    <DockLayout />
-                </DockPerspectiveLayoutProvider>
-            </DigitalInputMockProvider>
+            <StatusTrayProvider>
+                <DigitalInputMockProvider>
+                    <SimulationController />
+                    <DockPerspectiveLayoutProvider
+                        tiles={AVAILABLE_COMPONENTS}
+                        perspectives={perspectives}
+                        defaultPerspective="development"
+                    >
+                        <ExampleAppMenu title="Conveyors" />
+                        <DockLayout />
+                        <StatusTray />
+                    </DockPerspectiveLayoutProvider>
+                </DigitalInputMockProvider>
+            </StatusTrayProvider>
         </GlowbuzzerApp>
     )
 }
