@@ -144,17 +144,21 @@ export const JogTouchWidget = ({
                 setAnimate(false)
             }, 200)
 
-            function handle_end() {
+            function handle_end(e) {
+                // e.preventDefault()
                 clearTimeout(timer)
                 setState({ x: width / 2, y: height / 2, active: false })
                 setAnimate(true)
             }
+            const prevent_default = e => e.preventDefault()
 
-            document.addEventListener("mouseup", handle_end)
-            document.addEventListener("touchend", handle_end)
-            document.addEventListener("pointerup", handle_end)
+            document.addEventListener("contextmenu", prevent_default, { passive: false })
+            document.addEventListener("mouseup", handle_end, { passive: false })
+            document.addEventListener("touchend", handle_end, { passive: false })
+            document.addEventListener("pointerup", handle_end, { passive: false })
             return () => {
                 document.body.classList.remove("no-select")
+                document.removeEventListener("contextmenu", prevent_default)
                 document.removeEventListener("mouseup", handle_end)
                 document.removeEventListener("touchend", handle_end)
                 document.removeEventListener("pointerup", handle_end)
@@ -230,14 +234,17 @@ export const JogTouchWidget = ({
     }
 
     const touch_move: TouchEventHandler<SVGCircleElement> = e => {
+        e.preventDefault()
         update_position(e.currentTarget, null, e.touches[0].clientX, e.touches[0].clientY)
     }
 
     const pointer_down: PointerEventHandler<SVGCircleElement> = e => {
+        e.preventDefault()
         update_position(e.currentTarget, e.pointerId, e.clientX, e.clientY)
     }
 
     const pointer_move: PointerEventHandler<SVGCircleElement> = e => {
+        e.preventDefault()
         if (!state.active) {
             return
         }
