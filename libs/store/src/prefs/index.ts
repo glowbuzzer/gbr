@@ -9,7 +9,7 @@ import { useMemo } from "react"
 import { RootState } from "../root"
 import { ConversionFactors } from "./unit_conversion"
 
-const { load, save } = settings("prefs")
+const { load, save } = settings<{ [index: string]: any }>("prefs")
 
 type UnitsType = "m" | "mm" | "in" | "rad" | "deg" | "rev"
 

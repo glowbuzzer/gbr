@@ -1,0 +1,62 @@
+/*
+ * Copyright (c) 2024. Glowbuzzer. All rights reserved
+ */
+
+import {
+    ConfigSliceState,
+    FlowSliceState,
+    GbdbSliceConfiguration,
+    GlowbuzzerConfig,
+    PointsSliceState
+} from "@glowbuzzer/store"
+import { StateWithHistory } from "redux-undo"
+
+export const FlowGbdbFacetSlice: GbdbSliceConfiguration<
+    StateWithHistory<FlowSliceState>,
+    FlowSliceState["flows"]
+> = {
+    sliceName: "flow",
+    marshall(sliceState) {
+        return sliceState.present.flows
+    },
+    unmarshall(persistedState) {
+        const flows = persistedState || []
+        return {
+            present: { flows },
+            past: [],
+            future: []
+        }
+    }
+}
+
+/**
+ * Factory function to create a configuration facet slice with standard behaviour
+ * (handle specific single property in the config). Only interacts with the 'local' config state.
+ */
+function configFacetFactory<T extends keyof GlowbuzzerConfig>(
+    property: T
+): GbdbSliceConfiguration<Pick<ConfigSliceState, "local">, Pick<GlowbuzzerConfig, T>> {
+    return {
+        sliceName: "config",
+        properties: [property],
+        marshall(sliceState, persistedState) {
+            return {
+                ...persistedState,
+                [property]: sliceState.local?.[property]
+            } as Pick<GlowbuzzerConfig, T> // compiler cannot infer the type
+        },
+        unmarshall(persistedState, sliceState) {
+            return {
+                ...sliceState,
+                local: {
+                    ...sliceState.local,
+                    ...(persistedState || { [property]: [] })
+                }
+            }
+        }
+    }
+}
+
+export const FramesGbdbFacetSlice = configFacetFactory("frames")
+export const PointsGbdbFacetSlice = configFacetFactory("points")
+export const ToolsGbdbFacetSlice = configFacetFactory("tool")

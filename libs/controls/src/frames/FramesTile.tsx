@@ -7,47 +7,31 @@ import {
     CartesianPosition,
     configSlice,
     Frame,
+    FramesConfig,
     GlowbuzzerConfig,
     POSITIONREFERENCE,
-    Quat,
-    useConfig,
-    useConnection,
     useFrames,
     useFramesList,
     useSelectedFrame,
-    Vector3
+    WithName
 } from "@glowbuzzer/store"
-import { message, TreeDataNode } from "antd"
+import { TreeDataNode } from "antd"
 import { Euler } from "three"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
-import { CartesianPositionEditFullWithToolbar } from "../util/components/CartesianPositionEditFullWithToolbar"
 import { useConfigLiveEdit } from "../config"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import { useDispatch } from "react-redux"
+import {
+    CartesianPositionEditModal,
+    CartesianPositionEditModalMode
+} from "../util/components/CartesianPositionEditModal"
 
 const StyledDiv = styled.div`
     display: inline-block;
 
     ${CssPointNameWithFrame}
 `
-
-function useFramesLoader() {
-    const connection = useConnection()
-    const config = useConfig()
-    const dispatch = useDispatch()
-
-    return async ({ frames }: { frames: GlowbuzzerConfig["frames"] }) => {
-        if (!connection.connected) {
-            throw new Error("You must be connected to store frames")
-        }
-        const next: GlowbuzzerConfig = {
-            ...config,
-            frames
-        }
-        dispatch(configSlice.actions.setConfig(next))
-    }
-}
 
 /**
  * The frames tile shows the hierarchy of configured frames in your application along with their translation and rotation.
@@ -56,14 +40,19 @@ export const FramesTile = () => {
     // Note that `asList` is in tree order, whereas `frames` is in the order given in the config file (not necessarily the same)
     const { frames: editedFrames, setFrames, clearFrames } = useConfigLiveEdit()
     const { asTree } = useFrames(editedFrames)
-    const frames = useFramesList(editedFrames)
+    const frames = useFramesList()
     const [selected, setSelected] = useSelectedFrame()
-    const [editMode, setEditMode] = useState(false)
-    const [messageApi, messageContext] = message.useMessage()
+    const [mode, setMode] = useState<CartesianPositionEditModalMode>(
+        CartesianPositionEditModalMode.NONE
+    )
 
-    const loader = useFramesLoader()
+    const dispatch = useDispatch()
 
-    function transform_frame(frames: Frame[]): TreeDataNode[] {
+    function store(frames: GlowbuzzerConfig["frames"]) {
+        dispatch(configSlice.actions.addConfig({ frames }))
+    }
+
+    function make_tree(frames: Frame[]): TreeDataNode[] {
         if (!frames) {
             return
         }
@@ -94,147 +83,94 @@ export const FramesTile = () => {
                 a: euler.x,
                 b: euler.y,
                 c: euler.z,
-                children: frame.children?.length ? transform_frame(frame.children) : undefined
+                children: frame.children?.length ? make_tree(frame.children) : undefined
             }
         })
     }
 
-    function frame_to_cartesian_position(frameIndex: number): CartesianPosition {
-        const frame = frames[frameIndex]
+    function frame_to_cartesian_position(frameIndex: number): WithName<CartesianPosition> {
+        const frame = editedFrames?.[frameIndex] || frames[frameIndex]
+        if (!frame) {
+            return null
+        }
         return {
-            positionReference: frame.positionReference,
+            ...frame,
+            // shift from frame's parent index to position frame index
             frameIndex:
                 frame.positionReference === POSITIONREFERENCE.ABSOLUTE
                     ? undefined
-                    : frame.parentFrameIndex,
-            translation: frame.translation,
-            rotation: frame.rotation
+                    : frame.parentFrameIndex
         }
     }
 
-    function frames_with_modification(
-        frameIndex: number,
-        name: string,
-        positionReference: POSITIONREFERENCE,
-        parentFrameIndex: number,
-        translation: Vector3,
-        rotation: Quat
-    ) {
-        return frames.map((frame, index) => {
-            if (index === frameIndex) {
-                return {
-                    name,
-                    positionReference,
-                    parentFrameIndex,
-                    translation,
-                    rotation
-                }
-            }
-            return frame
-        })
-    }
-
-    function update_frame(
-        name: string,
-        {
-            positionReference,
-            frameIndex: parentFrameIndex,
-            rotation,
-            translation
-        }: CartesianPosition
-    ) {
-        const overrides: GlowbuzzerConfig["frames"] = frames_with_modification(
-            selected,
+    function update_frame({
+        name,
+        positionReference,
+        frameIndex: parentFrameIndex,
+        rotation,
+        translation
+    }: WithName<CartesianPosition>) {
+        const frameIndex = mode === CartesianPositionEditModalMode.CREATE ? frames.length : selected
+        const modifiedFrame = {
             name,
             positionReference,
             parentFrameIndex,
-            translation,
-            rotation
-        )
+            rotation,
+            translation
+        }
+
+        // append or update list with modification
+        const overrides: WithName<FramesConfig>[] =
+            frameIndex >= frames.length
+                ? [...frames, modifiedFrame]
+                : frames.map((frame, index) => {
+                      if (index === frameIndex) {
+                          return modifiedFrame
+                      }
+                      return frame
+                  })
+
         setFrames(overrides)
     }
 
-    function save_frames(
-        name: string,
-        {
-            positionReference,
-            frameIndex: parentFrameIndex,
-            rotation,
-            translation
-        }: CartesianPosition
-    ) {
-        const next: GlowbuzzerConfig["frames"] = frames_with_modification(
-            selected,
-            name,
-            positionReference,
-            parentFrameIndex,
-            translation,
-            rotation
-        )
-        loader({
-            frames: next
-        }).then(() => {
-            clearFrames()
-            setEditMode(false)
-            return messageApi.success("Frames updated")
-        })
+    function save_frames() {
+        store(editedFrames)
+        clearFrames()
+        setMode(CartesianPositionEditModalMode.NONE)
     }
 
     function add_frame() {
-        const next: GlowbuzzerConfig["frames"] = [
-            ...frames,
-            {
-                name: "New Frame",
-                translation: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0, w: 1 },
-                positionReference: POSITIONREFERENCE.ABSOLUTE
-            }
-        ]
-        loader({
-            frames: next
-        }).then(() => {
-            setSelected(next.length - 1)
-            setEditMode(true)
-        })
+        setMode(CartesianPositionEditModalMode.CREATE)
     }
 
     function delete_frame() {
-        const next: GlowbuzzerConfig["points"] = frames.filter((_, index) => index !== selected)
-        loader({
-            frames: next
-        }).then(() => {
-            setSelected(selected > 0 ? selected - 1 : 0)
-        })
+        const next = frames.filter((_, index) => index !== selected)
+        store(next)
+        setSelected(selected > 0 ? selected - 1 : 0)
     }
 
-    function cancel_edit() {
-        clearFrames()
-        setEditMode(false)
-    }
+    const treeData = make_tree(asTree)
 
-    const treeData = transform_frame(asTree)
-
-    return (
-        <>
-            {messageContext}
-            {editMode ? (
-                <CartesianPositionEditFullWithToolbar
-                    name={frames[selected].name}
-                    value={frame_to_cartesian_position(selected)}
-                    onSave={save_frames}
-                    onChange={update_frame}
-                    onCancel={cancel_edit}
-                />
-            ) : (
-                <CartesianPositionTable
-                    selected={selected}
-                    setSelected={setSelected}
-                    items={treeData}
-                    onEdit={() => setEditMode(true)}
-                    onAdd={add_frame}
-                    onDelete={delete_frame}
-                />
-            )}
-        </>
+    return mode === CartesianPositionEditModalMode.NONE ? (
+        <CartesianPositionTable
+            selected={selected}
+            setSelected={setSelected}
+            items={treeData}
+            onEdit={() => setMode(CartesianPositionEditModalMode.UPDATE)}
+            onAdd={add_frame}
+            onDelete={delete_frame}
+        />
+    ) : (
+        <CartesianPositionEditModal
+            mode={mode}
+            value={
+                mode === CartesianPositionEditModalMode.UPDATE
+                    ? frame_to_cartesian_position(selected)
+                    : null
+            }
+            onChange={update_frame}
+            onSave={save_frames}
+            onClose={() => setMode(CartesianPositionEditModalMode.NONE)}
+        />
     )
 }

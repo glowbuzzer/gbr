@@ -3,7 +3,6 @@
  */
 
 import {
-    AnyAction,
     combineReducers,
     configureStore,
     Middleware,
@@ -13,10 +12,11 @@ import {
 import {
     configSlice,
     framesSlice,
+    GbdbConfiguration,
+    gbdbHigherOrderReducerFactory,
+    gbdbMiddleware,
     GlowbuzzerConfig,
     prefsSlice,
-    RootState,
-    settings,
     standardReducers,
     telemetrySlice
 } from "@glowbuzzer/store"
@@ -25,40 +25,34 @@ export const GlowbuzzerAppLifecycle = new (class {
     createStore(
         configuration: GlowbuzzerConfig,
         storeEnhancers: StoreEnhancer[],
-        additionalReducers: Record<string, Reducer>
+        additionalReducers: Record<string, Reducer>,
+        persistenceConfiguration: GbdbConfiguration = { facets: {} }
     ) {
         if (typeof import.meta !== "undefined" && import.meta?.hot?.data.store) {
             return import.meta.hot.data.store
         }
 
-        const flowStorage = settings("flows")
-
-        const localStorageMiddleware: Middleware<{}, RootState> =
-            store => next => (action: AnyAction) => {
-                const result = next(action)
-                if (action.type.startsWith("flow/")) {
-                    const state = store.getState()
-                    flowStorage.save(state.flow.present)
-                }
-                return result
-            }
-
         const middleware = (getDefault: (options: any) => Middleware[]) => {
             return getDefault({
                 immutableCheck: false,
                 serializableCheck: false
-            }).concat(localStorageMiddleware)
+            }).concat(gbdbMiddleware(persistenceConfiguration.facets))
         }
 
+        const reducer = gbdbHigherOrderReducerFactory(
+            persistenceConfiguration.facets,
+            combineReducers({ ...standardReducers, ...additionalReducers })
+        )
+
         const store = configureStore({
-            reducer: combineReducers({ ...standardReducers, ...additionalReducers }),
+            reducer,
             middleware,
             enhancers: storeEnhancers
         })
 
         store.dispatch(prefsSlice.actions.loadSettings(null))
         store.dispatch(framesSlice.actions.loadSettings(null))
-        store.dispatch(configSlice.actions.loadOfflineConfig(configuration))
+        store.dispatch(configSlice.actions.setAppConfig(configuration))
         store.dispatch(telemetrySlice.actions.loadSettings())
 
         if (import.meta?.hot?.data) {

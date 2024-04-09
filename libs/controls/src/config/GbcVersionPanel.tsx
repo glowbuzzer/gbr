@@ -3,13 +3,13 @@
  */
 
 import React from "react"
-import { useConnection, useGbcVersionInfo } from "@glowbuzzer/store"
+import { useConnection, useGbcConfigInfo } from "@glowbuzzer/store"
 import { Popover, Tag } from "antd"
 import { check_gbc_version } from "../status/StatusTrayGbcVersionCheck"
 
 export const GbcVersionPanel = () => {
     const { connected } = useConnection()
-    const { gbcVersion, schemaVersion } = useGbcVersionInfo()
+    const { gbcVersion, schemaVersion } = useGbcConfigInfo()
 
     if (!(gbcVersion && schemaVersion && connected)) {
         return null

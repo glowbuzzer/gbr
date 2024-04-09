@@ -11,9 +11,9 @@ import { ActionCreators } from "redux-undo"
 import { settings } from "../util/settings"
 import { Flow, FlowBranch, FlowIntegration, FlowRegular, FlowType } from "./types"
 
-const { load } = settings("flows")
+const { load } = settings<FlowSliceState>("flows")
 
-type FlowSliceState = {
+export type FlowSliceState = {
     flows: Flow[]
 }
 

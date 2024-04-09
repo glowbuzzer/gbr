@@ -5,17 +5,17 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { PointsTile } from "./PointsTile"
-import { DockTileDefinition } from "../dock"
+import { DockTileDefinitionBuilder } from "../dock"
+import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 
-export const PointsTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.POINTS,
-    name: "Points",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    render: () => createElement(PointsTile, {}, null),
-    config: {
-        enableWithoutConnection: "foo"
-    }
-}
+export const PointsTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.POINTS)
+    .name("Points")
+    .placement(2, 0)
+    .enableWithoutConnection()
+    .render(
+        () => createElement(PointsTile, {}, null),
+        null,
+        gbdbFacetIndicatorFactory("config", "points")
+    )
+    .build()

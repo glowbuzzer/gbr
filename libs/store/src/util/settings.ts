@@ -11,9 +11,9 @@ export function initSettings(appName: string) {
     globalAppName = appName
 }
 
-export function settings(key: string) {
+export function settings<T>(key: string) {
     return {
-        load(defaultValue = {}) {
+        load(defaultValue?: T): T {
             if (!globalAppName) {
                 console.warn("initSettings has not been called to set app name")
             }
@@ -32,7 +32,7 @@ export function settings(key: string) {
             }
             return defaultValue
         },
-        save(value) {
+        save(value: T) {
             if (!globalAppName) {
                 console.warn("initSettings has not been called to set app name")
             }

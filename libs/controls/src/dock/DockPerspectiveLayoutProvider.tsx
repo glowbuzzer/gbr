@@ -10,6 +10,9 @@ import * as React from "react"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { ReactNode } from "react"
 import { useAppName } from "../app"
+import { StatusTrayProvider } from "../status/StatusTrayProvider"
+import { StatusBar } from "../status/StatusBar"
+import { StatusTray } from "../status/StatusTray"
 
 export type DockPerspectiveLayoutProviderProps = {
     /** The tiles that are available in the dock layout. These tiles are available to all perspectives even if not shown by default. */
@@ -38,7 +41,11 @@ export const DockPerspectiveLayoutProvider = ({
 
     return (
         <StyledDockLayout>
-            <DockLayoutContext.Provider value={context}>{children}</DockLayoutContext.Provider>
+            <StatusTrayProvider>
+                <DockLayoutContext.Provider value={context}>{children}</DockLayoutContext.Provider>
+                <StatusBar />
+                <StatusTray />
+            </StatusTrayProvider>
         </StyledDockLayout>
     )
 }

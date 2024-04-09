@@ -38,12 +38,12 @@ export const CartesianPositionTriadDisplay = ({
     const [mat_solid_black, mat_semi_transparent] = useMemo(() => {
         return [
             new MeshBasicMaterial({
-                color: token.colorText,
+                color: token.colorTextBase,
                 transparent: true,
                 opacity: 0.7
             }),
             new MeshBasicMaterial({
-                color: token.colorText,
+                color: token.colorTextBase,
                 transparent: true,
                 opacity: 0.2
             })

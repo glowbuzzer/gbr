@@ -39,7 +39,7 @@ import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
 
-const { load, save } = settings("tiles.gcode")
+const { load, save } = settings<string>("tiles.gcode")
 
 const StyledDiv = styled.div<{ readOnly: boolean }>`
     height: 100%;

@@ -58,7 +58,7 @@ export const ConnectionProvider = ({ children }) => {
 
         handler.request(websocket, "get config").then(response => {
             // console.log("Setting config from remote")
-            dispatch(configSlice.actions.setConfigFromRemote(response.config))
+            dispatch(configSlice.actions.setRemoteConfig(response.config))
         })
     }
 
@@ -120,7 +120,7 @@ export const ConnectionProvider = ({ children }) => {
 
     function send(msg) {
         if (!connection || connection.readyState !== WebSocket.OPEN) {
-            console.error("No connection open for send")
+            console.warn("No connection open for send")
             return
         }
         connection.send(msg)

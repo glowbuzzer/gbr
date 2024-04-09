@@ -11,12 +11,34 @@ import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { config } from "./config"
 import { App } from "./app"
+import {
+    FlowGbdbFacetSlice,
+    FramesGbdbFacetSlice,
+    GbdbConfiguration,
+    PointsGbdbFacetSlice,
+    ToolsGbdbFacetSlice
+} from "@glowbuzzer/store"
 
-// console.log(JSON.stringify(config, null, 2))
+const persistence: GbdbConfiguration = {
+    // remoteDb: "http://localhost:5984",
+    facets: {
+        project: {
+            dependencies: ["cell"],
+            slices: [FlowGbdbFacetSlice, PointsGbdbFacetSlice]
+        },
+        cell: {
+            slices: [FramesGbdbFacetSlice, ToolsGbdbFacetSlice]
+        }
+    }
+}
 
 const root = createRoot(document.getElementById("root"))
 root.render(
-    <GlowbuzzerApp appName="awtube-l2" configuration={config}>
+    <GlowbuzzerApp
+        appName="awtube-l2"
+        configuration={config}
+        persistenceConfiguration={persistence}
+    >
         <SerialCommunicationsProvider>
             <App />
         </SerialCommunicationsProvider>

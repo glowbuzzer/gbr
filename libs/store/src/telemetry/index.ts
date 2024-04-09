@@ -27,7 +27,7 @@ import {
     reset_telemetry_state
 } from "./storage"
 
-const { load, save } = settings("telemetry")
+const { load, save } = settings<TelemetrySettingsType>("telemetry")
 
 type TelemetrySliceType = {
     settings: TelemetrySettingsType

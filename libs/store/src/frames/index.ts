@@ -11,11 +11,12 @@ import { build_list, build_tree2, change_reference_frame } from "../util/frame_u
 import { FramesConfig, GlowbuzzerConfig, POSITIONREFERENCE, Quat, Vector3 } from "../gbc"
 import { useMemo } from "react"
 
-const { load, save } = settings("frames")
+const { load, save } = settings<FramesSliceType>("frames")
 
 type FramesSliceType = {
     activeFrame: number
     selectedFrame: number
+    overrides: number[][]
 }
 
 export const framesSlice: Slice<FramesSliceType> = createSlice({
@@ -66,7 +67,7 @@ export const useFrames = (overrides?: FramesConfig[]) => {
                 dispatch(framesSlice.actions.setActiveFrame(index))
             }
         }
-    }, [config, activeFrame, overrides])
+    }, [config.frames, activeFrame, overrides])
 }
 
 /**
@@ -76,7 +77,7 @@ export function useFramesList(overrides?: GlowbuzzerConfig["frames"]): Glowbuzze
     const config = useConfig()
 
     // make sure the frames have sensible defaults for missing properties
-    return (overrides || config.frames).map(f => ({
+    return (overrides || config.frames || []).map(f => ({
         ...f,
         translation: { x: 0, y: 0, z: 0, ...f.translation },
         rotation: { x: 0, y: 0, z: 0, w: 1, ...f.rotation }

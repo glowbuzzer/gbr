@@ -19,9 +19,14 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
             return this
         }
 
-        render(renderFn: () => ReactNode, renderHelpFn?: () => ReactNode) {
+        render(
+            renderFn: () => ReactNode,
+            renderHelpFn?: () => ReactNode,
+            renderButtonsFn?: () => ReactNode
+        ) {
             this.definition.render = renderFn
             this.definition.renderHelp = renderHelpFn
+            this.definition.renderButtons = renderButtonsFn
             return this
         }
 

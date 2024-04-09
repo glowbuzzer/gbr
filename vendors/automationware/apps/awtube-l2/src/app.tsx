@@ -46,6 +46,7 @@ import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { DevInputOverridesTileDefinition } from "../../../../../libs/controls/src/io/overrides/DevInputOverridesTileDefinition"
+import { AppMenu } from "./AppMenu"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -151,7 +152,7 @@ export const App = () => {
                 InterpolatedMoveTileDefinition
             ]}
         >
-            <ExampleAppMenu title="AutomationWare AW-TUBE" />
+            <AppMenu title="AutomationWare AW-TUBE" />
             <DockLayout />
         </DockLayoutProvider>
     )

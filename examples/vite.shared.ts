@@ -57,6 +57,9 @@ export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) 
                 "@glowbuzzer/controls": resolve(root, "./libs/controls/src/index.ts"),
                 "@glowbuzzer/store": resolve(root, "./libs/store/src/index.ts")
             }
+        },
+        define: {
+            "window.global": "window"
         }
     }
 }

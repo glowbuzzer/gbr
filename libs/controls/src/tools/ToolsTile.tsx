@@ -4,6 +4,7 @@
 
 import * as React from "react"
 import {
+    configSlice,
     MachineState,
     useMachineState,
     usePrefs,
@@ -13,9 +14,15 @@ import {
 } from "@glowbuzzer/store"
 import { Button, Tag } from "antd"
 import styled from "styled-components"
-import { RightOutlined } from "@ant-design/icons"
+import { EditOutlined, RightOutlined } from "@ant-design/icons"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { TileEmptyMessage } from "../tiles"
+import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
+import { ToolsEditModal } from "./ToolsEditModal"
+import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -38,6 +45,8 @@ export const ToolsTile = () => {
     const { fromSI, getUnits } = usePrefs()
     const api = useSoloActivity(0)
     const currentState = useMachineState()
+    const [showEdit, setShowEdit] = React.useState(false)
+    const dispatch = useDispatch()
 
     function select(index: number) {
         return api.setToolOffset(index).promise()
@@ -45,40 +54,70 @@ export const ToolsTile = () => {
 
     const { units, precision } = getUnits("linear")
 
+    function add_tool() {
+        dispatch(
+            configSlice.actions.addConfig({
+                tool: [
+                    ...(tools || []),
+                    {
+                        name: "Tool test",
+                        diameter: 0.5
+                    }
+                ]
+            })
+        )
+    }
+
     return (
-        <StyledTileContent>
-            {tools?.map((config, index) => (
-                <StyledDiv key={index}>
-                    <div className="name">{config.name}</div>
-                    {index === toolIndex && <RightOutlined />}
-                    <Tag>
-                        {fromSI(config.translation?.z || 0, "linear").toFixed(precision)} {units}
-                    </Tag>
-                    {config.diameter && (
+        <DockTileWithToolbar
+            toolbar={
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        Icon={EditIcon}
+                        useFill={true}
+                        title="Edit Tools"
+                        button
+                        onClick={add_tool}
+                    />
+                </DockToolbarButtonGroup>
+            }
+        >
+            {showEdit && <ToolsEditModal onClose={() => setShowEdit(false)} />}
+            <StyledTileContent>
+                {tools?.map((config, index) => (
+                    <StyledDiv key={index}>
+                        <div className="name">{config.name}</div>
+                        {index === toolIndex && <RightOutlined />}
                         <Tag>
-                            <svg viewBox="0 0 16 16" width={16}>
-                                <circle
-                                    cx={6}
-                                    cy={10}
-                                    r={5}
-                                    stroke="black"
-                                    fill="none"
-                                    strokeWidth={1}
-                                />
-                            </svg>
-                            {fromSI(config.diameter || 0, "linear").toFixed(precision)} {units}
+                            {fromSI(config.translation?.z || 0, "linear").toFixed(precision)}{" "}
+                            {units}
                         </Tag>
-                    )}
-                    <Button
-                        size="small"
-                        onClick={() => select(index)}
-                        disabled={currentState !== MachineState.OPERATION_ENABLED}
-                    >
-                        Select
-                    </Button>
-                </StyledDiv>
-            ))}
-            {!tools?.length && <TileEmptyMessage>No tools configured</TileEmptyMessage>}
-        </StyledTileContent>
+                        {config.diameter && (
+                            <Tag>
+                                <svg viewBox="0 0 16 16" width={16}>
+                                    <circle
+                                        cx={6}
+                                        cy={10}
+                                        r={5}
+                                        stroke="black"
+                                        fill="none"
+                                        strokeWidth={1}
+                                    />
+                                </svg>
+                                {fromSI(config.diameter || 0, "linear").toFixed(precision)} {units}
+                            </Tag>
+                        )}
+                        <Button
+                            size="small"
+                            onClick={() => select(index)}
+                            disabled={currentState !== MachineState.OPERATION_ENABLED}
+                        >
+                            Select
+                        </Button>
+                    </StyledDiv>
+                ))}
+                {!tools?.length && <TileEmptyMessage>No tools configured</TileEmptyMessage>}
+            </StyledTileContent>
+        </DockTileWithToolbar>
     )
 }

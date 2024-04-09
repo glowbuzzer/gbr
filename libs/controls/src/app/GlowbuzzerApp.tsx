@@ -8,6 +8,7 @@ import { Reducer, StoreEnhancer } from "@reduxjs/toolkit"
 import {
     ConfigState,
     ConnectionState,
+    GbdbConfiguration,
     GlowbuzzerConfig,
     initSettings,
     useConfigState,
@@ -22,6 +23,7 @@ import { appNameContext } from "./hooks"
 import { ConnectionProvider } from "./ConnectionProvider"
 import { GlowbuzzerAppLifecycle } from "./lifecycle"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
+import { GbdbProvider } from "../gbdb"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
@@ -65,7 +67,7 @@ type GlowbuzzerContainerProps = {
 
 const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     const connection = useConnection()
-    const [configState] = useConfigState()
+    const configState = useConfigState()
     const connectDelay = useRef(0)
 
     const { state, autoConnect, reconnect } = connection
@@ -128,9 +130,12 @@ type GlowbuzzerAppProps = {
     appName: string
     /** Enhancers that can be used to manipulate the store. See [the Redux Toolkit documentation](https://redux-toolkit.js.org/api/configureStore#enhancers) */
     storeEnhancers?: StoreEnhancer[]
+    /** Additional reducers to add to the store. You can use this to add slices to the Redux store. */
     additionalReducers?: { [index: string]: Reducer }
     /** Configuration to load into the store. If not provided, the configuration will be loaded from local storage, or from GBC upon connect. */
     configuration?: GlowbuzzerConfig
+    /** Configuration for slice persistence */
+    persistenceConfiguration?: GbdbConfiguration
     /** Your application */
     children: ReactNode
 }
@@ -149,6 +154,7 @@ export const GlowbuzzerApp = ({
     storeEnhancers,
     additionalReducers,
     configuration,
+    persistenceConfiguration,
     children
 }: GlowbuzzerAppProps) => {
     initSettings(appName)
@@ -156,18 +162,21 @@ export const GlowbuzzerApp = ({
     const store = GlowbuzzerAppLifecycle.createStore(
         configuration,
         storeEnhancers,
-        additionalReducers
+        additionalReducers,
+        persistenceConfiguration
     )
 
     return (
         <appNameContext.Provider value={appName}>
             <GlowbuzzerThemeProvider>
                 <Provider store={store}>
-                    <ConnectionProvider>
-                        <ConfigLiveEditProvider>
-                            <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
-                        </ConfigLiveEditProvider>
-                    </ConnectionProvider>
+                    <GbdbProvider configuration={persistenceConfiguration}>
+                        <ConnectionProvider>
+                            <ConfigLiveEditProvider>
+                                <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                            </ConfigLiveEditProvider>
+                        </ConnectionProvider>
+                    </GbdbProvider>
                 </Provider>
             </GlowbuzzerThemeProvider>
         </appNameContext.Provider>

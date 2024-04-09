@@ -6,13 +6,7 @@ import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import deepEqual from "fast-deep-equal"
 import { RootState } from "../root"
-import { useFrames } from "../frames"
-import { Quaternion, Vector3 } from "three"
-import {
-    CartesianPosition,
-    CartesianPositionsConfig,
-    GlowbuzzerKinematicsConfigurationStatus
-} from "../gbc"
+import { GlowbuzzerKinematicsConfigurationStatus } from "../gbc"
 
 export type TraceElement = {
     x: number
@@ -40,14 +34,13 @@ export const traceSlice: Slice<TraceSliceType> = createSlice({
     },
     reducers: {
         status(state, action) {
-            action.payload.forEach((kc: GlowbuzzerKinematicsConfigurationStatus, index) => {
+            action.payload.forEach((kc: GlowbuzzerKinematicsConfigurationStatus, index: number) => {
                 const { x, y, z } = kc.position.translation
 
                 state.kcs[index] ??= { path: [], last: undefined, enabled: true }
                 const current = state.kcs[index]
 
                 if (!current.enabled) {
-                    console.log("not enabled")
                     return
                 }
                 if (current.last && deepEqual(current.last, kc)) {

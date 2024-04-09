@@ -3,7 +3,7 @@
  */
 
 import React from "react"
-import { GbcSchemaChecksum, useConnection, useGbcVersionInfo } from "@glowbuzzer/store"
+import { GbcSchemaChecksum, useConnection, useGbcConfigInfo } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Tag } from "antd"
 import { StatusTrayItem } from "./StatusTrayItem"
@@ -70,7 +70,7 @@ export function check_gbc_version(
  * Check if GBC version is supported and display a warning if not
  */
 export const StatusTrayGbcVersionCheck = () => {
-    const { gbcVersion, schemaVersion } = useGbcVersionInfo()
+    const { gbcVersion, schemaVersion } = useGbcConfigInfo()
     const { connected } = useConnection()
 
     if (!(gbcVersion && schemaVersion && connected)) {

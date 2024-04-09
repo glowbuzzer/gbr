@@ -137,6 +137,7 @@ export const FlowTile = () => {
     }
 
     const flow = flows[selectedFlowIndex]
+    console.log("Flow", flow, "flows", flows)
 
     return active ? (
         <FlowRuntimeDisplay />

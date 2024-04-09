@@ -118,20 +118,17 @@ export const App = () => {
             additionalReducers={sortingAppReducers}
             configuration={sortingAppConfig}
         >
-            <StatusTrayProvider>
-                <DigitalInputMockProvider>
-                    <SimulationController />
-                    <DockPerspectiveLayoutProvider
-                        tiles={AVAILABLE_COMPONENTS}
-                        perspectives={perspectives}
-                        defaultPerspective="development"
-                    >
-                        <ExampleAppMenu title="Conveyors" />
-                        <DockLayout />
-                        <StatusTray />
-                    </DockPerspectiveLayoutProvider>
-                </DigitalInputMockProvider>
-            </StatusTrayProvider>
+            <DigitalInputMockProvider>
+                <SimulationController />
+                <DockPerspectiveLayoutProvider
+                    tiles={AVAILABLE_COMPONENTS}
+                    perspectives={perspectives}
+                    defaultPerspective="development"
+                >
+                    <ExampleAppMenu title="Conveyors" />
+                    <DockLayout />
+                </DockPerspectiveLayoutProvider>
+            </DigitalInputMockProvider>
         </GlowbuzzerApp>
     )
 }

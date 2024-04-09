@@ -20,7 +20,7 @@ export type GlowbuzzerConnectionContextType = {
     /** Send a message to the remote websocket */
     send(msg: string): void
     /** Send a request to the remote websocket and return a promise that resolves when the request has been completed */
-    request(type: string, body: string): Promise<MessageResponse>
+    request(type: string, body: object): Promise<MessageResponse>
     /** The current connection state */
     state: ConnectionState
     /** Whether status messages are being received */

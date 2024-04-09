@@ -2,15 +2,16 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { settings } from "../util/settings"
 import { useConnection } from "../connect"
+import { gbdbExtraReducersFactory } from "../gbdb"
 
-const { load, save } = settings("config")
+const { load, save } = settings<GlowbuzzerConfig>("config")
 
 export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
     machine: [{ name: "default" }],
@@ -33,108 +34,172 @@ export enum ConfigState {
     READY = "READY"
 }
 
-type ConfigSliceType = {
+type GbcConfigResponse = GlowbuzzerConfig & {
+    gbcVersion: string
+    schemaVersion: string
+    readonly: boolean
+    simulationOnly: boolean
+}
+
+export type ConfigSliceState = {
     state: ConfigState
     readonly: boolean
     simulationOnly: boolean
     gbcVersion: string
     schemaVersion: string
     version: number
-    modified: boolean
-    usingLocalConfiguration: boolean
+    requiresUpload: boolean
     current: GlowbuzzerConfig
-    remote: GlowbuzzerConfig | null
+    remote?: GlowbuzzerConfig
+    local?: GlowbuzzerConfig
+    appConfig?: GlowbuzzerConfig
+    // overlay?: Pick<
+    //     GlowbuzzerConfig,
+    //     "tool" | "frames" | "kinematicsConfiguration" | "joint" | "points"
+    // >
 }
 
-function persist({ current, modified, remote }) {
-    save({
-        current,
-        remote,
-        modified
-    })
+type ConfigSliceReducers = {
+    setRemoteConfig: (state: ConfigSliceState, action: PayloadAction<GbcConfigResponse>) => void
+    setAppConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
+    addConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
+    setConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
 }
 
-export const configSlice: Slice<ConfigSliceType> = createSlice({
+function persist(current: GlowbuzzerConfig) {
+    save(current)
+}
+
+function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
+    return configs.reduce((acc, config) => {
+        if (!config) {
+            return acc
+        }
+        // patch the current config with the new config
+        for (const key in config) {
+            if (acc[key] === undefined) {
+                acc[key] = config[key]
+            } else {
+                const existing = acc[key]
+                const overlay = config[key]
+                // all the values in config are arrays or undefined
+                if (!existing || existing.length !== overlay.length) {
+                    // if the lengths to merge are different, we assume the overlay should overwrite all
+                    acc[key] = overlay
+                } else {
+                    // we're only interested in merging the top-level properties of objects in array
+                    // TODO: M: We might need to do a more selective merge here.
+                    //          For example kinematicsConfiguration.frameIndex might be overridden
+                    if (key === "kinematicsConfiguration") {
+                        console.log("merge", JSON.parse(JSON.stringify(overlay[0], null, 2)))
+                    }
+                    acc[key] = overlay.map((v: object, i: number) => ({ ...existing[i], ...v }))
+                }
+            }
+        }
+        return acc
+    }, {})
+}
+
+export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createSlice({
     name: "config",
     initialState: {
-        state: ConfigState.AWAITING_CONFIG as ConfigState,
-        readonly: false as boolean,
-        simulationOnly: false as boolean,
+        state: ConfigState.AWAITING_CONFIG,
+        readonly: false,
+        simulationOnly: false,
         gbcVersion: null,
         schemaVersion: null,
-        modified: false as boolean,
+        requiresUpload: false,
         usingLocalConfiguration: false,
         version: 1,
         current: GlowbuzzerMinimalConfig,
         remote: null
-    },
+    } as ConfigSliceState,
     reducers: {
-        loadOfflineConfig(state, action) {
-            const saved = load()
-            const mismatch = action.payload && !deepEqual(saved?.current, action.payload)
-            const modified = saved?.modified || mismatch
-            const localOverride = action.payload ? { current: action.payload } : {}
+        /** Set the app config - will overlay onto the current config (which may be loaded from local storage or empty) */
+        setAppConfig(state, action) {
+            // we will attempt to load the last config from local storage and overlay the app config
+            const appConfig = action.payload
+            // this happens early in the lifecycle, so we don't need to worry about locally loaded config
+            const current = merge(load({}), appConfig)
+
             return {
                 ...state,
-                ...saved,
-                ...localOverride,
-                usingLocalConfiguration: !!action.payload,
-                modified
+                appConfig,
+                current
             }
         },
-        /** Set config on connect - will not overwrite a locally modified config */
-        setConfigFromRemote(state, action) {
-            const { gbcVersion, schemaVersion, readonly, simulationOnly, ...config } =
+
+        /** Set config from GBC after connect */
+        setRemoteConfig(state, action) {
+            const { gbcVersion, schemaVersion, readonly, simulationOnly, ...remote } =
                 action.payload
-            state.readonly = readonly
-            state.simulationOnly = simulationOnly
-            state.gbcVersion = gbcVersion
-            state.schemaVersion = schemaVersion
-            state.version++
-            state.state = ConfigState.READY
-            state.modified = state.usingLocalConfiguration && !deepEqual(state.current, config)
-            if (state.modified && !readonly) {
-                state.remote = config
-            } else {
-                state.current = config
-                state.remote = null
+
+            const current = merge(remote, state.appConfig, state.local)
+            const requiresUpload = !deepEqual(current, remote)
+
+            persist(current)
+
+            return {
+                ...state,
+                state: ConfigState.READY,
+                version: state.version + 1, // TODO: remove?
+                gbcVersion,
+                schemaVersion,
+                readonly,
+                simulationOnly,
+                current,
+                remote,
+                requiresUpload
             }
-            persist(state)
         },
+
+        /** Set the overlay config - merged with app config and remote config */
+        addConfig(state, action) {
+            const local = merge(state.local, action.payload)
+            const current = merge(state.current, state.appConfig, local)
+            const requiresUpload = !deepEqual(current, state.remote)
+            console.log(
+                "add config called, resulting config: ",
+                current,
+                "from",
+                "payload",
+                action.payload,
+                "local state",
+                state.local,
+                "local merged",
+                local
+            )
+            return {
+                ...state,
+                local,
+                current,
+                requiresUpload
+            }
+        },
+
         /** Set config - overrides and resets any locally modified config */
         setConfig(state, action) {
-            state.version++
-            state.modified = false
-            state.remote = null
-            state.current = action.payload
-            persist(state)
-        },
-        /** Set offline config - marks config as modified and cache the last known remote config */
-        setOfflineConfig(state, action) {
-            state.version++
-            if (!state.modified) {
-                state.remote = state.current
-            }
-            state.modified = true
-            state.current = action.payload
-            persist(state)
-        },
-        /** Discard any locally modified config and replace with last known remote config */
-        discardOfflineConfig(state) {
-            if (!state.modified) {
-                return
-            }
-            state.version++
-            state.modified = false
-            state.current = state.remote || GlowbuzzerMinimalConfig
-            state.remote = null
-            state.usingLocalConfiguration = false
-            persist(state)
-        },
-        setConfigState(state, action) {
-            state.state = action.payload
+            throw new Error("Reducer setConfig is no longer supported!")
+            // state.version++
+            // state.modified = false
+            // state.remote = null
+            // state.current = action.payload
+            // persist(state)
         }
-    }
+    },
+    extraReducers: gbdbExtraReducersFactory<ConfigSliceState>((state, action) => {
+        // config has been modified by load of gbdb facet (into 'local' state)
+        const current = merge(state.current, state.local)
+        // console.log("local", JSON.parse(JSON.stringify(state.local, null, 2)))
+        // console.log("extra reducer called", JSON.parse(JSON.stringify(current, null, 2)))
+        const requiresUpload = !deepEqual(current, state.remote)
+        return {
+            ...state,
+            current,
+            requiresUpload
+        }
+    })
 })
 
 /** @ignore */
@@ -152,50 +217,21 @@ export function useBusCycleTime(): number {
 
 /** @ignore */
 export function useConfigState() {
-    const dispatch = useDispatch()
-    // return value and setter
-    return [
-        useSelector((state: RootState) => state.config.state, shallowEqual),
-        state => dispatch(configSlice.actions.setConfigState(state))
-    ] as [ConfigState, (state: ConfigState) => void]
-}
-
-/** @ignore */
-export function useOfflineConfig() {
-    const loader = useConfigLoader()
-    const { modified, usingLocalConfiguration, readonly } = useSelector(
-        (state: RootState) => ({
-            modified: state.config.modified,
-            usingLocalConfiguration: state.config.usingLocalConfiguration,
-            readonly: state.config.readonly
-        }),
-        shallowEqual
-    )
-    const offline_config = useSelector((state: RootState) => state.config.current, deepEqual)
-    const dispatch = useDispatch()
-
-    return {
-        modified,
-        usingLocalConfiguration,
-        readonly,
-        discard() {
-            dispatch(configSlice.actions.discardOfflineConfig(null))
-        },
-        upload(): Promise<void> {
-            return loader(offline_config)
-        }
-    }
+    return useSelector((state: RootState) => state.config.state)
 }
 
 /**
  * Returns the version of the connected GBC, if available
  */
-export function useGbcVersionInfo() {
+export function useGbcConfigInfo() {
     const config = useSelector((state: RootState) => state.config)
 
+    const { gbcVersion, schemaVersion, readonly, simulationOnly } = config
     return {
-        gbcVersion: config.gbcVersion,
-        schemaVersion: config.schemaVersion
+        gbcVersion,
+        schemaVersion,
+        readonly,
+        simulationOnly
     }
 }
 
@@ -207,10 +243,7 @@ export function useSimilationOnlyConfiguration() {
  * Returns the current configuration as provided by GBC.
  */
 export function useConfig() {
-    return useSelector(
-        (state: RootState) => state.config,
-        (a, b) => a.version === b.version // only update on version change
-    ).current
+    return useSelector((state: RootState) => state.config.current)
 }
 
 /**
@@ -218,26 +251,48 @@ export function useConfig() {
  * changes will be sent to GBC.
  */
 export function useConfigLoader() {
+    // const connection = useConnection()
+    // const config = useConfig()
+    // const dispatch = useDispatch()
+
+    console.error(
+        "Config loader is no longer supported - projects should use GbDb functionality instead"
+    )
+
+    return async (change: Partial<GlowbuzzerConfig>, overwriteCurrent = false): Promise<void> => {
+        // const next: GlowbuzzerConfig = {
+        //     ...config,
+        //     ...change
+        // }
+        // if (connection.connected) {
+        //     await connection.request("load config", { config: next })
+        //     dispatch(configSlice.actions.setConfig(next))
+        // } else {
+        //     // just do the dispatch, but config is now cached
+        //     dispatch(configSlice.actions.setOfflineConfig(next))
+        //     if (overwriteCurrent) {
+        //         dispatch(configSlice.actions.setConfig(next))
+        //     }
+        // }
+    }
+}
+
+export function useConfigSync(): [boolean, () => Promise<void>] {
     const connection = useConnection()
     const config = useConfig()
     const dispatch = useDispatch()
+    const gbcInfo = useGbcConfigInfo()
+    const requireSync = useSelector((state: RootState) => state.config.requiresUpload)
 
-    return async (change: Partial<GlowbuzzerConfig>, overwriteCurrent = false): Promise<void> => {
-        const next: GlowbuzzerConfig = {
-            ...config,
-            ...change
-        }
-        if (connection.connected) {
-            await connection.request("load config", { config: next })
-            dispatch(configSlice.actions.setConfig(next))
-        } else {
-            // just do the dispatch, but config is now cached
-            dispatch(configSlice.actions.setOfflineConfig(next))
-            if (overwriteCurrent) {
-                dispatch(configSlice.actions.setConfig(next))
+    return [
+        requireSync,
+        async () => {
+            if (connection.connected) {
+                await connection.request("load config", { config })
+                dispatch(configSlice.actions.setRemoteConfig({ ...gbcInfo, ...config }))
             }
         }
-    }
+    ]
 }
 
 /**

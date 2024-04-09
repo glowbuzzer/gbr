@@ -2,24 +2,33 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { useConfig } from "../config"
-import { GlowbuzzerConfig } from "../gbc"
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { PointsConfig, WithName } from "../gbc"
+import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 
-type PointsSliceType = {
+export type PointsSliceState = {
     selectedPoint: number
+    points: WithName<PointsConfig>[]
 }
 
-export const pointsSlice: Slice<PointsSliceType> = createSlice({
+type PointsSliceReducers = {
+    setSelectedPoint: CaseReducer<PointsSliceState, PayloadAction<number>>
+    setPoints: CaseReducer<PointsSliceState, PayloadAction<WithName<PointsConfig>[]>>
+}
+
+export const pointsSlice = createSlice<PointsSliceState, PointsSliceReducers>({
     name: "points",
     initialState: {
-        selectedPoint: null
+        selectedPoint: null,
+        points: []
     },
     reducers: {
         setSelectedPoint(state, action) {
             state.selectedPoint = action.payload
+        },
+        setPoints(state, action) {
+            state.points = action.payload
         }
     }
 })
@@ -28,11 +37,12 @@ export const pointsSlice: Slice<PointsSliceType> = createSlice({
  * Provides access to the points that have been configured. The overrides parameter is used by GBR for dynamic editing of points
  * and should not generally be used by applications.
  */
-export function usePointsList(overrides?: GlowbuzzerConfig["points"]): GlowbuzzerConfig["points"] {
-    const config = useConfig()
+export function usePointsList(overrides?: WithName<PointsConfig>[]): WithName<PointsConfig>[] {
+    const points = useSelector((state: RootState) => state.points.points)
+    // const config = useConfig()
     // normalise points
     return (
-        (overrides || config.points)?.map(p => ({
+        (overrides || points)?.map(p => ({
             ...p,
             translation: {
                 x: 0,

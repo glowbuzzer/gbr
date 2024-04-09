@@ -5,18 +5,13 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
-    configSlice,
     FramesConfig,
-    GlowbuzzerConfig,
     PointsConfig,
+    pointsSlice,
     POSITIONREFERENCE,
-    Quat,
-    useConfig,
-    useConnection,
     useFramesList,
     usePointsList,
     useSelectedPoint,
-    Vector3,
     WithName
 } from "@glowbuzzer/store"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
@@ -24,32 +19,16 @@ import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import styled from "styled-components"
 import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
 import { Euler, Quaternion } from "three"
-import { message } from "antd"
-import { CartesianPositionEditFullWithToolbar } from "../util/components/CartesianPositionEditFullWithToolbar"
 import { useConfigLiveEdit } from "../config"
 import { useDispatch } from "react-redux"
+import {
+    CartesianPositionEditModal,
+    CartesianPositionEditModalMode
+} from "../util/components/CartesianPositionEditModal"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
 `
-
-function usePointsLoader() {
-    const connection = useConnection()
-    const config = useConfig()
-    const dispatch = useDispatch()
-
-    return async ({ points }: { points: GlowbuzzerConfig["points"] }) => {
-        if (!connection.connected) {
-            throw new Error("You must be connected to store points")
-        }
-        const next: GlowbuzzerConfig = {
-            ...config,
-            points
-        }
-        await connection.request("load points", { points })
-        dispatch(configSlice.actions.setConfig(next))
-    }
-}
 
 /**
  * The points tile shows a simple table of all configured points.
@@ -57,13 +36,15 @@ function usePointsLoader() {
 export const PointsTile = () => {
     const { points: editedPoints, setPoints, clearPoints } = useConfigLiveEdit()
     const [selected, setSelected] = useSelectedPoint()
-    const [editMode, setEditMode] = useState(false)
+    const [mode, setMode] = useState<CartesianPositionEditModalMode>(
+        CartesianPositionEditModalMode.NONE
+    )
 
-    const points = usePointsList(editedPoints)
+    const points = usePointsList()
     const frames = useFramesList()
-    const loader = usePointsLoader()
+    const dispatch = useDispatch()
 
-    function transform_point(point: WithName<PointsConfig>, index: number) {
+    const treeData = points?.map((point: WithName<PointsConfig>, index: number) => {
         {
             const { name, frameIndex, translation, rotation } = point
             const { x, y, z } = translation ?? { x: 0, y: 0, z: 0 }
@@ -103,131 +84,94 @@ export const PointsTile = () => {
                 c: euler.z
             }
         }
-    }
+    })
 
-    const items = points?.map(transform_point)
-
-    function points_with_modification(
-        name: string,
-        positionReference: POSITIONREFERENCE,
-        frameIndex: number,
-        translation: Vector3,
-        rotation: Quat
-    ) {
-        return points.map((point, index) => {
-            if (index === selected) {
-                return {
-                    name,
-                    frameIndex:
-                        positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : frameIndex,
-                    translation,
-                    rotation,
-                    configuration: point.configuration
-                }
-            }
-            return point
-        })
-    }
-
-    function update_point(
-        name: string,
-        {
-            positionReference,
-            frameIndex: parentFrameIndex,
-            rotation,
-            translation
-        }: CartesianPosition
-    ) {
-        const overrides: FramesConfig[] = points_with_modification(
+    function update_point({
+        name,
+        positionReference,
+        frameIndex: parentFrameIndex,
+        rotation,
+        translation
+    }: WithName<CartesianPosition>) {
+        const pointIndex = mode === CartesianPositionEditModalMode.CREATE ? points.length : selected
+        const modifiedPoint: WithName<PointsConfig> = {
             name,
-            positionReference,
-            parentFrameIndex,
+            frameIndex:
+                positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : parentFrameIndex,
             translation,
-            rotation
-        )
+            rotation,
+            configuration: 0
+        }
+        const overrides: WithName<FramesConfig>[] =
+            pointIndex >= points.length
+                ? [...points, modifiedPoint]
+                : points.map((point, index) => {
+                      if (index === pointIndex) {
+                          return {
+                              ...modifiedPoint,
+                              configuration: point.configuration
+                          }
+                      }
+                      return point
+                  })
         setPoints(overrides)
     }
 
-    function save_points(
-        name: string,
-        { positionReference, frameIndex, rotation, translation }: CartesianPosition
-    ) {
-        const next: PointsConfig[] = points_with_modification(
-            name,
-            positionReference,
-            frameIndex,
-            translation,
-            rotation
-        )
-        loader({
-            points: next
-        }).then(() => {
-            clearPoints()
-            setEditMode(false)
-            return message.success("Points updated")
-        })
+    function save_points() {
+        dispatch(pointsSlice.actions.setPoints(editedPoints))
+        clearPoints()
+        setMode(CartesianPositionEditModalMode.NONE)
     }
 
-    function point_to_cartesian_position(point: PointsConfig): CartesianPosition {
-        const { frameIndex, translation, rotation } = point
+    function point_to_cartesian_position(pointIndex: number): CartesianPosition {
+        const point = editedPoints?.[pointIndex] || points[pointIndex]
+        if (!point) {
+            return null
+        }
         return {
+            ...point,
             positionReference:
-                frameIndex === undefined ? POSITIONREFERENCE.ABSOLUTE : POSITIONREFERENCE.RELATIVE,
-            frameIndex,
-            translation,
-            rotation
+                point.frameIndex === undefined
+                    ? POSITIONREFERENCE.ABSOLUTE
+                    : POSITIONREFERENCE.RELATIVE
         }
     }
 
     function add_point() {
-        const next: PointsConfig[] = [
-            ...points,
-            {
-                name: "New Point",
-                frameIndex: undefined,
-                translation: { x: 0, y: 0, z: 0 },
-                rotation: { x: 0, y: 0, z: 0, w: 1 },
-                configuration: 0
-            }
-        ]
-        loader({
-            points: next
-        }).then(() => {
-            setSelected(next.length - 1)
-            setEditMode(true)
-        })
+        setMode(CartesianPositionEditModalMode.CREATE)
     }
 
     function delete_point() {
         const next: PointsConfig[] = points.filter((_, index) => index !== selected)
-        loader({
-            points: next
-        }).then(() => {
-            setSelected(selected > 0 ? selected - 1 : 0)
-        })
+        dispatch(pointsSlice.actions.setPoints(next))
+        setSelected(selected > 0 ? selected - 1 : 0)
     }
 
     function cancel_edit() {
         clearPoints()
-        setEditMode(false)
+        setMode(CartesianPositionEditModalMode.NONE)
     }
 
-    return editMode ? (
-        <CartesianPositionEditFullWithToolbar
-            name={points[selected].name}
-            value={point_to_cartesian_position(points[selected])}
-            onSave={save_points}
-            onChange={update_point}
-            onCancel={cancel_edit}
-        />
-    ) : (
+    return mode === CartesianPositionEditModalMode.NONE ? (
         <CartesianPositionTable
             selected={selected}
             setSelected={setSelected}
-            items={items}
-            onEdit={() => setEditMode(true)}
+            items={treeData}
+            onEdit={() => setMode(CartesianPositionEditModalMode.UPDATE)}
             onAdd={add_point}
             onDelete={delete_point}
+        />
+    ) : (
+        <CartesianPositionEditModal
+            value={
+                mode === CartesianPositionEditModalMode.UPDATE
+                    ? point_to_cartesian_position(selected)
+                    : null
+            }
+            mode={mode}
+            onSave={save_points}
+            onChange={update_point}
+            onClose={cancel_edit}
         />
     )
 }

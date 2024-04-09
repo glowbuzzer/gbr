@@ -119,7 +119,9 @@ for (const project of projects) {
             // dseg font css (no code), but not sure we can bundle
             'dseg',
             // don't bundle the occt-import-js code (TODO not currently referenced)
-            'occt-import-js'
+            'occt-import-js',
+            // don't bundle pouchdb
+            'pouchdb'
         ];
 
         // these libs will be bundled

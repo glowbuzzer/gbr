@@ -41,8 +41,10 @@ import undoable from "redux-undo"
 import { flowSlice } from "./flow"
 import { monitorSlice } from "./monitor"
 import { overrideable } from "./overrideable"
+import { gbdbSlice } from "./gbdb"
 
 export const standardReducers = {
+    gbdb: gbdbSlice.reducer,
     config: configSlice.reducer,
     tasks: tasksSlice.reducer,
     activity: activitySlice.reducer,
