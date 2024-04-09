@@ -16,13 +16,12 @@ const StyledFacet = styled.div`
     padding: 2px 4px;
 `
 
-export const GbDbFacetIndicator = ({
-    sliceName,
-    propertyName = null
-}: {
+type GbdbFacetIndicatorProps = {
     sliceName: string
     propertyName?: string
-}) => {
+}
+
+export const GbdbFacetIndicator = ({ sliceName, propertyName = null }: GbdbFacetIndicatorProps) => {
     const { facets } = useGbdb()
     const affected_facets = Object.entries(facets).filter(([, value]) =>
         value.slices.some(
@@ -33,12 +32,16 @@ export const GbDbFacetIndicator = ({
     if (!affected_facets.length) {
         return null
     }
-    return affected_facets
-        .map(([key, value]) => key)
-        .filter((value, index, self) => self.indexOf(value) === index)
-        .map(key => (
-            <StyledFacet key={key} color="blue">
-                {key}
-            </StyledFacet>
-        ))
+    return (
+        <>
+            {affected_facets
+                .map(([key, value]) => key)
+                .filter((value, index, self) => self.indexOf(value) === index)
+                .map(key => (
+                    <StyledFacet key={key} color="blue">
+                        {key}
+                    </StyledFacet>
+                ))}
+        </>
+    )
 }

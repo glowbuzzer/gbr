@@ -6,7 +6,7 @@ import { DockTileDefinitionBuilder } from ".."
 import React, { createElement } from "react"
 import { FlowTile } from "./FlowTile"
 import { FlowContextProvider } from "./FlowContextProvider"
-import { GbDbFacetIndicator } from "../gbdb/GbDbFacetIndicator"
+import { GbdbFacetIndicator } from "../gbdb/GbdbFacetIndicator"
 import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 
 export const FlowTileDefinition = DockTileDefinitionBuilder()

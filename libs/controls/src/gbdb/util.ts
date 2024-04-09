@@ -3,8 +3,8 @@
  */
 
 import { createElement } from "react"
-import { GbDbFacetIndicator } from "./GbDbFacetIndicator"
+import { GbdbFacetIndicator } from "./GbdbFacetIndicator"
 
 export function gbdbFacetIndicatorFactory(sliceName: string, propertyName?: string) {
-    return () => createElement(GbDbFacetIndicator, { sliceName, propertyName }, null)
+    return () => createElement(GbdbFacetIndicator, { sliceName, propertyName }, null)
 }

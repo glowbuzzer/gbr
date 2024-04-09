@@ -6,7 +6,7 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ToolsTile, ToolsTileHelp } from "./index"
 import { ConnectTabButtons } from "../connect"
-import { GbDbFacetIndicator } from "../gbdb/GbDbFacetIndicator"
+import { GbdbFacetIndicator } from "../gbdb/GbdbFacetIndicator"
 import { DockTileDefinitionBuilder } from "../dock"
 import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 
