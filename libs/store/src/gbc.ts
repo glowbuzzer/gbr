@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "e9b59e74189eec8e883d28465af09402"
+export const GbcSchemaChecksum = "1082aeac812d10e71f73ae044e18970d"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -347,6 +347,16 @@ export const GbcConstants = {
   KC_WPOSITIVE ,
         /**  for 6DOF robots the robot is in the wrist negative configuration */
   KC_WNEGATIVE ,
+    }
+    export enum KC_AUXILIARYAXISTYPE {
+        /**  No auxiliary axis (default) */
+  KC_AUXILIARYAXIS_NONE ,
+        /**  Linear auxiliary axis in X */
+  KC_AUXILIARYAXIS_X ,
+        /**  Linear auxiliary axis in Y */
+  KC_AUXILIARYAXIS_Y ,
+        /**  Linear auxiliary axis in Z */
+  KC_AUXILIARYAXIS_Z ,
     }
     export enum BLENDTYPE {
         /**  No blend used for move */
@@ -983,6 +993,10 @@ export const GbcConstants = {
                         sphericalEnvelope?:SphericalEnvelope;
                         /**  Inner and outer radius of cylindrical envelope (disabled by default) */
                         cylindricalEnvelope?:number[];
+                        /**  Integrated auxiliary axis for the kinematics configuration, if supported */
+                        auxiliaryAxisType?:KC_AUXILIARYAXISTYPE;
+                        /**  Amount of the move that the auxiliary axis should cover, in range 0 to 1 */
+                        auxiliaryAxisFactor?:number;
             }
             /** Status of a kinematics configuration */
             export type KinematicsConfigurationStatus = {
