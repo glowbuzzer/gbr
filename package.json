@@ -2,7 +2,8 @@
     "name": "gbr",
     "license": "MIT",
     "scripts": {
-        "start": "vite"
+        "start": "vite",
+        "tags": "git tag --sort=-creatordate | head -5"
     },
     "private": true,
     "optionalDependencies": {
