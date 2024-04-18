@@ -21,6 +21,8 @@ type DockLayoutProviderProps = {
     defaultVisible?: string[]
     /** The children of the dock layout provider. This must include {@link DockLayout}. */
     children: ReactNode
+    /** Extra content to be displayed in the status bar. */
+    statusBarExtra?: ReactNode
 }
 
 /**
@@ -30,7 +32,8 @@ type DockLayoutProviderProps = {
 export const DockLayoutProvider = ({
     tiles,
     defaultVisible,
-    children
+    children,
+    statusBarExtra
 }: DockLayoutProviderProps) => {
     const appName = useAppName()
 
@@ -46,7 +49,7 @@ export const DockLayoutProvider = ({
         <StyledDockLayout>
             <StatusTrayProvider>
                 <DockLayoutContext.Provider value={context}>{children}</DockLayoutContext.Provider>
-                <StatusBar />
+                <StatusBar>{statusBarExtra}</StatusBar>
                 <StatusTray />
             </StatusTrayProvider>
         </StyledDockLayout>

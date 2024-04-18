@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { useConnection, useGbdbFacets, useMachine } from "@glowbuzzer/store"
+import { useConnection, useMachine } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { ConnectStatusIndicator } from "./ConnectStatusIndicator"
 import { useStatusTrayDismissedItems } from "./StatusTrayProvider"
@@ -38,7 +38,7 @@ const StyledSpace = styled(Space)`
 /**
  * Status bar at the bottom of the screen
  */
-export const StatusBar = () => {
+export const StatusBar = ({ children }) => {
     const { connected } = useConnection()
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
     const { name } = useMachine()
@@ -65,6 +65,7 @@ export const StatusBar = () => {
                     </div>
                 )}
             </StyledSpace>
+            {children}
             <StatusBarGbDb />
         </Flex>
     )

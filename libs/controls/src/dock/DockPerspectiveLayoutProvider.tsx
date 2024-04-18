@@ -23,6 +23,8 @@ export type DockPerspectiveLayoutProviderProps = {
     defaultPerspective: string
     /** The children of the dock layout provider. This must include {@link DockLayout}. */
     children: ReactNode
+    /** Extra content to be displayed in the status bar. */
+    statusBarExtra?: ReactNode
 }
 
 /**
@@ -34,7 +36,8 @@ export const DockPerspectiveLayoutProvider = ({
     tiles,
     perspectives,
     defaultPerspective,
-    children
+    children,
+    statusBarExtra
 }: DockPerspectiveLayoutProviderProps) => {
     const appName = useAppName()
     const context = useDockContext(tiles, perspectives, defaultPerspective, appName)
@@ -43,7 +46,7 @@ export const DockPerspectiveLayoutProvider = ({
         <StyledDockLayout>
             <StatusTrayProvider>
                 <DockLayoutContext.Provider value={context}>{children}</DockLayoutContext.Provider>
-                <StatusBar />
+                <StatusBar>{statusBarExtra}</StatusBar>
                 <StatusTray />
             </StatusTrayProvider>
         </StyledDockLayout>

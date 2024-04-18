@@ -12,7 +12,7 @@ import { StatusTrayHandGuidedMode } from "../handguided/StatusTrayHandGuidedMode
 
 const StyledDiv = styled.div<{ $visible: boolean }>`
     position: absolute;
-    bottom: 0;
+    bottom: 40px;
     left: 0;
     width: 100vw;
     pointer-events: none;
@@ -21,14 +21,14 @@ const StyledDiv = styled.div<{ $visible: boolean }>`
     .tray {
         z-index: 1000;
         pointer-events: all;
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
+        //border-top-left-radius: 6px;
+        //border-top-right-radius: 6px;
         width: 50%;
         min-width: 500px;
         margin: 0 auto;
         height: 100%;
-        border: 6px solid ${props => props.theme.colorWarningBorder};
-        border-bottom: none;
+        border: 3px solid ${props => props.theme.colorWarningBorder};
+        //border-bottom: none;
         background: ${props => props.theme.colorBgContainer};
     }
 `
