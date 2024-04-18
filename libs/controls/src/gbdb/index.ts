@@ -5,3 +5,4 @@
 export * from "./GbdbProvider"
 export * from "./modal/FileModal"
 export * from "./menu"
+export * from "./util"
