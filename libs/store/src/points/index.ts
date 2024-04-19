@@ -9,26 +9,20 @@ import { RootState } from "../root"
 
 export type PointsSliceState = {
     selectedPoint: number
-    points: WithName<PointsConfig>[]
 }
 
 type PointsSliceReducers = {
     setSelectedPoint: CaseReducer<PointsSliceState, PayloadAction<number>>
-    setPoints: CaseReducer<PointsSliceState, PayloadAction<WithName<PointsConfig>[]>>
 }
 
 export const pointsSlice = createSlice<PointsSliceState, PointsSliceReducers>({
     name: "points",
     initialState: {
-        selectedPoint: null,
-        points: []
+        selectedPoint: null
     },
     reducers: {
         setSelectedPoint(state, action) {
             state.selectedPoint = action.payload
-        },
-        setPoints(state, action) {
-            state.points = action.payload
         }
     }
 })
@@ -38,7 +32,7 @@ export const pointsSlice = createSlice<PointsSliceState, PointsSliceReducers>({
  * and should not generally be used by applications.
  */
 export function usePointsList(overrides?: WithName<PointsConfig>[]): WithName<PointsConfig>[] {
-    const points = useSelector((state: RootState) => state.points.points)
+    const points = useSelector((state: RootState) => state.config.current.points)
     // const config = useConfig()
     // normalise points
     return (

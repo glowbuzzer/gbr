@@ -27,7 +27,7 @@ const persistence: GbdbConfiguration = {
             slices: [FlowGbdbFacetSlice, PointsGbdbFacetSlice]
         },
         cell: {
-            slices: [FramesGbdbFacetSlice, ToolsGbdbFacetSlice]
+            slices: [FramesGbdbFacetSlice, PointsGbdbFacetSlice, ToolsGbdbFacetSlice]
         }
     }
 }

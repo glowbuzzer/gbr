@@ -5,9 +5,10 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
+    configSlice,
     FramesConfig,
+    GlowbuzzerConfig,
     PointsConfig,
-    pointsSlice,
     POSITIONREFERENCE,
     useFramesList,
     usePointsList,
@@ -39,6 +40,10 @@ export const PointsTile = () => {
     const [mode, setMode] = useState<CartesianPositionEditModalMode>(
         CartesianPositionEditModalMode.NONE
     )
+
+    function store(points: GlowbuzzerConfig["points"]) {
+        dispatch(configSlice.actions.addConfig({ points }))
+    }
 
     const points = usePointsList()
     const frames = useFramesList()
@@ -118,7 +123,7 @@ export const PointsTile = () => {
     }
 
     function save_points() {
-        dispatch(pointsSlice.actions.setPoints(editedPoints))
+        store(editedPoints)
         clearPoints()
         setMode(CartesianPositionEditModalMode.NONE)
     }
@@ -143,7 +148,7 @@ export const PointsTile = () => {
 
     function delete_point() {
         const next: PointsConfig[] = points.filter((_, index) => index !== selected)
-        dispatch(pointsSlice.actions.setPoints(next))
+        store(next)
         setSelected(selected > 0 ? selected - 1 : 0)
     }
 
