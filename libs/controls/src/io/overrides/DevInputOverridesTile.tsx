@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Button, Flex } from "antd"
+import { Flex } from "antd"
 import { useDispatch } from "react-redux"
 import {
     createOverrideClearAction,
@@ -16,6 +16,11 @@ import {
     useSafetyDigitalInputs
 } from "@glowbuzzer/store"
 import { DevDigitalInputOverrides } from "./DevDigitalInputOverrides"
+import styled from "styled-components"
+
+const StyledDiv = styled.div`
+    padding: 10px;
+`
 
 /**
  * A tile to override input values. This tile is only useful during development to simulate inputs from GBC rather than rely on physical inputs.
@@ -46,7 +51,7 @@ export const DevInputOverridesTile = () => {
     }
 
     return (
-        <div style={{ padding: "10px" }}>
+        <StyledDiv>
             <p>
                 Use this tile to override the values of digital and analog inputs. This is useful
                 during development to simulate inputs from GBC rather than rely on physical inputs.
@@ -69,6 +74,6 @@ export const DevInputOverridesTile = () => {
                     onClear={clear_safety_digital_inputs}
                 />
             </Flex>
-        </div>
+        </StyledDiv>
     )
 }

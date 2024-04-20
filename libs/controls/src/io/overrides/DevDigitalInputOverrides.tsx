@@ -12,6 +12,7 @@ type DevDigitalInputOverridesProps = {
     onChange(index: number, value: boolean): void
     onClear(): void
 }
+
 export const DevDigitalInputOverrides = ({
     title,
     labels,
