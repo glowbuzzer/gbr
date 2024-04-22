@@ -7,11 +7,8 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
-import { settings } from "../util/settings"
 import { useConnection } from "../connect"
 import { gbdbExtraReducersFactory } from "../gbdb"
-
-const { load, save } = settings<GlowbuzzerConfig>("config")
 
 export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
     machine: [{ name: "default" }],
@@ -66,10 +63,6 @@ type ConfigSliceReducers = {
     setConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
 }
 
-function persist(current: GlowbuzzerConfig) {
-    save(current)
-}
-
 function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
     return configs.reduce((acc, config) => {
         if (!config) {
@@ -90,15 +83,20 @@ function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
                     // we're only interested in merging the top-level properties of objects in array
                     // TODO: M: We might need to do a more selective merge here.
                     //          For example kinematicsConfiguration.frameIndex might be overridden
-                    if (key === "kinematicsConfiguration") {
-                        console.log("merge", JSON.parse(JSON.stringify(overlay[0], null, 2)))
-                    }
                     acc[key] = overlay.map((v: object, i: number) => ({ ...existing[i], ...v }))
                 }
             }
         }
         return acc
     }, {})
+}
+
+function configEqual(a: GlowbuzzerConfig, b: GlowbuzzerConfig) {
+    // we don't really care about points being different because they are not used by GBC
+    // and we don't want to force an upload just because of a point change
+    const { points: a_points, ...a_config } = a
+    const { points: b_points, ...b_config } = b
+    return deepEqual(a_config, b_config)
 }
 
 export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createSlice({
@@ -121,7 +119,7 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
             // we will attempt to load the last config from local storage and overlay the app config
             const appConfig = action.payload
             // this happens early in the lifecycle, so we don't need to worry about locally loaded config
-            const current = merge(load({}), appConfig)
+            const current = appConfig
 
             return {
                 ...state,
@@ -136,9 +134,7 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
                 action.payload
 
             const current = merge(remote, state.appConfig, state.local)
-            const requiresUpload = !deepEqual(current, remote)
-
-            persist(current)
+            const requiresUpload = !configEqual(current, remote)
 
             return {
                 ...state,
@@ -158,7 +154,7 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
         addConfig(state, action) {
             const local = merge(state.local, action.payload)
             const current = merge(state.current, state.appConfig, local)
-            const requiresUpload = !deepEqual(current, state.remote)
+            const requiresUpload = !configEqual(current, state.remote)
             console.log(
                 "add config called, resulting config: ",
                 current,
@@ -193,7 +189,7 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
         const current = merge(state.current, state.local)
         // console.log("local", JSON.parse(JSON.stringify(state.local, null, 2)))
         // console.log("extra reducer called", JSON.parse(JSON.stringify(current, null, 2)))
-        const requiresUpload = !deepEqual(current, state.remote)
+        const requiresUpload = !configEqual(current, state.remote)
         return {
             ...state,
             current,
