@@ -8,7 +8,7 @@ import { useGbdbFacets } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { useEffect } from "react"
-import { useGbdb } from "@glowbuzzer/controls"
+import { useGbdb } from ".."
 
 const StyledSpace = styled(Space)`
     .facet {
