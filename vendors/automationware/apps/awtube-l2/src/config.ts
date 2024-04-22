@@ -4,10 +4,10 @@
 
 import {
     DIN_SAFETY_TYPE,
-    DinConfig,
     GlowbuzzerConfig,
     JOINT_MODEOFOPERATION,
     JOINT_TORQUE_MODE,
+    KC_KINEMATICSCONFIGURATIONTYPE,
     SafetyDinConfig,
     WithName
 } from "@glowbuzzer/store"
@@ -304,7 +304,7 @@ export const config: GlowbuzzerConfig = {
             frameIndex: 1,
             participatingJoints: [0, 1, 2, 3, 4, 5],
             participatingJointsCount: 6,
-            kinematicsConfigurationType: 1,
+            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_SIXDOF,
             supportedConfigurationBits: 7,
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
