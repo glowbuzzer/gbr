@@ -31,7 +31,7 @@ export type GbdbFacetState = {
 }
 
 // the slice consists entirely of named facets
-type GbdbSliceState = Record<string, GbdbFacetState>
+export type GbdbSliceState = Record<string, GbdbFacetState>
 
 // define the reducers for the slice
 type GbDbReducers = {

@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useEffect, useMemo } from "react"
 import PouchDB from "pouchdb"
-import { useDispatch, useStore } from "react-redux"
+import { useDispatch, useSelector, useStore } from "react-redux"
 import {
     GbdbConfiguration,
     GbdbFacetConfiguration,
@@ -13,6 +13,7 @@ import {
     RootState,
     usePref
 } from "@glowbuzzer/store"
+import { useGbdbDebugHelper } from "./debug"
 
 export type GbdbItem = PouchDB.Core.IdMeta & PouchDB.Core.RevisionIdMeta
 
@@ -41,6 +42,7 @@ export const GbdbProvider = ({
     const dispatch = useDispatch()
     const [url] = usePref("url")
     const { remoteDb, facets } = configuration
+    const gbdb = useSelector((state: RootState) => state.gbdb)
 
     function validate_facet(facetName: string) {
         if (!facets[facetName]) {
@@ -48,7 +50,7 @@ export const GbdbProvider = ({
         }
     }
 
-    const databases = useMemo(() => {
+    const databases: { [p: string]: PouchDB.Database<{ state: object }> } = useMemo(() => {
         function make_url(facetName: string) {
             if (remoteDb === true) {
                 // determine the url from the websocket url
@@ -68,6 +70,9 @@ export const GbdbProvider = ({
             })
         )
     }, [remoteDb, facets])
+
+    // hook to add import and export to window.gbdb (useful during development to exchange facet state)
+    useGbdbDebugHelper(gbdb, databases)
 
     useEffect(() => {
         // create empty facets on mount
@@ -108,19 +113,35 @@ export const GbdbProvider = ({
             }
         }, {})
 
-        console.log("save doc", updateState, facetState)
+        // console.log("save doc", updateState, facetState)
+        const _rev = await new Promise<string>((resolve, reject) => {
+            const lookup = id || doc._id
+            if (lookup) {
+                db.get(lookup)
+                    .then(doc => {
+                        resolve(doc._rev)
+                    })
+                    .catch(() => {
+                        // doc doesn't exist so we'll create new
+                        resolve(undefined)
+                    })
+            } else {
+                resolve(undefined)
+            }
+        })
 
         // post new doc or put existing doc
         const response = id
             ? await db.post({
                   ...doc,
                   _id: id,
-                  _rev: undefined, // ensure no rev for new doc
+                  _rev,
                   state: updateState,
                   references: facetState.references
               })
             : await db.put({
-                  ...doc, // contains _id and _rev
+                  ...doc, // contains _id
+                  _rev,
                   state: updateState,
                   references: facetState.references
               })
@@ -143,8 +164,9 @@ export const GbdbProvider = ({
             throw new Error("Invalid facet name: " + facetName)
         }
         const doc = await db.get<{ state: any; references?: Record<string, string> }>(id)
-        console.log("loaded doc", doc)
+        // console.log("loaded doc", doc)
         // spread state into the store (handled by the gbdb reducer)
+        // console.log("dispatching gbdbLoadActionCreator", doc.state)
         dispatch(gbdbLoadActionCreator(facetName, doc.state))
         // dispatch to our slice
         dispatch(gbdbSlice.actions.load({ facetName, doc }))

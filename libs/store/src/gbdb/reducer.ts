@@ -40,7 +40,7 @@ export function gbdbHigherOrderReducerFactory(
             // unmarshall the loaded state into the store for each configured slice
             // there might be multiple slices with the same name, so we need to merge
             // we reverse the order of slices, to mirror the order they were marshalled
-            const loaded_state = config.slices
+            return config.slices
                 .slice(0) // copy
                 .reverse() // reverse
                 .reduce((acc, { sliceName, unmarshall }) => {
@@ -51,10 +51,6 @@ export function gbdbHigherOrderReducerFactory(
                         [sliceName]: merged_slice
                     }
                 }, state)
-
-            console.log("loaded state", loaded_state)
-            // return state
-            return loaded_state
         }
         return reducer(state, action)
     }
