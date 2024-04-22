@@ -3,9 +3,12 @@
  */
 
 import * as React from "react"
-import { Space, Tag } from "antd"
+import { Space, Switch, Tag } from "antd"
 import { useGbdbFacets } from "@glowbuzzer/store"
 import styled from "styled-components"
+import { useLocalStorage } from "../util/LocalStorageHook"
+import { useEffect } from "react"
+import { useGbdb } from "@glowbuzzer/controls"
 
 const StyledSpace = styled(Space)`
     .facet {
@@ -22,10 +25,32 @@ const StyledSpace = styled(Space)`
 `
 
 export const StatusBarGbDb = () => {
+    const [autoSave, setAutoSave] = useLocalStorage("auto.save", false)
     const facets = useGbdbFacets()
+    const { save } = useGbdb()
+
+    const loaded = Object.values(facets).some(f => f._id)
+
+    useEffect(() => {
+        // debounce the save
+        const timer = setTimeout(() => {
+            for (const [name, facet] of Object.entries(facets)) {
+                if (facet.modified && facet._id && autoSave) {
+                    save(name).catch(console.error)
+                }
+            }
+        }, 1000)
+        return () => clearTimeout(timer)
+    }, [facets, autoSave])
 
     return (
         <StyledSpace>
+            {loaded && (
+                <Space>
+                    <Switch checked={autoSave} onChange={setAutoSave} size="small" />
+                    Autosave
+                </Space>
+            )}
             {Object.entries(facets)
                 .filter(([, state]) => state._id)
                 .map(([facetName, state]) => (
