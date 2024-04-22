@@ -94,6 +94,10 @@ function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
 function configEqual(a: GlowbuzzerConfig, b: GlowbuzzerConfig) {
     // we don't really care about points being different because they are not used by GBC
     // and we don't want to force an upload just because of a point change
+    if (!a || !b) {
+        // if either is undefined, we can't compare so just return if both are undefined
+        return a === b
+    }
     const { points: a_points, ...a_config } = a
     const { points: b_points, ...b_config } = b
     return deepEqual(a_config, b_config)
