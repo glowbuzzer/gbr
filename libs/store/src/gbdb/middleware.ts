@@ -77,7 +77,10 @@ export const gbdbMiddleware =
                         // merge the updates
                         return {
                             ...acc,
-                            ...slice.marshall(state[sliceNameForAction], acc[sliceNameForAction])
+                            [slice.sliceName]: slice.marshall(
+                                state[sliceNameForAction],
+                                acc[sliceNameForAction] || {}
+                            )
                         }
                     }, {})
 

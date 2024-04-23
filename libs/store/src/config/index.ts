@@ -74,9 +74,9 @@ function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
                 acc[key] = config[key]
             } else {
                 const existing = acc[key]
-                const overlay = config[key]
+                const overlay = config[key] || []
                 // all the values in config are arrays or undefined
-                if (!existing || existing.length !== overlay.length) {
+                if (!existing || !Array.isArray(existing) || existing.length !== overlay.length) {
                     // if the lengths to merge are different, we assume the overlay should overwrite all
                     acc[key] = overlay
                 } else {
@@ -159,17 +159,17 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
             const local = merge(state.local, action.payload)
             const current = merge(state.current, state.appConfig, local)
             const requiresUpload = !configEqual(current, state.remote)
-            console.log(
-                "add config called, resulting config: ",
-                current,
-                "from",
-                "payload",
-                action.payload,
-                "local state",
-                state.local,
-                "local merged",
-                local
-            )
+            // console.log(
+            //     "add config called, resulting config: ",
+            //     current,
+            //     "from",
+            //     "payload",
+            //     action.payload,
+            //     "local state",
+            //     state.local,
+            //     "local merged",
+            //     local
+            // )
             return {
                 ...state,
                 local,

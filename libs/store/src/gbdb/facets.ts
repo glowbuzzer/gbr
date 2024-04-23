@@ -6,8 +6,7 @@ import {
     ConfigSliceState,
     FlowSliceState,
     GbdbSliceConfiguration,
-    GlowbuzzerConfig,
-    PointsSliceState
+    GlowbuzzerConfig
 } from "@glowbuzzer/store"
 import { StateWithHistory } from "redux-undo"
 
@@ -43,7 +42,7 @@ function configFacetFactory<T extends keyof GlowbuzzerConfig>(
             return {
                 ...persistedState,
                 [property]: sliceState.local?.[property]
-            } as Pick<GlowbuzzerConfig, T> // compiler cannot infer the type
+            }
         },
         unmarshall(persistedState, sliceState) {
             return {
@@ -60,3 +59,4 @@ function configFacetFactory<T extends keyof GlowbuzzerConfig>(
 export const FramesGbdbFacetSlice = configFacetFactory("frames")
 export const PointsGbdbFacetSlice = configFacetFactory("points")
 export const ToolsGbdbFacetSlice = configFacetFactory("tool")
+export const JointsGbdbFacetSlice = configFacetFactory("joint")

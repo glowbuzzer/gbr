@@ -6,12 +6,12 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import { GbdbItem, useGbdb } from ".."
 import { DocumentSelectList } from "./DocumentSelectList"
-import { Button, Flex, Modal } from "antd"
+import { Button, Flex, Modal, Upload } from "antd"
 import styled from "styled-components"
 import { DeleteOutlined } from "@ant-design/icons"
 import { GbdbDependencySelect } from "./GbdbDependencySelect"
 import { useDispatch } from "react-redux"
-import { gbdbSlice } from "@glowbuzzer/store"
+import { gbdbLoadActionCreator, gbdbSlice, telemetrySlice } from "@glowbuzzer/store"
 
 const StyledModal = styled(Modal)`
     .ant-modal-title {
@@ -38,10 +38,11 @@ export enum FileModalMode {
 type FileModalProps = {
     facetName: string
     mode: FileModalMode
+    allowExternal?: boolean
     onClose: () => void
 }
 
-export const FileModal = ({ facetName, mode, onClose }: FileModalProps) => {
+export const FileModal = ({ facetName, mode, allowExternal, onClose }: FileModalProps) => {
     const { list, open: openFile, saveAs, remove, facets } = useGbdb()
     const [selected, setSelected] = useState<GbdbItem>(null)
     const [files, setFiles] = useState<GbdbItem[]>([])
@@ -132,6 +133,17 @@ export const FileModal = ({ facetName, mode, onClose }: FileModalProps) => {
 
     const { title, okEnabled, okText, deleteEnabled, filterList } = config()
 
+    function before_import(info) {
+        info.arrayBuffer().then((buffer: ArrayBuffer) => {
+            const text = new TextDecoder("utf-8").decode(buffer)
+            const doc = JSON.parse(text)
+            dispatch(gbdbLoadActionCreator(facetName, doc.slices))
+            dispatch(gbdbSlice.actions.load({ facetName, doc }))
+            onClose()
+        })
+        return false
+    }
+
     return (
         <StyledModal
             title={title}
@@ -145,6 +157,11 @@ export const FileModal = ({ facetName, mode, onClose }: FileModalProps) => {
                         <Button onClick={delete_file} danger={!!selected} disabled={!selected}>
                             <DeleteOutlined />
                         </Button>
+                    )}
+                    {allowExternal && (
+                        <Upload beforeUpload={before_import} maxCount={1} showUploadList={false}>
+                            <Button onClick={() => {}}>Import...</Button>
+                        </Upload>
                     )}
                     <div>
                         <Button onClick={onClose}>Cancel</Button>

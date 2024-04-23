@@ -1,11 +1,13 @@
 /*
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
-import { JOINT_FINITECONTINUOUS, JOINT_TYPE, useConfig, useConfigLoader } from "@glowbuzzer/store"
+import { configSlice, JOINT_FINITECONTINUOUS, JOINT_TYPE, useConfig } from "@glowbuzzer/store"
 import * as React from "react"
 
 import { Button, Form, Input, message, Select, Space } from "antd"
 import styled from "styled-components"
+import { useDispatch } from "react-redux"
+import { useEffect } from "react"
 
 const StyledDiv = styled.div`
     .buttons {
@@ -20,12 +22,17 @@ const StyledDiv = styled.div`
 
 export const DriveConfigEditor = ({ index }) => {
     const config = useConfig()
-    const loader = useConfigLoader()
+    const dispatch = useDispatch()
+
     const original_joint_config = config.joint[index]
 
     const [editedJointConfig, setEditedJointConfig] = React.useState(original_joint_config)
     const [selectedLimits, setSelectedLimits] = React.useState(0)
     const [modified, setModified] = React.useState(false)
+
+    useEffect(() => {
+        setEditedJointConfig(original_joint_config)
+    }, [original_joint_config])
 
     function reset() {
         setEditedJointConfig(original_joint_config)
@@ -63,10 +70,7 @@ export const DriveConfigEditor = ({ index }) => {
             ...config,
             joint: config.joint.map((j, i) => (i === index ? editedJointConfig : j))
         }
-        loader(new_config).then(() => {
-            setModified(false)
-            message.success("Configuration updated")
-        })
+        dispatch(configSlice.actions.addConfig(new_config))
     }
 
     return (

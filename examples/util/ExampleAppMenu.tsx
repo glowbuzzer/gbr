@@ -51,7 +51,7 @@ const StyledMenuBar = styled.div`
     }
 `
 
-export const ExampleAppMenu = ({ title = null }) => {
+export const ExampleAppMenu = ({ title = null, fileExtra = [] }) => {
     const { perspectives, currentPerspective, changePerspective } = useDockLayoutContext()
     const viewMenu = useDockViewMenu()
 
@@ -70,7 +70,8 @@ export const ExampleAppMenu = ({ title = null }) => {
                     key: "file-preferences",
                     label: "Preferences",
                     onClick: () => setShowPrefs(true)
-                }
+                },
+                ...fileExtra
             ]
         }
     ]

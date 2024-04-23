@@ -120,7 +120,7 @@ export const ConnectionProvider = ({ children }) => {
 
     function send(msg) {
         if (!connection || connection.readyState !== WebSocket.OPEN) {
-            console.warn("No connection open for send")
+            // console.warn("No connection open for send")
             return
         }
         connection.send(msg)
