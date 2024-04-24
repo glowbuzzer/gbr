@@ -7,7 +7,7 @@ import { ChangeEvent, useEffect, useState } from "react"
 import { Button, Input, Space } from "antd"
 import { CartesianPosition, POSITIONREFERENCE, WithName } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { CartesianPositionEdit } from "@glowbuzzer/controls"
+import { CartesianPositionEdit } from "."
 
 const StyledDiv = styled.div`
     padding: 10px;
