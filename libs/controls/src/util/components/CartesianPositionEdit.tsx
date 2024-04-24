@@ -3,8 +3,7 @@
  */
 
 import * as React from "react"
-import { ChangeEvent, useEffect, useState } from "react"
-import { Button, Checkbox, Input, Space } from "antd"
+import { useState } from "react"
 import {
     CartesianPosition,
     POSITIONREFERENCE,
@@ -12,21 +11,16 @@ import {
     useKinematicsConfigurationList,
     useKinematicsConfigurationPositions,
     usePrefs,
-    Vector3,
-    WithName
+    Vector3
 } from "@glowbuzzer/store"
 import { Euler, Quaternion } from "three"
-import styled from "styled-components"
 import { PrecisionInput } from "./PrecisionInput"
-import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
+import { Button, Checkbox, Space } from "antd"
 import { FramesDropdown } from "../../frames"
+import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
+import styled from "styled-components"
 
 const StyledDiv = styled.div`
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-
     .grid {
         display: grid;
         width: 100%;
@@ -45,34 +39,7 @@ const StyledDiv = styled.div`
         justify-content: space-between;
         padding: 8px 0;
     }
-
-    .actions {
-        display: flex;
-        justify-content: right;
-    }
 `
-
-export enum CartesianPositionEditModalMode {
-    NONE,
-    CREATE,
-    UPDATE
-}
-
-const DEFAULT_VALUE: WithName<CartesianPosition> = {
-    name: "",
-    positionReference: POSITIONREFERENCE.ABSOLUTE,
-    translation: {
-        x: 0,
-        y: 0,
-        z: 0
-    },
-    rotation: {
-        x: 0,
-        y: 0,
-        z: 0,
-        w: 1
-    }
-}
 
 function to_euler(q: Quat): Euler {
     const { x, y, z, w } = q
@@ -80,24 +47,12 @@ function to_euler(q: Quat): Euler {
     return new Euler().setFromQuaternion(quaternion)
 }
 
-type CartesianPositionEditModalProps = {
-    mode: CartesianPositionEditModalMode
-    value?: WithName<CartesianPosition>
-    onChange: (position: WithName<CartesianPosition>) => void
-    onSave: () => void
-    onClose: () => void
+type CartesianPositionEditProps = {
+    value: CartesianPosition
+    onChange: (value: CartesianPosition) => void
 }
 
-export const CartesianPositionEditModal = ({
-    mode,
-    value: value_or_null,
-    onChange,
-    onSave,
-    onClose
-}: CartesianPositionEditModalProps) => {
-    const value = value_or_null || DEFAULT_VALUE
-    // const [position, setPosition] = React.useState(value)
-    const [name, setName] = useState(value.name)
+export const CartesianPositionEdit = ({ value, onChange }: CartesianPositionEditProps) => {
     const [positionReference, setPositionReference] = useState<POSITIONREFERENCE>(
         value.positionReference
     )
@@ -113,15 +68,8 @@ export const CartesianPositionEditModal = ({
     const positions = useKinematicsConfigurationPositions()
     const kinematicsConfigurations = useKinematicsConfigurationList()
 
-    useEffect(() => {
-        const update = value || DEFAULT_VALUE
-        // setPosition(update)
-        setName(update.name)
-    }, [value, mode])
-
-    function handle_change(update: Partial<WithName<CartesianPosition>>) {
+    function handle_change(update: Partial<CartesianPosition>) {
         onChange({
-            name,
             positionReference,
             frameIndex,
             translation,
@@ -183,19 +131,8 @@ export const CartesianPositionEditModal = ({
         }
     }
 
-    if (mode === CartesianPositionEditModalMode.NONE) {
-        return null
-    }
-
-    function update_name(e: ChangeEvent<HTMLInputElement>) {
-        const name = e.target.value
-        handle_change({ name })
-        setName(name)
-    }
-
     return (
         <StyledDiv>
-            <Input value={name} placeholder="Enter name" onChange={update_name} />
             <div className="grid">
                 <div>Translation</div>
                 {["x", "y", "z"].map(axis => (
@@ -255,12 +192,6 @@ export const CartesianPositionEditModal = ({
                     />
                 )}
             </div>
-            <Space className="actions">
-                <Button onClick={onClose}>Cancel</Button>
-                <Button type="primary" onClick={onSave} disabled={!name?.length}>
-                    {mode === CartesianPositionEditModalMode.CREATE ? "Create" : "Save"}
-                </Button>
-            </Space>
         </StyledDiv>
     )
 }

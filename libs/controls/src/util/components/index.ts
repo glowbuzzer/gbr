@@ -3,3 +3,5 @@
  */
 
 export * from "./PrecisionInput"
+export * from "./CartesianPositionEdit"
+export * from "./CartesianPositionTable"

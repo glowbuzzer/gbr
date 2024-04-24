@@ -23,9 +23,9 @@ import { Euler, Quaternion } from "three"
 import { useConfigLiveEdit } from "../config"
 import { useDispatch } from "react-redux"
 import {
-    CartesianPositionEditModal,
-    CartesianPositionEditModalMode
-} from "../util/components/CartesianPositionEditModal"
+    CartesianPositionEditPanel,
+    CartesianPositionEditPanelMode
+} from "../util/components/CartesianPositionEditPanel"
 
 const StyledDiv = styled.div`
     ${CssPointNameWithFrame}
@@ -37,8 +37,8 @@ const StyledDiv = styled.div`
 export const PointsTile = () => {
     const { points: editedPoints, setPoints, clearPoints } = useConfigLiveEdit()
     const [selected, setSelected] = useSelectedPoint()
-    const [mode, setMode] = useState<CartesianPositionEditModalMode>(
-        CartesianPositionEditModalMode.NONE
+    const [mode, setMode] = useState<CartesianPositionEditPanelMode>(
+        CartesianPositionEditPanelMode.NONE
     )
 
     function store(points: GlowbuzzerConfig["points"]) {
@@ -98,7 +98,7 @@ export const PointsTile = () => {
         rotation,
         translation
     }: WithName<CartesianPosition>) {
-        const pointIndex = mode === CartesianPositionEditModalMode.CREATE ? points.length : selected
+        const pointIndex = mode === CartesianPositionEditPanelMode.CREATE ? points.length : selected
         const modifiedPoint: WithName<PointsConfig> = {
             name,
             frameIndex:
@@ -125,7 +125,7 @@ export const PointsTile = () => {
     function save_points() {
         store(editedPoints)
         clearPoints()
-        setMode(CartesianPositionEditModalMode.NONE)
+        setMode(CartesianPositionEditPanelMode.NONE)
     }
 
     function point_to_cartesian_position(pointIndex: number): CartesianPosition {
@@ -143,7 +143,7 @@ export const PointsTile = () => {
     }
 
     function add_point() {
-        setMode(CartesianPositionEditModalMode.CREATE)
+        setMode(CartesianPositionEditPanelMode.CREATE)
     }
 
     function delete_point() {
@@ -154,22 +154,22 @@ export const PointsTile = () => {
 
     function cancel_edit() {
         clearPoints()
-        setMode(CartesianPositionEditModalMode.NONE)
+        setMode(CartesianPositionEditPanelMode.NONE)
     }
 
-    return mode === CartesianPositionEditModalMode.NONE ? (
+    return mode === CartesianPositionEditPanelMode.NONE ? (
         <CartesianPositionTable
             selected={selected}
             setSelected={setSelected}
             items={treeData}
-            onEdit={() => setMode(CartesianPositionEditModalMode.UPDATE)}
+            onEdit={() => setMode(CartesianPositionEditPanelMode.UPDATE)}
             onAdd={add_point}
             onDelete={delete_point}
         />
     ) : (
-        <CartesianPositionEditModal
+        <CartesianPositionEditPanel
             value={
-                mode === CartesianPositionEditModalMode.UPDATE
+                mode === CartesianPositionEditPanelMode.UPDATE
                     ? point_to_cartesian_position(selected)
                     : null
             }

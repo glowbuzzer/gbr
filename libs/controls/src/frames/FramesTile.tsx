@@ -23,9 +23,9 @@ import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import { useDispatch } from "react-redux"
 import {
-    CartesianPositionEditModal,
-    CartesianPositionEditModalMode
-} from "../util/components/CartesianPositionEditModal"
+    CartesianPositionEditPanel,
+    CartesianPositionEditPanelMode
+} from "../util/components/CartesianPositionEditPanel"
 
 const StyledDiv = styled.div`
     display: inline-block;
@@ -42,8 +42,8 @@ export const FramesTile = () => {
     const { asTree } = useFrames(editedFrames)
     const frames = useFramesList()
     const [selected, setSelected] = useSelectedFrame()
-    const [mode, setMode] = useState<CartesianPositionEditModalMode>(
-        CartesianPositionEditModalMode.NONE
+    const [mode, setMode] = useState<CartesianPositionEditPanelMode>(
+        CartesianPositionEditPanelMode.NONE
     )
 
     const dispatch = useDispatch()
@@ -110,7 +110,7 @@ export const FramesTile = () => {
         rotation,
         translation
     }: WithName<CartesianPosition>) {
-        const frameIndex = mode === CartesianPositionEditModalMode.CREATE ? frames.length : selected
+        const frameIndex = mode === CartesianPositionEditPanelMode.CREATE ? frames.length : selected
         const modifiedFrame = {
             name,
             positionReference,
@@ -136,11 +136,11 @@ export const FramesTile = () => {
     function save_frames() {
         store(editedFrames)
         clearFrames()
-        setMode(CartesianPositionEditModalMode.NONE)
+        setMode(CartesianPositionEditPanelMode.NONE)
     }
 
     function add_frame() {
-        setMode(CartesianPositionEditModalMode.CREATE)
+        setMode(CartesianPositionEditPanelMode.CREATE)
     }
 
     function delete_frame() {
@@ -151,26 +151,26 @@ export const FramesTile = () => {
 
     const treeData = make_tree(asTree)
 
-    return mode === CartesianPositionEditModalMode.NONE ? (
+    return mode === CartesianPositionEditPanelMode.NONE ? (
         <CartesianPositionTable
             selected={selected}
             setSelected={setSelected}
             items={treeData}
-            onEdit={() => setMode(CartesianPositionEditModalMode.UPDATE)}
+            onEdit={() => setMode(CartesianPositionEditPanelMode.UPDATE)}
             onAdd={add_frame}
             onDelete={delete_frame}
         />
     ) : (
-        <CartesianPositionEditModal
+        <CartesianPositionEditPanel
             mode={mode}
             value={
-                mode === CartesianPositionEditModalMode.UPDATE
+                mode === CartesianPositionEditPanelMode.UPDATE
                     ? frame_to_cartesian_position(selected)
                     : null
             }
             onChange={update_frame}
             onSave={save_frames}
-            onClose={() => setMode(CartesianPositionEditModalMode.NONE)}
+            onClose={() => setMode(CartesianPositionEditPanelMode.NONE)}
         />
     )
 }
