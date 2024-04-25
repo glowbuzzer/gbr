@@ -73,18 +73,25 @@ function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
             if (acc[key] === undefined) {
                 acc[key] = config[key]
             } else {
-                const existing = acc[key]
+                // const existing = acc[key]
                 const overlay = config[key] || []
-                // all the values in config are arrays or undefined
-                if (!existing || !Array.isArray(existing) || existing.length !== overlay.length) {
-                    // if the lengths to merge are different, we assume the overlay should overwrite all
+                // We can't do a deeper merge because of issue where app config
+                // omits some default values and assumes they are going to be set to default
+                // zero value. For example, kinematicsConfiguration.kinematicsType might not set
+                // (for naked kins)
+                if (overlay) {
                     acc[key] = overlay
-                } else {
-                    // we're only interested in merging the top-level properties of objects in array
-                    // TODO: M: We might need to do a more selective merge here.
-                    //          For example kinematicsConfiguration.frameIndex might be overridden
-                    acc[key] = overlay.map((v: object, i: number) => ({ ...existing[i], ...v }))
                 }
+                // // all the values in config are arrays or undefined
+                // if (!existing || !Array.isArray(existing) || existing.length !== overlay.length) {
+                //     // if the lengths to merge are different, we assume the overlay should overwrite all
+                //     acc[key] = overlay
+                // } else {
+                //     // we're only interested in merging the top-level properties of objects in array
+                //     // TODO: M: We might need to do a more selective merge here.
+                //     //          For example kinematicsConfiguration.frameIndex might be overridden
+                //     acc[key] = overlay.map((v: object, i: number) => ({ ...existing[i], ...v }))
+                // }
             }
         }
         return acc
