@@ -179,6 +179,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -80,
             posLimit: 80,
             inverted: true,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
@@ -203,6 +204,7 @@ export const config: GlowbuzzerConfig = {
             negLimit: -40,
             posLimit: 40,
             inverted: true,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
@@ -220,11 +222,12 @@ export const config: GlowbuzzerConfig = {
             ],
             scalePos: 166886,
             scaleVel: 9549,
-            scaleTorque: 4.3,
+            scaleTorque: 3.41,
             jointType: 1,
             negLimit: 50,
             posLimit: 130,
             inverted: false,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
@@ -247,11 +250,14 @@ export const config: GlowbuzzerConfig = {
             negLimit: -170,
             posLimit: 170,
             inverted: true,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
-            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
+            supportedTorqueModes:
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY |
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_DIRECT
         },
         {
             name: "4",
@@ -264,11 +270,12 @@ export const config: GlowbuzzerConfig = {
             ],
             scalePos: 166886,
             scaleVel: 9549,
-            scaleTorque: 3.414,
+            scaleTorque: 4.3,
             jointType: 1,
             negLimit: 10,
             posLimit: 170,
             inverted: true,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
@@ -291,11 +298,14 @@ export const config: GlowbuzzerConfig = {
             negLimit: -270,
             posLimit: 270,
             inverted: true,
+            dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
             supportedModes:
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP |
                 JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CST,
-            supportedTorqueModes: JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY
+            supportedTorqueModes:
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_GRAVITY |
+                JOINT_TORQUE_MODE.JOINT_TORQUE_MODE_DIRECT
         }
     ],
     kinematicsConfiguration: [
@@ -339,6 +349,25 @@ export const config: GlowbuzzerConfig = {
     serial: [
         {
             name: "default"
+        }
+    ],
+    tool: [
+        {
+            name: "t1",
+            rigidBodyInertia: {
+                m: 1.1,
+                h: {
+                    x: 0,
+                    y: 0,
+                    z: 0
+                },
+                Ixx: 0.10033,
+                Iyy: 0.098412,
+                Izz: 0.072655,
+                Ixy: 0.00004912,
+                Ixz: 0.00009505,
+                Iyz: 0.00059172
+            }
         }
     ]
 }
