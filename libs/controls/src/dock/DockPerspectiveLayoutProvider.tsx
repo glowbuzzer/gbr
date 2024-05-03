@@ -41,14 +41,15 @@ export const DockPerspectiveLayoutProvider = ({
 }: DockPerspectiveLayoutProviderProps) => {
     const appName = useAppName()
     const context = useDockContext(tiles, perspectives, defaultPerspective, appName)
+    const statusBarRef = React.useRef<HTMLDivElement>(null)
 
     return (
         <StyledDockLayout>
             <StatusTrayProvider>
                 <DockLayoutContext.Provider value={context}>
                     {children}
-                    <StatusBar>{statusBarExtra}</StatusBar>
-                    <StatusTray />
+                    <StatusBar ref={statusBarRef}>{statusBarExtra}</StatusBar>
+                    <StatusTray statusBarRef={statusBarRef} />
                 </DockLayoutContext.Provider>
             </StatusTrayProvider>
         </StyledDockLayout>
