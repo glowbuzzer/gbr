@@ -164,7 +164,6 @@ export const GbdbProvider = ({
             throw new Error("Invalid facet name: " + facetName)
         }
         const doc = await db.get<{ state: any; references?: Record<string, string> }>(id)
-        // console.log("loaded doc", doc)
         // spread state into the store (handled by the gbdb reducer)
         // console.log("dispatching gbdbLoadActionCreator", doc.state)
         dispatch(gbdbLoadActionCreator(facetName, doc.state))
@@ -194,6 +193,18 @@ export const GbdbProvider = ({
             }
         }
     }
+
+    useEffect(() => {
+        for (const [facetName, facet] of Object.entries(facets)) {
+            if (facet.singleton) {
+                open(facetName, "Default").catch(err => {
+                    if (err.status === 404) {
+                        save(facetName, "Default").catch(console.error)
+                    }
+                })
+            }
+        }
+    }, [facets])
 
     const context: GbdbContextType = {
         facets,

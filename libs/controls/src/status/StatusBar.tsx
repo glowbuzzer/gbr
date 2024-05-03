@@ -13,13 +13,18 @@ import { ReactComponent as HandIcon } from "@material-symbols/svg-400/outlined/p
 import { ReactComponent as HandIconDisabled } from "@material-symbols/svg-400/outlined/do_not_touch.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { StatusBarGbDb } from "./StatusBarGbDb"
+import { StatusBarLiveSwitch } from "./StatusBarLiveSwitch"
+import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
+import { forwardRef } from "react"
 
 const StyledSpace = styled(Space)`
+    padding-top: 8px;
     font-size: 0.8em;
     font-weight: bold;
 
     .ant-space.enabled {
         color: ${props => props.theme.green5};
+
         path {
             fill: ${props => props.theme.green5};
             stroke: ${props => props.theme.green5};
@@ -28,6 +33,7 @@ const StyledSpace = styled(Space)`
 
     .ant-space.disabled {
         color: ${props => props.theme.red5};
+
         path {
             fill: ${props => props.theme.red5};
             stroke: ${props => props.theme.red5};
@@ -35,17 +41,21 @@ const StyledSpace = styled(Space)`
     }
 `
 
+type StatusBarProps = {
+    children: React.ReactNode
+}
+
 /**
  * Status bar at the bottom of the screen
  */
-export const StatusBar = ({ children }) => {
+export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children }, ref) => {
     const { connected } = useConnection()
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
     const { name } = useMachine()
     const { keyswitchEngaged, handGuidedModeActive } = useHandGuidedMode()
 
     return (
-        <Flex justify="space-between">
+        <Flex justify="space-between" ref={ref}>
             <StyledSpace split={<Divider type="vertical" />}>
                 <Space>
                     <ConnectStatusIndicator connected={connected} />
@@ -64,9 +74,11 @@ export const StatusBar = ({ children }) => {
                         } hidden notification${dismissed.length > 1 ? "s" : ""}`}</Button>
                     </div>
                 )}
+                <StatusBarLiveSwitch />
+                <StatusBarEnableOperation />
             </StyledSpace>
             {children}
             <StatusBarGbDb />
         </Flex>
     )
-}
+})

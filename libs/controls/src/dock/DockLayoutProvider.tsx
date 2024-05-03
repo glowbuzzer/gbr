@@ -36,6 +36,7 @@ export const DockLayoutProvider = ({
     statusBarExtra
 }: DockLayoutProviderProps) => {
     const appName = useAppName()
+    const statusBarRef = React.useRef<HTMLDivElement>(null)
 
     // create a single 'default' perspective
     const perspective: DockPerspective = {
@@ -50,8 +51,8 @@ export const DockLayoutProvider = ({
             <StatusTrayProvider>
                 <DockLayoutContext.Provider value={context}>
                     {children}
-                    <StatusBar>{statusBarExtra}</StatusBar>
-                    <StatusTray />
+                    <StatusBar ref={statusBarRef}>{statusBarExtra}</StatusBar>
+                    <StatusTray statusBarRef={statusBarRef} />
                 </DockLayoutContext.Provider>
             </StatusTrayProvider>
         </StyledDockLayout>

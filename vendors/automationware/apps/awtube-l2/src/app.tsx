@@ -132,7 +132,7 @@ export const App = () => {
                     showToolOutputs: true
                 }),
                 SerialCommunicationsTileDefinition,
-                ConnectTileDefinition,
+                // ConnectTileDefinition,
                 CartesianJogTileDefinition,
                 CartesianDroTileDefinition,
                 JointJogTileDefinition,

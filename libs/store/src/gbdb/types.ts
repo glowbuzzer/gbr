@@ -20,6 +20,8 @@ export type GbdbSliceConfiguration<S = any, P = any> = {
  */
 export type GbdbFacetConfiguration = {
     [facetName: string]: {
+        singleton?: boolean
+        autoSave?: boolean
         dependencies?: string[]
         slices: GbdbSliceConfiguration[]
     }

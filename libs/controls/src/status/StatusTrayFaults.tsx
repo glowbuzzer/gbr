@@ -50,29 +50,33 @@ export const StatusTrayFaults = () => {
         return null
     }
 
+    const show_error = !!machine.activeFault || !!machine.faultHistory || !!machine.operationError
+
     return (
         <StatusTrayItem
             id={"faults"}
             dismissable={fault_active ? DismissType.NOT_DISMISSIBLE : DismissType.REQUIRE_RESET}
         >
             <StyledDiv>
-                <div className="errors">
-                    {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
-                        <Tag color="red" key={code}>
-                            {description}
-                        </Tag>
-                    ))}
-                    <div className="error-message">
-                        {machine.operationError ===
-                        OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
-                            ? "Heartbeat lost"
-                            : machine.operationErrorMessage}
+                {show_error && (
+                    <div className="errors">
+                        {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
+                            <Tag color="red" key={code}>
+                                {description}
+                            </Tag>
+                        ))}
+                        <div className="error-message">
+                            {machine.operationError ===
+                            OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
+                                ? "Heartbeat lost"
+                                : machine.operationErrorMessage}
+                        </div>
                     </div>
-                </div>
+                )}
                 <div className="message">
                     {fault_active
-                        ? "Fault currently active, automatic reset attempted, manual intervention may be required (e.g. safety reset) "
-                        : "A fault occurred and must be reset. "}
+                        ? "Fault currently active, automatic reset attempted, manual intervention may be required (e.g. safety reset)"
+                        : "A fault occurred and must be reset"}
                 </div>
             </StyledDiv>
         </StatusTrayItem>

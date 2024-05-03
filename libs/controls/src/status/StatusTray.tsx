@@ -9,10 +9,14 @@ import { StatusTrayModifiedConfiguration } from "./StatusTrayModifiedConfigurati
 import { StatusTrayFaults } from "./StatusTrayFaults"
 import { StatusTrayGbcVersionCheck } from "./StatusTrayGbcVersionCheck"
 import { StatusTrayHandGuidedMode } from "../handguided/StatusTrayHandGuidedMode"
+import { StatusTrayConnect } from "./StatusTrayConnect"
+import { useEffect, useState } from "react"
 
-const StyledDiv = styled.div<{ $visible: boolean }>`
+const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     position: absolute;
-    bottom: 40px;
+    bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 4px)`};
+    // top: ${props => `${props.$bottomOffset}px`};
+    //bottom: 40px;
     left: 0;
     width: 100vw;
     pointer-events: none;
@@ -21,27 +25,51 @@ const StyledDiv = styled.div<{ $visible: boolean }>`
     .tray {
         z-index: 1000;
         pointer-events: all;
-        //border-top-left-radius: 6px;
-        //border-top-right-radius: 6px;
         width: 50%;
         min-width: 500px;
         margin: 0 auto;
         height: 100%;
         border: 3px solid ${props => props.theme.colorWarningBorder};
-        //border-bottom: none;
         background: ${props => props.theme.colorBgContainer};
+        border-radius: 14px;
+        box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
     }
 `
+
+type StatusTrayProps = {
+    statusBarRef: React.RefObject<HTMLDivElement>
+}
 
 /**
  * Status tray at the bottom of the screen, which will appear if there are any notifications active
  */
-export const StatusTray = () => {
+export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
     const visible = useStatusTrayVisible()
+    const [bottomOffset, setBottomOffset] = useState(0)
+
+    useEffect(() => {
+        if (statusBarRef.current) {
+            function handle_resize(entries: ResizeObserverEntry[]) {
+                const entry = entries[0]
+                if (entry) {
+                    const rect = entry.target.getBoundingClientRect()
+                    console.log("StatusTray: bottom offset", rect.top)
+                    setBottomOffset(rect.top)
+                }
+            }
+
+            const observer = new ResizeObserver(handle_resize)
+            observer.observe(statusBarRef.current)
+            return () => {
+                observer.disconnect()
+            }
+        }
+    }, [statusBarRef])
 
     return (
-        <StyledDiv $visible={visible}>
+        <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
             <div className="tray">
+                <StatusTrayConnect />
                 <StatusTrayHandGuidedMode />
                 <StatusTrayModifiedConfiguration />
                 <StatusTrayFaults />

@@ -36,7 +36,7 @@ export const dockDropdownStyle = css`
 export const StyledDockLayout = styled.div`
     padding: 10px;
     display: flex;
-    gap: 10px;
+    //gap: 10px;
     background: ${props => props.theme.colorBgContainer};
     position: absolute;
     flex-direction: column;

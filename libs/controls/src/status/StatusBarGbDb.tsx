@@ -27,7 +27,7 @@ const StyledSpace = styled(Space)`
 export const StatusBarGbDb = () => {
     const [autoSave, setAutoSave] = useLocalStorage("auto.save", false)
     const facets = useGbdbFacets()
-    const { save } = useGbdb()
+    const { facets: facetConfigs, save } = useGbdb()
 
     const loaded = Object.values(facets).some(f => f._id)
 
@@ -35,7 +35,8 @@ export const StatusBarGbDb = () => {
         // debounce the save
         const timer = setTimeout(() => {
             for (const [name, facet] of Object.entries(facets)) {
-                if (facet.modified && facet._id && autoSave) {
+                const autoSaveFacet = facetConfigs[name].autoSave
+                if (facet.modified && facet._id && (autoSave || autoSaveFacet)) {
                     save(name).catch(console.error)
                 }
             }
@@ -43,23 +44,25 @@ export const StatusBarGbDb = () => {
         return () => clearTimeout(timer)
     }, [facets, autoSave])
 
+    const facets_to_show = Object.entries(facets).filter(([name, state]) => {
+        const config = facetConfigs[name]
+        return state._id && !config.singleton
+    })
     return (
         <StyledSpace>
-            {loaded && (
+            {facets_to_show.length > 0 && loaded && (
                 <Space>
                     <Switch checked={autoSave} onChange={setAutoSave} size="small" />
                     Autosave
                 </Space>
             )}
-            {Object.entries(facets)
-                .filter(([, state]) => state._id)
-                .map(([facetName, state]) => (
-                    <Tag className="facet" key={facetName}>
-                        <span className="facet-name">{facetName}</span>
-                        <span className="facet-id">{state._id || facetName}</span>
-                        {state.modified && <span className="dirty">(modified)</span>}
-                    </Tag>
-                ))}
+            {facets_to_show.map(([facetName, state]) => (
+                <Tag className="facet" key={facetName}>
+                    <span className="facet-name">{facetName}</span>
+                    <span className="facet-id">{state._id || facetName}</span>
+                    {state.modified && <span className="dirty">(modified)</span>}
+                </Tag>
+            ))}
         </StyledSpace>
     )
 }
