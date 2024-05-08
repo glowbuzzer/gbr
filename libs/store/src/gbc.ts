@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "1082aeac812d10e71f73ae044e18970d"
+export const GbcSchemaChecksum = "0548c9ed9cef19ac60fc3501279ff12f"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -79,6 +79,10 @@ export const GbcConstants = {
         FSOE_MASTER_HIGH_LEVEL_STATE_ERROR                 = (6),
         FSOE_MASTER_HIGH_LEVEL_STATE_ALARM                 = (7),
         FSOE_MASTER_HIGH_LEVEL_STATE_NO_NETWORK            = (8),
+    }
+    export enum GBEM_REQUEST {
+        GBEM_REQUEST_NONE                                 = (0),
+        GBEM_REQUEST_SDO_READ                             = (1),
     }
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,

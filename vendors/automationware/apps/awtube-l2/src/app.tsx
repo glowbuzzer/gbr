@@ -5,7 +5,7 @@
 import {
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
-    ConnectTileDefinition,
+    ConfigEditTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
@@ -26,7 +26,6 @@ import {
     ToolsTileDefinition,
     TriadHelper
 } from "@glowbuzzer/controls"
-import { ExampleAppMenu } from "../../../../../examples/util/ExampleAppMenu"
 import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import React, { Suspense } from "react"
 import {
@@ -132,6 +131,7 @@ export const App = () => {
                     showToolOutputs: true
                 }),
                 SerialCommunicationsTileDefinition,
+                ConfigEditTileDefinition,
                 // ConnectTileDefinition,
                 CartesianJogTileDefinition,
                 CartesianDroTileDefinition,

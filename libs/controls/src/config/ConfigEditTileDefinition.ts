@@ -5,6 +5,7 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ConfigEditTile } from "./ConfigEditTile"
+import { ConfigEditTile2 } from "./ConfigEditTile2"
 
 export const ConfigEditTileDefinition = {
     id: GlowbuzzerTileIdentifiers.CONFIG_EDIT,
@@ -13,5 +14,5 @@ export const ConfigEditTileDefinition = {
         column: 2,
         row: 1
     },
-    render: () => createElement(ConfigEditTile, {}, null)
+    render: () => createElement(ConfigEditTile2, {}, null)
 }
