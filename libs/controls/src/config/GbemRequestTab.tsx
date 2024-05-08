@@ -39,7 +39,7 @@ export const GbemRequestTab = () => {
     const [responseText, setResponseText] = useState("")
 
     function send_request() {
-        request(requestType, { index: 0x1000, subindex: 0 })
+        request(requestType, JSON.parse(requestText))
             .then(response => {
                 console.log("Response", response)
                 setResponseText(JSON.stringify(response, null, 2))
