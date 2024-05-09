@@ -19,22 +19,24 @@ import {
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition,
     JointTorqueModesTile,
-    JointTorqueModesTileDefinition
+    JointTorqueModesTileDefinition,
+    useGbdbMenu
 } from "@glowbuzzer/controls"
-import {ExampleAppMenu} from "../../../util/ExampleAppMenu"
+import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import {DrivesOscillatingMoveTileDefinition} from "./tiles"
-import {DrivesTileDefinition} from "../../../util/drives/DrivesTileDefinition"
-import {EmStatTileDefinition} from "@glowbuzzer/controls"
+import { DrivesOscillatingMoveTileDefinition } from "./tiles"
+import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
+import { EmStatTileDefinition } from "@glowbuzzer/controls"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
     .build()
 
 export const App = () => {
+    const { menuItems, menuContext } = useGbdbMenu("project", true)
     return (
         <DockLayoutProvider
             tiles={[
@@ -55,8 +57,9 @@ export const App = () => {
                 JointTorqueModesTileDefinition
             ]}
         >
-            <ExampleAppMenu title="Drives FSoE"/>
-            <DockLayout/>
+            <ExampleAppMenu title="Drives FSoE" fileExtra={menuItems} />
+            {menuContext}
+            <DockLayout />
         </DockLayoutProvider>
     )
 }
