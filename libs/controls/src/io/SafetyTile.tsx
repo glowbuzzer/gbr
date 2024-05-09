@@ -4,6 +4,7 @@
 
 import React, { useState } from "react"
 import {
+    DIN_SAFETY_TYPE,
     useDigitalInputList,
     useDigitalInputs,
     useDigitalOutputState,
@@ -13,8 +14,12 @@ import {
     useSafetyDigitalOutputList,
     useSafetyDigitalOutputState
 } from "@glowbuzzer/store"
-import { StyledSafetyTileContent } from "../util/styles/StyledTileContent"
-import { Tag, Select, Switch, Button, Space } from "antd"
+import {
+    StyledSafetyTileContent,
+    StyledSafetyTileText,
+    StyledDivider
+} from "../util/styles/StyledTileContent"
+import { Tag, Select, Switch, Button, Space, Divider } from "antd"
 import styled from "styled-components"
 
 const { Option } = Select
@@ -48,9 +53,6 @@ type SafetyInputsTileProps = {
  * The safety tile
  */
 export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
-    //Saftey Dout 0 is used acknowledge the restart
-    const [dout, setDout] = useSafetyDigitalOutputState(0)
-
     const safetyDins = useSafetyDigitalInputList()
     const safetyValues = useSafetyDigitalInputs()
     const [isRestartAck, setIsRestartAck] = useState(false)
@@ -58,21 +60,13 @@ export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
     // safety Din 2 is used to signal that a restart acknowledge is needed
     const resetAckNeeded = useSafetyDigitalInputState(2)
 
-    const handleResetClick = () => {
-        // Check if a reset is not already in progress
-        if (!isRestartAck) {
-            setDout(true) // Set digital output to 1
+    const safePosValidIndex = safetyDins?.findIndex(
+        c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_SAFE_POS_VALID
+    )
 
-            // Set a timeout to reset the digital output after 2 seconds
-            setTimeout(() => {
-                setDout(false) // Reset digital output to 0
-                setIsRestartAck(false) // Set isRestartAck back to false
-            }, 2000)
-
-            // Set isRestartAck to true to prevent multiple resets at the same time
-            setIsRestartAck(true)
-        }
-    }
+    const overallSafetyStateIndex = safetyDins?.findIndex(
+        c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE
+    )
 
     const normalised_labels = safetyDins?.map(
         (config, index) => labels[index] || config.name || index.toString()
@@ -81,10 +75,17 @@ export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
 
     return (
         <StyledSafetyTileContent>
+            The overall safety state is:{"  "}
+            <Tag color={safetyValues[overallSafetyStateIndex] ? "green" : "red"}>
+                {safetyValues[overallSafetyStateIndex] ? "NO FAULT" : "FAULT"}
+            </Tag>
+            <StyledDivider />
+            <StyledSafetyTileText>The acknowledgeable safety faults are:</StyledSafetyTileText>
             {safetyDins &&
                 safetyDins.map(
                     (config, index) =>
-                        normalised_types[index] !== 1 && (
+                        normalised_types[index] ==
+                            DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE && (
                             <StyledSafetyInput key={index}>
                                 <span className="label">{normalised_labels[index]}</span>
                                 <Tag color={safetyValues[index] ? "green" : "red"}>
@@ -93,14 +94,35 @@ export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
                             </StyledSafetyInput>
                         )
                 )}
-            <StyledResetButton>
-                <Space>
-                    Acknowledge active safety faults to restart the machine:
-                    <Button disabled={!resetAckNeeded} size="small" onClick={handleResetClick}>
-                        Restart Acknowledge
-                    </Button>
-                </Space>
-            </StyledResetButton>
+            <StyledDivider />
+            <StyledSafetyTileText>The unacknowledgeable safety faults are:</StyledSafetyTileText>
+            {safetyDins &&
+                safetyDins.map(
+                    (config, index) =>
+                        normalised_types[index] ==
+                            DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_UNACKNOWLEDGEABLE && (
+                            <StyledSafetyInput key={index}>
+                                <span className="label">{normalised_labels[index]}</span>
+                                <Tag color={safetyValues[index] ? "green" : "red"}>
+                                    {safetyValues[index] ? "NO FAULT" : "FAULT"}
+                                </Tag>
+                            </StyledSafetyInput>
+                        )
+                )}
+            <StyledDivider />
+            Acknowledgeable safety faults can we reset using the reset button. Unacknowledgeable
+            safety faults require?.
+            <StyledDivider />
+            {safetyDins[safePosValidIndex] ? (
+                <div>
+                    The robot is reporting that its safe position is valid. No action is needed.
+                </div>
+            ) : (
+                <div>
+                    The robot is reporting that its safe position is INVALID. The safe position
+                    homing routine must be run.{" "}
+                </div>
+            )}
         </StyledSafetyTileContent>
     )
 }
