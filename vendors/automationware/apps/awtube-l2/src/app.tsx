@@ -24,7 +24,8 @@ import {
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
-    TriadHelper
+    TriadHelper,
+    DigitalOutputsTileDefinition
 } from "@glowbuzzer/controls"
 import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import React, { Suspense } from "react"
@@ -149,7 +150,8 @@ export const App = () => {
                 MonitorTileDefinition,
                 DevInputOverridesTileDefinition,
                 PayloadTileDefinition,
-                InterpolatedMoveTileDefinition
+                InterpolatedMoveTileDefinition,
+                DigitalOutputsTileDefinition
             ]}
         >
             <AppMenu title="AutomationWare AW-TUBE" />
