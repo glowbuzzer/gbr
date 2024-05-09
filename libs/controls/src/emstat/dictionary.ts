@@ -134,8 +134,92 @@ function FsoeHighLevelStateToString(value: number) {
     return (FSOE_SLAVE_HIGH_LEVEL_STATE[value] || "UNKNOWN").substring(28)
 }
 
+function testBit(number: number, bitPosition: number): boolean {
+    const bitmask = 1 << bitPosition
+    console.log(number, bitPosition)
+    return (number & bitmask) !== 0
+}
+
+const SynapticonSlaveStateBitTextObject = {
+    0: "STO",
+    1: "reserved",
+    2: "Reserved",
+    3: "SOS",
+    4: "Reserved",
+    5: "Reserved",
+    6: "Reserved",
+    7: "Error",
+    8: "SS1",
+    9: "SS2",
+    10: "Unused",
+    11: "Unused",
+    12: "SLS1",
+    13: "SLS2",
+    14: "SLS3",
+    15: "SLS4",
+    16: "Restart ack needed",
+    17: "Brake engaged",
+    18: "Temp warn",
+    19: "Safe pos valid",
+    20: "Safe vel valid",
+    21: "Unused",
+    22: "Unused",
+    23: "Unused",
+    24: "Safe in 1",
+    25: "Safe in 2",
+    26: "Reserved",
+    27: "Reserved",
+    28: "Safe out 1",
+    29: "Reserved",
+    30: "Analog in diagnostic active",
+    31: "Analog in valid"
+}
+
+function FsoeSynapticonSlaveStateToString(value: number) {
+    let concatenatedText = " "
+    let isFirstBit = true
+
+    for (const bit in SynapticonSlaveStateBitTextObject) {
+        if (SynapticonSlaveStateBitTextObject.hasOwnProperty(bit)) {
+            const bitNumber = parseInt(bit, 10)
+
+            if (testBit(value, bitNumber)) {
+                if (!isFirstBit) {
+                    // If it's not the first bit, add " + " separator
+                    concatenatedText += " + "
+                }
+
+                concatenatedText += SynapticonSlaveStateBitTextObject[bitNumber]
+                isFirstBit = false // Update the flag
+            }
+        }
+    }
+    if (isFirstBit) {
+        return concatenatedText.trim() // Trim to remove trailing space
+    } else {
+        return concatenatedText
+    }
+}
+
 function FsoeSlaveTypeToString(value: number) {
     return (FSOE_SLAVE_TYPE[value] || "UNKNOWN").substring(16)
+}
+
+enum FsoeSlaveType {
+    UNKNOWN_SLAVE_TYPE = "Unknown slave type",
+    FSOE_SLAVE_TYPE_SYNAPTICON = "FSOE_SLAVE_TYPE_SYNAPTICON",
+    FSOE_SLAVE_TYPE_SCU_1_EC = "FSOE_SLAVE_TYPE_SCU_1_EC"
+}
+
+function FsoeMapSlaveType(value: string): FsoeSlaveType {
+    switch (value) {
+        case FsoeSlaveType.FSOE_SLAVE_TYPE_SYNAPTICON:
+            return FsoeSlaveType.FSOE_SLAVE_TYPE_SYNAPTICON
+        case FsoeSlaveType.FSOE_SLAVE_TYPE_SCU_1_EC:
+            return FsoeSlaveType.FSOE_SLAVE_TYPE_SCU_1_EC
+        default:
+            return FsoeSlaveType.UNKNOWN_SLAVE_TYPE
+    }
 }
 
 function FsoeMasterHighLevelStateTypeToString(value: number) {
@@ -410,7 +494,7 @@ const dictionary: DictionaryNode = {
 
                 fsoess: {
                     name: "FSoE Slave State",
-                    convert: NumberToBinaryString
+                    convert: FsoeSynapticonSlaveStateToString
                 },
                 foeshls: {
                     name: "FSoE Slave High-Level State",
