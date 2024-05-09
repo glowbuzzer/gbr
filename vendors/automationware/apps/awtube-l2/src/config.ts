@@ -59,11 +59,7 @@ export const config: GlowbuzzerConfig = {
             busCycleTime: 4
         }
     ],
-    din: [
-        {
-            name: "Digital 1"
-        }
-    ],
+  
     safetyDin: safety_din_array,
     ain: [
         {
