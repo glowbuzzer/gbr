@@ -50,9 +50,14 @@ function to_euler(q: Quat): Euler {
 type CartesianPositionEditProps = {
     value: CartesianPosition
     onChange: (value: CartesianPosition) => void
+    ignoreFrame?: boolean
 }
 
-export const CartesianPositionEdit = ({ value, onChange }: CartesianPositionEditProps) => {
+export const CartesianPositionEdit = ({
+    value,
+    onChange,
+    ignoreFrame
+}: CartesianPositionEditProps) => {
     const [positionReference, setPositionReference] = useState<POSITIONREFERENCE>(
         value.positionReference
     )
@@ -168,30 +173,32 @@ export const CartesianPositionEdit = ({ value, onChange }: CartesianPositionEdit
                 ))}
                 <div>{angularUnits}</div>
             </div>
-            <div className="frame">
-                <Space>
-                    <Checkbox
-                        checked={positionReference === POSITIONREFERENCE.RELATIVE}
-                        onChange={toggle_relative}
-                    >
-                        Relative to frame
-                    </Checkbox>
-                    {positionReference === POSITIONREFERENCE.RELATIVE && (
-                        <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
+            {ignoreFrame || (
+                <div className="frame">
+                    <Space>
+                        <Checkbox
+                            checked={positionReference === POSITIONREFERENCE.RELATIVE}
+                            onChange={toggle_relative}
+                        >
+                            Relative to frame
+                        </Checkbox>
+                        {positionReference === POSITIONREFERENCE.RELATIVE && (
+                            <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
+                        )}
+                    </Space>
+                    {kinematicsConfigurations.length < 2 ? (
+                        <Button size="small" onClick={() => update_from_kc(0)}>
+                            Set from current position
+                        </Button>
+                    ) : (
+                        <KinematicsDropdown
+                            value={null}
+                            placeholder="Set from current position"
+                            onChange={update_from_kc}
+                        />
                     )}
-                </Space>
-                {kinematicsConfigurations.length < 2 ? (
-                    <Button size="small" onClick={() => update_from_kc(0)}>
-                        Set from current position
-                    </Button>
-                ) : (
-                    <KinematicsDropdown
-                        value={null}
-                        placeholder="Set from current position"
-                        onChange={update_from_kc}
-                    />
-                )}
-            </div>
+                </div>
+            )}
         </StyledDiv>
     )
 }

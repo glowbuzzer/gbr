@@ -1,123 +1,120 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
 import * as React from "react"
+import { TileWithEditableTableSupport } from "@glowbuzzer/controls"
 import {
     configSlice,
+    GlowbuzzerConfig,
     MachineState,
+    ToolConfig,
     useMachineState,
-    usePrefs,
     useSoloActivity,
-    useToolIndex,
     useToolList
 } from "@glowbuzzer/store"
-import { Button, Tag } from "antd"
-import styled from "styled-components"
-import { EditOutlined, RightOutlined } from "@ant-design/icons"
-import { StyledTileContent } from "../util/styles/StyledTileContent"
-import { TileEmptyMessage } from "../tiles"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
-import { ToolsEditModal } from "./ToolsEditModal"
+import { ColumnType } from "antd/es/table"
 import { useDispatch } from "react-redux"
+import { ToolConfigEditor } from "./ToolConfigEditor"
+import { Button } from "antd"
 
-const StyledDiv = styled.div`
-    display: flex;
-    align-items: center;
+export type ToolsTileTableEntry = ToolConfig & { name: string; id: number }
 
-    .name {
-        flex-grow: 1;
-    }
-`
-
-/**
- * The tools tile shows all tools in the configuration and allows you to switch tools.
- *
- * It is your responsibility to ensure the machine is at rest when the tool is changed.
- * For tool changes when running a job (for example, during G-code execution), see the section on automated tool changes.
- */
 export const ToolsTile = () => {
     const tools = useToolList()
-    const toolIndex = useToolIndex(0)
-    const { fromSI, getUnits } = usePrefs()
+    const dispatch = useDispatch()
     const api = useSoloActivity(0)
     const currentState = useMachineState()
-    const [showEdit, setShowEdit] = React.useState(false)
-    const dispatch = useDispatch()
+
+    const definitions = tools.map((tool, index) => ({
+        id: index,
+        ...tool
+    }))
 
     function select(index: number) {
         return api.setToolOffset(index).promise()
     }
 
-    const { units, precision } = getUnits("linear")
+    const columns: ColumnType<ToolsTileTableEntry>[] = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name"
+        },
+        {
+            title: "Length",
+            key: "length",
+            render: (item, record) => record.translation?.z || 0
+        },
+        {
+            title: "Diameter",
+            dataIndex: "diameter",
+            key: "diameter"
+        },
+        {
+            title: "Actions",
+            key: "actions",
+            render: (item, record) => (
+                <Button
+                    size="small"
+                    onClick={() => select(record.id)}
+                    disabled={currentState !== MachineState.OPERATION_ENABLED}
+                >
+                    Activate
+                </Button>
+            )
+        }
+    ]
 
-    function add_tool() {
-        dispatch(
-            configSlice.actions.addConfig({
-                tool: [
-                    ...(tools || []),
-                    {
-                        name: "Tool test",
-                        diameter: 0.5
-                    }
-                ]
-            })
-        )
+    function store(tool: GlowbuzzerConfig["tool"]) {
+        dispatch(configSlice.actions.addConfig({ tool }))
+    }
+
+    function create_tool(tool: ToolsTileTableEntry) {
+        const { id, ...created } = tool
+        const update = [...tools, created]
+        store(update)
+    }
+
+    function update_tool(tool: ToolsTileTableEntry) {
+        const { id, ...modified } = tool
+        const update = tools.map((t, index) => (index === id ? modified : t))
+        store(update)
+    }
+
+    function delete_tool(n: number) {
+        const update = tools.filter((t, index) => index !== n)
+        store(update)
+    }
+
+    function make_new_tool(): ToolConfig {
+        return {
+            translation: { x: 0, y: 0, z: 0 },
+            rotation: { x: 0, y: 0, z: 0, w: 1 },
+            diameter: 0,
+            rigidBodyInertia: {
+                Ixx: 0,
+                Iyy: 0,
+                Izz: 0,
+                Ixy: 0,
+                Ixz: 0,
+                Iyz: 0,
+                m: 0,
+                h: { x: 0, y: 0, z: 0 }
+            }
+        }
     }
 
     return (
-        <DockTileWithToolbar
-            toolbar={
-                <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon
-                        Icon={EditIcon}
-                        useFill={true}
-                        title="Edit Tools"
-                        button
-                        onClick={add_tool}
-                    />
-                </DockToolbarButtonGroup>
-            }
-        >
-            {showEdit && <ToolsEditModal onClose={() => setShowEdit(false)} />}
-            <StyledTileContent>
-                {tools?.map((config, index) => (
-                    <StyledDiv key={index}>
-                        <div className="name">{config.name}</div>
-                        {index === toolIndex && <RightOutlined />}
-                        <Tag>
-                            {fromSI(config.translation?.z || 0, "linear").toFixed(precision)}{" "}
-                            {units}
-                        </Tag>
-                        {config.diameter && (
-                            <Tag>
-                                <svg viewBox="0 0 16 16" width={16}>
-                                    <circle
-                                        cx={6}
-                                        cy={10}
-                                        r={5}
-                                        stroke="black"
-                                        fill="none"
-                                        strokeWidth={1}
-                                    />
-                                </svg>
-                                {fromSI(config.diameter || 0, "linear").toFixed(precision)} {units}
-                            </Tag>
-                        )}
-                        <Button
-                            size="small"
-                            onClick={() => select(index)}
-                            disabled={currentState !== MachineState.OPERATION_ENABLED}
-                        >
-                            Select
-                        </Button>
-                    </StyledDiv>
-                ))}
-                {!tools?.length && <TileEmptyMessage>No tools configured</TileEmptyMessage>}
-            </StyledTileContent>
-        </DockTileWithToolbar>
+        <TileWithEditableTableSupport
+            columns={columns}
+            items={definitions}
+            onCreate={create_tool}
+            onUpdate={update_tool}
+            onDelete={delete_tool}
+            EditComponent={ToolConfigEditor}
+            factory={make_new_tool}
+            onVerify={item => item.name?.length > 0}
+        />
     )
 }

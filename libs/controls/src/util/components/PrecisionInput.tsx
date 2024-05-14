@@ -44,7 +44,7 @@ export const PrecisionInput = forwardRef(
         useEffect(() => {
             if (!Number.isNaN(valueString)) {
                 const value = clamp(Number(valueString), min, max)
-                onChange(value)
+                onChange?.(value)
             }
         }, [valueString])
 
