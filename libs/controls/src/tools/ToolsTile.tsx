@@ -3,7 +3,6 @@
  */
 
 import * as React from "react"
-import { TileWithEditableTableSupport } from "@glowbuzzer/controls"
 import {
     configSlice,
     GlowbuzzerConfig,
@@ -17,6 +16,7 @@ import { ColumnType } from "antd/es/table"
 import { useDispatch } from "react-redux"
 import { ToolConfigEditor } from "./ToolConfigEditor"
 import { Button } from "antd"
+import { TileWithEditableTableSupport } from "../util"
 
 export type ToolsTileTableEntry = ToolConfig & { name: string; id: number }
 
@@ -44,7 +44,7 @@ export const ToolsTile = () => {
         {
             title: "Length",
             key: "length",
-            render: (item, record) => record.translation?.z || 0
+            render: (_, record) => record.translation?.z || 0
         },
         {
             title: "Diameter",
@@ -54,7 +54,7 @@ export const ToolsTile = () => {
         {
             title: "Actions",
             key: "actions",
-            render: (item, record) => (
+            render: (_, record) => (
                 <Button
                     size="small"
                     onClick={() => select(record.id)}
@@ -83,7 +83,7 @@ export const ToolsTile = () => {
     }
 
     function delete_tool(n: number) {
-        const update = tools.filter((t, index) => index !== n)
+        const update = tools.filter((_, index) => index !== n)
         store(update)
     }
 

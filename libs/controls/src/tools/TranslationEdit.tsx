@@ -4,8 +4,8 @@
 
 import * as React from "react"
 import { usePrefs, Vector3 } from "@glowbuzzer/store"
-import { PrecisionInput } from "@glowbuzzer/controls"
 import { Space } from "antd"
+import { PrecisionInput } from "../util"
 
 type TranslationEditProps = {
     item: Vector3

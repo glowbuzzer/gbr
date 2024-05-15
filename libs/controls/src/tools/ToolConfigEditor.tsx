@@ -5,9 +5,9 @@
 import * as React from "react"
 import { CartesianPosition, ToolConfig } from "@glowbuzzer/store"
 import { Form, Input, Space } from "antd"
-import { CartesianPositionEdit, PrecisionInput } from "@glowbuzzer/controls"
 import { ToolsTileTableEntry } from "./ToolsTile"
 import { TranslationEdit } from "./TranslationEdit"
+import { CartesianPositionEdit, PrecisionInput } from "../util"
 
 export const ToolConfigEditor = ({
     item,
@@ -61,13 +61,6 @@ export const ToolConfigEditor = ({
                 ...item.rigidBodyInertia,
                 [prop]: value
             }
-        })
-    }
-
-    function update_dynamics(update: ToolConfig["rigidBodyInertia"]) {
-        onChange({
-            ...item,
-            rigidBodyInertia: update
         })
     }
 
