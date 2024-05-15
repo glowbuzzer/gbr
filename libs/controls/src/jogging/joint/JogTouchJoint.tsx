@@ -40,14 +40,13 @@ type JogTouchJointProps = {
 export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointProps) => {
     const joints = useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex)
     const enabled = useMotionAllowed()
+    const preview = usePreview()
+    const motion = useSoloActivity(kinematicsConfigurationIndex)
 
     return (
         <StyledDiv>
             <div className="controls">
                 {joints.map((_joint, index) => {
-                    const preview = usePreview()
-                    const motion = useSoloActivity(kinematicsConfigurationIndex)
-
                     async function jog_start(vx: number) {
                         const velos = joints.map(({ config }, logical_index) => {
                             const vmax =
