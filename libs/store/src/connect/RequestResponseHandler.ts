@@ -24,7 +24,7 @@ export function useRequestHandler() {
     return {
         request(connection: WebSocket, requestType, args?): Promise<MessageResponse> {
             const requestId = Math.random().toString(36).substring(2, 15)
-            console.log("New request", requestId, requestType)
+            // console.log("New request", requestId, requestType)
             return new Promise<MessageResponse>((resolve, reject) => {
                 requests.current[requestId] = { resolve, reject }
                 connection.send(
@@ -57,16 +57,16 @@ export function useRequestHandler() {
             if (error) {
                 reject(message)
             } else {
-                console.log(
-                    "Resolve response: " +
-                        requestId +
-                        " " +
-                        requestType +
-                        " " +
-                        error +
-                        " " +
-                        message
-                )
+                // console.log(
+                //     "Resolve response: " +
+                //         requestId +
+                //         " " +
+                //         requestType +
+                //         " " +
+                //         error +
+                //         " " +
+                //         message
+                // )
                 resolve(body)
             }
         },
