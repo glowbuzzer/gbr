@@ -53,7 +53,6 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
                 const entry = entries[0]
                 if (entry) {
                     const rect = entry.target.getBoundingClientRect()
-                    console.log("StatusTray: bottom offset", rect.top)
                     setBottomOffset(rect.top)
                 }
             }
