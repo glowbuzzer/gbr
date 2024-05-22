@@ -2,6 +2,96 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.0](https://github.com/glowbuzzer/gbr/compare/v1.12.0...v1.13.0) (2024-05-22)
+
+
+### Feature
+
+* **#153:** Flow Maker (no code) feature ([89c8839](https://github.com/glowbuzzer/gbr/commit/89c883967073f6ca5c7dba84938daca3c6f90ec1))
+* **#159:** Runtime mode for flow maker ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* **#160:** Ability to override inputs during development ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* **#161:** Hand guided mode initial version ([77b698a](https://github.com/glowbuzzer/gbr/commit/77b698ad5ab69c0c063217043ab6b8148c57ea61))
+* **#165:** External integration http callout to flow maker ([d1d534f](https://github.com/glowbuzzer/gbr/commit/d1d534f5e8d77cecf1ad2225578d4220ec9b1eff))
+* **#168:** Add persistence feature ([6783531](https://github.com/glowbuzzer/gbr/commit/67835312a88f1db8ecc7d7339167b5385f6b20bb))
+* **#169:** Allow extra app-specific content in the status bar ([d618d3e](https://github.com/glowbuzzer/gbr/commit/d618d3e777586014d8ca76b2896b77771529d5bf))
+* **#171:** gbdb auto-save feature ([75e3c88](https://github.com/glowbuzzer/gbr/commit/75e3c882b0e38b9a16b4072ea63e4cfcf93b61ef))
+* **#173:** gbdb import/export in console ([f915d38](https://github.com/glowbuzzer/gbr/commit/f915d3853a4856249b321f63badf932df771b6cf))
+* **#175:** Make connect tile optional ([7f4f0af](https://github.com/glowbuzzer/gbr/commit/7f4f0af01f81022212ea67647a9299b9467eea60))
+* **#176:** Support for gbdb hidden/singleton facets ([7f4f0af](https://github.com/glowbuzzer/gbr/commit/7f4f0af01f81022212ea67647a9299b9467eea60))
+* **#180:** Add tool config editor ([26b1f8e](https://github.com/glowbuzzer/gbr/commit/26b1f8ee69638fcff43ec89fd59e5ecb3aaefbc0))
+* Add awtube-envelope app ([2718ef2](https://github.com/glowbuzzer/gbr/commit/2718ef23eb206f5eafaad6ff1fa0e31748f3b822))
+* Add monitoring to track latency between HMI and GBC ([89c8839](https://github.com/glowbuzzer/gbr/commit/89c883967073f6ca5c7dba84938daca3c6f90ec1))
+* add payload tile ([2893886](https://github.com/glowbuzzer/gbr/commit/2893886a9a2f2ac8fef83a9b349067caabd65546))
+* Better dock tile resize on touch devices ([0d3b668](https://github.com/glowbuzzer/gbr/commit/0d3b66833ffabfd00d281daa5274deea2964a1b4))
+
+
+### Bug Fix
+
+* **#149:** fix issue with useTrace hook ([ffc9e92](https://github.com/glowbuzzer/gbr/commit/ffc9e92fde9c915a507720a7778033987b2c962e))
+* **#151:** fix issue with zerog tile inverted enter/exit button ([a2590fd](https://github.com/glowbuzzer/gbr/commit/a2590fd4c3af6aee70979c450c58750ae35d3866))
+* **#156:** Sort telemetry domains correctly ([8961a80](https://github.com/glowbuzzer/gbr/commit/8961a8087589b74943971d457ce0ca76ef1847cd))
+* **#166:** Disable propogation of touch events to prevent select (touch jog control issue) ([36a83aa](https://github.com/glowbuzzer/gbr/commit/36a83aa3101e91e5c2d21345bbc01cee8bd9b96d))
+* **#167:** Support status bar and status tray in DockPerspectiveLayoutProvider.tsx ([6783531](https://github.com/glowbuzzer/gbr/commit/67835312a88f1db8ecc7d7339167b5385f6b20bb))
+* **#172:** Remove load/save from config slice ([57a3ec4](https://github.com/glowbuzzer/gbr/commit/57a3ec417fe95931ade3c7c4ba9520f1f507abb9))
+* actually use the request text in GbemRequestTab.tsx ([d3e210e](https://github.com/glowbuzzer/gbr/commit/d3e210e714c922e362351f15c88ad556bcbb558e))
+* bug in configEqual comparison when one config is undefined ([26d3104](https://github.com/glowbuzzer/gbr/commit/26d3104fc3287d6c23a8063c42b88506237eddbe))
+* don't try to merge configs below top-level ([96ee23f](https://github.com/glowbuzzer/gbr/commit/96ee23f91b0d7d9eb7306e384d10da6fc272989c))
+* Fix incorrect MoI properties ([933d58c](https://github.com/glowbuzzer/gbr/commit/933d58c17556cb65ef8dadf487c06ac51a1d9ec5))
+* incorrect min value calc in PrecisionInput.tsx ([00a8303](https://github.com/glowbuzzer/gbr/commit/00a8303e27be589be6041a9c8de53b3af3fe4812))
+* Issue with switching kins in jog joint panel ([335a64d](https://github.com/glowbuzzer/gbr/commit/335a64da111406786cef17e0d1fc3953dffe1c54))
+* issues with touch controls on tablet ([b1cf0c5](https://github.com/glowbuzzer/gbr/commit/b1cf0c576c89e846d2c2ed881ca9823f435460ab))
+* move points from points slice to config slice, same as frames ([e9abdb5](https://github.com/glowbuzzer/gbr/commit/e9abdb5a368606268c35f65c8be49c9ed7fb6faf))
+* status bar needs to be inside DockLayoutContext ([1c56621](https://github.com/glowbuzzer/gbr/commit/1c566213a4fab5bb5d8b4762d53d97543090f032))
+
+
+### Chore
+
+* add basic support for status tray to convmc example ([76f987b](https://github.com/glowbuzzer/gbr/commit/76f987b9f806f11e72839002d204aa8d7954205e))
+* add events lib to keep pouchdb happy ([c56d203](https://github.com/glowbuzzer/gbr/commit/c56d2036cbe8c552be98ec058a6153eb41ca25de))
+* add script to show latest git tags by date ([f4bd853](https://github.com/glowbuzzer/gbr/commit/f4bd8539fa1cf5236251895af354992fae43e15d))
+* add shrink-wrap.mjs bundler ([f4e7f3b](https://github.com/glowbuzzer/gbr/commit/f4e7f3bf0f9436f794922cdef3165814b4b12949))
+* Add synapticon slave state processing ([f4431c0](https://github.com/glowbuzzer/gbr/commit/f4431c0cd86f8725817bb4fb4c8fac37221ad087))
+* add teeth models to stewart platform demo ([3bd8796](https://github.com/glowbuzzer/gbr/commit/3bd8796673146db99d7d786d37e73ea851fae33f))
+* Add window.global to script ([bdb0851](https://github.com/glowbuzzer/gbr/commit/bdb085117b8dc06df720e1e91fac6fefd7097cae))
+* create awtube-l2.json example config ([84b0bee](https://github.com/glowbuzzer/gbr/commit/84b0beeb561e5d789b909efcc8994a8c9e187041))
+* create machine_limits.ini example file ([6b7ad1f](https://github.com/glowbuzzer/gbr/commit/6b7ad1f6b0d11506eb756fa89990c75c3e7178b5))
+* export all from gbdb util.ts ([6ae3a77](https://github.com/glowbuzzer/gbr/commit/6ae3a77742f850cd4b78718a212307660955209a))
+* export DevInputOverridesTile ([727bcf6](https://github.com/glowbuzzer/gbr/commit/727bcf666b48c177c465be00e83385658462ce05))
+* export some utility components ([d5ba514](https://github.com/glowbuzzer/gbr/commit/d5ba5145c2f592419fa5e47106ccf227fba0c150))
+* factor out CartesianPositionEdit.tsx and expose some utility components ([e33d2dd](https://github.com/glowbuzzer/gbr/commit/e33d2ddb85ff867dd49c9b34ea3fe209f4bdebc8))
+* fix awtube-variable page load ([96fcd14](https://github.com/glowbuzzer/gbr/commit/96fcd142b819cf82292c7555726c5df59f5cdb75))
+* fix docktilelayout with perspective ([9bccc63](https://github.com/glowbuzzer/gbr/commit/9bccc63a9d27a2f7037d4b659bfe31b81db6dfc5))
+* fix import ([50ab8fa](https://github.com/glowbuzzer/gbr/commit/50ab8fa829111a824890d2e657670ba9990be422))
+* fix import ([de020bc](https://github.com/glowbuzzer/gbr/commit/de020bcb1cd3774b4368984b3fa7e5fcaf49813a))
+* fix import issues ([e230e3a](https://github.com/glowbuzzer/gbr/commit/e230e3a8dd16b64911db22d11bb20342d9ceee51))
+* fix react docgen issue ([ea32cb0](https://github.com/glowbuzzer/gbr/commit/ea32cb086cdbbd363ed1636521ef79f348fb3603))
+* fix up cnc app config.ts ([0ea9bed](https://github.com/glowbuzzer/gbr/commit/0ea9bed2db6da2b45f55e5c6d6e8ef0ac1b7c928))
+* fix wrong import ([63082a7](https://github.com/glowbuzzer/gbr/commit/63082a7d8d5407e91bdbc01da762582fee7de3f3))
+* improve trace handling and tooltips ([ec41c25](https://github.com/glowbuzzer/gbr/commit/ec41c25ac591dc7a3c8727ebe995684e9a950e4c))
+* modify .gitignore ([71c0c07](https://github.com/glowbuzzer/gbr/commit/71c0c0766db9901802b2a89abc4ef91f790cc296))
+* new config edit tile with tabs for config and request/response - work in progress ([f258b6f](https://github.com/glowbuzzer/gbr/commit/f258b6fefc804163537de4906c12f7dda3e48d03))
+* refactor and comment flow maker runtime code ([5073682](https://github.com/glowbuzzer/gbr/commit/5073682ebb15fffb0f3482e086a48da07072f769))
+* Remove din definition that was overwriting other dins ([5029223](https://github.com/glowbuzzer/gbr/commit/5029223d7d2b02b373d41837bdc3919868c5e51c))
+* remove unnecessary logging ([54c2b6e](https://github.com/glowbuzzer/gbr/commit/54c2b6ef04970378bdbaedfda37f13a1910d1968))
+* remove unnecessary logging ([37b0fd9](https://github.com/glowbuzzer/gbr/commit/37b0fd97189d47f322571d4b47b3a9f550e7c444))
+* remove unnecessary logging ([d98ab5d](https://github.com/glowbuzzer/gbr/commit/d98ab5d5a2e6410f5926aca391c1fc88a8e33d86))
+* resize touch controls in container ([b1cf0c5](https://github.com/glowbuzzer/gbr/commit/b1cf0c576c89e846d2c2ed881ca9823f435460ab))
+* status bar tweaks ([c27e235](https://github.com/glowbuzzer/gbr/commit/c27e2357a3d1feb179ea8436a605fce5251efafc))
+* tweak awtube-l2 config.ts ([9e68835](https://github.com/glowbuzzer/gbr/commit/9e6883504a815cc3e510627ecae371aa0cbb7fbc))
+* tweaks to awtube-l2 demo ([46c331d](https://github.com/glowbuzzer/gbr/commit/46c331d823f15aedda00bbc8e5ae312731f46d17))
+* Update awlib ([0d346bd](https://github.com/glowbuzzer/gbr/commit/0d346bde56bee4acc369c5f711b5deb3db7f99df))
+* update awlib hash ([6ca8423](https://github.com/glowbuzzer/gbr/commit/6ca8423533c92cfcff563c200da6e49c7e2a68e1))
+* update awlib hash ([fc66f3d](https://github.com/glowbuzzer/gbr/commit/fc66f3dc2566ebfc131edd56e59692eacf9ae65e))
+* update drives application to use gbdb facets ([098fc44](https://github.com/glowbuzzer/gbr/commit/098fc445617277436bf68db4ba10d4cbeaf3fdd2))
+* update gbc.ts ([4de256e](https://github.com/glowbuzzer/gbr/commit/4de256eb28f6b4db935e10eb1b43b5b9095a8643))
+* Update J25 params ([dc16e4a](https://github.com/glowbuzzer/gbr/commit/dc16e4adc07d212bc857d7be071c6fac9398a252))
+* Update L2 friction params ([41bdd53](https://github.com/glowbuzzer/gbr/commit/41bdd53dbe65ec80015280ee2bd4c49cdc752e5c))
+* update node version ([de75bab](https://github.com/glowbuzzer/gbr/commit/de75baba58e55e6250d2769d561a323478b71208))
+* update PNPM version ([b397891](https://github.com/glowbuzzer/gbr/commit/b39789175b93041734fdfdcb20f1f0f38b79eb17))
+* Update Safety tile ([d098369](https://github.com/glowbuzzer/gbr/commit/d09836963285920c03b5ff53602c36a6f8e0fbff))
+* Update to use gbdb ([64ca5dc](https://github.com/glowbuzzer/gbr/commit/64ca5dc7ed5f7d226c3f24f2173372a869f0a077))
+* Update to use gbdb ([d73666b](https://github.com/glowbuzzer/gbr/commit/d73666b379539ca8beec78a235a0e83a78915c07))
+
 ## [1.12.0](https://github.com/glowbuzzer/gbr/compare/v1.11.0...v1.12.0) (2024-02-14)
 
 
