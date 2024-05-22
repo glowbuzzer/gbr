@@ -47,6 +47,13 @@ const safety_din_array: WithName<SafetyDinConfig>[] = safety_dins
         return { name, type: Number(type) || DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE }
     })
 
+const DEFAULT_LIMITS = [
+    {
+        vmax: 1,
+        amax: 10,
+        jmax: 20
+    }
+]
 /**
  * This is the configuration for the AWTUBE L machine that can be pushed to the control if needed
  * (for example on first start)
@@ -59,7 +66,7 @@ export const config: GlowbuzzerConfig = {
             busCycleTime: 4
         }
     ],
-  
+
     safetyDin: safety_din_array,
     ain: [
         {
@@ -161,19 +168,13 @@ export const config: GlowbuzzerConfig = {
     joint: [
         {
             name: "0",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 3.414,
             jointType: 1,
-            negLimit: -80,
-            posLimit: 80,
+            negLimit: -200,
+            posLimit: 200,
             inverted: true,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -186,19 +187,13 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "1",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 2.54,
             jointType: 1,
-            negLimit: -40,
-            posLimit: 40,
+            negLimit: -200,
+            posLimit: 200,
             inverted: true,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -209,19 +204,13 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "2",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 3.41,
             jointType: 1,
-            negLimit: 50,
-            posLimit: 130,
+            negLimit: -200,
+            posLimit: 200,
             inverted: false,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -232,19 +221,13 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "3",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 4.3,
             jointType: 1,
-            negLimit: -170,
-            posLimit: 170,
+            negLimit: -200,
+            posLimit: 200,
             inverted: true,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -257,19 +240,13 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "4",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 4.3,
             jointType: 1,
-            negLimit: 10,
-            posLimit: 170,
+            negLimit: -200,
+            posLimit: 200,
             inverted: true,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -280,19 +257,13 @@ export const config: GlowbuzzerConfig = {
         },
         {
             name: "5",
-            limits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            limits: DEFAULT_LIMITS,
             scalePos: 166886,
             scaleVel: 9549,
             scaleTorque: 16.07,
             jointType: 1,
-            negLimit: -270,
-            posLimit: 270,
+            negLimit: -360,
+            posLimit: 360,
             inverted: true,
             dynamicsVelocityThreshold: 0.02,
             preferredMode: JOINT_MODEOFOPERATION.JOINT_MODEOFOPERATION_CSP,
@@ -314,30 +285,15 @@ export const config: GlowbuzzerConfig = {
             supportedConfigurationBits: 7,
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
-            extentsZ: [500, 1400],
-            sphericalEnvelope: {
-                center: {
-                    x: 0,
-                    y: 0,
-                    z: 0
-                },
-                radius: [500, 1400]
-            },
+            extentsZ: [-1000, 1500],
             linearLimits: [
                 {
-                    vmax: 200,
-                    amax: 1000,
-                    jmax: 20000
+                    vmax: 600,
+                    amax: 3000,
+                    jmax: 60000
                 }
             ],
-
-            angularLimits: [
-                {
-                    vmax: 0.25,
-                    amax: 2.5,
-                    jmax: 5
-                }
-            ],
+            angularLimits: DEFAULT_LIMITS,
             ...AwTubeL2KinChainParams,
             inverseDynamicParams: AwTubeL2InverseDynamicParams
         }
@@ -356,13 +312,13 @@ export const config: GlowbuzzerConfig = {
                     x: 0,
                     y: 0,
                     z: 0
-                },
-                Ixx: 0.10033,
-                Iyy: 0.098412,
-                Izz: 0.072655,
-                Ixy: 0.00004912,
-                Ixz: 0.00009505,
-                Iyz: 0.00059172
+                }
+                // Ixx: 0.10033,
+                // Iyy: 0.098412,
+                // Izz: 0.072655,
+                // Ixy: 0.00004912,
+                // Ixz: 0.00009505,
+                // Iyz: 0.00059172
             }
         }
     ]
