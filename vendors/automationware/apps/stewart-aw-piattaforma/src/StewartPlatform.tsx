@@ -12,7 +12,7 @@ import { useStewartPlatformInverseKinematics } from "./util"
 // the origin of the platform glb is on the bottom face of the disk, which is 12mm thick
 const platform_thickness = 12
 
-export const StewartPlatform = () => {
+export const StewartPlatform = ({ children }) => {
     const {
         position: { translation, rotation }
     } = useKinematicsCartesianPosition(0)
@@ -135,6 +135,7 @@ export const StewartPlatform = () => {
                 >
                     <primitive object={platform} rotation={[Math.PI / 2, 0, 0]} />
                 </group>
+                {children}
             </group>
         </group>
     )

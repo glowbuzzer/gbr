@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { StrictMode, Suspense } from "react"
+import React, { Suspense } from "react"
 import { createRoot } from "react-dom/client"
 import {
     CartesianDroTileDefinition,
@@ -33,13 +33,35 @@ import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import { DefaultEnvironment } from "../../../../../examples/util/DefaultEnvironment"
 import { StewartPlatform } from "./StewartPlatform"
 import { PointsLoaderTile } from "./PointsLoaderTile"
+import { MechHumanTile } from "./mh/MechHumanTile"
+import { LowerJaw } from "./mh/scene/LowerJaw"
+import { UpperJaw } from "./mh/scene/UpperJaw"
+import { MechHumanContextProvider } from "./mh/MechHumanContextProvider"
+import {
+    FlowGbdbFacetSlice,
+    FramesGbdbFacetSlice,
+    GbdbConfiguration,
+    PointsGbdbFacetSlice,
+    ToolsGbdbFacetSlice
+} from "@glowbuzzer/store"
+
+const MechHumanTileDefinition = DockTileDefinitionBuilder()
+    .id("mech-human")
+    .name("Teeth Motion")
+    .placement(2, 0)
+    .enableWithoutConnection()
+    .render(() => <MechHumanTile />)
+    .build()
 
 const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
         return (
-            <ThreeDimensionalSceneTile>
+            <ThreeDimensionalSceneTile hidePreview hideTrace>
                 <Suspense fallback={null}>
-                    <StewartPlatform />
+                    <StewartPlatform>
+                        <LowerJaw />
+                    </StewartPlatform>
+                    <UpperJaw />
                 </Suspense>
                 <PlaneShinyMetal />
                 <DefaultEnvironment />
@@ -56,28 +78,45 @@ const PointsLoaderTileDefinition = DockTileDefinitionBuilder()
     .enableWithoutConnection()
     .build()
 
+const persistence: GbdbConfiguration = {
+    // remoteDb: "http://localhost:5984",
+    facets: {
+        cell: {
+            singleton: true,
+            autoSave: true,
+            slices: [PointsGbdbFacetSlice]
+        }
+    }
+}
+
 const root = createRoot(document.getElementById("root"))
 root.render(
-    <GlowbuzzerApp appName="stewart_platform" configuration={config}>
-        <DockLayoutProvider
-            tiles={[
-                ConnectTileDefinition,
-                CartesianJogTileDefinition,
-                CartesianDroTileDefinition,
-                JointJogTileDefinition,
-                JointDroTileDefinition,
-                ToolsTileDefinition,
-                PointsTileDefinition,
-                FramesTileDefinition,
-                FeedRateTileDefinition,
-                ConfigEditTileDefinition,
-                CustomSceneTileDefinition,
-                PointsLoaderTileDefinition,
-                TelemetryTileDefinition
-            ]}
-        >
-            <ExampleAppMenu title="Stewart Platform" />
-            <DockLayout />
-        </DockLayoutProvider>
+    <GlowbuzzerApp
+        appName="stewart_platform"
+        configuration={config}
+        persistenceConfiguration={persistence}
+    >
+        <MechHumanContextProvider>
+            <DockLayoutProvider
+                tiles={[
+                    CartesianJogTileDefinition,
+                    CartesianDroTileDefinition,
+                    JointJogTileDefinition,
+                    JointDroTileDefinition,
+                    ToolsTileDefinition,
+                    PointsTileDefinition,
+                    FramesTileDefinition,
+                    FeedRateTileDefinition,
+                    ConfigEditTileDefinition,
+                    CustomSceneTileDefinition,
+                    PointsLoaderTileDefinition,
+                    TelemetryTileDefinition,
+                    MechHumanTileDefinition
+                ]}
+            >
+                <ExampleAppMenu title="Stewart Platform" />
+                <DockLayout />
+            </DockLayoutProvider>
+        </MechHumanContextProvider>
     </GlowbuzzerApp>
 )
