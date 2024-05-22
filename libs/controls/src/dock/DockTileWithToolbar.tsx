@@ -12,8 +12,12 @@ const StyledTileWithToolbar = styled.div`
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
+    white-space: nowrap;
+    overflow-x: clip;
 
     .panel {
+        display: flex;
+        flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
         min-height: 0;

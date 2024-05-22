@@ -19,10 +19,12 @@ export type DockLayoutContextType = {
     tiles: (Partial<DockTileDefinition> & { id: string })[]
     perspectives: DockPerspective[]
     currentPerspective: string
+    locked: boolean
     changePerspective: (perspective: string) => void
     updateModel(model: Model): void
     resetLayout(): void
     showTile(id: string, show: boolean): void
+    setLocked(locked: boolean): void
 }
 
 export const DockLayoutContext = createContext<DockLayoutContextType>(null)
