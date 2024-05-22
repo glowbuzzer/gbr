@@ -9,14 +9,23 @@ import styled, { css } from "styled-components"
 const radius = 80
 const sm = 15
 
-const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number; disabled: boolean }>`
+const StyledDiv = styled.div<{ $width: number; $height: number }>`
+    position: relative;
+    max-height: 100%;
+    overflow-y: clip;
+    width: 100%;
+    flex-basis: 0;
+    flex-grow: ${props => props.$width};
+`
+
+const StyledCartesianTouchSvg = styled.svg<{ $disabled: boolean }>`
+    user-select: none;
+
     ${props =>
-        props.disabled &&
+        props.$disabled &&
         css`
             pointer-events: none;
         `}
-
-    // animate x and y position of circle
 
     circle.animate {
         transition:
@@ -26,32 +35,32 @@ const StyledCartesianTouchSvg = styled.svg<{ width: number; height: number; disa
 
     circle.large {
         fill: ${props =>
-            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
+            props.$disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
     }
 
     circle.small {
         fill: ${props =>
-            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
+            props.$disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
     }
 
     path {
         stroke: ${props =>
-            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
+            props.$disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimary};
         stroke-opacity: 0.3;
         fill: none;
     }
 
     path.horizontal {
-        transform: translate(0, ${props => props.height / 2}px);
+        transform: translate(0, 50%);
     }
 
     path.vertical {
-        transform: translate(${props => props.width / 2}px, 0px) rotate(90deg);
+        transform: translate(50%, 0px) rotate(90deg);
     }
 
     path.solo-control {
         fill: ${props =>
-            props.disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
+            props.$disabled ? props.theme.colorBgContainerDisabled : props.theme.colorPrimaryBg};
     }
 `
 
@@ -105,7 +114,7 @@ export const JogTouchWidget = ({
                     width: sm * 2,
                     height: radius * 2,
                     lock_xy: true,
-                    pointer_info(x: number, y: number) {
+                    pointer_info(_x: number, y: number) {
                         const c = radius,
                             dy = y - c,
                             distance = Math.abs(dy)
@@ -118,7 +127,7 @@ export const JogTouchWidget = ({
                     width: radius * 2,
                     height: sm * 2,
                     lock_xy: true,
-                    pointer_info(x: number, y: number) {
+                    pointer_info(x: number, _y: number) {
                         const c = width / 2,
                             dx = x - c,
                             distance = Math.abs(dx)
@@ -135,33 +144,43 @@ export const JogTouchWidget = ({
         active: false
     })
     const [animate, setAnimate] = React.useState(true)
+    const svgRef = React.useRef<SVGSVGElement | null>(null)
 
     useEffect(() => {
-        if (state.active) {
+        const prevent_default = (e: Event) => {
+            e.preventDefault()
+        }
+
+        svgRef.current?.addEventListener("contextmenu", prevent_default, { passive: false })
+
+        return () => {
+            svgRef.current?.removeEventListener("contextmenu", prevent_default)
+        }
+    }, [])
+
+    useEffect(() => {
+        if (state.active && svgRef.current) {
             // document.body.classList.add("no-select")
 
             const timer = setTimeout(() => {
                 setAnimate(false)
             }, 200)
 
-            function handle_end(e) {
+            function handle_end() {
                 // e.preventDefault()
                 clearTimeout(timer)
                 setState({ x: width / 2, y: height / 2, active: false })
                 setAnimate(true)
             }
-            const prevent_default = e => e.preventDefault()
 
-            document.addEventListener("contextmenu", prevent_default, { passive: false })
-            document.addEventListener("mouseup", handle_end, { passive: false })
-            document.addEventListener("touchend", handle_end, { passive: false })
-            document.addEventListener("pointerup", handle_end, { passive: false })
+            svgRef.current.addEventListener("mouseup", handle_end, { passive: false })
+            svgRef.current.addEventListener("touchend", handle_end, { passive: false })
+            svgRef.current.addEventListener("pointerup", handle_end, { passive: false })
             return () => {
-                document.body.classList.remove("no-select")
-                document.removeEventListener("contextmenu", prevent_default)
-                document.removeEventListener("mouseup", handle_end)
-                document.removeEventListener("touchend", handle_end)
-                document.removeEventListener("pointerup", handle_end)
+                // svgRef.current.body.classList.remove("no-select")
+                svgRef.current.removeEventListener("mouseup", handle_end)
+                svgRef.current.removeEventListener("touchend", handle_end)
+                svgRef.current.removeEventListener("pointerup", handle_end)
             }
         }
     }, [state.active])
@@ -207,8 +226,6 @@ export const JogTouchWidget = ({
         const dxScaled = dx * scale
         const dyScaled = dy * scale
 
-        // console.log("distance", distance)
-
         return ortho(dx, dy, c + dxScaled, c + dyScaled)
     }
 
@@ -229,7 +246,22 @@ export const JogTouchWidget = ({
             point.x = x
             point.y = y
             const t = point.matrixTransform(owner.getScreenCTM().inverse())
-            setState({ active: true, ...clamp(t.x, t.y) })
+            setState(current => {
+                const { x: nx, y: ny } = clamp(t.x, t.y)
+                if (!current.active) {
+                    return {
+                        active: true,
+                        x: nx,
+                        y: ny
+                    }
+                }
+                const dx = Math.abs((nx - current.x) / current.x)
+                const dy = Math.abs((ny - current.y) / current.y)
+                if (dx > 0.1 || dy > 0.1) {
+                    return { active: true, x: nx, y: ny }
+                }
+                return current // unchanged
+            })
         }
     }
 
@@ -268,27 +300,40 @@ export const JogTouchWidget = ({
     }
 
     return (
-        <StyledCartesianTouchSvg width={width} height={height} disabled={disabled}>
-            {mode === JogTouchWidgetMode.XY ? (
-                <circle className="large" cx={width / 2} cy={height / 2} r={radius} {...events} />
-            ) : mode === JogTouchWidgetMode.VERTICAL ? (
-                <path className="vertical solo-control" d={sausage_path} {...events} />
-            ) : (
-                <path className="horizontal solo-control" d={sausage_path} {...events} />
-            )}
-            <circle
-                className={animate ? "animate small" : "small"}
-                cx={state.x}
-                cy={state.y}
-                r={sm}
-                {...events}
-            />
-            {lock_xy && mode === JogTouchWidgetMode.XY && (
-                <>
-                    <path className="horizontal" d={sausage_path} />
-                    <path className="vertical" d={sausage_path} />
-                </>
-            )}
-        </StyledCartesianTouchSvg>
+        <StyledDiv $width={width} $height={height}>
+            <StyledCartesianTouchSvg
+                ref={svgRef}
+                $disabled={disabled}
+                // preserveAspectRatio="xMidYMid meet"
+                viewBox={`0 0 ${width} ${height}`}
+            >
+                {mode === JogTouchWidgetMode.XY ? (
+                    <circle
+                        className="large"
+                        cx={width / 2}
+                        cy={height / 2}
+                        r={radius}
+                        {...events}
+                    />
+                ) : mode === JogTouchWidgetMode.VERTICAL ? (
+                    <path className="vertical solo-control" d={sausage_path} {...events} />
+                ) : (
+                    <path className="horizontal solo-control" d={sausage_path} {...events} />
+                )}
+                <circle
+                    className={animate ? "animate small" : "small"}
+                    cx={state.x}
+                    cy={state.y}
+                    r={sm}
+                    {...events}
+                />
+                {lock_xy && mode === JogTouchWidgetMode.XY && (
+                    <>
+                        <path className="horizontal" d={sausage_path} />
+                        <path className="vertical" d={sausage_path} />
+                    </>
+                )}
+            </StyledCartesianTouchSvg>
+        </StyledDiv>
     )
 }

@@ -14,11 +14,14 @@ const StyledDiv = styled.div`
     align-items: center;
 
     .controls {
+        width: 100%;
+        max-width: 375px;
+        padding: 0 40px;
         display: grid;
         grid-template-columns: auto 1fr;
-        grid-gap: 10px;
+        grid-gap: 5px;
         align-items: center;
-        margin: 10px 0;
+        //margin: 10px 0;
 
         .joint-number {
             display: flex;
