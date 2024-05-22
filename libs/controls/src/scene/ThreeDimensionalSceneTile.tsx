@@ -139,22 +139,20 @@ export const ThreeDimensionalSceneTile = ({
                         Icon={ShowChartIcon}
                         useFill={true}
                         button
-                        title="Show/hide Preview"
+                        title={hidePreview ? "Show Preview" : "Hide Preview"}
                         onClick={toggle_preview}
                         checked={!hidePreview}
                     />
                 </DockToolbarButtonGroup>
                 <DockToolbarButtonGroup>
-                    {defaultHideTrace || (
-                        <GlowbuzzerIcon
-                            Icon={AutoGraphIcon}
-                            useFill={true}
-                            button
-                            title="Toggle Trace"
-                            onClick={toggle_trace}
-                            checked={!hideTrace}
-                        />
-                    )}
+                    <GlowbuzzerIcon
+                        Icon={AutoGraphIcon}
+                        useFill={true}
+                        button
+                        title={hideTrace ? "Show Trace" : "Hide Trace"}
+                        onClick={toggle_trace}
+                        checked={!hideTrace}
+                    />
                     <GlowbuzzerIcon
                         useFill={true}
                         Icon={BlockIcon}
