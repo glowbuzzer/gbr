@@ -99,9 +99,8 @@ export const ToolConfigEditor = ({
             </Form.Item>
             <Form.Item label="MoI">
                 {[
-                    ["Ixx", "Ixy", "Ixz"],
-                    ["Iyx", "Iyy", "Iyz"],
-                    ["Izx", "Izy", "Izz"]
+                    ["Ixx", "Iyy", "Izz"],
+                    ["Ixy", "Ixz", "Iyz"]
                 ].map((row, i) => (
                     <Space key={i}>
                         {row.map((prop, j) => (
