@@ -40,7 +40,8 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "Stewart AW Piattaforma",
-            busCycleTime: 4
+            busCycleTime: 4,
+            heartbeatTimeout: 15000
         }
     ],
     stream: [
