@@ -26,13 +26,16 @@ export const StewartPlatform = ({ children }) => {
 
     const [base, platform, bottomRod, topRod, uj] = useMemo(
         () =>
-            useGLTF([
-                "/assets/base.glb",
-                "/assets/platform.glb",
-                "/assets/cylinder body.glb",
-                "/assets/piston.glb",
-                "/assets/uj.glb"
-            ]).map(({ scene }) => {
+            useGLTF(
+                [
+                    "/assets/base.glb",
+                    "/assets/platform.glb",
+                    "/assets/cylinder body.glb",
+                    "/assets/piston.glb",
+                    "/assets/uj.glb"
+                ],
+                "/assets/draco/"
+            ).map(({ scene }) => {
                 scene.scale.copy(new THREE.Vector3(1000, 1000, 1000))
                 return scene
             }),
