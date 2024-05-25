@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.13.1](https://github.com/glowbuzzer/gbr/compare/v1.13.0...v1.13.1) (2024-05-25)
+
+
+### Bug Fix
+
+* **#194:** Fix PrecisionInput editing issues ([37efd85](https://github.com/glowbuzzer/gbr/commit/37efd850f34cb3d4c5ab03a51f9ece0ab2534214))
+
+
+### Chore
+
+* ensure model load uses local draco wasm ([51079ae](https://github.com/glowbuzzer/gbr/commit/51079aecd61e1302ea5e7cbb2a106bce58ea5cef))
+* increase timeout ([142fb80](https://github.com/glowbuzzer/gbr/commit/142fb8063df218a88a660d84815816f39fd55761))
+* increase timeout ([2113c06](https://github.com/glowbuzzer/gbr/commit/2113c063e2025f50e39ec9a9794ed22072cf31bb))
+* remove deprecated use of send streaming function ([2731cd7](https://github.com/glowbuzzer/gbr/commit/2731cd78859751f42fbc2eb15a8efb33e6a55112))
+
 ## [1.13.0](https://github.com/glowbuzzer/gbr/compare/v1.12.0...v1.13.0) (2024-05-22)
 
 
