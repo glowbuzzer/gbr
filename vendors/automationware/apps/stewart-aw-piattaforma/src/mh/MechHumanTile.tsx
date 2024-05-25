@@ -4,7 +4,7 @@
 
 import React, { useMemo, useState } from "react"
 import { RcFile } from "antd/es/upload"
-import { Button, message, Space, Table, Tag, Upload } from "antd"
+import { Button, message, Space, Table, Tag } from "antd"
 import { CartesianPosition, MachineState, useMachineState, useStream } from "@glowbuzzer/store"
 import { calc_cartesian_position, chunk, interpolate } from "./motion"
 import { useMechHumanContext } from "./MechHumanContextProvider"
@@ -36,7 +36,7 @@ const columns = ["x", "y", "z", "a", "b", "c"].map(key => ({
  */
 export const MechHumanTile = () => {
     const { points, openProject } = useMechHumanContext()
-    const { send, reset, tag, state: streamState, pending, queued, time } = useStream(0)
+    const { execute, reset, tag, state: streamState, pending, queued, time } = useStream(0)
     const [messageApi, messagePlaceholder] = message.useMessage()
     const [state, setState] = useState(State.PROJECT_NOT_LOADED)
     const [positions, setPositions] = useState<CartesianPosition[]>([])
@@ -62,21 +62,21 @@ export const MechHumanTile = () => {
             })
     }
 
-    async function before_upload(info: RcFile) {
-        // function called when user selects a file to "upload" (actually just load into memory)
-        setState(State.PROJECT_LOADING)
-
-        openProject(await info.arrayBuffer())
-            .then(() => {
-                messageApi.success("Project loaded!")
-                setPositions(points.map(calc_cartesian_position))
-                setState(State.MOVE_START_REQUIRED)
-            })
-            .catch(e => {
-                messageApi.error(e.message)
-                setState(State.PROJECT_NOT_LOADED)
-            })
-    }
+    // async function before_upload(info: RcFile) {
+    //     // function called when user selects a file to "upload" (actually just load into memory)
+    //     setState(State.PROJECT_LOADING)
+    //
+    //     openProject(await info.arrayBuffer())
+    //         .then(() => {
+    //             messageApi.success("Project loaded!")
+    //             setPositions(points.map(calc_cartesian_position))
+    //             setState(State.MOVE_START_REQUIRED)
+    //         })
+    //         .catch(e => {
+    //             messageApi.error(e.message)
+    //             setState(State.PROJECT_NOT_LOADED)
+    //         })
+    // }
 
     async function run() {
         try {
@@ -93,8 +93,8 @@ export const MechHumanTile = () => {
             for (const positions of chunk(interpolate(points, 21, 4), 100)) {
                 // take chunk of positions and send to robot using api.moveInstant()
                 promises.push(
-                    send(api =>
-                        positions.map(p => api.moveInstant().setFromCartesianPosition(p).promise())
+                    execute(api =>
+                        positions.map(p => api.moveInstant().setFromCartesianPosition(p))
                     )
                 )
                 // allow the UI thread to do some work before processing next chunk
@@ -119,13 +119,13 @@ export const MechHumanTile = () => {
 
         try {
             reset()
-            await send(api => [
+            await execute(api => [
                 // move to safe Z
-                api.moveLine(0, 0, -10).relative().promise(),
+                api.moveLine(0, 0, -10).relative(),
                 // move to start xy
-                api.moveLine(x, y, null /* current position */).promise(),
+                api.moveLine(x, y, null /* current position */),
                 // move to start
-                api.moveLine().setFromCartesianPosition(start_position).promise()
+                api.moveLine().setFromCartesianPosition(start_position)
             ])
             setState(State.READY)
         } catch (e) {
