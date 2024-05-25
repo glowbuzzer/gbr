@@ -63,7 +63,8 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "AWTUBE L2",
-            busCycleTime: 4
+            busCycleTime: 4,
+            heartbeatTimeout: 15000
         }
     ],
 
