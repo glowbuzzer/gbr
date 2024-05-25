@@ -2,117 +2,114 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, {
-    FocusEventHandler,
-    ForwardedRef,
-    forwardRef,
-    useEffect,
-    useRef,
-    WheelEvent
-} from "react"
-import { InputNumber } from "antd"
+import React, { FocusEvent, ForwardedRef, forwardRef, useEffect, useState, WheelEvent } from "react"
+import { InputNumber, InputNumberProps } from "antd"
 import styled from "styled-components"
 
 const StyledInputNumber = styled(InputNumber)<{ $width?: number }>`
     width: ${props => (props.$width ? `${props.$width + 2}em` : "none")};
 `
 
+// ensure value stays within min/max bounds
 function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min || -Number.MAX_VALUE), max || Number.MAX_VALUE)
+}
+
+// check if a string is a valid number
+function valid_number(value: string) {
+    return !Number.isNaN(Number.parseFloat(value))
 }
 
 type PrecisionInputProps = {
     value: number
     onChange?: (value: number) => void
-    onBlur?: FocusEventHandler<HTMLInputElement>
+    onBlur?: (e: FocusEvent) => void
     precision: number
     step?: number
     min?: number
     max?: number
     width?: number
 }
+
+/**
+ * A number input that allows for a specific precision.
+ */
 export const PrecisionInput = forwardRef(
     (
         { value, onChange, onBlur, precision, step, min, max, width }: PrecisionInputProps,
         ref: ForwardedRef<HTMLInputElement>
     ) => {
         const [valueString, setValueString] = React.useState(value.toFixed(precision))
-        const valueRef = useRef(value) // initial value
-        const timerValueStringRef = useRef(null)
-        const timerValueRef = useRef(null)
+        const [focused, setFocused] = useState(false)
 
         useEffect(() => {
-            if (!Number.isNaN(valueString)) {
+            // if valid, immediately call the onChange handler, so caller can update state
+            if (valid_number(valueString)) {
                 const value = clamp(Number(valueString), min, max)
                 onChange?.(value)
             }
         }, [valueString])
 
         useEffect(() => {
-            clearTimeout(timerValueStringRef.current)
-            if (!Number.isNaN(valueString)) {
+            if (valid_number(valueString)) {
                 // ensure we are clamped, but give a delay in case the user is mid-edit
-                const value = Number(valueString)
+                const value = Number.parseFloat(valueString)
                 if (value < min) {
-                    timerValueStringRef.current = setTimeout(
-                        () => setValueString(min.toFixed(precision)),
-                        300
-                    )
+                    const timer = setTimeout(() => setValueString(min.toFixed(precision)), 300)
+                    return () => clearTimeout(timer)
                 }
                 if (value > max) {
-                    timerValueStringRef.current = setTimeout(
-                        () => setValueString(max.toFixed(precision)),
-                        300
-                    )
+                    const timer = setTimeout(() => setValueString(max.toFixed(precision)), 300)
+                    return () => clearTimeout(timer)
                 }
             }
         }, [valueString])
 
         useEffect(() => {
-            clearTimeout(timerValueRef.current)
-            timerValueRef.current = setTimeout(() => {
+            // whenever the value changes, update the input string if not focused
+            if (!focused) {
                 setValueString(value.toFixed(precision))
-            }, 750)
-        }, [value])
+            }
+        }, [value, focused])
 
         useEffect(() => {
-            if (Number.isNaN(valueString)) {
+            if (!valid_number(valueString)) {
                 // don't apply precision change if mid-edit
                 return
             }
-            if (valueRef.current === value) {
-                setValueString(value.toFixed(precision))
-            } else {
-                const new_value = Number(valueString)
-                setValueString(new_value.toFixed(precision))
-                valueRef.current = new_value
-            }
+            setValueString(value.toFixed(precision))
         }, [precision])
 
-        function update_value(v) {
-            setValueString(v)
-        }
-
         function handle_wheel(e: WheelEvent<HTMLInputElement>) {
-            if (Number.isNaN(valueString)) {
+            if (!valid_number(valueString)) {
                 // don't try to update if mid-edit
                 return
             }
             const mult = (step ??= 1)
             const new_value =
                 Number(valueString) - (Math.sign(e.deltaY) / Math.pow(10, precision)) * mult
-            update_value(new_value.toFixed(precision))
+
+            setValueString(new_value.toFixed(precision))
         }
 
-        function handle_step(v, info) {
+        const handle_step: InputNumberProps["onStep"] = (_v, info) => {
             switch (info.type) {
                 case "up":
-                    update_value((Number(valueString) + step).toFixed(precision))
+                    setValueString((Number(valueString) + step).toFixed(precision))
                     break
                 case "down":
-                    update_value((Number(valueString) - step).toFixed(precision))
+                    setValueString((Number(valueString) - step).toFixed(precision))
                     break
             }
+        }
+
+        function handle_focus() {
+            setFocused(true)
+        }
+
+        function handle_blur(e: FocusEvent) {
+            setFocused(false)
+            onBlur?.(e)
         }
 
         return (
@@ -125,8 +122,9 @@ export const PrecisionInput = forwardRef(
                 min={min}
                 max={max}
                 onWheel={handle_wheel}
-                onChange={update_value}
-                onBlur={onBlur}
+                onChange={(v: string) => setValueString(v)}
+                onFocus={handle_focus}
+                onBlur={handle_blur}
                 $width={width}
             />
         )
