@@ -93,12 +93,13 @@ export const PrecisionInput = forwardRef(
         }
 
         const handle_step: InputNumberProps["onStep"] = (_v, info) => {
+            const amount = step || 1 / Math.pow(10, precision)
             switch (info.type) {
                 case "up":
-                    setValueString((Number(valueString) + step).toFixed(precision))
+                    setValueString((Number(valueString) + amount).toFixed(precision))
                     break
                 case "down":
-                    setValueString((Number(valueString) - step).toFixed(precision))
+                    setValueString((Number(valueString) - amount).toFixed(precision))
                     break
             }
         }
@@ -116,13 +117,15 @@ export const PrecisionInput = forwardRef(
             <StyledInputNumber
                 ref={ref}
                 value={valueString}
-                onStep={step ? handle_step : undefined}
+                onStep={handle_step}
                 size="small"
-                step={1 / Math.pow(10, precision)}
+                keyboard
                 min={min}
                 max={max}
                 onWheel={handle_wheel}
-                onChange={(v: string) => setValueString(v)}
+                onChange={(v: string) => {
+                    setValueString(v)
+                }}
                 onFocus={handle_focus}
                 onBlur={handle_blur}
                 $width={width}
