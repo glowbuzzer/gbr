@@ -10,14 +10,42 @@ import { FlowActivityParams } from "./FlowActivityParams"
 import { FlowActivityTriggersDisplay } from "./FlowActivityTriggersDisplay"
 import { GlowbuzzerIcon } from "../../util/GlowbuzzerIcon"
 import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
-import { ReactComponent as DeleteIcon } from "@material-symbols/svg-400/outlined/delete.svg"
+import { ReactComponent as MoreVerticalIcon } from "@material-symbols/svg-400/outlined/more_vert.svg"
+import { Dropdown } from "antd"
+import { ItemType } from "antd/es/menu/hooks/useItems"
 
 type FlowActivityProps = {
     item: ActivityStreamItem
     onEdit?(): void
     onDelete?(): void
+    onMoveUp?(): void
+    onMoveDown?(): void
 }
-export const FlowActivityDisplay = ({ item, onEdit, onDelete }: FlowActivityProps) => {
+export const FlowActivityDisplay = ({
+    item,
+    onEdit,
+    onDelete,
+    onMoveUp,
+    onMoveDown
+}: FlowActivityProps) => {
+    const menu_options: ItemType[] = [
+        {
+            key: "delete",
+            label: "Delete Activity",
+            onClick: onDelete
+        },
+        {
+            key: "move-up",
+            label: "Move Up",
+            onClick: onMoveUp
+        },
+        {
+            key: "move-down",
+            label: "Move Down",
+            onClick: onMoveDown
+        }
+    ].filter(m => m.onClick)
+
     return (
         <>
             <div>
@@ -32,7 +60,9 @@ export const FlowActivityDisplay = ({ item, onEdit, onDelete }: FlowActivityProp
             {onEdit && onDelete && (
                 <div className="actions">
                     <GlowbuzzerIcon Icon={EditIcon} button onClick={onEdit} />
-                    <GlowbuzzerIcon Icon={DeleteIcon} button onClick={onDelete} />
+                    <Dropdown menu={{ items: menu_options }} trigger={["click"]}>
+                        <GlowbuzzerIcon Icon={MoreVerticalIcon} button />
+                    </Dropdown>
                 </div>
             )}
         </>

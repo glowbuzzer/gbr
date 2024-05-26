@@ -21,6 +21,16 @@ export const FlowActivitiesDisplay = ({ selectedFlowIndex, onEditActivity }) => 
         dispatch(flowSlice.actions.deleteActivity({ flow: selectedFlowIndex, index }))
     }
 
+    function move_activity(index: number, direction: number) {
+        dispatch(
+            flowSlice.actions.moveActivity({
+                flow: selectedFlowIndex,
+                index,
+                direction
+            })
+        )
+    }
+
     function add_activity(activity: ActivityStreamItem) {
         dispatch(
             flowSlice.actions.addActivity({
@@ -71,6 +81,8 @@ export const FlowActivitiesDisplay = ({ selectedFlowIndex, onEditActivity }) => 
                                     item={item}
                                     onEdit={() => start_activity_edit(item, index)}
                                     onDelete={() => delete_activity(index)}
+                                    onMoveUp={() => move_activity(index, -1)}
+                                    onMoveDown={() => move_activity(index, 1)}
                                 />
                             )
                         })}

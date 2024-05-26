@@ -46,6 +46,14 @@ type FlowSliceReducers = {
             index: number
         }>
     ) => void
+    moveActivity: (
+        state: FlowSliceState,
+        action: PayloadAction<{
+            flow: number
+            index: number
+            direction: number
+        }>
+    ) => void
     updateBranches(
         state: FlowSliceState,
         action: PayloadAction<{ flow: number; branches: FlowBranch[] }>
@@ -116,6 +124,16 @@ export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
         deleteActivity(state, action) {
             const flow = regular_flow(state.flows[action.payload.flow])
             flow.activities.splice(action.payload.index, 1)
+        },
+        moveActivity(state, action) {
+            const flow = regular_flow(state.flows[action.payload.flow])
+            const { index, direction } = action.payload
+            const newIndex = index + direction
+            if (newIndex < 0 || newIndex >= flow.activities.length) {
+                return
+            }
+            const [activity] = flow.activities.splice(index, 1)
+            flow.activities.splice(newIndex, 0, activity)
         },
         updateBranches(state, action) {
             state.flows[action.payload.flow].branches = action.payload.branches

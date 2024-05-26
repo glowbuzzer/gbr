@@ -136,8 +136,8 @@ export const FlowTile = () => {
         )
     }
 
-    const flow = flows[selectedFlowIndex]
-    console.log("Flow", flow, "flows", flows)
+    const selected_index = Math.min(selectedFlowIndex, flows.length - 1)
+    const flow = flows[selected_index]
 
     return active ? (
         <FlowRuntimeDisplay />
@@ -148,7 +148,7 @@ export const FlowTile = () => {
                     <Select
                         size="small"
                         options={items}
-                        value={selectedFlowIndex}
+                        value={selected_index}
                         onChange={value => setSelectedFlowIndex(value)}
                     ></Select>
                     <Dropdown menu={{ items: add_flow_items }} trigger={["click"]}>
@@ -167,21 +167,21 @@ export const FlowTile = () => {
             <StyledDiv>
                 <Flex vertical gap="middle">
                     <FlowBasicSettingsDisplay
-                        flow={flows[selectedFlowIndex]}
+                        flow={flow}
                         onChange={save_flow_edit}
                         onDelete={delete_flow}
                     />
                     {flow.type === FlowType.REGULAR ? (
                         <FlowActivitiesDisplay
-                            selectedFlowIndex={selectedFlowIndex}
+                            selectedFlowIndex={selected_index}
                             onEditActivity={setEditingActivity}
                         />
                     ) : (
-                        <FlowIntegrationDisplay selectedFlowIndex={selectedFlowIndex} />
+                        <FlowIntegrationDisplay selectedFlowIndex={selected_index} />
                     )}
                     <FlowBranchesDisplay
-                        selectedFlowIndex={selectedFlowIndex}
-                        branches={flows[selectedFlowIndex].branches}
+                        selectedFlowIndex={selected_index}
+                        branches={flow.branches}
                         onChange={update_branches}
                     />
                 </Flex>
