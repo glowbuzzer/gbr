@@ -64,7 +64,8 @@ export const config: GlowbuzzerConfig = {
         {
             name: "AWTUBE L2",
             busCycleTime: 4,
-            heartbeatTimeout: 15000
+            heartbeatTimeout: 15000,
+            statusFrequency: 150
         }
     ],
 
