@@ -17,11 +17,15 @@ import { GlowbuzzerStatus } from "../gbc_extra"
 import { tasksSlice } from "../tasks"
 import { activitySlice } from "../activity"
 import { jointsSlice } from "../joints"
-import { digitalInputsSlice, safetyDigitalInputsSlice } from "../io/din"
+import { digitalInputsSlice, safetyDigitalInputsSlice, modbusDigitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice, safetyDigitalOutputsSlice } from "../io/dout"
 import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
-import { integerInputsSlice, unsignedIntegerInputsSlice } from "../io/iin"
+import {
+    integerInputsSlice,
+    unsignedIntegerInputsSlice,
+    modbusUnsignedIntegerInputsSlice
+} from "../io/iin"
 import { integerOutputsSlice, unsignedIntegerOutputsSlice } from "../io/iout"
 import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../config"
 import { emstatSlice } from "../emstat"
@@ -174,6 +178,10 @@ export function useStatusProcessor(connection: WebSocket) {
                 dispatch(
                     safetyDigitalInputsSlice.actions.status(status(msg.status.safetyDin, heartbeat))
                 )
+            msg.status.modbusDin &&
+                dispatch(
+                    modbusDigitalInputsSlice.actions.status(status(msg.status.modbusDin, heartbeat))
+                )
             msg.status.dout &&
                 dispatch(digitalOutputsSlice.actions.status(status(msg.status.dout, heartbeat)))
             msg.status.safetyDout &&
@@ -191,6 +199,12 @@ export function useStatusProcessor(connection: WebSocket) {
             msg.status.uiin &&
                 dispatch(
                     unsignedIntegerInputsSlice.actions.status(status(msg.status.uiin, heartbeat))
+                )
+            msg.status.modbusUiin &&
+                dispatch(
+                    modbusUnsignedIntegerInputsSlice.actions.status(
+                        status(msg.status.modbusUiin, heartbeat)
+                    )
                 )
             msg.status.iout &&
                 dispatch(integerOutputsSlice.actions.status(status(msg.status.iout, heartbeat)))

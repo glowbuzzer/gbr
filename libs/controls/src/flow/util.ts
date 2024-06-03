@@ -17,6 +17,8 @@ import {
     FlowIntegration,
     GlowbuzzerStatus,
     IoutBuilder,
+    ModbusDoutBuilder,
+    ModbusUioutBuilder,
     MoveLineBuilder,
     MoveToPositionBuilder,
     SetPayloadBuilder,
@@ -76,6 +78,10 @@ export function toActivityTypeString(type: ACTIVITYTYPE) {
             return "Set External Unsigned Integer Output"
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD:
             return "Set Payload"
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT:
+            return "Set Modbus Digital Output"
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT:
+            return "Set Modbus Unsigned Integer Output"
         default:
             return "Unknown"
     }
@@ -164,6 +170,14 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD,
         factory: () => new SetPayloadBuilder(dummy_controller).mass(0).command
+    },
+    {
+        type: ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT,
+        factory: () => new ModbusDoutBuilder(dummy_controller).dout(0).value([true]).command
+    },
+    {
+        type: ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT,
+        factory: () => new ModbusUioutBuilder(dummy_controller).uiout(0).value([0]).command
     }
 ]
 

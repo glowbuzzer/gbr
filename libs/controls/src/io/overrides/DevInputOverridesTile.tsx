@@ -14,6 +14,9 @@ import {
     useDigitalInputs,
     useSafetyDigitalInputList,
     useSafetyDigitalInputs
+    // modbusDigitalInputsSlice,
+    // useModbusDigitalInputs,
+    // useModbusDigitalInputList
 } from "@glowbuzzer/store"
 import { DevDigitalInputOverrides } from "./DevDigitalInputOverrides"
 import styled from "styled-components"
@@ -32,6 +35,8 @@ export const DevInputOverridesTile = () => {
     const digitalInputList = useDigitalInputList()
     const safetyDigitalInputs = useSafetyDigitalInputs()
     const safetyDigitalInputList = useSafetyDigitalInputList()
+    // const modbusDigitalInputs = useModbusDigitalInputs()
+    // const modbusDigitalInputsList = useModbusDigitalInputList()
     const dispatch = useDispatch()
 
     function clear_digital_inputs() {
@@ -49,6 +54,14 @@ export const DevInputOverridesTile = () => {
     function set_safety_digital_input(index: number, value: boolean) {
         dispatch(createOverrideSetAction(safetyDigitalInputsSlice, index, value))
     }
+
+    // function clear_modbus_digital_inputs() {
+    //     dispatch(createOverrideClearAction(modbusDigitalInputsSlice))
+    // }
+    //
+    // function set_modbus_digital_input(index: number, value: boolean) {
+    //     dispatch(createOverrideSetAction(modbusDigitalInputsSlice, index, value))
+    // }
 
     return (
         <StyledDiv>
@@ -73,6 +86,13 @@ export const DevInputOverridesTile = () => {
                     onChange={set_safety_digital_input}
                     onClear={clear_safety_digital_inputs}
                 />
+                {/*<DevDigitalInputOverrides*/}
+                {/*    title={"Modbus Digital Inputs"}*/}
+                {/*    labels={modbusDigitalInputsList.map(c => c.name)}*/}
+                {/*    inputs={modbusDigitalInputs}*/}
+                {/*    onChange={set_modbus_digital_input}*/}
+                {/*    onClear={clear_modbus_digital_inputs}*/}
+                {/*/>*/}
             </Flex>
         </StyledDiv>
     )

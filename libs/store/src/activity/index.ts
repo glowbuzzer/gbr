@@ -5,7 +5,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { useEffect, useMemo } from "react"
-import { ActivityStatus } from "../gbc"
+import { ActivityStatus, ACTIVITYTYPE } from "../gbc"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useDefaultMoveParameters } from "../config"
@@ -54,6 +54,8 @@ export function useSoloActivity(kinematicsConfigurationIndex = 0): SoloActivityA
         const { tag, state } = status
         api.updateActivity(tag, state)
     }, [api, status])
+
+    //AK can we return the whole status object here as well?
 
     return api
 }

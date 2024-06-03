@@ -25,6 +25,8 @@ import {
     ROTATIONINTERPOLATION,
     SetAoutActivityParams,
     SetDoutActivityParams,
+    SetModbusDoutActivityParams,
+    SetModbusUioutActivityParams,
     SetIoutActivityParams,
     SpindleActivityParams,
     SPINDLEDIRECTION,
@@ -140,6 +142,56 @@ export class PauseProgramBuilder extends ActivityBuilder {
     protected build() {
         // this activity type has no params (not even union member)
         return null
+    }
+}
+
+export class ModbusDoutBuilder extends ActivityBuilder {
+    protected commandName = "setModbusDout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT
+    private doutToSet: number = 0
+    private valueToSetArray: boolean[] = []
+
+    dout(index: number): this {
+        this.doutToSet = index
+        return this
+    }
+
+    value(value: boolean[]): this {
+        this.valueToSetArray = value
+        return this
+    }
+
+    /** @ignore */
+    protected build(): SetModbusDoutActivityParams {
+        return {
+            doutToSet: this.doutToSet,
+            valueToSetArray: this.valueToSetArray
+        }
+    }
+}
+
+export class ModbusUioutBuilder extends ActivityBuilder {
+    protected commandName = "setModbusUiout"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT
+    private uioutToSet: number = 0
+    private valueToSetArray: number[] = []
+
+    uiout(index: number): this {
+        this.uioutToSet = index
+        return this
+    }
+
+    value(value: number[]): this {
+        this.valueToSetArray = value
+        return this
+    }
+
+    /** @ignore */
+    protected build(): SetModbusUioutActivityParams {
+        return {
+            uioutToSet: this.uioutToSet,
+            valueToSetArray: this.valueToSetArray
+        }
     }
 }
 
@@ -731,10 +783,7 @@ export class SetPayloadBuilder extends ActivityBuilder {
 }
 
 export class ActivityStreamItemBuilder extends ActivityBuilder {
-    constructor(
-        controller: ActivityController,
-        private readonly activity: ActivityStreamItem
-    ) {
+    constructor(controller: ActivityController, private readonly activity: ActivityStreamItem) {
         super(controller)
     }
 

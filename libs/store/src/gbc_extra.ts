@@ -22,6 +22,7 @@ import {
     ExternalUioutConfig,
     FramesConfig,
     IinConfig,
+    ModbusUiinConfig,
     IoutCommand,
     IoutConfig,
     IoutStatus,
@@ -35,6 +36,7 @@ import {
     MoveParametersConfig,
     PointsConfig,
     SafetyDinConfig,
+    ModbusDinConfig,
     SafetyDoutCommand,
     SafetyDoutConfig,
     SafetyDoutStatus,
@@ -48,7 +50,11 @@ import {
     TaskStatus,
     ToolConfig,
     UiinConfig,
-    UioutConfig
+    UioutConfig,
+    ModbusDoutConfig,
+    ModbusUiinStatus,
+    ModbusDinStatus,
+    ModbusUioutConfig
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
@@ -98,6 +104,7 @@ export type GlowbuzzerConfig = WithNameForArrayElements<{
     uiout?: UioutConfig[]
     din?: DinConfig[]
     safetyDin?: SafetyDinConfig[]
+    modbusDin?: ModbusDinConfig[]
     ain?: AinConfig[]
     iin?: IinConfig[]
     uiin?: UiinConfig[]
@@ -106,7 +113,10 @@ export type GlowbuzzerConfig = WithNameForArrayElements<{
     externalDin?: ExternalDinConfig[]
     externalIin?: ExternalIinConfig[]
     externalUiin?: ExternalUiinConfig[]
+    modbusUiin?: ModbusUiinConfig[]
     externalDout?: ExternalDoutConfig[]
+    modbusDout?: ModbusDoutConfig[]
+    modbusUiout?: ModbusUioutConfig[]
     externalIout?: ExternalIoutConfig[]
     externalUiout?: ExternalUioutConfig[]
     serial?: SerialConfig[]
@@ -181,10 +191,14 @@ export type GlowbuzzerStatus = {
         iin: number[]
         /** The current state of all unsigned integer inputs. */
         uiin: number[]
+        /** The current state of all modbus unisgned interger inputs. */
+        modbusUiin: ModbusUiinStatus[]
         /** The current state of all digital inputs. */
         din: boolean[]
         /** The current state of all safe digital inputs. */
         safetyDin: boolean[]
+        /** The current state of all modbus digital inputs. */
+        modbusDin: ModbusDinStatus[]
         /** The current state of all analog outputs. */
         aout: AnalogOutputStatus[]
         /** The current state of all integer outputs. */

@@ -2,31 +2,35 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {CartesianDroTileDefinition, JointDroTileDefinition} from "./dro"
-import {CartesianJogTileDefinition, JointJogTileDefinition} from "./jogging"
-import {ConnectTileDefinition} from "./connect"
-import {ConfigEditTileDefinition} from "./config"
-import {ThreeDimensionalSceneTileDefinition} from "./scene"
-import {GCodeTileDefinition} from "./gcode"
-import {FeedRateTileDefinition} from "./feedrate"
-import {SpindleTileDefinition} from "./spindle"
+import { CartesianDroTileDefinition, JointDroTileDefinition } from "./dro"
+import { CartesianJogTileDefinition, JointJogTileDefinition } from "./jogging"
+import { ConnectTileDefinition } from "./connect"
+import { ConfigEditTileDefinition } from "./config"
+import { ThreeDimensionalSceneTileDefinition } from "./scene"
+import { GCodeTileDefinition } from "./gcode"
+import { FeedRateTileDefinition } from "./feedrate"
+import { SpindleTileDefinition } from "./spindle"
 import {
     AnalogInputsTileDefinition,
     AnalogOutputsTileDefinition,
     DigitalInputsTileDefinition,
     DigitalOutputsTileDefinition,
+    ModbusDigitalOutputsTileDefinition,
+    ModbusDigitalInputsTileDefinition,
     IntegerInputsTileDefinition,
+    ModbusIntegerInputsTileDefinition,
     IntegerOutputsTileDefinition,
+    ModbusIntegerOutputsTileDefinition,
     SafetyTileDefinition,
     SafetyDigitalInputsTileDefinition,
-    SafetyDigitalOutputsTileDefinition,
+    SafetyDigitalOutputsTileDefinition
 } from "./io"
-import {FramesTileDefinition} from "./frames"
-import {PointsTileDefinition} from "./points"
-import {ToolsTileDefinition} from "./tools"
-import {TasksTileDefinition} from "./tasks"
-import {TelemetryTileDefinition} from "./telemetry"
-import {StateMachineToolsTileDefinition} from "./dev"
+import { FramesTileDefinition } from "./frames"
+import { PointsTileDefinition } from "./points"
+import { ToolsTileDefinition } from "./tools"
+import { TasksTileDefinition } from "./tasks"
+import { TelemetryTileDefinition } from "./telemetry"
+import { StateMachineToolsTileDefinition } from "./dev"
 
 /**
  * This is the complete list of glowbuzzer tile definitions. Be aware that if you import this list
@@ -46,6 +50,8 @@ export const GlowbuzzerTileDefinitionList = [
     SpindleTileDefinition,
     DigitalInputsTileDefinition,
     SafetyDigitalInputsTileDefinition,
+    ModbusDigitalInputsTileDefinition,
+    ModbusIntegerInputsTileDefinition,
     AnalogInputsTileDefinition,
     IntegerInputsTileDefinition,
     DigitalOutputsTileDefinition,

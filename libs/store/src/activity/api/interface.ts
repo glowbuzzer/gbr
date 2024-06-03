@@ -6,6 +6,8 @@ import {
     ActivityStreamItemBuilder,
     AoutBuilder,
     DwellActivityBuilder,
+    ModbusDoutBuilder,
+    ModbusUioutBuilder,
     GenericDoutBuilder,
     GenericIoutBuilder,
     MoveArcBuilder,
@@ -131,6 +133,21 @@ export interface ActivityApi {
      * @param value The value to set
      */
     setExternalDout(index: number, value: boolean): GenericDoutBuilder
+
+    /**
+     * Set a modbus digital output. Completes in multiple cycles.
+     *
+     * @param index The digital output to set
+     * @param values The array of values to set
+     */
+    setModbusDout(index: number, values: boolean[]): ModbusDoutBuilder
+
+    /**
+     * Set a modbus unsigned integer output. Completes in multiple cycles.
+     * @param index The index of the output
+     * @param values The array of values to set
+     */
+    setModbusUiout(index: number, values: number[]): ModbusUioutBuilder
 
     /**
      * Set an analog output. Completes in a single cycle.

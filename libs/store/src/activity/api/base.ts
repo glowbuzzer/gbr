@@ -16,6 +16,8 @@ import {
     DoutBuilder,
     DwellActivityBuilder,
     ExternalDoutBuilder,
+    ModbusDoutBuilder,
+    ModbusUioutBuilder,
     ExternalIoutBuilder,
     ExternalUioutBuilder,
     IoutBuilder,
@@ -134,6 +136,10 @@ export abstract class ActivityApiBase implements ActivityApi {
         return new ExternalDoutBuilder(this).dout(index).value(value)
     }
 
+    setModbusDout(index: number, value: boolean[]) {
+        return new ModbusDoutBuilder(this).dout(index).value(value)
+    }
+
     setAout(index: number, value: number) {
         return new AoutBuilder(this).aout(index).value(value)
     }
@@ -152,6 +158,10 @@ export abstract class ActivityApiBase implements ActivityApi {
 
     setExternalUiout(index: number, value: number) {
         return new ExternalUioutBuilder(this).iout(index).value(value)
+    }
+
+    setModbusUiout(index: number, value: number[]) {
+        return new ModbusUioutBuilder(this).uiout(index).value(value)
     }
 
     setToolOffset(toolIndex: number): ToolOffsetBuilder {

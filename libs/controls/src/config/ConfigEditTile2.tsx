@@ -8,6 +8,7 @@ import { Card, TabsProps } from "antd"
 import { useState } from "react"
 import { GbemConfigTab } from "./GbemConfigTab"
 import { GbemRequestTab } from "./GbemRequestTab"
+import { GbemOptionalSlavesTab } from "./GbemOptionalSlavesTab"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -29,12 +30,14 @@ export const ConfigEditTile2 = () => {
 
     const tab_content = {
         config: <GbemConfigTab />,
-        request: <GbemRequestTab />
+        request: <GbemRequestTab />,
+        optionalSlaves: <GbemOptionalSlavesTab />
     }
 
     const tabs: TabsProps["items"] = [
         { key: "config", label: "Config" },
-        { key: "request", label: "Request" }
+        { key: "request", label: "Request" },
+        { key: "optionalSlaves", label: "Optional Slaves" }
     ]
 
     function switch_tab(e: string) {
