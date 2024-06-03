@@ -16,6 +16,7 @@ import { StatusBarGbDb } from "./StatusBarGbDb"
 import { StatusBarLiveSwitch } from "./StatusBarLiveSwitch"
 import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
 import { forwardRef } from "react"
+import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
 
 const StyledSpace = styled(Space)`
     padding-top: 8px;
@@ -79,6 +80,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
             </StyledSpace>
             {children}
             <StatusBarGbDb />
+            <StatusBarLayoutControls />
         </Flex>
     )
 })

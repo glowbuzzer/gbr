@@ -6,6 +6,8 @@ import {
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
+    DevInputOverridesTileDefinition,
+    DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
@@ -24,8 +26,7 @@ import {
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
-    TriadHelper,
-    DigitalOutputsTileDefinition
+    TriadHelper
 } from "@glowbuzzer/controls"
 import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
 import React, { Suspense } from "react"
@@ -45,8 +46,7 @@ import {
 import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
-import { DevInputOverridesTileDefinition } from "../../../../../libs/controls/src/io/overrides/DevInputOverridesTileDefinition"
-import { AppMenu } from "./AppMenu"
+import { AppStatusBar } from "./AppStatusBar"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -68,24 +68,24 @@ const definition_l2: AwTubeRobotParts = {
     s0: Spindle.M112
 }
 
-const definition_l: AwTubeRobotParts = {
-    b0: Base.MM219_27,
-    j0: Joint.J40LP,
-    p0: Plate.J40,
-    c0: Clamp.J40_J40,
-    j1: Joint.J40HP,
-    l0: Link.L125_514,
-    j2: Joint.J32,
-    c1: Clamp.J32_J25,
-    j3: Joint.J25,
-    p1: Plate.J25,
-    l1: Link.L100_494,
-    j4: Joint.J25,
-    p2: Plate.J25,
-    m0: Monobraccio.M250,
-    j5: Joint.J20,
-    s0: Spindle.M112
-}
+// const definition_l: AwTubeRobotParts = {
+//     b0: Base.MM219_27,
+//     j0: Joint.J40LP,
+//     p0: Plate.J40,
+//     c0: Clamp.J40_J40,
+//     j1: Joint.J40HP,
+//     l0: Link.L125_514,
+//     j2: Joint.J32,
+//     c1: Clamp.J32_J25,
+//     j3: Joint.J25,
+//     p1: Plate.J25,
+//     l1: Link.L100_494,
+//     j4: Joint.J25,
+//     p2: Plate.J25,
+//     m0: Monobraccio.M250,
+//     j5: Joint.J20,
+//     s0: Spindle.M112
+// }
 
 const LoadedAwTubeRobot = () => {
     const parts = useLoadedRobotParts(definition_l2)
@@ -104,7 +104,7 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
     .render(() => {
         // noinspection JSUnresolvedReference
         return (
-            <ThreeDimensionalSceneTile>
+            <ThreeDimensionalSceneTile hidePreview hideTrace>
                 <Suspense fallback={null}>
                     <LoadedAwTubeRobot />
                     <PlaneShinyMetal />
@@ -133,7 +133,6 @@ export const App = () => {
                 }),
                 SerialCommunicationsTileDefinition,
                 ConfigEditTileDefinition,
-                // ConnectTileDefinition,
                 CartesianJogTileDefinition,
                 CartesianDroTileDefinition,
                 JointJogTileDefinition,
@@ -153,8 +152,8 @@ export const App = () => {
                 InterpolatedMoveTileDefinition,
                 DigitalOutputsTileDefinition
             ]}
+            statusBarExtra={<AppStatusBar />}
         >
-            <AppMenu title="AutomationWare AW-TUBE" />
             <DockLayout />
         </DockLayoutProvider>
     )

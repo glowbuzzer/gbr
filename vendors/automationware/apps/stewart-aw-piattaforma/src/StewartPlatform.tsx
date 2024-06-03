@@ -12,7 +12,7 @@ import { useStewartPlatformInverseKinematics } from "./util"
 // the origin of the platform glb is on the bottom face of the disk, which is 12mm thick
 const platform_thickness = 12
 
-export const StewartPlatform = () => {
+export const StewartPlatform = ({ children }) => {
     const {
         position: { translation, rotation }
     } = useKinematicsCartesianPosition(0)
@@ -26,13 +26,16 @@ export const StewartPlatform = () => {
 
     const [base, platform, bottomRod, topRod, uj] = useMemo(
         () =>
-            useGLTF([
-                "/assets/base.glb",
-                "/assets/platform.glb",
-                "/assets/cylinder body.glb",
-                "/assets/piston.glb",
-                "/assets/uj.glb"
-            ]).map(({ scene }) => {
+            useGLTF(
+                [
+                    "/assets/base.glb",
+                    "/assets/platform.glb",
+                    "/assets/cylinder body.glb",
+                    "/assets/piston.glb",
+                    "/assets/uj.glb"
+                ],
+                "/assets/draco/"
+            ).map(({ scene }) => {
                 scene.scale.copy(new THREE.Vector3(1000, 1000, 1000))
                 return scene
             }),
@@ -135,6 +138,7 @@ export const StewartPlatform = () => {
                 >
                     <primitive object={platform} rotation={[Math.PI / 2, 0, 0]} />
                 </group>
+                {children}
             </group>
         </group>
     )

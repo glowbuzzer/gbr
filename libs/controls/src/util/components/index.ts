@@ -5,3 +5,4 @@
 export * from "./PrecisionInput"
 export * from "./CartesianPositionEdit"
 export * from "./CartesianPositionTable"
+export * from "./TileWithEditableTableSupport"

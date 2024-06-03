@@ -18,7 +18,7 @@ const DOCK_MODEL_TEMPLATE: IJsonModel = {
         borderBarSize: 1,
         borderSize: 1,
         tabBorderWidth: 1,
-        splitterSize: is_touch_device() ? 15 : 5
+        splitterSize: is_touch_device() ? 20 : 5
     },
     borders: [],
     layout: {
@@ -78,13 +78,19 @@ export function useDockTiles(): GlowbuzzerDockTileCurrent[] {
 function createDockModel(
     availableTiles: DockPerspectiveLayoutProviderProps["tiles"],
     defaultVisible: DockPerspective["defaultVisible"],
+    locked: boolean,
     savedLayout
 ) {
     const tiles = availableTiles.filter(
         c => c.enableClose === false || !defaultVisible || defaultVisible.includes(c.id)
     )
 
-    const modelJson = JSON.parse(JSON.stringify(DOCK_MODEL_TEMPLATE))
+    const unmodified = JSON.parse(JSON.stringify(DOCK_MODEL_TEMPLATE))
+    const modelJson = {
+        ...unmodified,
+        global: { ...unmodified.global, splitterSize: locked ? 5 : 25 }
+    }
+
     for (const tile of tiles) {
         add_tile(modelJson, tile)
     }
@@ -105,6 +111,7 @@ export function useDockContext(
     appName: string
 ): DockLayoutContextType {
     const [currentPerspective, changePerspective] = useState(defaultPerspective)
+    const [locked, setLocked] = useState(true)
     const [savedLayout, updateSavedLayout] = useLocalStorage(
         "docklayout",
         null,
@@ -120,6 +127,7 @@ export function useDockContext(
     const { currentModel, defaultModel } = createDockModel(
         availableTiles,
         defaultVisible,
+        locked,
         savedLayout
     )
 
@@ -160,9 +168,11 @@ export function useDockContext(
         tiles: availableTiles,
         perspectives,
         model: model,
+        locked,
         currentPerspective,
         changePerspective,
         resetLayout,
+        setLocked,
         factory: (node: TabNode) => {
             return tileFor(node.getId()).render()
         },

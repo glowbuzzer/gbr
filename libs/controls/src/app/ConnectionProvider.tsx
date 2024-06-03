@@ -42,7 +42,7 @@ export const ConnectionProvider = ({ children }) => {
     const appReloadRef = useRef(false)
 
     function init_connection(websocket: WebSocket) {
-        console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
+        // console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
 
         websocket.onmessage = msg => {
             const message: GlowbuzzerStatus = JSON.parse(msg.data)

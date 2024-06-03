@@ -4,11 +4,9 @@
 
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
-import { ToolsTile, ToolsTileHelp } from "./index"
-import { ConnectTabButtons } from "../connect"
-import { GbdbFacetIndicator } from "../gbdb/GbdbFacetIndicator"
 import { DockTileDefinitionBuilder } from "../dock"
-import { gbdbFacetIndicatorFactory } from "../gbdb/util"
+import { gbdbFacetIndicatorFactory } from "../gbdb"
+import { ToolsTile } from "./ToolsTile"
 
 export const ToolsTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.TOOLS)

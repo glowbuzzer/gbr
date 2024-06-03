@@ -100,7 +100,6 @@ export const gbdbSlice = createSlice<GbdbSliceState, GbDbReducers>({
                 ...references
             }
             if (!deepEqual(existing, new_references)) {
-                console.log("references changed", existing, new_references)
                 state[facetName] = {
                     ...currentState,
                     modified: true,

@@ -10,11 +10,11 @@ import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
 import { useMotionAllowed } from "../../util/hooks"
 
 const StyledDiv = styled.div`
+    flex-grow: 1;
     display: flex;
-    padding: 10px;
     justify-content: center;
+    padding: 10px;
     gap: 30px;
-    //text-align: center;
 
     svg {
         display: inline-block;

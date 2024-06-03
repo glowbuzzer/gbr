@@ -40,7 +40,8 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "Stewart AW Piattaforma",
-            busCycleTime: 4
+            busCycleTime: 4,
+            heartbeatTimeout: 15000
         }
     ],
     stream: [
@@ -165,26 +166,16 @@ export const config: GlowbuzzerConfig = {
             },
             linearLimits: [
                 {
-                    vmax: 20,
-                    amax: 400,
-                    jmax: 8000
-                },
-                {
-                    vmax: 20,
-                    amax: 400,
-                    jmax: 8000
-                },
-                {
-                    vmax: 20,
-                    amax: 400,
-                    jmax: 8000
+                    vmax: 80,
+                    amax: 1600,
+                    jmax: 32000
                 }
             ],
             angularLimits: [
                 {
-                    vmax: 0.2,
-                    amax: 20,
-                    jmax: 200
+                    vmax: 1,
+                    amax: 100,
+                    jmax: 1000
                 }
             ],
             kinChainParams: {

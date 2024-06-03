@@ -43,3 +43,5 @@ dist
 /create-react-app/cra-template-glowbuzzer-typescript/package.json
 .vite-cache
 .vitest
+/vendors/automationware/apps/stewart-aw-piattaforma/public/teeth.zip
+/dist.tar.gz

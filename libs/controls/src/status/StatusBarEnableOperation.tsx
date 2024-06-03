@@ -9,7 +9,7 @@ import styled from "styled-components"
 
 const StyledSpace = styled(Space)`
     .ant-btn {
-        width: 160px;
+        min-width: 160px;
     }
 
     .disable-operation {

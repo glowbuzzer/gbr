@@ -14,11 +14,14 @@ const StyledDiv = styled.div`
     align-items: center;
 
     .controls {
+        width: 100%;
+        max-width: 375px;
+        padding: 0 40px;
         display: grid;
         grid-template-columns: auto 1fr;
-        grid-gap: 10px;
+        grid-gap: 5px;
         align-items: center;
-        margin: 10px 0;
+        //margin: 10px 0;
 
         .joint-number {
             display: flex;
@@ -40,14 +43,13 @@ type JogTouchJointProps = {
 export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointProps) => {
     const joints = useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex)
     const enabled = useMotionAllowed()
+    const preview = usePreview()
+    const motion = useSoloActivity(kinematicsConfigurationIndex)
 
     return (
         <StyledDiv>
             <div className="controls">
                 {joints.map((_joint, index) => {
-                    const preview = usePreview()
-                    const motion = useSoloActivity(kinematicsConfigurationIndex)
-
                     async function jog_start(vx: number) {
                         const velos = joints.map(({ config }, logical_index) => {
                             const vmax =
