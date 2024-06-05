@@ -139,8 +139,11 @@ export function useStatusProcessor(connection: WebSocket) {
             })
         }
 
-        const heartbeat_frequency_ms =
+        // ensure frequency is at least once per second
+        const heartbeat_frequency_ms = Math.min(
+            2000, // will be halved below
             heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE
+        )
 
         // send heartbeat twice as often as required to allow for delays
         const heartbeat_frequency = heartbeat_frequency_ms / busCycleTime / 2
