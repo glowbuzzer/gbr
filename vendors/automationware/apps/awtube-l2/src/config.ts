@@ -9,7 +9,7 @@ import {
     JOINT_TORQUE_MODE,
     KC_KINEMATICSCONFIGURATIONTYPE,
     SafetyDinConfig,
-    WithName
+    WithNameAndDescription
 } from "@glowbuzzer/store"
 import {
     AwTubeL2InverseDynamicParams,
@@ -39,7 +39,7 @@ const safety_dins = `
 18\tactive_fault_drive_drives_sbc
 19\tactive_fault_drive_drives_over_temp`
 
-const safety_din_array: WithName<SafetyDinConfig>[] = safety_dins
+const safety_din_array: WithNameAndDescription<SafetyDinConfig>[] = safety_dins
     .trim()
     .split("\n")
     .map(line => {

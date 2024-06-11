@@ -13,7 +13,7 @@ import {
     useFrames,
     useFramesList,
     useSelectedFrame,
-    WithName
+    WithNameAndDescription
 } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { Euler } from "three"
@@ -88,7 +88,9 @@ export const FramesTile = () => {
         })
     }
 
-    function frame_to_cartesian_position(frameIndex: number): WithName<CartesianPosition> {
+    function frame_to_cartesian_position(
+        frameIndex: number
+    ): WithNameAndDescription<CartesianPosition> {
         const frame = editedFrames?.[frameIndex] || frames[frameIndex]
         if (!frame) {
             return null
@@ -109,7 +111,7 @@ export const FramesTile = () => {
         frameIndex: parentFrameIndex,
         rotation,
         translation
-    }: WithName<CartesianPosition>) {
+    }: WithNameAndDescription<CartesianPosition>) {
         const frameIndex = mode === CartesianPositionEditPanelMode.CREATE ? frames.length : selected
         const modifiedFrame = {
             name,
@@ -120,7 +122,7 @@ export const FramesTile = () => {
         }
 
         // append or update list with modification
-        const overrides: WithName<FramesConfig>[] =
+        const overrides: WithNameAndDescription<FramesConfig>[] =
             frameIndex >= frames.length
                 ? [...frames, modifiedFrame]
                 : frames.map((frame, index) => {

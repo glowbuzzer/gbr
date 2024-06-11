@@ -179,5 +179,98 @@ export const config: GlowbuzzerConfig = {
         {
             name: "Drive Reset Pos (cmd) (5)"
         }
+    ],
+    modbusDin: [
+        {
+            name: "Read coil, slave 2, address 3",
+            description: "Read coil, slave 2, address 3",
+            slave_num: 0x2,
+            address: 0x2,
+            function: 0x1
+        },
+        {
+            name: "Read coil, slave 2, address 6",
+            slave_num: 0x2,
+            address: 0x6,
+            function: 0x1
+        },
+        {
+            name: "Read coil, slave 2, address 9",
+            slave_num: 0x2,
+            address: 0x9,
+            function: 0x1
+        },
+        {
+            name: "Read coil, slave 1, address 7",
+            slave_num: 0x2,
+            address: 0x7,
+            function: 0x1
+        },
+        {
+            name: "Read coil, slave 1, address 8",
+            slave_num: 0x2,
+            address: 0x8,
+            function: 0x1
+        }
+    ],
+    modbusUiin: [
+        {
+            name: "Red",
+            slave_num: 1,
+            address: 10,
+            function: 3
+        },
+        {
+            name: "Blue",
+            slave_num: 1,
+            address: 12,
+            function: 3
+        },
+        {
+            name: "Yellow",
+            slave_num: 1,
+            address: 13,
+            function: 3
+        }
+    ],
+    modbusDout: [
+        {
+            name: "Green",
+            slave_num: 2,
+            start_address: 10,
+            end_address: 10
+        },
+        {
+            name: "Blue",
+            slave_num: 2,
+            start_address: 12,
+            end_address: 13
+        },
+        {
+            name: "Red",
+            slave_num: 2,
+            start_address: 15,
+            end_address: 17
+        }
+    ],
+    modbusUiout: [
+        {
+            name: "Yellow",
+            slave_num: 1,
+            start_address: 1,
+            end_address: 1
+        },
+        {
+            name: "Green",
+            slave_num: 1,
+            start_address: 2,
+            end_address: 4
+        },
+        {
+            name: "Blue",
+            slave_num: 1,
+            start_address: 6,
+            end_address: 9
+        }
     ]
 }

@@ -136,7 +136,7 @@ function FsoeHighLevelStateToString(value: number) {
 
 function testBit(number: number, bitPosition: number): boolean {
     const bitmask = 1 << bitPosition
-    console.log(number, bitPosition)
+    // console.log(number, bitPosition)
     return (number & bitmask) !== 0
 }
 

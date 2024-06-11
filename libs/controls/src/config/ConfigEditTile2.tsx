@@ -3,12 +3,14 @@
  */
 
 import * as React from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Card, TabsProps } from "antd"
-import { useState } from "react"
 import { GbemConfigTab } from "./GbemConfigTab"
-import { GbemRequestTab } from "./GbemRequestTab"
+import { GbemReadSlaveTab } from "./gbemReadSlaves/GbemReadSlaveTab"
 import { GbemOptionalSlavesTab } from "./GbemOptionalSlavesTab"
+import { SlaveCatProvider } from "./slaveCatData/slaveCatProvider"
+import { IoConfigTab } from "./ioConfig/IoConfigTab"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -30,14 +32,22 @@ export const ConfigEditTile2 = () => {
 
     const tab_content = {
         config: <GbemConfigTab />,
-        request: <GbemRequestTab />,
-        optionalSlaves: <GbemOptionalSlavesTab />
+        readSlaves: <GbemReadSlaveTab />,
+        optionalSlaves: <GbemOptionalSlavesTab />,
+        io: <IoConfigTab />
     }
 
     const tabs: TabsProps["items"] = [
         { key: "config", label: "Config" },
-        { key: "request", label: "Request" },
-        { key: "optionalSlaves", label: "Optional Slaves" }
+        { key: "readSlaves", label: "Read slave config" },
+        { key: "optionalSlaves", label: "Optional slave enable" },
+        { key: "io", label: "IO configuration" },
+        { key: "setSlaveConfig", label: "Set slave config" },
+        { key: "toolConfig", label: "Tool configuration" },
+        { key: "machineEnvelope", label: "Set machine envelope" },
+        { key: "frames", label: "Frames config" },
+        { key: "verticalAxis", label: "Vertical axis config" },
+        { key: "debug", label: "Debug setings" }
     ]
 
     function switch_tab(e: string) {
@@ -45,10 +55,17 @@ export const ConfigEditTile2 = () => {
     }
 
     return (
-        <StyledDiv>
-            <Card tabList={tabs} size="small" activeTabKey={currentTab} onTabChange={switch_tab}>
-                {tab_content[currentTab]}
-            </Card>
-        </StyledDiv>
+        <SlaveCatProvider>
+            <StyledDiv>
+                <Card
+                    tabList={tabs}
+                    size="small"
+                    activeTabKey={currentTab}
+                    onTabChange={switch_tab}
+                >
+                    {tab_content[currentTab]}
+                </Card>
+            </StyledDiv>
+        </SlaveCatProvider>
     )
 }
