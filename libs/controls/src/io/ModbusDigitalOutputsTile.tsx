@@ -80,6 +80,7 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
                         index={index}
                         label={labels[index] || config.name || index.toString()}
                         numberOf={doutNumberof[index]}
+                        description={config.description || "No description"}
                     />
                 ))}
             </StyledDiv>
@@ -91,6 +92,7 @@ interface ModbusDigitalOutputItemProps {
     index: number
     label: string | number
     numberOf: number
+    description?: string
 }
 
 const ModbusDigitalOutputItem: React.FC<ModbusDigitalOutputItemProps> = ({
