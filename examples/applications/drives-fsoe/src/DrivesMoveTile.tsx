@@ -33,6 +33,8 @@ export const DrivesMoveTile = () => {
     const api = useSoloActivity(0)
     const { currentState } = useMachine()
 
+    // api.setModbusDout(0, [true])
+
     useEffect(() => {
         if (!connection.connected || currentState !== "OPERATION_ENABLED") {
             api.cancel()
@@ -61,6 +63,7 @@ export const DrivesMoveTile = () => {
         switch (activity) {
             case Activity.OSCILLATING_MOVE:
                 console.log("Starting oscillating move")
+
                 api.moveJoints(pos)
                     .promise()
                     .then(move => {
@@ -168,7 +171,7 @@ export const DrivesMoveTile = () => {
                 <Space direction="vertical">
                     <div>
                         {joints.map((joint, index) => (
-                            <div>
+                            <div key={index}>
                                 <Space key={index}>
                                     <div>{joint.name}</div>
                                     <div>
@@ -205,7 +208,7 @@ export const DrivesMoveTile = () => {
                 <Space direction="vertical">
                     <div>
                         {joints.map((joint, index) => (
-                            <div>
+                            <div key={index}>
                                 <Space key={index}>
                                     <div>{joint.name}</div>
                                     <div>
@@ -247,7 +250,7 @@ export const DrivesMoveTile = () => {
                     <div>Enter values in Nm to apply torque to one or more drives.</div>
                     <div>
                         {joints.map((joint, index) => (
-                            <div>
+                            <div key={index}>
                                 <Space key={index}>
                                     <div>{joint.name}</div>
                                     <div>
