@@ -13,7 +13,7 @@ import {
     useFramesList,
     usePointsList,
     useSelectedPoint,
-    WithName
+    WithNameAndDescription
 } from "@glowbuzzer/store"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -49,7 +49,7 @@ export const PointsTile = () => {
     const frames = useFramesList()
     const dispatch = useDispatch()
 
-    const treeData = points?.map((point: WithName<PointsConfig>, index: number) => {
+    const treeData = points?.map((point: WithNameAndDescription<PointsConfig>, index: number) => {
         {
             const { name, frameIndex, translation, rotation } = point
             const { x, y, z } = translation ?? { x: 0, y: 0, z: 0 }
@@ -99,7 +99,7 @@ export const PointsTile = () => {
         translation
     }: WithName<CartesianPosition>) {
         const pointIndex = mode === CartesianPositionEditPanelMode.CREATE ? points.length : selected
-        const modifiedPoint: WithName<PointsConfig> = {
+        const modifiedPoint: WithNameAndDescription<PointsConfig> = {
             name,
             frameIndex:
                 positionReference === POSITIONREFERENCE.ABSOLUTE ? undefined : parentFrameIndex,
@@ -107,7 +107,7 @@ export const PointsTile = () => {
             rotation,
             configuration: 0
         }
-        const overrides: WithName<FramesConfig>[] =
+        const overrides: WithNameAndDescription<FramesConfig>[] =
             pointIndex >= points.length
                 ? [...points, modifiedPoint]
                 : points.map((point, index) => {
