@@ -3,12 +3,12 @@
  */
 
 import * as React from "react"
-import { Button, Flex, Space, Row, Col, Card, Checkbox, Form, InputNumber, Switch } from "antd"
-import TextArea from "antd/es/input/TextArea"
+import { useState } from "react"
+import { Button, Card, Checkbox, Flex, Form, Input, InputNumber, Space, Switch } from "antd"
 import styled from "styled-components"
-import { useConnection } from "@glowbuzzer/store"
-import { useEffect, useState } from "react"
-import { ModbusDinConfig } from "@glowbuzzer/store"
+import { configSlice, ModbusDinConfig, useDigitalInputList } from "@glowbuzzer/store"
+import { useDispatch } from "react-redux"
+import { CheckboxChangeEvent } from "antd/es/checkbox"
 
 const tabList = [
     {
@@ -46,11 +46,72 @@ const tabList = [
 ]
 
 const StandardDigitalInputs: React.FC = () => {
+    const current = useDigitalInputList()
+    const [inputs, setInputs] = useState(current)
+    const dispatch = useDispatch()
+
+    function reset() {
+        setInputs(current)
+    }
+
+    function save() {
+        dispatch(
+            configSlice.actions.addConfig({
+                din: inputs
+            })
+        )
+    }
+
+    function update_name(index: number, e: React.ChangeEvent<HTMLInputElement>) {
+        setInputs(current =>
+            current.map((input, i) => (i === index ? { ...input, name: e.target.value } : input))
+        )
+    }
+
+    function update_inverted(index: number, e: CheckboxChangeEvent) {
+        setInputs(current =>
+            current.map((input, i) =>
+                i === index ? { ...input, inverted: e.target.checked } : input
+            )
+        )
+    }
+
+    const modified = JSON.stringify(inputs) !== JSON.stringify(current)
+
     return (
         <StyledFlex>
-            <Space direction="vertical" size="small">
-                Just view the list - look at descriptions and set the name
-            </Space>
+            <div className="digital-input-grid">
+                {inputs.map((input, index) => (
+                    <React.Fragment key={index}>
+                        <div>{input.description}</div>
+                        <div>
+                            <Input
+                                type="text"
+                                value={input.name}
+                                onChange={e => update_name(index, e)}
+                            />
+                        </div>
+                        <div>
+                            <Checkbox
+                                checked={input.inverted}
+                                onChange={e => update_inverted(index, e)}
+                            >
+                                Inverted
+                            </Checkbox>
+                        </div>
+                    </React.Fragment>
+                ))}
+            </div>
+            <div className="actions">
+                <Space>
+                    <Button type="primary" onClick={save} disabled={!modified}>
+                        Save
+                    </Button>
+                    <Button onClick={reset} disabled={!modified}>
+                        Reset
+                    </Button>
+                </Space>
+            </div>
         </StyledFlex>
     )
 }
@@ -151,6 +212,13 @@ const StyledFlex = styled(Flex)`
     .ant-input {
         flex-grow: 1;
         font-family: monospace;
+    }
+
+    .digital-input-grid {
+        display: grid;
+        align-items: center;
+        grid-template-columns: 2fr 3fr 1fr;
+        gap: 10px;
     }
 `
 

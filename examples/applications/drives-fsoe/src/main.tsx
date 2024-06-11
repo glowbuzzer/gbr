@@ -7,13 +7,15 @@ import React, { StrictMode } from "react"
 import { GlowbuzzerApp } from "@glowbuzzer/controls"
 import { App } from "./app"
 import { config } from "./config"
-import { GbdbConfiguration, JointsGbdbFacetSlice } from "@glowbuzzer/store"
+import { DinGbdbFacetSlice, GbdbConfiguration, JointsGbdbFacetSlice } from "@glowbuzzer/store"
 
 const persistence: GbdbConfiguration = {
-    // remoteDb: "http://localhost:5984",
+    remoteDb: "http://localhost:5984",
     facets: {
         project: {
-            slices: [JointsGbdbFacetSlice]
+            singleton: true,
+            autoSave: true,
+            slices: [JointsGbdbFacetSlice, DinGbdbFacetSlice]
         }
     }
 }

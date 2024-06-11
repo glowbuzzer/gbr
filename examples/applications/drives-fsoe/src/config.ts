@@ -111,6 +111,13 @@ export const config: GlowbuzzerConfig = {
             ]
         }
     ],
+    din: [
+        {
+            name: "My din",
+            description: "EL2008 slave 1 input 0",
+            inverted: true
+        }
+    ],
     safetyDin: [
         {
             name: "Overall safety state (0)",
