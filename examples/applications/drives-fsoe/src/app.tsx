@@ -20,7 +20,11 @@ import {
     SafetyDigitalOutputsTileDefinition,
     JointTorqueModesTile,
     JointTorqueModesTileDefinition,
-    useGbdbMenu
+    ModbusDigitalInputsTileDefinition,
+    ModbusIntegerInputsTileDefinition,
+    useGbdbMenu,
+    ModbusDigitalOutputsTileDefinition,
+    ModbusIntegerOutputsTileDefinition
 } from "@glowbuzzer/controls"
 import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 
@@ -54,7 +58,11 @@ export const App = () => {
                 SafetyDigitalInputsTileDefinition,
                 SafetyDigitalOutputsTileDefinition,
                 EmStatTileDefinition,
-                JointTorqueModesTileDefinition
+                JointTorqueModesTileDefinition,
+                ModbusDigitalInputsTileDefinition,
+                ModbusIntegerInputsTileDefinition,
+                ModbusDigitalOutputsTileDefinition,
+                ModbusIntegerOutputsTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives FSoE" fileExtra={menuItems} />
