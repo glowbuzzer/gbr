@@ -44,6 +44,7 @@ import { ExampleAppMenu } from "../../../../../examples/util/ExampleAppMenu"
 import { EnvelopeProvider } from "./provider"
 import { EnvelopeTileDefinition } from "./EnvelopeTile"
 import { EnvelopePoints } from "./EnvelopePoints"
+import { ReachabilityViz } from "./ReachabilityViz"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -104,10 +105,12 @@ const CustomSceneTileDefinition = DockTileDefinitionBuilder(ThreeDimensionalScen
             <ThreeDimensionalSceneTile>
                 <Suspense fallback={null}>
                     <LoadedAwTubeRobot />
-                    <EnvelopePoints />
                     {/*
                     <PlaneShinyMetal />
 */}
+                    <group position={[0, 0, -117 * 2]}>
+                        <ReachabilityViz />
+                    </group>
                     <Environment files="/assets/environment/aerodynamics_workshop_1k.hdr" />
                 </Suspense>
             </ThreeDimensionalSceneTile>
@@ -126,7 +129,10 @@ export const App = () => {
                     CartesianDroTileDefinition,
                     JointJogTileDefinition,
                     JointDroTileDefinition,
-                    EnvelopeTileDefinition
+                    EnvelopeTileDefinition,
+                    FeedRateTileDefinition,
+                    PointsTileDefinition,
+                    FramesTileDefinition
                 ]}
             >
                 <ExampleAppMenu />
