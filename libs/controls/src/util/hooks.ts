@@ -8,13 +8,13 @@ import {
     useJointConfigurationList,
     useKinematicsConfiguration,
     useMachineState,
-    WithName
+    WithNameAndDescription
 } from "@glowbuzzer/store"
 import { useHandGuidedMode } from "../handguided/hooks"
 
 export function useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex: number): {
     index: number
-    config: WithName<JointConfig>
+    config: WithNameAndDescription<JointConfig>
 }[] {
     const joints = useJointConfigurationList()
     const kinematicsConfiguration = useKinematicsConfiguration(kinematicsConfigurationIndex)

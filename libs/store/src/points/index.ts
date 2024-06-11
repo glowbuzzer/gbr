@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { PointsConfig, WithName } from "../gbc"
+import { PointsConfig, WithNameAndDescription } from "../gbc"
 import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
@@ -31,7 +31,9 @@ export const pointsSlice = createSlice<PointsSliceState, PointsSliceReducers>({
  * Provides access to the points that have been configured. The overrides parameter is used by GBR for dynamic editing of points
  * and should not generally be used by applications.
  */
-export function usePointsList(overrides?: WithName<PointsConfig>[]): WithName<PointsConfig>[] {
+export function usePointsList(
+    overrides?: WithNameAndDescription<PointsConfig>[]
+): WithNameAndDescription<PointsConfig>[] {
     const points = useSelector((state: RootState) => state.config.current.points)
     // const config = useConfig()
     // normalise points

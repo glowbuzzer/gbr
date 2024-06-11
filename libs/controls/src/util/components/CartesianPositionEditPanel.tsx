@@ -5,7 +5,7 @@
 import * as React from "react"
 import { ChangeEvent, useEffect, useState } from "react"
 import { Button, Input, Space } from "antd"
-import { CartesianPosition, POSITIONREFERENCE, WithName } from "@glowbuzzer/store"
+import { CartesianPosition, POSITIONREFERENCE, WithNameAndDescription } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { CartesianPositionEdit } from "."
 
@@ -27,7 +27,7 @@ export enum CartesianPositionEditPanelMode {
     UPDATE
 }
 
-const DEFAULT_VALUE: WithName<CartesianPosition> = {
+const DEFAULT_VALUE: WithNameAndDescription<CartesianPosition> = {
     name: "",
     positionReference: POSITIONREFERENCE.ABSOLUTE,
     translation: {
@@ -45,8 +45,8 @@ const DEFAULT_VALUE: WithName<CartesianPosition> = {
 
 type CartesianPositionEditModalProps = {
     mode: CartesianPositionEditPanelMode
-    value?: WithName<CartesianPosition>
-    onChange: (position: WithName<CartesianPosition>) => void
+    value?: WithNameAndDescription<CartesianPosition>
+    onChange: (position: WithNameAndDescription<CartesianPosition>) => void
     onSave: () => void
     onClose: () => void
 }

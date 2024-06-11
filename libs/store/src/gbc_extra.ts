@@ -59,10 +59,18 @@ import {
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
 
-export type WithName<T> = T & { name?: string }
+// export type WithName<T> = T & { name?: string }
+//
+// // export type WithDescription<T> = T & { description?: string }
+//
+// type WithNameForArrayElements<T> = {
+//     [P in keyof T]: T[P] extends Array<infer U> ? WithName<U>[] : T[P]
+// }
 
-type WithNameForArrayElements<T> = {
-    [P in keyof T]: T[P] extends Array<infer U> ? WithName<U>[] : T[P]
+export type WithNameAndDescription<T> = T & { name?: string; description?: string }
+
+type WithNameAndDescriptionForArrayElements<T> = {
+    [P in keyof T]: T[P] extends Array<infer U> ? WithNameAndDescription<U>[] : T[P]
 }
 
 /**
@@ -86,7 +94,9 @@ type WithNameForArrayElements<T> = {
  *
  * See the individual types for each configuration item for further details.
  */
-export type GlowbuzzerConfig = WithNameForArrayElements<{
+
+export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
+    // export type GlowbuzzerConfig = WithNameForArrayElements<{
     machine?: MachineConfig[]
     kinematicsConfiguration?: KinematicsConfigurationConfig[]
     moveParameters?: MoveParametersConfig[]
