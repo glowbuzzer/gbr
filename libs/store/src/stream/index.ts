@@ -8,6 +8,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import {
     ActivityStreamItem,
     GlowbuzzerKinematicsConfigurationStatus,
+    MoveParametersConfig,
     STREAMCOMMAND,
     STREAMSTATE
 } from "../gbc"
@@ -18,6 +19,7 @@ import { StreamingActivityApi } from "./api"
 import { useEffect, useMemo } from "react"
 import { useDefaultMoveParameters } from "../config"
 import { ActivityApi, ActivityBuilder, ActivityPromiseResult } from "../activity"
+import { useShallowStableValue } from "../util/useShallowStableValue"
 
 // there is one of these per stream configured
 export type StreamSliceType = {
@@ -231,9 +233,11 @@ type ActivityGeneratorReturnType = ActivityBuilder | Promise<any>
  * ```
  *
  * @param streamIndex The index of the stream to use. This corresponds to the index of the kinematics configuration that will be used.
+ * @param defaultMoveParams Default move parameters to use for all activities in the stream
  */
 export const useStream = (
-    streamIndex: number
+    streamIndex: number,
+    defaultMoveParams: MoveParametersConfig = {}
 ): {
     /** The current state of the stream execution */
     state: STREAMSTATE
@@ -278,15 +282,18 @@ export const useStream = (
     )
     const connection = useConnection()
     const dispatch = useDispatch()
-    const defaultMoveParameters = useDefaultMoveParameters()
+    const default_move_params_from_config = useDefaultMoveParameters()
+    const stable_default_move_params_param = useShallowStableValue(defaultMoveParams)
 
-    const api = useMemo(
-        () =>
-            new StreamingActivityApi(streamIndex, defaultMoveParameters, activity => {
-                dispatch(streamSlice.actions.append({ streamIndex, buffer: [activity] }))
-            }),
-        [streamIndex, dispatch]
-    )
+    const api = useMemo(() => {
+        const params = {
+            ...default_move_params_from_config,
+            ...stable_default_move_params_param // overrides config if given
+        }
+        return new StreamingActivityApi(streamIndex, params, activity => {
+            dispatch(streamSlice.actions.append({ streamIndex, buffer: [activity] }))
+        })
+    }, [streamIndex, stable_default_move_params_param, default_move_params_from_config, dispatch])
 
     useEffect(() => {
         api.updateStream(tag, state)

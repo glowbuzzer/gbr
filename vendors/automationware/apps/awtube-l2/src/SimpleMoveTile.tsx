@@ -4,13 +4,15 @@
 
 import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
 import { Button, Space } from "antd"
-import { useStream } from "@glowbuzzer/store"
+import { BLENDTYPE, useStream } from "@glowbuzzer/store"
 
 export const SimpleMoveTile = () => {
-    const { send } = useStream(0)
+    const { execute } = useStream(0, {
+        blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED
+    })
 
     async function go() {
-        await send(api => [
+        await execute(api => [
             api
                 .moveToPosition()
                 .translation(822.212686, 0, 591.427618)
@@ -25,7 +27,7 @@ export const SimpleMoveTile = () => {
     }
 
     async function go_line() {
-        await send(api => [
+        await execute(api => [
             api
                 .moveToPosition()
                 .translation(822.212686, 0, 591.427618)
@@ -40,7 +42,7 @@ export const SimpleMoveTile = () => {
     }
 
     async function go_updown() {
-        await send(api => [
+        await execute(api => [
             api
                 .moveToPosition()
                 .translation(822.212686, 0, 591.427618)
