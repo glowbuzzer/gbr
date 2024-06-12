@@ -10,7 +10,7 @@ import { config } from "./config"
 import { DinGbdbFacetSlice, GbdbConfiguration, JointsGbdbFacetSlice } from "@glowbuzzer/store"
 
 const persistence: GbdbConfiguration = {
-    remoteDb: "http://localhost:5984",
+    remoteDb: true, // "http://localhost:5984",
     facets: {
         project: {
             singleton: true,
