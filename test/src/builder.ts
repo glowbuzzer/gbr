@@ -121,6 +121,17 @@ export class ConfigBuilder {
         return this
     }
 
+    linearLimits(vmax: number, amax: number, jmax: number, kinematicsConfigurationIndex = 0) {
+        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].linearLimits = [
+            {
+                vmax,
+                amax,
+                jmax
+            }
+        ]
+        return this
+    }
+
     cartesianKinematics(frameIndex = 0) {
         const jointCount = this.json.joint.length || 3
         this.json.kinematicsConfiguration = [

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "add058e7ec2f02ad7d73fb49cef8f02d"
+export const GbcSchemaChecksum = "ec9a694b88416797015d9dffed1ffb9c"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -83,6 +83,8 @@ export const GbcConstants = {
     export enum GBEM_REQUEST {
         GBEM_REQUEST_NONE                                 = (0),
         GBEM_REQUEST_SDO_READ                             = (1),
+        GBEM_REQUEST_SDO_WRITE                            = (2),
+        GBEM_REQUEST_GET_VERSION                          = (3),
     }
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,
@@ -1065,6 +1067,8 @@ export const GbcConstants = {
                         auxiliaryAxisType?:KC_AUXILIARYAXISTYPE;
                         /**  Amount of the move that the auxiliary axis should cover, in range 0 to 1 */
                         auxiliaryAxisFactor?:number;
+                        /**  Default tool index for the kinematics configuration. Set to 0xFF to disable tool selection */
+                        defaultToolIndex?:number;
             }
             /** Status of a kinematics configuration */
             export type KinematicsConfigurationStatus = {
