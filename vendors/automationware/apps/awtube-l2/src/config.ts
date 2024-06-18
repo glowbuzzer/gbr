@@ -49,9 +49,9 @@ const safety_din_array: WithNameAndDescription<SafetyDinConfig>[] = safety_dins
 
 const DEFAULT_LIMITS = [
     {
-        vmax: 1,
-        amax: 10,
-        jmax: 20
+        vmax: 0.1,
+        amax: 1,
+        jmax: 2
     }
 ]
 /**
@@ -260,7 +260,7 @@ export const config: GlowbuzzerConfig = {
         {
             name: "5",
             limits: DEFAULT_LIMITS,
-            scalePos: 166886,
+            scalePos: 166886 * 51,
             scaleVel: 9549,
             scaleTorque: 16.07,
             jointType: 1,
@@ -290,9 +290,9 @@ export const config: GlowbuzzerConfig = {
             extentsZ: [-1000, 1500],
             linearLimits: [
                 {
-                    vmax: 600,
-                    amax: 3000,
-                    jmax: 60000
+                    vmax: 600 * 0.1,
+                    amax: 3000 * 0.1,
+                    jmax: 60000 * 0.1
                 }
             ],
             angularLimits: DEFAULT_LIMITS,
