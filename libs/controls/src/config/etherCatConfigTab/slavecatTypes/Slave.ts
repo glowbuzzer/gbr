@@ -1,6 +1,6 @@
 import { slaveInfo } from "./SlaveInfo"
 
-export interface Slave {
+export interface slave {
     name: string
     slaveInfo: slaveInfo
 }

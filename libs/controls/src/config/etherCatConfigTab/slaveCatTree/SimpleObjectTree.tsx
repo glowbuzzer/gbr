@@ -42,7 +42,7 @@ const renderTreeTitle = (node: any) => {
 
 interface SimpleObjectTreeProps {
     data: SimpleObject[]
-    onSelect: (node: DataNode) => void
+    onSelect: any
 }
 
 export const SimpleObjectTree: React.FC<SimpleObjectTreeProps> = ({ data, onSelect }) => {
@@ -53,11 +53,20 @@ export const SimpleObjectTree: React.FC<SimpleObjectTreeProps> = ({ data, onSele
 
     const treeData = transformToTreeData(data)
 
-    const handleSelect: TreeProps["onSelect"] = (_, info) => {
-        const selectedNode = info.node as any
+    // const handleSelect: TreeProps["onSelect"] = (_, info) => {
+    //     const selectedNode = info.node as any
+    //
+    //     if (selectedNode && !selectedNode.disable) {
+    //         onSelect(selectedNode)
+    //     }
+    // }
 
-        if (selectedNode && !selectedNode.disable) {
-            onSelect(selectedNode)
+    const handleSelect: TreeProps["onSelect"] = (_, info) => {
+        const selectedNode = info.node as any // Use correct typing
+        console.log(selectedNode)
+        if (selectedNode && !(selectedNode as any).disable) {
+            // Handle custom properties
+            onSelect(selectedNode) // Pass only the node
         }
     }
 

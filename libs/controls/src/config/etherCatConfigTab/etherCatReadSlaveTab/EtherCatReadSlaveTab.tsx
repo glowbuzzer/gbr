@@ -8,13 +8,18 @@ import TextArea from "antd/es/input/TextArea"
 import * as React from "react"
 import { GBEM_REQUEST, useConnection } from "@glowbuzzer/store"
 import { useState, useEffect, useRef } from "react"
-import { SimpleObjectTree } from "./SimpleObjectTree"
+import { SimpleObjectTree } from "../slaveCatTree/SimpleObjectTree"
 import { BulbOutlined } from "@ant-design/icons"
-import { Slave } from "../slavecatTypes/Slave"
 import { SimpleObject } from "../slavecatTypes/SimpleObject"
-import { DataNode } from "./transformToTreeData"
+import { DataNode } from "../slaveCatTree/transformToTreeData"
 import { useSlaveCat } from "../slaveCatData/slaveCatContext"
 import { DefaultValue } from "../slavecatTypes/DefaultValue"
+import { EtherCatConfig, Slave } from "../EtherCatConfigTypes"
+import { slaveInfo } from "../slavecatTypes/SlaveInfo"
+import { EtherCatConfigEditTabProps } from "../etherCatConfigEditTab/EtherCatSlaveConfigTab"
+import { SlaveCatTree } from "../slaveCatTree/SlaveCatTree"
+import { useEtherCatConfig } from "../EtherCatConfigContext"
+import { EventDataNode } from "antd/es/tree"
 
 const ScrollableTreeContainer = styled.div`
     max-height: 220px; /* Adjust the height as needed */
@@ -97,6 +102,7 @@ const CardsContainer = styled.div`
 type slaveList = {
     idx: number
     name: string
+    eep_name: string
 }
 
 // const enabledSlaves: slaveList[] = [
@@ -111,12 +117,12 @@ type slaveList = {
 //     { idx: 9, name: "EK1110" }
 // ]
 
-const enabledSlaves: slaveList[] = [
-    { idx: 1, name: "SCU-1-EC" },
-    { idx: 2, name: "EK1100" },
-    { idx: 3, name: "EL6021" },
-    { idx: 4, name: "SYNAPTICON" }
-]
+// const enabledSlaves: slaveList[] = [
+//     { idx: 1, name: "SCU-1-EC" },
+//     { idx: 2, name: "EK1100" },
+//     { idx: 3, name: "EL6021" },
+//     { idx: 4, name: "SYNAPTICON" }
+// ]
 
 interface SlaveDropdownProps {
     slaveList: slaveList[]
@@ -152,7 +158,8 @@ const SlaveDropdown: React.FC<SlaveDropdownProps> = ({
 
     useEffect(() => {
         if (selectedSlave) {
-            const foundSlaveData = slaveData.find(s => s.name.toUpperCase() === selectedSlave.name)
+            console.log("Selected slave", selectedSlave)
+            const foundSlaveData = slaveData.find(s => s.name === selectedSlave.eep_name)
             setSelectedSlaveData(foundSlaveData)
             console.log("Selected slave data", foundSlaveData)
         } else {
@@ -202,8 +209,34 @@ const SlaveDropdown: React.FC<SlaveDropdownProps> = ({
     )
 }
 
-export const GbemReadSlaveTab = () => {
+//filter slave list by optional
+function transformToSlaveList(config: EtherCatConfig): slaveList[] {
+    return config.ethercat.slaves
+        .map((slave, index) => ({
+            idx: index,
+            name: slave.name,
+            eep_name: slave.eep_name,
+            is_configurable: slave.optional.is_configurable,
+            is_enabled: slave.optional.is_enabled
+        }))
+        .filter(slave => !(slave.is_configurable && slave.is_enabled))
+        .map(({ idx, name, eep_name }) => ({ idx, name, eep_name }))
+}
+
+export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) => {
     const { request } = useConnection()
+
+    const {
+        config,
+        setConfig,
+        setEditedConfig,
+        editedConfig,
+        configLoaded,
+        setConfigLoaded,
+        configEdited,
+        setConfigEdited
+    } = useEtherCatConfig()
+
     const requestType = GBEM_REQUEST.GBEM_REQUEST_SDO_READ
     const [requestText, setRequestText] = useState(
         '{"payload": {"index": 0x1000, "subindex": 0, "length": 2}}'
@@ -212,31 +245,27 @@ export const GbemReadSlaveTab = () => {
     const [selectedNode, setSelectedNode] = useState<DataNode | null>(null)
     const [isError, setIsError] = useState(false)
     const [selectedSlave, setSelectedSlave] = useState<slaveList | undefined>(undefined)
+    const [selectedSlaveData, setSelectedSlaveData] = useState<Slave | undefined>(undefined)
 
-    // State to control modal visibility
-    const [isModalVisible, setIsModalVisible] = useState(false)
+    const filteredSlaveList = transformToSlaveList(config)
+    console.log(filteredSlaveList) // Output: [ { idx: 0, name: 'Eep1' } ]
 
-    // Functions to handle modal
-    const showModal = () => {
-        setIsModalVisible(true)
-    }
-
-    const handleCancel = () => {
-        setIsModalVisible(false)
-    }
-
-    const handleNodeSelect = (node: DataNode) => {
-        setSelectedNode(node)
-        setResponseText(undefined)
-        console.log("Selected node", node)
-    }
+    // const handleNodeSelect = (node: DataNode) => {
+    //     setSelectedNode(node)
+    //     setResponseText(undefined)
+    //     console.log("Selected node", node)
+    // }
 
     const slaveData = useSlaveCat() // Use the context
 
     const nodeSelectRef = useRef<HTMLDivElement | null>(null)
+    const [isScrolling, setIsScrolling] = useState(false)
+    const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
+            if (isScrolling) return // Ignore clicks if scrolling
+
             const node = nodeSelectRef.current
             const modal = document.querySelector(".custom-modal")
 
@@ -251,12 +280,40 @@ export const GbemReadSlaveTab = () => {
             }
         }
 
+        const handleScroll = () => {
+            console.log("scrolling")
+            setIsScrolling(true)
+            if (scrollTimeoutRef.current) {
+                clearTimeout(scrollTimeoutRef.current)
+            }
+            scrollTimeoutRef.current = setTimeout(() => {
+                setIsScrolling(false)
+            }, 200) // Adjust timeout as needed
+        }
+
         document.addEventListener("mousedown", handleClickOutside)
+        document.addEventListener("scroll", handleScroll, true) // true to capture the event
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
+            document.removeEventListener("scroll", handleScroll, true)
         }
-    }, [])
+    }, [isScrolling])
+
+    useEffect(() => {
+        if (selectedNode) {
+            const constructedRequestText = JSON.stringify({
+                payload: {
+                    slave: selectedSlave?.idx,
+                    index: selectedNode.index,
+                    subindex: selectedNode.subIndex || 0,
+                    datatype: selectedNode.dataTypeCode,
+                    length: selectedNode.bitSize ? selectedNode.bitSize / 8 : 2
+                }
+            })
+            setRequestText(constructedRequestText)
+        }
+    }, [selectedNode])
 
     useEffect(() => {
         if (selectedNode) {
@@ -287,7 +344,7 @@ export const GbemReadSlaveTab = () => {
                 // }
 
                 // console.log("Response", response)
-                // setResponseText(JSON.stringify(response, null, 2))
+                setResponseText(JSON.stringify(response, null, 2))
             })
             .catch(err => {
                 console.error("Error", err)
@@ -296,22 +353,39 @@ export const GbemReadSlaveTab = () => {
             })
     }
 
-    const showDescriptionButton = selectedNode?.description ? (
-        <Button
-            size="small"
-            type="text"
-            icon={<BulbOutlined />}
-            onClick={showModal}
-            title="Show extra documentation about the object"
-        />
-    ) : null
+    // const showDescriptionButton = selectedNode?.description ? (
+    //     <Button
+    //         size="small"
+    //         type="text"
+    //         icon={<BulbOutlined />}
+    //         onClick={showModal}
+    //         title="Show extra documentation about the object"
+    //     />
+    // ) : null
 
-    const selectedSlaveData = slaveData.find(
-        s => selectedSlave && s.name.toUpperCase() === selectedSlave.name
-    )
+    // const selectedSlaveData = slaveData.find(
+    //     s => selectedSlave && s.name.toUpperCase() === selectedSlave.name
+    // )
+
+    useEffect(() => {
+        if (selectedSlave) {
+            console.log("Selected slave", selectedSlave)
+            const foundSlaveData = slaveData.find(s => s.name === selectedSlave.eep_name)
+            setSelectedSlaveData(foundSlaveData)
+            console.log("Selected slave data", foundSlaveData)
+        } else {
+            setSelectedSlaveData(undefined)
+        }
+    }, [selectedSlave, slaveData]) // Add slaveData to dependency array
 
     if (selectedNode) {
         console.log("Selected node", selectedNode)
+    }
+
+    const handleNodeSelect = (node: DataNode) => {
+        setSelectedNode(node)
+        setResponseText(undefined)
+        console.log("Selected node", node)
     }
 
     return (
@@ -319,103 +393,19 @@ export const GbemReadSlaveTab = () => {
             <Space>
                 Selected slave{" "}
                 <SlaveDropdown
-                    slaveList={enabledSlaves}
+                    slaveList={filteredSlaveList}
                     slaveData={slaveData}
                     selectedSlave={selectedSlave}
                     setSelectedSlave={setSelectedSlave}
                 />
             </Space>
-            <div ref={nodeSelectRef}>
-                {selectedSlaveData && selectedSlaveData.slaveInfo?.simpleSlaveObjects ? (
-                    <CardsContainer>
-                        <Card size={"small"} title="Object Dictionary" className="ant-card">
-                            <ScrollableTreeContainer>
-                                {selectedSlaveData.slaveInfo.simpleSlaveObjects &&
-                                selectedSlaveData.slaveInfo.simpleSlaveObjects.length > 0 ? (
-                                    <SimpleObjectTree
-                                        data={selectedSlaveData.slaveInfo.simpleSlaveObjects}
-                                        onSelect={handleNodeSelect}
-                                    />
-                                ) : (
-                                    <Empty
-                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                        description="No data in object dictionary"
-                                        imageStyle={{ height: 60 }}
-                                    />
-                                )}
-                            </ScrollableTreeContainer>
-                        </Card>
-
-                        {selectedNode && (
-                            <Card
-                                size={"small"}
-                                title={`Selected Object: ${selectedNode.name}`}
-                                className="second-card"
-                                extra={showDescriptionButton} // Added extra prop
-                                // style={{ overflow: "auto", width: "350px" }}
-                            >
-                                {/*<StyledDivider orientation="left">Object Details</StyledDivider>*/}
-
-                                <StyledCardParagraph>
-                                    <strong>Name: </strong>
-                                    {selectedNode.name}
-                                </StyledCardParagraph>
-
-                                <StyledCardParagraph>
-                                    <strong>Index:</strong> 16#
-                                    {selectedNode.index.toString(16).toUpperCase()}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>SubIndex:</strong> {selectedNode.subIndex}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Default Value:</strong> {selectedNode.defaultValue}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Min:</strong> {selectedNode.min || "No min"}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Max:</strong> {selectedNode.max || "No max"}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Unit:</strong> {selectedNode.unit || "No unit"}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Flags:</strong> {selectedNode.flags || "No flags"}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Data Type:</strong> {selectedNode.dataType}
-                                </StyledCardParagraph>
-                                <StyledCardParagraph>
-                                    <strong>Bit Size:</strong> {selectedNode.bitSize}
-                                    {/* Modal for showing description */}
-                                    <Modal
-                                        title="Object Description"
-                                        open={isModalVisible}
-                                        onCancel={handleCancel}
-                                        style={{ top: 20, left: 500 }} // Adjust this to control position
-                                        footer={null}
-                                        className="custom-modal" // Add a unique class here
-                                    >
-                                        <span
-                                            dangerouslySetInnerHTML={{
-                                                __html: selectedNode.description || ""
-                                            }}
-                                        />
-                                    </Modal>
-                                </StyledCardParagraph>
-                            </Card>
-                        )}
-                    </CardsContainer>
-                ) : (
-                    <>
-                        <Empty
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description="No data"
-                            imageStyle={{ height: 60 }}
-                        />
-                    </>
-                )}
+            <div>
+                <SlaveCatTree
+                    slaveData={selectedSlaveData}
+                    // onNodeSelect={setSelectedNode}
+                    selectedNode={selectedNode}
+                    onNodeSelect={handleNodeSelect}
+                />
                 <div>
                     <Space style={{ marginTop: 10 }}>
                         {selectedNode ? (
@@ -427,13 +417,16 @@ export const GbemReadSlaveTab = () => {
                                 Select an object before reading from slave
                             </span>
                         )}
-                        <Button disabled={!selectedNode} size="small" onClick={send_request}>
+                        <Button
+                            disabled={!selectedNode || selectedNode.isParent}
+                            size="small"
+                            onClick={send_request}
+                        >
                             Read object from slave
                         </Button>
                     </Space>
                 </div>
             </div>
-            {/*<TextArea rows={1} value={requestText} onChange={e => setRequestText(e.target.value)} />*/}
             {responseText && (
                 <Alert
                     message={isError ? "Error reading from slave" : "Success reading from slave"}
@@ -442,7 +435,6 @@ export const GbemReadSlaveTab = () => {
                     showIcon
                 />
             )}
-            {/*<div className="response">{responseText}</div>*/}
         </StyledFlex>
     )
 }
