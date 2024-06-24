@@ -251,16 +251,7 @@ export type GlowbuzzerStatus = {
     }[]
     response: any // used for promise resolution
     emstat?: {
-        machine_state: number
-        shared_mem_busy_count: number
-        ec_check_found_error: boolean
-        drive_count: number
-        drives: {
-            name: string
-            state: number
-            error_message: string
-        }[]
-        slave_count: number
-        slave_error_messages: string[]
+        /** EtherCAT master boot state, boot successful */
+        bsbs?: boolean
     }
 }

@@ -6,6 +6,7 @@ import * as React from "react"
 import {
     MACHINETARGET,
     useConnection,
+    useLiveModeEnabled,
     useMachine,
     useSimilationOnlyConfiguration
 } from "@glowbuzzer/store"
@@ -14,6 +15,7 @@ import { Button } from "antd"
 export const StatusBarLiveSwitch = () => {
     const simulationOnly = useSimilationOnlyConfiguration()
     const { connected } = useConnection()
+    const live_switch_enabled = useLiveModeEnabled()
     const machine = useMachine()
 
     const disabled = simulationOnly || !connected
@@ -31,7 +33,7 @@ export const StatusBarLiveSwitch = () => {
                 type={live ? "primary" : undefined}
                 loading={live && switching}
                 onClick={() => change_target(MACHINETARGET.MACHINETARGET_FIELDBUS)}
-                disabled={disabled}
+                disabled={disabled || !live_switch_enabled}
             >
                 Normal
             </Button>

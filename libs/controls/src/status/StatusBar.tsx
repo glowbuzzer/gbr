@@ -19,6 +19,7 @@ import { forwardRef } from "react"
 import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
 import { ModeSwitch } from "../modes/ModeSwitch"
 import { useAutoOpEnabled } from "../app/AutoOpEnabledController"
+import { StatusBarConnectAndEmStatus } from "./StatusBarConnectAndEmStatus"
 
 const StyledSpace = styled(Space)`
     padding-top: 8px;
@@ -61,10 +62,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
     return (
         <Flex justify="space-between" ref={ref}>
             <StyledSpace split={<Divider type="vertical" />}>
-                <Space>
-                    <ConnectStatusIndicator connected={connected} />
-                    {connected ? <div>{name} CONNECTED</div> : <>NOT CONNECTED</>}
-                </Space>
+                <StatusBarConnectAndEmStatus />
                 <ModeSwitch />
                 {handGuidedModeRequested && (
                     <Space className={handGuidedModeActive ? "enabled" : "disabled"}>

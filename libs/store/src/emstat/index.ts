@@ -18,6 +18,11 @@ export const emstatSlice: Slice<EmStatType> = createSlice({
     }
 })
 
-export const useEtherCATMasterStatus = () => {
-    return useSelector<RootState, EmStatType>(state => state.emstat)
+export function useEtherCATMasterStatus(): EmStatType {
+    return useSelector<RootState, EmStatType>(state => state.emstat) || {}
+}
+
+export function useLiveModeEnabled(): boolean {
+    const { bsbs } = useEtherCATMasterStatus()
+    return bsbs
 }

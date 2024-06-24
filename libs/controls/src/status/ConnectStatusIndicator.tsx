@@ -6,12 +6,15 @@ import * as React from "react"
 
 const size = 16
 
+type ConnectStatusIndicatorProps = {
+    color: "red" | "green" | "orange"
+}
+
 /**
  * Simple component to display a green or red circle to indicate connection status.
  * @param connected Whether the connection is active or not.
  */
-export const ConnectStatusIndicator = ({ connected }) => {
-    const color = connected ? "green" : "red"
+export const ConnectStatusIndicator = ({ color }: ConnectStatusIndicatorProps) => {
     return (
         <svg width={size} height={size} viewBox="0 0 64 64">
             <filter id="connected-indicator-filter" filterUnits="objectBoundingBox">
