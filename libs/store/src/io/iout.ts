@@ -92,7 +92,7 @@ export const integerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[]> = cre
  */
 export function useIntegerOutputList() {
     const config = useConfig()
-    return config.iout
+    return config.iout || []
 }
 
 /**
@@ -132,7 +132,7 @@ export const unsignedIntegerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[
  */
 export function useUnsignedIntegerOutputList() {
     const config = useConfig()
-    return config.uiout
+    return config.uiout || []
 }
 
 /**
@@ -174,7 +174,7 @@ export const externalIntegerOutputsSlice: StatusUpdateSlice<IntegerOutputStatus[
  */
 export function useExternalIntegerOutputList() {
     const config = useConfig()
-    return config.externalIout
+    return config.externalIout || []
 }
 
 /**
@@ -215,7 +215,7 @@ export const externalUnsignedIntegerOutputsSlice: StatusUpdateSlice<IntegerOutpu
  */
 export function useExternalUnsignedIntegerOutputList() {
     const config = useConfig()
-    return config.externalUiout
+    return config.externalUiout || []
 }
 
 /**
@@ -238,4 +238,30 @@ export function useExternalUnsignedIntegerOutputState(index: number): [
     (setValue: number, override: boolean) => void
 ] {
     return useGenericIntegerOutput(index, "externalUiout")
+}
+
+/**
+ * Returns the list of configured modbus integer outputs.
+ *
+ * @returns The list of configured modbus integer output names.
+ */
+export function useModbusIntegerOutputList() {
+    const config = useConfig()
+    return config.modbusUiout || []
+}
+
+/** Returns the number of integer outputs configured for each modbus intetger output index (you can have a start address and end address for each modbus integer output).
+ *
+ * @returns The number of ints for each modbus integer output index
+ */
+
+export function useModbusIntegerOutputNumberofList() {
+    const config = useConfig()
+    // Check if modbusUiout is defined and is an array
+    if (Array.isArray(config.modbusUiout)) {
+        // Map over the array to get the start_address values
+        return config.modbusUiout.map(uiout => uiout.end_address - uiout.start_address + 1)
+    }
+    // Return an empty array if modbusDout is not defined or not an array
+    return []
 }
