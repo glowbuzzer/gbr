@@ -14,7 +14,7 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "DRIVES FSoE CONFIG",
-            busCycleTime: 1
+            busCycleTime: 4
         }
     ],
     joint: [
@@ -116,6 +116,61 @@ export const config: GlowbuzzerConfig = {
             name: "My din",
             description: "EL2008 slave 1 input 0",
             inverted: true
+        },
+        {
+            name: "My din 2",
+            description: "EL2008 slave 1 input 1",
+            inverted: false
+        }
+    ],
+    dout: [
+        {
+            name: "My dout",
+            description: "EL2008 slave 1 output 0"
+        },
+        {
+            name: "My dout 2",
+            description: "EL2008 slave 1 output 1"
+        }
+    ],
+    uiin: [
+        {
+            name: "My uiin",
+            description: "ELxxx slave 1 input 2"
+        },
+        {
+            name: "My uiin 2",
+            description: "ELxxx slave 1 input 3"
+        }
+    ],
+    iin: [
+        {
+            name: "My iin",
+            description: "ELxxx slave 1 input 4"
+        },
+        {
+            name: "My iin 2",
+            description: "ELxxx slave 1 input 5"
+        }
+    ],
+    iout: [
+        {
+            name: "My iout",
+            description: "ELxxx slave 1 output 0"
+        },
+        {
+            name: "My iout 2",
+            description: "ELxxx slave 1 output 1"
+        }
+    ],
+    uiout: [
+        {
+            name: "My uiout",
+            description: "ELxxx slave 1 output 2"
+        },
+        {
+            name: "My uiout 2",
+            description: "ELxxx slave 1 output 3"
         }
     ],
     safetyDin: [
@@ -189,32 +244,31 @@ export const config: GlowbuzzerConfig = {
     ],
     modbusDin: [
         {
-            name: "Read coil, slave 2, address 3",
-            description: "Read coil, slave 2, address 3",
+            name: "Temperature sensor",
             slave_num: 0x2,
             address: 0x2,
             function: 0x1
         },
         {
-            name: "Read coil, slave 2, address 6",
+            name: "Part in position 1",
             slave_num: 0x2,
             address: 0x6,
             function: 0x1
         },
         {
-            name: "Read coil, slave 2, address 9",
+            name: "Part in position 2",
             slave_num: 0x2,
             address: 0x9,
             function: 0x1
         },
         {
-            name: "Read coil, slave 1, address 7",
+            name: "Part in position 3",
             slave_num: 0x2,
             address: 0x7,
             function: 0x1
         },
         {
-            name: "Read coil, slave 1, address 8",
+            name: "Part in position 4",
             slave_num: 0x2,
             address: 0x8,
             function: 0x1
@@ -222,39 +276,51 @@ export const config: GlowbuzzerConfig = {
     ],
     modbusUiin: [
         {
-            name: "Red",
+            name: "F/T sensor Fx",
             slave_num: 1,
             address: 10,
             function: 3
         },
         {
-            name: "Blue",
+            name: "F/T sensor Fy",
+            slave_num: 1,
+            address: 11,
+            function: 3
+        },
+        {
+            name: "F/T sensor Fz",
             slave_num: 1,
             address: 12,
             function: 3
         },
         {
-            name: "Yellow",
+            name: "F/T sensor Tx",
             slave_num: 1,
             address: 13,
+            function: 3
+        },
+        {
+            name: "F/T sensor Ty",
+            slave_num: 1,
+            address: 14,
             function: 3
         }
     ],
     modbusDout: [
         {
-            name: "Green",
+            name: "Grippper 1",
             slave_num: 2,
             start_address: 10,
             end_address: 10
         },
         {
-            name: "Blue",
+            name: "Grippper 2",
             slave_num: 2,
             start_address: 12,
             end_address: 13
         },
         {
-            name: "Red",
+            name: "Conveyor actuate",
             slave_num: 2,
             start_address: 15,
             end_address: 17
@@ -262,19 +328,19 @@ export const config: GlowbuzzerConfig = {
     ],
     modbusUiout: [
         {
-            name: "Yellow",
+            name: "Gripper position",
             slave_num: 1,
             start_address: 1,
             end_address: 1
         },
         {
-            name: "Green",
+            name: "Gripper force",
             slave_num: 1,
             start_address: 2,
             end_address: 4
         },
         {
-            name: "Blue",
+            name: "Gripper LED",
             slave_num: 1,
             start_address: 6,
             end_address: 9
