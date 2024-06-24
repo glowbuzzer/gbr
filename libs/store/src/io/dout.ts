@@ -93,12 +93,12 @@ export const safetyDigitalOutputsSlice: StatusUpdateSlice<SafetyDigitalOutputSta
  */
 export function useDigitalOutputList() {
     const config = useConfig()
-    return config.dout
+    return config.dout || []
 }
 
 export function useSafetyDigitalOutputList() {
     const config = useConfig()
-    return config.safetyDout
+    return config.safetyDout || []
 }
 
 /**
@@ -161,7 +161,7 @@ export const externalDigitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[
  */
 export function useExternalDigitalOutputList() {
     const config = useConfig()
-    return config.externalDout
+    return config.externalDout || []
 }
 
 /**
@@ -188,4 +188,30 @@ export function useExternalDigitalOutputState(index: number): [
 
 export function useExternalDigitalOutputStates(): DigitalOutputStatus[] {
     return useSelector((root: RootState) => root.externalDout, deepEqual)
+}
+
+/**
+ * Returns the list of configured modbus digital outputs.
+ *
+ * @returns The list of configured digital input names.
+ */
+export function useModbusDigitalOutputList() {
+    const config = useConfig()
+    return config.modbusDout || []
+}
+
+/** Returns the number of digital outputs configured for each modbus digital output index (you can have a start address and end address for each modbus digital output).
+ *
+ * @returns The number of bools for each modbus digital output index
+ */
+
+export function useModbusDigitalOutputNumberofList() {
+    const config = useConfig()
+    // Check if modbusDout is defined and is an array
+    if (Array.isArray(config.modbusDout)) {
+        // Map over the array to get the start_address values
+        return config.modbusDout.map(dout => dout.end_address - dout.start_address + 1)
+    }
+    // Return an empty array if modbusDout is not defined or not an array
+    return []
 }
