@@ -10,16 +10,18 @@ import {
     useSafetyDigitalInputList,
     useSafetyDigitalInputs
 } from "@glowbuzzer/store"
+import { useGlowbuzzerMode } from "../modes"
 
 type HandGuidedModeState = {
     handGuidedModeSupported: boolean
+    handGuidedModeRequested: boolean
     handGuidedModeActive: boolean
     overallSafetyState: boolean
-    keyswitchEngaged: boolean
     deadmanEngaged: boolean
 }
 
 export function useHandGuidedMode(): HandGuidedModeState {
+    const { mode } = useGlowbuzzerMode()
     const digitalInputList = useSafetyDigitalInputList()
     const machineState = useMachineState()
     const inputs = useSafetyDigitalInputs()
@@ -50,8 +52,9 @@ export function useHandGuidedMode(): HandGuidedModeState {
             handGuidedModeActive: active,
             handGuidedModeSupported: supported,
             overallSafetyState: overallState,
-            keyswitchEngaged: keyswitch,
+            // TODO: rename this property
+            handGuidedModeRequested: mode === "hand-guided",
             deadmanEngaged: deadman
         }
-    }, [machineState, inputs, indexes])
+    }, [machineState, inputs, indexes, mode, supported])
 }

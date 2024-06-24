@@ -1,0 +1,18 @@
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "allowJs": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        // relative to base tsconfig!
+        "paths": {
+            "@glowbuzzer/controls": [
+                "./libs/controls/src/index.ts"
+            ],
+            "@glowbuzzer/store": [
+                "./libs/store/src/index.ts"
+            ]
+        }
+    }
+}

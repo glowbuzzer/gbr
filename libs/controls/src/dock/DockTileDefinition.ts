@@ -5,6 +5,8 @@
 import { IJsonTabNode } from "flexlayout-react"
 import { ReactNode } from "react"
 
+import { TileWrapperFactory } from "./DockTileDefinitionBuilder"
+
 type DockTilePlacement = {
     column: number
     row: number
@@ -22,6 +24,8 @@ export interface DockTileDefinition extends IJsonTabNode {
     renderButtons?(): ReactNode
 
     renderHelp?(): ReactNode
+
+    renderWrapper?: TileWrapperFactory
 
     defaultPlacement?: DockTilePlacement
 

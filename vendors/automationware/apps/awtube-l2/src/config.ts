@@ -24,8 +24,8 @@ const safety_dins = `
 3\tpause_motion
 4\treduce_speed
 5\tsafe_pos_valid
-6\thand_guided_mode_keyswitch\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH}
-7\thand_guided_mode_deadman\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN}
+6\tkeyswitch\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH}
+7\tdeadman\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN}
 8\tmute_safety_function
 9\tactive_fault_machine_swm
 10\tactive_fault_machine_sls

@@ -25,10 +25,18 @@ export function useJointsForKinematicsConfigurationList(kinematicsConfigurationI
     }))
 }
 
+/**
+ * @deprecated This hook may be removed in the future
+ */
 export function useMotionAllowed(): boolean {
     const { connected } = useConnection()
     const machineState = useMachineState()
     const { handGuidedModeActive } = useHandGuidedMode()
 
     return connected && machineState === "OPERATION_ENABLED" && !handGuidedModeActive
+}
+
+export function useOperationEnabled() {
+    const machineState = useMachineState()
+    return machineState === "OPERATION_ENABLED"
 }

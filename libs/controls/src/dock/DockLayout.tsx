@@ -3,18 +3,17 @@
  */
 
 import * as React from "react"
-import { Suspense, useContext, useState } from "react"
+import { createElement, useContext, useState } from "react"
 import { Popover } from "antd"
 import { DockLayoutContext } from "./DockLayoutContext"
 import { Layout, TabNode } from "flexlayout-react"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { ReactComponent as SettingsIcon } from "@material-symbols/svg-400/outlined/settings.svg"
 import { QuestionCircleOutlined } from "@ant-design/icons"
-import { useConnection } from "@glowbuzzer/store"
-import { DockTileWrapper } from "./DockTileWrapper"
-import { useGlowbuzzerTheme } from "../app"
-import styled from "styled-components"
+import { MachineState, useConnection, useMachineState } from "@glowbuzzer/store"
 import { is_touch_device } from "./util"
+import { useGlowbuzzerMode } from "../modes"
+import { DockTileDisabled } from "./DockTileDisabled"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
@@ -36,31 +35,6 @@ const DockTileSettingsModal = ({ Component }: { Component }) => {
 
 const ButtonsWrapper = ({ children }) => <>{children}</>
 
-function gradient(darkMode: boolean) {
-    const color1 = darkMode ? "#333333" : "#f0f0f0"
-    const color2 = darkMode ? "#fff0f0" : "#ff6666"
-    return `linear-gradient(
-        135deg,
-        ${color2} 5%,
-        ${color1} 5%,
-        ${color1} 50%,
-        ${color2} 50%,
-        ${color2} 55%,
-        ${color1} 55%,
-        ${color1} 100%
-    )`
-}
-const StyledDockTileDimmer = styled.div<{ $darkMode: boolean }>`
-    position: absolute;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-image: ${props => gradient(props.$darkMode)};
-    background-size: 6px 6px;
-    opacity: 0.2;
-`
-
 /**
  * This component renders the current layout, as defined by the current layout context (see {@link DockLayoutProvider}).
  */
@@ -72,27 +46,30 @@ export const DockLayout = () => {
         settingsFactory,
         helpFactory,
         headerFactory,
+        wrapperFactory,
         updateModel
     } = useContext(DockLayoutContext)
 
     const connection = useConnection()
-    const { darkMode } = useGlowbuzzerTheme()
+    const { mode } = useGlowbuzzerMode()
+    const machineState = useMachineState()
+    const op = machineState === MachineState.OPERATION_ENABLED
 
-    function connection_aware_factory(node: TabNode) {
+    function tile_factory(node: TabNode) {
+        // create the tile itself unadorned
         const tile = factory(node)
-        if (connection.connected || node.getConfig()?.enableWithoutConnection) {
-            return (
-                <Suspense>
-                    <DockTileWrapper>{tile}</DockTileWrapper>
-                </Suspense>
-            )
-        }
-        return (
-            <Suspense>
-                {tile}
-                <StyledDockTileDimmer $darkMode={darkMode} />
-            </Suspense>
-        )
+        // has a wrapper factory been defined for this tile?
+        // this is used to handle overlaying the tile with a dimmer when it is disabled,
+        // and to handle other mode-specific behaviours
+        const elemFactory = wrapperFactory?.(node)
+        return elemFactory
+            ? // factory exists, so use it to wrap the tile
+              elemFactory(tile, connection.connected, op, mode)
+            : // no factory, so implement the default behaviour which
+            // is to dim the tile if we're not connected
+            connection.connected
+            ? tile // no dimming
+            : createElement(DockTileDisabled, null, tile)
     }
 
     function render_tab_set(node, renderValues) {
@@ -136,7 +113,7 @@ export const DockLayout = () => {
     return (
         <Layout
             model={model}
-            factory={connection_aware_factory}
+            factory={tile_factory}
             font={{ size: "12px" }}
             realtimeResize={!is_touch_device()}
             onModelChange={updateModel}

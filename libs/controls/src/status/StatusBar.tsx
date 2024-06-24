@@ -17,6 +17,7 @@ import { StatusBarLiveSwitch } from "./StatusBarLiveSwitch"
 import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
 import { forwardRef } from "react"
 import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
+import { ModeSwitch } from "../modes/ModeSwitch"
 
 const StyledSpace = styled(Space)`
     padding-top: 8px;
@@ -53,7 +54,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
     const { connected } = useConnection()
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
     const { name } = useMachine()
-    const { keyswitchEngaged, handGuidedModeActive } = useHandGuidedMode()
+    const { handGuidedModeRequested, handGuidedModeActive } = useHandGuidedMode()
 
     return (
         <Flex justify="space-between" ref={ref}>
@@ -62,7 +63,8 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
                     <ConnectStatusIndicator connected={connected} />
                     {connected ? <div>{name} CONNECTED</div> : <>NOT CONNECTED</>}
                 </Space>
-                {keyswitchEngaged && (
+                <ModeSwitch />
+                {handGuidedModeRequested && (
                     <Space className={handGuidedModeActive ? "enabled" : "disabled"}>
                         <GlowbuzzerIcon Icon={handGuidedModeActive ? HandIcon : HandIconDisabled} />
                         HAND GUIDED MODE

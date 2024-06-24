@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { Dropdown, Select, SelectProps, Tag } from "antd"
+import { Button, Dropdown, Flex, Select, SelectProps, Space, Tag } from "antd"
 import {
     ArrowDownOutlined,
     ArrowLeftOutlined,
@@ -12,15 +12,6 @@ import {
 } from "@ant-design/icons"
 import * as React from "react"
 import styled from "styled-components"
-
-const StyledDiv = styled.div`
-    display: inline-block;
-    white-space: nowrap;
-
-    .ant-tag {
-        cursor: pointer;
-    }
-`
 
 const StyledSelect = styled(Select)`
     transform: translateY(1px);
@@ -106,30 +97,33 @@ export const RobotConfigurationSelector = ({
     })
 
     return (
-        <StyledDiv>
+        <Flex align="center" gap="small">
             {waistSupported && (
-                <Tag
+                <Button
+                    size="small"
                     onClick={() => toggle(0b100)}
                     color={currentWaist !== waist ? "blue" : undefined}
                 >
                     Waist {waist ? <ArrowRightOutlined /> : <ArrowLeftOutlined />}
-                </Tag>
+                </Button>
             )}
             {elbowSupported && (
-                <Tag
+                <Button
+                    size="small"
                     onClick={() => toggle(0b010)}
                     color={currentElbow !== elbow ? "blue" : undefined}
                 >
                     Elbow {elbow ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
-                </Tag>
+                </Button>
             )}
             {wristSupported && (
-                <Tag
+                <Button
+                    size="small"
                     onClick={() => toggle(0b001)}
                     color={currentWrist !== wrist ? "blue" : undefined}
                 >
                     Wrist <ReloadOutlined style={wrist ? { transform: "scaleX(-1)" } : undefined} />
-                </Tag>
+                </Button>
             )}
             <StyledSelect
                 size="small"
@@ -141,6 +135,6 @@ export const RobotConfigurationSelector = ({
                 popupMatchSelectWidth={false}
                 // dropdownRender={() => <>X</>}
             />
-        </StyledDiv>
+        </Flex>
     )
 }

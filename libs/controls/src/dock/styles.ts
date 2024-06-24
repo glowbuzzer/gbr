@@ -71,3 +71,38 @@ export const StyledDockLayout = styled.div`
         }
     }
 `
+
+function gradient(darkMode: boolean) {
+    const color1 = darkMode ? "rgba(0,0,0,0.2)" : "rgba(255,255,255,0.2)"
+    const color2 = darkMode ? "rgba(255,255,255,0.2)" : "rgba(255,0,0,0.2)"
+    return `linear-gradient(
+        135deg,
+        ${color2} 5%,
+        ${color1} 5%,
+        ${color1} 50%,
+        ${color2} 50%,
+        ${color2} 55%,
+        ${color1} 55%,
+        ${color1} 100%
+    )`
+}
+
+export const StyledDockTileDimmer = styled.div<{ $darkMode: boolean }>`
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-image: ${props => gradient(props.$darkMode)};
+    background-size: 6px 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .content {
+        padding: 20px 30px;
+        border-radius: 10px;
+        border: 1px solid ${props => props.theme.colorBorder};
+        background: ${props => props.theme.colorBgContainer};
+    }
+`

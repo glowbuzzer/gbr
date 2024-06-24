@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { useFeedRate, useKinematicsConfigurationList } from "@glowbuzzer/store"
 import { Slider } from "antd"
 import { useLocalStorage } from "../util/LocalStorageHook"
@@ -12,6 +12,7 @@ import { DockToolbarButtonGroup } from "../dock/DockToolbar"
 import { KinematicsDropdown } from "../kinematics/KinematicsDropdown"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
+import DisabledContext from "antd/es/config-provider/DisabledContext"
 
 /**
  * The feed rate tile provides a simple way to adjust the feedrate for a kinematics configuration.
@@ -33,6 +34,7 @@ export const FeedRateTile = () => {
 
     const [value, setValueInternal] = useState(0)
     const [feedRestoreValue, setFeedRestoreValue] = useState(null)
+    const disabled = useContext(DisabledContext)
 
     const timer = useRef(null)
 
@@ -106,7 +108,7 @@ export const FeedRateTile = () => {
         >
             <StyledTileContent>
                 <Slider
-                    disabled={feedRestoreValue !== null}
+                    disabled={disabled || feedRestoreValue !== null}
                     min={0}
                     max={2}
                     value={value}

@@ -38,7 +38,7 @@ export const StatusTrayHandGuidedMode = () => {
         handGuidedModeSupported,
         handGuidedModeActive,
         overallSafetyState,
-        keyswitchEngaged,
+        handGuidedModeRequested,
         deadmanEngaged
     } = useHandGuidedMode()
 
@@ -72,7 +72,7 @@ export const StatusTrayHandGuidedMode = () => {
         }
     }, [handGuidedModeActive])
 
-    if (!handGuidedModeSupported || !keyswitchEngaged || handGuidedModeActive) {
+    if (!handGuidedModeSupported || !handGuidedModeRequested || handGuidedModeActive) {
         // either hand guided mode not supported, requested, or we've gone through all the steps to get to OP enabled
         return null
     }
@@ -83,7 +83,7 @@ export const StatusTrayHandGuidedMode = () => {
                 <Steps direction="vertical">
                     <Steps.Step
                         title={"Hand Guided Mode Requested"}
-                        description="The hand guided mode key switch has been activated"
+                        description="The hand guided mode has been activated"
                         status="finish"
                     />
                     <Steps.Step

@@ -7,7 +7,7 @@
         "allowJs": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "downlevelIteration": true
+        "downlevelIteration": true,
     },
     "files": [],
     "include": [],

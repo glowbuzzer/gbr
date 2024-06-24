@@ -7,7 +7,8 @@ import { PositionMode } from "./JogGotoCartesian"
 import styled from "styled-components"
 import { useConnection, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
-import { useMotionAllowed } from "../../util/hooks"
+import { useContext } from "react"
+import DisabledContext from "antd/es/config-provider/DisabledContext"
 
 const StyledDiv = styled.div`
     flex-grow: 1;
@@ -27,7 +28,6 @@ type JogTouchCartesianProps = {
     lockSpeed: boolean
     kinematicsConfigurationIndex: number
     frameIndex: number
-    disabled: boolean
 }
 
 export const JogTouchCartesian = ({
@@ -39,7 +39,7 @@ export const JogTouchCartesian = ({
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const { connected } = useConnection()
-    const disabled = !useMotionAllowed()
+    const disabled = useContext(DisabledContext)
 
     async function jog_xy_start(vx: number, vy: number) {
         if (connected) {

@@ -8,6 +8,7 @@ import { ThreeDimensionalSceneTileHelp } from "./ThreeDimensionalSceneTileHelp"
 import { ThreeDimensionalSceneTile } from "./ThreeDimensionalSceneTile"
 import { TrackPosition } from "./TrackPosition"
 import { Frustum } from "./Frustum"
+import { DockTileDefinitionBuilder } from "../dock"
 
 function renderThreeDimensionalSceneWithFrustum() {
     return createElement(
@@ -17,17 +18,13 @@ function renderThreeDimensionalSceneWithFrustum() {
     )
 }
 
-export const ThreeDimensionalSceneTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.THREE_DIMENSIONAL_SCENE,
-    name: "3D Scene",
-    enableClose: false,
-    defaultPlacement: {
-        column: 1,
-        row: 0
-    },
-    render: () => renderThreeDimensionalSceneWithFrustum(),
-    renderHelp: () => createElement(ThreeDimensionalSceneTileHelp, {}, null),
-    config: {
-        enableWithoutConnection: true
-    }
-}
+export const ThreeDimensionalSceneTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.THREE_DIMENSIONAL_SCENE)
+    .name("3D Scene")
+    .placement(1, 0)
+    .render(
+        () => renderThreeDimensionalSceneWithFrustum(),
+        () => createElement(ThreeDimensionalSceneTileHelp, {}, null)
+    )
+    .enableWithoutConnection()
+    .build()

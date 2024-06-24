@@ -47,6 +47,8 @@ import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { AppStatusBar } from "./AppStatusBar"
+import { InnoboticsModeProvider } from "@glowbuzzer/awlib"
+import { InnoboticsJogModeTileHelper } from "../../../awlib/src/modes/InnoboticsJogModeTileHelper"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -123,38 +125,40 @@ const InterpolatedMoveTileDefinition = DockTileDefinitionBuilder()
 
 export const App = () => {
     return (
-        <DockLayoutProvider
-            tiles={[
-                CustomSceneTileDefinition,
-                AwTubeStatusTileDefinitionBuilder({
-                    showSoftwareStop: true,
-                    showToolInputs: true,
-                    showToolOutputs: true
-                }),
-                SerialCommunicationsTileDefinition,
-                ConfigEditTileDefinition,
-                CartesianJogTileDefinition,
-                CartesianDroTileDefinition,
-                JointJogTileDefinition,
-                JointDroTileDefinition,
-                JointTorqueModesTileDefinition,
-                ToolsTileDefinition,
-                PointsTileDefinition,
-                FramesTileDefinition,
-                FeedRateTileDefinition,
-                TelemetryTileDefinition,
-                EmStatTileDefinition,
-                SimpleMoveTileDefinition,
-                FlowTileDefinition,
-                MonitorTileDefinition,
-                DevInputOverridesTileDefinition,
-                PayloadTileDefinition,
-                InterpolatedMoveTileDefinition,
-                DigitalOutputsTileDefinition
-            ]}
-            statusBarExtra={<AppStatusBar />}
-        >
-            <DockLayout />
-        </DockLayoutProvider>
+        <InnoboticsModeProvider>
+            <DockLayoutProvider
+                tiles={[
+                    CustomSceneTileDefinition,
+                    AwTubeStatusTileDefinitionBuilder({
+                        showSoftwareStop: true,
+                        showToolInputs: true,
+                        showToolOutputs: true
+                    }),
+                    SerialCommunicationsTileDefinition,
+                    ConfigEditTileDefinition,
+                    InnoboticsJogModeTileHelper(CartesianJogTileDefinition),
+                    InnoboticsJogModeTileHelper(JointJogTileDefinition),
+                    CartesianDroTileDefinition,
+                    JointDroTileDefinition,
+                    JointTorqueModesTileDefinition,
+                    ToolsTileDefinition,
+                    PointsTileDefinition,
+                    FramesTileDefinition,
+                    FeedRateTileDefinition,
+                    TelemetryTileDefinition,
+                    EmStatTileDefinition,
+                    SimpleMoveTileDefinition,
+                    FlowTileDefinition,
+                    MonitorTileDefinition,
+                    DevInputOverridesTileDefinition,
+                    PayloadTileDefinition,
+                    InterpolatedMoveTileDefinition,
+                    DigitalOutputsTileDefinition
+                ]}
+                statusBarExtra={<AppStatusBar />}
+            >
+                <DockLayout />
+            </DockLayoutProvider>
+        </InnoboticsModeProvider>
     )
 }

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "ec9a694b88416797015d9dffed1ffb9c"
+export const GbcSchemaChecksum = "07befb89c57d613a4c8f42e7932c7d2e"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -31,7 +31,6 @@ export const GbcConstants = {
         FAULT_CAUSE_GBC_TO_PLC_CON_ERROR_BIT_NUM           = (15),
         FAULT_CAUSE_MOVE_NOT_OP_EN_BIT_NUM                 = (16),
         FAULT_CAUSE_DRIVE_STATE_MISMATCH_BIT_NUM           = (17),
-        FAULT_CAUSE_FSOE_ERROR_BIT_NUM                     = (18),
     }
     export enum STATUS_WORD_GBEM {
         STATUS_WORD_GBEM_ALIVE_BIT_NUM                      = (16),
@@ -181,6 +180,7 @@ export const GbcConstants = {
         OPERATION_ERROR_CONFIG_RELOADED,
         OPERATION_ERROR_KINEMATICS_ENVELOPE_VIOLATION,
         OPERATION_ERROR_KINEMATICS_NEAR_SINGULARITY,
+        OPERATION_ERROR_MODBUS_WRITE_FAILURE,
     }
     export enum POSITIONREFERENCE {
         /**  Position is specified absolutely (relative to origin) */
@@ -1054,7 +1054,7 @@ export const GbcConstants = {
                         /**  List of angular limits to be applied to the kinematics configuration for different types of move */
                         angularLimits?:LimitConfiguration[];
                         /**  Auto velocity scaling parameters for the kinematics configuration */
-                        velocityScaling?:VelocityScaling;
+                        velocityScaling?:VelocityScaling[];
                         /**  Matrix containing the DH parameters for the kinematics model */
                         kinChainParams?:MatrixInstanceDouble;
                         /**  Inverse dynamic parameters for the kinematics model */
@@ -1203,6 +1203,8 @@ export const GbcConstants = {
                         function?:number;
                         /**  Defines if the modbus data is little endian */
                         little_endian?:boolean;
+                        /**  Defines if the input signal is inverted */
+                        inverted?:boolean;
             }
             /** 
             Status of an modbus digital input
@@ -1231,8 +1233,6 @@ export const GbcConstants = {
              */
             export type DoutConfig = {
             
-                        /**  Defines if the ouput signal is inverted */
-                        inverted?:boolean;
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
@@ -1259,8 +1259,6 @@ export const GbcConstants = {
              */
             export type SafetyDoutConfig = {
             
-                        /**  Defines if the ouput signal is inverted */
-                        inverted?:boolean;
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
@@ -1287,8 +1285,6 @@ export const GbcConstants = {
              */
             export type ExternalDoutConfig = {
             
-                        /**  Defines if the ouput signal is inverted */
-                        inverted?:boolean;
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
@@ -1321,8 +1317,6 @@ export const GbcConstants = {
                         start_address?:number;
                         /**  Defines the modbus end address to write to */
                         end_address?:number;
-                        /**  Defines if the output signal is inverted */
-                        inverted?:boolean;
             }
             /** 
             Configuration parameters for an analogue input

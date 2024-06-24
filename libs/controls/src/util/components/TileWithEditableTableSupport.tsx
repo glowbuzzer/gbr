@@ -3,16 +3,15 @@
  */
 
 import * as React from "react"
+import { ComponentType, useState } from "react"
 import styled from "styled-components"
-import { ComponentType, useContext, useState } from "react"
 import { ColumnType } from "antd/es/table"
-import { Button, Form, Popconfirm, Space, Table } from "antd"
+import { Button, Popconfirm, Space, Table } from "antd"
 import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
 import { ReactComponent as AddIcon } from "@material-symbols/svg-400/outlined/add.svg"
 import { ReactComponent as DeleteIcon } from "@material-symbols/svg-400/outlined/delete.svg"
 import { DockToolbar, DockToolbarButtonGroup } from "../../dock"
 import { GlowbuzzerIcon } from "../GlowbuzzerIcon"
-import DisabledContext, { DisabledContextProvider } from "antd/es/config-provider/DisabledContext"
 
 const StyledDiv = styled.div`
     padding: 10px;

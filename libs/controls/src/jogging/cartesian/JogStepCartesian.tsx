@@ -56,7 +56,6 @@ type JogStepCartesianProps = {
     jogSpeed: number
     kinematicsConfigurationIndex: number
     frameIndex: number
-    disabled: boolean
 }
 
 /** @ignore - internal to the jog tile */
@@ -65,8 +64,7 @@ export const JogStepCartesian = ({
     positionMode,
     jogSpeed,
     kinematicsConfigurationIndex,
-    frameIndex,
-    disabled
+    frameIndex
 }: JogStepCartesianProps) => {
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
@@ -206,7 +204,6 @@ export const JogStepCartesian = ({
                 onClick={() => stepJog(index, direction)}
                 onMouseDown={() => startJog(index, direction)}
                 onMouseUp={() => stopJog()}
-                disabled={disabled}
             >
                 {children}
             </Button>

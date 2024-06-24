@@ -1,10 +1,9 @@
-import React from "react"
+import React, { useState } from "react"
 import { SimpleObject } from "../slavecatTypes/SimpleObject"
 import { DataNode, transformToTreeData } from "./transformToTreeData"
-import { Tree, Tooltip, TreeProps } from "antd"
-import { useState, useEffect } from "react"
+import { Tooltip, Tree, TreeProps } from "antd"
 import styled from "styled-components"
-import { useGlowbuzzerTheme } from "@glowbuzzer/controls"
+import { useGlowbuzzerTheme } from "../../app"
 
 const StyledTree = styled(Tree)<{ darkMode: boolean }>`
     .ant-tree-treenode-disabled .ant-tree-node-content-wrapper {

@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import { createElement, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import { DockLayoutContext, DockLayoutContextType } from "./DockLayoutContext"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { add_tile, is_touch_device } from "./util"
@@ -10,7 +10,6 @@ import { Actions, IJsonModel, Model, TabNode } from "flexlayout-react"
 import { DockPerspective } from "./types"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { DockPerspectiveLayoutProviderProps } from "./DockPerspectiveLayoutProvider"
-import { TestDummyTile } from "./TestDummyTile"
 
 const DOCK_MODEL_TEMPLATE: IJsonModel = {
     global: {
@@ -187,6 +186,9 @@ export function useDockContext(
         },
         helpFactory: (node: TabNode) => {
             return tileFor(node.getId()).renderHelp?.()
+        },
+        wrapperFactory: (node: TabNode) => {
+            return tileFor(node.getId()).renderWrapper
         },
         updateModel: new_model => {
             // model object is not changed, so we need to force a re-render

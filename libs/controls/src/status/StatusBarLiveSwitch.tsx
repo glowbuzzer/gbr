@@ -28,20 +28,20 @@ export const StatusBarLiveSwitch = () => {
     return (
         <Button.Group>
             <Button
+                type={live ? "primary" : undefined}
+                loading={live && switching}
+                onClick={() => change_target(MACHINETARGET.MACHINETARGET_FIELDBUS)}
+                disabled={disabled}
+            >
+                Normal
+            </Button>
+            <Button
                 type={live ? undefined : "primary"}
                 loading={!live && switching}
                 onClick={() => change_target(MACHINETARGET.MACHINETARGET_SIMULATION)}
                 disabled={disabled}
             >
                 Simulation
-            </Button>
-            <Button
-                type={live ? "primary" : undefined}
-                loading={live && switching}
-                onClick={() => change_target(MACHINETARGET.MACHINETARGET_FIELDBUS)}
-                disabled={disabled}
-            >
-                Live
             </Button>
         </Button.Group>
     )

@@ -6,14 +6,15 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { FeedRateTile } from "./FeedRateTile"
 import { FeedRateTileHelp } from "./FeedRateTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const FeedRateTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.FEEDRATE,
-    name: "Feedrate",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    render: () => createElement(FeedRateTile, {}, null),
-    renderHelp: () => createElement(FeedRateTileHelp, {}, null)
-}
+export const FeedRateTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.FEEDRATE)
+    .name("Feedrate")
+    .placement(2, 0)
+    .render(
+        () => createElement(FeedRateTile, {}, null),
+        () => createElement(FeedRateTileHelp, {}, null)
+    )
+    .requiresOperationEnabled()
+    .build()

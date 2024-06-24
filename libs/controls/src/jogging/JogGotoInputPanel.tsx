@@ -2,11 +2,12 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect, useRef } from "react"
+import React, { useContext, useEffect, useRef } from "react"
 import { Button, Input } from "antd"
 import { ConversionFactors, usePrefs } from "@glowbuzzer/store"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import styled from "styled-components"
+import DisabledContext from "antd/es/config-provider/DisabledContext"
 
 export type JogGotoItem = {
     key: string | number
@@ -56,7 +57,6 @@ const StyledDiv = styled.div`
 type JogGotoInputPanelProps = {
     localStorageKey: string
     items: JogGotoItem[]
-    disabled?: boolean
     onGoto(key: string | number, value: number)
     onGotoAll(values: { [index: string]: number })
 }
@@ -69,11 +69,11 @@ export const JogGotoInputPanel = ({
     localStorageKey,
     items,
     onGoto,
-    onGotoAll,
-    disabled
+    onGotoAll
 }: JogGotoInputPanelProps) => {
     const { toSI, getUnits } = usePrefs()
     const [values, setValues] = useLocalStorage<string[]>(localStorageKey, EMPTY_ARRAY)
+    const disabled = useContext(DisabledContext)
 
     const { units: linearUnits } = getUnits("linear")
     const linearUnitsRef = useRef(linearUnits)

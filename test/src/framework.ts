@@ -181,7 +181,8 @@ export class GbcTest {
                 tolerance = 0.001,
                 allowNeg = false
             ) => {
-                const actual = selector(this.status_msg)
+                const status = this.status_msg
+                const actual = selector(status)
                 test_near(actual, expected, tolerance, allowNeg)
                 return this
             },

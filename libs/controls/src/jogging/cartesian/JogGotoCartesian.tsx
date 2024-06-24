@@ -42,8 +42,7 @@ export const JogGotoCartesian = ({
     positionMode,
     kinematicsConfigurationIndex,
     frameIndex,
-    robotConfiguration,
-    disabled
+    robotConfiguration
 }) => {
     const motion = useSoloActivity(kinematicsConfigurationIndex)
     const waypoint = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
@@ -117,7 +116,6 @@ export const JogGotoCartesian = ({
                     <JogGotoInputPanel
                         localStorageKey={"jog.position"}
                         items={xyzItems}
-                        disabled={disabled}
                         onGoto={goto_position}
                         onGotoAll={goto_position_all}
                     />
@@ -126,7 +124,6 @@ export const JogGotoCartesian = ({
                     <JogGotoInputPanel
                         localStorageKey={"jog.orientation"}
                         items={abcItems}
-                        disabled={disabled}
                         onGoto={goto_orient}
                         onGotoAll={goto_orient_all}
                     />

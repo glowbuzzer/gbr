@@ -3,11 +3,11 @@
  */
 
 import { JogMode } from "../types"
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { PositionMode } from "./JogGotoCartesian"
 import { JogCartesianPanel } from "./JogCartesianPanel"
 import { JogModeRadioButtons } from "../JogModeRadioButtons"
-import { DockToolbarButtonGroup } from "../../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../../dock"
 import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
 import { FramesDropdown } from "../../frames"
 import { JogHomeSplitButton } from "../JogHomeSplitButton"
@@ -21,6 +21,7 @@ import { GlowbuzzerIcon } from "../../util/GlowbuzzerIcon"
 import { useLocalStorage } from "../../util/LocalStorageHook"
 import { XyIcon } from "../../icons/XyIcon"
 import { ReactComponent as SpeedIcon } from "@material-symbols/svg-400/outlined/speed.svg"
+import DisabledContext, { DisabledContextProvider } from "antd/es/config-provider/DisabledContext"
 
 /**
  * The jog cartesian tile displays jog controls for the cartesian axes. You can jog the axes in continuous or step mode,
@@ -40,89 +41,91 @@ export const CartesianJogTile = () => {
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(0)
     const [frameIndex, setFrameIndex] = useState(0)
 
-    const { isNearSingularity, configuration } = useKinematics(kinematicsConfigurationIndex)
     const { supportedConfigurationBits } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+    const { isNearSingularity, configuration } = useKinematics(kinematicsConfigurationIndex)
+    const disabled = useContext(DisabledContext)
 
     useEffect(() => {
         setRobotConfiguration(configuration)
     }, [configuration])
 
     return (
-        <DockTileWithToolbar
-            toolbar={
-                <>
-                    <JogHomeSplitButton
-                        kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                        frameIndex={frameIndex}
-                    />
-                    <JogModeRadioButtons mode={jogMode} onChange={setJogMode} />
-                    {jogMode === JogMode.CONTINUOUS && (
+        <DisabledContextProvider disabled={disabled || !!isNearSingularity}>
+            <DockTileWithToolbar
+                toolbar={
+                    <>
+                        <JogHomeSplitButton
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                            frameIndex={frameIndex}
+                        />
+                        <JogModeRadioButtons mode={jogMode} onChange={setJogMode} />
+                        {jogMode === JogMode.CONTINUOUS && (
+                            <DockToolbarButtonGroup>
+                                <GlowbuzzerIcon
+                                    useFill={true}
+                                    Icon={XyIcon}
+                                    button
+                                    title="Lock XY"
+                                    checked={lockXy}
+                                    onClick={() => setLockXy(!lockXy)}
+                                />
+                                <GlowbuzzerIcon
+                                    useFill={true}
+                                    Icon={SpeedIcon}
+                                    button
+                                    title="Lock Full Speed"
+                                    checked={lockSpeed}
+                                    onClick={() => setLockSpeed(!lockSpeed)}
+                                />
+                            </DockToolbarButtonGroup>
+                        )}
                         <DockToolbarButtonGroup>
-                            <GlowbuzzerIcon
-                                useFill={true}
-                                Icon={XyIcon}
-                                button
-                                title="Lock XY"
-                                checked={lockXy}
-                                onClick={() => setLockXy(!lockXy)}
+                            <KinematicsDropdown
+                                value={kinematicsConfigurationIndex}
+                                onChange={setKinematicsConfigurationIndex}
                             />
-                            <GlowbuzzerIcon
-                                useFill={true}
-                                Icon={SpeedIcon}
-                                button
-                                title="Lock Full Speed"
-                                checked={lockSpeed}
-                                onClick={() => setLockSpeed(!lockSpeed)}
+                            <FramesDropdown value={frameIndex} onChange={setFrameIndex} />
+                            <JogLimitsToolbarButton
+                                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
                             />
                         </DockToolbarButtonGroup>
+                        {isNearSingularity ? (
+                            <Tag color={"red"} style={{ float: "right" }}>
+                                SINGULARITY
+                            </Tag>
+                        ) : null}
+                    </>
+                }
+            >
+                <JogTileItem>
+                    <Radio.Group
+                        value={positionMode}
+                        onChange={e => setPositionMode(e.target.value)}
+                        size="small"
+                    >
+                        <Radio.Button value={PositionMode.POSITION}>Position</Radio.Button>
+                        <Radio.Button value={PositionMode.ORIENTATION}>Orientation</Radio.Button>
+                    </Radio.Group>
+                    {jogMode === JogMode.GOTO && (
+                        <RobotConfigurationSelector
+                            currentValue={configuration}
+                            value={robotConfiguration}
+                            supportedConfigurationBits={supportedConfigurationBits}
+                            onChange={setRobotConfiguration}
+                        />
                     )}
-                    <DockToolbarButtonGroup>
-                        <KinematicsDropdown
-                            value={kinematicsConfigurationIndex}
-                            onChange={setKinematicsConfigurationIndex}
-                        />
-                        <FramesDropdown value={frameIndex} onChange={setFrameIndex} />
-                        <JogLimitsToolbarButton
-                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                        />
-                    </DockToolbarButtonGroup>
-                    {isNearSingularity ? (
-                        <Tag color={"red"} style={{ float: "right" }}>
-                            SINGULARITY
-                        </Tag>
-                    ) : null}
-                </>
-            }
-        >
-            <JogTileItem>
-                <Radio.Group
-                    value={positionMode}
-                    onChange={e => setPositionMode(e.target.value)}
-                    size="small"
-                >
-                    <Radio.Button value={PositionMode.POSITION}>Position</Radio.Button>
-                    <Radio.Button value={PositionMode.ORIENTATION}>Orientation</Radio.Button>
-                </Radio.Group>
-                {jogMode === JogMode.GOTO && (
-                    <RobotConfigurationSelector
-                        currentValue={configuration}
-                        value={robotConfiguration}
-                        supportedConfigurationBits={supportedConfigurationBits}
-                        onChange={setRobotConfiguration}
-                    />
-                )}
-            </JogTileItem>
+                </JogTileItem>
 
-            <JogCartesianPanel
-                jogMode={jogMode}
-                positionMode={positionMode}
-                lockXy={lockXy}
-                lockSpeed={lockSpeed}
-                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                robotConfiguration={robotConfiguration}
-                frameIndex={frameIndex}
-                disabled={!!isNearSingularity}
-            />
-        </DockTileWithToolbar>
+                <JogCartesianPanel
+                    jogMode={jogMode}
+                    positionMode={positionMode}
+                    lockXy={lockXy}
+                    lockSpeed={lockSpeed}
+                    kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    robotConfiguration={robotConfiguration}
+                    frameIndex={frameIndex}
+                />
+            </DockTileWithToolbar>
+        </DisabledContextProvider>
     )
 }

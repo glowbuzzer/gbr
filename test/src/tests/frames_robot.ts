@@ -63,7 +63,6 @@ function init_robot_test() {
         .joints(6)
         .robotKinematics(1)
         .addFrame({
-            name: "robot",
             translation: {
                 x: 100
             },

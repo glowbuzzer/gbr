@@ -18,7 +18,7 @@ import { ToolConfigEditor } from "./ToolConfigEditor"
 import { Button } from "antd"
 import { TileWithEditableTableSupport } from "../util"
 
-export type ToolsTileTableEntry = ToolConfig & { name: string; id: number }
+export type ToolsTileTableEntry = ToolConfig & { name?: string; id: number }
 
 export const ToolsTile = () => {
     const tools = useToolList()

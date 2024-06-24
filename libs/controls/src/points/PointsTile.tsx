@@ -18,7 +18,7 @@ import {
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
 import styled from "styled-components"
-import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
+import { CartesianPositionTable } from "../util"
 import { Euler, Quaternion } from "three"
 import { useConfigLiveEdit } from "../config"
 import { useDispatch } from "react-redux"
@@ -97,7 +97,7 @@ export const PointsTile = () => {
         frameIndex: parentFrameIndex,
         rotation,
         translation
-    }: WithName<CartesianPosition>) {
+    }: WithNameAndDescription<CartesianPosition>) {
         const pointIndex = mode === CartesianPositionEditPanelMode.CREATE ? points.length : selected
         const modifiedPoint: WithNameAndDescription<PointsConfig> = {
             name,
