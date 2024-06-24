@@ -2,6 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
+import * as React from "react"
 import { useEffect } from "react"
 import { ConnectionState, useConnection, usePrefs } from "@glowbuzzer/store"
 
@@ -15,5 +16,5 @@ export const AutoConnectionController = ({ children = null, enabled }) => {
         }
     }, [enabled, connected /*, state, prefs.current.url*/])
 
-    return children
+    return <>{children}</>
 }
