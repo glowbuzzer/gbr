@@ -1,17 +1,19 @@
 /*
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
-
+import { useMemo, useRef } from "react"
 import { createSlice, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { StatusUpdateSlice } from "../util/redux"
 import { useConfig } from "../config"
-import { ModbusDinStatus, ModbusUiinStatus } from "../gbc"
+import { DigitalInputStatus, ModbusDinStatus, SafetyDigitalInputStatus } from "../gbc"
+import { useConnection } from "../connect"
+import deepEqual from "fast-deep-equal"
 
-export const digitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
+export const digitalInputsSlice: StatusUpdateSlice<DigitalInputStatus[]> = createSlice({
     name: "din",
-    initialState: [] as boolean[],
+    initialState: [] as DigitalInputStatus[],
     reducers: {
         status: (state, action) => {
             return [...action.payload.status]
@@ -34,20 +36,111 @@ export function useDigitalInputList() {
  *
  * @param index The index in the configuration of the digital input
  */
-export function useDigitalInputState(index: number): boolean {
-    return useSelector((state: RootState) => state.din[index])
+// export function useDigitalInputState(index: number): boolean {
+//     return useSelector((state: RootState) => state.din[index])
+// }
+
+function useGenericDigitalInputState(
+    index: number,
+    type: "din" | "safetyDin" | "externalDin"
+): [
+    {
+        /** The current effective value */
+        actValue?: boolean
+        /** The desired value */
+        setValue?: boolean
+        /** Whether the desired value should override the value last set by an activity ?????*/
+        override?: boolean
+    },
+    (setValue: boolean, override?: boolean) => void
+] {
+    const connection = useConnection()
+    const ref = useRef<DigitalInputStatus>(null)
+    const din = useSelector((root: RootState) => root[type][index], shallowEqual) || {
+        actValue: false,
+        setValue: false,
+        override: false
+    }
+
+    // compare ref value of din with latest from store
+    if (!deepEqual(ref.current, din)) {
+        ref.current = din
+    }
+
+    const value = ref.current
+    return useMemo(
+        () => [
+            value,
+            (value: boolean, override = true) => {
+                connection.send(
+                    JSON.stringify({
+                        command: {
+                            [type]: {
+                                [index]: {
+                                    command: {
+                                        setValue: value ? 1 : 0,
+                                        override
+                                    }
+                                }
+                            }
+                        }
+                    })
+                )
+            }
+        ],
+        [index, value, connection, type]
+    )
+}
+
+/**
+ * Returns the state of a digital input, and a function to set the desired state.
+ *
+ * The effective value is determined by GBC and is the setValue (if override is true) or the value last set by an activity
+ * (see `setDout` in {@link ActivityCommand} or {@link ActivityStreamItem}) ?????????????????????
+ *
+ * @param index The index in the configuration of the digital output
+ */
+export function useDigitalInputState(index: number): [
+    {
+        /** The current effective value */
+        actValue?: boolean
+        /** The desired value */
+        setValue?: boolean
+        /** Whether the desired value should override the value???y */
+        override?: boolean
+    },
+    (setValue: boolean, override?: boolean) => void
+] {
+    return useGenericDigitalInputState(index, "din")
 }
 
 /**
  * Returns a list with the current state of each digital input as `true` or `false`
  */
+// export function useDigitalInputs(): boolean[] {
+//     return useSelector((state: RootState) => state.din, shallowEqual)
+// }
+
 export function useDigitalInputs(): boolean[] {
-    return useSelector((state: RootState) => state.din, shallowEqual)
+    // return useSelector((state: RootState) => state.safetyDin, shallowEqual)
+    return useSelector(
+        (state: RootState) => state.din.map(item => item.actValue ?? false),
+        shallowEqual
+    )
 }
 
-export const safetyDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
+// export const safetyDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
+//     name: "safetyDin",
+//     initialState: [] as boolean[],
+//     reducers: {
+//         status: (state, action) => {
+//             return [...action.payload.status]
+//         }
+//     }
+// })
+export const safetyDigitalInputsSlice: StatusUpdateSlice<SafetyDigitalInputStatus[]> = createSlice({
     name: "safetyDin",
-    initialState: [] as boolean[],
+    initialState: [] as SafetyDigitalInputStatus[],
     reducers: {
         status: (state, action) => {
             return [...action.payload.status]
@@ -70,15 +163,32 @@ export function useSafetyDigitalInputList() {
  *
  * @param index The index in the configuration of the digital input
  */
-export function useSafetyDigitalInputState(index: number): boolean {
-    return useSelector((state: RootState) => state.safetyDin[index])
+// export function useSafetyDigitalInputState(index: number): boolean {
+//     return useSelector((state: RootState) => state.safetyDin[index])
+// }
+export function useSafetyDigitalInputState(index: number): [
+    {
+        /** The current effective value */
+        actValue?: boolean
+        /** The desired value */
+        setValue?: boolean
+        /** Whether the desired value should override the value???y */
+        override?: boolean
+    },
+    (setValue: boolean, override?: boolean) => void
+] {
+    return useGenericDigitalInputState(index, "safetyDin")
 }
 
 /**
  * Returns a list with the current state of each digital input as `true` or `false`
  */
 export function useSafetyDigitalInputs(): boolean[] {
-    return useSelector((state: RootState) => state.safetyDin)
+    // return useSelector((state: RootState) => state.safetyDin, shallowEqual)
+    return useSelector(
+        (state: RootState) => state.safetyDin.map(item => item.actValue ?? false),
+        shallowEqual
+    )
 }
 
 export const externalDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSlice({
@@ -98,7 +208,7 @@ export const externalDigitalInputsSlice: StatusUpdateSlice<boolean[]> = createSl
  */
 export function useExternalDigitalInputList() {
     const config = useConfig()
-    return config.externalDin
+    return config.externalDin || []
 }
 
 /**
@@ -154,56 +264,4 @@ export function useModbusDigitalInputList() {
  */
 export function useModbusDigitalInputState(index: number): ModbusDinStatus {
     return useSelector((state: RootState) => state.modbusDin[index])
-}
-
-/**
- * Returns the list of configured modbus digital outputs.
- *
- * @returns The list of configured digital input names.
- */
-export function useModbusDigitalOutputList() {
-    const config = useConfig()
-    return config.modbusDout || []
-}
-
-/** Returns the number of digital outputs configured for each modbus digital output index (you can have a start address and end address for each modbus digital output).
- *
- * @returns The number of bools for each modbus digital output index
- */
-
-export function useModbusDigitalOutputNumberofList() {
-    const config = useConfig()
-    // Check if modbusDout is defined and is an array
-    if (Array.isArray(config.modbusDout)) {
-        // Map over the array to get the start_address values
-        return config.modbusDout.map(dout => dout.end_address - dout.start_address + 1)
-    }
-    // Return an empty array if modbusDout is not defined or not an array
-    return []
-}
-
-/**
- * Returns the list of configured modbus integer outputs.
- *
- * @returns The list of configured modbus integer output names.
- */
-export function useModbusIntegerOutputList() {
-    const config = useConfig()
-    return config.modbusUiout || []
-}
-
-/** Returns the number of integer outputs configured for each modbus intetger output index (you can have a start address and end address for each modbus integer output).
- *
- * @returns The number of ints for each modbus integer output index
- */
-
-export function useModbusIntegerOutputNumberofList() {
-    const config = useConfig()
-    // Check if modbusUiout is defined and is an array
-    if (Array.isArray(config.modbusUiout)) {
-        // Map over the array to get the start_address values
-        return config.modbusUiout.map(uiout => uiout.end_address - uiout.start_address + 1)
-    }
-    // Return an empty array if modbusDout is not defined or not an array
-    return []
 }
