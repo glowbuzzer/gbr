@@ -24,6 +24,8 @@ import { ConnectionProvider } from "./ConnectionProvider"
 import { GlowbuzzerAppLifecycle } from "./lifecycle"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
 import { GbdbProvider } from "../gbdb"
+import { AutoConnectionController } from "./AutoConnectionController"
+import { AutoOpEnabledController } from "./AutoOpEnabledController"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
@@ -136,6 +138,10 @@ type GlowbuzzerAppProps = {
     configuration?: GlowbuzzerConfig
     /** Configuration for slice persistence */
     persistenceConfiguration?: GbdbConfiguration
+    /** Whether to auto-connect to GBC */
+    autoConnect?: boolean
+    /** Whether to auto-enable operation */
+    autoOpEnabled?: boolean
     /** Your application */
     children: ReactNode
 }
@@ -155,6 +161,8 @@ export const GlowbuzzerApp = ({
     additionalReducers,
     configuration,
     persistenceConfiguration,
+    autoConnect,
+    autoOpEnabled,
     children
 }: GlowbuzzerAppProps) => {
     initSettings(appName)
@@ -173,7 +181,12 @@ export const GlowbuzzerApp = ({
                     <GbdbProvider configuration={persistenceConfiguration}>
                         <ConnectionProvider>
                             <ConfigLiveEditProvider>
-                                <GlowbuzzerContainer>{children}</GlowbuzzerContainer>
+                                <GlowbuzzerContainer>
+                                    <AutoConnectionController enabled={autoConnect} />
+                                    <AutoOpEnabledController enabled={autoOpEnabled}>
+                                        {children}
+                                    </AutoOpEnabledController>
+                                </GlowbuzzerContainer>
                             </ConfigLiveEditProvider>
                         </ConnectionProvider>
                     </GbdbProvider>

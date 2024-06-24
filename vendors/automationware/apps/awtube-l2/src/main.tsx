@@ -40,6 +40,8 @@ root.render(
         appName="awtube-l2"
         configuration={config}
         persistenceConfiguration={persistence}
+        autoConnect={true}
+        autoOpEnabled={true}
     >
         <SerialCommunicationsProvider>
             <App />

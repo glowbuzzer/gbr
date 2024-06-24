@@ -18,6 +18,7 @@ import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
 import { forwardRef } from "react"
 import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
 import { ModeSwitch } from "../modes/ModeSwitch"
+import { useAutoOpEnabled } from "../app/AutoOpEnabledController"
 
 const StyledSpace = styled(Space)`
     padding-top: 8px;
@@ -55,6 +56,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
     const { name } = useMachine()
     const { handGuidedModeRequested, handGuidedModeActive } = useHandGuidedMode()
+    const enable_button_hidden = useAutoOpEnabled()
 
     return (
         <Flex justify="space-between" ref={ref}>
@@ -78,7 +80,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
                     </div>
                 )}
                 <StatusBarLiveSwitch />
-                <StatusBarEnableOperation />
+                {enable_button_hidden || <StatusBarEnableOperation />}
             </StyledSpace>
             {children}
             <StatusBarGbDb />
