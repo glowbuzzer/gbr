@@ -11,6 +11,8 @@ import {
     AoutStatus,
     CartesianPosition,
     DinConfig,
+    DinCommand,
+    DinStatus,
     DoutCommand,
     DoutConfig,
     DoutStatus,
@@ -36,6 +38,8 @@ import {
     MoveParametersConfig,
     PointsConfig,
     SafetyDinConfig,
+    SafetyDinCommand,
+    SafetyDinStatus,
     ModbusDinConfig,
     SafetyDoutCommand,
     SafetyDoutConfig,
@@ -157,6 +161,9 @@ export type IntegerOutputStatus = Required<IoutStatus & IoutCommand>
 export type DigitalOutputStatus = Required<DoutStatus & DoutCommand>
 export type SafetyDigitalOutputStatus = Required<SafetyDoutStatus & SafetyDoutCommand>
 
+export type DigitalInputStatus = Required<DinStatus & DinCommand>
+export type SafetyDigitalInputStatus = Required<SafetyDinStatus & SafetyDinCommand>
+
 export type GlowbuzzerStatus = {
     /**
      * Provides information about activities that are being streamed to GBC.
@@ -204,9 +211,10 @@ export type GlowbuzzerStatus = {
         /** The current state of all modbus unisgned interger inputs. */
         modbusUiin: ModbusUiinStatus[]
         /** The current state of all digital inputs. */
-        din: boolean[]
+        din: DinStatus[]
         /** The current state of all safe digital inputs. */
-        safetyDin: boolean[]
+        // safetyDin: boolean[]
+        safetyDin: SafetyDinStatus[]
         /** The current state of all modbus digital inputs. */
         modbusDin: ModbusDinStatus[]
         /** The current state of all analog outputs. */

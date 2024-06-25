@@ -13,6 +13,7 @@ import {
     useSoloActivity
 } from "@glowbuzzer/store"
 import { index, number } from "mathjs"
+import RotarySwitch from "./rotarySwitch/RotarySwitch"
 
 enum Activity {
     NONE,
@@ -163,6 +164,7 @@ export const DrivesMoveTile = () => {
         })
     }
 
+    const [isChecked, setIsChecked] = useState(false)
     const items: TabsProps["items"] = [
         {
             key: "1",
@@ -197,6 +199,9 @@ export const DrivesMoveTile = () => {
                         >
                             Stop
                         </Button>
+                        <div style={{ padding: "20px" }}>
+                            <RotarySwitch checked={isChecked} onChange={setIsChecked} />
+                        </div>
                     </Space>
                 </Space>
             )

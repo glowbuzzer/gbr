@@ -32,6 +32,7 @@ import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
 import { DrivesOscillatingMoveTileDefinition } from "./tiles"
+import { VirtualHmiTileDefinition } from "./tiles"
 import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
 import { EmStatTileDefinition } from "@glowbuzzer/controls"
 
@@ -62,7 +63,8 @@ export const App = () => {
                 ModbusDigitalInputsTileDefinition,
                 ModbusIntegerInputsTileDefinition,
                 ModbusDigitalOutputsTileDefinition,
-                ModbusIntegerOutputsTileDefinition
+                ModbusIntegerOutputsTileDefinition,
+                VirtualHmiTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives FSoE" fileExtra={menuItems} />

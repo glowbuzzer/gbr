@@ -6,15 +6,17 @@ import * as React from "react"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { Card, TabsProps } from "antd"
-import { GbemConfigTab } from "./GbemConfigTab"
-import { GbemReadSlaveTab } from "./gbemReadSlaves/GbemReadSlaveTab"
-import { GbemOptionalSlavesTab } from "./GbemOptionalSlavesTab"
-import { SlaveCatProvider } from "./slaveCatData/slaveCatProvider"
+import { EtherCatConfigTab } from "./etherCatConfigTab/EtherCatConfigTab"
 import { IoConfigTab } from "./ioConfig/IoConfigTab"
+import { VersionTab } from "./versionTab/VersionTab"
+import { EtherCatConfigProvider } from "./etherCatConfigTab/EtherCatConfigContext"
+import { MachineEnvelopeConfigTab } from "./machineEnvelopeConfigTab/MachineEnvelopeConfigTab"
+import { VerticalAxisConfigTab } from "./verticalAxisConfigTab/verticalAxisConfigTab"
+import { ToolConfigTab } from "./toolConfigTab/ToolConfigTab"
 
 const StyledDiv = styled.div`
     padding: 10px;
-    height: 100%;
+    //height: 100%;
 
     .ant-card {
         height: 100%;
@@ -28,26 +30,28 @@ const StyledDiv = styled.div`
 `
 
 export const ConfigEditTile2 = () => {
-    const [currentTab, setCurrentTab] = useState("config")
+    const [currentTab, setCurrentTab] = useState("etherCat")
 
     const tab_content = {
-        config: <GbemConfigTab />,
-        readSlaves: <GbemReadSlaveTab />,
-        optionalSlaves: <GbemOptionalSlavesTab />,
-        io: <IoConfigTab />
+        io: <IoConfigTab />,
+        etherCat: <EtherCatConfigTab />,
+        tool: <ToolConfigTab />,
+        machineEnvelope: <MachineEnvelopeConfigTab />,
+        frames: <p>Frames config content</p>,
+        verticalAxis: <VerticalAxisConfigTab />,
+        debug: <p>Debug config content</p>,
+        version: <VersionTab />
     }
 
     const tabs: TabsProps["items"] = [
-        { key: "config", label: "Config" },
-        { key: "readSlaves", label: "Read slave config" },
-        { key: "optionalSlaves", label: "Optional slave enable" },
-        { key: "io", label: "IO configuration" },
-        { key: "setSlaveConfig", label: "Set slave config" },
-        { key: "toolConfig", label: "Tool configuration" },
-        { key: "machineEnvelope", label: "Set machine envelope" },
+        { key: "io", label: "IO config" },
+        { key: "etherCat", label: "EtherCAT Config" },
+        { key: "tool", label: "Tool config" },
+        { key: "machineEnvelope", label: "Machine envelope config" },
         { key: "frames", label: "Frames config" },
         { key: "verticalAxis", label: "Vertical axis config" },
-        { key: "debug", label: "Debug setings" }
+        { key: "debug", label: "Debug config" },
+        { key: "version", label: "Software versions" }
     ]
 
     function switch_tab(e: string) {
@@ -55,8 +59,8 @@ export const ConfigEditTile2 = () => {
     }
 
     return (
-        <SlaveCatProvider>
-            <StyledDiv>
+        <StyledDiv>
+            <EtherCatConfigProvider>
                 <Card
                     tabList={tabs}
                     size="small"
@@ -65,7 +69,7 @@ export const ConfigEditTile2 = () => {
                 >
                     {tab_content[currentTab]}
                 </Card>
-            </StyledDiv>
-        </SlaveCatProvider>
+            </EtherCatConfigProvider>
+        </StyledDiv>
     )
 }

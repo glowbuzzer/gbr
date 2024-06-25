@@ -36,7 +36,7 @@ type SafetyDigitalInputsTileProps = {
 export const SafetyDigitalInputsTile = ({ labels = [] }: SafetyDigitalInputsTileProps) => {
     const dins = useSafetyDigitalInputList()
     const values = useSafetyDigitalInputs()
-
+    
     const normalised_labels = dins?.map(
         (config, index) => labels[index] || config.name || index.toString()
     )

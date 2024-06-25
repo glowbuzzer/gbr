@@ -1,6 +1,6 @@
 import React, { useEffect, useState, ReactNode } from "react"
 
-import { Slave } from "../slavecatTypes/Slave"
+import { slave } from "../slavecatTypes/Slave"
 import { SlaveCatContext } from "./slaveCatContext"
 
 interface SlaveCatProviderProps {
@@ -8,11 +8,11 @@ interface SlaveCatProviderProps {
 }
 
 export const SlaveCatProvider = ({ children }: SlaveCatProviderProps) => {
-    const [slaveData, setSlaveData] = useState<Slave[]>([])
+    const [slaveData, setSlaveData] = useState<slave[]>([])
 
     useEffect(() => {
         import("../slaveCatData/slaveCatData.json")
-            .then(data => setSlaveData(data.default as any))
+            .then(data => setSlaveData(data.default))
             .catch(error => console.error("Error importing JSON:", error))
     }, [])
 

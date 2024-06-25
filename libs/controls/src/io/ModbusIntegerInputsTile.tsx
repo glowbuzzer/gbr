@@ -37,7 +37,7 @@ const ModbusIntegerInputItem = ({ label, index }) => {
         <StyledDiv key={index}>
             <div>{label}</div>
             <div>
-                Value: <Tag>{actValue}</Tag>
+                <Tag>{actValue}</Tag>
                 {isError && (
                     <>
                         Error Code:{" "}

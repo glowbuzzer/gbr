@@ -18,6 +18,7 @@ export interface DataNode {
     subIndex?: number
     bitSize?: number
     description?: string
+    isParent?: boolean
 }
 
 const getStringValueFromDefaultValue = (defaultValue: DefaultValue): string => {
@@ -87,7 +88,8 @@ export const transformToTreeData = (data: SimpleObject[], parentPath?: string): 
             index: item.index,
             bitSize: item.bitSize,
             description: item.description,
-            defaultValue: getStringValueFromDefaultValue(item?.defaultValue)
+            defaultValue: getStringValueFromDefaultValue(item?.defaultValue),
+            isParent: isParent
 
             // ...item // Spread item properties to ensure they are part of the node
         }

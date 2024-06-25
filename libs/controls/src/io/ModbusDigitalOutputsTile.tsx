@@ -4,7 +4,19 @@
 
 import React from "react"
 import { useState } from "react"
-import { Alert, Button, Col, Row, Select, Switch, Tag } from "antd"
+import {
+    Alert,
+    Button,
+    Card,
+    Col,
+    Row,
+    Select,
+    Space,
+    Switch,
+    Tag,
+    Tooltip,
+    Typography
+} from "antd"
 import styled from "styled-components"
 import {
     MachineState,
@@ -14,8 +26,36 @@ import {
     useSoloActivity
 } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
+import { ControlOutlined } from "@ant-design/icons"
 
 const { Option } = Select
+
+const { Text } = Typography
+
+const TitleContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+`
+
+const TitleContent = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 8px;
+`
+
+const StyledContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+`
+
+const StyledCard = styled(Card)`
+    .ant-card-body {
+        padding: 10px;
+    }
+`
 
 const SwitchContainer = styled.div`
     display: flex;
@@ -59,6 +99,8 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
     const doutNumberof = useModbusDigitalOutputNumberofList()
 
     const machineState = useMachine().currentState
+
+    //todo i can't possibly forget this again?
     // if (machineState !== MachineState.OPERATION_ENABLED) {
     //     return (
     //         <StyledTileContent>
@@ -73,7 +115,7 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
     // }
     return (
         <StyledTileContent>
-            <StyledDiv>
+            <StyledContainer>
                 {douts?.map((config, index) => (
                     <ModbusDigitalOutputItem
                         key={index}
@@ -81,9 +123,11 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
                         label={labels[index] || config.name || index.toString()}
                         numberOf={doutNumberof[index]}
                         description={config.description || "No description"}
+                        start_address={config.start_address}
+                        end_address={config.end_address}
                     />
                 ))}
-            </StyledDiv>
+            </StyledContainer>
         </StyledTileContent>
     )
 }
@@ -93,12 +137,17 @@ interface ModbusDigitalOutputItemProps {
     label: string | number
     numberOf: number
     description?: string
+    start_address?: number
+    end_address?: number
 }
 
 const ModbusDigitalOutputItem: React.FC<ModbusDigitalOutputItemProps> = ({
     index,
     label,
-    numberOf
+    numberOf,
+    description,
+    start_address,
+    end_address
 }) => {
     const api = useSoloActivity(0)
 
@@ -142,40 +191,61 @@ const ModbusDigitalOutputItem: React.FC<ModbusDigitalOutputItemProps> = ({
     //     // Initial state setup or any other side effects
     // }, []);
 
-    return (
-        <Row gutter={10} style={{ marginBottom: "2px" }}>
-            <Col span={4}>
-                <label className="dout-label">{label}</label>
-            </Col>
-            {Array.from({ length: numberOf }).map((_, i) => (
-                <Col key={i} span={4}>
-                    <Switch
-                        checked={modbusDigitalOutputStates[i]}
-                        onChange={checked => handleToggle(i, checked, numberOf)}
-                        checkedChildren="ON"
-                        unCheckedChildren="OFF"
-                        loading={loading && numberOf === 1}
-                    />
-                </Col>
-            ))}
+    const renderCardTitle = () => (
+        <TitleContainer>
+            <TitleContent>
+                <Tooltip title={description}>
+                    <Text>
+                        <p style={{ fontWeight: "bold" }}>{label}</p>
+                        <p style={{ fontStyle: "italic" }}>
+                            (Address{" "}
+                            {start_address === end_address
+                                ? `${start_address} (0x${start_address
+                                      .toString(16)
+                                      .padStart(4, "0")})`
+                                : `from ${start_address} (0x${start_address
+                                      .toString(16)
+                                      .padStart(4, "0")}) to ${end_address} (0x${end_address
+                                      .toString(16)
+                                      .padStart(4, "0")})`}
+                            )
+                        </p>
+                    </Text>
+                </Tooltip>
+            </TitleContent>
             {numberOf > 1 && (
-                <Col span={4}>
-                    <Button
-                        type="primary"
-                        onClick={() => handleWrite()}
-                        loading={loading}
-                        style={{
-                            height: "22px",
-                            fontSize: "10px",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}
-                    >
-                        Write
-                    </Button>
-                </Col>
+                <Button type="primary" onClick={handleWrite} loading={loading} size="small">
+                    Set all
+                </Button>
             )}
-        </Row>
+        </TitleContainer>
+    )
+
+    return (
+        <StyledCard title={renderCardTitle()} size="small" bordered>
+            <Row gutter={16} align="middle">
+                <Col span={16}>
+                    <Space direction="vertical">
+                        {Array.from({ length: numberOf }).map((_, i) => (
+                            <Space key={i}>
+                                <Text>
+                                    {" "}
+                                    {start_address + i} (
+                                    {`0x${(start_address + i).toString(16).padStart(4, "0")}`})
+                                </Text>
+                                <Switch
+                                    checked={modbusDigitalOutputStates[i]}
+                                    onChange={checked => handleToggle(i, checked, numberOf)}
+                                    checkedChildren="ON"
+                                    unCheckedChildren="OFF"
+                                    size="small"
+                                    loading={loading && numberOf === 1}
+                                />
+                            </Space>
+                        ))}
+                    </Space>
+                </Col>
+            </Row>
+        </StyledCard>
     )
 }

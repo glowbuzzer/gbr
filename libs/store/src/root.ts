@@ -60,8 +60,12 @@ export const standardReducers = {
     joints: jointsSlice.reducer,
     points: pointsSlice.reducer,
     frames: framesSlice.reducer,
-    din: overrideable<boolean>(digitalInputsSlice),
-    safetyDin: overrideable<boolean>(safetyDigitalInputsSlice),
+    // din: overrideable<boolean>(digitalInputsSlice),
+    // safetyDin: overrideable<boolean>(safetyDigitalInputsSlice),
+    din: digitalInputsSlice.reducer,
+    safetyDin: safetyDigitalInputsSlice.reducer,
+
+
     externalDin: externalDigitalInputsSlice.reducer,
     // modbusDin: overrideable<boolean>(modbusDigitalInputsSlice),
     modbusDin: modbusDigitalInputsSlice.reducer,

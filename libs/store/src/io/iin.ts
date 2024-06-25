@@ -26,7 +26,7 @@ export const integerInputsSlice: StatusUpdateSlice<number[]> = createSlice({
  */
 export function useIntegerInputList() {
     const config = useConfig()
-    return config.iin
+    return config.iin || []
 }
 
 /**
@@ -62,7 +62,7 @@ export const unsignedIntegerInputsSlice: StatusUpdateSlice<number[]> = createSli
  */
 export function useUnsignedIntegerInputList() {
     const config = useConfig()
-    return config.uiin
+    return config.uiin || []
 }
 
 /** Returns the list of unsigned integer input values */
@@ -98,7 +98,7 @@ export const externalIntegerInputsSlice: StatusUpdateSlice<number[]> = createSli
  */
 export function useExternalIntegerInputList() {
     const config = useConfig()
-    return config.externalIin
+    return config.externalIin || []
 }
 
 /** Returns the list of external integer input values */
@@ -183,7 +183,7 @@ export const modbusUnsignedIntegerInputsSlice: Slice<ModbusUiinStatus[]> = creat
  */
 export function useExternalUnsignedIntegerInputList() {
     const config = useConfig()
-    return config.externalUiin
+    return config.externalUiin || []
 }
 
 /** Returns the list of external unsigned integer input values */
@@ -207,7 +207,7 @@ export function useExternalUnsignedIntegerInputState(index: number): number {
  */
 export function useModbusUnsignedIntegerInputList() {
     const config = useConfig()
-    return config.modbusUiin
+    return config.modbusUiin || []
 }
 
 /** Returns the list of Modbus unsigned integer input values */
