@@ -16,10 +16,10 @@ import { useSlaveCat } from "../slaveCatData/slaveCatContext"
 import { DefaultValue } from "../slavecatTypes/DefaultValue"
 import { EtherCatConfig, Slave } from "../EtherCatConfigTypes"
 import { slaveInfo } from "../slavecatTypes/SlaveInfo"
-import { EtherCatConfigEditTabProps } from "../etherCatConfigEditTab/EtherCatSlaveConfigTab"
 import { SlaveCatTree } from "../slaveCatTree/SlaveCatTree"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import { EventDataNode } from "antd/es/tree"
+import { slave } from "../slavecatTypes/Slave"
 
 const ScrollableTreeContainer = styled.div`
     max-height: 220px; /* Adjust the height as needed */
@@ -126,7 +126,7 @@ type slaveList = {
 
 interface SlaveDropdownProps {
     slaveList: slaveList[]
-    slaveData: Slave[]
+    slaveData: slave[]
     selectedSlave: slaveList | undefined
     setSelectedSlave: React.Dispatch<React.SetStateAction<slaveList | undefined>>
 }
@@ -154,7 +154,7 @@ const SlaveDropdown: React.FC<SlaveDropdownProps> = ({
 }) => {
     // const [selectedSlave, setSelectedSlave] = useState<slaveList | undefined>(undefined)
     // const [selectedSlaveData, setSelectedSlaveData] = useState<Slave | undefined>(undefined)
-    const [selectedSlaveData, setSelectedSlaveData] = useState<Slave | undefined>(undefined)
+    const [selectedSlaveData, setSelectedSlaveData] = useState<slave | undefined>(undefined)
 
     useEffect(() => {
         if (selectedSlave) {
@@ -219,11 +219,19 @@ function transformToSlaveList(config: EtherCatConfig): slaveList[] {
             is_configurable: slave.optional.is_configurable,
             is_enabled: slave.optional.is_enabled
         }))
-        .filter(slave => !(slave.is_configurable && slave.is_enabled))
+        .filter(slave => !(slave.is_configurable && !slave.is_enabled))
         .map(({ idx, name, eep_name }) => ({ idx, name, eep_name }))
 }
 
-export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) => {
+type EtherCatReadSlaveTabProps = {}
+
+interface ResponsePayload {
+    payload: {
+        value: number
+    }
+}
+
+export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) => {
     const { request } = useConnection()
 
     const {
@@ -241,11 +249,11 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) =
     const [requestText, setRequestText] = useState(
         '{"payload": {"index": 0x1000, "subindex": 0, "length": 2}}'
     )
-    const [responseText, setResponseText] = useState("")
+    const [responseText, setResponseText] = useState<string>("")
     const [selectedNode, setSelectedNode] = useState<DataNode | null>(null)
     const [isError, setIsError] = useState(false)
     const [selectedSlave, setSelectedSlave] = useState<slaveList | undefined>(undefined)
-    const [selectedSlaveData, setSelectedSlaveData] = useState<Slave | undefined>(undefined)
+    const [selectedSlaveData, setSelectedSlaveData] = useState<slave | undefined>(undefined)
 
     const filteredSlaveList = transformToSlaveList(config)
     console.log(filteredSlaveList) // Output: [ { idx: 0, name: 'Eep1' } ]
@@ -261,6 +269,15 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) =
     const nodeSelectRef = useRef<HTMLDivElement | null>(null)
     const [isScrolling, setIsScrolling] = useState(false)
     const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+    const getPayloadValue = (response: string): number | string => {
+        try {
+            const parsedResponse: ResponsePayload = JSON.parse(response)
+            return parsedResponse.payload.value
+        } catch (error) {
+            return "Invalid response format"
+        }
+    }
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -320,7 +337,7 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) =
             // Construct the request text based on the selected node
             const constructedRequestText = JSON.stringify({
                 payload: {
-                    slave: selectedSlave.idx, // Add the slave idx here
+                    slave: selectedSlave.idx + 1, // Add the slave idx here
                     index: selectedNode.index,
                     subindex: selectedNode.subIndex || 0,
                     datatype: selectedNode.dataTypeCode,
@@ -430,7 +447,7 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatConfigEditTabProps> = ({}) =
             {responseText && (
                 <Alert
                     message={isError ? "Error reading from slave" : "Success reading from slave"}
-                    description={`Value read: ${responseText}`}
+                    description={`Value read: ${getPayloadValue(responseText)}`}
                     type={isError ? "error" : "success"}
                     showIcon
                 />
