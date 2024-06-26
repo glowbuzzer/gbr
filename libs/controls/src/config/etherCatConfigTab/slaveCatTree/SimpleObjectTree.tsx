@@ -3,7 +3,7 @@ import { SimpleObject } from "../slavecatTypes/SimpleObject"
 import { DataNode, transformToTreeData } from "./transformToTreeData"
 import { Tooltip, Tree, TreeProps } from "antd"
 import styled from "styled-components"
-import { useGlowbuzzerTheme } from "../../app"
+import { useGlowbuzzerTheme } from "../../../app"
 
 const StyledTree = styled(Tree)<{ darkMode: boolean }>`
     .ant-tree-treenode-disabled .ant-tree-node-content-wrapper {
