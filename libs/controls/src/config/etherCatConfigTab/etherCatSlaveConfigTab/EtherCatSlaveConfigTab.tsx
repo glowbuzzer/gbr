@@ -36,6 +36,7 @@ import { SimpleObject } from "../slavecatTypes/SimpleObject"
 
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons"
 import styled from "styled-components"
+import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
 
 const { Panel } = Collapse
 
@@ -56,6 +57,11 @@ const HeaderText = styled.div<{ isOptional: boolean }>`
     align-items: center;
     color: ${({ isOptional }) => (isOptional ? "grey" : "inherit")};
 `
+
+const findDataTypeString = datatypeNumber => {
+    const dataType = ethercatDataTypes.find(type => type.index === datatypeNumber)
+    return dataType ? dataType.dataType : "Unknown"
+}
 
 const EditableCell = ({
     title,
@@ -105,6 +111,54 @@ const EditableCell = ({
                         {
                             required: true,
                             message: `${title} is required.`
+                        },
+                        {
+                            validator: (_, value) => {
+                                const dataType = ethercatDataTypes.find(
+                                    dt => dt.index === record.datatype
+                                )
+
+                                if (dataType) {
+                                    const { tsType, bitSize } = dataType
+
+                                    let convertedValue = value
+                                    if (tsType === "boolean") {
+                                        convertedValue = value === "true"
+                                    } else if (tsType === "number") {
+                                        convertedValue = Number(value)
+                                    }
+
+                                    console.log("tsType", tsType)
+                                    console.log("convertedValue", convertedValue)
+                                    console.log("typeof", typeof convertedValue)
+
+                                    if (
+                                        (tsType === "boolean" &&
+                                            typeof convertedValue !== "boolean") ||
+                                        (tsType === "number" &&
+                                            typeof convertedValue !== "number") ||
+                                        (tsType === "string" && typeof convertedValue !== "string")
+                                    ) {
+                                        return Promise.reject(
+                                            new Error(`Value must be of type ${tsType}`)
+                                        )
+                                    }
+                                    if (
+                                        tsType === "number" &&
+                                        (convertedValue < -(2 ** (bitSize - 1)) ||
+                                            convertedValue > 2 ** (bitSize - 1) - 1)
+                                    ) {
+                                        return Promise.reject(
+                                            new Error(
+                                                `Value must be within the range for ${bitSize}-bit number`
+                                            )
+                                        )
+                                    }
+                                }
+                                return Promise.resolve()
+
+                                return Promise.resolve()
+                            }
                         }
                     ]}
                 >
@@ -236,7 +290,8 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
         {
             title: "Datatype",
             dataIndex: "datatype",
-            key: "datatype"
+            key: "datatype",
+            render: (_, record) => findDataTypeString(record.datatype)
         },
         {
             title: "Index",
