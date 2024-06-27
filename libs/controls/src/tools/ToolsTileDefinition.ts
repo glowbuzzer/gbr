@@ -11,7 +11,6 @@ import { ToolsTile } from "./ToolsTile"
 export const ToolsTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.TOOLS)
     .name("Tools")
-    .placement(2, 2)
     .render(() => createElement(ToolsTile), undefined, gbdbFacetIndicatorFactory("config", "tools"))
-    .enableWithoutConnection()
+    .placement(2, 2)
     .build()

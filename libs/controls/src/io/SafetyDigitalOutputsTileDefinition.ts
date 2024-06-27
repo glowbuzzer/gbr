@@ -6,15 +6,15 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { SafetyDigitalOutputsTile } from "./SafetyDigitalOutputsTile"
 import { SafetyDigitalOutputsTileHelp } from "./SafetyDigitalOutputsTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const SafetyDigitalOutputsTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.SAFETY_DIGITAL_OUTPUTS,
-    name: "Safety Digital Outputs",
-    defaultPlacement: {
-        column: 2,
-        row: 2
-    },
-    enableWithoutConnection: true,
-    render: () => createElement(SafetyDigitalOutputsTile, {}, null),
-    renderHelp: () => createElement(SafetyDigitalOutputsTileHelp, {}, null)
-}
+export const SafetyDigitalOutputsTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.SAFETY_DIGITAL_OUTPUTS)
+    .name("Safety Digital Outputs")
+    .placement(2, 2)
+    .render(
+        () => createElement(SafetyDigitalOutputsTile, {}, null),
+        () => createElement(SafetyDigitalOutputsTileHelp, {}, null)
+    )
+    .requiresOperationEnabled()
+    .build()

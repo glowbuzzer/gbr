@@ -10,7 +10,6 @@ import { DockTileDefinition, DockTileDefinitionBuilder } from "../dock"
 export const EmStatTileDefinition: DockTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.EMSTAT)
     .name("EtherCAT Master Status")
-    .placement(1, 0)
-    .enableWithoutConnection()
     .render(() => createElement(EmStatTile, {}, null))
+    .placement(1, 0)
     .build()

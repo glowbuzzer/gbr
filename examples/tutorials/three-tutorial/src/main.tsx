@@ -53,47 +53,26 @@ import { PlaybackTile } from "./playbackTile"
 import { DemoMoveTile } from "./demoMoveTile"
 import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
 
-const ChooseExampleTileDefinition: DockTileDefinition = {
-    id: "chooseExample",
-    name: "Choose Example",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    excludeByDefault: false,
-    config: {
-        enableWithoutConnection: true
-    },
-    render: () => <ChooseExample />
-}
+const ChooseExampleTileDefinition = DockTileDefinitionBuilder()
+    .id("chooseExample")
+    .name("Choose Example")
+    .placement(2, 0)
+    .render(() => <ChooseExample />)
+    .build()
 
-const PlaybackTileDefinition: DockTileDefinition = {
-    id: "playback",
-    name: "Playback telemetry",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    excludeByDefault: false,
-    config: {
-        enableWithoutConnection: true
-    },
-    render: () => <PlaybackTile />
-}
+const PlaybackTileDefinition = DockTileDefinitionBuilder()
+    .id("playback")
+    .name("Playback telemetry")
+    .placement(2, 0)
+    .render(() => <PlaybackTile />)
+    .build()
 
-const DemoMoveTileDefinition: DockTileDefinition = {
-    id: "demoMove",
-    name: "Demo move",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    excludeByDefault: false,
-    config: {
-        enableWithoutConnection: true
-    },
-    render: () => <DemoMoveTile />
-}
+const DemoMoveTileDefinition = DockTileDefinitionBuilder()
+    .id("demoMove")
+    .name("Demo Move")
+    .placement(2, 0)
+    .render(() => <DemoMoveTile />)
+    .build()
 
 const DEG90 = Math.PI / 2
 

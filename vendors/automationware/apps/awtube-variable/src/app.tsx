@@ -64,7 +64,6 @@ const LinkLengthTileDefinition = DockTileDefinitionBuilder()
     .render(() => {
         return <LinkLengthTile />
     })
-    .enableWithoutConnection()
     .build()
 
 export const App = () => {

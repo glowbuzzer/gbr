@@ -12,10 +12,5 @@ export const CartesianJogTileDefinition = DockTileDefinitionBuilder()
     .name("Cartesian Jog")
     .placement(0, 1)
     .render(() => createElement(CartesianJogTile, {}, null))
-    // .modeBehaviour((connected, op) => {
-    //     return {
-    //         disabled: !connected || !op,
-    //         overlay: null
-    //     }
-    // })
+    .requiresOperationEnabled()
     .build()

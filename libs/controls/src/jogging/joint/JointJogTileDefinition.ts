@@ -5,13 +5,13 @@
 import { GlowbuzzerTileIdentifiers } from "../../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { JointJogTile } from "./JointJogTile"
+import { DockTileDefinitionBuilder } from "../../dock"
+import { CartesianJogTile } from "../cartesian/CartesianJogTile"
 
-export const JointJogTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.JOG_JOINT,
-    name: "Joint Jog",
-    defaultPlacement: {
-        column: 0,
-        row: 1
-    },
-    render: () => createElement(JointJogTile, {}, null)
-}
+export const JointJogTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.JOG_JOINT)
+    .name("Joint Jog")
+    .placement(0, 1)
+    .render(() => createElement(JointJogTile, {}, null))
+    .requiresOperationEnabled()
+    .build()

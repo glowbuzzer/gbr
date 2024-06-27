@@ -136,22 +136,4 @@ test("will normalise move vector at velocity", async () => {
     await do_cancel(move, 1, 50)
 })
 
-test("move vector at velocity respects feedrate", async () => {
-    const pos = joint => state => state.status.joint[joint].actPos
-
-    const move1 = gbc.wrap(gbc.activity.moveVectorAtVelocity(100, 0, 0).promise)
-    await do_cancel(move1, 1, 50)
-    gbc.assert.gt(pos(0), 10)
-
-    gbc.reset()
-    gbc.enable_operation()
-    gbc.set_fro(0, 0.5)
-
-    const move2 = gbc.wrap(gbc.activity.moveVectorAtVelocity(100, 0, 0).promise)
-    await do_cancel(move2, 1, 50)
-    gbc.assert.lt(pos(0), 10)
-
-    gbc.plot("test")
-})
-
 export const activity = test

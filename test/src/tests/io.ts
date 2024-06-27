@@ -13,7 +13,7 @@ test.before.each(() => {
 
 test("can get digital input from fieldbus", async () => {
     const index = 2
-    const selector = state => state.status.din[index]
+    const selector = state => state.status.din[index].actValue
     gbc.assert
         .selector(selector, false)
         .enable_operation()

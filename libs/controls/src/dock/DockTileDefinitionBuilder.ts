@@ -2,35 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react"
-import { createElement, isValidElement, ReactNode } from "react"
+import { createElement, FunctionComponent, ReactNode } from "react"
 import { DockTileDefinition } from "./DockTileDefinition"
-import { DockTileDisabled } from "./DockTileDisabled"
-
-function convertToReactElement(tile: ReactNode) {
-    if (isValidElement(tile)) {
-        return tile
-    }
-    return createElement(React.Fragment, { children: tile })
-}
-
-export type TileWrapperFactory = (
-    tile: React.ReactNode,
-    connected: boolean,
-    op: boolean,
-    mode: string
-) => React.ReactElement
+import { DockTileStandardWrapper } from "./DockTileStandardWrapper"
+import Element = React.JSX.Element
 
 export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
     return new (class {
         public definition: DockTileDefinition = {
-            renderWrapper(tile: ReactNode, connected: boolean, _op: boolean, _mode: string) {
-                return connected
-                    ? convertToReactElement(tile)
-                    : createElement(DockTileDisabled, {
-                          children: tile
-                      })
-            },
             ...template
         }
 
@@ -49,9 +28,17 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
             renderHelpFn?: () => ReactNode,
             renderButtonsFn?: () => ReactNode
         ) {
+            this.definition.tile = template?.tile || renderFn
             this.definition.render = renderFn
             this.definition.renderHelp = renderHelpFn
             this.definition.renderButtons = renderButtonsFn
+            return this
+        }
+
+        wrap(element: FunctionComponent<{ children: ReactNode }>) {
+            this.definition.render = () =>
+                createElement(element, { children: this.definition.tile() })
+
             return this
         }
 
@@ -64,26 +51,37 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
             return this.definition
         }
 
-        wrapper(wrapperFactory: TileWrapperFactory) {
-            this.definition.renderWrapper = wrapperFactory
+        /** @deprecated */
+        enableWithoutConnection() {
+            console.warn("enableWithoutConnection is deprecated, use requiresConnection instead")
             return this
         }
 
-        enableWithoutConnection() {
-            this.definition.renderWrapper = convertToReactElement
+        requiresConnection() {
+            if (!this.definition.tile) {
+                throw new Error("render function must be set before calling requiresConnection")
+            }
+            this.definition.render = () =>
+                createElement(DockTileStandardWrapper, {
+                    children: this.definition.tile(),
+                    requireOpEnabled: false
+                })
+
             return this
         }
 
         requiresOperationEnabled() {
-            this.definition.renderWrapper = (tile, connected, op) => {
-                if (!connected || !op) {
-                    return createElement(DockTileDisabled, {
-                        children: tile,
-                        disabledOnly: connected
-                    })
-                }
-                return convertToReactElement(tile)
+            if (!this.definition.tile) {
+                throw new Error(
+                    "render function must be set before calling requiresOperationEnabled"
+                )
             }
+            this.definition.render = () =>
+                createElement(DockTileStandardWrapper, {
+                    children: this.definition.tile(),
+                    requireOpEnabled: true
+                })
+
             return this
         }
     })()

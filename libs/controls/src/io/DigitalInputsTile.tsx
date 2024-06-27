@@ -16,9 +16,7 @@ import styled from "styled-components"
 
 const { Option } = Select
 
-const StyledDiv = styled.div`
-    //padding-top: 20px;
-
+export const StyledDigitalInputs = styled.div`
     > div {
         display: flex;
         gap: 10px;
@@ -33,36 +31,6 @@ const StyledDiv = styled.div`
         text-align: center;
     }
 `
-
-const StyledDigitalInput = styled.div`
-    display: flex;
-    padding: 1px 0;
-
-    justify-content: space-between; // Add this line
-    align-items: center; // Optional: Align items to center vertically
-
-    .label {
-        flex-grow: 1;
-    }
-
-    .ant-tag {
-        width: 40px;
-        text-align: center;
-    }
-`
-
-export const TooltipWrapper = ({ title, children }) => (
-    <StyledToolTipDiv>
-        <Tooltip
-            title={title}
-            placement="right"
-            mouseEnterDelay={1}
-            getPopupContainer={triggerNode => triggerNode}
-        >
-            {children}
-        </Tooltip>
-    </StyledToolTipDiv>
-)
 
 const DigitalInputItem = ({ index, label }: { index: number; label?: string }) => {
     const [din, setDin] = useDigitalInputState(index)
@@ -114,16 +82,10 @@ type DigitalInputsTileProps = {
  */
 export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
     const dins = useDigitalInputList()
-    const values = useDigitalInputs()
-
-    // label fallbacks if no name provided
-    const normalised_labels = dins?.map(
-        (config, index) => labels[index] || config.name || index.toString()
-    )
 
     return (
         <StyledTileContent>
-            <StyledDiv>
+            <StyledDigitalInputs>
                 {dins?.map((config, index) => (
                     <DigitalInputItem
                         key={index}
@@ -131,7 +93,7 @@ export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
                         label={labels[index] || config.name || index.toString()}
                     />
                 ))}
-            </StyledDiv>
+            </StyledDigitalInputs>
         </StyledTileContent>
     )
 }

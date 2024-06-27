@@ -26,5 +26,4 @@ export const ThreeDimensionalSceneTileDefinition = DockTileDefinitionBuilder()
         () => renderThreeDimensionalSceneWithFrustum(),
         () => createElement(ThreeDimensionalSceneTileHelp, {}, null)
     )
-    .enableWithoutConnection()
     .build()

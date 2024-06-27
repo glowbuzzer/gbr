@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { createElement, useContext, useState } from "react"
+import { useContext, useState } from "react"
 import { Popover } from "antd"
 import { DockLayoutContext } from "./DockLayoutContext"
 import { Layout, TabNode } from "flexlayout-react"
@@ -13,7 +13,6 @@ import { QuestionCircleOutlined } from "@ant-design/icons"
 import { MachineState, useConnection, useMachineState } from "@glowbuzzer/store"
 import { is_touch_device } from "./util"
 import { useGlowbuzzerMode } from "../modes"
-import { DockTileDisabled } from "./DockTileDisabled"
 
 const DockTileSettingsModal = ({ Component }: { Component }) => {
     const [visible, setVisible] = useState(false)
@@ -46,7 +45,6 @@ export const DockLayout = () => {
         settingsFactory,
         helpFactory,
         headerFactory,
-        wrapperFactory,
         updateModel
     } = useContext(DockLayoutContext)
 
@@ -54,23 +52,6 @@ export const DockLayout = () => {
     const { mode } = useGlowbuzzerMode()
     const machineState = useMachineState()
     const op = machineState === MachineState.OPERATION_ENABLED
-
-    function tile_factory(node: TabNode) {
-        // create the tile itself unadorned
-        const tile = factory(node)
-        // has a wrapper factory been defined for this tile?
-        // this is used to handle overlaying the tile with a dimmer when it is disabled,
-        // and to handle other mode-specific behaviours
-        const elemFactory = wrapperFactory?.(node)
-        return elemFactory
-            ? // factory exists, so use it to wrap the tile
-              elemFactory(tile, connection.connected, op, mode)
-            : // no factory, so implement the default behaviour which
-            // is to dim the tile if we're not connected
-            connection.connected
-            ? tile // no dimming
-            : createElement(DockTileDisabled, null, tile)
-    }
 
     function render_tab_set(node, renderValues) {
         const selectedNode = node.getSelectedNode()
@@ -113,7 +94,7 @@ export const DockLayout = () => {
     return (
         <Layout
             model={model}
-            factory={tile_factory}
+            factory={(node: TabNode) => factory(node)}
             font={{ size: "12px" }}
             realtimeResize={!is_touch_device()}
             onModelChange={updateModel}

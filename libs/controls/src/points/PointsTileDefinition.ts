@@ -11,11 +11,10 @@ import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 export const PointsTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.POINTS)
     .name("Points")
-    .placement(2, 0)
-    .enableWithoutConnection()
     .render(
         () => createElement(PointsTile, {}, null),
         null,
         gbdbFacetIndicatorFactory("config", "points")
     )
+    .placement(2, 0)
     .build()

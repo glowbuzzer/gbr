@@ -36,15 +36,15 @@ import {
 } from "@glowbuzzer/store"
 import { ToolHolderConstants } from "./constants"
 
+const CustomThreeDimensionalSceneTileDefinition = DockTileDefinitionBuilder(
+    ThreeDimensionalSceneTileDefinition
+)
+    .render(() => <CncScene />)
+    .build()
+
 export const App = () => {
     const toolList = useToolList()
     const toolHolderFrame = useFrame(ToolHolderConstants.frameIndex)
-
-    const CustomThreeDimensionalSceneTileDefinition = DockTileDefinitionBuilder(
-        ThreeDimensionalSceneTileDefinition
-    )
-        .render(() => <CncScene />)
-        .build()
 
     const { spacing, holderToolOffset } = ToolHolderConstants
     const { x: originX, y: originY, z: originZ } = toolHolderFrame.translation

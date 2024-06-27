@@ -12,6 +12,7 @@ export const DrivesOscillatingMoveTileDefinition = DockTileDefinitionBuilder()
     .name("Move Drives")
     .placement(0, 1)
     .render(() => React.createElement(DrivesMoveTile))
+    .requiresOperationEnabled()
     .build()
 
 export const VirtualHmiTileDefinition = DockTileDefinitionBuilder()

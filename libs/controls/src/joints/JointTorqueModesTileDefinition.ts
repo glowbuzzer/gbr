@@ -3,15 +3,13 @@
  */
 
 import { createElement } from "react"
-import { GlowbuzzerTileIdentifiers } from ".."
+import { DockTileDefinitionBuilder, GlowbuzzerTileIdentifiers } from ".."
 import { JointTorqueModesTile } from "./JointTorqueModesTile"
 
-export const JointTorqueModesTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.JOINT_TORQUE_MODES,
-    name: "Joint Torque Mode",
-    defaultPlacement: {
-        column: 0,
-        row: 1
-    },
-    render: () => createElement(JointTorqueModesTile, {}, null)
-}
+export const JointTorqueModesTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.JOINT_TORQUE_MODES)
+    .name("Joint Torque Mode")
+    .placement(0, 1)
+    .render(() => createElement(JointTorqueModesTile, {}, null))
+    .requiresOperationEnabled()
+    .build()

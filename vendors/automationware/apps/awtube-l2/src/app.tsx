@@ -7,6 +7,7 @@ import {
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
     DevInputOverridesTileDefinition,
+    DigitalInputsTileDefinition,
     DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
@@ -21,6 +22,7 @@ import {
     MonitorTileDefinition,
     PayloadTileDefinition,
     PointsTileDefinition,
+    SafetyDigitalInputsTileDefinition,
     SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
@@ -36,6 +38,7 @@ import {
     AwTubeStatusTileDefinitionBuilder,
     Base,
     Clamp,
+    InnoboticsModeProvider,
     Joint,
     Link,
     Monobraccio,
@@ -47,8 +50,7 @@ import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { AppStatusBar } from "./AppStatusBar"
-import { InnoboticsModeProvider } from "@glowbuzzer/awlib"
-import { InnoboticsJogModeTileHelper } from "../../../awlib/src/modes/InnoboticsJogModeTileHelper"
+import { InnoboticsJogTileWrapper } from "../../../awlib/src/modes/InnoboticsJogTileWrapper"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -121,6 +123,7 @@ const InterpolatedMoveTileDefinition = DockTileDefinitionBuilder()
     .id("aw-interpolated-move")
     .name("Interpolated Move")
     .render(() => <InterpolatedMoveTile />)
+    .requiresOperationEnabled()
     .build()
 
 export const App = () => {
@@ -136,8 +139,12 @@ export const App = () => {
                     }),
                     SerialCommunicationsTileDefinition,
                     ConfigEditTileDefinition,
-                    InnoboticsJogModeTileHelper(CartesianJogTileDefinition),
-                    InnoboticsJogModeTileHelper(JointJogTileDefinition),
+                    DockTileDefinitionBuilder(CartesianJogTileDefinition)
+                        .wrap(InnoboticsJogTileWrapper)
+                        .build(),
+                    DockTileDefinitionBuilder(JointJogTileDefinition)
+                        .wrap(InnoboticsJogTileWrapper)
+                        .build(),
                     CartesianDroTileDefinition,
                     JointDroTileDefinition,
                     JointTorqueModesTileDefinition,
@@ -153,6 +160,8 @@ export const App = () => {
                     DevInputOverridesTileDefinition,
                     PayloadTileDefinition,
                     InterpolatedMoveTileDefinition,
+                    DigitalInputsTileDefinition,
+                    SafetyDigitalInputsTileDefinition,
                     DigitalOutputsTileDefinition
                 ]}
                 statusBarExtra={<AppStatusBar />}

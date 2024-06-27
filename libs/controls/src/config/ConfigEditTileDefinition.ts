@@ -24,7 +24,6 @@ import { DockTileDefinitionBuilder } from "../dock"
 export const ConfigEditTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.CONFIG_EDIT)
     .name("Config Editor")
-    .placement(1, 0)
-    .enableWithoutConnection()
     .render(() => createElement(ConfigEditTile2, {}, null), null)
+    .placement(1, 0)
     .build()

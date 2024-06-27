@@ -6,14 +6,15 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { DigitalOutputsTile } from "./DigitalOutputsTile"
 import { DigitalOutputsTileHelp } from "./DigitalOutputsTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const DigitalOutputsTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.DIGITAL_OUTPUTS,
-    name: "Digital Outputs",
-    defaultPlacement: {
-        column: 2,
-        row: 2
-    },
-    render: () => createElement(DigitalOutputsTile, {}, null),
-    renderHelp: () => createElement(DigitalOutputsTileHelp, {}, null)
-}
+export const DigitalOutputsTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.DIGITAL_OUTPUTS)
+    .name("Digital Outputs")
+    .placement(2, 2)
+    .render(
+        () => createElement(DigitalOutputsTile, {}, null),
+        () => createElement(DigitalOutputsTileHelp, {}, null)
+    )
+    .requiresOperationEnabled()
+    .build()

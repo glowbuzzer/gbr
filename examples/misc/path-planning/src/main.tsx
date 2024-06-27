@@ -52,7 +52,6 @@ const DemoTileDefinition = DockTileDefinitionBuilder()
     .name("Demo")
     .id("path-demo")
     .placement(1, 1)
-    .enableWithoutConnection()
     .build()
 
 const root = createRoot(document.getElementById("root"))

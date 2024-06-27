@@ -5,13 +5,12 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { SpindleTile } from "./SpindleTile"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const SpindleTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.SPINDLE,
-    name: "Spindle",
-    defaultPlacement: {
-        column: 2,
-        row: 0
-    },
-    render: () => createElement(SpindleTile, {}, null)
-}
+export const SpindleTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.SPINDLE)
+    .name("Spindle")
+    .placement(2, 0)
+    .render(() => createElement(SpindleTile, {}, null))
+    .requiresConnection()
+    .build()

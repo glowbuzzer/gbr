@@ -142,7 +142,8 @@ export function useDockContext(
     }
 
     function tileFor(id: string): DockTileDefinition {
-        const definition = availableTiles.find(c => c.id === id)
+        const definition: DockTileDefinition = availableTiles.find(c => c.id === id)
+
         if (!definition) {
             console.warn("No tile definition found for id", id, availableTiles)
             return {
@@ -152,6 +153,17 @@ export function useDockContext(
                 }
             }
         }
+
+        if (!definition.tile) {
+            console.log("Tile did not use DockTileDefinitionBuilder to create definition", id)
+            return {
+                id,
+                render() {
+                    return "Tile does not use DockTileDefinitionBuilder " + id
+                }
+            }
+        }
+
         return definition
         // use this for testing to render simple content in every tile
         // return {
@@ -186,9 +198,6 @@ export function useDockContext(
         },
         helpFactory: (node: TabNode) => {
             return tileFor(node.getId()).renderHelp?.()
-        },
-        wrapperFactory: (node: TabNode) => {
-            return tileFor(node.getId()).renderWrapper
         },
         updateModel: new_model => {
             // model object is not changed, so we need to force a re-render

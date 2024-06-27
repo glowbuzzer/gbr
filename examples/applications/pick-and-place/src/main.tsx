@@ -41,6 +41,7 @@ const DemoTileDefinition = DockTileDefinitionBuilder()
     .name("Demo")
     .placement(1, 1)
     .render(() => React.createElement(DemoTile))
+    .requiresConnection()
     .build()
 
 function App() {

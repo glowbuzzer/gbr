@@ -6,17 +6,14 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { GCodeTile } from "./GCodeTile"
 import { GCodeTileHelp } from "./GCodeTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const GCodeTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.GCODE,
-    name: "GCode",
-    defaultPlacement: {
-        column: 1,
-        row: 1
-    },
-    render: () => createElement(GCodeTile, {}, null),
-    renderHelp: () => createElement(GCodeTileHelp, {}, null),
-    config: {
-        enableWithoutConnection: true
-    }
-}
+export const GCodeTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.GCODE)
+    .name("GCode")
+    .placement(1, 1)
+    .render(
+        () => createElement(GCodeTile, {}, null),
+        () => createElement(GCodeTileHelp, {}, null)
+    )
+    .build()

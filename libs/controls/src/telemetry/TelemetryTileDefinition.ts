@@ -5,16 +5,12 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { TelemetryTile } from "./TelemetryTile"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const TelemetryTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.TELEMETRY,
-    name: "Telemetry",
-    defaultPlacement: {
-        column: 0,
-        row: 2
-    },
-    config: {
-        enableWithoutConnection: true
-    },
-    render: () => createElement(TelemetryTile, {}, null)
-}
+export const TelemetryTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.TELEMETRY)
+    .name("Telemetry")
+    .placement(1, 2)
+    .render(() => createElement(TelemetryTile, {}, null))
+    .requiresConnection()
+    .build()

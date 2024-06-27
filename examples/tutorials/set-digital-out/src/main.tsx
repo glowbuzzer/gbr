@@ -23,6 +23,7 @@ const toggleDigitalOutputTileDefinition = DockTileDefinitionBuilder()
     .name("Toggle Digital Output")
     .placement(1, 0)
     .render(() => <ToggleDigitalOutputTile />)
+    .requiresOperationEnabled()
     .build()
 
 const config: GlowbuzzerConfig = {

@@ -12,6 +12,9 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.reset()
     gbc.enable_operation()
+    // we increase the factor used to check limits,
+    // because blending can increase vmax and amax
+    gbc.enable_limit_check(2)
 })
 
 const tag = state => state.stream[0].tag

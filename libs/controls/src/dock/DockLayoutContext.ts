@@ -8,8 +8,6 @@ import { createContext } from "react"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { DockPerspective } from "./types"
 
-import { TileWrapperFactory } from "./DockTileDefinitionBuilder"
-
 export type DockLayoutContextType = {
     appName: string
     model: Model
@@ -18,7 +16,6 @@ export type DockLayoutContextType = {
     headerFactory: (node: TabNode) => React.ReactNode
     buttonsFactory: (node: TabNode) => React.ReactNode
     helpFactory: (node: TabNode) => React.ReactNode
-    wrapperFactory: (node: TabNode) => TileWrapperFactory
     tiles: (Partial<DockTileDefinition> & { id: string })[]
     perspectives: DockPerspective[]
     currentPerspective: string

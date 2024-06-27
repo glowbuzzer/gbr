@@ -66,6 +66,7 @@ const demoMoveTile: DockTileDefinition = DockTileDefinitionBuilder()
     .name("Demo Move")
     .render(() => <DemoMoveTile />)
     .placement(0, 1)
+    .requiresOperationEnabled()
     .build()
 
 export function App() {

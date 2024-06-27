@@ -2,26 +2,51 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { useSafetyDigitalInputList, useSafetyDigitalInputs } from "@glowbuzzer/store"
+import * as React from "react"
+import { useSafetyDigitalInputList, useSafetyDigitalInputState } from "@glowbuzzer/store"
 import { StyledSafetyTileContent } from "../util/styles/StyledTileContent"
-import { Tag } from "antd"
+import { Select, Switch, Tag } from "antd"
+import { StyledDigitalInputs } from "./DigitalInputsTile"
 
-import styled from "styled-components"
+const { Option } = Select
 
-const StyledSafetyDigitalInput = styled.div`
-    display: flex;
-    padding: 1px 0;
+const SafetyDigitalInputItem = ({ index, label }: { index: number; label?: string }) => {
+    const [din, setDin] = useSafetyDigitalInputState(index)
 
-    .label {
-        flex-grow: 1;
+    function handle_override_change(value) {
+        setDin(din.override, value)
     }
 
-    .ant-tag {
-        width: 40px;
-        text-align: center;
+    function handle_state_change() {
+        const new_state = !din.setValue
+        setDin(new_state, din.override)
     }
-`
+
+    return (
+        <div>
+            <div className="din-label">{label || "Unknown"}</div>
+            <div>
+                <Select
+                    size="small"
+                    value={din.override ? 1 : 0}
+                    style={{ width: "90px" }}
+                    onChange={handle_override_change}
+                >
+                    <Option value={0}>Auto</Option>
+                    <Option value={1}>Override</Option>
+                </Select>
+            </div>
+            <Switch
+                disabled={!din.override}
+                checked={din.setValue}
+                onChange={handle_state_change}
+            />
+            <div>
+                <Tag color={din.actValue ? "green" : "red"}>{din.actValue ? "ON" : "OFF"}</Tag>
+            </div>
+        </div>
+    )
+}
 
 type SafetyDigitalInputsTileProps = {
     /**
@@ -35,23 +60,18 @@ type SafetyDigitalInputsTileProps = {
  */
 export const SafetyDigitalInputsTile = ({ labels = [] }: SafetyDigitalInputsTileProps) => {
     const dins = useSafetyDigitalInputList()
-    const values = useSafetyDigitalInputs()
-    
-    const normalised_labels = dins?.map(
-        (config, index) => labels[index] || config.name || index.toString()
-    )
 
     return (
         <StyledSafetyTileContent>
-            {dins &&
-                dins.map((config, index) => (
-                    <StyledSafetyDigitalInput>
-                        <span className="label">{normalised_labels[index]}</span>
-                        <Tag color={values[index] ? "green" : "red"}>
-                            {values[index] ? "ON" : "OFF"}
-                        </Tag>
-                    </StyledSafetyDigitalInput>
+            <StyledDigitalInputs>
+                {dins?.map((config, index) => (
+                    <SafetyDigitalInputItem
+                        key={index}
+                        index={index}
+                        label={labels[index] || config.name || index.toString()}
+                    />
                 ))}
+            </StyledDigitalInputs>
         </StyledSafetyTileContent>
     )
 }

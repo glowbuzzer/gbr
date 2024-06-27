@@ -29,7 +29,7 @@ function init_robot_test() {
     gbc.set_joint_pos(5, 0)
 
     gbc.enable_operation()
-    gbc.enable_limit_check()
+    gbc.enable_limit_check(2)
 }
 
 test.before.each(() => {

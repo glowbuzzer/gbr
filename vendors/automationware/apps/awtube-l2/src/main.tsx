@@ -19,6 +19,8 @@ import {
     ToolsGbdbFacetSlice
 } from "@glowbuzzer/store"
 
+console.log(config)
+
 const persistence: GbdbConfiguration = {
     // remoteDb: "http://localhost:5984",
     facets: {

@@ -1,4 +1,5 @@
-import {Button, Text, View} from "react-native"
+import * as React from "react"
+import { Button, Text, View } from "react-native"
 import {
     DesiredState,
     determine_machine_state,

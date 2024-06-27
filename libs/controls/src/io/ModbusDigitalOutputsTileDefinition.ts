@@ -6,14 +6,15 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ModbusDigitalOutputsTile } from "./ModbusDigitalOutputsTile"
 import { ModbusDigitalOutputsTileHelp } from "./ModbusDigitalOutputsTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const ModbusDigitalOutputsTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.MODBUS_DIGITAL_OUTPUTS,
-    name: "Modbus Digital Outputs",
-    defaultPlacement: {
-        column: 2,
-        row: 2
-    },
-    render: () => createElement(ModbusDigitalOutputsTile, {}, null),
-    renderHelp: () => createElement(ModbusDigitalOutputsTileHelp, {}, null)
-}
+export const ModbusDigitalOutputsTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.MODBUS_DIGITAL_OUTPUTS)
+    .name("Modbus Digital Outputs")
+    .placement(2, 2)
+    .render(
+        () => createElement(ModbusDigitalOutputsTile, {}, null),
+        () => createElement(ModbusDigitalOutputsTileHelp, {}, null)
+    )
+    .requiresOperationEnabled()
+    .build()

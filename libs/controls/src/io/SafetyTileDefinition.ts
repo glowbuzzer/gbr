@@ -6,14 +6,15 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { SafetyTile } from "./SafetyTile"
 import { SafetyTileHelp } from "./SafetyTileHelp"
+import { DockTileDefinitionBuilder } from "../dock"
 
-export const SafetyTileDefinition = {
-    id: GlowbuzzerTileIdentifiers.SAFETY,
-    name: "Safety",
-    defaultPlacement: {
-        column: 2,
-        row: 1
-    },
-    render: () => createElement(SafetyTile, {}, null),
-    renderHelp: () => createElement(SafetyTileHelp, {}, null)
-}
+export const SafetyTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.SAFETY)
+    .name("Safety")
+    .placement(2, 1)
+    .render(
+        () => createElement(SafetyTile, {}, null),
+        () => createElement(SafetyTileHelp, {}, null)
+    )
+    .requiresConnection()
+    .build()

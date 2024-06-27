@@ -99,7 +99,6 @@ const UrdfTileDefinition = DockTileDefinitionBuilder()
     .render(() => {
         return <UrdfTile />
     })
-    .enableWithoutConnection()
     .build()
 
 export const App = () => {

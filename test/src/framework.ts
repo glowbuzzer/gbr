@@ -76,7 +76,7 @@ export class GbcTest {
               activity: { tag: number; streamState: number; activityState: number }
           }[]
         | undefined
-    private check_limits = true
+    private valid_limits_factor = 1
     private readonly gbc: any
     private store: EnhancedStore<State>
     private activity_api: SoloActivityApi
@@ -278,12 +278,12 @@ export class GbcTest {
     }
 
     disable_limit_check() {
-        this.check_limits = false
+        this.valid_limits_factor = 0
         return this
     }
 
-    enable_limit_check() {
-        this.check_limits = true
+    enable_limit_check(factor = 1) {
+        this.valid_limits_factor = factor
         return this
     }
 
@@ -309,7 +309,7 @@ export class GbcTest {
         this.send(updateFroMsg(0, 1))
         this.exec_double_cycle()
 
-        this.check_limits = true
+        this.valid_limits_factor = 1
 
         return this
     }
@@ -406,7 +406,7 @@ export class GbcTest {
     exec(count = 1, single_cycle = false) {
         if (this.capture_state) {
             for (let n = 0; n < count; n++) {
-                this.gbc.run(1, single_cycle, this.check_limits)
+                this.gbc.run(1, single_cycle, this.valid_limits_factor)
                 // get the joint status
                 const msg = this.status_msg
                 const status = msg.status
@@ -437,7 +437,7 @@ export class GbcTest {
                 })
             }
         } else {
-            this.gbc.run(count, single_cycle, this.check_limits)
+            this.gbc.run(count, single_cycle, this.valid_limits_factor)
         }
         const status = this.status_msg.status
         const { activity } = status

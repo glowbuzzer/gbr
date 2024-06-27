@@ -11,11 +11,10 @@ import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 export const FramesTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.FRAMES)
     .name("Frames")
-    .placement(2, 0)
-    .enableWithoutConnection()
     .render(
         () => createElement(FramesTile, {}, null),
         null,
         gbdbFacetIndicatorFactory("config", "frames")
     )
+    .placement(2, 0)
     .build()

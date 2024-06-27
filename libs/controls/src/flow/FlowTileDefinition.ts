@@ -12,11 +12,10 @@ import { gbdbFacetIndicatorFactory } from "../gbdb/util"
 export const FlowTileDefinition = DockTileDefinitionBuilder()
     .id("flow")
     .name("Flow Maker")
-    .placement(1, 1)
     .render(
         () => createElement(FlowContextProvider, { children: createElement(FlowTile) }),
         undefined,
         gbdbFacetIndicatorFactory("flow")
     )
-    .enableWithoutConnection()
+    .placement(1, 1)
     .build()

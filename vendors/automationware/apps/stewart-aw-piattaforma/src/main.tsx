@@ -49,7 +49,6 @@ const MechHumanTileDefinition = DockTileDefinitionBuilder()
     .id("mech-human")
     .name("Teeth Motion")
     .placement(2, 0)
-    .enableWithoutConnection()
     .render(() => <MechHumanTile />)
     .build()
 
@@ -75,7 +74,6 @@ const PointsLoaderTileDefinition = DockTileDefinitionBuilder()
     .name("Points Loader")
     .placement(2, 1)
     .render(() => <PointsLoaderTile />)
-    .enableWithoutConnection()
     .build()
 
 const persistence: GbdbConfiguration = {
