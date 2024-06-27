@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.14.0](https://github.com/glowbuzzer/gbr/compare/v1.13.1...v1.14.0) (2024-06-27)
+
+
+### Feature
+
+* **#178:** Add config screens gbem and gbc config ([8e1b0dc](https://github.com/glowbuzzer/gbr/commit/8e1b0dca7227a091210a7c67b00be91844829e30))
+* **#198:** Add Modbus Tiles (dout, din, uiin, uiout) ([a3279bf](https://github.com/glowbuzzer/gbr/commit/a3279bf210f1fcb7035c4051cb418a1db4acdedf))
+* **#198:** Add Modbus Tiles (dout, din, uiin, uiout) ([c2ba187](https://github.com/glowbuzzer/gbr/commit/c2ba187cd0f6fafc63094e150e2b5c9c1191a7dc))
+* **#199:** Provide way to set default move params in streaming API ([aec95d2](https://github.com/glowbuzzer/gbr/commit/aec95d22d291589095e14bf06a7c26f966383be6))
+* **#201:** Add description to config ([a9f2bfc](https://github.com/glowbuzzer/gbr/commit/a9f2bfcdcb76c21815948cb6ca0ba4830099a327))
+* **#202:** Add ability to read sdos from slaves ([33c471e](https://github.com/glowbuzzer/gbr/commit/33c471eb57e3c9893f244dac440a6156073332d2))
+* **#204:** Change Live to Normal for target switch ([cca58e4](https://github.com/glowbuzzer/gbr/commit/cca58e4ebd97d0c4862034795f54cd037178cec7))
+* **#205:** Multiple mode support ([dbf85f2](https://github.com/glowbuzzer/gbr/commit/dbf85f2bc3fff214d3b94bec3a397c5e1a878437))
+* **#207:** Provide auto-connect option on GlowbuzzerApp ([e4304e3](https://github.com/glowbuzzer/gbr/commit/e4304e34401af21395c958e574acc80407e97280))
+* **#208:** Enhance connection status to include GBEM boot status ([22cf3e1](https://github.com/glowbuzzer/gbr/commit/22cf3e1aae743f53a9813893956815b8820d338a))
+* **#209:** Automatically move to OP if configured on GlowbuzzerApp ([e4304e3](https://github.com/glowbuzzer/gbr/commit/e4304e34401af21395c958e574acc80407e97280))
+* move activity up and down in flow ([3c6c6ea](https://github.com/glowbuzzer/gbr/commit/3c6c6ea5ba57314ac7fbcafc2dc9d21a442484a1))
+
+
+### Bug Fix
+
+* **#200:** Set minimum heartbeat frequency to 1 second ([08fc6f4](https://github.com/glowbuzzer/gbr/commit/08fc6f4a26123766832cffe2f2d011576e17858d))
+* **#203:** support undefined in move activity axis values ([a329425](https://github.com/glowbuzzer/gbr/commit/a3294251bba47489422f7ce4da0cb21d257ac5fa))
+* minor issue with PrecisionInput.tsx usability ([b19362f](https://github.com/glowbuzzer/gbr/commit/b19362f7d0d01b18faf00b6fe964e67418480923))
+* null pointer error deleting flows ([3c6c6ea](https://github.com/glowbuzzer/gbr/commit/3c6c6ea5ba57314ac7fbcafc2dc9d21a442484a1))
+
+
+### Chore
+
+* Add decode of datatype ([05e9811](https://github.com/glowbuzzer/gbr/commit/05e9811d451e6f06370252b4d9004f573755aa3b))
+* Add description ([19e9c79](https://github.com/glowbuzzer/gbr/commit/19e9c791e966feba12e10ad70f858e1904ecee11))
+* Add ethercat types ([39ab4ac](https://github.com/glowbuzzer/gbr/commit/39ab4acaf4a7652b6dc0a4c843880500dffeedfc))
+* add facet config to drives-fsoe ([4ff0942](https://github.com/glowbuzzer/gbr/commit/4ff09426b6c4a3618dd552f04f4fd338ba6aaab6))
+* Add FSOE fault cause ([ebce22c](https://github.com/glowbuzzer/gbr/commit/ebce22cf89ae9c5390911dda1607aa0c33675d9a))
+* Add key ([86eab9d](https://github.com/glowbuzzer/gbr/commit/86eab9d1def3aee224b8a46b7297b93ce69b2718))
+* Add Name and Description ([bb3e845](https://github.com/glowbuzzer/gbr/commit/bb3e845c3025ba652cca831be5593e8ab1799028))
+* Add resolveJsonModule ([1868f52](https://github.com/glowbuzzer/gbr/commit/1868f52af35c2de23640da65944287a2283cb9b2))
+* Add test rotary switch ([1dd552c](https://github.com/glowbuzzer/gbr/commit/1dd552c326edcbf1e94176d45ae427f23ad66bfe))
+* Add virtual hmi prototype ([bd0f2af](https://github.com/glowbuzzer/gbr/commit/bd0f2af83d1f09657d010dc3a90f33cef15cbd2c))
+* Allow overriding of standard and safety dins ([7082cf8](https://github.com/glowbuzzer/gbr/commit/7082cf8d4bd3d45a3c17ae17f0fc79ce1f939f9f))
+* decrease status frequency ([a3a1086](https://github.com/glowbuzzer/gbr/commit/a3a108642c9bc4113525f94c5d9d8aa521451381))
+* Ensure empty array is returned if not defined ([752a5dd](https://github.com/glowbuzzer/gbr/commit/752a5dd84682f7c7aa3fdfc21942b152b8dcd4be))
+* Ensure empty array is returned if not defined ([c762ea9](https://github.com/glowbuzzer/gbr/commit/c762ea9bd8b17adfd1c2f024d0ae8e27fb36e38d))
+* Ensure empty array is returned if not defined and add modus dout ([2e81a40](https://github.com/glowbuzzer/gbr/commit/2e81a408398fa75982038e519afe82481e42383c))
+* Ensure empty array is returned if not defined and add modus iout ([9d9c39e](https://github.com/glowbuzzer/gbr/commit/9d9c39e152ea7ecb26bb6e555507fb2f79baba8d))
+* fix component doc generation issue ([ce86c5c](https://github.com/glowbuzzer/gbr/commit/ce86c5c14b568d4a19b919b24963b825315c84b9))
+* Formatting of response payload ([1179329](https://github.com/glowbuzzer/gbr/commit/1179329db9bef7bfb9bb2aeeb4e612620bbadeea))
+* Initial work on IBT modes ([dbf85f2](https://github.com/glowbuzzer/gbr/commit/dbf85f2bc3fff214d3b94bec3a397c5e1a878437))
+* modify envelope viz project ([bfb4994](https://github.com/glowbuzzer/gbr/commit/bfb4994b3662274d406e56372a65418acd115450))
+* reduce limits ([aa3655f](https://github.com/glowbuzzer/gbr/commit/aa3655fabe575ab5845eeab76b60ec20efa61afb))
+* refactor dock tile definitions plus other changes ([0d18c85](https://github.com/glowbuzzer/gbr/commit/0d18c85e4e921a6af11f445b4934eaec02babb6e))
+* refactor tsconfig files ([dbf85f2](https://github.com/glowbuzzer/gbr/commit/dbf85f2bc3fff214d3b94bec3a397c5e1a878437))
+* Update awlib ([67e1bee](https://github.com/glowbuzzer/gbr/commit/67e1bee58488f23fc07456c7b6aea96f22174056))
+* Update awlib ([1cdcbc3](https://github.com/glowbuzzer/gbr/commit/1cdcbc3b52a99395b93e13bd351849b8a9a99d35))
+* Update FSoE drives project ([b35f92f](https://github.com/glowbuzzer/gbr/commit/b35f92fc38d5ab6dcf0346949c3595ab8c94c056))
+* Update import ([95aa0c5](https://github.com/glowbuzzer/gbr/commit/95aa0c52ce4fff173198d9e473e4a88e6e14eaa2))
+* Update io test tiles ([2f124ee](https://github.com/glowbuzzer/gbr/commit/2f124ee2373169f20f4dceb3fa2631cd4a63db09))
+* Update slavecat json ([419488d](https://github.com/glowbuzzer/gbr/commit/419488de7905145a27b38a984bd17cebda82b6b8))
+* use remote gbdb store ([9a6b6a6](https://github.com/glowbuzzer/gbr/commit/9a6b6a62d6b670f4c6892f130f9b735a469c7c43))
+
 ## [1.13.1](https://github.com/glowbuzzer/gbr/compare/v1.13.0...v1.13.1) (2024-05-25)
 
 
