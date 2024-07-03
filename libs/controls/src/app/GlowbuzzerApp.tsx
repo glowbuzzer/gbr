@@ -25,7 +25,7 @@ import { GlowbuzzerAppLifecycle } from "./lifecycle"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
 import { GbdbProvider } from "../gbdb"
 import { AutoConnectionController } from "./AutoConnectionController"
-import { AutoOpEnabledController } from "./AutoOpEnabledController"
+import { AutoDesiredModeController } from "./AutoDesiredModeController"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
@@ -183,9 +183,9 @@ export const GlowbuzzerApp = ({
                             <ConfigLiveEditProvider>
                                 <GlowbuzzerContainer>
                                     <AutoConnectionController enabled={autoConnect} />
-                                    <AutoOpEnabledController enabled={autoOpEnabled}>
+                                    <AutoDesiredModeController enabled={autoOpEnabled}>
                                         {children}
-                                    </AutoOpEnabledController>
+                                    </AutoDesiredModeController>
                                 </GlowbuzzerContainer>
                             </ConfigLiveEditProvider>
                         </ConnectionProvider>

@@ -52,8 +52,11 @@ export const GlowbuzzerAppLifecycle = new (class {
 
         store.dispatch(prefsSlice.actions.loadSettings(null))
         store.dispatch(framesSlice.actions.loadSettings(null))
-        store.dispatch(configSlice.actions.setAppConfig(configuration))
         store.dispatch(telemetrySlice.actions.loadSettings())
+
+        if (configuration) {
+            store.dispatch(configSlice.actions.setAppConfig(configuration))
+        }
 
         if (import.meta?.hot?.data) {
             import.meta.hot.data.store = store

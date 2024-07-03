@@ -23,6 +23,7 @@ import {
     PayloadTileDefinition,
     PointsTileDefinition,
     SafetyDigitalInputsTileDefinition,
+    SafetyDigitalOutputsTileDefinition,
     SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
@@ -162,7 +163,8 @@ export const App = () => {
                     InterpolatedMoveTileDefinition,
                     DigitalInputsTileDefinition,
                     SafetyDigitalInputsTileDefinition,
-                    DigitalOutputsTileDefinition
+                    DigitalOutputsTileDefinition,
+                    SafetyDigitalOutputsTileDefinition
                 ]}
                 statusBarExtra={<AppStatusBar />}
             >

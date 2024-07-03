@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "cc05ac7750b33fda4a60d32d9ca0c65a"
+export const GbcSchemaChecksum = "223c3460a4c79d0420ec4ce7b7668ea5"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -548,16 +548,42 @@ export const GbcConstants = {
                         jmax?:number;
             }
             
+            export type MachineIoPurpose = {
+            
+                        /**  Whether this input or output is enabled */
+                        enabled?:boolean;
+                        /**  Whether this is a safety input or output */
+                        safety?:boolean;
+                        /**  The index of the input or output */
+                        index?:number;
+            }
+            
             export type MachineConfig = {
             
                         /**  The bus cycle time (in milliseconds) */
                         busCycleTime?:number;
                         /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
                         statusFrequency?:number;
-                        /**  Whether one of the digital inputs should be treated as estop */
+                        /**  @deprecated */
                         estopEnabled?:boolean;
-                        /**  Which digital input should be treated as estop, if estopEnabled is true */
+                        /**  @deprecated */
                         estopInput?:number;
+                        /**  The input that indicates that machine is in a safe state */
+                        safetyStateInput?:MachineIoPurpose;
+                        /**  The input that should be used to determine whether auto mode is enabled (for example, keyswitch state) */
+                        autoModeEnabledInput?:MachineIoPurpose;
+                        /**  The input that should be used to determine whether motion is enabled in menual mode (for example, deadman pressed) */
+                        motionEnabledInput?:MachineIoPurpose;
+                        /**  The input that indicates the machine is in a safe stop state */
+                        safeStopInput?:MachineIoPurpose;
+                        /**  The input that should be used to determine whether the machine is in override mode (safety functions muted) */
+                        overrideEnabledInput?:MachineIoPurpose;
+                        /**  The output that should be used as the first bit of the manual mode, when manual mode active */
+                        manualModeBit1Output?:MachineIoPurpose;
+                        /**  The output that should be used as the second bit of the manual mode, when manual mode active */
+                        manualModeBit2Output?:MachineIoPurpose;
+                        /**  The output that should be used as the third bit of the manual mode, when manual mode active */
+                        manualModeBit3Output?:MachineIoPurpose;
                         /**  The amount of time (in milliseconds) before GBC will fault if it has not received a heartbeat, default 2000 */
                         heartbeatTimeout?:number;
             }

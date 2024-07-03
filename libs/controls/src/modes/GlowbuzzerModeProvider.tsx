@@ -3,19 +3,19 @@
  */
 
 import * as React from "react"
-import { createContext } from "react"
+import { createContext, Key } from "react"
 
-type GlowbuzzerModeContextType = {
-    mode: string
-    setMode(mode: string): void
+type GlowbuzzerModeItem = {
+    value: string | number
+    icon?: string | React.ReactNode
+    name: string
+    disabled?: boolean
+}
 
-    modes: {
-        [key: string]: {
-            icon?: string | React.ReactNode
-            name: string
-            disabled?: boolean
-        }
-    }
+export type GlowbuzzerModeContextType = {
+    mode: string | number
+    setMode(mode: string | number): void
+    modes: GlowbuzzerModeItem[]
 }
 
 const modeContext = createContext<GlowbuzzerModeContextType>(null)
@@ -34,9 +34,9 @@ export const useGlowbuzzerMode = () => {
     if (!context) {
         // return something sensible in case the context is not available
         return {
-            mode: "",
+            mode: null,
             setMode: () => {},
-            modes: {}
+            modes: []
         }
     }
     return context

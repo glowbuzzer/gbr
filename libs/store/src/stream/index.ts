@@ -269,15 +269,19 @@ export const useStream = (
     /** Reset the local stream queue */
     reset(): void
 } => {
-    const { state, tag, time, capacity, queued, pending } = useSelector(
+    const { state, tag, time, capacity, queued, pending, readCount } = useSelector<
+        RootState,
+        StreamSliceType
+    >(
         (state: RootState) =>
-            state.stream[streamIndex] || {
+            state.stream[streamIndex] ||
+            ({
                 state: STREAMSTATE.STREAMSTATE_IDLE,
                 tag: 0,
                 time: 0,
                 capacity: 0,
                 pending: 0
-            },
+            } as StreamSliceType),
         shallowEqual
     )
     const connection = useConnection()
@@ -297,7 +301,13 @@ export const useStream = (
 
     useEffect(() => {
         api.updateStream(tag, state)
-    }, [api, tag, state])
+    }, [
+        api,
+        tag,
+        state,
+        /* include readCount to catch cases where single move completes in a single cycle */
+        readCount
+    ])
 
     return {
         state,

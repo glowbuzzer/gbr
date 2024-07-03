@@ -5,7 +5,7 @@
 import * as React from "react"
 import { Select } from "antd"
 import { DefaultOptionType } from "antd/es/select"
-import { useOperationEnabled } from "../util/hooks"
+import { useOperationEnabled } from "../util"
 
 import styled from "styled-components"
 import { useGlowbuzzerMode } from "./GlowbuzzerModeProvider"
@@ -25,26 +25,26 @@ const StyledModeLabel = styled.div`
     }
 `
 
-export const ModeSwitch = () => {
+export const StatusBarModeSwitch = () => {
     const { modes, mode, setMode } = useGlowbuzzerMode()
     const op = useOperationEnabled()
 
-    if (!Object.keys(modes).length) {
+    if (!modes.length) {
         // no modes, nothing to display
         return null
     }
 
-    const options: DefaultOptionType[] = Object.entries(modes).map(([key, value]) => {
+    const options: DefaultOptionType[] = modes.map(({ disabled, icon, name, value }) => {
         return {
-            key,
-            value: key,
+            key: value,
+            value: value,
             label: (
                 <StyledModeLabel>
-                    {value.icon ? value.icon : <span className="auto-icon">{value.name[0]}</span>}
-                    <span>{value.name}</span>
+                    {icon ? icon : <span className="auto-icon">{name[0]}</span>}
+                    <span>{name}</span>
                 </StyledModeLabel>
             ),
-            disabled: value.disabled
+            disabled: disabled
         }
     })
 

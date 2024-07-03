@@ -65,7 +65,32 @@ export const config: GlowbuzzerConfig = {
             name: "AWTUBE L2",
             busCycleTime: 4,
             heartbeatTimeout: 15000,
-            statusFrequency: 150
+            statusFrequency: 150,
+            autoModeEnabledInput: {
+                enabled: true,
+                safety: true,
+                index: 6
+            },
+            motionEnabledInput: {
+                enabled: true,
+                safety: true,
+                index: 7
+            },
+            manualModeBit1Output: {
+                enabled: true,
+                safety: true,
+                index: 0
+            },
+            manualModeBit2Output: {
+                enabled: true,
+                safety: true,
+                index: 1
+            },
+            safeStopInput: {
+                enabled: true,
+                safety: true,
+                index: 3
+            }
         }
     ],
 

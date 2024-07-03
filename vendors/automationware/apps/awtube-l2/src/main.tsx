@@ -36,11 +36,13 @@ const persistence: GbdbConfiguration = {
     }
 }
 
+console.log(config)
+
 const root = createRoot(document.getElementById("root"))
 root.render(
     <GlowbuzzerApp
         appName="awtube-l2"
-        configuration={config}
+        // configuration={config}
         persistenceConfiguration={persistence}
         autoConnect={true}
         autoOpEnabled={true}

@@ -3,9 +3,9 @@
  */
 
 import * as React from "react"
+import { forwardRef } from "react"
 import { useConnection, useMachine } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { ConnectStatusIndicator } from "./ConnectStatusIndicator"
 import { useStatusTrayDismissedItems } from "./StatusTrayProvider"
 import { Button, Divider, Flex, Space } from "antd"
 import { useHandGuidedMode } from "../handguided/hooks"
@@ -15,10 +15,9 @@ import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { StatusBarGbDb } from "./StatusBarGbDb"
 import { StatusBarLiveSwitch } from "./StatusBarLiveSwitch"
 import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
-import { forwardRef } from "react"
 import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
-import { ModeSwitch } from "../modes/ModeSwitch"
-import { useAutoOpEnabled } from "../app/AutoOpEnabledController"
+import { StatusBarModeSwitch } from "../modes/StatusBarModeSwitch"
+import { useAutoOpEnabled } from "../app/AutoDesiredModeController"
 import { StatusBarConnectAndEmStatus } from "./StatusBarConnectAndEmStatus"
 
 const StyledSpace = styled(Space)`
@@ -53,9 +52,7 @@ type StatusBarProps = {
  * Status bar at the bottom of the screen
  */
 export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children }, ref) => {
-    const { connected } = useConnection()
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
-    const { name } = useMachine()
     const { handGuidedModeRequested, handGuidedModeActive } = useHandGuidedMode()
     const enable_button_hidden = useAutoOpEnabled()
 
@@ -63,7 +60,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
         <Flex justify="space-between" ref={ref}>
             <StyledSpace split={<Divider type="vertical" />}>
                 <StatusBarConnectAndEmStatus />
-                <ModeSwitch />
+                <StatusBarModeSwitch />
                 {handGuidedModeRequested && (
                     <Space className={handGuidedModeActive ? "enabled" : "disabled"}>
                         <GlowbuzzerIcon Icon={handGuidedModeActive ? HandIcon : HandIconDisabled} />

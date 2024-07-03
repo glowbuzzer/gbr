@@ -4,9 +4,7 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { STREAMCOMMAND, STREAMSTATE } from "../../../libs/store/src"
-import { StreamingActivityApi } from "../../../libs/store/src/stream/api"
-import * as assert from "assert"
+import { STREAMCOMMAND, STREAMSTATE } from "@glowbuzzer/store"
 
 const test = uvu.suite("stream")
 
@@ -212,6 +210,24 @@ test("can stop stream during move", () => {
     gbc.streamCommand(STREAMCOMMAND.STREAMCOMMAND_RUN)
         .exec(2)
         .assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+})
+
+test("can stream a single command, reset and stream another", async () => {
+    gbc.enqueue([gbc.stream.dwell(5).command, gbc.stream.endProgram().command])
+    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE).assert.selector(tag, 0)
+    gbc.exec(20)
+    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+    gbc.assert.selector(tag, 1)
+
+    gbc.stream.reset()
+    gbc.enqueue([gbc.stream.dwell(20).command, gbc.stream.endProgram().command])
+
+    gbc.exec(5)
+    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
+    gbc.assert.selector(tag, 1)
+    gbc.exec(15)
+    gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_IDLE)
+    gbc.assert.selector(tag, 1)
 })
 
 export const stream = test
