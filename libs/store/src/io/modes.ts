@@ -37,7 +37,7 @@ export function useMotionEnabledInput() {
 }
 
 export function useSafeStopInput() {
-    return useInputActive("safeStopInput")
+    return !useInputActive("safeStopInput")
 }
 
 export enum ManualMode {
