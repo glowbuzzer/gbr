@@ -10,6 +10,7 @@ import { useConnection } from "@glowbuzzer/store"
 import { useEffect, useState } from "react"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import EtherCatConfigStatusIndicator from "../EtherCatConfigStatusIndicator"
+import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
 const StyledFlex = styled(Flex)`
     height: 100%;
@@ -151,7 +152,7 @@ export const EtherCatOptionalSlavesTab = () => {
     }
 
     return (
-        <>
+        <ConditionalDisplayInOpEnabled>
             <EtherCatConfigStatusIndicator />
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <div style={{ textAlign: "left", fontSize: "14px" }}>
@@ -179,6 +180,6 @@ export const EtherCatOptionalSlavesTab = () => {
                     <Button onClick={handleReset}>Reset</Button>
                 </Space>
             </Space>
-        </>
+        </ConditionalDisplayInOpEnabled>
     )
 }

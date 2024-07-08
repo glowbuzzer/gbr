@@ -20,6 +20,7 @@ import { SlaveCatTree } from "../slaveCatTree/SlaveCatTree"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import { EventDataNode } from "antd/es/tree"
 import { slave } from "../slavecatTypes/Slave"
+import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
 const ScrollableTreeContainer = styled.div`
     max-height: 220px; /* Adjust the height as needed */
@@ -406,52 +407,56 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
     }
 
     return (
-        <StyledFlex>
-            <Space>
-                Selected slave{" "}
-                <SlaveDropdown
-                    slaveList={filteredSlaveList}
-                    slaveData={slaveData}
-                    selectedSlave={selectedSlave}
-                    setSelectedSlave={setSelectedSlave}
-                />
-            </Space>
-            <div>
-                <SlaveCatTree
-                    slaveData={selectedSlaveData}
-                    // onNodeSelect={setSelectedNode}
-                    selectedNode={selectedNode}
-                    onNodeSelect={handleNodeSelect}
-                />
+        <ConditionalDisplayInOpEnabled>
+            <StyledFlex>
+                <Space>
+                    Selected slave{" "}
+                    <SlaveDropdown
+                        slaveList={filteredSlaveList}
+                        slaveData={slaveData}
+                        selectedSlave={selectedSlave}
+                        setSelectedSlave={setSelectedSlave}
+                    />
+                </Space>
                 <div>
-                    <Space style={{ marginTop: 10 }}>
-                        {selectedNode ? (
-                            <span style={{ marginRight: 10 }}>
-                                You have selected an object, now read the value from the slave
-                            </span>
-                        ) : (
-                            <span style={{ marginRight: 10 }}>
-                                Select an object before reading from slave
-                            </span>
-                        )}
-                        <Button
-                            disabled={!selectedNode || selectedNode.isParent}
-                            size="small"
-                            onClick={send_request}
-                        >
-                            Read object from slave
-                        </Button>
-                    </Space>
+                    <SlaveCatTree
+                        slaveData={selectedSlaveData}
+                        // onNodeSelect={setSelectedNode}
+                        selectedNode={selectedNode}
+                        onNodeSelect={handleNodeSelect}
+                    />
+                    <div>
+                        <Space style={{ marginTop: 10 }}>
+                            {selectedNode ? (
+                                <span style={{ marginRight: 10 }}>
+                                    You have selected an object, now read the value from the slave
+                                </span>
+                            ) : (
+                                <span style={{ marginRight: 10 }}>
+                                    Select an object before reading from slave
+                                </span>
+                            )}
+                            <Button
+                                disabled={!selectedNode || selectedNode.isParent}
+                                size="small"
+                                onClick={send_request}
+                            >
+                                Read object from slave
+                            </Button>
+                        </Space>
+                    </div>
                 </div>
-            </div>
-            {responseText && (
-                <Alert
-                    message={isError ? "Error reading from slave" : "Success reading from slave"}
-                    description={`Value read: ${getPayloadValue(responseText)}`}
-                    type={isError ? "error" : "success"}
-                    showIcon
-                />
-            )}
-        </StyledFlex>
+                {responseText && (
+                    <Alert
+                        message={
+                            isError ? "Error reading from slave" : "Success reading from slave"
+                        }
+                        description={`Value read: ${getPayloadValue(responseText)}`}
+                        type={isError ? "error" : "success"}
+                        showIcon
+                    />
+                )}
+            </StyledFlex>
+        </ConditionalDisplayInOpEnabled>
     )
 }

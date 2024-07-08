@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 
 import { GBEM_REQUEST, useConnection } from "@glowbuzzer/store"
 import { Alert, Button, Input } from "antd"
+import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
 export const EtherCatWriteSlaveTab: React.FC = ({}) => {
     const { request } = useConnection()
@@ -50,7 +51,7 @@ export const EtherCatWriteSlaveTab: React.FC = ({}) => {
         setRequestText(constructedRequestText)
     }, [])
     return (
-        <div>
+        <ConditionalDisplayInOpEnabled>
             <Input.TextArea
                 rows={4}
                 value={requestText}
@@ -68,6 +69,6 @@ export const EtherCatWriteSlaveTab: React.FC = ({}) => {
                     showIcon
                 />
             )}
-        </div>
+        </ConditionalDisplayInOpEnabled>
     )
 }

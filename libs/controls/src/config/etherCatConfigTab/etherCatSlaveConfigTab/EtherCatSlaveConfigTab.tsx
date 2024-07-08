@@ -37,6 +37,7 @@ import { SimpleObject } from "../slavecatTypes/SimpleObject"
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons"
 import styled from "styled-components"
 import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
+import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
 const { Panel } = Collapse
 
@@ -391,7 +392,7 @@ export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}
     const slaveData: slave[] = useSlaveCat()
 
     return (
-        <>
+        <ConditionalDisplayInOpEnabled>
             <EtherCatConfigStatusIndicator />
             <Space>
                 Edit the configuration of EtherCAT slaves (applied at start-up of the network)
@@ -417,6 +418,6 @@ export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}
                     imageStyle={{ height: 60 }}
                 />
             )}
-        </>
+        </ConditionalDisplayInOpEnabled>
     )
 }
