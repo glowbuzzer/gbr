@@ -55,18 +55,6 @@ type SafetyInputsTileProps = {
 export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
     const safetyDins = useSafetyDigitalInputList()
     const safetyValues = useSafetyDigitalInputs()
-    const [isRestartAck, setIsRestartAck] = useState(false)
-
-    // safety Din 2 is used to signal that a restart acknowledge is needed
-    const resetAckNeeded = useSafetyDigitalInputState(2)
-
-    const safePosValidIndex = safetyDins?.findIndex(
-        c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_SAFE_POS_VALID
-    )
-
-    const overallSafetyStateIndex = safetyDins?.findIndex(
-        c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE
-    )
 
     const normalised_labels = safetyDins?.map(
         (config, index) => labels[index] || config.name || index.toString()
@@ -76,9 +64,9 @@ export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
     return (
         <StyledSafetyTileContent>
             The overall safety state is:{"  "}
-            <Tag color={safetyValues[overallSafetyStateIndex] ? "green" : "red"}>
-                {safetyValues[overallSafetyStateIndex] ? "NO FAULT" : "FAULT"}
-            </Tag>
+            {/*<Tag color={safetyValues[overallSafetyStateIndex] ? "green" : "red"}>*/}
+            {/*    {safetyValues[overallSafetyStateIndex] ? "NO FAULT" : "FAULT"}*/}
+            {/*</Tag>*/}
             <StyledDivider />
             <StyledSafetyTileText>The acknowledgeable safety faults are:</StyledSafetyTileText>
             {safetyDins &&
@@ -113,16 +101,16 @@ export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
             Acknowledgeable safety faults can we reset using the reset button. Unacknowledgeable
             safety faults require?.
             <StyledDivider />
-            {safetyDins[safePosValidIndex] ? (
-                <div>
-                    The robot is reporting that its safe position is valid. No action is needed.
-                </div>
-            ) : (
-                <div>
-                    The robot is reporting that its safe position is INVALID. The safe position
-                    homing routine must be run.{" "}
-                </div>
-            )}
+            {/*{safetyDins[safePosValidIndex] ? (*/}
+            {/*    <div>*/}
+            {/*        The robot is reporting that its safe position is valid. No action is needed.*/}
+            {/*    </div>*/}
+            {/*) : (*/}
+            {/*    <div>*/}
+            {/*        The robot is reporting that its safe position is INVALID. The safe position*/}
+            {/*        homing routine must be run.{" "}*/}
+            {/*    </div>*/}
+            {/*)}*/}
         </StyledSafetyTileContent>
     )
 }

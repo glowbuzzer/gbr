@@ -18,6 +18,44 @@ export const StyledSafetyTileContent = styled.div`
 export const StyledSafetyTileText = styled.div`
     margin-bottom: 1rem;
 `
+export const StyledSafetyDigitalInputs = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+`
+
+export const StyledSafetyDigitalInputsRow = styled.div`
+    display: grid;
+    grid-template-columns: 4fr 1fr 1fr 2fr;
+    gap: 10px;
+    align-items: center;
+
+    > div {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .din-label {
+        flex-grow: 1;
+    }
+
+    .ant-tag {
+        //width: 40px;
+        text-align: center;
+    }
+
+    .ant-select {
+        justify-self: center;
+        width: 90px; /* Fixed width for Select component */
+    }
+
+    .ant-switch {
+        justify-self: center;
+    }
+`
+
 export const StyledDivider = styled.div`
     height: 1px; /* Set the height of the divider */
     background-color: lightyellow;
@@ -42,6 +80,11 @@ export const StyledToolTipDiv = styled.div`
 
     .ant-tooltip-placement-right > .ant-tooltip-content {
         margin-left: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-left > .ant-tooltip-content {
+        margin-right: 10px; /* Adjust the distance here */
         //background-color: green; /* Adjust background if needed */
     }
 `

@@ -54,7 +54,7 @@ export const StatusBarModeSwitch = () => {
 
     return (
         <Select
-            disabled={!op}
+            // disabled={!op}
             options={options}
             value={mode}
             popupMatchSelectWidth={false}

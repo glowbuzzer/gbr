@@ -3,10 +3,11 @@
  */
 
 import React from "react"
-import { Select, Switch, Tag } from "antd"
+import { Select, Switch, Tag, Tooltip } from "antd"
 import styled from "styled-components"
 import { useSafetyDigitalOutputList, useSafetyDigitalOutputState } from "@glowbuzzer/store"
 import { StyledSafetyTileContent } from "../util/styles/StyledTileContent"
+import { parseDescription } from "./SafetyIoUtils"
 
 const { Option } = Select
 
@@ -28,8 +29,23 @@ const StyledDiv = styled.div`
     }
 `
 
-const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) => {
+const DigitalOutputItem = ({
+    index,
+    label,
+    description,
+    states
+}: {
+    index: number
+    label?: string
+    description?: string
+    states?: { state: number; label: string; isError: boolean }[]
+}) => {
     const [dout, setDout] = useSafetyDigitalOutputState(index)
+
+    const activeState = states?.find(state => state.state === (dout.effectiveValue ? 1 : 0))
+    const activeStateLabel = activeState?.label || (dout.effectiveValue ? "ON" : "OFF")
+
+    const activeStateColor = activeState?.isError ? "red" : "green"
 
     function handle_override_change(value) {
         setDout(dout.override, value)
@@ -42,7 +58,14 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
 
     return (
         <div>
-            <div className="dout-label">{label || "Unknown"}</div>
+            <Tooltip
+                title={label}
+                placement="top"
+                mouseEnterDelay={2}
+                getPopupContainer={triggerNode => triggerNode}
+            >
+                <div className="dout-label">{description || "Unknown"}</div>
+            </Tooltip>
             <div>
                 <Select
                     size="small"
@@ -60,9 +83,11 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
                 onChange={handle_state_change}
             />
             <div>
-                <Tag color={dout.effectiveValue ? "green" : "red"}>
-                    {dout.effectiveValue ? "ON" : "OFF"}
-                </Tag>
+                {/*<Tag color={dout.effectiveValue ? "green" : "red"}>*/}
+                {/*    {dout.effectiveValue ? "ON" : "OFF"}*/}
+                {/*</Tag>*/}
+
+                <Tag color={activeStateColor}>{activeStateLabel}</Tag>
             </div>
         </div>
     )
@@ -91,13 +116,22 @@ export const SafetyDigitalOutputsTile = ({ labels = [] }: SafetyDigitalOutputsTi
     return (
         <StyledSafetyTileContent>
             <StyledDiv>
-                {douts?.map((config, index) => (
-                    <DigitalOutputItem
-                        key={index}
-                        index={index}
-                        label={labels[index] || config.name || index.toString()}
-                    />
-                ))}
+                {douts?.map((config, index) => {
+                    const { description, states } = parseDescription(config.description || "")
+
+                    return (
+                        <DigitalOutputItem
+                            // key={index}
+                            // index={index}
+                            // label={labels[index] || config.name || index.toString()}
+                            key={index}
+                            index={index}
+                            label={labels[index] || config.name || index.toString()}
+                            description={description}
+                            states={states}
+                        />
+                    )
+                })}
             </StyledDiv>
         </StyledSafetyTileContent>
     )

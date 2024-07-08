@@ -4,14 +4,36 @@
 
 import * as React from "react"
 import { useSafetyDigitalInputList, useSafetyDigitalInputState } from "@glowbuzzer/store"
-import { StyledSafetyTileContent } from "../util/styles/StyledTileContent"
-import { Select, Switch, Tag } from "antd"
+import {
+    StyledDivider,
+    StyledSafetyDigitalInputs,
+    StyledSafetyDigitalInputsRow,
+    StyledSafetyTileContent,
+    StyledToolTipDiv
+} from "../util/styles/StyledTileContent"
+import { Select, Switch, Tag, Tooltip } from "antd"
 import { StyledDigitalInputs } from "./DigitalInputsTile"
+import { parseDescription } from "./SafetyIoUtils"
 
 const { Option } = Select
 
-const SafetyDigitalInputItem = ({ index, label }: { index: number; label?: string }) => {
+const SafetyDigitalInputItem = ({
+    index,
+    label,
+    description,
+    states
+}: {
+    index: number
+    label?: string
+    description?: string
+    states?: { state: number; label: string; isError: boolean }[]
+}) => {
     const [din, setDin] = useSafetyDigitalInputState(index)
+
+    const activeState = states?.find(state => state.state === (din.actValue ? 1 : 0))
+    const activeStateLabel = activeState?.label || (din.actValue ? "ON" : "OFF")
+
+    const activeStateColor = activeState?.isError ? "red" : "green"
 
     function handle_override_change(value) {
         setDin(din.override, value)
@@ -23,8 +45,17 @@ const SafetyDigitalInputItem = ({ index, label }: { index: number; label?: strin
     }
 
     return (
-        <div>
-            <div className="din-label">{label || "Unknown"}</div>
+        <StyledSafetyDigitalInputsRow>
+            <StyledToolTipDiv>
+                <Tooltip
+                    title={label}
+                    placement="top"
+                    mouseEnterDelay={2}
+                    getPopupContainer={triggerNode => triggerNode}
+                >
+                    <div className="din-label">{description || "Unknown"}</div>
+                </Tooltip>
+            </StyledToolTipDiv>
             <div>
                 <Select
                     size="small"
@@ -42,9 +73,10 @@ const SafetyDigitalInputItem = ({ index, label }: { index: number; label?: strin
                 onChange={handle_state_change}
             />
             <div>
-                <Tag color={din.actValue ? "green" : "red"}>{din.actValue ? "ON" : "OFF"}</Tag>
+                {/*<Tag color={din.actValue ? "green" : "red"}>{din.actValue ? "ON" : "OFF"}</Tag>*/}
+                <Tag color={activeStateColor}>{activeStateLabel}</Tag>
             </div>
-        </div>
+        </StyledSafetyDigitalInputsRow>
     )
 }
 
@@ -63,15 +95,21 @@ export const SafetyDigitalInputsTile = ({ labels = [] }: SafetyDigitalInputsTile
 
     return (
         <StyledSafetyTileContent>
-            <StyledDigitalInputs>
-                {dins?.map((config, index) => (
-                    <SafetyDigitalInputItem
-                        key={index}
-                        index={index}
-                        label={labels[index] || config.name || index.toString()}
-                    />
-                ))}
-            </StyledDigitalInputs>
+            <StyledSafetyDigitalInputs>
+                {dins?.map((config, index) => {
+                    const { description, states } = parseDescription(config.description || "")
+
+                    return (
+                        <SafetyDigitalInputItem
+                            key={index}
+                            index={index}
+                            label={labels[index] || config.name || index.toString()}
+                            description={description}
+                            states={states}
+                        />
+                    )
+                })}
+            </StyledSafetyDigitalInputs>
         </StyledSafetyTileContent>
     )
 }
