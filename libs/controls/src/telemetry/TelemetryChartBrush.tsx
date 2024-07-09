@@ -62,6 +62,7 @@ export const TelemetryChartBrush = ({
             x_domain,
             domain,
             0,
+            false,
             0,
             undefined
         )

@@ -32,9 +32,22 @@ export enum CaptureState {
     COMPLETE
 }
 
+export type TelemetryIoEdges = {
+    di: [rising: number, falling: number]
+    do: [rising: number, falling: number]
+    sdi: [rising: number, falling: number]
+    sdo: [rising: number, falling: number]
+}
+
 export type TelemetryEntry = GlowbuzzerStatus["telemetry"][0]
 
-export type TelemetryGenerator = (domain: [number, number?]) => IterableIterator<TelemetryEntry>
+export type TelemetryEntryWithEdges = TelemetryEntry & {
+    e: TelemetryIoEdges
+}
+
+export type TelemetryGenerator = (
+    domain: [number, number?]
+) => IterableIterator<TelemetryEntryWithEdges>
 
 export type TelemetrySelector = (
     e: TelemetryEntry,

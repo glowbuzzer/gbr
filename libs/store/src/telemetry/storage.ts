@@ -2,12 +2,18 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { TelemetryEntry, TelemetryPVAT, TelemetryVisibilityOptions } from "./types"
+import {
+    TelemetryEntry,
+    TelemetryEntryWithEdges,
+    TelemetryIoEdges,
+    TelemetryPVAT,
+    TelemetryVisibilityOptions
+} from "./types"
 
 export const MAX_SAMPLES = 30000 // max number of samples we can store
 
 // circular buffer for samples
-export const telemetry_circular_buffer: TelemetryEntry[] = Array(MAX_SAMPLES)
+export const telemetry_circular_buffer: TelemetryEntryWithEdges[] = Array(MAX_SAMPLES)
 
 // domains for each joint keyed by visibility option and plot type
 export const telemetry_cached_domains = []
@@ -100,6 +106,47 @@ function update_telemetry_domains(items: TelemetryEntry[]) {
     }
 }
 
+function derive_edges(count: number, d: TelemetryEntry, prev: number): TelemetryIoEdges {
+    if (count === 0) {
+        return {
+            di: [0, 0],
+            do: [0, 0],
+            sdi: [0, 0],
+            sdo: [0, 0]
+        }
+    }
+    const {
+        di: prev_di,
+        do: prev_do,
+        sdi: prev_sdi,
+        sdo: prev_sdo
+    } = telemetry_circular_buffer[prev]
+    const { di: curr_di, do: curr_do, sdi: curr_sdi, sdo: curr_sdo } = d
+
+    function compare_edges(prev: number, curr: number, falling: boolean) {
+        let result = 0
+        for (let n = 0; n < 16; n++) {
+            const mask = 1 << n
+            if (falling) {
+                if (prev & mask && !(curr & mask)) {
+                    result |= mask
+                }
+            } else {
+                if (!(prev & mask) && curr & mask) {
+                    result |= mask
+                }
+            }
+        }
+        return result
+    }
+
+    return {
+        di: [compare_edges(prev_di, curr_di, false), compare_edges(prev_di, curr_di, true)],
+        do: [compare_edges(prev_do, curr_do, false), compare_edges(prev_do, curr_do, true)],
+        sdi: [compare_edges(prev_sdi, curr_sdi, false), compare_edges(prev_sdi, curr_sdi, true)],
+        sdo: [compare_edges(prev_sdo, curr_sdo, false), compare_edges(prev_sdo, curr_sdo, true)]
+    }
+}
 /**
  * Append telemetry items to the circular buffer. This function also updates the cached
  * domains for each joint, plot, and view.
@@ -111,7 +158,12 @@ export function append_telemetry_items(
     const count = items.length
     items.forEach((d, index) => {
         const pos = (state.start + state.count + index) % MAX_SAMPLES
-        telemetry_circular_buffer[pos] = d
+        const prev = (pos + MAX_SAMPLES - 1) % MAX_SAMPLES
+        const edges = derive_edges(state.count, d, prev)
+        telemetry_circular_buffer[pos] = {
+            ...d,
+            e: edges
+        }
     })
     const new_count = state.count + count
     if (new_count >= MAX_SAMPLES) {

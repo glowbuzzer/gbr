@@ -12,6 +12,7 @@ import {
     CaptureState,
     TelemetryDomainProvider,
     TelemetryEntry,
+    TelemetryEntryWithEdges,
     TelemetryGenerator,
     TelemetryPVAT,
     TelemetrySelector,
@@ -204,7 +205,7 @@ export function useTelemetryData(): {
             firstTimecode: telemetry_circular_buffer[start]?.t,
             lastTimecode: telemetry_circular_buffer[last]?.t,
             count,
-            *data(selection: [number, number?]): IterableIterator<TelemetryEntry> {
+            *data(selection: [number, number?]): IterableIterator<TelemetryEntryWithEdges> {
                 if (selection[0] < 0) {
                     selection[0] = Math.max(0, count + selection[0])
                 }

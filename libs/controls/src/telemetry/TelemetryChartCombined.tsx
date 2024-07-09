@@ -10,8 +10,8 @@ import {
     useTelemetryData
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { TelemetryChartPrimary } from "./TelemetryChartPrimary"
 import { TelemetryChartBrush } from "./TelemetryChartBrush"
+import { TelemetryChartPrimary } from "./TelemetryChartPrimary"
 
 const StyledDiv = styled.div`
     flex-grow: 1;
@@ -109,6 +109,7 @@ export const TelemetryChartCombined = ({
             <TelemetryChartPrimary
                 joints={kinematicsConfiguration.participatingJoints}
                 selected={selected}
+                plot={plot}
                 view={view}
                 brush={brush}
                 domain={domain}

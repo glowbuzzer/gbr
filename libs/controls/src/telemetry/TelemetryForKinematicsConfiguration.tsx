@@ -9,7 +9,7 @@ import {
     useTelemetryControls
 } from "@glowbuzzer/store"
 import * as React from "react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { Radio, Tag } from "antd"
 import styled from "styled-components"
@@ -62,12 +62,17 @@ export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, v
         kinematicsConfiguration.participatingJoints.map(() => true)
     )
 
+    useEffect(() => {
+        setSelected(kinematicsConfiguration.participatingJoints.map(() => true))
+    }, [kinematicsConfiguration.participatingJoints.length])
+
     const [desired_view, setView] = useLocalStorage(
         "viewTelemetrySetActBoth",
         TelemetryVisibilityOptions.SET
     )
 
     function toggle_selected(index) {
+        console.log("toggle", index, selected)
         setSelected(selected.map((v, i) => (i === index ? !v : v)))
     }
 

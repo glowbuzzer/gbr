@@ -250,9 +250,17 @@ export type GlowbuzzerStatus = {
         // timestamp
         t: number
         // these are the telemetry buffer capacities, only used during development and not sent by GBC unless enabled
-        m7cap: number
-        m4cap: number
-        m7wait: number
+        // m7cap: number
+        // m4cap: number
+        // m7wait: number
+
+        // digital io
+        di: number
+        do: number
+        // safety digital io
+        sdi: number
+        sdo: number
+
         // these are the set and act values on the joints
         set: { p: number; v: number; a: number; t: number; to: number }[]
         act: { p: number; v: number; t: number; e: number }[]

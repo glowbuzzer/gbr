@@ -1,8 +1,9 @@
 /*
- * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
 import {
+    TelemetryPVAT,
     TelemetryVisibilityOptions,
     useTelemetryControls,
     useTelemetryData
@@ -12,21 +13,24 @@ import React, { useEffect } from "react"
 import { update } from "./update"
 import * as d3 from "d3"
 
-type TelemetryChartPrimaryProps = {
+type TelemetryChartGenericProps = {
     joints: number[]
     selected: boolean[]
+    plot: TelemetryPVAT
     view: TelemetryVisibilityOptions
     domain: number[]
-    brush: number[]
+    brush?: number[]
 }
+
 export const TelemetryChartPrimary = ({
     joints,
     selected,
+    plot,
     view,
     domain,
     brush
-}: TelemetryChartPrimaryProps) => {
-    const { captureDuration, plot } = useTelemetryControls()
+}: TelemetryChartGenericProps) => {
+    const { captureDuration } = useTelemetryControls()
     const { firstTimecode, lastTimecode, data, count, selector } = useTelemetryData()
     const [svgRef, width, height] = useElementSize<SVGSVGElement>()
 
@@ -43,12 +47,14 @@ export const TelemetryChartPrimary = ({
                 x_domain,
                 domain,
                 30,
+                true,
                 from,
                 to
             )
             const axes = [d3.axisBottom(x_scale).ticks(4), d3.axisRight(y_scale).ticks(4)]
 
-            d3.selectAll(".axis").each(function (_, i) {
+            const svg = d3.select(svgRef.current)
+            svg.selectAll(".axis").each(function (_, i) {
                 const selection = d3.select(this)
                 selection
                     .transition()
