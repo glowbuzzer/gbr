@@ -4,6 +4,7 @@
 
 import {
     JointConfig,
+    MachineState,
     useConnection,
     useJointConfigurationList,
     useKinematicsConfiguration,
@@ -38,5 +39,5 @@ export function useMotionAllowed(): boolean {
 
 export function useOperationEnabled() {
     const machineState = useMachineState()
-    return machineState === "OPERATION_ENABLED"
+    return machineState === MachineState.OPERATION_ENABLED
 }
