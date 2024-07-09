@@ -20,6 +20,7 @@ const head = `<!DOCTYPE html>
 <body onload="run()">
 
 <div id="tag"></div>
+<div id="fro"></div>
 <div id="pos"></div>
 <div id="vel"></div>
 <div id="acc"></div>
@@ -82,6 +83,7 @@ function chart (id, csv) {
 
 function run () {
   chart('tag', tag_csv)
+  chart('fro', fro_csv)
   chart('pos', pos_csv)
   chart('vel', vel_csv)
   chart('acc', acc_csv)
@@ -102,6 +104,7 @@ export function make_plot(
         translation: Vector3
         rotation: Quaternion
         activity: { tag: number; streamState: number; activityState: number }
+        fro: { target: number; actual: number }
     }[]
 ) {
     // assume first row of data gives the joint count
@@ -125,6 +128,7 @@ export function make_plot(
     const tag_csv = data
         .map(r => `${r.activity.tag},${r.activity.streamState},${r.activity.activityState}`)
         .join("\n")
+    const fro_csv = data.map(r => `${r.fro.target},${r.fro.actual}`).join("\n")
     const joints_csv = joint_positions.map(r => r.join(",")).join("\n")
     const vel_csv = vel.map(r => r.join(",")).join("\n")
     const acc_csv = acc.map(r => r.join(",")).join("\n")
@@ -137,6 +141,7 @@ export function make_plot(
     const html = `
     ${head}
     const tag_csv=\`ACTIVITY TAG,STREAM STATE,ACTIVITY_STATE\n${tag_csv}\`
+    const fro_csv=\`FRO TARGET,FRO ACTUAL\n${fro_csv}\`
     const pos_csv=\`${first_row}\n${joints_csv}\`
     const vel_csv=\`${first_row}\n${vel_csv}\`
     const acc_csv=\`${first_row}\n${acc_csv}\`

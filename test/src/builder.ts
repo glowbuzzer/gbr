@@ -121,6 +121,11 @@ export class ConfigBuilder {
         return this
     }
 
+    scaleJoints(v: number) {
+        this.json.joint.forEach(j => (j.scale = v))
+        return this
+    }
+
     linearLimits(vmax: number, amax: number, jmax: number, kinematicsConfigurationIndex = 0) {
         this.json.kinematicsConfiguration[kinematicsConfigurationIndex].linearLimits = [
             {
@@ -132,7 +137,14 @@ export class ConfigBuilder {
         return this
     }
 
-    cartesianKinematics(frameIndex = 0) {
+    cartesianKinematics(
+        frameIndex = 0,
+        limits = {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        }
+    ) {
         const jointCount = this.json.joint.length || 3
         this.json.kinematicsConfiguration = [
             {
@@ -142,15 +154,16 @@ export class ConfigBuilder {
                 participatingJointsCount: jointCount,
                 kinematicsConfigurationType: 4,
                 extentsX: [-100, 100],
-                linearLimits: [
-                    {
-                        vmax: 200,
-                        amax: 4000,
-                        jmax: 80000
-                    }
-                ]
+                linearLimits: [limits]
             }
         ]
+        return this
+    }
+
+    scaleKinematics(v: number, kc = 0) {
+        this.json.kinematicsConfiguration[kc].scaleX = v
+        this.json.kinematicsConfiguration[kc].scaleY = v
+        this.json.kinematicsConfiguration[kc].scaleZ = v
         return this
     }
 

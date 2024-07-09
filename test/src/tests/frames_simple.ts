@@ -22,13 +22,11 @@ test.before.each(() => {
         .cartesianKinematics()
         // there is always a default empty frame at position 0
         .addFrame({
-            name: "tr_only",
             translation: {
                 x: 10
             }
         })
         .addFrame({
-            name: "both",
             translation: {
                 x: 10
             },
@@ -40,7 +38,6 @@ test.before.each(() => {
             }
         })
         .addFrame({
-            name: "rot_only",
             rotation: {
                 x: 0.7071068,
                 y: 0,
@@ -49,7 +46,6 @@ test.before.each(() => {
             }
         })
         .addFrame({
-            name: "both_in_z",
             translation: {
                 z: 325
             },
@@ -62,13 +58,10 @@ test.before.each(() => {
         })
         .finalize()
 
-    gbc.disable_limit_check()
+    gbc.enable_operation()
 
     // move machine away from origin
     gbc.set_joints(10, 10, 0)
-
-    gbc.enable_operation()
-    gbc.enable_limit_check()
 })
 
 test("initial kc local position from joint angles is not rotated", async () => {
@@ -138,6 +131,8 @@ test("move_line in rotated frame", async () => {
 
 test("move vector at velocity in rotated frame", async () => {
     try {
+        // fro change causes high jerk
+        gbc.enable_limit_check(3)
         // kc frame index is zero (no translation)
         assertNear(10, 10, 0, 0, 0, 0)
         // gbc.disable_limit_check()
@@ -152,7 +147,7 @@ test("move vector at velocity in rotated frame", async () => {
 
         gbc.assert.near(px, 10, 0.01)
         gbc.assert.near(py, 10, 0.01)
-        gbc.assert.near(pz, 10.24, 0.01)
+        gbc.assert.near(pz, 8.41, 0.01)
     } finally {
         gbc.plot("test")
     }

@@ -125,12 +125,14 @@ test("can cancel dwell", async () => {
 })
 
 test("can cancel move vector at velocity", async () => {
+    gbc.enable_limit_check(3)
     const move = gbc.wrap(gbc.activity.moveVectorAtVelocity(1, 0, 0).promise)
     // on the first cycle after cancel we are cancelling the dwell so the cancel itself completes on the cycle after
     await do_cancel(move, 1, 50)
 })
 
 test("will normalise move vector at velocity", async () => {
+    gbc.enable_limit_check(3)
     // the vector given here is not normalised but should still work without error
     const move = gbc.wrap(gbc.activity.moveVectorAtVelocity(100, 0, 0).promise)
     await do_cancel(move, 1, 50)

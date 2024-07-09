@@ -74,6 +74,7 @@ export class GbcTest {
               translation: Vector3
               rotation: Quaternion
               activity: { tag: number; streamState: number; activityState: number }
+              fro: { target: number; actual: number }
           }[]
         | undefined
     private valid_limits_factor = 1
@@ -354,13 +355,15 @@ export class GbcTest {
     }
 
     set_joints(...joints) {
+        const t = this.valid_limits_factor
         this.disable_limit_check()
         for (let i = 0; i < joints.length; i++) {
             this.set_joint_pos(i, joints[i])
         }
         this.gbc.init_kc()
         this.exec(3)
-        this.enable_limit_check()
+        this.enable_limit_check(t)
+        this.reset_capture()
     }
 
     enqueue(items, streamIndex = 0) {
@@ -422,8 +425,9 @@ export class GbcTest {
 
                 const joints_act_pos = store_state.joint.map(j => j.actPos)
 
-                const translation = store_state.kc[0].position.translation
-                const rotation = store_state.kc[0].position.rotation
+                const kc = store_state.kc[0]
+                const translation = kc.position.translation
+                const rotation = kc.position.rotation
 
                 const tag = store_state.stream[0].tag
                 const streamState = store_state.stream[0].state
@@ -433,7 +437,8 @@ export class GbcTest {
                     joints: joints_act_pos,
                     translation: new Vector3(translation.x, translation.y, translation.z),
                     rotation: new Quaternion(rotation.x, rotation.y, rotation.z, rotation.w),
-                    activity: { tag, streamState, activityState }
+                    activity: { tag, streamState, activityState },
+                    fro: { target: kc.froTarget, actual: kc.froActual }
                 })
             }
         } else {
@@ -602,6 +607,11 @@ export class GbcTest {
 
     private capture(enabled) {
         this.capture_state = enabled ? [] : undefined
+        return this
+    }
+
+    private reset_capture() {
+        this.capture_state = this.capture_state ? [] : undefined
         return this
     }
 

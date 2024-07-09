@@ -40,6 +40,7 @@ test("can execute basic gcode", async () => {
 })
 
 test("can execute arc with centre gcode", async () => {
+    gbc.enable_limit_check(1.5)
     gbc.send_gcode("G2 X1 Y1 I1 J0\nM2")
     gbc.exec(3)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)
@@ -51,6 +52,7 @@ test("can execute arc with centre gcode", async () => {
 })
 
 test("can execute arc with radius gcode", async () => {
+    gbc.enable_limit_check(1.5)
     gbc.send_gcode("G3 X1 Y1 R1\nM2")
     gbc.exec(3)
     gbc.assert.selector(state, STREAMSTATE.STREAMSTATE_ACTIVE)

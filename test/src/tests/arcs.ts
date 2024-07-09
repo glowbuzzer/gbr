@@ -15,6 +15,11 @@ test.before.each(ctx => {
     console.log(ctx.__test__)
     gbc.config()
         .joints(3)
+        // .joints(3, {
+        //     vmax: 3000,
+        //     amax: 1000000,
+        //     jmax: 300000000
+        // })
         .cartesianKinematics()
         .addFrame({
             // for testing arc in rotated frame
@@ -35,6 +40,8 @@ test.before.each(ctx => {
         })
         .finalize()
     gbc.enable_operation()
+    // arcs exceed limits slightly and we aren't testing limits here
+    gbc.enable_limit_check(1.5)
     gbc.set_fro(0, 1)
 })
 
@@ -257,6 +264,7 @@ test("move arc when kc frame is non-zero and plane is specified", async () => {
         })
         .finalize()
         .enable_operation()
+        .enable_limit_check(1.5)
 
     try {
         await gbc.run(api => api.moveToPosition(10, 0, 0))
