@@ -23,6 +23,7 @@ console.log("Using cache dir", cacheDir)
 type ExampleViteConfigOptions = {
     sharedAssetDirectories?: string[]
     customAssets?: { [index: string]: string }
+    aliases?: { [index: string]: string }
 }
 
 export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) {
@@ -55,7 +56,10 @@ export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) 
         resolve: {
             alias: {
                 "@glowbuzzer/controls": resolve(root, "./libs/controls/src/index.ts"),
-                "@glowbuzzer/store": resolve(root, "./libs/store/src/index.ts")
+                "@glowbuzzer/store": resolve(root, "./libs/store/src/index.ts"),
+                ...Object.fromEntries(
+                    Object.entries(options.aliases || {}).map(([k, v]) => [k, resolve(root, v)])
+                )
             }
         },
         define: {
