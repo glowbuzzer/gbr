@@ -4,4 +4,8 @@
 
 import { defineExampleViteConfig } from "../../vite.shared"
 
-export default defineExampleViteConfig()
+export default defineExampleViteConfig({
+    aliases: {
+        "@glowbuzzer/awlib": "./vendors/automationware/awlib/src/index.ts"
+    }
+})

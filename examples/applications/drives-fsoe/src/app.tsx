@@ -6,40 +6,33 @@ import React from "react"
 import {
     ConfigEditTileDefinition,
     ConnectTileDefinition,
+    DigitalInputsTileDefinition,
+    DigitalOutputsTileDefinition,
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
+    EmStatTileDefinition,
     FeedRateTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
-    TelemetryTileDefinition,
-    DigitalInputsTileDefinition,
-    DigitalOutputsTileDefinition,
-    SafetyTileDefinition,
-    SafetyDigitalInputsTileDefinition,
-    SafetyDigitalOutputsTileDefinition,
-    JointTorqueModesTile,
     JointTorqueModesTileDefinition,
     ModbusDigitalInputsTileDefinition,
-    ModbusIntegerInputsTileDefinition,
-    useGbdbMenu,
     ModbusDigitalOutputsTileDefinition,
+    ModbusIntegerInputsTileDefinition,
     ModbusIntegerOutputsTileDefinition,
-    CartesianJogTileDefinition
+    SafetyDigitalInputsTileDefinition,
+    SafetyDigitalOutputsTileDefinition,
+    SafetyTileDefinition,
+    TelemetryTileDefinition
 } from "@glowbuzzer/controls"
 
-import { InnoboticsModeProvider } from "./InnoboticsModeProvider"
-
-import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 import { AppStatusBar } from "./AppStatusBar"
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { DrivesOscillatingMoveTileDefinition } from "./tiles"
-import { VirtualHmiTileDefinition } from "./tiles"
+import { DrivesOscillatingMoveTileDefinition, VirtualHmiTileDefinition } from "./tiles"
 import { DrivesTileDefinition } from "../../../util/drives/DrivesTileDefinition"
-import { EmStatTileDefinition } from "@glowbuzzer/controls"
-import { InnoboticsJogTileWrapper } from "./InnoboticsJogTileWrapper"
+import { InnoboticsJogTileWrapper, InnoboticsModeProvider } from "@glowbuzzer/awlib"
 
 const TelemetryMiddleCol = DockTileDefinitionBuilder(TelemetryTileDefinition)
     .placement(1, 1)
