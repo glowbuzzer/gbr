@@ -4,11 +4,14 @@
 
 import { useMemo } from "react"
 import {
-    DIN_SAFETY_TYPE,
     MachineState,
+    ManualMode,
+    useAutoModeActiveInput,
+    useEnablingSwitchInput,
     useMachineState,
     useSafetyDigitalInputList,
-    useSafetyDigitalInputs
+    useSafetyDigitalInputs,
+    useOverallSafetyStateInput
 } from "@glowbuzzer/store"
 import { useGlowbuzzerMode } from "../modes"
 
@@ -17,44 +20,39 @@ type HandGuidedModeState = {
     handGuidedModeRequested: boolean
     handGuidedModeActive: boolean
     overallSafetyState: boolean
-    deadmanEngaged: boolean
+    enablingSwitchEngaged: boolean
 }
 
 export function useHandGuidedMode(): HandGuidedModeState {
-    const { mode } = useGlowbuzzerMode()
-    const digitalInputList = useSafetyDigitalInputList()
+    const { mode, modes } = useGlowbuzzerMode()
+
+    const handGuidedModeSupported = modes.some(m => m.value === ManualMode.HAND_GUIDED)
+    const overallSafetyState = useOverallSafetyStateInput()
+    const enablingSwitchEngaged = useEnablingSwitchInput()
+    const manualMode = !useAutoModeActiveInput()
     const machineState = useMachineState()
-    const inputs = useSafetyDigitalInputs()
 
-    const { supported, ...indexes } = useMemo(() => {
-        const overallStateIndex = digitalInputList.findIndex(
-            c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE
-        )
-        const keyswitchIndex = digitalInputList.findIndex(
-            c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH
-        )
-        const deadmanIndex = digitalInputList.findIndex(
-            c => c.type === DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN
-        )
-        const supported = keyswitchIndex !== -1
+    const handGuidedModeRequested = mode === ManualMode.HAND_GUIDED
 
-        return { supported, overallStateIndex, keyswitchIndex, deadmanIndex }
-    }, [digitalInputList])
+    const handGuidedModeActive =
+        machineState === MachineState.OPERATION_ENABLED &&
+        overallSafetyState &&
+        manualMode &&
+        enablingSwitchEngaged
 
     return useMemo(() => {
-        const overallState = inputs[indexes.overallStateIndex]
-        const keyswitch = inputs[indexes.keyswitchIndex]
-        const deadman = inputs[indexes.deadmanIndex]
-        const active =
-            machineState === MachineState.OPERATION_ENABLED && overallState && keyswitch && deadman
-
         return {
-            handGuidedModeActive: active,
-            handGuidedModeSupported: supported,
-            overallSafetyState: overallState,
-            // TODO: rename this property
-            handGuidedModeRequested: mode === "hand-guided",
-            deadmanEngaged: deadman
+            handGuidedModeActive,
+            handGuidedModeSupported,
+            overallSafetyState,
+            handGuidedModeRequested,
+            enablingSwitchEngaged
         }
-    }, [machineState, inputs, indexes, mode, supported])
+    }, [
+        handGuidedModeActive,
+        handGuidedModeSupported,
+        overallSafetyState,
+        handGuidedModeRequested,
+        enablingSwitchEngaged
+    ])
 }

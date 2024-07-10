@@ -2,45 +2,70 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React, { useState } from "react"
+import React from "react"
 import {
-    DIN_SAFETY_TYPE,
-    useDigitalInputList,
-    useDigitalInputs,
-    useDigitalOutputState,
+    GlowbuzzerConfig,
+    useOverallSafetyStateInput,
     useSafetyDigitalInputList,
-    useSafetyDigitalInputs,
-    useSafetyDigitalInputState,
-    useSafetyDigitalOutputList,
-    useSafetyDigitalOutputState
+    useSafetyDigitalInputs
 } from "@glowbuzzer/store"
-import {
-    StyledSafetyTileContent,
-    StyledSafetyTileText,
-    StyledDivider
-} from "../util/styles/StyledTileContent"
-import { Tag, Select, Switch, Button, Space, Divider } from "antd"
+import { Tag } from "antd"
 import styled from "styled-components"
+import { SafetyTileContent } from "./SafetyTileContent"
 
-const { Option } = Select
+const StyledDiv = styled.div`
+    .safety-grid {
+        display: grid;
+        grid-template-columns: 5fr 1fr;
+        gap: 5px;
+        align-items: center;
+        padding-bottom: 10px;
 
-const StyledResetButton = styled.div`
-    margin-top: 8px; /* Adjust the margin value as needed */
+        header {
+            padding-top: 10px;
+            grid-column: span 2;
+        }
+
+        .label {
+            color: ${props => props.theme.colorTextSecondary};
+        }
+        .ant-tag {
+            width: 100%;
+            text-align: center;
+        }
+    }
 `
 
-const StyledSafetyInput = styled.div`
-    display: flex;
-    //padding: 1px 0;
+type SafetyItemProps = {
+    label: string
+    config: GlowbuzzerConfig["safetyDin"][0]
+    state: boolean
+}
 
-    .label {
-        flex-grow: 1;
-    }
+const SafetyItem = ({ label, config, state }: SafetyItemProps) => {
+    const metadata = config.$metadata
+    const description = config.description || label
+    const numeric_state = state ? 1 : 0
 
-    .ant-tag {
-        //width: 40px;
-        text-align: center;
-    }
-`
+    const { active_state_label, active_state_color } = metadata
+        ? {
+              active_state_label: metadata[numeric_state],
+              active_state_color: numeric_state == metadata.negativeState ? "red" : "green"
+          }
+        : {
+              active_state_label: state ? "ON" : "OFF",
+              active_state_color: state ? "green" : "red"
+          }
+
+    return (
+        <React.Fragment>
+            <div className="label">{description}</div>
+            <div>
+                <Tag color={active_state_color}>{active_state_label}</Tag>
+            </div>
+        </React.Fragment>
+    )
+}
 
 type SafetyInputsTileProps = {
     /**
@@ -55,62 +80,67 @@ type SafetyInputsTileProps = {
 export const SafetyTile = ({ labels = [] }: SafetyInputsTileProps) => {
     const safetyDins = useSafetyDigitalInputList()
     const safetyValues = useSafetyDigitalInputs()
+    const overallSafetyState = useOverallSafetyStateInput()
 
     const normalised_labels = safetyDins?.map(
         (config, index) => labels[index] || config.name || index.toString()
     )
-    const normalised_types = safetyDins?.map((config, index) => config.type)
+
+    const acknowledgeableFaults = safetyDins?.filter(s => s.$metadata?.type === "acknowledgeable")
+    const unacknowledgeableFaults = safetyDins?.filter(
+        s => s.$metadata?.type === "unacknowledgeable"
+    )
 
     return (
-        <StyledSafetyTileContent>
-            The overall safety state is:{"  "}
-            {/*<Tag color={safetyValues[overallSafetyStateIndex] ? "green" : "red"}>*/}
-            {/*    {safetyValues[overallSafetyStateIndex] ? "NO FAULT" : "FAULT"}*/}
-            {/*</Tag>*/}
-            <StyledDivider />
-            <StyledSafetyTileText>The acknowledgeable safety faults are:</StyledSafetyTileText>
-            {safetyDins &&
-                safetyDins.map(
-                    (config, index) =>
-                        normalised_types[index] ==
-                            DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE && (
-                            <StyledSafetyInput key={index}>
-                                <span className="label">{normalised_labels[index]}</span>
-                                <Tag color={safetyValues[index] ? "green" : "red"}>
-                                    {safetyValues[index] ? "NO FAULT" : "FAULT"}
-                                </Tag>
-                            </StyledSafetyInput>
-                        )
-                )}
-            <StyledDivider />
-            <StyledSafetyTileText>The unacknowledgeable safety faults are:</StyledSafetyTileText>
-            {safetyDins &&
-                safetyDins.map(
-                    (config, index) =>
-                        normalised_types[index] ==
-                            DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_UNACKNOWLEDGEABLE && (
-                            <StyledSafetyInput key={index}>
-                                <span className="label">{normalised_labels[index]}</span>
-                                <Tag color={safetyValues[index] ? "green" : "red"}>
-                                    {safetyValues[index] ? "NO FAULT" : "FAULT"}
-                                </Tag>
-                            </StyledSafetyInput>
-                        )
-                )}
-            <StyledDivider />
-            Acknowledgeable safety faults can we reset using the reset button. Unacknowledgeable
-            safety faults require?.
-            <StyledDivider />
-            {/*{safetyDins[safePosValidIndex] ? (*/}
-            {/*    <div>*/}
-            {/*        The robot is reporting that its safe position is valid. No action is needed.*/}
-            {/*    </div>*/}
-            {/*) : (*/}
-            {/*    <div>*/}
-            {/*        The robot is reporting that its safe position is INVALID. The safe position*/}
-            {/*        homing routine must be run.{" "}*/}
-            {/*    </div>*/}
-            {/*)}*/}
-        </StyledSafetyTileContent>
+        <SafetyTileContent>
+            <StyledDiv>
+                <div className="safety-grid">
+                    <>
+                        Overall safety state
+                        <Tag color={overallSafetyState ? "green" : "red"}>
+                            {overallSafetyState ? "NO FAULT" : "FAULT"}
+                        </Tag>
+                    </>
+                    {acknowledgeableFaults.length > 0 && (
+                        <>
+                            <header>Acknowledgeable safety faults</header>
+                            {acknowledgeableFaults.map((s, index) => (
+                                <SafetyItem
+                                    key={index}
+                                    label={normalised_labels[index]}
+                                    state={safetyValues[index]}
+                                    config={s}
+                                />
+                            ))}
+                        </>
+                    )}
+                    {unacknowledgeableFaults.length > 0 && (
+                        <>
+                            <header>Unacknowledgeable safety faults</header>
+                            {unacknowledgeableFaults.map((s, index) => (
+                                <SafetyItem
+                                    key={index}
+                                    label={normalised_labels[index]}
+                                    state={safetyValues[index]}
+                                    config={s}
+                                />
+                            ))}
+                        </>
+                    )}
+                </div>
+                Acknowledgeable safety faults can we reset using the reset button. Unacknowledgeable
+                safety faults require?.
+                {/*{safetyDins[safePosValidIndex] ? (*/}
+                {/*    <div>*/}
+                {/*        The robot is reporting that its safe position is valid. No action is needed.*/}
+                {/*    </div>*/}
+                {/*) : (*/}
+                {/*    <div>*/}
+                {/*        The robot is reporting that its safe position is INVALID. The safe position*/}
+                {/*        homing routine must be run.{" "}*/}
+                {/*    </div>*/}
+                {/*)}*/}
+            </StyledDiv>
+        </SafetyTileContent>
     )
 }

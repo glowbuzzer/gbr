@@ -10,8 +10,8 @@ import {
     AoutConfig,
     AoutStatus,
     CartesianPosition,
-    DinConfig,
     DinCommand,
+    DinConfig,
     DinStatus,
     DoutCommand,
     DoutConfig,
@@ -24,7 +24,6 @@ import {
     ExternalUioutConfig,
     FramesConfig,
     IinConfig,
-    ModbusUiinConfig,
     IoutCommand,
     IoutConfig,
     IoutStatus,
@@ -35,12 +34,17 @@ import {
     KinematicsConfigurationStatus,
     MachineConfig,
     MachineStatus,
+    ModbusDinConfig,
+    ModbusDinStatus,
+    ModbusDoutConfig,
+    ModbusUiinConfig,
+    ModbusUiinStatus,
+    ModbusUioutConfig,
     MoveParametersConfig,
     PointsConfig,
-    SafetyDinConfig,
     SafetyDinCommand,
+    SafetyDinConfig,
     SafetyDinStatus,
-    ModbusDinConfig,
     SafetyDoutCommand,
     SafetyDoutConfig,
     SafetyDoutStatus,
@@ -54,11 +58,7 @@ import {
     TaskStatus,
     ToolConfig,
     UiinConfig,
-    UioutConfig,
-    ModbusDoutConfig,
-    ModbusUiinStatus,
-    ModbusDinStatus,
-    ModbusUioutConfig
+    UioutConfig
 } from "./gbc"
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
@@ -75,6 +75,46 @@ export type WithNameAndDescription<T> = T & { name?: string; description?: strin
 
 type WithNameAndDescriptionForArrayElements<T> = {
     [P in keyof T]: T[P] extends Array<infer U> ? WithNameAndDescription<U>[] : T[P]
+}
+
+type WithMetadata<T, M> = T & {
+    $metadata?: M
+}
+
+export type SafetyIoMetadata = {
+    0?: string
+    1?: string
+    negativeState?: number
+}
+
+export type SafetyInputMetadata = SafetyIoMetadata & {
+    type?: "acknowledgeable" | "unacknowledgeable"
+}
+
+type MachineIoItem = {
+    safety?: boolean
+    index: number
+}
+
+export type MachineMetadata = {
+    /** The input that indicates that machine is in a safe state */
+    safetyStateInput?: MachineIoItem
+    /** The input that indicates that hardware reset is needed */
+    resetNeededInput?: MachineIoItem
+    /** The input that should be used to determine whether auto mode is enabled (for example, keyswitch state) */
+    autoModeEnabledInput?: MachineIoItem
+    /** The input that should be used to determine whether motion is enabled in menual mode (for example, deadman pressed) */
+    motionEnabledInput?: MachineIoItem
+    /** The input that indicates the machine is in a safe stop state */
+    safeStopInput?: MachineIoItem
+    /** The input that should be used to determine whether the machine is in override mode (safety functions muted) */
+    overrideEnabledInput?: MachineIoItem
+    /** The output that should be used as the first bit of the manual mode, when manual mode active */
+    manualModeBit1Output?: MachineIoItem
+    /** The output that should be used as the second bit of the manual mode, when manual mode active */
+    manualModeBit2Output?: MachineIoItem
+    /** The output that should be used as the third bit of the manual mode, when manual mode active */
+    manualModeBit3Output?: MachineIoItem
 }
 
 /**
@@ -98,10 +138,8 @@ type WithNameAndDescriptionForArrayElements<T> = {
  *
  * See the individual types for each configuration item for further details.
  */
-
 export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
-    // export type GlowbuzzerConfig = WithNameForArrayElements<{
-    machine?: MachineConfig[]
+    machine?: WithMetadata<MachineConfig, MachineMetadata>[]
     kinematicsConfiguration?: KinematicsConfigurationConfig[]
     moveParameters?: MoveParametersConfig[]
     joint?: JointConfig[]
@@ -112,12 +150,12 @@ export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
     stream?: StreamConfig[]
     soloActivity?: SoloActivityConfig[]
     dout?: DoutConfig[]
-    safetyDout?: SafetyDoutConfig[]
     aout?: AoutConfig[]
     iout?: IoutConfig[]
     uiout?: UioutConfig[]
     din?: DinConfig[]
-    safetyDin?: SafetyDinConfig[]
+    safetyDin?: WithMetadata<SafetyDinConfig, SafetyInputMetadata>[]
+    safetyDout?: WithMetadata<SafetyDoutConfig, SafetyIoMetadata>[]
     modbusDin?: ModbusDinConfig[]
     ain?: AinConfig[]
     iin?: IinConfig[]

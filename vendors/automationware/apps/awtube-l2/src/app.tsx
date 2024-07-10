@@ -24,6 +24,7 @@ import {
     PointsTileDefinition,
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition,
+    SafetyTileDefinition,
     SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
@@ -146,6 +147,7 @@ export const App = () => {
                     DockTileDefinitionBuilder(JointJogTileDefinition)
                         .wrap(InnoboticsJogTileWrapper)
                         .build(),
+                    FlowTileDefinition,
                     CartesianDroTileDefinition,
                     JointDroTileDefinition,
                     JointTorqueModesTileDefinition,
@@ -156,7 +158,6 @@ export const App = () => {
                     TelemetryTileDefinition,
                     EmStatTileDefinition,
                     SimpleMoveTileDefinition,
-                    FlowTileDefinition,
                     MonitorTileDefinition,
                     DevInputOverridesTileDefinition,
                     PayloadTileDefinition,
@@ -164,7 +165,8 @@ export const App = () => {
                     DigitalInputsTileDefinition,
                     SafetyDigitalInputsTileDefinition,
                     DigitalOutputsTileDefinition,
-                    SafetyDigitalOutputsTileDefinition
+                    SafetyDigitalOutputsTileDefinition,
+                    SafetyTileDefinition
                 ]}
                 statusBarExtra={<AppStatusBar />}
             >

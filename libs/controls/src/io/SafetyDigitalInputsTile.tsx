@@ -3,39 +3,49 @@
  */
 
 import * as React from "react"
-import { useSafetyDigitalInputList, useSafetyDigitalInputState } from "@glowbuzzer/store"
 import {
-    StyledDivider,
-    StyledSafetyDigitalInputs,
-    StyledSafetyDigitalInputsRow,
-    StyledSafetyTileContent,
+    GlowbuzzerConfig,
+    SafetyIoMetadata,
+    useSafetyDigitalInputList,
+    useSafetyDigitalInputState
+} from "@glowbuzzer/store"
+import {
+    // StyledSafetyDigitalInputs,
+    // StyledSafetyDigitalInputsRow,
     StyledToolTipDiv
 } from "../util/styles/StyledTileContent"
 import { Select, Switch, Tag, Tooltip } from "antd"
-import { StyledDigitalInputs } from "./DigitalInputsTile"
-import { parseDescription } from "./SafetyIoUtils"
+import { SafetyTileContent } from "./SafetyTileContent"
 
 const { Option } = Select
 
 const SafetyDigitalInputItem = ({
     index,
-    label,
-    description,
-    states
+    config,
+    label
 }: {
     index: number
+    config: GlowbuzzerConfig["safetyDin"][0]
     label?: string
-    description?: string
-    states?: { state: number; label: string; isError: boolean }[]
 }) => {
     const [din, setDin] = useSafetyDigitalInputState(index)
 
-    const activeState = states?.find(state => state.state === (din.actValue ? 1 : 0))
-    const activeStateLabel = activeState?.label || (din.actValue ? "ON" : "OFF")
+    const description = config.description
+    const state = din.actValue
+    const numeric_state = state ? 1 : 0
 
-    const activeStateColor = activeState?.isError ? "red" : "green"
+    const metadata: SafetyIoMetadata = config.$metadata
+    const { active_state_label, active_state_color } = metadata
+        ? {
+              active_state_label: metadata[numeric_state],
+              active_state_color: numeric_state == metadata.negativeState ? "red" : "green"
+          }
+        : {
+              active_state_label: state ? "ON" : "OFF",
+              active_state_color: state ? "green" : "red"
+          }
 
-    function handle_override_change(value) {
+    function handle_override_change(value: boolean) {
         setDin(din.override, value)
     }
 
@@ -45,7 +55,7 @@ const SafetyDigitalInputItem = ({
     }
 
     return (
-        <StyledSafetyDigitalInputsRow>
+        <React.Fragment>
             <StyledToolTipDiv>
                 <Tooltip
                     title={label}
@@ -59,12 +69,12 @@ const SafetyDigitalInputItem = ({
             <div>
                 <Select
                     size="small"
-                    value={din.override ? 1 : 0}
+                    value={din.override}
                     style={{ width: "90px" }}
                     onChange={handle_override_change}
                 >
-                    <Option value={0}>Auto</Option>
-                    <Option value={1}>Override</Option>
+                    <Option value={false}>Auto</Option>
+                    <Option value={true}>Override</Option>
                 </Select>
             </div>
             <Switch
@@ -72,11 +82,10 @@ const SafetyDigitalInputItem = ({
                 checked={din.setValue}
                 onChange={handle_state_change}
             />
-            <div>
-                {/*<Tag color={din.actValue ? "green" : "red"}>{din.actValue ? "ON" : "OFF"}</Tag>*/}
-                <Tag color={activeStateColor}>{activeStateLabel}</Tag>
+            <div className="label">
+                <Tag color={active_state_color}>{active_state_label}</Tag>
             </div>
-        </StyledSafetyDigitalInputsRow>
+        </React.Fragment>
     )
 }
 
@@ -94,22 +103,19 @@ export const SafetyDigitalInputsTile = ({ labels = [] }: SafetyDigitalInputsTile
     const dins = useSafetyDigitalInputList()
 
     return (
-        <StyledSafetyTileContent>
-            <StyledSafetyDigitalInputs>
+        <SafetyTileContent>
+            <div className="grid">
                 {dins?.map((config, index) => {
-                    const { description, states } = parseDescription(config.description || "")
-
                     return (
                         <SafetyDigitalInputItem
                             key={index}
                             index={index}
+                            config={config}
                             label={labels[index] || config.name || index.toString()}
-                            description={description}
-                            states={states}
                         />
                     )
                 })}
-            </StyledSafetyDigitalInputs>
-        </StyledSafetyTileContent>
+            </div>
+        </SafetyTileContent>
     )
 }

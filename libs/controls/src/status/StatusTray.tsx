@@ -8,7 +8,7 @@ import { useStatusTrayVisible } from "./StatusTrayProvider"
 import { StatusTrayModifiedConfiguration } from "./StatusTrayModifiedConfiguration"
 import { StatusTrayFaults } from "./StatusTrayFaults"
 import { StatusTrayGbcVersionCheck } from "./StatusTrayGbcVersionCheck"
-import { StatusTrayHandGuidedMode } from "../handguided/StatusTrayHandGuidedMode"
+import { StatusTrayModeSwitch } from "./StatusTrayModeSwitch"
 import { StatusTrayConnect } from "./StatusTrayConnect"
 import { useEffect, useState } from "react"
 
@@ -69,7 +69,7 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
         <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
             <div className="tray">
                 <StatusTrayConnect />
-                <StatusTrayHandGuidedMode />
+                <StatusTrayModeSwitch />
                 <StatusTrayModifiedConfiguration />
                 <StatusTrayFaults />
                 <StatusTrayGbcVersionCheck />

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "223c3460a4c79d0420ec4ce7b7668ea5"
+export const GbcSchemaChecksum = "04d77671f69d7665724265746bff86aa"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -498,24 +498,6 @@ export const GbcConstants = {
         TRIGGERACTION_CANCEL,
         TRIGGERACTION_START,
     }
-    export enum DIN_SAFETY_TYPE {
-        /**  The digital input is a reserved input */
-  DIN_SAFETY_TYPE_RESERVED ,
-        /**  The digital input represents an acknowledgeable safety fault */
-  DIN_SAFETY_TYPE_ACKNOWLEDGEABLE ,
-        /**  The digital input represents an unacknowledgeable safety fault */
-  DIN_SAFETY_TYPE_UNACKNOWLEDGEABLE ,
-        /**  The digital input represents the overall safety state of a machine */
-  DIN_SAFETY_TYPE_OVERALL_STATE ,
-        /**  The digital input represents the deadman switch */
-  DIN_SAFETY_TYPE_DEAD_MAN ,
-        /**  The digital input represents the keyswitch */
-  DIN_SAFETY_TYPE_KEYSWITCH ,
-        /**  The digital input represents the safe position valid signal */
-  DIN_SAFETY_TYPE_SAFE_POS_VALID ,
-        /**  The digital input represents the muted signal */
-  DIN_SAFETY_TYPE_MUTED ,
-    }
     export enum SERIAL_CONTROL_WORD {
         SERIAL_TRANSMIT_REQUEST_BIT_NUM                     = (0),
         SERIAL_RECEIVE_ACCEPTED_BIT_NUM                     = (1),
@@ -548,42 +530,12 @@ export const GbcConstants = {
                         jmax?:number;
             }
             
-            export type MachineIoPurpose = {
-            
-                        /**  Whether this input or output is enabled */
-                        enabled?:boolean;
-                        /**  Whether this is a safety input or output */
-                        safety?:boolean;
-                        /**  The index of the input or output */
-                        index?:number;
-            }
-            
             export type MachineConfig = {
             
                         /**  The bus cycle time (in milliseconds) */
                         busCycleTime?:number;
                         /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
                         statusFrequency?:number;
-                        /**  @deprecated */
-                        estopEnabled?:boolean;
-                        /**  @deprecated */
-                        estopInput?:number;
-                        /**  The input that indicates that machine is in a safe state */
-                        safetyStateInput?:MachineIoPurpose;
-                        /**  The input that should be used to determine whether auto mode is enabled (for example, keyswitch state) */
-                        autoModeEnabledInput?:MachineIoPurpose;
-                        /**  The input that should be used to determine whether motion is enabled in menual mode (for example, deadman pressed) */
-                        motionEnabledInput?:MachineIoPurpose;
-                        /**  The input that indicates the machine is in a safe stop state */
-                        safeStopInput?:MachineIoPurpose;
-                        /**  The input that should be used to determine whether the machine is in override mode (safety functions muted) */
-                        overrideEnabledInput?:MachineIoPurpose;
-                        /**  The output that should be used as the first bit of the manual mode, when manual mode active */
-                        manualModeBit1Output?:MachineIoPurpose;
-                        /**  The output that should be used as the second bit of the manual mode, when manual mode active */
-                        manualModeBit2Output?:MachineIoPurpose;
-                        /**  The output that should be used as the third bit of the manual mode, when manual mode active */
-                        manualModeBit3Output?:MachineIoPurpose;
                         /**  The amount of time (in milliseconds) before GBC will fault if it has not received a heartbeat, default 2000 */
                         heartbeatTimeout?:number;
             }
@@ -1170,8 +1122,6 @@ export const GbcConstants = {
             
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
-                        /**  The type of safety input */
-                        type?:DIN_SAFETY_TYPE;
             }
             /** 
             Status of a safety digital input

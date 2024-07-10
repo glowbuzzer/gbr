@@ -3,7 +3,6 @@
  */
 
 import {
-    DIN_SAFETY_TYPE,
     GlowbuzzerConfig,
     JOINT_MODEOFOPERATION,
     JOINT_TORQUE_MODE,
@@ -11,22 +10,17 @@ import {
     SafetyDinConfig,
     WithNameAndDescription
 } from "@glowbuzzer/store"
-import {
-    AwTubeL2InverseDynamicParams,
-    AwTubeL2KinChainParams,
-    AwTubeLKinChainParams,
-    StandardAwTubeConfiguration
-} from "@glowbuzzer/awlib"
+import { AwTubeLKinChainParams, StandardAwTubeConfiguration } from "@glowbuzzer/awlib"
 
 const safety_dins = `
-0\tsafety_state\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE}
+0\tsafety_state
 1\tsafety_error
 2\trestart_ack_needed
 3\tpause_motion
 4\treduce_speed
 5\tsafe_pos_valid
-6\thand_guided_mode_keyswitch\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH}
-7\thand_guided_mode_deadman\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN}
+6\thand_guided_mode_keyswitch
+7\thand_guided_mode_deadman
 8\tmute_safety_function
 9\tactive_fault_machine_swm
 10\tactive_fault_machine_sls
@@ -44,8 +38,8 @@ const safety_din_array: WithNameAndDescription<SafetyDinConfig>[] = safety_dins
     .trim()
     .split("\n")
     .map(line => {
-        const [, name, type] = line.trim().split("\t")
-        return { name, type: Number(type) || DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE }
+        const [, name] = line.trim().split("\t")
+        return { name }
     })
 
 /**

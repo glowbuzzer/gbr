@@ -16,5 +16,4 @@ export const SafetyDigitalOutputsTileDefinition = DockTileDefinitionBuilder()
         () => createElement(SafetyDigitalOutputsTile, {}, null),
         () => createElement(SafetyDigitalOutputsTileHelp, {}, null)
     )
-    .requiresOperationEnabled()
     .build()

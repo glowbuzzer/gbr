@@ -2,21 +2,23 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { MachineConfig, RootState, useConfig, useConnection } from "@glowbuzzer/store"
+import { MachineMetadata, RootState, useConfig, useConnection } from "@glowbuzzer/store"
 import { useSelector } from "react-redux"
 import { useMemo } from "react"
 
-function useInputActive(
-    prop: Extract<
-        keyof MachineConfig,
-        "autoModeEnabledInput" | "motionEnabledInput" | "safeStopInput"
-    >
-) {
+export function useMachineMetadataExists(prop: keyof MachineMetadata) {
+    const config = useConfig()
+    return !!config.machine[0].$metadata?.[prop]
+}
+
+export function useMachineInputActive(prop: keyof MachineMetadata) {
     const config = useConfig()
     return useSelector<RootState, boolean>(state => {
         // do the work inside the selector, so react can optimise simple boolean return
-        const { enabled, index, safety } = config.machine[0][prop] || {}
-        if (!enabled) {
+        const metadata = config.machine[0].$metadata?.[prop]
+        const { index, safety } = metadata || {}
+
+        if (!metadata) {
             return false
         }
 
@@ -28,16 +30,24 @@ function useInputActive(
     })
 }
 
-export function useAutoModeActiveInput() {
-    return useInputActive("autoModeEnabledInput")
+export function useResetNeededInput() {
+    return useMachineInputActive("resetNeededInput")
 }
 
-export function useMotionEnabledInput() {
-    return useInputActive("motionEnabledInput")
+export function useOverallSafetyStateInput() {
+    return useMachineInputActive("safetyStateInput")
+}
+
+export function useAutoModeActiveInput() {
+    return useMachineInputActive("autoModeEnabledInput")
+}
+
+export function useEnablingSwitchInput() {
+    return useMachineInputActive("motionEnabledInput")
 }
 
 export function useSafeStopInput() {
-    return !useInputActive("safeStopInput")
+    return !useMachineInputActive("safeStopInput")
 }
 
 export enum ManualMode {
@@ -50,10 +60,11 @@ export enum ManualMode {
 export function useManualMode(): [ManualMode, (mode: ManualMode) => void] {
     const connection = useConnection()
     const config = useConfig()
-    const bit1 = config.machine[0].manualModeBit1Output
-    const bit2 = config.machine[0].manualModeBit2Output
+    const { manualModeBit1Output, manualModeBit2Output } = config.machine[0].$metadata || {}
+    const bit1 = manualModeBit1Output
+    const bit2 = manualModeBit2Output
 
-    const not_configured = !bit1?.enabled || !bit2?.enabled
+    const not_configured = !bit1 || !bit2
 
     const commanded_mode = useSelector<RootState, ManualMode>(state => {
         if (not_configured) {
@@ -104,5 +115,5 @@ export function useManualMode(): [ManualMode, (mode: ManualMode) => void] {
                 )
             }
         ]
-    }, [not_configured, connection, commanded_mode])
+    }, [not_configured, connection, commanded_mode, bit1, bit2])
 }

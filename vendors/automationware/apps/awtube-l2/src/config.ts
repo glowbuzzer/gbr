@@ -3,7 +3,6 @@
  */
 
 import {
-    DIN_SAFETY_TYPE,
     GlowbuzzerConfig,
     JOINT_MODEOFOPERATION,
     JOINT_TORQUE_MODE,
@@ -18,14 +17,14 @@ import {
 } from "@glowbuzzer/awlib"
 
 const safety_dins = `
-0\tsafety_state\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_OVERALL_STATE}
+0\tsafety_state
 1\tsafety_error
 2\trestart_ack_needed
 3\tpause_motion
 4\treduce_speed
 5\tsafe_pos_valid
-6\tkeyswitch\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_KEYSWITCH}
-7\tdeadman\t${DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_DEAD_MAN}
+6\tkeyswitch
+7\tdeadman
 8\tmute_safety_function
 9\tactive_fault_machine_swm
 10\tactive_fault_machine_sls
@@ -43,8 +42,8 @@ const safety_din_array: WithNameAndDescription<SafetyDinConfig>[] = safety_dins
     .trim()
     .split("\n")
     .map(line => {
-        const [, name, type] = line.trim().split("\t")
-        return { name, type: Number(type) || DIN_SAFETY_TYPE.DIN_SAFETY_TYPE_ACKNOWLEDGEABLE }
+        const [, name] = line.trim().split("\t")
+        return { name }
     })
 
 const DEFAULT_LIMITS = [
@@ -66,30 +65,27 @@ export const config: GlowbuzzerConfig = {
             busCycleTime: 4,
             heartbeatTimeout: 15000,
             statusFrequency: 150,
-            autoModeEnabledInput: {
-                enabled: true,
-                safety: true,
-                index: 6
-            },
-            motionEnabledInput: {
-                enabled: true,
-                safety: true,
-                index: 7
-            },
-            manualModeBit1Output: {
-                enabled: true,
-                safety: true,
-                index: 0
-            },
-            manualModeBit2Output: {
-                enabled: true,
-                safety: true,
-                index: 1
-            },
-            safeStopInput: {
-                enabled: true,
-                safety: true,
-                index: 3
+            $metadata: {
+                autoModeEnabledInput: {
+                    safety: true,
+                    index: 6
+                },
+                motionEnabledInput: {
+                    safety: true,
+                    index: 7
+                },
+                manualModeBit1Output: {
+                    safety: true,
+                    index: 0
+                },
+                manualModeBit2Output: {
+                    safety: true,
+                    index: 1
+                },
+                safeStopInput: {
+                    safety: true,
+                    index: 3
+                }
             }
         }
     ],

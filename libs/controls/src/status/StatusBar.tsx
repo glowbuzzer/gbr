@@ -4,14 +4,9 @@
 
 import * as React from "react"
 import { forwardRef } from "react"
-import { useConnection, useMachine } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { useStatusTrayDismissedItems } from "./StatusTrayProvider"
 import { Button, Divider, Flex, Space } from "antd"
-import { useHandGuidedMode } from "../handguided/hooks"
-import { ReactComponent as HandIcon } from "@material-symbols/svg-400/outlined/pan_tool.svg"
-import { ReactComponent as HandIconDisabled } from "@material-symbols/svg-400/outlined/do_not_touch.svg"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { StatusBarGbDb } from "./StatusBarGbDb"
 import { StatusBarLiveSwitch } from "./StatusBarLiveSwitch"
 import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
@@ -19,6 +14,7 @@ import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
 import { StatusBarModeSwitch } from "../modes/StatusBarModeSwitch"
 import { useAutoOpEnabled } from "../app/AutoDesiredModeController"
 import { StatusBarConnectAndEmStatus } from "./StatusBarConnectAndEmStatus"
+import { StatusBarHandGuidedIndicator } from "./StatusBarHandGuidedIndicator"
 
 const StyledSpace = styled(Space)`
     padding-top: 8px;
@@ -53,7 +49,6 @@ type StatusBarProps = {
  */
 export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children }, ref) => {
     const { dismissed, undismissAll } = useStatusTrayDismissedItems()
-    const { handGuidedModeRequested, handGuidedModeActive } = useHandGuidedMode()
     const enable_button_hidden = useAutoOpEnabled()
 
     return (
@@ -61,12 +56,7 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
             <StyledSpace split={<Divider type="vertical" />}>
                 <StatusBarConnectAndEmStatus />
                 <StatusBarModeSwitch />
-                {handGuidedModeRequested && (
-                    <Space className={handGuidedModeActive ? "enabled" : "disabled"}>
-                        <GlowbuzzerIcon Icon={handGuidedModeActive ? HandIcon : HandIconDisabled} />
-                        HAND GUIDED MODE
-                    </Space>
-                )}
+                <StatusBarHandGuidedIndicator />
                 {!!dismissed.length && (
                     <div>
                         <Button size="small" type="dashed" onClick={undismissAll}>{`${

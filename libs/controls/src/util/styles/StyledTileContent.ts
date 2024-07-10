@@ -12,47 +12,23 @@ export const StyledTileContent = styled.div`
 export const StyledSafetyTileContent = styled.div`
     border: 2px solid yellow;
     border-radius: 5px;
-    padding: 10px;
-    //background-color: rgba(255, 255, 0, 0.2); /* Light yellow */
-`
-export const StyledSafetyTileText = styled.div`
-    margin-bottom: 1rem;
-`
-export const StyledSafetyDigitalInputs = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-`
+    height: 100%;
 
-export const StyledSafetyDigitalInputsRow = styled.div`
-    display: grid;
-    grid-template-columns: 4fr 1fr 1fr 2fr;
-    gap: 10px;
-    align-items: center;
+    .content {
+        padding: 10px;
+        overflow-y: auto;
+        height: 100%;
 
-    > div {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-    }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto auto;
+            gap: 10px;
 
-    .din-label {
-        flex-grow: 1;
-    }
-
-    .ant-tag {
-        //width: 40px;
-        text-align: center;
-    }
-
-    .ant-select {
-        justify-self: center;
-        width: 90px; /* Fixed width for Select component */
-    }
-
-    .ant-switch {
-        justify-self: center;
+            .ant-tag {
+                width: 100%;
+                text-align: center;
+            }
+        }
     }
 `
 
