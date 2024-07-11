@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
+import { useState } from "react"
 import {
     Button,
     Checkbox,
@@ -25,8 +25,8 @@ import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { DeleteOutlined } from "@ant-design/icons"
 import { StyledFlex, StyledToolTipDiv, SwitchContainer } from "./commonStyles"
 import { HexDecInput } from "./HexDecInput"
-import { consecutiveAddressesInfoContent } from "./commonContent"
-import { ActionButton } from "./CommonComponents"
+import { ConsecutiveAddressesInfoContent } from "./commonContent"
+import { ActionButton } from "./ActionButton"
 
 const { Option } = Select
 
@@ -547,7 +547,7 @@ export const ModbusIntegerInputs: React.FC = () => {
                         </ActionButton>
                     </Space>
                     <Popover
-                        content={consecutiveAddressesInfoContent}
+                        content={<ConsecutiveAddressesInfoContent />}
                         title="More information on modbus IO grouping"
                         placement="right"
                         style={{ maxWidth: "200px" }}

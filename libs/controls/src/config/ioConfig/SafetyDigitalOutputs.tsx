@@ -6,7 +6,8 @@ import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { CloseOutlined, DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons"
 import { Button, Checkbox, Empty, Input, InputNumber, Space, Tooltip } from "antd"
 import { CenteredCheckbox, StyledFlex } from "./commonStyles"
-import { ActionButton, TooltipWrapper } from "./CommonComponents"
+import { TooltipWrapper } from "./TooltipWrapper"
+import { ActionButton } from "./ActionButton"
 
 export const SafetyDigitalOutputs: React.FC = () => {
     const current = useSafetyDigitalOutputList()

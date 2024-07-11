@@ -26,7 +26,8 @@ import { DeleteOutlined } from "@ant-design/icons"
 import { StyledFlex, StyledToolTipDiv, SwitchContainer } from "./commonStyles"
 import { HexDecInput } from "./HexDecInput"
 import { consecutiveAddressesInfoContent } from "./commonContent"
-import { ActionButton } from "./CommonComponents"
+
+import { ActionButton } from "./ActionButton"
 
 const { Option } = Select
 

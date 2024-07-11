@@ -1,7 +1,7 @@
-import { PopoverContent } from "./commonStyles"
 import * as React from "react"
+import { PopoverContent } from "./commonStyles"
 
-export const consecutiveAddressesInfoContent = (
+export const ConsecutiveAddressesInfoContent = () => (
     <PopoverContent>
         Objects having an address that is consecutive with another object get grouped together (if
         the are on the same slave number).

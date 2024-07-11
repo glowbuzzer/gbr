@@ -1,6 +1,10 @@
-import React from "react"
+/*
+ * Copyright (c) 2024. Glowbuzzer. All rights reserved
+ */
+
 import { StyledToolTipDiv } from "./commonStyles"
-import { Button, Tooltip } from "antd"
+import { Tooltip } from "antd"
+import React from "react"
 
 export const TooltipWrapper = ({ title, children }) => (
     <StyledToolTipDiv>
@@ -13,12 +17,4 @@ export const TooltipWrapper = ({ title, children }) => (
             {children}
         </Tooltip>
     </StyledToolTipDiv>
-)
-
-export const ActionButton = ({ onClick, disabled, children, tooltipTitle, type }) => (
-    <TooltipWrapper title={tooltipTitle}>
-        <Button type={type} onClick={onClick} disabled={disabled} size="small">
-            {children}
-        </Button>
-    </TooltipWrapper>
 )

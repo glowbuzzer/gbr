@@ -5,7 +5,8 @@ import { useDispatch } from "react-redux"
 import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { Checkbox, Empty, Input, Space, Tooltip } from "antd"
 import { StyledFlex } from "./commonStyles"
-import { ActionButton, TooltipWrapper } from "./CommonComponents"
+import { TooltipWrapper } from "./TooltipWrapper"
+import { ActionButton } from "./ActionButton"
 
 export const StandardIntegerOutputs: React.FC = () => {
     const current = useIntegerOutputList()
