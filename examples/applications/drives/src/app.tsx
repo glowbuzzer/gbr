@@ -11,7 +11,7 @@ import {
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
-    EmStatTileDefinition,
+    DiagnosticsTileDefinition,
     FeedRateTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
@@ -47,7 +47,7 @@ export const App = () => {
                 DrivesOscillatingMoveTileDefinition,
                 DigitalInputsTileDefinition,
                 DigitalOutputsTileDefinition,
-                EmStatTileDefinition
+                DiagnosticsTileDefinition
             ]}
         >
             <ExampleAppMenu title="Drives" fileExtra={menuItems} />

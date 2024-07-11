@@ -10,7 +10,7 @@ import {
     useEtherCATMasterStatus,
     useMachine
 } from "@glowbuzzer/store"
-import { message, Table } from "antd"
+import { message, Table, TabsProps } from "antd"
 import { to_table_data } from "./dictionary"
 
 import styled from "styled-components"
@@ -80,7 +80,7 @@ function isBitSet(number: number, bitPosition: number): boolean {
     return (number & mask) !== 0
 }
 
-export const EmStatTile = () => {
+export const EmStatTab = () => {
     const emstat = useEtherCATMasterStatus()
     const [messageApi, messageContext] = message.useMessage()
 

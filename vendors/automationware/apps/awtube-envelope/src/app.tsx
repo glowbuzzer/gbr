@@ -9,7 +9,7 @@ import {
     DockLayout,
     DockLayoutProvider,
     DockTileDefinitionBuilder,
-    EmStatTileDefinition,
+    DiagnosticsTileDefinition,
     FeedRateTileDefinition,
     FlowTileDefinition,
     FramesTileDefinition,

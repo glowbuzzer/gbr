@@ -4,12 +4,12 @@
 
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
-import { EmStatTile } from "./EmStatTile"
 import { DockTileDefinition, DockTileDefinitionBuilder } from "../dock"
+import { DiagnosticsTile } from "./DiagnosticsTile"
 
-export const EmStatTileDefinition: DockTileDefinition = DockTileDefinitionBuilder()
-    .id(GlowbuzzerTileIdentifiers.EMSTAT)
-    .name("EtherCAT Master Status")
-    .render(() => createElement(EmStatTile, {}, null))
+export const DiagnosticsTileDefinition: DockTileDefinition = DockTileDefinitionBuilder()
+    .id(GlowbuzzerTileIdentifiers.DIAGNOSTICS)
+    .name("Diagnostics")
+    .render(() => createElement(DiagnosticsTile, {}, null))
     .placement(1, 0)
     .build()
