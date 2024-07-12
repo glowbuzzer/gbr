@@ -65,8 +65,8 @@ export const StatusTrayModeSwitch = () => {
         )
     }, [cst_mode])
 
-    if (mode === ManualMode.DISABLED) {
-        // we're not in any mode
+    if (mode === ManualMode.DISABLED || modes.length === 0) {
+        // we're not in any mode, or there are no modes
         return null
     }
 
