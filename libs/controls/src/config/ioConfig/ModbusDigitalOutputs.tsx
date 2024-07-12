@@ -25,7 +25,6 @@ import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { DeleteOutlined } from "@ant-design/icons"
 import { StyledFlex, StyledToolTipDiv, SwitchContainer } from "./commonStyles"
 import { HexDecInput } from "./HexDecInput"
-import { consecutiveAddressesInfoContent } from "./commonContent"
 
 import { ActionButton } from "./ActionButton"
 

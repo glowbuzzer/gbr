@@ -12,6 +12,7 @@ export const SlaveCatProvider = ({ children }: SlaveCatProviderProps) => {
 
     useEffect(() => {
         import("../slaveCatData/slaveCatData.json")
+            // @ts-ignore
             .then(data => setSlaveData(data.default))
             .catch(error => console.error("Error importing JSON:", error))
     }, [])

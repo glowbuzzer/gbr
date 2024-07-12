@@ -99,6 +99,8 @@ type MachineIoItem = {
 export type MachineMetadata = {
     /** The input that indicates that machine is in a safe state */
     safetyStateInput?: MachineIoItem
+    /** The input that indicates that estop switch is active */
+    estopInput?: MachineIoItem
     /** The input that indicates that hardware reset is needed */
     resetNeededInput?: MachineIoItem
     /** The input that should be used to determine whether auto mode is enabled (for example, keyswitch state) */

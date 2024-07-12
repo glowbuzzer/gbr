@@ -2,21 +2,21 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react"
-import { Button, Radio, Spin, Tag } from "antd"
+import * as React from "react";
+import { Button, Radio, Spin, Tag } from "antd";
 import {
-    ConnectionState,
-    DesiredState,
-    determine_machine_state,
-    MachineState,
-    MACHINETARGET,
-    possible_transitions,
-    useConnection,
-    useEstop,
-    useMachine,
-    useSimilationOnlyConfiguration
-} from "@glowbuzzer/store"
-import styled from "styled-components"
+  ConnectionState,
+  DesiredState,
+  determine_machine_state,
+  MachineState,
+  MACHINETARGET,
+  possible_transitions,
+  useConnection,
+  useEstopInput,
+  useMachine,
+  useSimilationOnlyConfiguration
+} from "@glowbuzzer/store";
+import styled from "styled-components";
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -107,7 +107,7 @@ const StyledDiv = styled.div`
 export const ConnectTile = () => {
     const connection = useConnection()
     const machine = useMachine()
-    const estopActive = useEstop()
+    const estopActive = useEstopInput()
     const simulationOnly = useSimilationOnlyConfiguration()
 
     function change_target(e) {

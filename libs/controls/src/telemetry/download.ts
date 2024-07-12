@@ -24,27 +24,32 @@ export function generate_telemetry_download(joints: JointConfig[], generator: Te
                             `J${i} ACT TORQUE`,
                             `J${i} ACT CONTROL EFFORT`
                         ])
-                        .flat()
+                        .flat(),
+                    "di",
+                    "do",
+                    "sdi",
+                    "sdo"
                 ]
             ]
                 .concat(
                     data.map(d => {
+                        const { t, set, act, e, di, do: douts, sdi, sdo } = d
                         const values = joints
                             .map((_v, index) => {
                                 return [
-                                    d.set[index].p,
-                                    d.act[index].p,
-                                    d.set[index].v,
-                                    d.act[index].v,
-                                    d.set[index].a,
-                                    d.set[index].t,
-                                    d.set[index].to,
-                                    d.act[index].t,
-                                    d.act[index].e
+                                    set[index].p,
+                                    act[index].p,
+                                    set[index].v,
+                                    act[index].v,
+                                    set[index].a,
+                                    set[index].t,
+                                    set[index].to,
+                                    act[index].t,
+                                    act[index].e
                                 ]
                             })
                             .flat()
-                        return [d.t, ...values].map(v => v.toString())
+                        return [d.t, di, douts, sdi, sdo, ...values].map(v => v.toString())
                     })
                 )
                 .map(line => line.join(","))
@@ -66,10 +71,9 @@ export function generate_telemetry_download(joints: JointConfig[], generator: Te
 
 export function parse_telemetry_csv(csv: string): TelemetryEntry[] {
     const lines = csv.split("\n")
-    const header = lines[0].split(",")
     const data = lines.slice(1).map(line => line.split(",").map(v => parseFloat(v)))
 
-    return data.map(([t, ...rest]) => {
+    return data.map(([t, di, douts, sdo, sdi, ...rest]) => {
         const set = []
         const act = []
         // the 'rest' array should be divisible by 9, as each joint has 9 values
@@ -86,6 +90,10 @@ export function parse_telemetry_csv(csv: string): TelemetryEntry[] {
             m4cap: 0,
             m7cap: 0,
             m7wait: 0,
+            di,
+            do: douts,
+            sdi,
+            sdo,
             set,
             act
         }

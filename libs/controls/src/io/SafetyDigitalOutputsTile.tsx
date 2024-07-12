@@ -5,6 +5,7 @@
 import React from "react"
 import { Select, Switch, Tag, Tooltip } from "antd"
 import {
+    configMetadata,
     GlowbuzzerConfig,
     SafetyIoMetadata,
     useSafetyDigitalOutputList,
@@ -29,7 +30,7 @@ const DigitalOutputItem = ({
     const state = dout.effectiveValue
     const numeric_state = state ? 1 : 0
 
-    const metadata: SafetyIoMetadata = config.$metadata
+    const metadata = configMetadata(config, true)
     const { active_state_label, active_state_color } = metadata
         ? {
               active_state_label: metadata[numeric_state],

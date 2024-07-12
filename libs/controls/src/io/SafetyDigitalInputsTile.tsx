@@ -4,6 +4,7 @@
 
 import * as React from "react"
 import {
+    configMetadata,
     GlowbuzzerConfig,
     SafetyIoMetadata,
     useSafetyDigitalInputList,
@@ -34,7 +35,7 @@ const SafetyDigitalInputItem = ({
     const state = din.actValue
     const numeric_state = state ? 1 : 0
 
-    const metadata: SafetyIoMetadata = config.$metadata
+    const metadata = configMetadata(config, true)
     const { active_state_label, active_state_color } = metadata
         ? {
               active_state_label: metadata[numeric_state],

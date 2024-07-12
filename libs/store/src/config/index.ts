@@ -253,6 +253,17 @@ export function useConfig() {
     return useSelector((state: RootState) => state.config.current)
 }
 
+export function configMetadata<T extends { $metadata?: any }>(
+    configItem: T,
+    allowUndefined = false
+): T extends {
+    $metadata?: any
+}
+    ? T["$metadata"]
+    : never {
+    return (configItem as any).$metadata || (allowUndefined ? undefined : {})
+}
+
 /**
  * Returns a function that can be used to apply partial updates to the configuration. Configuration
  * changes will be sent to GBC.

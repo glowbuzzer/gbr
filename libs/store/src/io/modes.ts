@@ -2,20 +2,21 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { MachineMetadata, RootState, useConfig, useConnection } from "@glowbuzzer/store"
+import {
+    MachineMetadata,
+    RootState,
+    useConfig,
+    configMetadata,
+    useConnection
+} from "@glowbuzzer/store"
 import { useSelector } from "react-redux"
 import { useMemo } from "react"
-
-export function useMachineMetadataExists(prop: keyof MachineMetadata) {
-    const config = useConfig()
-    return !!config.machine[0].$metadata?.[prop]
-}
 
 export function useMachineInputActive(prop: keyof MachineMetadata) {
     const config = useConfig()
     return useSelector<RootState, boolean>(state => {
         // do the work inside the selector, so react can optimise simple boolean return
-        const metadata = config.machine[0].$metadata?.[prop]
+        const metadata = configMetadata(config.machine[0])[prop]
         const { index, safety } = metadata || {}
 
         if (!metadata) {
@@ -28,6 +29,11 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
 
         return state.din[index]?.actValue
     })
+}
+
+export function useEstopInput() {
+    // inverted
+    return !useMachineInputActive("estopInput")
 }
 
 export function useResetNeededInput() {
@@ -60,7 +66,7 @@ export enum ManualMode {
 export function useManualMode(): [ManualMode, (mode: ManualMode) => void] {
     const connection = useConnection()
     const config = useConfig()
-    const { manualModeBit1Output, manualModeBit2Output } = config.machine[0].$metadata || {}
+    const { manualModeBit1Output, manualModeBit2Output } = configMetadata(config.machine[0])
     const bit1 = manualModeBit1Output
     const bit2 = manualModeBit2Output
 

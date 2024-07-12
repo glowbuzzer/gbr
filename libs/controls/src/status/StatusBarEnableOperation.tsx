@@ -3,7 +3,13 @@
  */
 
 import * as React from "react"
-import { DesiredState, MachineState, useConnection, useEstop, useMachine } from "@glowbuzzer/store"
+import {
+    DesiredState,
+    MachineState,
+    useConnection,
+    useEstopInput,
+    useMachine
+} from "@glowbuzzer/store"
 import { Button, Space } from "antd"
 import styled from "styled-components"
 
@@ -23,7 +29,7 @@ const StyledSpace = styled(Space)`
 export const StatusBarEnableOperation = () => {
     const connection = useConnection()
     const machine = useMachine()
-    const estopActive = useEstop()
+    const estopActive = useEstopInput()
     const connected = connection.connected && connection.statusReceived
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE

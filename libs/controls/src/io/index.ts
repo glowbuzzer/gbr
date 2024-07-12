@@ -2,7 +2,6 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-export * from "./overrides"
 export * from "./DigitalInputsTile"
 export * from "./DigitalOutputsTile"
 export * from "./ModbusDigitalOutputsTile"

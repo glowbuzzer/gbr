@@ -5,6 +5,7 @@
 import React from "react"
 import {
     GlowbuzzerConfig,
+    configMetadata,
     useOverallSafetyStateInput,
     useSafetyDigitalInputList,
     useSafetyDigitalInputs
@@ -44,7 +45,7 @@ type SafetyItemProps = {
 }
 
 const SafetyItem = ({ label, config, state }: SafetyItemProps) => {
-    const metadata = config.$metadata
+    const metadata = configMetadata(config, true)
     const description = config.description || label
     const numeric_state = state ? 1 : 0
 
@@ -87,9 +88,11 @@ export const SafetyTab = ({ labels = [] }: SafetyInputsTileProps) => {
         (config, index) => labels[index] || config.name || index.toString()
     )
 
-    const acknowledgeableFaults = safetyDins?.filter(s => s.$metadata?.type === "acknowledgeable")
+    const acknowledgeableFaults = safetyDins?.filter(
+        s => configMetadata(s).type === "acknowledgeable"
+    )
     const unacknowledgeableFaults = safetyDins?.filter(
-        s => s.$metadata?.type === "unacknowledgeable"
+        s => configMetadata(s).type === "unacknowledgeable"
     )
 
     return (
