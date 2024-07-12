@@ -2,13 +2,11 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import {
-    ConfigSliceState,
-    FlowSliceState,
-    GbdbSliceConfiguration,
-    GlowbuzzerConfig
-} from "@glowbuzzer/store"
 import { StateWithHistory } from "redux-undo"
+import { GbdbSliceConfiguration } from "./types"
+import { FlowSliceState } from "../flow"
+import { GlowbuzzerConfig } from "../gbc_extra"
+import { ConfigSliceState } from "../config"
 
 export const FlowGbdbFacetSlice: GbdbSliceConfiguration<
     StateWithHistory<FlowSliceState>,

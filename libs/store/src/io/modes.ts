@@ -2,15 +2,12 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import {
-    MachineMetadata,
-    RootState,
-    useConfig,
-    configMetadata,
-    useConnection
-} from "@glowbuzzer/store"
 import { useSelector } from "react-redux"
 import { useMemo } from "react"
+import { MachineMetadata } from "../gbc_extra"
+import { configMetadata, useConfig } from "../config"
+import { RootState } from "../root"
+import { useConnection } from "../connect"
 
 export function useMachineInputActive(prop: keyof MachineMetadata) {
     const config = useConfig()
