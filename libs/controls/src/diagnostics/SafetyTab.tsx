@@ -8,11 +8,22 @@ import {
     configMetadata,
     useOverallSafetyStateInput,
     useSafetyDigitalInputList,
-    useSafetyDigitalInputs
+    useSafetyDigitalInputs,
+    useEtherCATMasterStatus,
+    useSafetyDigitalInputState
 } from "@glowbuzzer/store"
-import { Tag } from "antd"
+import { Card, Divider, Tag, Tooltip } from "antd"
 import styled from "styled-components"
 import { SafetyTabContent } from "./SafetyTabContent"
+import { toTableDataEmStatSafety } from "./emStatSafetyDictionary"
+import { columns, StyledTable } from "./EmStatsUtils"
+import { StyledToolTipDiv } from "../util/styles/StyledTileContent"
+
+const StyledTag = styled(Tag)`
+    display: inline-block;
+    width: auto;
+    text-align: center;
+`
 
 const StyledDiv = styled.div`
     .safety-grid {
@@ -30,25 +41,30 @@ const StyledDiv = styled.div`
         .label {
             color: ${props => props.theme.colorTextSecondary};
         }
-
-        .ant-tag {
-            width: 100%;
-            text-align: center;
-        }
     }
 `
 
 type SafetyItemProps = {
-    label: string
+    index: number
     config: GlowbuzzerConfig["safetyDin"][0]
-    state: boolean
+    label?: string
 }
 
-const SafetyItem = ({ label, config, state }: SafetyItemProps) => {
-    const metadata = configMetadata(config, true)
-    const description = config.description || label
+type SafetyInputsTileProps = {
+    /**
+     * Override labels to use for inputs, in the order given in the configuration
+     */
+    labels?: string[]
+}
+
+const SafetyItem: React.FC<SafetyItemProps> = ({ index, config, label }) => {
+    const [din, setDin] = useSafetyDigitalInputState(index)
+
+    const description = config.description
+    const state = din.actValue
     const numeric_state = state ? 1 : 0
 
+    const metadata = configMetadata(config, true)
     const { active_state_label, active_state_color } = metadata
         ? {
               active_state_label: metadata[numeric_state],
@@ -61,90 +77,121 @@ const SafetyItem = ({ label, config, state }: SafetyItemProps) => {
 
     return (
         <React.Fragment>
-            <div className="label">{description}</div>
-            <div>
-                <Tag color={active_state_color}>{active_state_label}</Tag>
-            </div>
+            <StyledToolTipDiv>
+                <Tooltip
+                    title={label}
+                    placement="top"
+                    mouseEnterDelay={2}
+                    getPopupContainer={triggerNode => triggerNode}
+                >
+                    <div className="din-label">{description || "Unknown"}</div>
+                </Tooltip>
+            </StyledToolTipDiv>
+
+            <StyledTag color={active_state_color}>{active_state_label}</StyledTag>
+
+            {/*</div>*/}
         </React.Fragment>
     )
 }
 
-type SafetyInputsTileProps = {
-    /**
-     * Override labels to use for inputs, in the order given in the configuration
-     */
-    labels?: string[]
-}
-
 /**
- * The safety tile
+ * The safety diagnostics tile. Shows the overall safety state, acknowledgeable and unacknowledgeable faults, and FSoE status.
  */
 export const SafetyTab = ({ labels = [] }: SafetyInputsTileProps) => {
-    const safetyDins = useSafetyDigitalInputList()
-    const safetyValues = useSafetyDigitalInputs()
+    // const safetyDins = useSafetyDigitalInputList()
+    // const safetyValues = useSafetyDigitalInputs()
     const overallSafetyState = useOverallSafetyStateInput()
 
-    const normalised_labels = safetyDins?.map(
-        (config, index) => labels[index] || config.name || index.toString()
-    )
+    const dins = useSafetyDigitalInputList()
 
-    const acknowledgeableFaults = safetyDins?.filter(
-        s => configMetadata(s).type === "acknowledgeable"
-    )
-    const unacknowledgeableFaults = safetyDins?.filter(
-        s => configMetadata(s).type === "unacknowledgeable"
-    )
+    const acknowledgeableFaults = dins
+        ?.map((s, index) => ({
+            ...s,
+            originalIndex: index
+        }))
+        .filter(s => configMetadata(s).type === "acknowledgeable")
+
+    const unacknowledgeableFaults = dins
+        ?.map((s, index) => ({
+            ...s,
+            originalIndex: index
+        }))
+        .filter(s => configMetadata(s).type === "unacknowledgeable")
+
+    const emstat = useEtherCATMasterStatus()
+
+    const tableRef = React.useRef(null)
+
+    const updatedTableData = toTableDataEmStatSafety(emstat)
+
+    const getRowClassName = (record, index) => {
+        return record.key.endsWith("_se") ? "highlight-row" : "normal"
+    }
 
     return (
         <SafetyTabContent>
-            <StyledDiv>
-                <div className="safety-grid">
-                    <>
-                        Overall safety state
-                        <Tag color={overallSafetyState ? "green" : "red"}>
-                            {overallSafetyState ? "NO FAULT" : "FAULT"}
-                        </Tag>
-                    </>
-                    {acknowledgeableFaults.length > 0 && (
-                        <>
-                            <header>Acknowledgeable safety faults</header>
-                            {acknowledgeableFaults.map((s, index) => (
+            <Card title="Overall Safety State" size="small">
+                <StyledTag color={overallSafetyState ? "red" : "green"}>
+                    {overallSafetyState ? "FAULT" : "NO FAULT"}
+                </StyledTag>
+            </Card>
+
+            <Card title="Acknowledgeable Safety Faults" size="small">
+                <StyledDiv>
+                    <div className="safety-grid">
+                        {acknowledgeableFaults?.map(config => {
+                            return (
                                 <SafetyItem
-                                    key={index}
-                                    label={normalised_labels[index]}
-                                    state={safetyValues[index]}
-                                    config={s}
+                                    key={config.originalIndex}
+                                    index={config.originalIndex}
+                                    config={config}
+                                    label={
+                                        labels[config.originalIndex] ||
+                                        config.name ||
+                                        config.originalIndex.toString()
+                                    }
                                 />
-                            ))}
-                        </>
-                    )}
-                    {unacknowledgeableFaults.length > 0 && (
-                        <>
-                            <header>Unacknowledgeable safety faults</header>
-                            {unacknowledgeableFaults.map((s, index) => (
+                            )
+                        })}
+                    </div>
+                </StyledDiv>
+            </Card>
+
+            <Card title="Unacknowledgeable Safety Faults" size="small">
+                <StyledDiv>
+                    <div className="safety-grid">
+                        {unacknowledgeableFaults?.map(config => {
+                            return (
                                 <SafetyItem
-                                    key={index}
-                                    label={normalised_labels[index]}
-                                    state={safetyValues[index]}
-                                    config={s}
+                                    key={config.originalIndex}
+                                    index={config.originalIndex}
+                                    config={config}
+                                    label={
+                                        labels[config.originalIndex] ||
+                                        config.name ||
+                                        config.originalIndex.toString()
+                                    }
                                 />
-                            ))}
-                        </>
-                    )}
-                </div>
-                Acknowledgeable safety faults can we reset using the reset button. Unacknowledgeable
-                safety faults require?.
-                {/*{safetyDins[safePosValidIndex] ? (*/}
-                {/*    <div>*/}
-                {/*        The robot is reporting that its safe position is valid. No action is needed.*/}
-                {/*    </div>*/}
-                {/*) : (*/}
-                {/*    <div>*/}
-                {/*        The robot is reporting that its safe position is INVALID. The safe position*/}
-                {/*        homing routine must be run.{" "}*/}
-                {/*    </div>*/}
-                {/*)}*/}
-            </StyledDiv>
+                            )
+                        })}
+                    </div>
+                </StyledDiv>
+            </Card>
+
+            <Card title="FSoE status diagnostic" size="small">
+                <StyledTable
+                    ref={tableRef}
+                    rowClassName={getRowClassName}
+                    columns={columns}
+                    dataSource={updatedTableData}
+                    rowKey="key"
+                    size="small"
+                    expandable={{ defaultExpandAllRows: true }}
+                    pagination={false}
+                    showHeader={false}
+                />
+            </Card>
         </SafetyTabContent>
     )
 }
