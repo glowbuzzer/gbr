@@ -3,7 +3,11 @@
  */
 
 import * as React from "react"
-import { useJointsForKinematicsConfigurationList, useMotionAllowed } from "../../util/hooks"
+import {
+    useJointsForKinematicsConfigurationList,
+    useMotionAllowed,
+    useOperationEnabled
+} from "../../util/hooks"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
 import { LIMITPROFILE, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import styled from "styled-components"
@@ -42,7 +46,7 @@ type JogTouchJointProps = {
 
 export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointProps) => {
     const joints = useJointsForKinematicsConfigurationList(kinematicsConfigurationIndex)
-    const enabled = useMotionAllowed()
+    const enabled = useOperationEnabled()
     const preview = usePreview()
     const motion = useSoloActivity(kinematicsConfigurationIndex)
 
