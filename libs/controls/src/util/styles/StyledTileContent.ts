@@ -29,6 +29,17 @@ export const StyledSafetyTileContent = styled.div`
                 text-align: center;
             }
         }
+
+        .safetyTabGrid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+
+            .ant-tag {
+                width: 100%;
+                text-align: center;
+            }
+        }
     }
 `
 
