@@ -16,6 +16,32 @@ import styled from "styled-components"
 
 const { Option } = Select
 
+const StyledDinDiv = styled.div`
+    /* Target the outer tooltip wrapper when the tooltip is placed at the top */
+    //position: relative;
+    //display: inline-block; // Ensures inline behavior which is crucial for tooltips
+
+    .ant-tooltip-placement-top > .ant-tooltip-content {
+        margin-bottom: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-bottom > .ant-tooltip-content {
+        margin-top: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-right > .ant-tooltip-content {
+        margin-left: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-left > .ant-tooltip-content {
+        margin-right: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+`
+
 export const StyledDigitalInputs = styled.div`
     > div {
         display: flex;
@@ -32,7 +58,15 @@ export const StyledDigitalInputs = styled.div`
     }
 `
 
-const DigitalInputItem = ({ index, label }: { index: number; label?: string }) => {
+const DigitalInputItem = ({
+    index,
+    label,
+    description
+}: {
+    index: number
+    label?: string
+    description: string
+}) => {
     const [din, setDin] = useDigitalInputState(index)
 
     function handle_override_change(value) {
@@ -45,8 +79,16 @@ const DigitalInputItem = ({ index, label }: { index: number; label?: string }) =
     }
 
     return (
-        <div>
-            <div className="din-label">{label || "Unknown"}</div>
+        <StyledDinDiv>
+            <Tooltip
+                title={description}
+                placement="top"
+                mouseEnterDelay={2}
+                getPopupContainer={triggerNode => triggerNode}
+            >
+                <div className="din-label">{label || "Unknown"}</div>
+            </Tooltip>
+
             <div>
                 <Select
                     size="small"
@@ -63,10 +105,11 @@ const DigitalInputItem = ({ index, label }: { index: number; label?: string }) =
                 checked={din.setValue}
                 onChange={handle_state_change}
             />
+
             <div>
                 <Tag color={din.actValue ? "green" : "red"}>{din.actValue ? "ON" : "OFF"}</Tag>
             </div>
-        </div>
+        </StyledDinDiv>
     )
 }
 
@@ -91,6 +134,7 @@ export const DigitalInputsTile = ({ labels = [] }: DigitalInputsTileProps) => {
                         key={index}
                         index={index}
                         label={labels[index] || config.name || index.toString()}
+                        description={config.description}
                     />
                 ))}
             </StyledDigitalInputs>

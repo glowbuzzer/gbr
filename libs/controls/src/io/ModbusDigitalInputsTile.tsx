@@ -25,6 +25,26 @@ const StyledDiv = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .ant-tooltip-placement-top > .ant-tooltip-content {
+        margin-bottom: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-bottom > .ant-tooltip-content {
+        margin-top: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-right > .ant-tooltip-content {
+        margin-left: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-placement-left > .ant-tooltip-content {
+        margin-right: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
 `
 
 const ModbusDigitalInputItem = ({ label, description, index }) => {
@@ -33,7 +53,12 @@ const ModbusDigitalInputItem = ({ label, description, index }) => {
     if (!dinStatus) {
         return (
             <StyledDiv key={index}>
-                <Tooltip title={description}>
+                <Tooltip
+                    title={description}
+                    placement="top"
+                    mouseEnterDelay={2}
+                    getPopupContainer={triggerNode => triggerNode}
+                >
                     <div>{label}</div>
                 </Tooltip>
                 <div>
@@ -47,7 +72,12 @@ const ModbusDigitalInputItem = ({ label, description, index }) => {
 
     return (
         <StyledDiv key={index}>
-            <Tooltip title={description}>
+            <Tooltip
+                title={description}
+                placement="top"
+                mouseEnterDelay={2}
+                getPopupContainer={triggerNode => triggerNode}
+            >
                 <div>{label}</div>
             </Tooltip>
             <div>
