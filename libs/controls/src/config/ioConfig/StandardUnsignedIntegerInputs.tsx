@@ -8,6 +8,9 @@ import { StyledFlex } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure standard unsigned integer inputs.
+ */
 export const StandardUnsidedIntegerInputs: React.FC = () => {
     const current = useUnsignedIntegerInputList()
     const [inputs, setInputs] = useState(current)

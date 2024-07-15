@@ -9,6 +9,9 @@ import { StyledFlex, StyledToolTipDiv } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure standard digital inputs.
+ */
 export const StandardDigitalInputs: React.FC = () => {
     const current = useDigitalInputList()
     const [inputs, setInputs] = useState(current)

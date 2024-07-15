@@ -2,6 +2,9 @@ import React from "react"
 import { Alert } from "antd"
 import { MachineState, useMachine } from "@glowbuzzer/store"
 
+/**
+ * A component to display a warning message if the machine is in operation enabled.
+ */
 export const ConditionalDisplayInOpEnabled = ({ children }) => {
     const { currentState } = useMachine()
 

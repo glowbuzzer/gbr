@@ -248,6 +248,9 @@ const GridRowContent = ({
     </>
 )
 
+/**
+ * Component to configure the Modbus digital outputs
+ */
 export const ModbusDigitalOutputs: React.FC = () => {
     const current = useModbusDigitalOutputList()
     const [outputs, setOutputs] = useState(current)

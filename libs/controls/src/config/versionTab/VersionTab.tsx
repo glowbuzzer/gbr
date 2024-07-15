@@ -1,8 +1,12 @@
 import React from "react"
 import { useState, useEffect, useRef } from "react"
 import { GBEM_REQUEST, useConnection, useGbcConfigInfo } from "@glowbuzzer/store"
-import { Alert, Button, Popover, Space, Tag } from "antd"
+import { Alert, Button, Card, Popover, Space, Tag } from "antd"
 import { check_gbc_version } from "../../status/StatusTrayGbcVersionCheck"
+
+/**
+ * A component to display the software versions of the different software components.
+ */
 
 export const VersionTab = () => {
     const { connected } = useConnection()
@@ -12,7 +16,7 @@ export const VersionTab = () => {
     const [isError, setIsError] = useState(false)
 
     const [requestText, setRequestText] = useState('{"payload": {}}')
-    const [responseText, setResponseText] = useState("No request sent")
+    const [responseText, setResponseText] = useState("No version read")
 
     const send_request = () => {
         request(requestType, JSON.parse(requestText))
@@ -39,7 +43,7 @@ export const VersionTab = () => {
     if (!(gbcVersion && schemaVersion && connected)) {
         return (
             <Alert
-                message="Not in machine state Operation Enabled"
+                message="No connection to the machine"
                 description="You can only read the software versions when connected to the machine."
                 type="warning"
                 showIcon
@@ -50,22 +54,26 @@ export const VersionTab = () => {
     const { message } = check_gbc_version(gbcVersion, schemaVersion)
     return (
         <>
-            <Popover content={message}>
-                <span className="version-info">
-                    Core control (GBC) version:
-                    <Tag>GBC {gbcVersion}</Tag>
-                </span>
-            </Popover>
+            <Card title={"Core control (GBC) software version"} size="small">
+                <Popover content={message}>
+                    <span className="version-info">
+                        <Tag>GBC {gbcVersion}</Tag>
+                    </span>
+                </Popover>
+            </Card>
 
-            <div>
-                <Button type="primary" onClick={send_request}>
-                    Send Request for gbem version
+            <Card title={"Schema version"} size="small">
+                <Tag>GBC {schemaVersion}</Tag>
+            </Card>
+
+            <Card title={"EtherCAT controller (GBEM) software version"} size="small">
+                <Button type="primary" onClick={send_request} size="small">
+                    Read version from EtherCAT controller
                 </Button>
-            </div>
-            <div style={{ marginTop: "16px" }}>
-                EtherCAT controller (GBEM) version:{" "}
-                <Tag color={isError ? "red" : "purple"}>{responseText}</Tag>
-            </div>
+                <Tag style={{ marginLeft: "10px" }} color={isError ? "red" : "purple"}>
+                    {responseText}
+                </Tag>
+            </Card>
         </>
     )
 }

@@ -12,104 +12,12 @@ import { useEtherCatConfig } from "../EtherCatConfigContext"
 import EtherCatConfigStatusIndicator from "../EtherCatConfigStatusIndicator"
 import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
-const StyledFlex = styled(Flex)`
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    justify-content: space-between;
-
-    .ant-input {
-        flex-grow: 1;
-        font-family: monospace;
-    }
-`
-
-const SlaveGrid: React.FC = () => {
-    return (
-        <Row gutter={[1, 1]} style={{ margin: 0 }}>
-            {slaveData.map((slave, index) => (
-                <Col key={index} xs={2} sm={2} md={2} lg={2}>
-                    <Card bordered={true}>
-                        <div
-                            style={{
-                                height: 150,
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                whiteSpace: "nowrap"
-                            }}
-                        >
-                            <div style={{ transform: "rotate(-90deg)", marginBottom: 16 }}>
-                                {slave.name}
-                            </div>
-                            {slave.isOptional && (
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginLeft: 0,
-                                        alignItems: "center",
-                                        transform: "rotate(-90deg)"
-                                    }}
-                                >
-                                    <Checkbox checked={slave.isOptional} disabled />
-                                </div>
-                            )}
-                        </div>
-                    </Card>
-                </Col>
-            ))}
-        </Row>
-    )
-}
-
-const SlaveGrid2: React.FC = () => {
-    return (
-        <Space>
-            <Row gutter={[1, 1]} style={{ margin: 0 }}>
-                {slaveData.map((slave, index) => (
-                    <Col key={index} xs={2} sm={2} md={2} lg={2}>
-                        {/* Card for the Name */}
-                        <Card bordered={true} style={{ marginBottom: 0, textAlign: "center" }}>
-                            <div
-                                style={{
-                                    alignItems: "center", // Vertically center in the flex container
-                                    justifyContent: "center", // Horizontally center in the flex container
-                                    height: "100%", // Take full height of the container
-                                    display: "flex",
-                                    transform: "rotate(-90deg)",
-                                    transformOrigin: "center",
-                                    whiteSpace: "nowrap",
-                                    textOverflow: "hidden",
-                                    maxWidth: "200px"
-                                }}
-                            >
-                                {slave.name}
-                            </div>
-                        </Card>
-                        {/* Card for the Checkbox, only if isOptional is true */}
-                        <Card bordered={true} style={{ textAlign: "center", height: "50%" }}>
-                            {slave.isOptional ? (
-                                <Checkbox checked={slave.isOptional} disabled></Checkbox>
-                            ) : (
-                                <div style={{ height: "20px" }}></div> // Placeholder for an empty card
-                            )}
-                        </Card>
-                    </Col>
-                ))}
-            </Row>
-        </Space>
-    )
-}
-
-interface Slave {
+interface OptionalSlave {
     name: string
     isOptional: boolean
 }
 
-const slaveData: Slave[] = [
+const slaveData: OptionalSlave[] = [
     { name: "SYNAPTICON_1", isOptional: false },
     { name: "SYNAPTICON_2", isOptional: false },
     { name: "SYNAPTICON_3", isOptional: false },

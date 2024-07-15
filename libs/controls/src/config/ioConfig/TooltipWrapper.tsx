@@ -6,6 +6,11 @@ import { StyledToolTipDiv } from "./commonStyles"
 import { Tooltip } from "antd"
 import React from "react"
 
+/**
+ * A wrapper for the Tooltip component.
+ * @param title The title of the tooltip.
+ * @param children The children to be displayed.
+ */
 export const TooltipWrapper = ({ title, children }) => (
     <StyledToolTipDiv>
         <Tooltip

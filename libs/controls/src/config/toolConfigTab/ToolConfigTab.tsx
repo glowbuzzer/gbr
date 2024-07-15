@@ -1,5 +1,8 @@
 import React from "react"
 
+/**
+ * A component to configure tool configurations.
+ */
 export const ToolConfigTab = () => {
     return (
         <div>

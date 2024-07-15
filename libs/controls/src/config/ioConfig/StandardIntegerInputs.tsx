@@ -8,6 +8,9 @@ import { StyledFlex } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure standard integer inputs.
+ */
 export const StandardIntegerInputs: React.FC = () => {
     const current = useIntegerInputList()
     const [inputs, setInputs] = useState(current)

@@ -9,6 +9,14 @@ interface HexDecInputProps {
     index: number
 }
 
+/**
+ * A component that allows the user to input a hex or decimal value.
+ * @param isHex
+ * @param address
+ * @param update_address
+ * @param index
+ * @constructor
+ */
 export const HexDecInput: React.FC<HexDecInputProps> = ({
     isHex,
     address,

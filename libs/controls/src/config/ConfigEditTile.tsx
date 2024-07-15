@@ -1,125 +1,78 @@
 /*
- * Copyright (c) 2022. Glowbuzzer. All rights reserved
+ * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect, useState } from "react"
-import { Input, message, Upload } from "antd"
+import * as React from "react"
+import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { useConfig, useConfigLoader } from "@glowbuzzer/store"
-import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { ReactComponent as FileUploadIcon } from "@material-symbols/svg-400/outlined/file_upload_off.svg"
-import { ReactComponent as FileOpenIcon } from "@material-symbols/svg-400/outlined/folder_open.svg"
-import { ReactComponent as ResetConfigIcon } from "@material-symbols/svg-400/outlined/restart_alt.svg"
-import { ReactComponent as FormatConfigIcon } from "@material-symbols/svg-400/outlined/format_align_left.svg"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { Card, TabsProps } from "antd"
+import { EtherCatConfigTab } from "./etherCatConfigTab/EtherCatConfigTab"
+import { IoConfigTab } from "./ioConfig/IoConfigTab"
+import { VersionTab } from "./versionTab/VersionTab"
+import { EtherCatConfigProvider } from "./etherCatConfigTab/EtherCatConfigContext"
+import { MachineEnvelopeConfigTab } from "./machineEnvelopeConfigTab/MachineEnvelopeConfigTab"
+import { VerticalAxisConfigTab } from "./verticalAxisConfigTab/verticalAxisConfigTab"
+import { ToolConfigTab } from "./toolConfigTab/ToolConfigTab"
 
 const StyledDiv = styled.div`
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    padding: 10px;
+    //height: 100%;
 
-    .editor {
-        flex-grow: 1;
+    .ant-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
 
-        textarea {
-            height: 100% !important;
-            font-family: monospace;
-            resize: none;
+        .ant-card-body {
+            flex-grow: 1;
         }
-    }
-
-    .ant-upload {
-        font-size: inherit;
     }
 `
 
 /**
- * The configuration editor tile allows the user to edit the GBC configuration, load a configuration from disk and upload the new configuration.
+ * A component to edit the configuration of the machine.
  */
 export const ConfigEditTile = () => {
-    const config = useConfig()
-    const loader = useConfigLoader()
+    const [currentTab, setCurrentTab] = useState("etherCat")
 
-    const [editedConfig, setEditedConfig] = useState(JSON.stringify(config, null, 4))
-    const [error, setError] = useState(null)
-
-    function update_edited_config(e) {
-        setEditedConfig(e.target.value)
+    const tab_content = {
+        io: <IoConfigTab />,
+        etherCat: <EtherCatConfigTab />,
+        tool: <ToolConfigTab />,
+        machineEnvelope: <MachineEnvelopeConfigTab />,
+        frames: <p>Frames config content</p>,
+        verticalAxis: <VerticalAxisConfigTab />,
+        debug: <p>Debug config content</p>,
+        version: <VersionTab />
     }
 
-    function reset() {
-        setEditedConfig(JSON.stringify(config, null, 4))
-    }
+    const tabs: TabsProps["items"] = [
+        { key: "io", label: "IO config" },
+        { key: "etherCat", label: "EtherCAT Config" },
+        { key: "tool", label: "Tool config" },
+        { key: "machineEnvelope", label: "Machine envelope config" },
+        { key: "frames", label: "Frames config" },
+        { key: "verticalAxis", label: "Vertical axis config" },
+        { key: "debug", label: "Debug config" },
+        { key: "version", label: "Software versions" }
+    ]
 
-    useEffect(() => {
-        reset()
-    }, [config])
-
-    function upload() {
-        setError(null)
-        const configObject = JSON.parse(editedConfig)
-        loader(configObject).then(() => message.success("Configuration updated"))
-    }
-
-    function reformat() {
-        setEditedConfig(JSON.stringify(JSON.parse(editedConfig), null, 4))
-    }
-
-    function before_upload(info) {
-        setEditedConfig(JSON.stringify(config, null, 4))
-        info.arrayBuffer().then(buffer => {
-            message.success("Configuration loaded")
-            setEditedConfig(new TextDecoder("utf-8").decode(buffer))
-        })
-        return false
+    function switch_tab(e: string) {
+        setCurrentTab(e)
     }
 
     return (
         <StyledDiv>
-            <DockToolbar>
-                <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon
-                        Icon={FileUploadIcon}
-                        useFill={true}
-                        button
-                        title="Save and Upload"
-                        onClick={upload}
-                    />
-                    <Upload beforeUpload={before_upload} maxCount={1} showUploadList={false}>
-                        <GlowbuzzerIcon
-                            useFill={true}
-                            Icon={FileOpenIcon}
-                            button
-                            title="Load Config from File"
-                        />
-                    </Upload>
-                    <GlowbuzzerIcon
-                        useFill={true}
-                        Icon={ResetConfigIcon}
-                        button
-                        title="Undo Changes"
-                        onClick={reset}
-                    />
-                </DockToolbarButtonGroup>
-                <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon
-                        useFill={true}
-                        Icon={FormatConfigIcon}
-                        button
-                        title="Format Config"
-                        onClick={reformat}
-                    />
-                </DockToolbarButtonGroup>
-            </DockToolbar>
-
-            <div className="editor">
-                <Input.TextArea
-                    value={editedConfig}
-                    onChange={update_edited_config}
-                    bordered={false}
-                    spellCheck={false}
-                />
-            </div>
+            <EtherCatConfigProvider>
+                <Card
+                    tabList={tabs}
+                    size="small"
+                    activeTabKey={currentTab}
+                    onTabChange={switch_tab}
+                >
+                    {tab_content[currentTab]}
+                </Card>
+            </EtherCatConfigProvider>
         </StyledDiv>
     )
 }
