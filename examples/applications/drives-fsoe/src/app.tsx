@@ -22,7 +22,6 @@ import {
     ModbusIntegerOutputsTileDefinition,
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition,
-    SafetyTileDefinition,
     TelemetryTileDefinition
 } from "@glowbuzzer/controls"
 
@@ -44,7 +43,7 @@ export const App = () => {
         <InnoboticsModeProvider>
             <DockLayoutProvider
                 tiles={[
-                    ConnectTileDefinition,
+                    // ConnectTileDefinition,
                     DockTileDefinitionBuilder(JointJogTileDefinition)
                         .wrap(InnoboticsJogTileWrapper)
                         .build(),
@@ -56,7 +55,6 @@ export const App = () => {
                     DrivesOscillatingMoveTileDefinition,
                     DigitalInputsTileDefinition,
                     DigitalOutputsTileDefinition,
-                    SafetyTileDefinition,
                     SafetyDigitalInputsTileDefinition,
                     SafetyDigitalOutputsTileDefinition,
                     DiagnosticsTileDefinition,

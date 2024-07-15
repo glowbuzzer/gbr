@@ -23,16 +23,15 @@ import {
     PointsTileDefinition,
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition,
-    SafetyTileDefinition,
     SerialCommunicationsTileDefinition,
     TelemetryTileDefinition,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
     TriadHelper
-} from "@glowbuzzer/controls";
-import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal";
-import React, { Suspense } from "react";
+} from "@glowbuzzer/controls"
+import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
+import React, { Suspense } from "react"
 import {
     AwTubeRobot,
     AwTubeRobotParts,
@@ -46,12 +45,12 @@ import {
     Plate,
     Spindle,
     useLoadedRobotParts
-} from "@glowbuzzer/awlib";
-import { Environment, Sphere } from "@react-three/drei";
-import { SimpleMoveTileDefinition } from "./SimpleMoveTile";
-import { InterpolatedMoveTile } from "./InterpolatedMoveTile";
-import { AppStatusBar } from "./AppStatusBar";
-import { InnoboticsJogTileWrapper } from "../../../awlib/src/modes/InnoboticsJogTileWrapper";
+} from "@glowbuzzer/awlib"
+import { Environment, Sphere } from "@react-three/drei"
+import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
+import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
+import { AppStatusBar } from "./AppStatusBar"
+import { InnoboticsJogTileWrapper } from "../../../awlib/src/modes/InnoboticsJogTileWrapper"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -163,8 +162,7 @@ export const App = () => {
                     DigitalInputsTileDefinition,
                     SafetyDigitalInputsTileDefinition,
                     DigitalOutputsTileDefinition,
-                    SafetyDigitalOutputsTileDefinition,
-                    SafetyTileDefinition
+                    SafetyDigitalOutputsTileDefinition
                 ]}
                 statusBarExtra={<AppStatusBar />}
             >
