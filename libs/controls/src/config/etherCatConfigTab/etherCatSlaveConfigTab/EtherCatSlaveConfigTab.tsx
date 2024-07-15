@@ -13,7 +13,8 @@ import {
     Table,
     Empty,
     Spin,
-    Tooltip
+    Tooltip,
+    Switch
 } from "antd"
 import {
     EtherCatConfig,
@@ -40,6 +41,22 @@ import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
 import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
 const { Panel } = Collapse
+
+const StyledToolTipDiv = styled.div`
+    /* Target the outer tooltip wrapper when the tooltip is placed at the top */
+    position: relative;
+    display: inline-block; // Ensures inline behavior which is crucial for tooltips
+
+    .ant-tooltip-placement-right > .ant-tooltip-content {
+        margin-left: 10px; /* Adjust the distance here */
+        //background-color: green; /* Adjust background if needed */
+    }
+
+    .ant-tooltip-inner {
+        width: 600px;
+        white-space: normal; /* Allow the text to wrap */
+    }
+`
 
 // Extend Sdo to include slaveName
 interface EnhancedSdo extends Sdo {
@@ -129,9 +146,9 @@ const EditableCell = ({
                                         convertedValue = Number(value)
                                     }
 
-                                    console.log("tsType", tsType)
-                                    console.log("convertedValue", convertedValue)
-                                    console.log("typeof", typeof convertedValue)
+                                    // console.log("tsType", tsType)
+                                    // console.log("convertedValue", convertedValue)
+                                    // console.log("typeof", typeof convertedValue)
 
                                     if (
                                         (tsType === "boolean" &&
@@ -157,13 +174,45 @@ const EditableCell = ({
                                     }
                                 }
                                 return Promise.resolve()
-
-                                return Promise.resolve()
                             }
                         }
                     ]}
                 >
-                    <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+                    {/*<Input ref={inputRef} onPressEnter={save} onBlur={save} />*/}
+                    {(() => {
+                        const dataType = ethercatDataTypes.find(dt => dt.index === record.datatype)
+
+                        if (dataType && dataType.tsType === "number") {
+                            return (
+                                <InputNumber
+                                    size="small"
+                                    ref={inputRef}
+                                    onPressEnter={save}
+                                    onBlur={save}
+                                />
+                            )
+                        } else if (dataType && dataType.tsType === "boolean") {
+                            return (
+                                <Switch
+                                    size="small"
+                                    ref={inputRef}
+                                    checkedChildren="True"
+                                    unCheckedChildren="False"
+                                    defaultChecked={record[dataIndex] === "true"}
+                                    onChange={save}
+                                />
+                            )
+                        } else {
+                            return (
+                                <Input
+                                    size="small"
+                                    ref={inputRef}
+                                    onPressEnter={save}
+                                    onBlur={save}
+                                />
+                            )
+                        }
+                    })()}
                 </Form.Item>
             </Form>
         ) : (
@@ -225,8 +274,8 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
         // Display loading or empty state if config is not yet available
         return <Spin tip="Loading configuration..." />
     }
-    console.log(config)
-    console.log(slaveData)
+    // console.log(config)
+    // console.log(slaveData)
     if (config.ethercat.slaves.length === 0) {
         // Display a message if there are no slaves
         return (
@@ -260,7 +309,7 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
     ): string | null => {
         // console.log(index, subIndex, obj.index, obj.subIndex)
         if (obj.index === index && obj.subIndex === subIndex) {
-            console.log("Found", obj.name, obj)
+            // console.log("Found", obj.name, obj)
             return obj.name
         }
         if (obj.children) {
@@ -272,8 +321,37 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
         return null
     }
 
+    const searchSimpleObjectDescription = (
+        obj: SimpleObject,
+        index: number,
+        subIndex: number
+    ): string | null => {
+        if (obj.index === index && obj.subIndex === subIndex) {
+            return obj.description || "No description available"
+        }
+        if (obj.children) {
+            for (const child of obj.children) {
+                const found = searchSimpleObjectDescription(child, index, subIndex)
+                if (found) return found
+            }
+        }
+        return null
+    }
+
+    const findObjectDescription = (slaveName: string, index: number, subIndex: number): string => {
+        const matchingSlave = slaveData.find(slave => slave.name === slaveName)
+        if (!matchingSlave) return "No description available"
+
+        for (const obj of matchingSlave.slaveInfo.simpleSlaveObjects) {
+            const foundDescription = searchSimpleObjectDescription(obj, index, subIndex)
+            if (foundDescription) return foundDescription
+        }
+
+        return "No description available"
+    }
+
     const findIfOptional = (slaveName: string): boolean => {
-        console.log(slaveName)
+        // console.log(slaveName)
         const slave = config.ethercat.slaves.find(slave => slave.eep_name === slaveName)
         if (slave) {
             return slave.optional.is_configurable ? slave.optional.is_enabled : false
@@ -286,7 +364,28 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
             title: "Name",
             dataIndex: "name",
             key: "name",
-            render: (_, record) => findObjectName(record.slaveName, record.index, record.sub_index)
+            // render: (_, record) => findObjectName(record.slaveName, record.index, record.sub_index)
+            render: (_, record) => {
+                const description = findObjectDescription(
+                    record.slaveName,
+                    record.index,
+                    record.sub_index
+                )
+                return (
+                    <StyledToolTipDiv>
+                        <Tooltip
+                            title={<div dangerouslySetInnerHTML={{ __html: description }} />}
+                            placement="right"
+                            mouseEnterDelay={2}
+                            getPopupContainer={triggerNode => triggerNode}
+                        >
+                            <span>
+                                {findObjectName(record.slaveName, record.index, record.sub_index)}
+                            </span>
+                        </Tooltip>
+                    </StyledToolTipDiv>
+                )
+            }
         },
         {
             title: "Datatype",

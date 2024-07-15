@@ -226,11 +226,26 @@ function transformToSlaveList(config: EtherCatConfig): slaveList[] {
 
 type EtherCatReadSlaveTabProps = {}
 
-interface ResponsePayload {
+// interface ResponsePayload {
+//     payload: {
+//         value: number
+//     }
+// }
+
+interface SuccessResponsePayload {
     payload: {
         value: number
     }
 }
+
+// interface FailureResponsePayload {
+//     requestId: string
+//     error: true
+//     requestType: number
+//     message: string
+// }
+
+type ResponsePayload = SuccessResponsePayload
 
 export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) => {
     const { request } = useConnection()
@@ -271,10 +286,25 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
     const [isScrolling, setIsScrolling] = useState(false)
     const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
+    // const getPayloadValue = (response: string): number | string => {
+    //     try {
+    //         const parsedResponse: ResponsePayload = JSON.parse(response)
+    //         return parsedResponse.payload.value
+    //     } catch (error) {
+    //         return "Invalid response format"
+    //     }
+    // }
+
     const getPayloadValue = (response: string): number | string => {
+        console.log("Response", response)
         try {
             const parsedResponse: ResponsePayload = JSON.parse(response)
-            return parsedResponse.payload.value
+            console.log("Parsed response", parsedResponse)
+            if (parsedResponse.payload.value !== undefined) {
+                return parsedResponse.payload.value
+            } else {
+                return "Invalid response format"
+            }
         } catch (error) {
             return "Invalid response format"
         }
@@ -349,25 +379,45 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
         }
     }, [selectedNode])
 
+    // function send_request() {
+    //     request(requestType, JSON.parse(requestText))
+    //         .then(response => {
+    //             console.log("Response", response)
+    //             // if (response?.response?.error) {
+    //             //     setIsError(true)
+    //             //     setResponseText(response.response.message)
+    //             // } else {
+    //             setIsError(false)
+    //             setResponseText(`${response.payload.value}`)
+    //             // }
+    //
+    //             // console.log("Response", response)
+    //             setResponseText(JSON.stringify(response, null, 2))
+    //         })
+    //         .catch(err => {
+    //             console.error("Error", err)
+    //             setIsError(true)
+    //             setResponseText(err)
+    //         })
+    // }
     function send_request() {
+        setIsError(false)
         request(requestType, JSON.parse(requestText))
             .then(response => {
                 console.log("Response", response)
-                // if (response?.response?.error) {
-                //     setIsError(true)
-                //     setResponseText(response.response.message)
-                // } else {
-                setIsError(false)
-                setResponseText(`${response.payload.value}`)
-                // }
-
-                // console.log("Response", response)
-                setResponseText(JSON.stringify(response, null, 2))
+                try {
+                    // Directly set the raw response text for further processing
+                    setResponseText(JSON.stringify(response))
+                } catch (error) {
+                    console.error("Parsing Error", error)
+                    setIsError(true)
+                    setResponseText("Invalid response format")
+                }
             })
             .catch(err => {
-                console.error("Error", err)
+                console.error("Request Error", err)
                 setIsError(true)
-                setResponseText(err)
+                setResponseText(err.toString())
             })
     }
 
@@ -451,7 +501,11 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
                         message={
                             isError ? "Error reading from slave" : "Success reading from slave"
                         }
-                        description={`Value read: ${getPayloadValue(responseText)}`}
+                        description={
+                            isError
+                                ? `${responseText}`
+                                : `Value read: ${getPayloadValue(responseText)}`
+                        }
                         type={isError ? "error" : "success"}
                         showIcon
                     />

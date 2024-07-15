@@ -25,7 +25,7 @@ export interface Sdo {
     datatype: number
     index: number
     sub_index: number
-    value: number
+    value: number | string | boolean
     length: number
 }
 

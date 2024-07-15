@@ -3,7 +3,7 @@
  */
 
 import React from "react"
-import { Select, Switch, Tag } from "antd"
+import { Select, Switch, Tag, Tooltip } from "antd"
 import styled from "styled-components"
 import { useDigitalOutputList, useDigitalOutputState } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
@@ -21,13 +21,22 @@ const StyledDiv = styled.div`
     .dout-label {
         flex-grow: 1;
     }
+
     .ant-tag {
         width: 40px;
         text-align: center;
     }
 `
 
-const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) => {
+const DigitalOutputItem = ({
+    index,
+    label,
+    description
+}: {
+    index: number
+    label?: string
+    description: string
+}) => {
     const [dout, setDout] = useDigitalOutputState(index)
 
     function handle_override_change(value) {
@@ -41,7 +50,14 @@ const DigitalOutputItem = ({ index, label }: { index: number; label?: string }) 
 
     return (
         <div>
-            <div className="dout-label">{label || "Unknown"}</div>
+            <Tooltip
+                title={description}
+                placement="top"
+                mouseEnterDelay={2}
+                getPopupContainer={triggerNode => triggerNode}
+            >
+                <div className="dout-label">{label || "Unknown"}</div>
+            </Tooltip>
             <div>
                 <Select
                     size="small"
@@ -95,6 +111,7 @@ export const DigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProps) => 
                         key={index}
                         index={index}
                         label={labels[index] || config.name || index.toString()}
+                        description={config.description}
                     />
                 ))}
             </StyledDiv>

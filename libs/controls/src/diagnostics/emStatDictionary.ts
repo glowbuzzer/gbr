@@ -3,11 +3,14 @@
  */
 // noinspection JSUnusedGlobalSymbols
 
+import { DictionaryNode } from "./dictionaryUtils"
+
 import {
     FSOE_MASTER_HIGH_LEVEL_STATE,
     FSOE_SLAVE_HIGH_LEVEL_STATE,
     FSOE_SLAVE_TYPE
 } from "@glowbuzzer/store"
+import { extractValidKeys } from "./EmStatsUtils"
 
 export enum CIA_STATE {
     "CIA NOT READY TO SWITCH ON",
@@ -276,16 +279,7 @@ function ToDateString(value: string) {
     return value
 }
 
-type DictionaryNode = {
-    children?: Record<string, DictionaryNode>
-    type?: "array" | "object"
-    name?: string
-    nameProperty?: string
-    // convert?(value: any): string
-    convert?(value: any, obj: any): string
-}
-
-const dictionary: DictionaryNode = {
+const emStatDictionary: DictionaryNode = {
     type: "object",
     children: {
         mst: {
@@ -334,9 +328,9 @@ const dictionary: DictionaryNode = {
         s_se: {
             name: "Slaves section"
         },
-        sa_se: {
-            name: "Safety section"
-        },
+        // sa_se: {
+        //     name: "Safety section"
+        // },
         st_se: {
             name: "Stats section"
         },
@@ -463,45 +457,45 @@ const dictionary: DictionaryNode = {
             type: "array",
             nameProperty: "Slave emergency messages"
         },
-        fsoesc: {
-            name: "FSoE slave count"
-        },
-        fsoemsn: {
-            name: "FSoE master slave number"
-        },
-        fsoemhl: {
-            name: "FSoE master high-level state",
-            convert: FsoeMasterHighLevelStateTypeToString
-        },
-        fsoemec: {
-            name: "FSoE master error code"
-        },
+        // fsoesc: {
+        //     name: "FSoE slave count"
+        // },
+        // fsoemsn: {
+        //     name: "FSoE master slave number"
+        // },
+        // fsoemhl: {
+        //     name: "FSoE master high-level state",
+        //     convert: FsoeMasterHighLevelStateTypeToString
+        // },
+        // fsoemec: {
+        //     name: "FSoE master error code"
+        // },
 
-        SafeSlaves: {
-            type: "array",
-            nameProperty: "FSoE Slave name",
-            children: {
-                fsoest: {
-                    name: "FSoE Slave Type",
-                    convert: FsoeSlaveTypeToString
-                },
-                fsoesno: {
-                    name: "FSoE Slave Number"
-                },
-                fsoescid: {
-                    name: "FSoE Slave Connection ID"
-                },
-
-                fsoess: {
-                    name: "FSoE Slave State",
-                    convert: FsoeSynapticonSlaveStateToString
-                },
-                foeshls: {
-                    name: "FSoE Slave High-Level State",
-                    convert: FsoeHighLevelStateToString
-                }
-            }
-        },
+        // SafeSlaves: {
+        //     type: "array",
+        //     nameProperty: "FSoE Slave name",
+        //     children: {
+        //         fsoest: {
+        //             name: "FSoE Slave Type",
+        //             convert: FsoeSlaveTypeToString
+        //         },
+        //         fsoesno: {
+        //             name: "FSoE Slave Number"
+        //         },
+        //         fsoescid: {
+        //             name: "FSoE Slave Connection ID"
+        //         },
+        //
+        //         fsoess: {
+        //             name: "FSoE Slave State",
+        //             convert: FsoeSynapticonSlaveStateToString
+        //         },
+        //         foeshls: {
+        //             name: "FSoE Slave High-Level State",
+        //             convert: FsoeHighLevelStateToString
+        //         }
+        //     }
+        // },
         smb: {
             name: "Shared memory busy count"
         }
@@ -509,13 +503,23 @@ const dictionary: DictionaryNode = {
     }
 }
 
-export function to_table_data(obj, parentKey = "", dict: DictionaryNode | undefined = dictionary) {
+export function toTableDataEmStat(
+    obj,
+    parentKey = "",
+    dict: DictionaryNode | undefined = emStatDictionary
+) {
     const result = []
 
+    const validKeys = extractValidKeys(emStatDictionary)
+
     for (const key in obj) {
+        if (!validKeys.includes(key) && isNaN(Number(key))) {
+            continue
+        }
+
         if (typeof obj[key] === "object" && obj[key] !== null) {
             const child_dict = dict?.type === "array" ? dict : dict?.children?.[key]
-            const children = to_table_data(obj[key], key, child_dict)
+            const children = toTableDataEmStat(obj[key], key, child_dict)
             result.push({
                 key: parentKey + "/" + key,
                 property: obj[key][dict?.nameProperty] || key,

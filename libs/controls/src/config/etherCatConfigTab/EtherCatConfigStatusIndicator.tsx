@@ -79,11 +79,13 @@ const StatusIndicator: React.FC = () => {
 
     return (
         <StatusContainer>
-            <Tag>
-                {config?.machine_name
-                    ? `${config.machine_name}_${config.sub_machine_name}`
-                    : "NO MACHINE CONFIG DOWNLOADED"}
-            </Tag>
+            <Tooltip title="Machine name & sub-machine name">
+                <Tag>
+                    {config?.machine_name
+                        ? `${config.machine_name}_${config.sub_machine_name}`
+                        : "NO MACHINE CONFIG DOWNLOADED"}
+                </Tag>
+            </Tooltip>
             <Tooltip title="EtherCAT configuration downloaded">
                 <IconWrapper color={configLoaded ? "green" : "red"}>
                     {configLoaded ? <CheckCircleOutlined /> : <CloseCircleOutlined />}

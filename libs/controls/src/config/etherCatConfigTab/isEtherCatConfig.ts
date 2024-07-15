@@ -137,8 +137,9 @@ export function isMachineConfig(obj: any): obj is EtherCatConfig {
                 console.error(`Invalid ethercat.slaves[${i}].sdos[${j}]:`, sdo)
                 return false
             }
-
-            const sdoKeys = ["datatype", "index", "sub_index", "value", "length"]
+            //here value is a string
+            //todo validate based on data type
+            const sdoKeys = ["datatype", "index", "sub_index", "length"]
             for (const key of sdoKeys) {
                 if (typeof sdo[key] !== "number") {
                     console.error(
