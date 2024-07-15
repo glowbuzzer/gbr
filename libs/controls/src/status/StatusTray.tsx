@@ -11,6 +11,7 @@ import { StatusTrayGbcVersionCheck } from "./StatusTrayGbcVersionCheck"
 import { StatusTrayModeSwitch } from "./StatusTrayModeSwitch"
 import { StatusTrayConnect } from "./StatusTrayConnect"
 import { useEffect, useState } from "react"
+import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
 
 const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     position: absolute;
@@ -68,6 +69,7 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
     return (
         <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
             <div className="tray">
+                <StatusTraySafetyErrors />
                 <StatusTrayConnect />
                 <StatusTrayModeSwitch />
                 <StatusTrayModifiedConfiguration />

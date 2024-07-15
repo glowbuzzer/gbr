@@ -2,7 +2,13 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { MachineState, OPERATION_ERROR, useConnection, useMachine } from "@glowbuzzer/store"
+import {
+    FAULT_CAUSE,
+    MachineState,
+    OPERATION_ERROR,
+    useConnection,
+    useMachine
+} from "@glowbuzzer/store"
 import { StatusTrayItem } from "./StatusTrayItem"
 import { DismissType } from "./StatusTrayProvider"
 import { filter_fault_causes } from "../util/faults"
@@ -32,6 +38,11 @@ const StyledDiv = styled.div`
     }
 `
 
+function only_safety_error(fault: number) {
+    const mask = 1 << FAULT_CAUSE.FAULT_CAUSE_SAFETY_BIT_NUM
+    return (fault & mask) === mask
+}
+
 /**
  * Status tray item for faults (active or not)
  */
@@ -48,6 +59,14 @@ export const StatusTrayFaults = () => {
 
     if (!fault && !fault_active) {
         return null
+    }
+
+    // the safety dedicated status tray item will take care of pure safety faults
+    if (!fault_active && only_safety_error(machine.faultHistory)) {
+        return null
+    }
+    if (fault_active && only_safety_error(machine.activeFault)) {
+        return
     }
 
     const show_error = !!machine.activeFault || !!machine.faultHistory || !!machine.operationError

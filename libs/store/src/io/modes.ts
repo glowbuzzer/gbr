@@ -17,7 +17,7 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
         const { index, safety } = metadata || {}
 
         if (!metadata) {
-            return false
+            return undefined
         }
 
         if (safety) {
