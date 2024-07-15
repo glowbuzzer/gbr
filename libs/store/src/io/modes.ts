@@ -53,6 +53,10 @@ export function useSafeStopInput() {
     return !useMachineInputActive("safeStopInput")
 }
 
+export function useSafetyOverrideEnabledInput() {
+    return useMachineInputActive("overrideEnabledInput")
+}
+
 export enum ManualMode {
     DISABLED = 0b00,
     JOG = 0b01,

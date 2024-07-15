@@ -12,6 +12,7 @@ import { StatusTrayModeSwitch } from "./StatusTrayModeSwitch"
 import { StatusTrayConnect } from "./StatusTrayConnect"
 import { useEffect, useState } from "react"
 import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
+import { StatusTraySafetyOverrideMode } from "./StatusTraySafetyOverrideMode"
 
 const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     position: absolute;
@@ -70,6 +71,7 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
         <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
             <div className="tray">
                 <StatusTraySafetyErrors />
+                <StatusTraySafetyOverrideMode />
                 <StatusTrayConnect />
                 <StatusTrayModeSwitch />
                 <StatusTrayModifiedConfiguration />
