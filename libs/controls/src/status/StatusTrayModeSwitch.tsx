@@ -32,6 +32,8 @@ export const StatusTrayModeSwitch = () => {
     const resetNeeded = useResetNeededInput()
     const enablingSwitchEngaged = useEnablingSwitchInput()
 
+    const enabling_switch_required = mode !== "auto"
+
     const cst_mode =
         mode === ManualMode.HAND_GUIDED &&
         [MachineState.OPERATION_ENABLED, MachineState.QUICK_STOP].includes(state)
@@ -72,7 +74,7 @@ export const StatusTrayModeSwitch = () => {
 
     const { name } = modes.find(m => m.value === mode)
 
-    const action_required = resetNeeded || !enablingSwitchEngaged
+    const action_required = resetNeeded || (!enablingSwitchEngaged && enabling_switch_required)
     if (!action_required) {
         return null
     }
@@ -91,11 +93,15 @@ export const StatusTrayModeSwitch = () => {
                         description="You must press the reset button to acknowledge the safety errors"
                         status={resetNeeded ? "process" : "finish"}
                     />
-                    <Steps.Step
-                        title={"Operate Enabling Switch"}
-                        description="You must operate the enablng switch (deadman) to enable hand guiding"
-                        status={resetNeeded ? "wait" : enablingSwitchEngaged ? "finish" : "process"}
-                    />
+                    {enabling_switch_required && (
+                        <Steps.Step
+                            title={"Operate Enabling Switch"}
+                            description="You must operate the enablng switch (deadman) to enable hand guiding"
+                            status={
+                                resetNeeded ? "wait" : enablingSwitchEngaged ? "finish" : "process"
+                            }
+                        />
+                    )}
                 </Steps>
             </StyledDiv>
         </StatusTrayItem>
