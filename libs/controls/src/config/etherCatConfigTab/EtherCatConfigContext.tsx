@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { message } from "antd"
 import { EtherCatConfig, exampleConfig } from "./EtherCatConfigTypes"
 import { useConnection } from "@glowbuzzer/store"
-import { isMachineConfig } from "./isEtherCatConfig"
-import { initialTabList } from "./EtherCatConfigTab"
+import { isEtherCatConfig } from "./isEtherCatConfig"
+import { EtherCatConfigInitialTabList } from "./EtherCatConfigInitialTabList"
 
 type EtherCatConfigContextType = {
     config: EtherCatConfig | null
@@ -62,7 +62,7 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
     }, [config])
 
     const uploadConfig = async () => {
-        if (editedConfig && isMachineConfig(editedConfig)) {
+        if (editedConfig && isEtherCatConfig(editedConfig)) {
             try {
                 await request("load gbem config", { config: editedConfig })
                 setConfigUploaded(true)
@@ -100,7 +100,7 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
         try {
             if (useDummyConfig) {
                 // Use the dummy configuration for development
-                if (isMachineConfig(exampleConfig)) {
+                if (isEtherCatConfig(exampleConfig)) {
                     setConfig(exampleConfig)
                     setConfigLoaded(true)
                     message.success("Dummy configuration loaded successfully.")
@@ -123,7 +123,7 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
                             : response.config
 
                     // Validate the parsed configuration
-                    if (isMachineConfig(parsedConfig)) {
+                    if (isEtherCatConfig(parsedConfig)) {
                         setConfig(parsedConfig)
                         setConfigLoaded(true) // Set configLoaded to true if validation succeeds
                         message.success("Configuration loaded successfully.")
@@ -169,14 +169,14 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
 
     const enableAll = () => {
         setTabsDisabled(
-            initialTabList.map(tab => tab.key).filter(key => key !== excludeTab),
+            EtherCatConfigInitialTabList.map(tab => tab.key).filter(key => key !== excludeTab),
             false
         )
     }
 
     const disableAll = () => {
         setTabsDisabled(
-            initialTabList.map(tab => tab.key).filter(key => key !== excludeTab),
+            EtherCatConfigInitialTabList.map(tab => tab.key).filter(key => key !== excludeTab),
             true
         )
     }
@@ -201,7 +201,7 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
                 downloadConfig,
                 setUseDummyConfig,
                 useDummyConfig,
-                initialTabList,
+                initialTabList: EtherCatConfigInitialTabList,
                 disabledTabs,
                 setTabsDisabled,
                 enableAll,

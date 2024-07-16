@@ -9,6 +9,10 @@ import { CenteredCheckbox, StyledFlex } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure safety digital outputs.
+ */
+
 export const SafetyDigitalOutputs: React.FC = () => {
     const current = useSafetyDigitalOutputList()
     const [outputs, setOutputs] = useState(current)

@@ -27,7 +27,7 @@ import {
     exampleConfig
 } from "../EtherCatConfigTypes"
 import { useConnection } from "@glowbuzzer/store"
-import { isMachineConfig } from "../isEtherCatConfig"
+import { isEtherCatConfig } from "../isEtherCatConfig"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import EtherCatConfigStatusIndicator from "../EtherCatConfigStatusIndicator" // Ensure these types are correctly imported or defined
 import type { ColumnsType } from "antd/es/table"

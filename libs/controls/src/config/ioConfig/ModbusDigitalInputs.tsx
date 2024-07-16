@@ -25,7 +25,7 @@ import { CheckboxChangeEvent } from "antd/es/checkbox"
 import { DeleteOutlined } from "@ant-design/icons"
 import { StyledFlex, StyledToolTipDiv, SwitchContainer } from "./commonStyles"
 import { HexDecInput } from "./HexDecInput"
-import { ConsecutiveAddressesInfoContent } from "./commonContent"
+import { ConsecutiveAddressesInfoContent } from "./ConsecutiveAddressesInfoContent"
 
 import { ActionButton } from "./ActionButton"
 
@@ -285,6 +285,9 @@ const GridRowContent = ({
 //     return <button onClick={toggleSort}>{buttonLabel}</button>
 // }
 
+/**
+ * Component to manage the Modbus digital inputs
+ */
 export const ModbusDigitalInputs: React.FC = () => {
     const current = useModbusDigitalInputList()
     const [inputs, setInputs] = useState(current)

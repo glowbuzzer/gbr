@@ -9,6 +9,9 @@ import { StyledFlex, StyledToolTipDiv } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure safety digital inputs.
+ */
 export const SafetyDigitalInputs: React.FC = () => {
     const current = useSafetyDigitalInputList()
     const [inputs, setInputs] = useState(current)

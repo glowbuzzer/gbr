@@ -1,5 +1,5 @@
 import { useSafetyDigitalInputState } from "@glowbuzzer/store"
-import { Button, Switch, Tag } from "antd"
+import { Button, Switch, Tag, Card } from "antd"
 import styled from "styled-components"
 import { StyledTileContent } from "../../../../libs/controls/src/util/styles/StyledTileContent"
 import { useEffect, useState } from "react"
@@ -32,7 +32,14 @@ const SafetyDigitalInputToggle = ({
                 setDin(din.setValue, true)
             }
         }
-    }, [din.override, din.setValue, setDin])
+    }, [din.override, din.setValue, setDin, disabled])
+
+    useEffect(() => {
+        if (disabled) {
+            // Remove override when functionality is disabled
+            setDin(din.setValue, false)
+        }
+    }, [disabled, din.setValue, setDin])
 
     function handle_state_change() {
         if (!disabled) {
@@ -106,47 +113,56 @@ export const VirtualHmiTile = () => {
     }
     return (
         <StyledTileContent>
-            <div style={{ marginBottom: "10px" }}>
-                <Switch checked={enabled} onChange={handle_enable_toggle} size="small" />{" "}
-                Enable/Disable Functionality
-            </div>
-            <StyledDiv>
-                <SafetyDigitalInputToggle
-                    index={4}
-                    label="Override"
-                    onLabel="OVERIDDEN"
-                    offLabel={"NO OVERRIDE"}
-                    disabled={!enabled}
-                />
-                <SafetyDigitalInputToggle
-                    index={6}
-                    label="Mode"
-                    onLabel="AUTO"
-                    offLabel="MANUAL"
-                    disabled={!enabled}
-                />
-                <SafetyDigitalInputToggle
-                    index={8}
-                    label="Enabling switch"
-                    onLabel="ENABLED"
-                    offLabel="DISABLED"
-                    disabled={!enabled}
-                />
-                <SafetyDigitalInputToggle
-                    index={2}
-                    label="Yellow zone"
-                    onLabel="TRIGGERED"
-                    offLabel="NOT TRIGGERED"
-                    disabled={!enabled}
-                />
-                <SafetyDigitalInputToggle
-                    index={3}
-                    label="Red zone"
-                    onLabel="TRIGGERED"
-                    offLabel="NOT TRIGGERED"
-                    disabled={!enabled}
-                />
-            </StyledDiv>
+            <Card size="small" title="Enable/Disable Virtual HMI Functionality">
+                <div style={{ marginBottom: "10px" }}>
+                    <Switch
+                        style={{ marginRight: "10px" }}
+                        checked={enabled}
+                        onChange={handle_enable_toggle}
+                        size="small"
+                    />
+                    {enabled ? "Enabled" : "Disabled"}
+                </div>
+            </Card>
+            <Card size="small" title="Controls for Virtual HMI Functionality">
+                <StyledDiv>
+                    <SafetyDigitalInputToggle
+                        index={4}
+                        label="Override"
+                        onLabel="OVERIDDEN"
+                        offLabel={"NO OVERRIDE"}
+                        disabled={!enabled}
+                    />
+                    <SafetyDigitalInputToggle
+                        index={6}
+                        label="Mode"
+                        onLabel="AUTO"
+                        offLabel="MANUAL"
+                        disabled={!enabled}
+                    />
+                    <SafetyDigitalInputToggle
+                        index={8}
+                        label="Enabling switch"
+                        onLabel="ENABLED"
+                        offLabel="DISABLED"
+                        disabled={!enabled}
+                    />
+                    <SafetyDigitalInputToggle
+                        index={2}
+                        label="Yellow zone"
+                        onLabel="TRIGGERED"
+                        offLabel="NOT TRIGGERED"
+                        disabled={!enabled}
+                    />
+                    <SafetyDigitalInputToggle
+                        index={3}
+                        label="Red zone"
+                        onLabel="TRIGGERED"
+                        offLabel="NOT TRIGGERED"
+                        disabled={!enabled}
+                    />
+                </StyledDiv>
+            </Card>
         </StyledTileContent>
     )
 }

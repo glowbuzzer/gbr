@@ -8,6 +8,9 @@ import { StyledFlex } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure standard integer outputs.
+ */
 export const StandardIntegerOutputs: React.FC = () => {
     const current = useIntegerOutputList()
     const [outputs, setOutputs] = useState(current)

@@ -247,6 +247,9 @@ const GridRowContent = ({
     </>
 )
 
+/**
+ * Component to configure Modbus integer outputs
+ */
 export const ModbusIntegerOutputs: React.FC = () => {
     const current = useModbusIntegerOutputList()
     const [outputs, setOutputs] = useState(current)

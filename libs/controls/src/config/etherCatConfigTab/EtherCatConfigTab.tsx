@@ -26,25 +26,6 @@ const StyledFlex = styled(Flex)`
     }
 `
 
-export const initialTabList = [
-    {
-        key: "editConfig",
-        tab: "EtherCAT slave config"
-    },
-    {
-        key: "readSdo",
-        tab: "Read EtherCAT slave objects"
-    },
-    {
-        key: "writeSdo",
-        tab: "Write EtherCAT slave objects"
-    },
-    {
-        key: "optionalSlaves",
-        tab: "Optional EtherCAT slaves config"
-    }
-]
-
 const contentList: Record<string, (props: {}) => React.ReactNode> = {
     editConfig: props => <EtherCatSlaveConfigTab {...props} />,
     readSdo: props => <EtherCatReadSlaveTab {...props} />,
@@ -52,6 +33,9 @@ const contentList: Record<string, (props: {}) => React.ReactNode> = {
     optionalSlaves: () => <EtherCatOptionalSlavesTab />
 }
 
+/**
+ * A component to configure EtherCAT slaves.
+ */
 export const EtherCatConfigTab = () => {
     const [activeTabKey, setActiveTabKey] = useState<string>("editConfig")
 

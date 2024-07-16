@@ -9,6 +9,9 @@ import { CenteredCheckbox, StyledFlex } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
 
+/**
+ * A component to configure standard digital outputs.
+ */
 export const StandardDigitalOutputs: React.FC = () => {
     const current = useDigitalOutputList()
     const [outputs, setOutputs] = useState(current)

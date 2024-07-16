@@ -7,6 +7,9 @@ interface SlaveCatProviderProps {
     children: ReactNode
 }
 
+/**
+ * A provider for the EtherCat slave config context.
+ */
 export const SlaveCatProvider = ({ children }: SlaveCatProviderProps) => {
     const [slaveData, setSlaveData] = useState<slave[]>([])
 

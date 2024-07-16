@@ -3,22 +3,15 @@
  */
 
 import styled from "styled-components"
-import { Button, Flex, Space, Select, Card, Empty, Divider, Modal, Alert } from "antd"
-import TextArea from "antd/es/input/TextArea"
+import { Button, Flex, Space, Select, Divider, Alert } from "antd"
 import * as React from "react"
 import { GBEM_REQUEST, useConnection } from "@glowbuzzer/store"
 import { useState, useEffect, useRef } from "react"
-import { SimpleObjectTree } from "../slaveCatTree/SimpleObjectTree"
-import { BulbOutlined } from "@ant-design/icons"
-import { SimpleObject } from "../slavecatTypes/SimpleObject"
 import { DataNode } from "../slaveCatTree/transformToTreeData"
 import { useSlaveCat } from "../slaveCatData/slaveCatContext"
-import { DefaultValue } from "../slavecatTypes/DefaultValue"
 import { EtherCatConfig, Slave } from "../EtherCatConfigTypes"
-import { slaveInfo } from "../slavecatTypes/SlaveInfo"
 import { SlaveCatTree } from "../slaveCatTree/SlaveCatTree"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
-import { EventDataNode } from "antd/es/tree"
 import { slave } from "../slavecatTypes/Slave"
 import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
@@ -139,7 +132,7 @@ const StyledSelect = styled(Select)`
 `
 
 // Function to convert binary data to base64
-export const binaryToBase64 = (binary: string) => {
+const binaryToBase64 = (binary: string) => {
     let binaryString = ""
     for (let i = 0; i < binary.length; i += 2) {
         binaryString += String.fromCharCode(parseInt(binary.substr(i, 2), 16))

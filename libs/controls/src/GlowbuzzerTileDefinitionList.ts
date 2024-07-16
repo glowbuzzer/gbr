@@ -21,7 +21,6 @@ import {
     ModbusIntegerInputsTileDefinition,
     IntegerOutputsTileDefinition,
     ModbusIntegerOutputsTileDefinition,
-    SafetyTileDefinition,
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition
 } from "./io"
@@ -58,7 +57,6 @@ export const GlowbuzzerTileDefinitionList = [
     SafetyDigitalOutputsTileDefinition,
     AnalogOutputsTileDefinition,
     IntegerOutputsTileDefinition,
-    SafetyTileDefinition,
     FramesTileDefinition,
     PointsTileDefinition,
     ToolsTileDefinition,

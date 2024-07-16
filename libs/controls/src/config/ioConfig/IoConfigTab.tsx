@@ -105,6 +105,10 @@ const IoCards: React.FC = () => {
     )
 }
 
+/**
+ * The IO config tab shows the cards for the different typesof IO
+ * @constructor
+ */
 export const IoConfigTab = () => {
     return <IoCards />
 }

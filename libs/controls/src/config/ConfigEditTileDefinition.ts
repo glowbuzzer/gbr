@@ -5,7 +5,7 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ConfigEditTile } from "./ConfigEditTile"
-import { ConfigEditTile2 } from "./ConfigEditTile2"
+import { ConfigEditTile } from "./ConfigEditTile"
 import { DockTileDefinitionBuilder } from "../dock"
 
 // export const ConfigEditTileDefinition = {
@@ -24,6 +24,6 @@ import { DockTileDefinitionBuilder } from "../dock"
 export const ConfigEditTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.CONFIG_EDIT)
     .name("Config Editor")
-    .render(() => createElement(ConfigEditTile2, {}, null), null)
+    .render(() => createElement(ConfigEditTile, {}, null), null)
     .placement(1, 0)
     .build()

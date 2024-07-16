@@ -1,6 +1,12 @@
 import { EtherCatConfig } from "./EtherCatConfigTypes"
 
-export function isMachineConfig(obj: any): obj is EtherCatConfig {
+/**
+ * Validates an object to check if it is a valid EtherCatConfig object.
+ * @param obj The object to validate.
+ * @returns True if the object is a valid EtherCatConfig object, false otherwise.
+ */
+
+export function isEtherCatConfig(obj: any): obj is EtherCatConfig {
     console.log("Validating object:", obj)
 
     if (typeof obj !== "object" || obj === null) {

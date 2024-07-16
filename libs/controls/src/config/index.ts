@@ -5,4 +5,3 @@
 export * from "./ConfigEditTile"
 export * from "./ConfigEditTileDefinition"
 export * from "./ConfigLiveEditProvider"
-export * from "./GbcVersionPanel"
