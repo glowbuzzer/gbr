@@ -31,7 +31,12 @@ const persistence: GbdbConfiguration = {
         cell: {
             singleton: true,
             autoSave: true,
-            slices: [FramesGbdbFacetSlice, PointsGbdbFacetSlice, ToolsGbdbFacetSlice]
+            slices: [
+                FramesGbdbFacetSlice,
+                PointsGbdbFacetSlice,
+                ToolsGbdbFacetSlice,
+                FlowGbdbFacetSlice
+            ]
         }
     }
 }

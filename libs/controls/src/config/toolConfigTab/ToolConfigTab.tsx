@@ -1,4 +1,5 @@
 import React from "react"
+import { ToolsTile } from "../../tools"
 
 /**
  * A component to configure tool configurations.
@@ -6,6 +7,8 @@ import React from "react"
 export const ToolConfigTab = () => {
     return (
         <div>
+            <ToolsTile />
+            {/*
             <p>Tool config content</p>
             <p>Type generic mech gripper, pnu gripper, electric gripper, specific models</p>
             <p>
@@ -21,6 +24,7 @@ export const ToolConfigTab = () => {
                 Add 3d model - 3d model in grasp release? or is this just for specific tools we
                 support
             </p>
+*/}
         </div>
     )
 }

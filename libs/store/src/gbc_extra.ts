@@ -99,8 +99,6 @@ type MachineIoItem = {
 export type MachineMetadata = {
     /** The input that indicates that machine is in a safe state */
     safetyStateInput?: MachineIoItem
-    /** The input that indicates that estop switch is active */
-    estopInput?: MachineIoItem
     /** The input that indicates that hardware reset is needed */
     resetNeededInput?: MachineIoItem
     /** The input that should be used to determine whether auto mode is enabled (for example, keyswitch state) */
@@ -111,12 +109,40 @@ export type MachineMetadata = {
     safeStopInput?: MachineIoItem
     /** The input that should be used to determine whether the machine is in override mode (safety functions muted) */
     overrideEnabledInput?: MachineIoItem
+    /** The input that should be used to determine whether the drive safe positions are valid */
+    drivesSafePositionValidInput?: MachineIoItem
+    /** The input that should be used to determine whether any drives are in STO state */
+    anyJointStoInput?: MachineIoItem
+    /** The input that should be used to determine whether any joints are in SS1 state */
+    anyJointSs1Input?: MachineIoItem
+    /** The input that should be used to determine whether any joints are in SS2 state */
+    anyJointSs2Input?: MachineIoItem
+    /** The input that should be used to determine whether any joints are in SBC state */
+    anyJointSbcInput?: MachineIoItem
+    /** The input that should be used to determine whether any joints are in SOS state */
+    anyJointSosInput?: MachineIoItem
+    /** The input that should be used to determine whether any drives are over temperature */
+    drivesOverTempInput?: MachineIoItem
+    /** The input that should be used to determine whether any drives are in error state */
+    drivesErrorInput?: MachineIoItem
+    /** The input that should be used to determine whether TCP position is in SLS fault state */
+    faultTcpSlsInput?: MachineIoItem
+    /** The input that should be used to determine whether TCP position is in SWM fault state */
+    faultTcpSwmInput?: MachineIoItem
+    /** The input that should be used to determine whether joints are in SLP fault state */
+    faultJointsSlpInput?: MachineIoItem
+    /** The input that should be used to determine whether a pause was violated by motion */
+    faultPauseViolationInput?: MachineIoItem
+    /** The input that should be used to determine whether one or more estop conditions are active */
+    estopStateInput?: MachineIoItem
     /** The output that should be used as the first bit of the manual mode, when manual mode active */
     manualModeBit1Output?: MachineIoItem
     /** The output that should be used as the second bit of the manual mode, when manual mode active */
     manualModeBit2Output?: MachineIoItem
     /** The output that should be used as the third bit of the manual mode, when manual mode active */
     manualModeBit3Output?: MachineIoItem
+    /** The output that must be set to reset the drives safe position */
+    drivesSafePositionResetOutput?: MachineIoItem
 }
 
 /**

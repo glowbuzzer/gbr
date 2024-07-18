@@ -12,13 +12,17 @@ import {
     MachineState,
     ManualMode,
     useConnection,
+    useDrivesSafePositionValidInput,
     useEnablingSwitchInput,
     useMachineState,
-    useResetNeededInput
+    useResetNeededInput,
+    useSafetyOverrideEnabledInput,
+    useSafetyOverrideProcessesRequired
 } from "@glowbuzzer/store"
 import { Steps } from "antd"
 import { useJointsForKinematicsConfigurationList } from "../util"
 import { useGlowbuzzerMode } from "../modes"
+import { SafetyOverrideModePanel } from "./modes/SafetyOverrideModePanel"
 
 const StyledDiv = styled.div`
     //height: 400px;
@@ -31,8 +35,9 @@ export const StatusTrayModeSwitch = () => {
     const connection = useConnection()
     const resetNeeded = useResetNeededInput()
     const enablingSwitchEngaged = useEnablingSwitchInput()
+    const safetyOverrideProcessRequired = useSafetyOverrideProcessesRequired()
 
-    const enabling_switch_required = mode !== "auto"
+    const enabling_switch_required = mode !== "auto" && mode !== "override"
 
     const cst_mode =
         mode === ManualMode.HAND_GUIDED &&
@@ -66,6 +71,10 @@ export const StatusTrayModeSwitch = () => {
             })
         )
     }, [cst_mode])
+
+    if (Object.values(safetyOverrideProcessRequired).some(v => v === false)) {
+        return <SafetyOverrideModePanel />
+    }
 
     if (mode === ManualMode.DISABLED || modes.length === 0) {
         // we're not in any mode, or there are no modes

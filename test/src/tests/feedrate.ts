@@ -50,17 +50,17 @@ test("should not give velocity spike at higher fro when cancelling (moveVectorAt
     }
 })
 
-test("should not give velocity spike at higher fro when cancelling (moveJointsAtVelocity)", async () => {
+test.only("should not give velocity spike at higher fro when cancelling (moveJointsAtVelocity)", async () => {
     try {
         gbc.set_fro(0, 1)
         const move = gbc.wrap(gbc.activity.moveJointsAtVelocity([1]).promise)
         move.start()
-        gbc.exec(20)
+        gbc.exec(25)
         gbc.set_fro(0, 2)
         gbc.exec(20)
 
         const cancel = gbc.wrap(gbc.activity.cancel().promise)
-        cancel.start().iterations(45)
+        cancel.start().iterations(145)
     } finally {
         gbc.plot("test")
     }

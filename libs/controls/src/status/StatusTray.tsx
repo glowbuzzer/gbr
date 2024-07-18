@@ -12,10 +12,10 @@ import { StatusTrayModeSwitch } from "./StatusTrayModeSwitch"
 import { StatusTrayConnect } from "./StatusTrayConnect"
 import { useEffect, useState } from "react"
 import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
-import { StatusTraySafetyOverrideMode } from "./StatusTraySafetyOverrideMode"
 
 const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     position: absolute;
+    z-index: 10000;
     bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 4px)`};
     // top: ${props => `${props.$bottomOffset}px`};
     //bottom: 40px;
@@ -25,7 +25,6 @@ const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     display: ${props => (props.$visible ? "block" : "none")};
 
     .tray {
-        z-index: 1000;
         pointer-events: all;
         width: 50%;
         min-width: 500px;
@@ -33,6 +32,8 @@ const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
         height: 100%;
         border: 3px solid ${props => props.theme.colorWarningBorder};
         background: ${props => props.theme.colorBgContainer};
+        max-height: ${props => `${props.$bottomOffset - 4}px`};
+        overflow-y: auto;
         border-radius: 14px;
         box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
     }
@@ -71,7 +72,9 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
         <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
             <div className="tray">
                 <StatusTraySafetyErrors />
+                {/*
                 <StatusTraySafetyOverrideMode />
+*/}
                 <StatusTrayConnect />
                 <StatusTrayModeSwitch />
                 <StatusTrayModifiedConfiguration />

@@ -23,7 +23,36 @@ export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
             extentsZ: [-100, 100]
         }
     ],
-    joint: []
+    joint: [],
+    din: [],
+    dout: [],
+    ain: [],
+    aout: [],
+    uiin: [],
+    uiout: [],
+    iin: [],
+    iout: [],
+    externalDin: [],
+    externalDout: [],
+    externalUiin: [],
+    externalUiout: [],
+    externalIin: [],
+    externalIout: [],
+    safetyDin: [],
+    safetyDout: [],
+    modbusDin: [],
+    modbusDout: [],
+    modbusUiin: [],
+    modbusUiout: [],
+    tool: [],
+    points: [],
+    activity: [],
+    serial: [],
+    soloActivity: [],
+    spindle: [],
+    stream: [],
+    task: [],
+    moveParameters: []
 }
 
 export enum ConfigState {

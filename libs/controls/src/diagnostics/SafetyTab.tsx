@@ -12,7 +12,7 @@ import {
     useEtherCATMasterStatus,
     useSafetyDigitalInputState
 } from "@glowbuzzer/store"
-import { Card, Divider, Tag, Tooltip } from "antd"
+import { Card, Divider, Flex, Tag, Tooltip } from "antd"
 import styled from "styled-components"
 import { SafetyTabContent } from "./SafetyTabContent"
 import { toTableDataEmStatSafety } from "./emStatSafetyDictionary"
@@ -130,68 +130,70 @@ export const SafetyTab = ({ labels = [] }: SafetyInputsTileProps) => {
     }
 
     return (
-        <SafetyTabContent>
-            <Card title="Overall Safety State" size="small">
-                <StyledTag color={overallSafetyState ? "red" : "green"}>
-                    {overallSafetyState ? "FAULT" : "NO FAULT"}
-                </StyledTag>
-            </Card>
+        <SafetyTabContent outset>
+            <Flex vertical gap={10}>
+                <Card title="Overall Safety State" size="small">
+                    <StyledTag color={overallSafetyState ? "green" : "red"}>
+                        {overallSafetyState ? "NO FAULT" : "FAULT"}
+                    </StyledTag>
+                </Card>
 
-            <Card title="Acknowledgeable Safety Faults" size="small">
-                <StyledDiv>
-                    <div className="safety-grid">
-                        {acknowledgeableFaults?.map(config => {
-                            return (
-                                <SafetyItem
-                                    key={config.originalIndex}
-                                    index={config.originalIndex}
-                                    config={config}
-                                    label={
-                                        labels[config.originalIndex] ||
-                                        config.name ||
-                                        config.originalIndex.toString()
-                                    }
-                                />
-                            )
-                        })}
-                    </div>
-                </StyledDiv>
-            </Card>
+                <Card title="Acknowledgeable Safety Faults" size="small">
+                    <StyledDiv>
+                        <div className="safety-grid">
+                            {acknowledgeableFaults?.map(config => {
+                                return (
+                                    <SafetyItem
+                                        key={config.originalIndex}
+                                        index={config.originalIndex}
+                                        config={config}
+                                        label={
+                                            labels[config.originalIndex] ||
+                                            config.name ||
+                                            config.originalIndex.toString()
+                                        }
+                                    />
+                                )
+                            })}
+                        </div>
+                    </StyledDiv>
+                </Card>
 
-            <Card title="Unacknowledgeable Safety Faults" size="small">
-                <StyledDiv>
-                    <div className="safety-grid">
-                        {unacknowledgeableFaults?.map(config => {
-                            return (
-                                <SafetyItem
-                                    key={config.originalIndex}
-                                    index={config.originalIndex}
-                                    config={config}
-                                    label={
-                                        labels[config.originalIndex] ||
-                                        config.name ||
-                                        config.originalIndex.toString()
-                                    }
-                                />
-                            )
-                        })}
-                    </div>
-                </StyledDiv>
-            </Card>
+                <Card title="Unacknowledgeable Safety Faults" size="small">
+                    <StyledDiv>
+                        <div className="safety-grid">
+                            {unacknowledgeableFaults?.map(config => {
+                                return (
+                                    <SafetyItem
+                                        key={config.originalIndex}
+                                        index={config.originalIndex}
+                                        config={config}
+                                        label={
+                                            labels[config.originalIndex] ||
+                                            config.name ||
+                                            config.originalIndex.toString()
+                                        }
+                                    />
+                                )
+                            })}
+                        </div>
+                    </StyledDiv>
+                </Card>
 
-            <Card title="FSoE status diagnostic" size="small">
-                <StyledTable
-                    ref={tableRef}
-                    rowClassName={getRowClassName}
-                    columns={columns}
-                    dataSource={updatedTableData}
-                    rowKey="key"
-                    size="small"
-                    expandable={{ defaultExpandAllRows: true }}
-                    pagination={false}
-                    showHeader={false}
-                />
-            </Card>
+                <Card title="FSoE status diagnostic" size="small">
+                    <StyledTable
+                        ref={tableRef}
+                        rowClassName={getRowClassName}
+                        columns={columns}
+                        dataSource={updatedTableData}
+                        rowKey="key"
+                        size="small"
+                        expandable={{ defaultExpandAllRows: true }}
+                        pagination={false}
+                        showHeader={false}
+                    />
+                </Card>
+            </Flex>
         </SafetyTabContent>
     )
 }

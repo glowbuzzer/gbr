@@ -6,8 +6,10 @@ import * as React from "react"
 import { StatusTrayItem } from "./StatusTrayItem"
 import {
     configMetadata,
+    MachineMetadata,
     MachineState,
     possible_transitions,
+    useConfig,
     useConnection,
     useMachine,
     useOverallSafetyStateInput,
@@ -21,6 +23,7 @@ import { useEffect } from "react"
 const StyledGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr auto;
+    align-items: center;
     gap: 10px;
 
     .ant-tag {
@@ -34,7 +37,9 @@ export const StatusTraySafetyErrors = () => {
     const { connected } = useConnection()
     const overall = useOverallSafetyStateInput()
     const values = useSafetyDigitalInputs()
-    const config = useSafetyDigitalInputList()
+    const safety_dins = useSafetyDigitalInputList()
+    const config = useConfig()
+    const machine_meta = configMetadata(config.machine[0])
 
     const fault = machine.currentState === MachineState.FAULT
 
@@ -49,33 +54,51 @@ export const StatusTraySafetyErrors = () => {
         return null
     }
 
+    const filter: (keyof MachineMetadata)[] = [
+        "faultTcpSwmInput",
+        "faultJointsSlpInput",
+        "faultJointsSlpInput",
+        "faultPauseViolationInput",
+        "drivesOverTempInput",
+        "drivesErrorInput",
+        "estopStateInput"
+    ]
+
+    const relevant_errors = safety_dins
+        .map((item, index) => {
+            const meta = configMetadata(item)
+            return {
+                // we need a stable index into the values array
+                item,
+                index,
+                meta
+            }
+        })
+        .filter(({ index, meta }) => {
+            // only show items in the error state
+            return values[index] === Boolean(meta.negativeState)
+        })
+        .filter(({ index }) => {
+            return filter.some(name => machine_meta[name]?.index === index)
+        })
+
+    if (!relevant_errors.length) {
+        return null
+    }
+
     return (
         <StatusTrayItem id="safety-errors">
             <StyledGrid>
-                {config
-                    .map((item, index) => {
-                        const meta = configMetadata(item)
-                        return {
-                            // we need a stable index into the values array
-                            item,
-                            index,
-                            meta
-                        }
-                    })
-                    .filter(({ index, meta }) => {
-                        // only show items in the error state
-                        return values[index] === Boolean(meta.negativeState)
-                    })
-                    .map(({ item, index, meta }) => {
-                        return (
-                            <React.Fragment key={index}>
-                                <div>{item.description}</div>
-                                <div>
-                                    <Tag color="red">{meta[meta.negativeState]}</Tag>
-                                </div>
-                            </React.Fragment>
-                        )
-                    })}
+                {relevant_errors.map(({ item, index, meta }) => {
+                    return (
+                        <React.Fragment key={index}>
+                            <div>{item.description}</div>
+                            <div>
+                                <Tag color="red">{meta[meta.negativeState]}</Tag>
+                            </div>
+                        </React.Fragment>
+                    )
+                })}
             </StyledGrid>
         </StatusTrayItem>
     )

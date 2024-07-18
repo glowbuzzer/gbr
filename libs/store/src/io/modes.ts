@@ -2,12 +2,30 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { useSelector } from "react-redux"
-import { useMemo } from "react"
+import { shallowEqual, useSelector } from "react-redux"
+import { useEffect, useMemo } from "react"
 import { MachineMetadata } from "../gbc_extra"
 import { configMetadata, useConfig } from "../config"
 import { RootState } from "../root"
 import { useConnection } from "../connect"
+import { useSafetyDigitalOutputState } from "./dout"
+
+function useMachineInputsActive(props: (keyof MachineMetadata)[]) {
+    const config = useConfig()
+    return useSelector<RootState, boolean[]>(state => {
+        const metadata = configMetadata(config.machine[0])
+        return props.map(prop => {
+            if (!metadata[prop]) {
+                return undefined
+            }
+            const { index, safety } = metadata[prop]
+            if (safety) {
+                return state.safetyDin[index]?.actValue
+            }
+            return state.din[index]?.actValue
+        })
+    }, shallowEqual)
+}
 
 export function useMachineInputActive(prop: keyof MachineMetadata) {
     const config = useConfig()
@@ -30,7 +48,7 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
 
 export function useEstopInput() {
     // inverted
-    return !useMachineInputActive("estopInput")
+    return !useMachineInputActive("estopStateInput")
 }
 
 export function useResetNeededInput() {
@@ -55,6 +73,60 @@ export function useSafeStopInput() {
 
 export function useSafetyOverrideEnabledInput() {
     return useMachineInputActive("overrideEnabledInput")
+}
+
+export function useDrivesSafePositionValidInput() {
+    return useMachineInputActive("drivesSafePositionValidInput")
+}
+
+type SafeyOverrideProcessRequiredMetadata = Pick<
+    MachineMetadata,
+    "drivesSafePositionValidInput" | "faultTcpSwmInput" | "faultJointsSlpInput"
+>
+
+export function useSafetyOverrideProcessesRequired() {
+    const props: (keyof SafeyOverrideProcessRequiredMetadata)[] = [
+        "drivesSafePositionValidInput",
+        "faultTcpSwmInput",
+        "faultJointsSlpInput"
+    ]
+
+    const values = useMachineInputsActive(props as any)
+    return Object.fromEntries(props.map((prop, i) => [prop, values[i]])) as Record<
+        keyof SafeyOverrideProcessRequiredMetadata,
+        boolean
+    >
+}
+
+export function useDrivesSafePositionReset(): (reset: boolean) => void {
+    const config = useConfig()
+    const safetyOverrideEnabled = useSafetyOverrideEnabledInput()
+    const drivesSafePositionValid = useDrivesSafePositionValidInput()
+    const { drivesSafePositionResetOutput } = configMetadata(config.machine[0])
+    const [{ effectiveValue: resetSent }, setter] = useSafetyDigitalOutputState(
+        drivesSafePositionResetOutput?.index || 0
+    )
+
+    useEffect(() => {
+        if (drivesSafePositionValid && resetSent) {
+            // clear reset flag
+            console.log("Reset safe position flag")
+            setter(false, true)
+        }
+    }, [safetyOverrideEnabled, drivesSafePositionValid, resetSent, setter])
+
+    return useMemo(() => {
+        console.log("drivesSafePositionResetOutput", drivesSafePositionResetOutput)
+        if (!drivesSafePositionResetOutput) {
+            console.log("no drives safe position reset output")
+            return () => {}
+        }
+        if (!drivesSafePositionResetOutput.safety) {
+            console.error("drivesSafePositionResetOutput must be a safety output")
+            return () => {}
+        }
+        return (value: boolean) => setter(value, true)
+    }, [drivesSafePositionResetOutput, setter])
 }
 
 export enum ManualMode {

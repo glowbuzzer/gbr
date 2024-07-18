@@ -45,7 +45,14 @@ type FlowContextType = {
     close?: () => void
 }
 
+type FlowCustomContextType = {
+    enabled?: boolean
+    message?: string
+}
+
 const FlowContext = createContext<FlowContextType>(null)
+
+const FlowCustomContext = createContext<FlowCustomContextType>(null)
 
 export const FlowContextProvider = ({ children }) => {
     const flows = useFlows()
@@ -55,6 +62,7 @@ export const FlowContextProvider = ({ children }) => {
     const status = useLastStatus()
     const machine_state = useMachineState()
     const input_state = useFlowTriggerInputsState()
+    const { enabled } = useFlowCustomContext()
 
     const [selectedFlowIndex, setSelectedFlowIndex] = useState(0)
     const [activeFlow, setActiveFlow] = useState<Flow>(null)
@@ -208,7 +216,7 @@ export const FlowContextProvider = ({ children }) => {
             }
             break
         case FlowState.IDLE:
-            if (machine_state === MachineState.OPERATION_ENABLED && !error) {
+            if (machine_state === MachineState.OPERATION_ENABLED && !error && enabled) {
                 result.start = start_stream
             }
             if (!activeFlow || error) {
@@ -243,7 +251,6 @@ export const FlowContextProvider = ({ children }) => {
         case FlowState.STOPPING:
             break
         case FlowState.STOPPED:
-            // result.reset = reset_and_close
             result.close = () => {
                 setCompletedFlows([])
                 setActiveFlow(null)
@@ -255,6 +262,28 @@ export const FlowContextProvider = ({ children }) => {
     return <FlowContext.Provider value={result}>{children}</FlowContext.Provider>
 }
 
+type FlowCustomContextProviderProps = {
+    enabled?: boolean
+    message?: string
+    children: React.ReactNode
+}
+
+export const FlowCustomContextProvider = ({
+    children,
+    enabled,
+    message
+}: FlowCustomContextProviderProps) => {
+    return (
+        <FlowCustomContext.Provider value={{ enabled, message }}>
+            {children}
+        </FlowCustomContext.Provider>
+    )
+}
+
 export function useFlowContext() {
     return useContext(FlowContext)
+}
+
+export function useFlowCustomContext() {
+    return useContext(FlowCustomContext) || { enabled: true, message: null }
 }

@@ -11,7 +11,6 @@ import {
     useSoloActivity
 } from "@glowbuzzer/store"
 import { Button } from "antd"
-import { useJointsForKinematicsConfigurationList } from "../util"
 
 const StyledDiv = styled.div`
     text-align: center;

@@ -8,6 +8,7 @@ import {
     JOINT_TORQUE_MODE,
     KC_KINEMATICSCONFIGURATIONTYPE,
     SafetyDinConfig,
+    TRIGGERTYPE,
     WithNameAndDescription
 } from "@glowbuzzer/store"
 import {
@@ -309,6 +310,26 @@ export const config: GlowbuzzerConfig = {
             extentsX: [-1000, 1000],
             extentsY: [-1000, 1000],
             extentsZ: [-1000, 1500],
+            velocityScaling: [
+                {
+                    enabled: true,
+                    safeInput: true,
+                    scaleFactor: 0.25,
+                    trigger: {
+                        input: 2,
+                        when: TRIGGERTYPE.TRIGGERTYPE_FALLING
+                    }
+                },
+                {
+                    enabled: true,
+                    safeInput: true,
+                    scaleFactor: 0,
+                    trigger: {
+                        input: 3,
+                        when: TRIGGERTYPE.TRIGGERTYPE_FALLING
+                    }
+                }
+            ],
             linearLimits: [
                 {
                     vmax: 600 * 0.1,

@@ -10,7 +10,7 @@ import { EmStatTab } from "./EmStatTab"
 import { SafetyTab } from "./SafetyTab"
 
 const StyledDiv = styled.div`
-    padding: 10px;
+    //padding: 10px;
     //height: 100%;
 
     .ant-card {

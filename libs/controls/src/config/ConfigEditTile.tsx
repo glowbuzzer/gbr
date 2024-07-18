@@ -49,7 +49,7 @@ export const ConfigEditTile = () => {
     const tabs: TabsProps["items"] = [
         { key: "io", label: "IO config" },
         { key: "etherCat", label: "EtherCAT Config" },
-        { key: "tool", label: "Tool config" },
+        { key: "tool", label: "Tool Config" },
         { key: "machineEnvelope", label: "Machine envelope config" },
         { key: "frames", label: "Frames config" },
         { key: "verticalAxis", label: "Vertical axis config" },

@@ -2,14 +2,19 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import React from "react"
 
 export const StyledTileContent = styled.div`
     padding: 10px;
 `
 
-export const StyledSafetyTileContent = styled.div`
+export const StyledSafetyTileContent = styled.div<{ $outset?: boolean }>`
+    ${props =>
+        props.$outset &&
+        css`
+            margin: -10px;
+        `}
     border: 2px solid yellow;
     border-radius: 5px;
     height: 100%;

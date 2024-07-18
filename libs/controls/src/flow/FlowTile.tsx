@@ -13,7 +13,7 @@ import {
     useFlows
 } from "@glowbuzzer/store"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { Button, Dropdown, Flex, Select } from "antd"
+import { Alert, Button, Dropdown, Flex, Select } from "antd"
 import { ItemType } from "antd/es/menu/hooks/useItems"
 import { FlowUndoRedoButtons } from "./FlowUndoRedoButtons"
 import { ReactComponent as AddIcon } from "@material-symbols/svg-400/outlined/add.svg"
@@ -25,7 +25,7 @@ import { FlowBasicSettingsDisplay } from "./display/FlowBasicSettingsDisplay"
 import { FlowRuntimeControls } from "./FlowRuntimeControls"
 import { FlowActivitiesDisplay } from "./display/FlowActivitiesDisplay"
 import { FlowRuntimeDisplay } from "./FlowRuntimeDisplay"
-import { useFlowContext } from "./FlowContextProvider"
+import { useFlowContext, useFlowCustomContext } from "./FlowContextProvider"
 import { FlowIntegrationDisplay } from "./display/FlowIntegrationDisplay"
 
 const StyledDiv = styled.div`
@@ -65,6 +65,7 @@ const StyledEmpty = styled.div`
 export const FlowTile = () => {
     const flows = useFlows()
     const { active, selectedFlowIndex, setSelectedFlowIndex } = useFlowContext()
+    const { message } = useFlowCustomContext()
 
     const [editingActivity, setEditingActivity] = React.useState<{
         flow: number
@@ -166,6 +167,8 @@ export const FlowTile = () => {
             />
             <StyledDiv>
                 <Flex vertical gap="middle">
+                    {message && <Alert message={message} type="warning" showIcon />}
+
                     <FlowBasicSettingsDisplay
                         flow={flow}
                         onChange={save_flow_edit}

@@ -5,7 +5,6 @@
 import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ConfigEditTile } from "./ConfigEditTile"
-import { ConfigEditTile } from "./ConfigEditTile"
 import { DockTileDefinitionBuilder } from "../dock"
 
 // export const ConfigEditTileDefinition = {

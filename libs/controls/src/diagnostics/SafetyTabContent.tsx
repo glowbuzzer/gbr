@@ -5,9 +5,9 @@
 import React from "react"
 import { StyledSafetyTileContent } from "../util/styles/StyledTileContent"
 
-export const SafetyTabContent = ({ children }) => {
+export const SafetyTabContent = ({ children, outset = false }) => {
     return (
-        <StyledSafetyTileContent>
+        <StyledSafetyTileContent $outset={outset}>
             <div className="content">{children}</div>
         </StyledSafetyTileContent>
     )
