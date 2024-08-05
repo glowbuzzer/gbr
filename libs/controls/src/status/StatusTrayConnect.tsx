@@ -6,7 +6,7 @@ import * as React from "react"
 import { ConnectionState, useConnection, usePrefs } from "@glowbuzzer/store"
 import { StatusTrayItem } from "./StatusTrayItem"
 import { Button, Space } from "antd"
-import { ConnectSettings } from "../connect/ConnectSettings"
+import { ConnectSettings } from "../connect"
 
 export const StatusTrayConnect = () => {
     const { state, connected, connect } = useConnection()
