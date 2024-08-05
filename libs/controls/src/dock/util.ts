@@ -14,7 +14,7 @@ export function is_touch_device() {
 export function add_tile(modelJson, tile) {
     const { column, row } = tile.defaultPlacement ?? { column: 2, row: 0 }
 
-    const WEIGHTS = [10, 50, 25]
+    const WEIGHTS = [25, 50, 25]
     const layout = modelJson.layout
 
     while (layout.children.length <= column) {

@@ -24,33 +24,33 @@ const DOCK_MODEL_TEMPLATE: IJsonModel = {
         type: "row",
         id: "root",
         children: [
-            {
-                type: "row",
-                weight: 25,
-                children: [
-                    /*
-                    {
-                        type: "tabset",
-                        id: "connect-solo",
-                        enableDrop: false, // don't allow tabs to be added here
-                        children: []
-                    }
-*/
-                ]
-                // additional "rows" for cols created automatically
-            },
-            {
-                type: "row",
-                weight: 50,
-                children: [
-                    {
-                        type: "tabset",
-                        id: "wide-tabset",
-                        enableDeleteWhenEmpty: false,
-                        children: []
-                    }
-                ]
-            }
+            //             {
+            //                 type: "row",
+            //                 weight: 25,
+            //                 children: [
+            //                     /*
+            //                     {
+            //                         type: "tabset",
+            //                         id: "connect-solo",
+            //                         enableDrop: false, // don't allow tabs to be added here
+            //                         children: []
+            //                     }
+            // */
+            //                 ]
+            //                 // additional "rows" for cols created automatically
+            //                 // },
+            //                 // {
+            //                 //     type: "row",
+            //                 //     weight: 50,
+            //                 //     children: [
+            //                 //         {
+            //                 //             type: "tabset",
+            //                 //             id: "wide-tabset",
+            //                 //             enableDeleteWhenEmpty: false,
+            //                 //             children: []
+            //                 //         }
+            //                 //     ]
+            //             }
         ]
     }
 }
@@ -211,7 +211,6 @@ export function useDockContext(
                 if (existing) {
                     model.doAction(Actions.selectTab(id))
                 } else {
-                    console.log("ADDING TILE", id)
                     // tab was closed so we need to add it back in
                     const modelJson = model.toJson()
                     add_tile(modelJson, tileFor(id))
