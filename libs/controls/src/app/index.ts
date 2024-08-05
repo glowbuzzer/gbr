@@ -3,6 +3,7 @@
  */
 
 export * from "./GlowbuzzerApp"
+export * from "./GlowbuzzerStandaloneApp"
 export * from "./ConnectionProvider"
 export * from "./GlowbuzzerThemeProvider"
 export { useAppName } from "./hooks"
