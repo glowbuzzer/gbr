@@ -61,9 +61,9 @@ export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) 
                     Object.entries(options.aliases || {}).map(([k, v]) => [k, resolve(root, v)])
                 )
             }
-        },
-        define: {
-            "window.global": "window"
         }
+        // define: {
+        //     "window.global": "window"
+        // }
     }
 }
