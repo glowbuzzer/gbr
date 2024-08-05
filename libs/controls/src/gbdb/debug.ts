@@ -3,7 +3,7 @@
  */
 
 import { gbdbLoadActionCreator, gbdbSlice, GbdbSliceState } from "@glowbuzzer/store"
-import PouchDB from "pouchdb"
+import PouchDB from "pouchdb" // this does not trigger full import as only PouchDB types are used
 import { useDispatch } from "react-redux"
 import { useEffect } from "react"
 
