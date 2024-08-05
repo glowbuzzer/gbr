@@ -5,13 +5,7 @@
  */
 
 import { Menu } from "antd"
-import {
-    DockViewMenu,
-    GbcVersionPanel,
-    PreferencesDialog,
-    useDockLayoutContext,
-    useDockViewMenu
-} from "@glowbuzzer/controls"
+import { PreferencesDialog, useDockLayoutContext, useDockViewMenu } from "@glowbuzzer/controls"
 import { ReactComponent as Logo } from "../../images/tiny-logo.svg"
 import styled from "styled-components"
 import React, { useState } from "react"
@@ -99,7 +93,6 @@ export const ExampleAppMenu = ({ title = null, fileExtra = [] }) => {
                 </div>
             )}
             <Menu mode="horizontal" theme="light" selectedKeys={[]} items={menuItems} />
-            <GbcVersionPanel />
         </StyledMenuBar>
     )
 }
