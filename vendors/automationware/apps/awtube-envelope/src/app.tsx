@@ -124,7 +124,6 @@ export const App = () => {
             <DockLayoutProvider
                 tiles={[
                     CustomSceneTileDefinition,
-                    ConnectTileDefinition,
                     CartesianJogTileDefinition,
                     CartesianDroTileDefinition,
                     JointJogTileDefinition,
