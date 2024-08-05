@@ -25,8 +25,9 @@ import { FlowBasicSettingsDisplay } from "./display/FlowBasicSettingsDisplay"
 import { FlowRuntimeControls } from "./FlowRuntimeControls"
 import { FlowActivitiesDisplay } from "./display/FlowActivitiesDisplay"
 import { FlowRuntimeDisplay } from "./FlowRuntimeDisplay"
-import { useFlowContext, useFlowCustomContext } from "./FlowContextProvider"
+import { useFlowContext } from "./FlowContextProvider"
 import { FlowIntegrationDisplay } from "./display/FlowIntegrationDisplay"
+import { useFlowCustomContext } from "./FlowCustomContextProvider"
 
 const StyledDiv = styled.div`
     padding: 10px;

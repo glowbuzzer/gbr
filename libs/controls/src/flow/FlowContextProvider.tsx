@@ -2,8 +2,8 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react"
-import { createContext, useContext, useEffect, useState } from "react"
+import * as React from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
     ActivityStreamItem,
     Flow,
@@ -17,12 +17,13 @@ import {
     useMachineConfig,
     useMachineState,
     useStream
-} from "@glowbuzzer/store"
-import { FlowState } from "./runtime/types"
-import { ClientSideTrigger, triggerFactory } from "./runtime/triggers"
-import { useFlowDerivedState, useFlowTriggerInputsState } from "./runtime/hooks"
+} from "@glowbuzzer/store";
+import { FlowState } from "./runtime/types";
+import { ClientSideTrigger, triggerFactory } from "./runtime/triggers";
+import { useFlowDerivedState, useFlowTriggerInputsState } from "./runtime/hooks";
 
-import { call_http_endpoint } from "./util"
+import { call_http_endpoint } from "./util";
+import { useFlowCustomContext } from "./FlowCustomContextProvider";
 
 type CompletedFlow = {
     flow: Flow
@@ -45,14 +46,7 @@ type FlowContextType = {
     close?: () => void
 }
 
-type FlowCustomContextType = {
-    enabled?: boolean
-    message?: string
-}
-
 const FlowContext = createContext<FlowContextType>(null)
-
-const FlowCustomContext = createContext<FlowCustomContextType>(null)
 
 export const FlowContextProvider = ({ children }) => {
     const flows = useFlows()
@@ -262,28 +256,7 @@ export const FlowContextProvider = ({ children }) => {
     return <FlowContext.Provider value={result}>{children}</FlowContext.Provider>
 }
 
-type FlowCustomContextProviderProps = {
-    enabled?: boolean
-    message?: string
-    children: React.ReactNode
-}
-
-export const FlowCustomContextProvider = ({
-    children,
-    enabled,
-    message
-}: FlowCustomContextProviderProps) => {
-    return (
-        <FlowCustomContext.Provider value={{ enabled, message }}>
-            {children}
-        </FlowCustomContext.Provider>
-    )
-}
-
 export function useFlowContext() {
     return useContext(FlowContext)
 }
 
-export function useFlowCustomContext() {
-    return useContext(FlowCustomContext) || { enabled: true, message: null }
-}

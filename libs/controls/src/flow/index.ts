@@ -4,4 +4,5 @@
 
 export * from "./FlowTile"
 export * from "./FlowTileDefinition"
-export { FlowCustomContextProvider } from "./FlowContextProvider"
+
+export { FlowCustomContextProvider } from "./FlowCustomContextProvider"

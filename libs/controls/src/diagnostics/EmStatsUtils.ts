@@ -26,7 +26,7 @@ export const lightenColor = (hex, factor) => {
     return rgbToHex(adjustedR, adjustedG, adjustedB)
 }
 
-export const StyledTable = styled(Table)`
+export const StyledTable: any = styled(Table)`
     /* Add your styles here */
 
     .highlight-row {
