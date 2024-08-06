@@ -14,14 +14,15 @@ import {
     StyledDockLayout,
     useAppName,
     useDockContext,
-    useDockLayoutContext
+    useDockLayoutContext,
+    useDockViewMenu
 } from "@glowbuzzer/controls"
 import { createRoot } from "react-dom/client"
 
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { Button } from "antd"
+import { Button, Menu } from "antd"
 
 function SampleTile() {
     return <div>Sample Tile!</div>
@@ -34,17 +35,22 @@ const SampleTileDefinition = DockTileDefinitionBuilder()
     .placement(0, 0)
     .build()
 
-function SampleMenuBar() {
-    const { resetLayout } = useDockLayoutContext()
-
-    return (
-        <div>
-            <Button size="small" onClick={resetLayout}>
-                Reset Layout
-            </Button>
-        </div>
-    )
+const AppMenu = () => {
+    const viewMenu = useDockViewMenu()
+    return <Menu mode="horizontal" selectedKeys={[]} items={[viewMenu]} />
 }
+
+// function SampleMenuBar() {
+//     const { resetLayout } = useDockLayoutContext()
+//
+//     return (
+//         <div>
+//             <Button size="small" onClick={resetLayout}>
+//                 Reset Layout
+//             </Button>
+//         </div>
+//     )
+// }
 
 function App() {
     const appName = useAppName()
@@ -62,7 +68,7 @@ function App() {
             <StatusTrayProvider>
                 <DockLayoutContext.Provider value={context}>
                     {/* You can add content like a menu above the dock layout */}
-                    <SampleMenuBar />
+                    <AppMenu />
                     {/* The dock layout itself */}
                     <DockLayout />
                     {/* You can add content like a status bar below the dock layout here */}
