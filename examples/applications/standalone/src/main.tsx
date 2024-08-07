@@ -40,18 +40,6 @@ const AppMenu = () => {
     return <Menu mode="horizontal" selectedKeys={[]} items={[viewMenu]} />
 }
 
-// function SampleMenuBar() {
-//     const { resetLayout } = useDockLayoutContext()
-//
-//     return (
-//         <div>
-//             <Button size="small" onClick={resetLayout}>
-//                 Reset Layout
-//             </Button>
-//         </div>
-//     )
-// }
-
 function App() {
     const appName = useAppName()
 
