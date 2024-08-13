@@ -5,3 +5,4 @@
 export * from "./StatusBarGbDb"
 export * from "./StatusBarLayoutControls"
 export * from "./StatusTrayProvider"
+export * from "./StatusBarMenu"

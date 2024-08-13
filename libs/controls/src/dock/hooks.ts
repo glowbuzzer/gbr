@@ -10,6 +10,7 @@ import { Actions, IJsonModel, Model, TabNode } from "flexlayout-react"
 import { DockPerspective } from "./types"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { DockPerspectiveLayoutProviderProps } from "./DockPerspectiveLayoutProvider"
+import { useUser } from "../usermgmt"
 
 const DOCK_MODEL_TEMPLATE: IJsonModel = {
     global: {
@@ -23,35 +24,7 @@ const DOCK_MODEL_TEMPLATE: IJsonModel = {
     layout: {
         type: "row",
         id: "root",
-        children: [
-            //             {
-            //                 type: "row",
-            //                 weight: 25,
-            //                 children: [
-            //                     /*
-            //                     {
-            //                         type: "tabset",
-            //                         id: "connect-solo",
-            //                         enableDrop: false, // don't allow tabs to be added here
-            //                         children: []
-            //                     }
-            // */
-            //                 ]
-            //                 // additional "rows" for cols created automatically
-            //                 // },
-            //                 // {
-            //                 //     type: "row",
-            //                 //     weight: 50,
-            //                 //     children: [
-            //                 //         {
-            //                 //             type: "tabset",
-            //                 //             id: "wide-tabset",
-            //                 //             enableDeleteWhenEmpty: false,
-            //                 //             children: []
-            //                 //         }
-            //                 //     ]
-            //             }
-        ]
+        children: []
     }
 }
 
@@ -78,7 +51,7 @@ function createDockModel(
     availableTiles: DockPerspectiveLayoutProviderProps["tiles"],
     defaultVisible: DockPerspective["defaultVisible"],
     locked: boolean,
-    savedLayout
+    savedLayout: IJsonModel
 ) {
     const tiles = availableTiles.filter(
         c => c.enableClose === false || !defaultVisible || defaultVisible.includes(c.id)
@@ -104,15 +77,16 @@ function createDockModel(
 }
 
 export function useDockContext(
-    availableTiles,
+    availableTiles: DockTileDefinition[],
     perspectives: DockPerspective[],
     defaultPerspective: string,
     appName: string
 ): DockLayoutContextType {
+    const { currentUser, capabilities } = useUser()
     const [currentPerspective, changePerspective] = useState(defaultPerspective)
     const [locked, setLocked] = useState(true)
     const [savedLayout, updateSavedLayout] = useLocalStorage(
-        "docklayout",
+        `docklayout-${currentUser?._id || "anonymous"}`,
         null,
         `${appName}-${currentPerspective}`
     )
@@ -124,7 +98,7 @@ export function useDockContext(
     const { defaultVisible } = perspective
 
     const { currentModel, defaultModel } = createDockModel(
-        availableTiles,
+        availableTiles.filter(tile => !tile.capability || capabilities.includes(tile.capability)),
         defaultVisible,
         locked,
         savedLayout

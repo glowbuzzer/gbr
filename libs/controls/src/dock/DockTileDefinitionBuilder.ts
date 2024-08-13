@@ -84,5 +84,10 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
 
             return this
         }
+
+        requiresCapability(capability: symbol) {
+            this.definition.capability = capability
+            return this
+        }
     })()
 }

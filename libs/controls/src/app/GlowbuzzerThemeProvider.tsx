@@ -5,7 +5,7 @@
 import React, { createContext, useContext, useMemo } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
 import { ConfigProvider, theme as antdTheme, ThemeConfig } from "antd"
-import styled, { css, ThemeProvider } from "styled-components"
+import styled, { createGlobalStyle, css, ThemeProvider } from "styled-components"
 
 type GlowbuzzerThemeContextType = {
     darkMode: boolean
@@ -90,11 +90,35 @@ const StyledGlowbuzzerApp = styled.div<{ $darkMode: boolean }>`
     }
 `
 
+const GlobalStyles = createGlobalStyle`
+    ::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 10px;
+        height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+        background: ${props => props.theme.colorBgContainer};
+        border-radius: 0;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: ${props => props.theme.colorPrimaryBorder};
+        border-radius: 5px;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+    ::-webkit-scrollbar-corner {
+        background: ${props => props.theme.colorBgContainer};
+    }
+`
+
 const GlowbuzzerThemeInner = ({ children, darkMode }) => {
     const { token } = antdTheme.useToken()
     return (
         <ThemeProvider theme={token}>
-            <StyledGlowbuzzerApp $darkMode={darkMode}>{children}</StyledGlowbuzzerApp>
+            <StyledGlowbuzzerApp $darkMode={darkMode}>
+                <GlobalStyles />
+                {children}
+            </StyledGlowbuzzerApp>
         </ThemeProvider>
     )
 }

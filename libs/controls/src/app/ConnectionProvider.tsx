@@ -27,12 +27,14 @@ const DISCONNECTED_STATE: ConnectionProviderPrivateState = {
     autoConnect: false
 }
 
-export const ConnectionProvider = ({ children }) => {
+export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }) => {
     const dispatch = useDispatch()
     const handler = useRequestHandler()
 
-    const [url, setUrl] = useState()
-    const [state, setState] = useState<ConnectionProviderPrivateState>(DISCONNECTED_STATE)
+    const [state, setState] = useState<ConnectionProviderPrivateState>({
+        ...DISCONNECTED_STATE,
+        autoConnect: defaultAutoConnect
+    })
     const { connectionState, connection, autoConnect } = state
     const [lastStatus, setLastStatus] = useState<GlowbuzzerStatus["status"]>(null)
 
@@ -40,6 +42,7 @@ export const ConnectionProvider = ({ children }) => {
 
     const autoConnectRef = useRef(false)
     const appReloadRef = useRef(false)
+    const urlRef = useRef("")
 
     function init_connection(websocket: WebSocket) {
         // console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
@@ -82,8 +85,8 @@ export const ConnectionProvider = ({ children }) => {
         }
     }, [])
 
-    function connect(url, autoConnect = true) {
-        setUrl(url)
+    function connect(url: string, autoConnect = true) {
+        urlRef.current = url
 
         const connection = GlowbuzzerAppLifecycle.connect(url)
 
@@ -118,7 +121,7 @@ export const ConnectionProvider = ({ children }) => {
         }
     }
 
-    function send(msg) {
+    function send(msg: string) {
         if (!connection || connection.readyState !== WebSocket.OPEN) {
             // console.warn("No connection open for send")
             return
@@ -126,7 +129,7 @@ export const ConnectionProvider = ({ children }) => {
         connection.send(msg)
     }
 
-    function request(type, body) {
+    function request(type: any, body) {
         return handler.request(state.connection, type, body)
     }
 
@@ -139,13 +142,12 @@ export const ConnectionProvider = ({ children }) => {
             connected: connectionState === ConnectionState.CONNECTED,
             connect,
             reconnect() {
-                // console.log("Reconnect called with auto connect=", autoConnectRef.current)
-                connect(url)
+                console.log("Reconnect called, url =", urlRef.current)
+                connect(urlRef.current)
             },
             send,
             request,
             disconnect() {
-                // console.log("Disconnect called")
                 setState(DISCONNECTED_STATE)
                 autoConnectRef.current = false
                 state.connection?.close()

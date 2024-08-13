@@ -33,7 +33,7 @@ const StyledSegmentDisplay = styled.span<{ $error }>`
     }
 
     .foreground {
-        z-index: 1000;
+        z-index: 100;
         color: ${props => (props.$error ? "red" : "inherit")};
     }
 `

@@ -48,7 +48,7 @@ export const DockLayoutProvider = ({
 
     return (
         <StyledDockLayout>
-            <StatusTrayProvider>
+            <StatusTrayProvider statusBarElement={statusBarRef.current}>
                 <DockLayoutContext.Provider value={context}>
                     {children}
                     <StatusBar ref={statusBarRef}>{statusBarExtra}</StatusBar>

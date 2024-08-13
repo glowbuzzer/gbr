@@ -1,10 +1,13 @@
 import styled from "styled-components"
-import { Menu } from "antd"
 import * as React from "react"
 import { useState } from "react"
-import { PreferencesDialog, useDockViewMenu, useGbdbMenu } from "@glowbuzzer/controls"
+import {
+    PreferencesDialog,
+    StatusBarMenu,
+    useDockViewMenu,
+    useGbdbMenu
+} from "@glowbuzzer/controls"
 import { ItemType } from "antd/es/menu/hooks/useItems"
-import { useDispatch } from "react-redux"
 
 const StyledDiv = styled.div`
     flex-grow: 1;
@@ -59,7 +62,7 @@ export const AppStatusBar = () => {
         <StyledDiv>
             {projectMenuContext}
             <PreferencesDialog open={showPrefs} onClose={() => setShowPrefs(false)} />
-            <Menu mode="horizontal" selectedKeys={[]} items={menuItems} />
+            <StatusBarMenu mode="horizontal" selectedKeys={[]} items={menuItems} />
         </StyledDiv>
     )
 }

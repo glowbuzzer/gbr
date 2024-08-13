@@ -7,18 +7,19 @@ import { ConnectionState, useConnection, usePrefs } from "@glowbuzzer/store"
 import { StatusTrayItem } from "./StatusTrayItem"
 import { Button, Space } from "antd"
 import { ConnectSettings } from "../connect"
+import { useConnectionUrls } from "../app/hooks"
 
 export const StatusTrayConnect = () => {
     const { state, connected, connect } = useConnection()
-    const prefs = usePrefs()
     const [showSettings, setShowSettings] = React.useState(false)
+    const { gbcWebsocketUrl, readonly } = useConnectionUrls()
 
     if (connected || state === ConnectionState.CONNECTING) {
         return null
     }
 
     function connect_default() {
-        connect(prefs.current.url)
+        connect(gbcWebsocketUrl)
     }
 
     return (
@@ -29,9 +30,11 @@ export const StatusTrayConnect = () => {
                     <Button size="small" onClick={connect_default}>
                         Connect
                     </Button>
-                    <Button size="small" onClick={() => setShowSettings(true)}>
-                        Settings
-                    </Button>
+                    {readonly || (
+                        <Button size="small" onClick={() => setShowSettings(true)}>
+                            Settings
+                        </Button>
+                    )}
                 </Space>
             }
         >

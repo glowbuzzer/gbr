@@ -6,6 +6,7 @@ import { GlowbuzzerTileIdentifiers } from "../GlowbuzzerTileIdentifiers"
 import { createElement } from "react"
 import { ConfigEditTile } from "./ConfigEditTile"
 import { DockTileDefinitionBuilder } from "../dock"
+import { ConfigEditCapability } from "./ConfigEditCapability"
 
 // export const ConfigEditTileDefinition = {
 //     id: GlowbuzzerTileIdentifiers.CONFIG_EDIT,
@@ -25,4 +26,5 @@ export const ConfigEditTileDefinition = DockTileDefinitionBuilder()
     .name("Config Editor")
     .render(() => createElement(ConfigEditTile, {}, null), null)
     .placement(1, 0)
+    .requiresCapability(ConfigEditCapability.ENABLED)
     .build()

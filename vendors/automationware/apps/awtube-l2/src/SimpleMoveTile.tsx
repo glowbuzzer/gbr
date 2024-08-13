@@ -2,9 +2,10 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
-import { Button, Space } from "antd"
+import { DockTileDefinitionBuilder, UserCapabilityRegion } from "@glowbuzzer/controls"
+import { Button, Input, Space } from "antd"
 import { BLENDTYPE, useStream } from "@glowbuzzer/store"
+import { SimpleMoveCapability } from "./SimpleMoveCapabilities"
 
 export const SimpleMoveTile = () => {
     const { execute } = useStream(0, {
@@ -65,6 +66,25 @@ export const SimpleMoveTile = () => {
     return (
         <div style={{ padding: "10px" }}>
             <Space direction="vertical">
+                <UserCapabilityRegion
+                    capability={SimpleMoveCapability.READ}
+                    alternative={<>READ NOT allowed</>}
+                >
+                    READ IS allowed
+                </UserCapabilityRegion>
+                <UserCapabilityRegion
+                    capability={SimpleMoveCapability.WRITE}
+                    alternative={<>WRITE NOT allowed</>}
+                >
+                    WRITE IS allowed
+                </UserCapabilityRegion>
+                <UserCapabilityRegion capability={SimpleMoveCapability.READ} disable>
+                    <Input type="text" value="READX" />
+                </UserCapabilityRegion>
+                <UserCapabilityRegion capability={SimpleMoveCapability.WRITE} disable>
+                    <Input type="text" value="WRITE" />
+                </UserCapabilityRegion>
+
                 <div>Click the button below to perform move</div>
                 <Button size="small" onClick={go}>
                     PERFORM MOVE
@@ -88,4 +108,5 @@ export const SimpleMoveTileDefinition = DockTileDefinitionBuilder()
     .name("Simple Move")
     .render(() => <SimpleMoveTile />)
     .requiresOperationEnabled()
+    .requiresCapability(SimpleMoveCapability.READ)
     .build()

@@ -3,8 +3,9 @@
  */
 
 import { useConnection, usePrefs } from "@glowbuzzer/store"
-import { Button, Form, Input, Modal } from "antd"
+import { Alert, Button, Flex, Form, Input, Modal } from "antd"
 import * as React from "react"
+import { useConnectionUrls } from "../app/hooks"
 
 /**
  * @ignore
@@ -12,16 +13,21 @@ import * as React from "react"
 export const ConnectSettings = ({ open, onClose }) => {
     const prefs = usePrefs()
     const { connected, connect } = useConnection()
+    const { staticHost, gbcWebsocketUrl } = useConnectionUrls()
 
     const labelCol = { span: 6 }
 
     function update_url(e) {
-        prefs.update("url", e.target.value)
+        prefs.update("hostname", e.target.value)
+    }
+
+    function reset() {
+        prefs.update("hostname", "")
     }
 
     function connect_and_close() {
         if (!connected) {
-            connect(prefs.current.url)
+            connect(gbcWebsocketUrl)
         }
         onClose()
     }
@@ -31,14 +37,28 @@ export const ConnectSettings = ({ open, onClose }) => {
             open={open}
             onCancel={onClose}
             footer={[
+                <Button key="reset" onClick={reset} disabled={prefs.current.hostname?.length === 0}>
+                    Reset
+                </Button>,
                 <Button key="close" onClick={connect_and_close}>
                     {connected ? "Close" : "Connect"}
                 </Button>
             ]}
         >
-            <Form>
-                <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 16 }}>
-                    <Input defaultValue={prefs.current.url} onChange={update_url} />
+            <Form layout="vertical">
+                <Form.Item label="Connection URL" labelCol={labelCol} wrapperCol={{ span: 24 }}>
+                    <Flex vertical gap={8}>
+                        <Input
+                            value={prefs.current.hostname || ""}
+                            onChange={update_url}
+                            placeholder={
+                                staticHost
+                                    ? `Using configured hostname '${staticHost}'`
+                                    : "Using system default hostname 'localhost'"
+                            }
+                        />
+                        <div>Enter hostname only (without protocol or port)</div>
+                    </Flex>
                 </Form.Item>
             </Form>
         </Modal>

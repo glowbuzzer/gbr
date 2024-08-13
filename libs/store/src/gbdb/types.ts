@@ -30,6 +30,5 @@ export type GbdbFacetConfiguration = {
  * A gbdb configuration can specify a remote database to use, and a list of facets to configure.
  */
 export type GbdbConfiguration = {
-    remoteDb?: boolean | string
     facets: GbdbFacetConfiguration
 }

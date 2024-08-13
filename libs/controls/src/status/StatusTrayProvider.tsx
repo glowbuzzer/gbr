@@ -25,6 +25,7 @@ type StatusTrayContextType = {
     undismissAll(): void
     dismissed: string[]
     trayVisible: boolean
+    statusBarElement: HTMLDivElement
 }
 
 const statusTrayContext = createContext<StatusTrayContextType>(null)
@@ -36,7 +37,7 @@ const EMPTY_ARRAY: string[] = []
  * StatusTrayItem components register themselves with this provider. It's important that we don't go into a
  * re-render loop when descendents register themselves, hence heavy use of useCallback and useMemo.
  */
-export const StatusTrayProvider = ({ children }) => {
+export const StatusTrayProvider = ({ statusBarElement, children }) => {
     const [items, setItems] = useState<{ [index: string]: StatusTrayRegisteredItem }>({})
     const [dismissed, setDismissed] = useLocalStorage("status.tray.dismissed.items", EMPTY_ARRAY)
 
@@ -76,7 +77,8 @@ export const StatusTrayProvider = ({ children }) => {
             dismissItem,
             dismissed,
             undismissAll,
-            trayVisible
+            trayVisible,
+            statusBarElement
         }),
         [registerItem, unregisterItem, dismissItem, dismissed, undismissAll, trayVisible]
     )
@@ -113,4 +115,9 @@ export function useStatusTray(id: string) {
     return useMemo(() => {
         return { ...context, visible: !dismissed }
     }, [id, dismissed])
+}
+
+export function useStatusBarElement() {
+    const context = useContext(statusTrayContext)
+    return context.statusBarElement
 }

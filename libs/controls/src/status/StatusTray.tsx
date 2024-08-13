@@ -15,7 +15,7 @@ import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
 
 const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
     position: absolute;
-    z-index: 10000;
+    z-index: 500;
     bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 4px)`};
     // top: ${props => `${props.$bottomOffset}px`};
     //bottom: 40px;

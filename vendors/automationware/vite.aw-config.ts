@@ -23,6 +23,7 @@ export default function defineAutomationWareViteConfig() {
             host: true,
             port: 5175
         },
+        envDir: root, // load config from project root
         cacheDir,
         plugins: [
             react(),

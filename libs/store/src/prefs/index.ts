@@ -62,8 +62,10 @@ export function usePrefs(): {
         units_linear: "mm" | "in"
         /** Default angular units */
         units_angular: "rad" | "deg"
-        /** Connection url for GBC websocket */
+        /** @deprecated Connection url for GBC websocket */
         url: string
+        /** Hostname for GBC websocket and PouchDB */
+        hostname: string
     } & {
         /** Application defined preferences */
         [index: string]: string | number | boolean

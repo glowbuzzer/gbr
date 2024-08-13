@@ -4,12 +4,17 @@
 
 import React from "react"
 import { createRoot } from "react-dom/client"
-import { GlowbuzzerApp, SerialCommunicationsProvider } from "@glowbuzzer/controls"
+import {
+    ConnectionConfiguration,
+    GlowbuzzerApp,
+    RoleBuilder,
+    SerialCommunicationsProvider,
+    UserModel
+} from "@glowbuzzer/controls"
 
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { config } from "./config"
 import { App } from "./app"
 import {
     FlowGbdbFacetSlice,
@@ -18,11 +23,11 @@ import {
     PointsGbdbFacetSlice,
     ToolsGbdbFacetSlice
 } from "@glowbuzzer/store"
+import { SimpleMoveCapability } from "./SimpleMoveCapabilities"
 
-console.log(config)
+// console.log(config)
 
 const persistence: GbdbConfiguration = {
-    // remoteDb: "http://localhost:5984",
     facets: {
         project: {
             dependencies: ["cell"],
@@ -41,16 +46,42 @@ const persistence: GbdbConfiguration = {
     }
 }
 
-console.log(config)
+const userModel: UserModel = {
+    // set an anonymous role to allow anonymous users
+    anonymousRole: "anon",
+
+    roles: [
+        // add the default admin role capabilities
+        RoleBuilder.defaultAdminRole()
+            .addCapabilities(SimpleMoveCapability.READ, SimpleMoveCapability.WRITE)
+            .build(),
+
+        // add an empty anonymous role
+        new RoleBuilder("anon").addCapabilities(SimpleMoveCapability.READ).build()
+    ]
+}
+
+/**
+ * Configuration for the connection to the remote services. These need to
+ * be in the client app so that Vite can replace the values at build time.
+ */
+const connectionConfiguration: ConnectionConfiguration = {
+    // @ts-ignore
+    hostname: import.meta.env.VITE_REMOTE_HOST,
+    // @ts-ignore
+    remotePouchDb: import.meta.env.VITE_REMOTE_POUCHDB === "true",
+    // @ts-ignore
+    manualConnect: import.meta.env.VITE_MANUAL_CONNECT === "true"
+}
 
 const root = createRoot(document.getElementById("root"))
 root.render(
     <GlowbuzzerApp
         appName="awtube-l2"
-        // configuration={config}
         persistenceConfiguration={persistence}
-        autoConnect={true}
-        autoOpEnabled={true}
+        autoOpEnabled
+        connectionConfiguration={connectionConfiguration}
+        userModel={userModel}
     >
         <SerialCommunicationsProvider>
             <App />

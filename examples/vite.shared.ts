@@ -46,6 +46,7 @@ export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) 
 
     return {
         cacheDir,
+        envDir: root, // load config from project root
         plugins: [
             react(),
             svgr(),

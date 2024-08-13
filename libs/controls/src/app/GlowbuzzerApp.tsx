@@ -19,19 +19,21 @@ import { Button, GlobalToken } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import { Provider } from "react-redux"
 import { ConfigLiveEditProvider } from "../config"
-import { appNameContext } from "./hooks"
+import { appNameContext, connectionConfigurationContext } from "./hooks"
 import { ConnectionProvider } from "./ConnectionProvider"
 import { GlowbuzzerAppLifecycle } from "./lifecycle"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
 import { GbdbProvider } from "../gbdb"
 import { AutoConnectionController } from "./AutoConnectionController"
 import { AutoDesiredModeController } from "./AutoDesiredModeController"
+import { UserModel, UserProvider } from "../usermgmt"
+import { ConnectionConfiguration } from "./types"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
 }
 
-const GlowbuzzerDimmerStyle = styled.div<{ $visible: boolean }>`
+export const GlowbuzzerDimmerStyle = styled.div<{ $visible: boolean }>`
     display: none;
 
     ${props =>
@@ -39,14 +41,15 @@ const GlowbuzzerDimmerStyle = styled.div<{ $visible: boolean }>`
         css`
             display: block;
             position: fixed;
-            z-index: 300;
+            z-index: 600;
             background-color: rgba(1, 1, 1, 0.7);
             top: 0;
             left: 0;
             height: 100vh;
             width: 100vw;
         `}
-    .reconnect-panel {
+
+    .reconnect-panel, .login-panel {
         position: fixed;
         text-align: center;
         z-index: 301;
@@ -65,9 +68,10 @@ const GlowbuzzerMainStyle = styled.div`
 
 type GlowbuzzerContainerProps = {
     children: ReactNode
+    userModel: UserModel
 }
 
-const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
+const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ userModel, children }) => {
     const connection = useConnection()
     const configState = useConfigState()
     const connectDelay = useRef(0)
@@ -104,7 +108,7 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
     }
 
     return (
-        <div>
+        <>
             <GlowbuzzerDimmerStyle
                 $visible={
                     !(connection.connected && configState === ConfigState.READY) &&
@@ -122,8 +126,10 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ children }) => {
                     </div>
                 </div>
             </GlowbuzzerDimmerStyle>
-            <GlowbuzzerMainStyle>{children}</GlowbuzzerMainStyle>
-        </div>
+            <UserProvider model={userModel}>
+                <GlowbuzzerMainStyle>{children}</GlowbuzzerMainStyle>
+            </UserProvider>
+        </>
     )
 }
 
@@ -136,10 +142,12 @@ type GlowbuzzerAppProps = {
     additionalReducers?: { [index: string]: Reducer }
     /** Configuration to load into the store. If not provided, the configuration will be loaded from local storage, or from GBC upon connect. */
     configuration?: GlowbuzzerConfig
+    /** Configuration for connection to remote services such as GBC*/
+    connectionConfiguration?: ConnectionConfiguration
     /** Configuration for slice persistence */
     persistenceConfiguration?: GbdbConfiguration
-    /** Whether to auto-connect to GBC */
-    autoConnect?: boolean
+    /** The user authentication model to use, if required */
+    userModel?: UserModel
     /** Whether to auto-enable operation */
     autoOpEnabled?: boolean
     /** Your application */
@@ -161,11 +169,13 @@ export const GlowbuzzerApp = ({
     additionalReducers,
     configuration,
     persistenceConfiguration,
-    autoConnect,
+    connectionConfiguration = {},
     autoOpEnabled,
+    userModel,
     children
 }: GlowbuzzerAppProps) => {
     initSettings(appName)
+    const { manualConnect } = connectionConfiguration
 
     const store = GlowbuzzerAppLifecycle.createStore(
         configuration,
@@ -175,23 +185,25 @@ export const GlowbuzzerApp = ({
     )
 
     return (
-        <appNameContext.Provider value={appName}>
-            <GlowbuzzerThemeProvider>
-                <Provider store={store}>
-                    <GbdbProvider configuration={persistenceConfiguration}>
-                        <ConnectionProvider>
-                            <ConfigLiveEditProvider>
-                                <GlowbuzzerContainer>
-                                    <AutoConnectionController enabled={autoConnect} />
-                                    <AutoDesiredModeController enabled={autoOpEnabled}>
-                                        {children}
-                                    </AutoDesiredModeController>
-                                </GlowbuzzerContainer>
-                            </ConfigLiveEditProvider>
-                        </ConnectionProvider>
-                    </GbdbProvider>
-                </Provider>
-            </GlowbuzzerThemeProvider>
-        </appNameContext.Provider>
+        <connectionConfigurationContext.Provider value={connectionConfiguration}>
+            <appNameContext.Provider value={appName}>
+                <GlowbuzzerThemeProvider>
+                    <Provider store={store}>
+                        <GbdbProvider configuration={persistenceConfiguration}>
+                            <ConnectionProvider autoConnect={!manualConnect}>
+                                <ConfigLiveEditProvider>
+                                    <GlowbuzzerContainer userModel={userModel}>
+                                        <AutoConnectionController enabled={!manualConnect} />
+                                        <AutoDesiredModeController enabled={autoOpEnabled}>
+                                            {children}
+                                        </AutoDesiredModeController>
+                                    </GlowbuzzerContainer>
+                                </ConfigLiveEditProvider>
+                            </ConnectionProvider>
+                        </GbdbProvider>
+                    </Provider>
+                </GlowbuzzerThemeProvider>
+            </appNameContext.Provider>
+        </connectionConfigurationContext.Provider>
     )
 }

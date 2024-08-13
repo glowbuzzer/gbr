@@ -15,12 +15,10 @@ import {
     AnalogOutputsTileDefinition,
     DigitalInputsTileDefinition,
     DigitalOutputsTileDefinition,
-    ModbusDigitalOutputsTileDefinition,
     ModbusDigitalInputsTileDefinition,
     IntegerInputsTileDefinition,
     ModbusIntegerInputsTileDefinition,
     IntegerOutputsTileDefinition,
-    ModbusIntegerOutputsTileDefinition,
     SafetyDigitalInputsTileDefinition,
     SafetyDigitalOutputsTileDefinition
 } from "./io"

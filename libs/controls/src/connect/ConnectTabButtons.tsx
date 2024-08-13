@@ -5,9 +5,10 @@
 import React from "react"
 import { ReactComponent as ContactlessIcon } from "@material-symbols/svg-400/outlined/contactless.svg"
 import styled from "styled-components"
-import { useConnection, usePrefs } from "@glowbuzzer/store"
+import { useConnection } from "@glowbuzzer/store"
 import { classes } from "../util/classes"
 import { Button } from "antd"
+import { useConnectionUrls } from "../app/hooks"
 
 const DockButton = styled(Button)`
     padding: 1px 6px;
@@ -38,13 +39,13 @@ const ConnectIndicator = styled.span`
  */
 export const ConnectTabButtons = () => {
     const connection = useConnection()
-    const prefs = usePrefs()
+    const { gbcWebsocketUrl } = useConnectionUrls()
 
     function toggle_connection() {
         if (connection.connected) {
             connection.disconnect()
         } else {
-            connection.connect(prefs.current.url)
+            connection.connect(gbcWebsocketUrl)
         }
     }
 

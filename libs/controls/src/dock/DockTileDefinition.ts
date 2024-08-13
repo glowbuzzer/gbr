@@ -27,4 +27,6 @@ export interface DockTileDefinition extends IJsonTabNode {
     defaultPlacement?: DockTilePlacement
 
     excludeByDefault?: boolean
+
+    capability?: symbol
 }

@@ -8,6 +8,7 @@ import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"
 import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems"
 import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import { useUser } from "../usermgmt"
 
 /**
  * This component renders a sub-menu containing available tiles and allows the user to show or hide them. It should be used in conjunction with
@@ -26,6 +27,7 @@ import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
  * ```
  */
 export const useDockViewMenu = () => {
+    const { capabilities } = useUser()
     const { showTile, resetLayout } = useDockLayoutContext()
     const { darkMode, setDarkMode } = useGlowbuzzerTheme()
 
@@ -35,13 +37,15 @@ export const useDockViewMenu = () => {
         setDarkMode(!darkMode)
     }
 
-    const tileItems: ItemType[] = tiles.map(tile => ({
-        key: tile.id,
-        disabled: tile.enableClose === false,
-        icon: tile.visible ? <CheckOutlined /> : null,
-        onClick: () => showTile(tile.id, !tile.visible),
-        label: tile.name
-    }))
+    const tileItems: ItemType[] = tiles
+        .filter(tile => !tile.capability || capabilities.includes(tile.capability))
+        .map(tile => ({
+            key: tile.id,
+            disabled: tile.enableClose === false,
+            icon: tile.visible ? <CheckOutlined /> : null,
+            onClick: () => showTile(tile.id, !tile.visible),
+            label: tile.name
+        }))
 
     return {
         key: "view-menu",

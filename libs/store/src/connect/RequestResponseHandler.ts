@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useRef } from "react"
 
 export type MessageResponse = {
     requestId?: string
@@ -22,7 +22,11 @@ export function useRequestHandler() {
     const requests = useRef<RequestStore>({})
 
     return {
-        request(connection: WebSocket, requestType, args?): Promise<MessageResponse> {
+        request(
+            connection: WebSocket,
+            requestType: string,
+            args?: object
+        ): Promise<MessageResponse> {
             const requestId = Math.random().toString(36).substring(2, 15)
             // console.log("New request", requestId, requestType)
             return new Promise<MessageResponse>((resolve, reject) => {
@@ -44,7 +48,7 @@ export function useRequestHandler() {
                 }, 5000)
             })
         },
-        response(msg) {
+        response(msg: any) {
             const { requestId, requestType, error, message, ...body } = msg
             if (!requests.current[requestId]) {
                 // already resolved, ignore
@@ -57,16 +61,6 @@ export function useRequestHandler() {
             if (error) {
                 reject(message)
             } else {
-                // console.log(
-                //     "Resolve response: " +
-                //         requestId +
-                //         " " +
-                //         requestType +
-                //         " " +
-                //         error +
-                //         " " +
-                //         message
-                // )
                 resolve(body)
             }
         },

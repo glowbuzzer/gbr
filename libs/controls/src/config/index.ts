@@ -5,3 +5,4 @@
 export * from "./ConfigEditTile"
 export * from "./ConfigEditTileDefinition"
 export * from "./ConfigLiveEditProvider"
+export { ConfigEditCapability } from "./ConfigEditCapability"

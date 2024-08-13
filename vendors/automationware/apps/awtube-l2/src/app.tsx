@@ -29,9 +29,9 @@ import {
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition,
     TriadHelper
-} from "@glowbuzzer/controls";
-import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal";
-import React, { Suspense } from "react";
+} from "@glowbuzzer/controls"
+import { PlaneShinyMetal } from "../../../../../examples/util/PlaneShinyMetal"
+import React, { Suspense } from "react"
 import {
     AwTubeRobot,
     AwTubeRobotParts,
@@ -47,11 +47,11 @@ import {
     Plate,
     Spindle,
     useLoadedRobotParts
-} from "@glowbuzzer/awlib";
-import { Environment, Sphere } from "@react-three/drei";
-import { SimpleMoveTileDefinition } from "./SimpleMoveTile";
-import { InterpolatedMoveTile } from "./InterpolatedMoveTile";
-import { AppStatusBar } from "./AppStatusBar";
+} from "@glowbuzzer/awlib"
+import { Environment, Sphere } from "@react-three/drei"
+import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
+import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
+import { AppStatusBar } from "./AppStatusBar"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {

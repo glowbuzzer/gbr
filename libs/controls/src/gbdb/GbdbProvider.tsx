@@ -2,7 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 import * as React from "react"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 // import PouchDB from "pouchdb"
 import { useDispatch, useSelector, useStore } from "react-redux"
 import {
@@ -10,10 +10,10 @@ import {
     GbdbFacetConfiguration,
     gbdbLoadActionCreator,
     gbdbSlice,
-    RootState,
-    usePref
+    RootState
 } from "@glowbuzzer/store"
 import { useGbdbDebugHelper } from "./debug"
+import { useConnectionUrls } from "../app/hooks"
 
 export type GbdbItem = PouchDB.Core.IdMeta & PouchDB.Core.RevisionIdMeta
 
@@ -33,15 +33,12 @@ type GbdbProviderProps = {
     children: React.ReactNode
 }
 
-export const GbdbProvider = ({
-    configuration = { remoteDb: false, facets: {} },
-    children
-}: GbdbProviderProps) => {
+export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbProviderProps) => {
     // use store and store.getState() rather than a selector on the entire state to avoid re-rendering on every state change
     const store = useStore<RootState>()
+    const { pouchDbBase } = useConnectionUrls()
     const dispatch = useDispatch()
-    const [url] = usePref("url")
-    const { remoteDb, facets } = configuration
+    const { facets } = configuration
     const gbdb = useSelector((state: RootState) => state.gbdb)
     const [databases, setDatabases] = useState<{
         [p: string]: PouchDB.Database<{ state: object }>
@@ -61,25 +58,15 @@ export const GbdbProvider = ({
             // dynamic import pouchdb
             import("pouchdb")
                 .then(PouchDB => {
-                    function make_url(facetName: string) {
-                        if (remoteDb === true) {
-                            // determine the url from the websocket url
-                            const ws = new URL(url)
-                            // noinspection HttpUrlsUsage
-                            return `http://${ws.hostname}:5984/${facetName}`
-                        } else if (remoteDb) {
-                            return remoteDb + "/" + facetName
-                        }
-                        // local db
-                        return facetName
-                    }
                     // create a PouchDB instance for each facet
                     setDatabases(
                         Object.fromEntries(
                             Object.keys(facets).map(facetName => {
                                 return [
                                     facetName,
-                                    new PouchDB.default<{ state: object }>(make_url(facetName))
+                                    new PouchDB.default<{ state: object }>(
+                                        `${pouchDbBase}${facetName}`
+                                    )
                                 ]
                             })
                         )
@@ -93,27 +80,6 @@ export const GbdbProvider = ({
                 })
         }
     }, [configuration])
-
-    // const databases: { [p: string]: PouchDB.Database<{ state: object }> } = useMemo(() => {
-    //     function make_url(facetName: string) {
-    //         if (remoteDb === true) {
-    //             // determine the url from the websocket url
-    //             const ws = new URL(url)
-    //             // noinspection HttpUrlsUsage
-    //             return `http://${ws.hostname}:5984/${facetName}`
-    //         } else if (remoteDb) {
-    //             return remoteDb + "/" + facetName
-    //         }
-    //         // local db
-    //         return facetName
-    //     }
-    //     // create a PouchDB instance for each facet
-    //     return Object.fromEntries(
-    //         Object.keys(facets).map(facetName => {
-    //             return [facetName, new PouchDB<{ state: object }>(make_url(facetName))]
-    //         })
-    //     )
-    // }, [remoteDb, facets])
 
     // hook to add import and export to window.gbdb (useful during development to exchange facet state)
     useGbdbDebugHelper(gbdb, databases)
@@ -158,7 +124,7 @@ export const GbdbProvider = ({
         }, {})
 
         // console.log("save doc", updateState, facetState)
-        const _rev = await new Promise<string>((resolve, reject) => {
+        const _rev = await new Promise<string>(resolve => {
             const lookup = id || doc._id
             if (lookup) {
                 db.get(lookup)
