@@ -3,6 +3,6 @@
  */
 
 export * from "./UserProvider"
-export * from "./UserCapabilityRegion"
+export * from "./UserCapabilityGuard"
 export * from "./types"
 export * from "./util"

@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { DockTileDefinitionBuilder, UserCapabilityRegion } from "@glowbuzzer/controls"
+import { DockTileDefinitionBuilder, UserCapabilityGuard } from "@glowbuzzer/controls"
 import { Button, Input, Space } from "antd"
 import { BLENDTYPE, useStream } from "@glowbuzzer/store"
 import { SimpleMoveCapability } from "./SimpleMoveCapabilities"
@@ -66,24 +66,25 @@ export const SimpleMoveTile = () => {
     return (
         <div style={{ padding: "10px" }}>
             <Space direction="vertical">
-                <UserCapabilityRegion
+                <UserCapabilityGuard
                     capability={SimpleMoveCapability.READ}
                     alternative={<>READ NOT allowed</>}
                 >
                     READ IS allowed
-                </UserCapabilityRegion>
-                <UserCapabilityRegion
+                </UserCapabilityGuard>
+                <UserCapabilityGuard
                     capability={SimpleMoveCapability.WRITE}
                     alternative={<>WRITE NOT allowed</>}
                 >
                     WRITE IS allowed
-                </UserCapabilityRegion>
-                <UserCapabilityRegion capability={SimpleMoveCapability.READ} disable>
+                </UserCapabilityGuard>
+                <UserCapabilityGuard capability={SimpleMoveCapability.READ} disableOnly>
                     <Input type="text" value="READX" />
-                </UserCapabilityRegion>
-                <UserCapabilityRegion capability={SimpleMoveCapability.WRITE} disable>
+                </UserCapabilityGuard>
+                <UserCapabilityGuard capability={SimpleMoveCapability.WRITE} disableOnly>
                     <Input type="text" value="WRITE" />
-                </UserCapabilityRegion>
+                    <Button>DISABLED</Button>
+                </UserCapabilityGuard>
 
                 <div>Click the button below to perform move</div>
                 <Button size="small" onClick={go}>
@@ -107,6 +108,6 @@ export const SimpleMoveTileDefinition = DockTileDefinitionBuilder()
     .id("aw-simple-move")
     .name("Simple Move")
     .render(() => <SimpleMoveTile />)
-    .requiresOperationEnabled()
-    .requiresCapability(SimpleMoveCapability.READ)
+    // .requiresOperationEnabled()
+    // .requiresCapability(SimpleMoveCapability.READ)
     .build()

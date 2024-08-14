@@ -12,11 +12,11 @@ type UserCapabilityRegionProps = {
 } & (
     | {
           alternative?: React.ReactNode
-          disable?: never
+          disableOnly?: never
       }
     | {
           alternative?: never
-          disable?: true
+          disableOnly?: true
       }
 )
 
@@ -28,17 +28,17 @@ function has_capability(capability: symbol | symbol[], capabilities: symbol[]) {
     }
 }
 
-export const UserCapabilityRegion = ({
+export const UserCapabilityGuard = ({
     capability,
     alternative = null,
-    disable,
+    disableOnly,
     children
 }: UserCapabilityRegionProps) => {
     const { enabled, capabilities } = useUser()
 
     const allowed = !enabled || has_capability(capability, capabilities)
 
-    if (disable) {
+    if (disableOnly) {
         return <DisabledContextProvider disabled={!allowed}>{children}</DisabledContextProvider>
     }
 
