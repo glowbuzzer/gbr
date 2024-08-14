@@ -66,10 +66,9 @@ const userModel: UserModel = {
  * be in the client app so that Vite can replace the values at build time.
  */
 const connectionConfiguration: ConnectionConfiguration = {
+    remotePouchDb: false,
     // @ts-ignore
     hostname: import.meta.env.VITE_REMOTE_HOST,
-    // @ts-ignore
-    remotePouchDb: import.meta.env.VITE_REMOTE_POUCHDB === "true",
     // @ts-ignore
     manualConnect: import.meta.env.VITE_MANUAL_CONNECT === "true"
 }
