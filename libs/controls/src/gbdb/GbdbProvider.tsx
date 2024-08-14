@@ -62,19 +62,19 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
                     setDatabases(
                         Object.fromEntries(
                             Object.keys(facets).map(facetName => {
-                                return [
-                                    facetName,
-                                    new PouchDB.default<{ state: object }>(
-                                        `${pouchDbBase}${facetName}`
-                                    )
-                                ]
+                                const url = `${pouchDbBase}${facetName}`
+                                return [facetName, new PouchDB.default<{ state: object }>(url)]
                             })
                         )
+                    )
+                    console.log(
+                        "Initialised PouchDB databases for gbdb facets",
+                        Object.keys(facets)
                     )
                 })
                 .catch(err => {
                     console.error(
-                        "Failed to load PouchDB. Have you included it in your package.json, and have you added 'events' module?",
+                        `Failed to initialise PouchDB for gbdb facets with base url '${pouchDbBase}'. Please check error message and that you have the 'pouchdb' and 'events' npm modules installed`,
                         err
                     )
                 })

@@ -14,7 +14,7 @@ import { UserChangePinModal } from "./UserChangePinModal"
 type EnhancedMenuItem = MenuItemType & { capability?: symbol | symbol[] }
 
 export const StatusBarUser = () => {
-    const { currentUser, capabilities, logout, showAnonymousLogin } = useUser()
+    const { enabled, currentUser, capabilities, logout, showAnonymousLogin } = useUser()
     const [showUserMgmt, setShowUserMgmt] = React.useState(false)
     const [showChangePin, setShowChangePin] = React.useState(false)
 
@@ -39,6 +39,10 @@ export const StatusBarUser = () => {
 
     function change_pin() {
         setShowChangePin(true)
+    }
+
+    if (!enabled) {
+        return null
     }
 
     const items: EnhancedMenuItem[] = currentUser

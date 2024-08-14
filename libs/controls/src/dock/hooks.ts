@@ -82,7 +82,7 @@ export function useDockContext(
     defaultPerspective: string,
     appName: string
 ): DockLayoutContextType {
-    const { currentUser, capabilities } = useUser()
+    const { enabled, currentUser, capabilities } = useUser()
     const [currentPerspective, changePerspective] = useState(defaultPerspective)
     const [locked, setLocked] = useState(true)
     const [savedLayout, updateSavedLayout] = useLocalStorage(
@@ -98,7 +98,9 @@ export function useDockContext(
     const { defaultVisible } = perspective
 
     const { currentModel, defaultModel } = createDockModel(
-        availableTiles.filter(tile => !tile.capability || capabilities.includes(tile.capability)),
+        availableTiles.filter(
+            tile => !enabled || !tile.capability || capabilities.includes(tile.capability)
+        ),
         defaultVisible,
         locked,
         savedLayout

@@ -18,7 +18,7 @@ type UserDatabaseContextType = {
 
 const UserDatabaseContext = createContext<UserDatabaseContextType>(null)
 
-export const UserDatabaseProvider = ({ children }) => {
+export const UserDatabaseProvider = ({ enabled, children }) => {
     const { pouchDbBase } = useConnectionUrls()
     const [database, setDatabase] = useState<PouchDB.Database<UserProfile>>(null)
     const [users, setUsers] = useState<UserProfile[]>([])
@@ -46,16 +46,22 @@ export const UserDatabaseProvider = ({ children }) => {
     }, [database])
 
     useEffect(() => {
-        window.global = window
-        import("pouchdb")
-            .then(PouchDB => {
-                // TODO: remote db
-                setDatabase(new PouchDB.default(`${pouchDbBase}$users`))
-            })
-            .catch(err => {
-                console.error(err)
-            })
-    }, [])
+        if (enabled && !database) {
+            window.global = window
+            const url = `${pouchDbBase}$users`
+            import("pouchdb")
+                .then(PouchDB => {
+                    console.log("PouchDB database for user management created, url=", url)
+                    setDatabase(new PouchDB.default(url))
+                })
+                .catch(err => {
+                    console.error(
+                        `Failed to initialise PouchDB for user management with url '${url}'. Please check error message and that you have the 'pouchdb' and 'events' npm modules installed`,
+                        err
+                    )
+                })
+        }
+    }, [enabled, database])
 
     const context: UserDatabaseContextType = {
         users,

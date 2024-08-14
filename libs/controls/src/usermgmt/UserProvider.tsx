@@ -81,7 +81,7 @@ export const UserProvider = ({ model, children }: UserProviderProps) => {
 
     const show_login = enabled && !state.user && (!model.anonymousRole || anonymousLogin)
     return (
-        <UserDatabaseProvider>
+        <UserDatabaseProvider enabled={enabled}>
             {show_login && (
                 <UserLoginModal
                     onLogin={login}
