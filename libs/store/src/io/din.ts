@@ -35,6 +35,7 @@ export function useDigitalInputList() {
  * Returns the state of a digital input
  *
  * @param index The index in the configuration of the digital input
+ * @param type The type of digital input
  */
 // export function useDigitalInputState(index: number): boolean {
 //     return useSelector((state: RootState) => state.din[index])
