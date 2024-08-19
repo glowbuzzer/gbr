@@ -205,7 +205,9 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
     }
 
     useEffect(() => {
-        for (const [facetName, facet] of Object.entries(facets)) {
+        for (const [facetName, facet] of Object.entries(facets).filter(
+            ([name]) => databases[name]
+        )) {
             if (facet.singleton) {
                 open(facetName, "Default").catch(err => {
                     if (err.status === 404) {
@@ -214,7 +216,7 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
                 })
             }
         }
-    }, [facets])
+    }, [facets, databases])
 
     const context: GbdbContextType = {
         facets,
