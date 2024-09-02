@@ -3,11 +3,10 @@ import React from "react"
 export const VerticalAxisConfigTab = () => {
     return (
         <div>
-            <p>Vertical config content</p>
-            <p>Need to enabled extra axis - how do we do this?</p>
-            <p>Might need to set joint limits</p>
-            <p>Need to enable optional slaves - PWM/Servo drive</p>
-            <p>Will need separate safety code</p>
+            <h3>Vertical axis config </h3>
+            <p>Need to enabled ELM slave and PWM (optional slave)</p>
+            <p>Set joint limits based on travels</p>
+            <p>Not sure how the safety integration will work for this?</p>
         </div>
     )
 }

@@ -35,8 +35,8 @@ import { useSlaveCat } from "../slaveCatData/slaveCatContext"
 import { slave } from "../slavecatTypes/Slave"
 import { SimpleObject } from "../slavecatTypes/SimpleObject"
 
-import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons"
-import styled from "styled-components"
+import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined } from "@ant-design/icons"
+import styled, { useTheme } from "styled-components"
 import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
 import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
 
@@ -93,6 +93,8 @@ const EditableCell = ({
     const [editing, setEditing] = useState(false)
     const inputRef = useRef(null)
     const [form] = Form.useForm()
+
+    const theme = useTheme()
 
     useEffect(() => {
         if (editing) {
@@ -222,6 +224,11 @@ const EditableCell = ({
                 onClick={toggleEdit}
             >
                 {children}
+                <Tooltip title={"Edit the value"}>
+                    <EditOutlined
+                        style={{ marginLeft: 8, color: theme.colorPrimary }}
+                    ></EditOutlined>
+                </Tooltip>
             </div>
         )
     }
@@ -353,8 +360,12 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
     const findIfOptional = (slaveName: string): boolean => {
         // console.log(slaveName)
         const slave = config.ethercat.slaves.find(slave => slave.eep_name === slaveName)
+        // console.log("slaveName", slaveName)
+        // console.log("slave", slave)
         if (slave) {
-            return slave.optional.is_configurable ? slave.optional.is_enabled : false
+            if (!slave.optional.is_configurable) return false
+
+            return !slave.optional.is_enabled
         }
         return false
     }
@@ -495,16 +506,16 @@ export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}
             <EtherCatConfigStatusIndicator />
             <Space>
                 Edit the configuration of EtherCAT slaves (applied at start-up of the network)
-                <Button
-                    size="small"
-                    onClick={() => {
-                        setUseDummyConfig(!useDummyConfig)
-                        setConfigLoaded(false) // Reset config loaded status
-                    }}
-                    style={{ marginLeft: 8 }}
-                >
-                    {useDummyConfig ? "Switch to Real Config" : "Switch to Dummy Config"}
-                </Button>
+                {/*<Button*/}
+                {/*    size="small"*/}
+                {/*    onClick={() => {*/}
+                {/*        setUseDummyConfig(!useDummyConfig)*/}
+                {/*        setConfigLoaded(false) // Reset config loaded status*/}
+                {/*    }}*/}
+                {/*    style={{ marginLeft: 8 }}*/}
+                {/*>*/}
+                {/*    {useDummyConfig ? "Switch to Real Config" : "Switch to Dummy Config"}*/}
+                {/*</Button>*/}
             </Space>
             {configLoaded ? (
                 <div style={{ padding: 20 }}>

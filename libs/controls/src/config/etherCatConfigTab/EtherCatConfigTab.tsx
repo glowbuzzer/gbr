@@ -29,7 +29,7 @@ const StyledFlex = styled(Flex)`
 const contentList: Record<string, (props: {}) => React.ReactNode> = {
     editConfig: props => <EtherCatSlaveConfigTab {...props} />,
     readSdo: props => <EtherCatReadSlaveTab {...props} />,
-    writeSdo: () => <EtherCatWriteSlaveTab />,
+    // writeSdo: () => <EtherCatWriteSlaveTab />,
     optionalSlaves: () => <EtherCatOptionalSlavesTab />
 }
 
