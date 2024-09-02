@@ -279,7 +279,7 @@ function ToDateString(value: string) {
     return value
 }
 
-const emStatDictionary: DictionaryNode = {
+const emStatDrivesDictionary: DictionaryNode = {
     type: "object",
     children: {
         mst: {
@@ -294,223 +294,88 @@ const emStatDictionary: DictionaryNode = {
             name: "Safety state",
             convert: SafetyStateToString
         },
-        bsbs: {
-            name: "EtherCAT master: Boot successful",
-            convert: BoolToString
+        dct: {
+            name: "Drive count"
         },
-        bssf: {
-            name: "EtherCAT master: Found slaves on network",
-            convert: BoolToString
-        },
-        bsasm: {
-            name: "EtherCAT master: All slaves matched config.",
-            convert: BoolToString
-        },
-        bsaso: {
-            name: "EtherCAT master: All slaves EtherCAT state op",
-            convert: BoolToString
-        },
-        bsasso: {
-            name: "EtherCAT master: All slaves EtherCAT state safe-op",
-            convert: BoolToString
-        },
-        bsasp: {
-            name: "EtherCAT master: All slaves EtherCAT state pre-op",
-            convert: BoolToString
-        },
-
-        m_se: {
-            name: "Machine section"
-        },
-        // d_se: {
-        //     name: "Drives section"
-        // },
-        s_se: {
-            name: "Slaves section"
-        },
-        // sa_se: {
-        //     name: "Safety section"
-        // },
-        st_se: {
-            name: "Stats section"
-        },
-        // dct: {
-        //     name: "Drive count"
-        // },
-        // Drives: {
-        //     type: "array",
-        //     nameProperty: "Drive name",
-        //     children: {
-        //         dsn: {
-        //             name: "Drive secondary name"
-        //         },
-        //         das: {
-        //             name: "Drive CIA State",
-        //             convert: CiaStateToString
-        //         },
-        //         dcmo: {
-        //             name: "Drive commanded Mode of Operation",
-        //             convert: MooToString
-        //         },
-        //         damo: {
-        //             name: "Drive actual Mode of Operation",
-        //             convert: MooToString
-        //         },
-        //         dcs: {
-        //             name: "Drive CIA Command",
-        //             convert: CiaCommandToString
-        //         },
-        //
-        //         dail: {
-        //             name: "Active internal limit",
-        //             convert: BoolToString
-        //         },
-        //         dhil: {
-        //             name: "Historic internal limit",
-        //             convert: BoolToString
-        //         },
-        //         dafe: {
-        //             name: "Active follow error",
-        //             convert: BoolToString
-        //         },
-        //         dhfe: {
-        //             name: "Historic follow error",
-        //             convert: BoolToString
-        //         },
-        //         daw: {
-        //             name: "Active warning",
-        //             convert: BoolToString
-        //         },
-        //         dhw: {
-        //             name: "Historic warning",
-        //             convert: BoolToString
-        //         },
-        //
-        //         daf: {
-        //             name: "Active fault",
-        //             convert: BoolToString
-        //         },
-        //         dhf: {
-        //             name: "Historic fault",
-        //             convert: BoolToString
-        //         },
-        //
-        //         dem: {
-        //             name: "Drive error message"
-        //         },
-        //         dhem: {
-        //             name: "Drive historic error message"
-        //         }
-        //     }
-        // },
-        sct: {
-            name: "Number of slaves"
-        },
-        eer: {
-            name: "EtherCAT check found error",
-            convert: BoolToString
-        },
-        Slaves: {
+        Drives: {
             type: "array",
-            nameProperty: "Slave name",
+            nameProperty: "Drive name",
             children: {
-                sno: {
-                    name: "Slave number"
+                dsn: {
+                    name: "Drive secondary name"
                 },
-                sobi: {
-                    name: "Slave Obits"
+                das: {
+                    name: "Drive CIA State",
+                    convert: CiaStateToString
                 },
-                sibi: {
-                    name: "Slave Ibits"
+                dcmo: {
+                    name: "Drive commanded Mode of Operation",
+                    convert: MooToString
                 },
-                soby: {
-                    name: "Slave Obytes"
+                damo: {
+                    name: "Drive actual Mode of Operation",
+                    convert: MooToString
                 },
-                siby: {
-                    name: "Slave Ibytes"
+                dcs: {
+                    name: "Drive CIA Command",
+                    convert: CiaCommandToString
                 },
 
-                sdc: {
-                    name: "Slave hasDC",
+                dail: {
+                    name: "Active internal limit",
+                    convert: BoolToString
+                },
+                dhil: {
+                    name: "Historic internal limit",
+                    convert: BoolToString
+                },
+                dafe: {
+                    name: "Active follow error",
+                    convert: BoolToString
+                },
+                dhfe: {
+                    name: "Historic follow error",
+                    convert: BoolToString
+                },
+                daw: {
+                    name: "Active warning",
+                    convert: BoolToString
+                },
+                dhw: {
+                    name: "Historic warning",
                     convert: BoolToString
                 },
 
-                ss: {
-                    name: "Slave state",
-                    convert: EcStateToString
+                daf: {
+                    name: "Active fault",
+                    convert: BoolToString
                 },
-                sa: {
-                    name: "Slave Address (hex)",
-                    convert: ToHex
+                dhf: {
+                    name: "Historic fault",
+                    convert: BoolToString
                 },
-                sal: {
-                    name: "Slave ALStatuscode",
-                    convert: AlStatusCodeToString
+
+                dem: {
+                    name: "Drive error message"
+                },
+                dhem: {
+                    name: "Drive historic error message"
                 }
             }
-        },
-
-        seno: {
-            name: "Number of slave emergency messages"
-        },
-        SlaveErrors: {
-            type: "array",
-            nameProperty: "Slave emergency messages"
-        },
-        // fsoesc: {
-        //     name: "FSoE slave count"
-        // },
-        // fsoemsn: {
-        //     name: "FSoE master slave number"
-        // },
-        // fsoemhl: {
-        //     name: "FSoE master high-level state",
-        //     convert: FsoeMasterHighLevelStateTypeToString
-        // },
-        // fsoemec: {
-        //     name: "FSoE master error code"
-        // },
-
-        // SafeSlaves: {
-        //     type: "array",
-        //     nameProperty: "FSoE Slave name",
-        //     children: {
-        //         fsoest: {
-        //             name: "FSoE Slave Type",
-        //             convert: FsoeSlaveTypeToString
-        //         },
-        //         fsoesno: {
-        //             name: "FSoE Slave Number"
-        //         },
-        //         fsoescid: {
-        //             name: "FSoE Slave Connection ID"
-        //         },
-        //
-        //         fsoess: {
-        //             name: "FSoE Slave State",
-        //             convert: FsoeSynapticonSlaveStateToString
-        //         },
-        //         foeshls: {
-        //             name: "FSoE Slave High-Level State",
-        //             convert: FsoeHighLevelStateToString
-        //         }
-        //     }
-        // },
-        smb: {
-            name: "Shared memory busy count"
         }
+
         // ...
     }
 }
 
-export function toTableDataEmStat(
+export function toTableDataEmStatDrives(
     obj,
     parentKey = "",
-    dict: DictionaryNode | undefined = emStatDictionary
+    dict: DictionaryNode | undefined = emStatDrivesDictionary
 ) {
     const result = []
 
-    const validKeys = extractValidKeys(emStatDictionary)
+    const validKeys = extractValidKeys(emStatDrivesDictionary)
 
     for (const key in obj) {
         if (!validKeys.includes(key) && isNaN(Number(key))) {
@@ -519,7 +384,7 @@ export function toTableDataEmStat(
 
         if (typeof obj[key] === "object" && obj[key] !== null) {
             const child_dict = dict?.type === "array" ? dict : dict?.children?.[key]
-            const children = toTableDataEmStat(obj[key], key, child_dict)
+            const children = toTableDataEmStatDrives(obj[key], key, child_dict)
             result.push({
                 key: parentKey + "/" + key,
                 property: obj[key][dict?.nameProperty] || key,
