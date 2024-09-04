@@ -4,19 +4,65 @@
 
 import * as React from "react"
 import {
+    configMetadata,
     configSlice,
     GlowbuzzerConfig,
     MachineState,
+    RootState,
     ToolConfig,
+    useConfig,
     useMachineState,
     useSoloActivity,
     useToolList
 } from "@glowbuzzer/store"
 import { ColumnType } from "antd/es/table"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { ToolConfigEditor } from "./ToolConfigEditor"
 import { Button } from "antd"
 import { TileWithEditableTableSupport } from "../util"
+import { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
+
+import { Canvas } from "@react-three/fiber"
+import { OrbitControls, useGLTF } from "@react-three/drei"
+
+interface GLBModelProps {
+    url: string
+    scale?: number
+}
+
+interface GLTFResult extends GLTF {
+    nodes: Record<string, THREE.Object3D>
+    materials: Record<string, THREE.Material>
+}
+
+function GLBModel({ url, scale = 1000 }: GLBModelProps) {
+    const { scene } = useGLTF(url) as GLTFResult
+    return <primitive object={scene} scale={[scale, scale, scale]} />
+}
+
+export const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
+    return (
+        <Canvas style={{ height: 200, width: 200 }}>
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[10, 10, 5]} intensity={1.5} />
+            <directionalLight position={[-10, -10, -5]} intensity={0.5} />
+            <OrbitControls />
+            <GLBModel url={url} scale={scale} />
+        </Canvas>
+    )
+}
+
+export const mockToolUrls = [
+    {
+        id: 0,
+        url: "https://static.glowbuzzer.com/assets/tools/Schmalz_FQE_Xc_120x60.glb"
+    },
+    {
+        id: 1,
+        url: "https://static.glowbuzzer.com/assets/tools/Schmalz_FQE_Xc_220x80.glb"
+    }
+    // Add more tools as needed
+]
 
 export type ToolsTileTableEntry = ToolConfig & { name?: string; id: number }
 
@@ -25,8 +71,38 @@ export const ToolsTile = () => {
     const dispatch = useDispatch()
     const api = useSoloActivity(0)
     const currentState = useMachineState()
+    const config = useConfig()
+    console.log("config", config)
 
-    const definitions = tools.map((tool, index) => ({
+    // const getMetadataProperty = {}
+
+    // Get metadata from the config
+    const metadata = configMetadata(config.tool[0], true)
+
+    console.log("metadata", metadata)
+    // // Check if metadata exists
+    // if (!metadata) {
+    //     return undefined
+    // }
+    //
+    // // Return the requested property from metadata
+    // return metadata[propertyName]
+    // }
+
+    // Usage example:
+
+    // const definitions = tools.map((tool, index) => ({
+    //     id: index,
+    //     ...tool
+    // }))
+
+    // Merge real tool data with mock URLs
+    const toolsWithUrls = tools.map((tool, index) => ({
+        ...tool,
+        url: mockToolUrls.find(mockTool => mockTool.id === index)?.url
+    }))
+
+    const definitions = toolsWithUrls.map((tool, index) => ({
         id: index,
         ...tool
     }))
@@ -40,6 +116,16 @@ export const ToolsTile = () => {
             title: "Name",
             dataIndex: "name",
             key: "name"
+        },
+        {
+            title: "Description",
+            dataIndex: "description",
+            key: "description"
+        },
+        {
+            title: "3D View",
+            key: "3dview",
+            render: (_, record) => <GLBViewer url={record.url} scale={20} /> // Assuming `url` contains the GLB file URL
         },
         {
             title: "Length",

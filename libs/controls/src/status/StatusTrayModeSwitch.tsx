@@ -105,7 +105,7 @@ export const StatusTrayModeSwitch = () => {
                     {enabling_switch_required && (
                         <Steps.Step
                             title={"Operate Enabling Switch"}
-                            description="You must operate the enablng switch (deadman) to enable hand guiding"
+                            description="You must operate the enablng switch (deadman) to enable this mode"
                             status={
                                 resetNeeded ? "wait" : enablingSwitchEngaged ? "finish" : "process"
                             }

@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "04d77671f69d7665724265746bff86aa"
+export const GbcSchemaChecksum = "1186c6f4f1ec4c3226a71659c3c75750"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -48,7 +48,6 @@ export const GbcConstants = {
         CONTROL_WORD_GBEM_START_HOMING_BIT_NUM             = (17),
         CONTROL_WORD_GBC_REQUEST_FAULT_BIT_NUM             = (18),
         CONTROL_WORD_GBEM_REBOOT_BIT_NUM                   = (20),
-        CONTROL_WORD_GBEM_DOWNLOAD_DRIVE_LOGS_BIT_NUM      = (21),
     }
     export enum FSOE_SLAVE_HIGH_LEVEL_STATE {
         FSOE_SLAVE_HIGH_LEVEL_STATE_NONE                   = (0),
@@ -85,6 +84,7 @@ export const GbcConstants = {
         GBEM_REQUEST_SDO_READ                             = (1),
         GBEM_REQUEST_SDO_WRITE                            = (2),
         GBEM_REQUEST_GET_VERSION                          = (3),
+        GBEM_REQUEST_GET_FILE                             = (4),
     }
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,
@@ -448,6 +448,12 @@ export const GbcConstants = {
   OPEN ,
         /**  Tool is closed */
   CLOSED ,
+    }
+    export enum INTERFACE {
+        /**  Tool is controlled by digital IOs */
+  IO ,
+        /**  Tool is controlled by Modbus */
+  Modbus ,
     }
     export enum STREAMCOMMAND {
         /**  Run stream */
@@ -1173,13 +1179,13 @@ export const GbcConstants = {
             export type ModbusDinConfig = {
             
                         /**  Defines the modbus slave number to read from */
-                        slave_num?:number;
+                        slaveNum?:number;
                         /**  Defines the modbus address to read from */
                         address?:number;
                         /**  Defines the modbus function to use (0x1 or 0x2) */
                         function?:number;
                         /**  Defines if the modbus data is little endian */
-                        little_endian?:boolean;
+                        littleEndian?:boolean;
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
@@ -1191,7 +1197,7 @@ export const GbcConstants = {
                         /**  State of the modbus digital input */
                         actValue?:boolean;
                         /**  Error code of the modbus read */
-                        modbus_error_code?:number;
+                        errorCode?:number;
                         /**  Defines if the modbus read was successful */
                         isError?:boolean;
             }
@@ -1222,7 +1228,7 @@ export const GbcConstants = {
                         effectiveValue?:boolean;
             }
             /** 
-            Command for a safety digital output
+            Command for a digital output
              */
             export type DoutCommand = {
             
@@ -1289,11 +1295,11 @@ export const GbcConstants = {
             export type ModbusDoutConfig = {
             
                         /**  Defines the modbus slave number to write to */
-                        slave_num?:number;
+                        slaveNum?:number;
                         /**  Defines the modbus start address to write to */
-                        start_address?:number;
+                        startAddress?:number;
                         /**  Defines the modbus end address to write to */
-                        end_address?:number;
+                        endAddress?:number;
             }
             /** 
             Configuration parameters for an analogue input
@@ -1449,7 +1455,7 @@ export const GbcConstants = {
             export type ModbusUiinConfig = {
             
                         /**  Defines the modbus slave number to read from */
-                        slave_num?:number;
+                        slaveNum?:number;
                         /**  Defines the modbus address to read from */
                         address?:number;
                         /**  Defines the modbus function to use (0x3 or 0x4) */
@@ -1463,7 +1469,7 @@ export const GbcConstants = {
                         /**  State of the modbus digital input */
                         actValue?:number;
                         /**  Error code of the modbus read */
-                        modbus_error_code?:number;
+                        errorCode?:number;
                         /**  Defines if the modbus read was successful */
                         isError?:boolean;
             }
@@ -1571,13 +1577,13 @@ export const GbcConstants = {
             export type ModbusUioutConfig = {
             
                         /**  Defines the modbus slave number to write to */
-                        slave_num?:number;
+                        slaveNum?:number;
                         /**  Defines the modbus start address to write to */
-                        start_address?:number;
+                        startAddress?:number;
                         /**  Defines the modbus end address to write to */
-                        end_address?:number;
+                        endAddress?:number;
                         /**  Defines if the modbus data is little endian */
-                        little_endian?:boolean;
+                        littleEndian?:boolean;
             }
             /** 
             Parameters for move joints activity
@@ -1949,7 +1955,7 @@ export const GbcConstants = {
             export type SetModbusDoutActivityStatus = {
             
                         /**  Error code of the modbus write */
-                        modbus_error_code?:number;
+                        errorCode?:number;
                         /**  Defines if the modbus write was successful */
                         isError?:boolean;
             }
@@ -2016,20 +2022,16 @@ export const GbcConstants = {
              */
             export type SetModbusUioutActivityParams = {
             
-                        /**  The array of indexes of the integer output to set */
+                        /**  The configuration index of the integer output to set */
                         uioutToSet?:number;
-                        /**  Number of uiouts to set */
-                        numberToSet?:number;
                         /**  The array of values to set on the modbus outputs */
                         valueToSetArray?:number[];
-                        /**  Whether the modbus slave uses little endian byte representation */
-                        little_endian?:boolean;
             }
             /** Status for a set modbus unsigned integer output activity */
             export type SetModbusUioutActivityStatus = {
             
                         /**  Error code of the modbus write */
-                        modbus_error_code?:number;
+                        errorCode?:number;
                         /**  Defines if the modbus write was successful */
                         isError?:boolean;
             }
@@ -2486,6 +2488,16 @@ export const GbcConstants = {
                         diameter?:number;
                         /**  Rigid body params for the tool */
                         rigidBodyInertia?:RigidBodyInertia;
+                        /**  Interface used to control the tool */
+                        interface?:INTERFACE;
+                        /**  IO index for the grasp signal */
+                        graspIo?:number;
+                        /**  IO index for the release signal */
+                        releaseIo?:number;
+                        /**  IO index for the grasp sense signal */
+                        graspSenseIo?:number;
+                        /**  IO index for the release sense signal */
+                        releaseSenseIo?:number;
             }
             /** @ignore */
             export type SerialConfig = {

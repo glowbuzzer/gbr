@@ -91,8 +91,17 @@ export type SafetyInputMetadata = SafetyIoMetadata & {
     type?: "acknowledgeable" | "unacknowledgeable"
 }
 
+export type ToolMetadata = {
+    filename: string
+    index: number
+}
+
 type MachineIoItem = {
     safety?: boolean
+    index: number
+}
+type ToolFileName = {
+    filename: string
     index: number
 }
 
@@ -189,7 +198,7 @@ export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
     iin?: IinConfig[]
     uiin?: UiinConfig[]
     spindle?: SpindleConfig[]
-    tool?: ToolConfig[]
+    tool?: WithMetadata<ToolConfig, ToolMetadata>[]
     externalDin?: ExternalDinConfig[]
     externalIin?: ExternalIinConfig[]
     externalUiin?: ExternalUiinConfig[]

@@ -69,7 +69,7 @@ export const SlaveCatTree: React.FC<SlaveObjectTreeProps> = ({
         setIsModalVisible(true)
     }
 
-    console.log(slaveData)
+    // console.log(slaveData)
 
     return (
         <div>

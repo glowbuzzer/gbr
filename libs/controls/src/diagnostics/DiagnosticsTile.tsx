@@ -8,6 +8,8 @@ import styled from "styled-components"
 import { Card, TabsProps } from "antd"
 import { EmStatTab } from "./EmStatTab"
 import { SafetyTab } from "./SafetyTab"
+import { DrivesTab } from "./DrivesTab"
+import { SlaveFileOpsTab } from "./SlaveFileOpsTab"
 
 const StyledDiv = styled.div`
     //padding: 10px;
@@ -29,14 +31,21 @@ export const DiagnosticsTile = () => {
 
     const tab_content = {
         etherCat: <EmStatTab />,
-        safety: <SafetyTab />
+        drives: <DrivesTab />,
+        safety: <SafetyTab />,
+        files: <SlaveFileOpsTab />
     }
 
     const tabs: TabsProps["items"] = [
         { key: "etherCat", label: "EtherCAT diagnostics" },
+        { key: "drives", label: "Drives diagnostics" },
         {
             key: "safety",
             label: "Safety diagnostics"
+        },
+        {
+            key: "files",
+            label: "Slave file operations"
         }
     ]
 

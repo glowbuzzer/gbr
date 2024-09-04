@@ -48,28 +48,28 @@ export const EmStatTab = () => {
         return record.key.endsWith("_se") ? "highlight-row" : "normal"
     }
 
-    async function download_drive_logs() {
-        await request("download drive logs", { enable: true })
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        await request("download drive logs", { enable: false })
-        messageApi.success("Drive logs download triggered")
-    }
+    // async function download_drive_logs() {
+    //     await request("download drive logs", { enable: true })
+    //     await new Promise(resolve => setTimeout(resolve, 1000))
+    //     await request("download drive logs", { enable: false })
+    //     messageApi.success("Drive logs download triggered")
+    // }
 
     return (
         <>
             {messageContext}
-            <DockToolbar>
-                <DockToolbarButtonGroup>
-                    <GlowbuzzerIcon
-                        useFill
-                        Icon={SaveOutlined}
-                        button
-                        disabled={!download_enabled}
-                        onClick={download_drive_logs}
-                        title="Download Drive Logs"
-                    />
-                </DockToolbarButtonGroup>
-            </DockToolbar>
+            {/*<DockToolbar>*/}
+            {/*    <DockToolbarButtonGroup>*/}
+            {/*        <GlowbuzzerIcon*/}
+            {/*            useFill*/}
+            {/*            Icon={SaveOutlined}*/}
+            {/*            button*/}
+            {/*            disabled={!download_enabled}*/}
+            {/*            onClick={download_drive_logs}*/}
+            {/*            title="Download Drive Logs"*/}
+            {/*        />*/}
+            {/*    </DockToolbarButtonGroup>*/}
+            {/*</DockToolbar>*/}
             <StyledTable
                 ref={tableRef}
                 rowClassName={getRowClassName}

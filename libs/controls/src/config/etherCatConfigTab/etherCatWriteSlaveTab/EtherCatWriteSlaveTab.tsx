@@ -52,23 +52,24 @@ export const EtherCatWriteSlaveTab: React.FC = ({}) => {
     }, [])
     return (
         <ConditionalDisplayInOpEnabled>
-            <Input.TextArea
-                rows={4}
-                value={requestText}
-                onChange={e => setRequestText(e.target.value)}
-            />
-            <Button type="primary" onClick={send_request}>
-                Send Request
-            </Button>
-            {isError && <Alert message="Error" description={responseText} type="error" showIcon />}
-            {!isError && responseText && (
-                <Alert
-                    message="Response"
-                    description={<pre>{responseText}</pre>}
-                    type="success"
-                    showIcon
-                />
-            )}
+            <h3>Disabled - too dangerous even for the engineer who designed the system!</h3>
+            {/*<Input.TextArea*/}
+            {/*    rows={4}*/}
+            {/*    value={requestText}*/}
+            {/*    onChange={e => setRequestText(e.target.value)}*/}
+            {/*/>*/}
+            {/*<Button type="primary" onClick={send_request}>*/}
+            {/*    Send Request*/}
+            {/*</Button>*/}
+            {/*{isError && <Alert message="Error" description={responseText} type="error" showIcon />}*/}
+            {/*{!isError && responseText && (*/}
+            {/*    <Alert*/}
+            {/*        message="Response"*/}
+            {/*        description={<pre>{responseText}</pre>}*/}
+            {/*        type="success"*/}
+            {/*        showIcon*/}
+            {/*    />*/}
+            {/*)}*/}
         </ConditionalDisplayInOpEnabled>
     )
 }

@@ -152,10 +152,10 @@ const SlaveDropdown: React.FC<SlaveDropdownProps> = ({
 
     useEffect(() => {
         if (selectedSlave) {
-            console.log("Selected slave", selectedSlave)
+            // console.log("Selected slave", selectedSlave)
             const foundSlaveData = slaveData.find(s => s.name === selectedSlave.eep_name)
             setSelectedSlaveData(foundSlaveData)
-            console.log("Selected slave data", foundSlaveData)
+            // console.log("Selected slave data", foundSlaveData)
         } else {
             setSelectedSlaveData(undefined)
         }
@@ -203,18 +203,38 @@ const SlaveDropdown: React.FC<SlaveDropdownProps> = ({
     )
 }
 
-//filter slave list by optional
 function transformToSlaveList(config: EtherCatConfig): slaveList[] {
-    return config.ethercat.slaves
-        .map((slave, index) => ({
-            idx: index,
-            name: slave.name,
-            eep_name: slave.eep_name,
-            is_configurable: slave.optional.is_configurable,
-            is_enabled: slave.optional.is_enabled
-        }))
-        .filter(slave => !(slave.is_configurable && !slave.is_enabled))
-        .map(({ idx, name, eep_name }) => ({ idx, name, eep_name }))
+    // Step 1: Initial mapping to extract relevant properties
+    const mappedSlaves = config.ethercat.slaves.map((slave, index) => ({
+        idx: index,
+        name: slave.name,
+        eep_name: slave.eep_name,
+        is_configurable: slave.optional.is_configurable,
+        is_enabled: slave.optional.is_enabled
+    }))
+
+    // Log the output after the initial mapping
+    // console.log("After mapping:", mappedSlaves)
+
+    // Step 2: Filter based on configurability and enabled state
+    const filteredSlaves = mappedSlaves.filter(
+        slave => !slave.is_configurable || (slave.is_configurable && slave.is_enabled)
+    )
+
+    // Log the output after filtering
+    // console.log("After filtering:", filteredSlaves)
+
+    // Step 3: Re-map to assign consecutive indices and select only necessary properties
+    const finalSlaves = filteredSlaves.map((slave, index) => ({
+        idx: index, // Reassign index to ensure consecutive numbers
+        name: slave.name,
+        eep_name: slave.eep_name
+    }))
+
+    // Log the output after final mapping
+    // console.log("After final mapping:", finalSlaves)
+
+    return finalSlaves
 }
 
 type EtherCatReadSlaveTabProps = {}
@@ -265,7 +285,7 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
     const [selectedSlaveData, setSelectedSlaveData] = useState<slave | undefined>(undefined)
 
     const filteredSlaveList = transformToSlaveList(config)
-    console.log(filteredSlaveList) // Output: [ { idx: 0, name: 'Eep1' } ]
+    // console.log("filteredSlaveList", filteredSlaveList)
 
     // const handleNodeSelect = (node: DataNode) => {
     //     setSelectedNode(node)
@@ -289,7 +309,7 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
     // }
 
     const getPayloadValue = (response: string): number | string => {
-        console.log("Response", response)
+        // console.log("Response", response)
         try {
             const parsedResponse: ResponsePayload = JSON.parse(response)
             console.log("Parsed response", parsedResponse)
@@ -317,12 +337,12 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
             ) {
                 setSelectedNode(null)
                 setResponseText(undefined)
-                console.log("Clicked outside")
+                // console.log("Clicked outside")
             }
         }
 
         const handleScroll = () => {
-            console.log("scrolling")
+            // console.log("scrolling")
             setIsScrolling(true)
             if (scrollTimeoutRef.current) {
                 clearTimeout(scrollTimeoutRef.current)
@@ -430,23 +450,23 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
 
     useEffect(() => {
         if (selectedSlave) {
-            console.log("Selected slave", selectedSlave)
+            // console.log("Selected slave", selectedSlave)
             const foundSlaveData = slaveData.find(s => s.name === selectedSlave.eep_name)
             setSelectedSlaveData(foundSlaveData)
-            console.log("Selected slave data", foundSlaveData)
+            // console.log("Selected slave data", foundSlaveData)
         } else {
             setSelectedSlaveData(undefined)
         }
     }, [selectedSlave, slaveData]) // Add slaveData to dependency array
 
     if (selectedNode) {
-        console.log("Selected node", selectedNode)
+        // console.log("Selected node", selectedNode)
     }
 
     const handleNodeSelect = (node: DataNode) => {
         setSelectedNode(node)
         setResponseText(undefined)
-        console.log("Selected node", node)
+        // console.log("Selected node", node)
     }
 
     return (

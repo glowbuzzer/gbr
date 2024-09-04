@@ -13,6 +13,8 @@ import { EtherCatConfigProvider } from "./etherCatConfigTab/EtherCatConfigContex
 import { MachineEnvelopeConfigTab } from "./machineEnvelopeConfigTab/MachineEnvelopeConfigTab"
 import { VerticalAxisConfigTab } from "./verticalAxisConfigTab/verticalAxisConfigTab"
 import { ToolConfigTab } from "./toolConfigTab/ToolConfigTab"
+import { DrivesTab } from "../diagnostics/DrivesTab"
+import { DriveConfigTab } from "./driveConfigTab/driveConfigTab"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -38,6 +40,7 @@ export const ConfigEditTile = () => {
     const tab_content = {
         io: <IoConfigTab />,
         etherCat: <EtherCatConfigTab />,
+        drives: <DriveConfigTab />,
         tool: <ToolConfigTab />,
         machineEnvelope: <MachineEnvelopeConfigTab />,
         frames: <p>Frames config content</p>,
@@ -48,8 +51,9 @@ export const ConfigEditTile = () => {
 
     const tabs: TabsProps["items"] = [
         { key: "io", label: "IO config" },
-        { key: "etherCat", label: "EtherCAT Config" },
-        { key: "tool", label: "Tool Config" },
+        { key: "etherCat", label: "EtherCAT config" },
+        { key: "drives", label: "Drives config" },
+        { key: "tool", label: "Tools config" },
         { key: "machineEnvelope", label: "Machine envelope config" },
         { key: "frames", label: "Frames config" },
         { key: "verticalAxis", label: "Vertical axis config" },

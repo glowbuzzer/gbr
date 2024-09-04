@@ -3,11 +3,11 @@
  */
 
 import * as React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { ReactReduxContext } from "react-redux"
 import { usePrefs, usePreview, useTrace } from "@glowbuzzer/store"
 import { Trace } from "./Trace"
-import { Canvas } from "@react-three/fiber"
+import { Canvas, useThree } from "@react-three/fiber"
 import { OrbitControls, useContextBridge } from "@react-three/drei"
 import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { PreviewPath } from "./PreviewPath"
@@ -18,6 +18,7 @@ import { ReactComponent as ShowChartIcon } from "@material-symbols/svg-400/outli
 import { ReactComponent as AutoGraphIcon } from "@material-symbols/svg-400/outlined/auto_graph.svg"
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { ReactComponent as PointsIcon } from "@material-symbols/svg-400/outlined/pin_drop.svg"
+import { ReactComponent as DownloadIcon } from "@material-symbols/svg-400/outlined/download.svg"
 import { FramesDisplay } from "./FramesDisplay"
 import { DefaultPerspectiveCamera } from "./DefaultPerspectiveCamera"
 import { DefaultGridHelper } from "./DefaultGridHelper"
@@ -26,6 +27,7 @@ import { DefaultViewCube } from "./DefaultViewCube"
 import { DefaultLighting } from "./DefaultLighting"
 import { PointsDisplay } from "./PointsDisplay"
 import { Vector3 } from "three"
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter"
 
 type ThreeDimensionalSceneTileProps = {
     /** The kinematics configuration to use */
@@ -48,6 +50,14 @@ type ThreeDimensionalSceneTileProps = {
     initialCameraPosition?: Vector3
     /** Optional react-three-fiber children to render */
     children?: React.ReactNode
+}
+
+const SceneExporter = ({ sceneRef }) => {
+    const { scene } = useThree()
+    React.useEffect(() => {
+        sceneRef.current = scene
+    }, [scene])
+    return null
 }
 
 /**
@@ -77,6 +87,7 @@ export const ThreeDimensionalSceneTile = ({
     const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
     const { segments, highlightLine, disabled } = usePreview()
     const ContextBridge = useContextBridge(ReactReduxContext)
+    const sceneRef = useRef<THREE.Scene | null>(null)
 
     function toggle_preview() {
         setHidePreview(current => !current)
@@ -86,9 +97,31 @@ export const ThreeDimensionalSceneTile = ({
         setHideTrace(current => !current)
     }
 
+    function downloadGLTF() {
+        if (!sceneRef.current) return
+
+        const exporter = new GLTFExporter()
+        exporter.parse(
+            sceneRef.current,
+            function (result) {
+                const output = JSON.stringify(result, null, 2)
+                const blob = new Blob([output], { type: "application/json" })
+                const url = URL.createObjectURL(blob)
+                const link = document.createElement("a")
+                link.href = url
+                link.download = "scene.gltf"
+                link.click()
+            },
+            error => {
+                console.error("An error happened during GLTF export", error)
+            }
+        )
+    }
+
     return (
         <>
             <Canvas shadows frameloop="demand">
+                <SceneExporter sceneRef={sceneRef} />
                 <ContextBridge>
                     <ScaleProvider>
                         {noCamera || <DefaultPerspectiveCamera position={initialCameraPosition} />}
@@ -159,6 +192,17 @@ export const ThreeDimensionalSceneTile = ({
                         button
                         title="Clear Trace"
                         onClick={reset}
+                    />
+                </DockToolbarButtonGroup>
+                <DockToolbarButtonGroup>
+                    <GlowbuzzerIcon
+                        name="download"
+                        useFill={true}
+                        Icon={DownloadIcon}
+                        button
+                        // checked={!!current.showFrames}
+                        title={"Download 3D scene GLTF"}
+                        onClick={downloadGLTF}
                     />
                 </DockToolbarButtonGroup>
             </DockToolbar>
