@@ -90,7 +90,6 @@ export const SafetyOverrideModePanel = () => {
     }
 
     const current = step_num()
-    console.log("current", current)
 
     return (
         <StatusTrayItem id="override-mode">

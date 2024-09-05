@@ -111,16 +111,6 @@ function merge(...configs: GlowbuzzerConfig[]): GlowbuzzerConfig {
                 if (overlay) {
                     acc[key] = overlay
                 }
-                // // all the values in config are arrays or undefined
-                // if (!existing || !Array.isArray(existing) || existing.length !== overlay.length) {
-                //     // if the lengths to merge are different, we assume the overlay should overwrite all
-                //     acc[key] = overlay
-                // } else {
-                //     // we're only interested in merging the top-level properties of objects in array
-                //     // TODO: M: We might need to do a more selective merge here.
-                //     //          For example kinematicsConfiguration.frameIndex might be overridden
-                //     acc[key] = overlay.map((v: object, i: number) => ({ ...existing[i], ...v }))
-                // }
             }
         }
         return acc
@@ -173,8 +163,8 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
             const { gbcVersion, schemaVersion, readonly, simulationOnly, ...remote } =
                 action.payload
 
-            const current = merge(remote, state.appConfig, state.local)
-            const requiresUpload = !configEqual(current, remote)
+            const current = merge(GlowbuzzerMinimalConfig, remote, state.appConfig, state.local)
+            const requiresUpload = !configEqual(current, merge(GlowbuzzerMinimalConfig, remote))
 
             return {
                 ...state,
@@ -194,18 +184,10 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
         addConfig(state, action) {
             const local = merge(state.local, action.payload)
             const current = merge(state.current, state.appConfig, local)
-            const requiresUpload = !configEqual(current, state.remote)
-            // console.log(
-            //     "add config called, resulting config: ",
-            //     current,
-            //     "from",
-            //     "payload",
-            //     action.payload,
-            //     "local state",
-            //     state.local,
-            //     "local merged",
-            //     local
-            // )
+            const requiresUpload = !configEqual(
+                current,
+                merge(GlowbuzzerMinimalConfig, state.remote)
+            )
             return {
                 ...state,
                 local,
@@ -215,21 +197,14 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
         },
 
         /** Set config - overrides and resets any locally modified config */
-        setConfig(state, action) {
+        setConfig() {
             throw new Error("Reducer setConfig is no longer supported!")
-            // state.version++
-            // state.modified = false
-            // state.remote = null
-            // state.current = action.payload
-            // persist(state)
         }
     },
-    extraReducers: gbdbExtraReducersFactory<ConfigSliceState>((state, action) => {
+    extraReducers: gbdbExtraReducersFactory<ConfigSliceState>(state => {
         // config has been modified by load of gbdb facet (into 'local' state)
         const current = merge(state.current, state.local)
-        // console.log("local", JSON.parse(JSON.stringify(state.local, null, 2)))
-        // console.log("extra reducer called", JSON.parse(JSON.stringify(current, null, 2)))
-        const requiresUpload = !configEqual(current, state.remote)
+        const requiresUpload = !configEqual(current, merge(GlowbuzzerMinimalConfig, state.remote))
         return {
             ...state,
             current,
@@ -296,32 +271,13 @@ export function configMetadata<T extends { $metadata?: any }>(
 /**
  * Returns a function that can be used to apply partial updates to the configuration. Configuration
  * changes will be sent to GBC.
+ *
+ * @deprecated Use GbDb functionality instead
  */
 export function useConfigLoader() {
-    // const connection = useConnection()
-    // const config = useConfig()
-    // const dispatch = useDispatch()
-
-    console.error(
+    throw new Error(
         "Config loader is no longer supported - projects should use GbDb functionality instead"
     )
-
-    return async (change: Partial<GlowbuzzerConfig>, overwriteCurrent = false): Promise<void> => {
-        // const next: GlowbuzzerConfig = {
-        //     ...config,
-        //     ...change
-        // }
-        // if (connection.connected) {
-        //     await connection.request("load config", { config: next })
-        //     dispatch(configSlice.actions.setConfig(next))
-        // } else {
-        //     // just do the dispatch, but config is now cached
-        //     dispatch(configSlice.actions.setOfflineConfig(next))
-        //     if (overwriteCurrent) {
-        //         dispatch(configSlice.actions.setConfig(next))
-        //     }
-        // }
-    }
 }
 
 export function useConfigSync(): [boolean, () => Promise<void>] {

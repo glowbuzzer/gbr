@@ -24,15 +24,16 @@ import {
     ToolsGbdbFacetSlice
 } from "@glowbuzzer/store"
 import { SimpleMoveCapability } from "./SimpleMoveCapabilities"
+import { FlowMakerCapability } from "@glowbuzzer/controls"
 
 // console.log(config)
 
 const persistence: GbdbConfiguration = {
     facets: {
-        project: {
-            dependencies: ["cell"],
-            slices: [FlowGbdbFacetSlice, PointsGbdbFacetSlice]
-        },
+        // project: {
+        //     dependencies: ["cell"],
+        //     slices: [FlowGbdbFacetSlice, PointsGbdbFacetSlice]
+        // },
         cell: {
             singleton: true,
             autoSave: true,
@@ -56,8 +57,10 @@ const userModel: UserModel = {
             .addCapabilities(SimpleMoveCapability.READ, SimpleMoveCapability.WRITE)
             .build(),
 
-        // add an empty anonymous role
-        new RoleBuilder("anon").addCapabilities(SimpleMoveCapability.READ).build()
+        // add an anonymous role
+        new RoleBuilder("anon")
+            .addCapabilities(SimpleMoveCapability.READ, FlowMakerCapability.RUN)
+            .build()
     ]
 }
 

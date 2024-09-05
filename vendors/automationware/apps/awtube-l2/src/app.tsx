@@ -13,7 +13,7 @@ import {
     DockLayoutProvider,
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
-    FlowTileDefinition,
+    FlowEditorTileDefinition,
     FramesTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
@@ -52,6 +52,7 @@ import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { AppStatusBar } from "./AppStatusBar"
+import { FlowRuntimeTileDefinition } from "../../../../../libs/controls/src/flow/runtime/FlowRuntimeTileDefinition"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -146,7 +147,8 @@ export const App = () => {
                     DockTileDefinitionBuilder(JointJogTileDefinition)
                         .wrap(InnoboticsJogTileWrapper)
                         .build(),
-                    DockTileDefinitionBuilder(FlowTileDefinition)
+                    FlowEditorTileDefinition,
+                    DockTileDefinitionBuilder(FlowRuntimeTileDefinition)
                         .wrap(InnoboticsFlowTileWrapper)
                         .build(),
                     CartesianDroTileDefinition,

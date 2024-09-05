@@ -3,15 +3,22 @@
  */
 
 import * as React from "react"
-import { Button, Card, Flex, StepProps, Steps } from "antd"
-import { FlowRuntimeControls } from "./FlowRuntimeControls"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { useFlowContext } from "./FlowContextProvider"
+import { Alert, Button, Card, Dropdown, Flex, List, StepProps, Steps } from "antd"
 import styled from "styled-components"
-import { FlowState } from "./runtime/types"
 import { ActivityStreamItem, useFlows } from "@glowbuzzer/store"
-import { FlowTriggerDisplay } from "./display/FlowTriggerDisplay"
-import { FlowActivityDisplay } from "./display/FlowActivityDisplay"
+import { FlowState } from "./types"
+import { FlowActivityDisplay } from "../display/FlowActivityDisplay"
+import { useFlowContext } from "../FlowContextProvider"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { FlowRuntimeControls } from "./FlowRuntimeControls"
+import { FlowTriggerDisplay } from "../display/FlowTriggerDisplay"
+import { FlowSelectDropdown } from "../FlowSelectDropdown"
+import { useFlowCustomContext } from "../FlowCustomContextProvider"
+import { StyledEmpty } from "../styles"
+import { useUser } from "../../usermgmt"
+import { FlowMakerCapability } from "../FlowMakerCapability"
+import { ListGridType } from "antd/es/list"
+import { CaretRightOutlined } from "@ant-design/icons"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -25,6 +32,10 @@ const StyledDiv = styled.div`
 
     .col3 {
         grid-template-columns: 1fr 3fr 1fr;
+    }
+
+    .auto {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     }
 
     .ant-steps-item-title {
@@ -98,9 +109,63 @@ const FlowRuntimeFlowDisplay = ({ activities, tag, state }: FlowRuntimeFlowDispl
     )
 }
 
-export const FlowRuntimeDisplay = () => {
+const FlowRuntimePicker = () => {
+    const all_flows = useFlows()
+    const { startFlow } = useFlowContext()
+    const { hasCapability } = useUser()
+    const { enabled, message } = useFlowCustomContext()
+
+    const flows = all_flows.filter(
+        flow => !flow.restricted || hasCapability(FlowMakerCapability.EDIT)
+    )
+
+    if (!flows.length) {
+        return (
+            <StyledEmpty>
+                <div className="description">
+                    No flows defined. Flows allow you to create complex sequences of activities,
+                    including dynamic triggers, external integrations and branching
+                </div>
+            </StyledEmpty>
+        )
+    }
+
+    return (
+        <StyledDiv>
+            <Flex vertical gap="small">
+                {message && <Alert message={message} type="warning" showIcon />}
+                <div className="grid auto">
+                    {flows.map((flow, index) => (
+                        <Card key={index} title={flow.name} size="small" style={{ height: "100%" }}>
+                            <Flex vertical gap="small">
+                                {flow.description}
+                                <div>
+                                    <Button
+                                        size="large"
+                                        icon={<CaretRightOutlined />}
+                                        onClick={() => startFlow(flow)}
+                                        disabled={!enabled}
+                                    >
+                                        Start
+                                    </Button>
+                                </div>
+                            </Flex>
+                        </Card>
+                    ))}
+                </div>
+            </Flex>
+        </StyledDiv>
+    )
+}
+
+export const FlowRuntimeTile = () => {
     const flows = useFlows()
-    const { activeFlow, activities, completedFlows, state, tag, close } = useFlowContext()
+    const { active, activeFlow, activities, completedFlows, state, tag, close } = useFlowContext()
+    const { message } = useFlowCustomContext()
+
+    if (!active) {
+        return <FlowRuntimePicker />
+    }
 
     return (
         <DockTileWithToolbar
@@ -112,6 +177,8 @@ export const FlowRuntimeDisplay = () => {
         >
             <StyledDiv>
                 <Flex vertical gap="small">
+                    {message && <Alert message={message} type="warning" showIcon />}
+
                     {completedFlows.map(({ flow, activities }, index) => (
                         <Card key={index} size="small" title={`Completed Flow: "${flow.name}"`}>
                             <FlowRuntimeCompletedDisplay activities={activities} />
@@ -137,11 +204,7 @@ export const FlowRuntimeDisplay = () => {
                             )}
                         </Card>
                     )}
-                    {close && (
-                        <Button size="small" onClick={close}>
-                            Done
-                        </Button>
-                    )}
+                    {close && <Button onClick={close}>Done</Button>}
                 </Flex>
             </StyledDiv>
         </DockTileWithToolbar>

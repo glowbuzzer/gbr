@@ -12,22 +12,20 @@ import {
     FlowType,
     useFlows
 } from "@glowbuzzer/store"
-import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { Alert, Button, Dropdown, Flex, Select } from "antd"
-import { ItemType } from "antd/es/menu/hooks/useItems"
-import { FlowUndoRedoButtons } from "./FlowUndoRedoButtons"
+import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
+import { Button, Dropdown, Flex } from "antd"
+import { FlowUndoRedoButtons } from "../FlowUndoRedoButtons"
 import { ReactComponent as AddIcon } from "@material-symbols/svg-400/outlined/add.svg"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { FlowEditModal } from "./editor/FlowEditModal"
+import { GlowbuzzerIcon } from "../../util/GlowbuzzerIcon"
+import { FlowEditModal } from "./FlowEditModal"
 import { useDispatch } from "react-redux"
-import { FlowBranchesDisplay } from "./display/FlowBranchesDisplay"
-import { FlowBasicSettingsDisplay } from "./display/FlowBasicSettingsDisplay"
-import { FlowRuntimeControls } from "./FlowRuntimeControls"
-import { FlowActivitiesDisplay } from "./display/FlowActivitiesDisplay"
-import { FlowRuntimeDisplay } from "./FlowRuntimeDisplay"
-import { useFlowContext } from "./FlowContextProvider"
-import { FlowIntegrationDisplay } from "./display/FlowIntegrationDisplay"
-import { useFlowCustomContext } from "./FlowCustomContextProvider"
+import { FlowBranchesDisplay } from "../display/FlowBranchesDisplay"
+import { FlowBasicSettingsDisplay } from "../display/FlowBasicSettingsDisplay"
+import { FlowActivitiesDisplay } from "../display/FlowActivitiesDisplay"
+import { useFlowContext } from "../FlowContextProvider"
+import { FlowIntegrationDisplay } from "../display/FlowIntegrationDisplay"
+import { FlowSelectDropdown } from "../FlowSelectDropdown"
+import { StyledEmpty } from "../styles"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -47,26 +45,9 @@ const StyledDiv = styled.div`
     }
 `
 
-const StyledEmpty = styled.div`
-    color: ${props => props.theme.colorTextSecondary};
-    height: 100%;
-    display: flex;
-    gap: 20px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .description {
-        text-align: center;
-        line-height: 1.5em;
-        max-width: 380px;
-    }
-`
-
-export const FlowTile = () => {
+export const FlowEditorTile = () => {
     const flows = useFlows()
-    const { active, selectedFlowIndex, setSelectedFlowIndex } = useFlowContext()
-    const { message } = useFlowCustomContext()
+    const { selectedFlowIndex, setSelectedFlowIndex } = useFlowContext()
 
     const [editingActivity, setEditingActivity] = React.useState<{
         flow: number
@@ -75,12 +56,6 @@ export const FlowTile = () => {
         activity: ActivityStreamItem
     }>()
     const dispatch = useDispatch()
-
-    const items: ItemType[] = flows.map((flow, index) => ({
-        key: index,
-        value: index,
-        label: <>{flow.name}</>
-    }))
 
     function save_activity_edit(activity: ActivityStreamItem) {
         dispatch(flowSlice.actions.updateActivity({ ...editingActivity, activity }))
@@ -141,23 +116,15 @@ export const FlowTile = () => {
     const selected_index = Math.min(selectedFlowIndex, flows.length - 1)
     const flow = flows[selected_index]
 
-    return active ? (
-        <FlowRuntimeDisplay />
-    ) : (
+    return (
         <DockTileWithToolbar
             toolbar={
                 <>
-                    <Select
-                        size="small"
-                        options={items}
-                        value={selected_index}
-                        onChange={value => setSelectedFlowIndex(value)}
-                    ></Select>
+                    <FlowSelectDropdown />
                     <Dropdown menu={{ items: add_flow_items }} trigger={["click"]}>
                         <GlowbuzzerIcon Icon={AddIcon} button />
                     </Dropdown>
                     <FlowUndoRedoButtons />
-                    <FlowRuntimeControls />
                 </>
             }
         >
@@ -168,8 +135,6 @@ export const FlowTile = () => {
             />
             <StyledDiv>
                 <Flex vertical gap="middle">
-                    {message && <Alert message={message} type="warning" showIcon />}
-
                     <FlowBasicSettingsDisplay
                         flow={flow}
                         onChange={save_flow_edit}

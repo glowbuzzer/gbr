@@ -4,9 +4,9 @@
 
 import * as React from "react"
 import { Flow } from "@glowbuzzer/store"
-import { Form, Input, Modal } from "antd"
+import { Checkbox, Form, Input, Modal } from "antd"
 import { useEffect, useState } from "react"
-import { PrecisionInput } from "../../util/components/PrecisionInput"
+import { PrecisionInput } from "../../util"
 
 type FlowBasicSettingsEditModalProps = {
     flow: Flow
@@ -14,7 +14,7 @@ type FlowBasicSettingsEditModalProps = {
     onCancel(): void
 }
 
-type EditableFlowProps = Pick<Flow, "name" | "description" | "repeat">
+type EditableFlowProps = Pick<Flow, "name" | "description" | "repeat" | "restricted">
 
 export const FlowBasicSettingsEditModal = ({
     flow,
@@ -24,6 +24,7 @@ export const FlowBasicSettingsEditModal = ({
     const [edited, setEdited] = useState<EditableFlowProps>({
         name: flow.name,
         description: flow.description,
+        restricted: !!flow.restricted,
         repeat: flow.repeat || 1
     })
 
@@ -31,6 +32,7 @@ export const FlowBasicSettingsEditModal = ({
         setEdited({
             name: flow.name,
             description: flow.description,
+            restricted: !!flow.restricted,
             repeat: flow.repeat || 1
         })
     }, [flow])
@@ -55,6 +57,13 @@ export const FlowBasicSettingsEditModal = ({
                 </Form.Item>
                 <Form.Item label="Repeat Count" name="repeat">
                     <PrecisionInput value={edited.repeat} precision={0} min={1} />
+                </Form.Item>
+                <Form.Item
+                    label="Restricted (not Runnable)"
+                    name="restricted"
+                    valuePropName="checked"
+                >
+                    <Checkbox />
                 </Form.Item>
             </Form>
         </Modal>

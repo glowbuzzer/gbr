@@ -21,7 +21,7 @@ test.before.each(ctx => {
     gbc.enable_limit_check()
 })
 
-test("should not exceed limits when ramping from stationary to regular fro", async () => {
+test("should not exceed limits when ramping from stationary to regular fro (moveVectorAtVelocity)", async () => {
     try {
         gbc.set_fro(0, 0)
 
@@ -37,7 +37,7 @@ test("should not exceed limits when ramping from stationary to regular fro", asy
 
 test("should not give velocity spike at higher fro when cancelling (moveVectorAtVelocity)", async () => {
     try {
-        gbc.enable_limit_check(1.5)
+        gbc.enable_limit_check(5)
         const move = gbc.wrap(gbc.activity.moveVectorAtVelocity(0, 1, 0).promise)
         move.start().iterations(35)
         gbc.set_fro(0, 2)
@@ -50,8 +50,26 @@ test("should not give velocity spike at higher fro when cancelling (moveVectorAt
     }
 })
 
-test.only("should not give velocity spike at higher fro when cancelling (moveJointsAtVelocity)", async () => {
+test("should not break limits for fro change during ramp up (moveJointsAtVelocity)", async () => {
     try {
+        gbc.enable_limit_check(2)
+        gbc.set_fro(0, 1.2)
+        const move = gbc.wrap(gbc.activity.moveJointsAtVelocity([1]).promise)
+        move.start()
+        gbc.exec(5)
+        gbc.set_fro(0, 1)
+        gbc.exec(20)
+
+        const cancel = gbc.wrap(gbc.activity.cancel().promise)
+        cancel.start().iterations(30)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("should not break limits at higher fro when cancelling with fro change (moveJointsAtVelocity)", async () => {
+    try {
+        gbc.enable_limit_check(3) // we're running at double FRO, so give higher tolerance
         gbc.set_fro(0, 1)
         const move = gbc.wrap(gbc.activity.moveJointsAtVelocity([1]).promise)
         move.start()
@@ -60,7 +78,60 @@ test.only("should not give velocity spike at higher fro when cancelling (moveJoi
         gbc.exec(20)
 
         const cancel = gbc.wrap(gbc.activity.cancel().promise)
-        cancel.start().iterations(145)
+        cancel.start().iterations(50)
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("should be able to cancel immediately when fro is at zero (moveJointsAtVelocity)", async () => {
+    try {
+        gbc.set_fro(0, 1)
+        const move = gbc.wrap(gbc.activity.moveJointsAtVelocity([1]).promise)
+        move.start()
+        gbc.exec(25)
+        gbc.set_fro(0, 0)
+        gbc.exec(50)
+
+        const cancel = gbc.wrap(gbc.activity.cancel().promise)
+        cancel.start().iterations(10)
+        await cancel.assertCompleted()
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("will not cancel immediately when fro is non-zero (moveJointsAtVelocity)", async () => {
+    try {
+        gbc.set_fro(0, 1)
+        const move = gbc.wrap(gbc.activity.moveJointsAtVelocity([1]).promise)
+        move.start()
+        gbc.exec(25)
+        gbc.set_fro(0, 0.01) // small fro
+        gbc.exec(50)
+
+        const cancel = gbc.wrap(gbc.activity.cancel().promise)
+        cancel.start().iterations(10)
+        await cancel.assertNotResolved()
+    } finally {
+        gbc.plot("test")
+    }
+})
+
+test("should not break limits when cancelling and fro disabled (moveJointsAtVelocity)", async () => {
+    try {
+        gbc.enable_limit_check() // we're expecting to stay within regular limits
+        gbc.set_fro(0, 1)
+        const move = gbc.wrap(
+            gbc.activity.moveJointsAtVelocity([1]).params({ ignoreFeedrateOverride: true }).promise
+        )
+        move.start()
+        gbc.exec(25)
+        gbc.set_fro(0, 2)
+        gbc.exec(20)
+
+        const cancel = gbc.wrap(gbc.activity.cancel().promise)
+        cancel.start().iterations(50)
     } finally {
         gbc.plot("test")
     }

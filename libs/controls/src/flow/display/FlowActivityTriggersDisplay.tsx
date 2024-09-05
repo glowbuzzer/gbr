@@ -10,15 +10,10 @@ import { FlowTriggerDisplay } from "./FlowTriggerDisplay"
 export const FlowActivityTriggersDisplay = ({ triggers }: { triggers: TriggerParams[] }) => {
     return (
         <div>
-            {!!triggers?.length ? (
+            {triggers?.length > 0 &&
                 triggers.map((trigger, index) => {
                     return <FlowTriggerDisplay key={index} trigger={trigger} />
-                })
-            ) : (
-                <StyledFlowSettingItem>
-                    <div>IMMEDIATE START</div>
-                </StyledFlowSettingItem>
-            )}
+                })}
         </div>
     )
 }

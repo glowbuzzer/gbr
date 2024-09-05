@@ -45,9 +45,15 @@ export const JogTouchCartesian = ({
         if (connected) {
             preview.disable()
             if (positionMode === PositionMode.POSITION) {
-                await motion.moveVectorAtVelocity(vx, vy, 0).promise()
+                await motion
+                    .moveVectorAtVelocity(vx, vy, 0)
+                    .params({ ignoreFeedrateOverride: true })
+                    .promise()
             } else {
-                await motion.moveRotationAtVelocity(vx, vy, 0).promise()
+                await motion
+                    .moveRotationAtVelocity(vx, vy, 0)
+                    .params({ ignoreFeedrateOverride: true })
+                    .promise()
             }
             preview.enable()
         }
@@ -57,9 +63,15 @@ export const JogTouchCartesian = ({
         if (connected) {
             preview.disable()
             if (positionMode === PositionMode.POSITION) {
-                await motion.moveVectorAtVelocity(0, 0, vy).promise()
+                await motion
+                    .moveVectorAtVelocity(0, 0, vy)
+                    .params({ ignoreFeedrateOverride: true })
+                    .promise()
             } else {
-                await motion.moveRotationAtVelocity(0, 0, vy).promise()
+                await motion
+                    .moveRotationAtVelocity(0, 0, vy)
+                    .params({ ignoreFeedrateOverride: true })
+                    .promise()
             }
             preview.enable()
         }

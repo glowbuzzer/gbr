@@ -6,7 +6,7 @@ import { TriggerEditProps } from "../common/types"
 import { GTLT, TriggerOnAnalogInput, useAnalogInputList } from "@glowbuzzer/store"
 import { Select, Space } from "antd"
 import { FlowEditTriggerNumericComparisonDropdown } from "./FlowEditTriggerNumericComparisonDropdown"
-import { PrecisionInput } from "../../../util/components/PrecisionInput"
+import { PrecisionInput } from "../../../util"
 import * as React from "react"
 
 export const FlowEditTriggerAnalogInput = ({ trigger, onChange }: TriggerEditProps) => {

@@ -96,6 +96,7 @@ export const FlowBasicSettingsDisplay = ({
                     <Space>
                         <div>Flow "{flow.name}"</div>
                         {flow.repeat > 1 && <Tag>Repeat {flow.repeat} times</Tag>}
+                        {flow.restricted && <Tag>Restricted (not Runnable)</Tag>}
                     </Space>
                 }
             />

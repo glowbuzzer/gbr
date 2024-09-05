@@ -30,3 +30,19 @@ export const StyledParametersGrid = styled.div`
     grid-gap: 14px;
     grid-template-columns: auto auto auto auto auto 1fr;
 `
+
+export const StyledEmpty = styled.div`
+    color: ${props => props.theme.colorTextSecondary};
+    height: 100%;
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .description {
+        text-align: center;
+        line-height: 1.5em;
+        max-width: 380px;
+    }
+`

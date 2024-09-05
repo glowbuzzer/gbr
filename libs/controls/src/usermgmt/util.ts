@@ -5,6 +5,7 @@
 import { ConfigEditCapability } from "../config"
 import { UserManagementCapability } from "./capabilities"
 import { UserRoleDefinition } from "./types"
+import { FlowMakerCapability } from "../flow"
 
 export const ADMIN_ROLE_NAME = "admin"
 
@@ -21,7 +22,9 @@ export class RoleBuilder {
     static defaultAdminRole() {
         return new RoleBuilder(ADMIN_ROLE_NAME).addCapabilities(
             ConfigEditCapability.ENABLED,
-            UserManagementCapability.ALL
+            UserManagementCapability.ALL,
+            FlowMakerCapability.EDIT,
+            FlowMakerCapability.RUN
         )
     }
 

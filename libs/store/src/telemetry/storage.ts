@@ -147,6 +147,7 @@ function derive_edges(count: number, d: TelemetryEntry, prev: number): Telemetry
         sdo: [compare_edges(prev_sdo, curr_sdo, false), compare_edges(prev_sdo, curr_sdo, true)]
     }
 }
+
 /**
  * Append telemetry items to the circular buffer. This function also updates the cached
  * domains for each joint, plot, and view.
@@ -173,5 +174,6 @@ export function append_telemetry_items(
     } else {
         state.count = new_count
     }
+
     update_telemetry_domains(items)
 }

@@ -113,8 +113,8 @@ export const streamSlice: Slice<StreamSliceType[]> = createSlice({
         reset(state, action) {
             const streamIndex = action.payload
             state[streamIndex].buffer.length = 0
-            state[streamIndex].readCount = -1
-            state[streamIndex].writeCount = 0
+            // state[streamIndex].readCount = -1
+            // state[streamIndex].writeCount = 0
             state[streamIndex].lastWriteCount = -1
             state[streamIndex].writePending = false
             state[streamIndex].paused = false
@@ -185,23 +185,6 @@ export function updateStreamCommandMsg(streamIndex: number, streamCommand: STREA
         }
     })
 }
-
-// export function updateAllStreams(status: any[], streamCommand: STREAMCOMMAND) {
-//     const streams = status.map((_, i) => ({
-//         [i]: {
-//             command: {
-//                 streamCommand
-//             }
-//         }
-//     }))
-//     return JSON.stringify({
-//         command: {
-//             stream: {
-//                 ...streams
-//             }
-//         }
-//     })
-// }
 
 type ActivityGeneratorReturnType = ActivityBuilder | Promise<any>
 

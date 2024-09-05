@@ -3,7 +3,6 @@
  */
 
 import React, { createContext, useState } from "react"
-import { GlowbuzzerDimmerStyle } from "../app"
 import { UserLoginModal } from "./UserLoginModal"
 import { UserModel, UserProfile } from "./types"
 import { ADMIN_ROLE_NAME } from "./util"
@@ -16,6 +15,7 @@ type UserContextType = {
     capabilities: symbol[]
     logout(): void
     showAnonymousLogin(): void
+    hasCapability(capability: symbol): boolean
 }
 
 const UserContext = createContext<UserContextType>(null)
@@ -76,6 +76,9 @@ export const UserProvider = ({ model, children }: UserProviderProps) => {
         },
         showAnonymousLogin() {
             setAnonymousLogin(true)
+        },
+        hasCapability(capability: symbol) {
+            return !enabled || state.capabilities.includes(capability)
         }
     }
 

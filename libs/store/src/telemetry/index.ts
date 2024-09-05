@@ -81,6 +81,7 @@ export const telemetrySlice: Slice<
         },
         data(state, action) {
             const count = action.payload.length
+
             if (
                 state.captureState === CaptureState.RUNNING ||
                 state.captureState === CaptureState.CAPTURING

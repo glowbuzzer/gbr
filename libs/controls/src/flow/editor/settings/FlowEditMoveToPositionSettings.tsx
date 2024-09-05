@@ -8,7 +8,7 @@ import { StyledParametersGrid } from "../../styles"
 import { FlowEditCartesianPosition } from "../common/FlowEditCartesianPosition"
 import { Button, Card, Flex } from "antd"
 import { RobotConfigurationSelector } from "../../../misc/RobotConfigurationSelector"
-import { useKinematicsCartesianPosition, useKinematicsConfiguration } from "@glowbuzzer/store"
+import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
 import { StyledEditTabCardContent, StyledEditTabCardTitle } from "../styles"
 import { FlowEditTabTitleRadioGroup } from "../common/FlowEditTabTitleRadioGroup"
 import { FlowEditFrameSelectCard } from "../common/FlowEditFrameSelectCard"
@@ -17,7 +17,6 @@ export const FlowEditMoveToPositionSettings = ({
     item,
     onChange
 }: FlowActivityEditParametersProps) => {
-    const { supportedConfigurationBits } = useKinematicsConfiguration(0)
     const { configuration, position } = useKinematicsCartesianPosition(0)
 
     const moveToPosition = item.moveToPosition

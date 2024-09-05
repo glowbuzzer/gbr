@@ -5,23 +5,16 @@
 import * as React from "react"
 import { createContext, useEffect, useState } from "react"
 import { Modal } from "antd"
-import {
-    ActivityStreamItem,
-    ACTIVITYTYPE,
-    useAnalogOutputList,
-    useConfig,
-    useDigitalOutputList,
-    useExternalDigitalOutputList,
-    useExternalIntegerOutputList,
-    useExternalUnsignedIntegerOutputList,
-    useIntegerOutputList,
-    useUnsignedIntegerOutputList
-} from "@glowbuzzer/store"
+import { ActivityStreamItem, ACTIVITYTYPE, useConfig } from "@glowbuzzer/store"
 import { FlowEditorMoveToPositionTabs } from "./FlowEditorMoveToPositionTabs"
 import { FlowEditorMoveLineTabs } from "./FlowEditorMoveLineTabs"
 import { FlowEditorSetDigitalOutputTabs } from "./FlowEditorSetDigitalOutputTabs"
 import { FlowEditorSetGenericNumericOutputTabs } from "./FlowEditorSetGenericNumericOutputTabs"
 import { FlowEditorDwellTabs } from "./FlowEditorDwellTabs"
+import { FlowEditorSetPayloadTabs } from "./FlowEditorSetPayloadTabs"
+import { FlowEditorSetToolOffsetTabs } from "./FlowEditorSetToolOffsetTabs"
+import { FlowEditorSetModbusDout } from "./FlowEditorSetModbusDout"
+import { FlowEditorSetModbusUiout } from "./FlowEditorSetModbusUiout"
 
 function clone(item: ActivityStreamItem): ActivityStreamItem {
     return item ? JSON.parse(JSON.stringify(item)) : item
@@ -136,6 +129,31 @@ const FlowEditor = () => {
                     onChangeValue={value => onChange({ ...item, dwell: value })}
                 />
             )
+        case ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD:
+            return <FlowEditorSetPayloadTabs />
+
+        case ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET:
+            return <FlowEditorSetToolOffsetTabs />
+
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT:
+            return <FlowEditorSetModbusDout />
+
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT:
+            return <FlowEditorSetModbusUiout />
+
+        case ACTIVITYTYPE.ACTIVITYTYPE_NONE:
+        case ACTIVITYTYPE.ACTIVITYTYPE_PAUSEPROGRAM:
+        case ACTIVITYTYPE.ACTIVITYTYPE_ENDPROGRAM:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTS:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSATVELOCITY:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEVECTORATVELOCITY:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEROTATIONATVELOCITY:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEARC:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEINSTANT:
+        case ACTIVITYTYPE.ACTIVITYTYPE_SPINDLE:
+        case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSINTERPOLATED:
+        case ACTIVITYTYPE.ACTIVITYTYPE_GEARINPOS:
+        case ACTIVITYTYPE.ACTIVITYTYPE_GEARINVELO:
         default:
             return <div>Unknown activity type</div>
     }

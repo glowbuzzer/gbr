@@ -11,7 +11,7 @@ import {
     DockTileDefinitionBuilder,
     DiagnosticsTileDefinition,
     FeedRateTileDefinition,
-    FlowTileDefinition,
+    FlowEditorTileDefinition,
     FramesTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,

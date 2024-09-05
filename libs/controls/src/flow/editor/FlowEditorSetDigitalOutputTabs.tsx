@@ -39,6 +39,7 @@ export const FlowEditorSetDigitalOutputTabs = ({
             children: (
                 <FlowEditTriggersForActivity
                     triggers={item.triggers || []}
+                    startActionOnly
                     onChange={triggers => onChange({ ...item, triggers })}
                 />
             )

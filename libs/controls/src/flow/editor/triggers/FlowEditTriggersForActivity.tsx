@@ -3,16 +3,7 @@
  */
 
 import * as React from "react"
-import {
-    TRIGGERACTION,
-    TRIGGERON,
-    TriggerParams,
-    TRIGGERTYPE,
-    useAnalogInputList,
-    useDigitalInputList,
-    useIntegerInputList,
-    useSafetyDigitalInputList
-} from "@glowbuzzer/store"
+import { TRIGGERACTION, TRIGGERON, TriggerParams, TRIGGERTYPE } from "@glowbuzzer/store"
 import { Button, Card, Flex, Select, Space } from "antd"
 import { toEnumString } from "../../util"
 import styled from "styled-components"
@@ -39,9 +30,13 @@ const StyledTriggerTitle = styled.div`
 
 const FlowEditTriggerSettingsCard = ({
     trigger,
+    startActionOnly,
     onChange,
     onDelete
-}: TriggerEditProps & { onDelete: () => void }) => {
+}: TriggerEditProps & {
+    startActionOnly: boolean
+    onDelete: () => void
+}) => {
     const enabledTriggerOnOptions = useEnabledTriggerOnOptions()
 
     const { action, type } = trigger
@@ -58,20 +53,25 @@ const FlowEditTriggerSettingsCard = ({
             }
         >
             <Space>
-                <Select
-                    size="small"
-                    value={action}
-                    popupMatchSelectWidth={false}
-                    onChange={action => onChange({ ...trigger, action })}
-                >
-                    {[TRIGGERACTION.TRIGGERACTION_START, TRIGGERACTION.TRIGGERACTION_CANCEL].map(
-                        v => (
+                {startActionOnly ? (
+                    "START"
+                ) : (
+                    <Select
+                        size="small"
+                        value={action}
+                        popupMatchSelectWidth={false}
+                        onChange={action => onChange({ ...trigger, action })}
+                    >
+                        {[
+                            TRIGGERACTION.TRIGGERACTION_START,
+                            TRIGGERACTION.TRIGGERACTION_CANCEL
+                        ].map(v => (
                             <Select.Option key={v} value={v}>
                                 {toEnumString(TRIGGERACTION[v])}
                             </Select.Option>
-                        )
-                    )}
-                </Select>
+                        ))}
+                    </Select>
+                )}
                 after
                 <FlowEditTriggerOnDropdown
                     type={type}
@@ -91,10 +91,15 @@ const FlowEditTriggerSettingsCard = ({
 
 type FlowEditTriggersProps = {
     triggers: TriggerParams[]
+    startActionOnly?: boolean
     onChange(triggers: TriggerParams[]): void
 }
 
-export const FlowEditTriggersForActivity = ({ triggers, onChange }: FlowEditTriggersProps) => {
+export const FlowEditTriggersForActivity = ({
+    triggers,
+    startActionOnly,
+    onChange
+}: FlowEditTriggersProps) => {
     function delete_trigger(index: number) {
         onChange(triggers.filter((_, i) => i !== index))
     }
@@ -114,6 +119,7 @@ export const FlowEditTriggersForActivity = ({ triggers, onChange }: FlowEditTrig
                     <FlowEditTriggerSettingsCard
                         key={index}
                         trigger={trigger}
+                        startActionOnly={startActionOnly}
                         onChange={trigger => update_trigger(trigger, index, existing_type)}
                         onDelete={() => delete_trigger(index)}
                     />

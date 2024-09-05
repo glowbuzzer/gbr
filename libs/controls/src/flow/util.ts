@@ -15,6 +15,7 @@ import {
     ExternalIoutBuilder,
     ExternalUioutBuilder,
     FlowIntegration,
+    GlowbuzzerConfig,
     GlowbuzzerStatus,
     IoutBuilder,
     ModbusDoutBuilder,
@@ -73,7 +74,7 @@ export function toActivityTypeString(type: ACTIVITYTYPE) {
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT:
             return "Set External Digital Output"
         case ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET:
-            return "Tool Offset"
+            return "Set Tool Index"
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT:
             return "Set External Unsigned Integer Output"
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD:
@@ -100,7 +101,9 @@ export function toEnumString(value: string) {
 type ActivityTypeEntry = {
     type: ACTIVITYTYPE
     factory(position?: CartesianPositionsConfig): ActivityStreamItem
+    configKey?: keyof GlowbuzzerConfig
 }
+
 // Dummy controller used when adding activities via builders.
 // These activities cannot be executed directly and the tags will be updated
 // when the flow is actually executed.
@@ -133,31 +136,38 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT,
-        factory: () => new DoutBuilder(dummy_controller).dout(0).value(true).command
+        factory: () => new DoutBuilder(dummy_controller).dout(0).value(true).command,
+        configKey: "dout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT,
-        factory: () => new IoutBuilder(dummy_controller).iout(0).value(0).command
+        factory: () => new IoutBuilder(dummy_controller).iout(0).value(0).command,
+        configKey: "iout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT,
-        factory: () => new AoutBuilder(dummy_controller).aout(0).value(0).command
+        factory: () => new AoutBuilder(dummy_controller).aout(0).value(0).command,
+        configKey: "aout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_UIOUT,
-        factory: () => new UioutBuilder(dummy_controller).iout(0).value(0).command
+        factory: () => new UioutBuilder(dummy_controller).iout(0).value(0).command,
+        configKey: "uiout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT,
-        factory: () => new ExternalDoutBuilder(dummy_controller).dout(0).value(true).command
+        factory: () => new ExternalDoutBuilder(dummy_controller).dout(0).value(true).command,
+        configKey: "externalDout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_IOUT,
-        factory: () => new ExternalIoutBuilder(dummy_controller).iout(0).value(0).command
+        factory: () => new ExternalIoutBuilder(dummy_controller).iout(0).value(0).command,
+        configKey: "externalIout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT,
-        factory: () => new ExternalUioutBuilder(dummy_controller).iout(0).value(0).command
+        factory: () => new ExternalUioutBuilder(dummy_controller).iout(0).value(0).command,
+        configKey: "externalUiout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_DWELL,
@@ -165,7 +175,8 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET,
-        factory: () => new ToolOffsetBuilder(dummy_controller).toolIndex(0).command
+        factory: () => new ToolOffsetBuilder(dummy_controller).toolIndex(0).command,
+        configKey: "tool"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD,
@@ -173,11 +184,13 @@ export const ActivityFactoryList: ActivityTypeEntry[] = [
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT,
-        factory: () => new ModbusDoutBuilder(dummy_controller).dout(0).value([true]).command
+        factory: () => new ModbusDoutBuilder(dummy_controller).dout(0).value([true]).command,
+        configKey: "modbusDout"
     },
     {
         type: ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT,
-        factory: () => new ModbusUioutBuilder(dummy_controller).uiout(0).value([0]).command
+        factory: () => new ModbusUioutBuilder(dummy_controller).uiout(0).value([0]).command,
+        configKey: "modbusUiout"
     }
 ]
 

@@ -2,8 +2,8 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import * as React from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import {
     ActivityStreamItem,
     Flow,
@@ -17,13 +17,13 @@ import {
     useMachineConfig,
     useMachineState,
     useStream
-} from "@glowbuzzer/store";
-import { FlowState } from "./runtime/types";
-import { ClientSideTrigger, triggerFactory } from "./runtime/triggers";
-import { useFlowDerivedState, useFlowTriggerInputsState } from "./runtime/hooks";
+} from "@glowbuzzer/store"
+import { FlowState } from "./runtime/types"
+import { ClientSideTrigger, triggerFactory } from "./runtime/triggers"
+import { useFlowDerivedState, useFlowTriggerInputsState } from "./runtime/hooks"
 
-import { call_http_endpoint } from "./util";
-import { useFlowCustomContext } from "./FlowCustomContextProvider";
+import { call_http_endpoint } from "./util"
+import { useFlowCustomContext } from "./FlowCustomContextProvider"
 
 type CompletedFlow = {
     flow: Flow
@@ -40,6 +40,7 @@ type FlowContextType = {
     active: boolean
     state: FlowState
     start?: () => void
+    startFlow(flow: Flow): void
     stop?: () => void
     pause?: () => void
     reset?: () => void
@@ -132,7 +133,8 @@ export const FlowContextProvider = ({ children }) => {
                     }
                 }
             }
-            execute_active_flow().catch(() => {
+            execute_active_flow().catch(err => {
+                console.log("Error executing flow", err)
                 setError(true)
             })
         }
@@ -174,6 +176,7 @@ export const FlowContextProvider = ({ children }) => {
         setIteration(1)
         setLastTag(0)
         setCompletedFlows([])
+        setActivities([])
         setActiveFlow(flows[selectedFlowIndex])
     }
 
@@ -187,7 +190,7 @@ export const FlowContextProvider = ({ children }) => {
     }
 
     // by default no actions are available
-    const active = !!activeFlow || completedFlows.length > 0
+    const active = !!activeFlow || completedFlows.length > 0 || error
     const result: FlowContextType = {
         selectedFlowIndex,
         setSelectedFlowIndex,
@@ -196,7 +199,16 @@ export const FlowContextProvider = ({ children }) => {
         completedFlows,
         state,
         tag: lastTag,
-        active
+        active,
+        startFlow(flow: Flow) {
+            reset(false)
+            setError(false)
+            setIteration(1)
+            setActivities([])
+            setLastTag(0)
+            setCompletedFlows([])
+            setActiveFlow(flow)
+        }
     }
 
     // determine which actions are available based on the current state
@@ -213,7 +225,7 @@ export const FlowContextProvider = ({ children }) => {
             if (machine_state === MachineState.OPERATION_ENABLED && !error && enabled) {
                 result.start = start_stream
             }
-            if (!activeFlow || error) {
+            if (active) {
                 result.close = () => {
                     reset(true)
                     setCompletedFlows([])
@@ -259,4 +271,3 @@ export const FlowContextProvider = ({ children }) => {
 export function useFlowContext() {
     return useContext(FlowContext)
 }
-

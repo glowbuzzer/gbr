@@ -13,9 +13,28 @@ function to_digital_out_string(value: boolean) {
     return value ? "ON" : "OFF"
 }
 
+function to_digital_out_strings(value: boolean[]) {
+    return value.map(v => (v ? "ON" : "OFF")).join(", ")
+}
+
 export const FlowActivityParams = ({ item }: { item: ActivityStreamItem }) => {
-    const { dout, aout, iout, uiout, externalIout, externalUiout, externalDout, safetyDout } =
-        useConfig()
+    const {
+        dout,
+        aout,
+        iout,
+        uiout,
+        externalIout,
+        externalUiout,
+        externalDout,
+        safetyDout,
+        modbusDout,
+        modbusUiout,
+        tool
+    } = useConfig()
+
+    function safe_name(arr, index) {
+        return `${arr[index]?.name || "Unknown"} (${index})`
+    }
 
     switch (item.activityType) {
         case ACTIVITYTYPE.ACTIVITYTYPE_NONE:
@@ -33,50 +52,64 @@ export const FlowActivityParams = ({ item }: { item: ActivityStreamItem }) => {
         case ACTIVITYTYPE.ACTIVITYTYPE_SETDOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={dout[item.setDout.doutToSet].name}
+                    name={safe_name(dout, item.setDout.doutToSet)}
                     value={to_digital_out_string(item.setDout.valueToSet)}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_DOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={externalDout[item.setExternalDout.doutToSet].name}
+                    name={safe_name(externalDout, item.setExternalDout.doutToSet)}
                     value={to_digital_out_string(item.setExternalDout.valueToSet)}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SETIOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={iout[item.setIout.ioutToSet].name}
+                    name={safe_name(iout, item.setIout.ioutToSet)}
                     value={item.setIout.valueToSet.toString()}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_IOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={externalIout[item.setExternalIout.ioutToSet].name}
+                    name={safe_name(externalIout, item.setExternalIout.ioutToSet)}
                     value={item.setExternalIout.valueToSet.toString()}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SETAOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={aout[item.setAout.aoutToSet].name}
+                    name={safe_name(aout, item.setAout.aoutToSet)}
                     value={item.setAout.valueToSet.toString()}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_UIOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={uiout[item.setUiout.ioutToSet].name}
+                    name={safe_name(uiout, item.setUiout.ioutToSet)}
                     value={item.setUiout.valueToSet.toString()}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_SET_EXTERNAL_UIOUT:
             return (
                 <FlowActivityParamsGeneric
-                    name={externalUiout[item.setExternalUiout.ioutToSet].name}
+                    name={safe_name(externalUiout, item.setExternalUiout.ioutToSet)}
                     value={item.setExternalUiout.valueToSet.toString()}
+                />
+            )
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSDOUT:
+            return (
+                <FlowActivityParamsGeneric
+                    name={safe_name(modbusDout, item.setModbusDout.doutToSet)}
+                    value={to_digital_out_strings(item.setModbusDout.valueToSetArray)}
+                />
+            )
+        case ACTIVITYTYPE.ACTIVITYTYPE_SETMODBUSUIOUT:
+            return (
+                <FlowActivityParamsGeneric
+                    name={safe_name(modbusUiout, item.setModbusUiout.uioutToSet)}
+                    value={item.setModbusUiout.valueToSetArray.join(", ")}
                 />
             )
         case ACTIVITYTYPE.ACTIVITYTYPE_DWELL:
@@ -86,11 +119,22 @@ export const FlowActivityParams = ({ item }: { item: ActivityStreamItem }) => {
                     <div>MS</div>
                 </StyledFlowSettingItem>
             )
+        case ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET:
+            return (
+                <StyledFlowSettingItem>
+                    <div>{safe_name(tool, item.setToolOffset.toolIndex)}</div>
+                </StyledFlowSettingItem>
+            )
+        case ACTIVITYTYPE.ACTIVITYTYPE_SET_PAYLOAD:
+            return (
+                <StyledFlowSettingItem>
+                    <div>{item.setPayload.mass}</div>
+                </StyledFlowSettingItem>
+            )
         case ACTIVITYTYPE.ACTIVITYTYPE_SPINDLE:
         case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSINTERPOLATED:
         case ACTIVITYTYPE.ACTIVITYTYPE_GEARINPOS:
         case ACTIVITYTYPE.ACTIVITYTYPE_GEARINVELO:
-        case ACTIVITYTYPE.ACTIVITYTYPE_TOOLOFFSET:
         case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTS:
         case ACTIVITYTYPE.ACTIVITYTYPE_MOVEJOINTSATVELOCITY:
         case ACTIVITYTYPE.ACTIVITYTYPE_MOVEVECTORATVELOCITY:

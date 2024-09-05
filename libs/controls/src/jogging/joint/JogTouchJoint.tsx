@@ -3,11 +3,7 @@
  */
 
 import * as React from "react"
-import {
-    useJointsForKinematicsConfigurationList,
-    useMotionAllowed,
-    useOperationEnabled
-} from "../../util/hooks"
+import { useJointsForKinematicsConfigurationList, useOperationEnabled } from "../../util"
 import { JogTouchWidget, JogTouchWidgetMode } from "../JogTouchWidget"
 import { LIMITPROFILE, usePreview, useSoloActivity } from "@glowbuzzer/store"
 import styled from "styled-components"
@@ -64,7 +60,10 @@ export const JogTouchJoint = ({ kinematicsConfigurationIndex }: JogTouchJointPro
                         })
                         preview.disable()
                         try {
-                            return await motion.moveJointsAtVelocity(velos).promise()
+                            return await motion
+                                .moveJointsAtVelocity(velos)
+                                .params({ ignoreFeedrateOverride: true })
+                                .promise()
                         } finally {
                             preview.enable()
                         }
