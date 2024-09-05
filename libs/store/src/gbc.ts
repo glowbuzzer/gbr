@@ -84,6 +84,7 @@ export const GbcConstants = {
         GBEM_REQUEST_SDO_READ                             = (1),
         GBEM_REQUEST_SDO_WRITE                            = (2),
         GBEM_REQUEST_GET_VERSION                          = (3),
+        GBEM_REQUEST_GET_FILE                             = (4),
     }
     export enum CONFIG_STATUS {
         CONFIG_STATUS_NONE,
@@ -448,6 +449,12 @@ export const GbcConstants = {
         /**  Tool is closed */
   CLOSED ,
     }
+    export enum INTERFACE {
+        /**  Tool is controlled by digital IOs */
+  IO ,
+        /**  Tool is controlled by Modbus */
+  Modbus ,
+    }
     export enum STREAMCOMMAND {
         /**  Run stream */
   STREAMCOMMAND_RUN ,
@@ -512,15 +519,15 @@ export const GbcConstants = {
 
 
 // STRUCTS
-
+            
             export type SharedMemHeader = {
-
-
+            
+                        
                         status?:CONFIG_STATUS;
             }
-
+            
             export type LimitConfiguration = {
-
+            
                         /**  Velocity limit */
                         vmax?:number;
                         /**  Acceleration limit */
@@ -528,9 +535,9 @@ export const GbcConstants = {
                         /**  Jerk limit */
                         jmax?:number;
             }
-
+            
             export type MachineConfig = {
-
+            
                         /**  The bus cycle time (in milliseconds) */
                         busCycleTime?:number;
                         /**  The frequency of status updates (between 20 and 1000, in milliseconds) */
@@ -538,9 +545,9 @@ export const GbcConstants = {
                         /**  The amount of time (in milliseconds) before GBC will fault if it has not received a heartbeat, default 2000 */
                         heartbeatTimeout?:number;
             }
-
+            
             export type MachineStatus = {
-
+            
                         /**  CiA 402 status word for the machine as a whole */
                         statusWord?:number;
                         /**  Word containing any active faults the machine may have */
@@ -558,9 +565,9 @@ export const GbcConstants = {
                         /**  @ignore Reserved for internal use */
                         operationErrorMessage?:string[];
             }
-
+            
             export type MachineCommand = {
-
+            
                         /**  CiA 402 control word for the machine */
                         controlWord?:number;
                         /**  HLC (High-Level-Control) control word */
@@ -570,33 +577,33 @@ export const GbcConstants = {
                         /**  What target we want the machine to connect to - e.g. fieldbus, simulation */
                         target?:MACHINETARGET;
             }
-
+            
             export type StreamConfig = {
-
+            
                         /**  Indicates that buffer must be full or end program activity issued before stream will start executing */
                         enableEndProgram?:boolean;
             }
-
+            
             export type StreamStatus = {
-
-
+            
+                        
                         streamState?:STREAMSTATE;
-
+                        
                         tag?:number;
-
+                        
                         time?:number;
             }
-
+            
             export type StreamCommand = {
-
-
+            
+                        
                         streamCommand?:STREAMCOMMAND;
             }
-            /**
+            /** 
             Configuration parameters for move parameters
              */
             export type MoveParametersConfig = {
-
+            
                         /**  Vmax (max velocity) for move */
                         vmax?:number;
                         /**  Percentage of vmax to be used for move */
@@ -615,20 +622,20 @@ export const GbcConstants = {
                         blendTolerance?:number;
                         /**  Tool to be used for the move */
                         toolIndex?:number;
-
+                        
                         syncType?:SYNCTYPE;
-
+                        
                         syncValue?:number;
-
+                        
                         optimizeJointDistance?:boolean;
                         /**  Whether the move should ignore the current feedrate override */
                         ignoreFeedrateOverride?:boolean;
             }
-            /**
+            /** 
             Parameters for vector 3
              */
             export type Vector3 = {
-
+            
                         /**  Cartesian position on x axis */
                         x?:number;
                         /**  Cartesian position on y axis */
@@ -636,11 +643,11 @@ export const GbcConstants = {
                         /**  Cartesian position on x axis */
                         z?:number;
             }
-            /**
+            /** 
             Parameters for a quaternion
              */
             export type Quat = {
-
+            
                         /**  Quaternion orientation coefficient */
                         w?:number;
                         /**  Quaternion orientation coefficient */
@@ -650,11 +657,11 @@ export const GbcConstants = {
                         /**  Quaternion orientation coefficient */
                         z?:number;
             }
-            /**
+            /** 
             Parameters for a cartesian position
              */
             export type CartesianPosition = {
-
+            
                         /**  Whether the position is absolute or relative */
                         positionReference?:POSITIONREFERENCE;
                         /**  Translation vector object */
@@ -664,37 +671,37 @@ export const GbcConstants = {
                         /**  Index of the frame the position is with respect to */
                         frameIndex?:number;
             }
-            /**
+            /** 
             Parameters for an absolute / relative position
              */
             export type PositionAbsRel = {
-
+            
                         /**  Whether the position is absolute or relative */
                         positionReference?:POSITIONREFERENCE;
                         /**  Position vector object */
                         translation?:Vector3;
             }
-            /**
+            /** 
             Parameters for a cartesian vector
              */
             export type CartesianVector = {
-
+            
                         /**  Vector itself (x,y,z) */
                         vector?:Vector3;
                         /**  Index of frame for vector */
                         frameIndex?:number;
             }
-
+            
             export type DoubleValue = {
-
-
+            
+                        
                         value?:number;
             }
-            /**
+            /** 
             Configuration parameters for arcs
              */
             export type ArcsConfig = {
-
+            
                         /**  Whether the arc is defined by centre or radius */
                         arcType?:ARCTYPE;
                         /**  Is the arc direction CW or CCW (clockwise or counter-clockwise) */
@@ -712,121 +719,121 @@ export const GbcConstants = {
                          radius?: DoubleValue,
     //              End of Union
             }
-            /**
+            /** 
             Parameters for cartesian positions
              */
             export type CartesianPositionsConfig = {
-
+            
                         /**  The position including translation and rotation */
                         position?:CartesianPosition;
                         /**  The robot configuration (shoulder/elbow/wrist), if applicable */
                         configuration?:number;
             }
-
+            
             export type TriggerOnAnalogInput = {
-
-
+            
+                        
                         input?:number;
-
+                        
                         when?:GTLT;
-
+                        
                         value?:number;
             }
-
+            
             export type TriggerOnDigitalInput = {
-
-
+            
+                        
                         input?:number;
-
+                        
                         when?:TRIGGERTYPE;
             }
-
+            
             export type TriggerOnUnsignedIntegerInput = {
-
-
+            
+                        
                         input?:number;
-
+                        
                         when?:GTLT;
-
+                        
                         value?:number;
             }
-
+            
             export type TriggerOnIntegerInput = {
-
-
+            
+                        
                         input?:number;
-
+                        
                         when?:GTLT;
-
+                        
                         value?:number;
             }
-
+            
             export type TriggerOnTimer = {
-
-
+            
+                        
                         delay?:number;
             }
-
+            
             export type TriggerOnTick = {
-
-
+            
+                        
                         value?:number;
             }
-
+            
             export type TriggerParams = {
-
-
+            
+                        
                         type?:TRIGGERON;
-
+                        
                         action?:TRIGGERACTION;
     //              Start of Union
-
+                        
                          analog?: TriggerOnAnalogInput,
-
+                        
                          digital?: TriggerOnDigitalInput,
-
+                        
                          unsignedInteger?: TriggerOnUnsignedIntegerInput,
-
+                        
                          integer?: TriggerOnIntegerInput,
-
+                        
                          timer?: TriggerOnTimer,
-
+                        
                          tick?: TriggerOnTick,
     //              End of Union
             }
-            /**
+            /** 
             Config parameters for Tasks
              */
             export type TaskConfig = {
-
+            
                         /**  Number of activities in this task */
                         activityCount?:number;
                         /**  First activity in this task  */
                         firstActivityIndex?:number;
-
+                        
                         triggers?:TriggerParams[];
             }
-            /**
+            /** 
             Status parameters for Tasks
              */
             export type TaskStatus = {
-
+            
                         /**  Object representing the current state of the task */
                         taskState?:TASK_STATE;
                         /**  Current activity that is running */
                         currentActivityIndex?:number;
             }
-            /**
+            /** 
             Command parameters for Tasks
              */
             export type TaskCommand = {
-
+            
                         /**  Command object for task */
                         taskCommand?:TASK_COMMAND;
             }
             /** Configuration parameters for a PID controller */
             export type PidConfig = {
-
+            
                         /**  Proportional gain */
                         kp?:number;
                         /**  Integral gain */
@@ -840,12 +847,12 @@ export const GbcConstants = {
                         /**  Sample time in milliseconds */
                         sampleTime?:number;
             }
-            /**
+            /** 
             Configuration parameters for joint
              */
             export type JointConfig = {
-
-
+            
+                        
                         jointType?:JOINT_TYPE;
                         /**  List of limits to be applied to the joint for different types of move */
                         limits?:LimitConfiguration[];
@@ -871,26 +878,26 @@ export const GbcConstants = {
                         posLimit?:number;
                         /**  Indicates that a joint's motion is inverted. Equivalent to using a negative scale factor */
                         inverted?:boolean;
-
+                        
                         finiteContinuous?:JOINT_FINITECONTINUOUS;
-
+                        
                         isVirtualInternal?:boolean;
-
+                        
                         isVirtualFromEncoder?:boolean;
-
+                        
                         correspondingJointNumberOnPhysicalFieldbus?:number;
-
+                        
                         correspondingJointNumberOnVirtualFieldbus?:number;
                         /**  PID configuration for the joint, where 0 index is for CSV, and the other two are for CST */
                         pidConfig?:PidConfig[];
                         /**  The threshold at which the joint is considered to be moving */
                         dynamicsVelocityThreshold?:number;
             }
-            /**
+            /** 
             Status of joint
              */
             export type JointStatus = {
-
+            
                         /**  CiA 402 status word for the joint */
                         statusWord?:number;
                         /**  Actual position of the joint */
@@ -902,11 +909,11 @@ export const GbcConstants = {
                         /**  Actual control effort of the joint */
                         actControlEffort?:number;
             }
-            /**
+            /** 
             Command parameters for joint
              */
             export type JointCommand = {
-
+            
                         /**  CiA 402 control word for a drive (not used when using GBEM which controls the drives) */
                         controlWord?:number;
                         /**  Torque to be applied to the joint. Exact behaviour depends on the direct torque mode */
@@ -914,9 +921,9 @@ export const GbcConstants = {
                         /**  Torque mode to be used for the joint */
                         torqueMode?:JOINT_TORQUE_MODE;
             }
-
+            
             export type MatrixInstanceDouble = {
-
+            
                         /**  Number of rows in matrix */
                         numRows?:number;
                         /**  Number of columns in matrix */
@@ -926,9 +933,9 @@ export const GbcConstants = {
                         /**  Array of flags indicating if the joint angle should be inverted during FK/IK kinematics */
                         invJointAngles?:number[];
             }
-
+            
             export type RollPitchYaw = {
-
+            
                         /**  Roll */
                         r?:number;
                         /**  Pitch */
@@ -938,7 +945,7 @@ export const GbcConstants = {
             }
             /** URDF frame for a joint, used for inverse dynamics */
             export type UrdfFrame = {
-
+            
                         /**  Origin of frame */
                         translation?:Vector3;
                         /**  Roll, pitch, yaw of frame */
@@ -946,7 +953,7 @@ export const GbcConstants = {
             }
             /** Rigid body inertia for a kinematics configuration */
             export type RigidBodyInertia = {
-
+            
                         /**  Mass of rigid body */
                         m?:number;
                         /**  Center of mass of rigid body */
@@ -966,35 +973,35 @@ export const GbcConstants = {
             }
             /** Inverse dynamic parameters for a kinematics configuration */
             export type InverseDynamicParameters = {
-
+            
                         /**  URDF frame for the joint */
                         urdfFrame?:UrdfFrame;
                         /**  Rigid body inertia for the joint */
                         rigidBodyInertia?:RigidBodyInertia;
-
+                        
                         jointOffset?:number;
-
+                        
                         jointScale?:number;
-
+                        
                         jointInertia?:number;
                         /**  Joint axis for the joint */
                         jointAxis?:Vector3;
-
+                        
                         damping?:number;
-
+                        
                         friction?:number;
             }
-
+            
             export type SphericalEnvelope = {
-
+            
                         /**  Center of spherical envelope (default 0, 0, 0) */
                         center?:Vector3;
                         /**  Inner and outer radius of spherical envelope (disabled by default) */
                         radius?:number[];
             }
-
+            
             export type VelocityScaling = {
-
+            
                         /**  Whether auto velocity scaling is enabled */
                         enabled?:boolean;
                         /**  Trigger to activate velocity scaling */
@@ -1006,7 +1013,7 @@ export const GbcConstants = {
             }
             /** Configuration parameters for a kinematics configuration */
             export type KinematicsConfigurationConfig = {
-
+            
                         /**  Kinematics configuration type. That is, the kinematics model that will be used. Used as discriminator for the union */
                         kinematicsConfigurationType?:KC_KINEMATICSCONFIGURATIONTYPE;
                         /**  Defines the supported configurations a robot. Bit 0 is wrist, bit 1 elbow, bit 2 shoulder. Higher bits are user-defined */
@@ -1052,7 +1059,7 @@ export const GbcConstants = {
             }
             /** Status of a kinematics configuration */
             export type KinematicsConfigurationStatus = {
-
+            
                         /**  Feed rate target value */
                         froTarget?:number;
                         /**  Feed rate actual value */
@@ -1074,9 +1081,9 @@ export const GbcConstants = {
                         /**  Current tool index */
                         toolIndex?:number;
             }
-
+            
             export type KinematicsConfigurationCommand = {
-
+            
                         /**  Not used */
                         doStop?:boolean;
                         /**  Whether soft joint limits should be disabled */
@@ -1090,89 +1097,89 @@ export const GbcConstants = {
                         /**  Payload currently carried by the kinematics configuration */
                         payload?:number;
             }
-            /**
+            /** 
             Configuration parameters for a digital input
              */
             export type DinConfig = {
-
+            
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
-            /**
+            /** 
             Status of a digital input
              */
             export type DinStatus = {
-
+            
                         /**  State of the digital input */
                         actValue?:boolean;
             }
-            /**
+            /** 
             Command for a digital input
              */
             export type DinCommand = {
-
+            
                         /**  Defines if the digital input state is to be overridden */
                         override?:boolean;
                         /**  State of the digital input */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for a safety digital input
              */
             export type SafetyDinConfig = {
-
+            
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
-            /**
+            /** 
             Status of a safety digital input
              */
             export type SafetyDinStatus = {
-
+            
                         /**  State of the safety digital input */
                         actValue?:boolean;
             }
-            /**
+            /** 
             Command for a safety digital input
              */
             export type SafetyDinCommand = {
-
+            
                         /**  Defines if the digital input state is to be overridden */
                         override?:boolean;
                         /**  State of the digital input */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for an external digital input
              */
             export type ExternalDinConfig = {
-
+            
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
-            /**
+            /** 
             Status of an external digital input
              */
             export type ExternalDinStatus = {
-
+            
                         /**  State of the safety digital input */
                         actValue?:boolean;
             }
-            /**
+            /** 
             Command for an external digital input
              */
             export type ExternalDinCommand = {
-
+            
                         /**  Defines if the digital input state is to be overridden */
                         override?:boolean;
                         /**  State of the digital input */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for a modbus digital input (coil / discrete input)
              */
             export type ModbusDinConfig = {
-
+            
                         /**  Defines the modbus slave number to read from */
                         slaveNum?:number;
                         /**  Defines the modbus address to read from */
@@ -1184,11 +1191,11 @@ export const GbcConstants = {
                         /**  Defines if the input signal is inverted */
                         inverted?:boolean;
             }
-            /**
+            /** 
             Status of an modbus digital input
              */
             export type ModbusDinStatus = {
-
+            
                         /**  State of the modbus digital input */
                         actValue?:boolean;
                         /**  Error code of the modbus read */
@@ -1196,99 +1203,99 @@ export const GbcConstants = {
                         /**  Defines if the modbus read was successful */
                         isError?:boolean;
             }
-            /**
+            /** 
             Command for an modbus digital input
              */
             export type ModbusDinCommand = {
-
+            
                         /**  Defines if the digital input state is to be overridden */
                         override?:boolean;
                         /**  State of the digital input */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for a digital output
              */
             export type DoutConfig = {
-
+            
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
-            /**
+            /** 
             Status of a digital output
              */
             export type DoutStatus = {
-
+            
                         /**  State of the digital output */
                         effectiveValue?:boolean;
             }
-            /**
+            /** 
             Command for a digital output
              */
             export type DoutCommand = {
-
+            
                         /**  Defines if the digital output state is to be overridden */
                         override?:boolean;
                         /**  State of the digital output to be set */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for a safety digital output
              */
             export type SafetyDoutConfig = {
-
+            
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
-            /**
+            /** 
             Status of a safety digital output
              */
             export type SafetyDoutStatus = {
-
+            
                         /**  State of the digital output */
                         effectiveValue?:boolean;
             }
-            /**
+            /** 
             Command for a safety digital output
              */
             export type SafetyDoutCommand = {
-
+            
                         /**  Defines if the digital output state is to be overridden */
                         override?:boolean;
                         /**  State of the digital output to be set */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for an external digital output
              */
             export type ExternalDoutConfig = {
-
+            
                         /**  Indicates that in simulation mode, the output is looped back to the digital input given. Note that loopback to digital input 0 is not supported. */
                         loopback?:number;
             }
-            /**
+            /** 
             Status of an external digital output
              */
             export type ExternalDoutStatus = {
-
+            
                         /**  State of the digital output */
                         effectiveValue?:boolean;
             }
-            /**
+            /** 
             Command for an external digital output
              */
             export type ExternalDoutCommand = {
-
+            
                         /**  Defines if the digital output state is to be overridden */
                         override?:boolean;
                         /**  State of the digital output to be set */
                         setValue?:boolean;
             }
-            /**
+            /** 
             Configuration parameters for a modbus digital output. Uses modbus function 0x05 (single coil) or 0x0F (multiple coils)
              */
             export type ModbusDoutConfig = {
-
+            
                         /**  Defines the modbus slave number to write to */
                         slaveNum?:number;
                         /**  Defines the modbus start address to write to */
@@ -1296,55 +1303,55 @@ export const GbcConstants = {
                         /**  Defines the modbus end address to write to */
                         endAddress?:number;
             }
-            /**
+            /** 
             Configuration parameters for an analogue input
              */
             export type AinConfig = {
-
+            
                         /**  @ignore Flag to indicate this analog input should control the position of a virtual axis (joint) */
                         useForVirtualAxis?:boolean;
                         /**  @ignore Index of joint used for virtual axis (sim) */
                         jointIndexForVirtualAxis?:number;
             }
-            /**
+            /** 
             Status of an analog input
              */
             export type AinStatus = {
-
+            
                         /**  Actual value of the analog input */
                         actValue?:number;
             }
-            /**
+            /** 
             Command for an analog input
              */
             export type AinCommand = {
-
+            
                         /**  Defines if the analog input state is to be overridden */
                         override?:boolean;
                         /**  State of the analog input */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for Analog Outs (aout - floats)
              */
             export type AoutConfig = {
-
+            
             }
-            /**
-            Status of an analog output. The status includes the effective value which is
-            either the value set by {@link AoutCommand} if `override` flag is set,
+            /** 
+            Status of an analog output. The status includes the effective value which is 
+            either the value set by {@link AoutCommand} if `override` flag is set, 
             or the last value set by an activity (`setAout` in {@link ActivityCommand} or {@link ActivityStreamItem}).
              */
             export type AoutStatus = {
-
+            
                         /**  Effective value of analog out */
                         effectiveValue?:number;
             }
-            /**
+            /** 
             Command for Analog Outs (aout - floats)
              */
             export type AoutCommand = {
-
+            
                         /**  Whether to override the value of the analog out that might be set by an activity */
                         override?:boolean;
                         /**  Desired value of the analog out (ignored if override not set) */
@@ -1352,103 +1359,103 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type UiinConfig = {
-
+            
             }
-            /**
+            /** 
             Status of an unsigned integer input
              */
             export type UiinStatus = {
-
+            
                         /**  value of iin */
                         actValue?:number;
             }
-            /**
+            /** 
             Command for an unsigned integer input
              */
             export type UiinCommand = {
-
+            
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for a signed integer input
              */
             export type IinConfig = {
-
+            
             }
-            /**
+            /** 
             Status of a signed integer input
              */
             export type IinStatus = {
-
+            
                         /**  value of iin */
                         actValue?:number;
             }
-            /**
+            /** 
             Command for a signed integer input
              */
             export type IinCommand = {
-
+            
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for an unsigned integer input
              */
             export type ExternalUiinConfig = {
-
+            
             }
-            /**
+            /** 
             Status of an unsigned integer input
              */
             export type ExternalUiinStatus = {
-
+            
                         /**  value of iin */
                         actValue?:number;
             }
-            /**
+            /** 
             Command for an external unsigned integer input
              */
             export type ExternalUiinCommand = {
-
+            
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for a signed integer input
              */
             export type ExternalIinConfig = {
-
+            
             }
-            /**
+            /** 
             Status of a external signed integer input
              */
             export type ExternalIinStatus = {
-
+            
                         /**  value of iin */
                         actValue?:number;
             }
-            /**
+            /** 
             Command for a external signed integer input
              */
             export type ExternalIinCommand = {
-
+            
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for an unsigned integer input
              */
             export type ModbusUiinConfig = {
-
+            
                         /**  Defines the modbus slave number to read from */
                         slaveNum?:number;
                         /**  Defines the modbus address to read from */
@@ -1456,11 +1463,11 @@ export const GbcConstants = {
                         /**  Defines the modbus function to use (0x3 or 0x4) */
                         function?:number;
             }
-            /**
+            /** 
             Status of an unsigned integer input
              */
             export type ModbusUiinStatus = {
-
+            
                         /**  State of the modbus digital input */
                         actValue?:number;
                         /**  Error code of the modbus read */
@@ -1468,11 +1475,11 @@ export const GbcConstants = {
                         /**  Defines if the modbus read was successful */
                         isError?:boolean;
             }
-            /**
+            /** 
             Command for an external unsigned integer input
              */
             export type ModbusUiinCommand = {
-
+            
                         /**  Defines if the integer input state is to be overridden */
                         override?:boolean;
                         /**  State of the integer input */
@@ -1480,21 +1487,21 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type UioutConfig = {
-
+            
             }
-            /**
+            /** 
             Status of an unsigned integer output
              */
             export type UioutStatus = {
-
+            
                         /**  Effective value of the integer output */
                         effectiveValue?:number;
             }
-            /**
+            /** 
             Command for an unsigned integer output
              */
             export type UioutCommand = {
-
+            
                         /**  Override the value of the integer output */
                         override?:boolean;
                         /**  Value to set the integer output to */
@@ -1502,21 +1509,21 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type IoutConfig = {
-
+            
             }
-            /**
+            /** 
             Status of a signed integer output
              */
             export type IoutStatus = {
-
+            
                         /**  Effective value of the integer output */
                         effectiveValue?:number;
             }
-            /**
+            /** 
             Command for a signed integer output
              */
             export type IoutCommand = {
-
+            
                         /**  Override the value of the integer output */
                         override?:boolean;
                         /**  Value to set the integer output to */
@@ -1524,21 +1531,21 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type ExternalUioutConfig = {
-
+            
             }
-            /**
+            /** 
             Status of an external unsigned integer output
              */
             export type ExternalUioutStatus = {
-
+            
                         /**  Effective value of the integer output */
                         effectiveValue?:number;
             }
-            /**
+            /** 
             Command for an unsigned integer output
              */
             export type ExternalUioutCommand = {
-
+            
                         /**  Override the value of the integer output */
                         override?:boolean;
                         /**  Value to set the integer output to */
@@ -1546,31 +1553,31 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type ExternalIoutConfig = {
-
+            
             }
-            /**
+            /** 
             Status of an external signed integer output
              */
             export type ExternalIoutStatus = {
-
+            
                         /**  Effective value of the integer output */
                         effectiveValue?:number;
             }
-            /**
+            /** 
             Command for an external signed integer output
              */
             export type ExternalIoutCommand = {
-
+            
                         /**  Override the value of the integer output */
                         override?:boolean;
                         /**  Value to set the integer output to */
                         setValue?:number;
             }
-            /**
+            /** 
             Configuration parameters for an modbus unsigned integer output. Uses modbus function 0x06 (write single register) or 0x10 (write multiple registers)
              */
             export type ModbusUioutConfig = {
-
+            
                         /**  Defines the modbus slave number to write to */
                         slaveNum?:number;
                         /**  Defines the modbus start address to write to */
@@ -1580,53 +1587,53 @@ export const GbcConstants = {
                         /**  Defines if the modbus data is little endian */
                         littleEndian?:boolean;
             }
-            /**
+            /** 
             Parameters for move joints activity
              */
             export type MoveJointsActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Array of joint positions */
                         jointPositionArray?:number[];
-
+                        
                         positionReference?:POSITIONREFERENCE;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                         moveParamsIndex?:number;
             }
             /** @ignore */
             export type MoveJointsActivityStatus = {
-
+            
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
             }
-            /**
+            /** 
             Command for a running move joints activity
              */
             export type MoveJointsActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move joints activity
              */
             export type MoveJointsStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         positionReference?:POSITIONREFERENCE;
-
+                        
                         jointPositionArray?:number[];
-
+                        
                         moveParams?:MoveParametersConfig;
             }
-            /**
+            /** 
             Parameters for move joints interpolated activity
              */
             export type MoveJointsInterpolatedActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Array of joint positions */
@@ -1640,17 +1647,17 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type MoveJointsInterpolatedActivityStatus = {
-
+            
             }
             /** @ignore */
             export type MoveJointsInterpolatedActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a streamed move joints interpolated activity
              */
             export type MoveJointsInterpolatedStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  ${DOC_jointPositionArray} */
@@ -1659,14 +1666,14 @@ export const GbcConstants = {
                         jointVelocityArray?:number[];
                         /**  Duration of the move */
                         duration?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
             }
-            /**
+            /** 
             Parameters for a move joints at velocity activity
              */
             export type MoveJointsAtVelocityActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
@@ -1676,33 +1683,33 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type MoveJointsAtVelocityActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move joints at velocity activity
              */
             export type MoveJointsAtVelocityActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move joints at velocity activity
              */
             export type MoveJointsAtVelocityStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         jointVelocityArray?:number[];
             }
-            /**
+            /** 
             Parameters for a move line activity
              */
             export type MoveLineActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
@@ -1714,35 +1721,35 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type MoveLineActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move line activity
              */
             export type MoveLineActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move line activity
              */
             export type MoveLineStream = {
-
+            
                         /** The kinematics configuration to use for the move qq */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
                         /**  Line object for move */
                         line?:CartesianPosition;
-
+                        
                         superimposedIndex?:number;
             }
-            /**
+            /** 
             Parameters for a move vector at velocity activity
              */
             export type MoveVectorAtVelocityActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
@@ -1752,33 +1759,33 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type MoveVectorAtVelocityActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move vector at velocity activity
              */
             export type MoveVectorAtVelocityActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move vector at velocity activity
              */
             export type MoveVectorAtVelocityStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         vector?:CartesianVector;
             }
-            /**
+            /** 
             Parameters for a move rotation at velocity activity
              */
             export type MoveRotationAtVelocityActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
@@ -1788,141 +1795,141 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type MoveRotationAtVelocityActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move rotation at velocity activity
              */
             export type MoveRotationAtVelocityActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move rotation at velocity activity
              */
             export type MoveRotationAtVelocityStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
                         /**  The axis of rotation */
                         axis?:CartesianVector;
             }
-            /**
+            /** 
             Parameters for a move arc activity
              */
             export type MoveArcActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         superimposedIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                         moveParamsIndex?:number;
-
+                        
                         arc?:ArcsConfig;
             }
             /** @ignore */
             export type MoveArcActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move arc activity
              */
             export type MoveArcActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move arc activity
              */
             export type MoveArcStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         arc?:ArcsConfig;
-
+                        
                         superimposedIndex?:number;
             }
-            /**
+            /** 
             Parameters for a move instant activity
              */
             export type MoveInstantActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         position?:CartesianPosition;
             }
             /** @ignore */
             export type MoveInstantActivityStatus = {
-
+            
             }
             /** @ignore */
             export type MoveInstantActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a streamed move arc activity
              */
             export type MoveInstantStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         position?:CartesianPosition;
             }
-            /**
+            /** 
             Parameters for a move to position activity
              */
             export type MoveToPositionActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the move parameters (amax, vmax etc.) to be used for the move */
                         moveParamsIndex?:number;
-
+                        
                         cartesianPosition?:CartesianPositionsConfig;
             }
             /** @ignore */
             export type MoveToPositionActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running move to position activity
              */
             export type MoveToPositionActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Parameters for a streamed move to position activity
              */
             export type MoveToPositionStream = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
-
+                        
                         moveParams?:MoveParametersConfig;
-
+                        
                         cartesianPosition?:CartesianPositionsConfig;
             }
-            /**
+            /** 
             Parameters for a set digital output activity
              */
             export type SetDoutActivityParams = {
-
+            
                         /**  The index of the digital output to set */
                         doutToSet?:number;
                         /**  The value to set */
@@ -1930,17 +1937,17 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetDoutActivityStatus = {
-
+            
             }
             /** @ignore */
             export type SetDoutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a set modbus digital output activity
              */
             export type SetModbusDoutActivityParams = {
-
+            
                         /**  The index of the digital output to set */
                         doutToSet?:number;
                         /**  The array of values to set on the modbus outputs */
@@ -1948,7 +1955,7 @@ export const GbcConstants = {
             }
             /** Status for a set modbus digital output activity */
             export type SetModbusDoutActivityStatus = {
-
+            
                         /**  Error code of the modbus write */
                         errorCode?:number;
                         /**  Defines if the modbus write was successful */
@@ -1956,13 +1963,13 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetModbusDoutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a set analog output activity
              */
             export type SetAoutActivityParams = {
-
+            
                         /**  The index of the analog output to set */
                         aoutToSet?:number;
                         /**  The value to set */
@@ -1970,17 +1977,17 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetAoutActivityStatus = {
-
+            
             }
             /** @ignore */
             export type SetAoutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a set integer output activity
              */
             export type SetIoutActivityParams = {
-
+            
                         /**  The index of the integer output to set */
                         ioutToSet?:number;
                         /**  The value to set */
@@ -1988,17 +1995,17 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetIoutActivityStatus = {
-
+            
             }
             /** @ignore */
             export type SetIoutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a set unsigned integer output activity
              */
             export type SetUioutActivityParams = {
-
+            
                         /**  The index of the integer output to set */
                         ioutToSet?:number;
                         /**  The value to set */
@@ -2006,17 +2013,17 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetUioutActivityStatus = {
-
+            
             }
             /** @ignore */
             export type SetUioutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a set unsigned integer modbus output activity
              */
             export type SetModbusUioutActivityParams = {
-
+            
                         /**  The configuration index of the integer output to set */
                         uioutToSet?:number;
                         /**  The array of values to set on the modbus outputs */
@@ -2024,7 +2031,7 @@ export const GbcConstants = {
             }
             /** Status for a set modbus unsigned integer output activity */
             export type SetModbusUioutActivityStatus = {
-
+            
                         /**  Error code of the modbus write */
                         errorCode?:number;
                         /**  Defines if the modbus write was successful */
@@ -2032,33 +2039,33 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SetModbusUioutActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a dwell activity
              */
             export type DwellActivityParams = {
-
+            
                         /**  Number of milliseconds that you want to wait for */
                         msToDwell?:number;
             }
             /** @ignore */
             export type DwellActivityStatus = {
-
+            
             }
-            /**
+            /** 
             Command for a running dwell activity
              */
             export type DwellActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
             }
-            /**
+            /** 
             Configuration for a spindle
              */
             export type SpindleConfig = {
-
+            
                         /**  Index of the digital output used to turn on the spindle */
                         enableDigitalOutIndex?:number;
                         /**  Index of the digital output used to control direction of spindle */
@@ -2068,11 +2075,11 @@ export const GbcConstants = {
                         /**  Index of the analogue output used to control the spindle speed */
                         speedAnalogOutIndex?:number;
             }
-            /**
+            /** 
             Parameters for a spindle activity
              */
             export type SpindleActivityParams = {
-
+            
                         /**  Index of the spindle in the configuration */
                         spindleIndex?:number;
                         /**  Whether to enable or disable the spindle */
@@ -2084,19 +2091,19 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SpindleActivityStatus = {
-
+            
             }
-            /**
+            /** 
             @ignore Command parameters for spindle
              */
             export type SpindleActivityCommand = {
-
+            
             }
-            /**
+            /** 
             Parameters for a change of tool offset activity
              */
             export type ToolOffsetActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Index of the tool */
@@ -2104,110 +2111,110 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type GearInVeloActivityParams = {
-
+            
                         /**  Kinematics configuration to use for the master */
                         masterKinematicsConfigurationIndex?:number;
                         /**  Kinematics configuration to use for the slave */
                         slaveKinematicsConfigurationIndex?:number;
-
+                        
                         gearingFrameIndex?:number;
-
+                        
                         gearRatio?:number;
-
+                        
                         syncActivationDelay?:number;
             }
             /** @ignore */
             export type GearInVeloActivityStatus = {
-
+            
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
-
+                        
                         gearInFailed?:boolean;
-
+                        
                         gearedIn?:boolean;
             }
             /** @ignore */
             export type GearInVeloActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
-
+                        
                         updatedRatio?:number;
-
+                        
                         updateRation?:boolean;
             }
             /** @ignore */
             export type GearInPosActivityParams = {
-
+            
                         /**  Kinematics configuration to use for the master */
                         masterKinematicsConfigurationIndex?:number;
                         /**  Kinematics configuration to use for the slave */
                         slaveKinematicsConfigurationIndex?:number;
-
+                        
                         gearingFrameIndex?:number;
-
+                        
                         gearRatio?:number;
-
+                        
                         strategyToUse?:STRATEGYGEARINPOS;
-
+                        
                         gearRatioMaster?:number;
-
+                        
                         gearRatioSlave?:number;
-
+                        
                         masterSyncPosition?:CartesianPosition;
-
+                        
                         slaveSyncPosition?:CartesianPosition;
-
+                        
                         syncActivationDelay?:number;
             }
             /** @ignore */
             export type GearInPosActivityStatus = {
-
+            
                         /**  Percentage through move we currently are */
                         percentageComplete?:number;
-
+                        
                         gearInFailed?:boolean;
-
+                        
                         gearedIn?:boolean;
             }
             /** @ignore */
             export type GearInPosActivityCommand = {
-
+            
                         /**  Triggers the activity to stop and skip to the next in a task */
                         skipToNext?:boolean;
-
+                        
                         updatedRatioMaster?:number;
-
+                        
                         updatedRatioSlave?:number;
-
+                        
                         updatedMasterSyncPosition?:CartesianPosition;
-
+                        
                         updatedSlaveSyncPosition?:CartesianPosition;
             }
             /** @ignore */
             export type SetPayloadActivityStatus = {
-
+            
             }
             /** @ignore */
             export type SetPayloadActivityCommand = {
-
+            
             }
             /** Set the current payload (mass) */
             export type SetPayloadActivityParams = {
-
+            
                         /**  Index of the Kinematics Configuration (KC) to use */
                         kinematicsConfigurationIndex?:number;
                         /**  Mass of the payload */
                         mass?:number;
             }
-            /**
-            This is a union discriminated by activityType.
+            /** 
+            This is a union discriminated by activityType. 
              */
             export type ActivityConfig = {
-
+            
                         /**  IMPORTANT: This is the discriminator for the union */
                         activityType?:ACTIVITYTYPE;
-
+                        
                         triggers?:TriggerParams[];
     //              Start of Union
                         /**  Configuration parameters for move joints activity */
@@ -2258,7 +2265,7 @@ export const GbcConstants = {
             }
             /** Status of an activity */
             export type ActivityStatus = {
-
+            
                         /**  Current state of the activity */
                         state?:ACTIVITYSTATE;
                         /**  User defined. Used by Glowbuzzer React to correlate activities */
@@ -2310,11 +2317,11 @@ export const GbcConstants = {
                          setModbusUiout?: SetModbusUioutActivityStatus,
     //              End of Union
             }
-            /**
+            /** 
             This is a union. There is no discriminator for this union as the Activity will have been configured with a specific type of activity and these are the commands that act on this type.
              */
             export type ActivityCommand = {
-
+            
     //              Start of Union
                         /**  Move joints command object for activity */
                          moveJoints?: MoveJointsActivityCommand,
@@ -2366,16 +2373,16 @@ export const GbcConstants = {
                          setModbusUiout?: SetModbusUioutActivityCommand,
     //              End of Union
             }
-            /**
+            /** 
             This is a union
              */
             export type ActivityStreamItem = {
-
+            
                         /**  Discriminator - the type of activity */
                         activityType?:ACTIVITYTYPE;
                         /**  User defined. Used by Glowbuzzer React to track gcode line */
                         tag?:number;
-
+                        
                         triggers?:TriggerParams[];
     //              Start of Union
                         /**  Parameters for a streamed move joints */
@@ -2424,17 +2431,17 @@ export const GbcConstants = {
                          setPayload?: SetPayloadActivityParams,
     //              End of Union
             }
-
+            
             export type SoloActivityConfig = {
-
+            
             }
             export type SoloActivityStatus = ActivityStatus
             export type SoloActivityCommand = ActivityStreamItem
-            /**
+            /** 
             Configuration parameters for frame
              */
             export type FramesConfig = {
-
+            
                         /**  Translation of the frame */
                         translation?:Vector3;
                         /**  Rotation of the frame */
@@ -2446,21 +2453,21 @@ export const GbcConstants = {
                         /**  Allows you to use this frame as a workspace offset, where G54 is workspace offset 1 and so on */
                         workspaceOffset?:number;
             }
-            /**
+            /** 
             Command parameters for frame
              */
             export type FramesCommand = {
-
+            
             }
             /** @ignore */
             export type FramesStatus = {
-
+            
             }
-            /**
+            /** 
             Configuration parameters for point
              */
             export type PointsConfig = {
-
+            
                         /**  Frame for point */
                         frameIndex?:number;
                         /**  Translation (location) of the point */
@@ -2470,11 +2477,11 @@ export const GbcConstants = {
                         /**  Robot configuration (shoulder, elbow, wrist) */
                         configuration?:number;
             }
-            /**
+            /** 
             Configuration parameters for a tool
              */
             export type ToolConfig = {
-
+            
                         /**  Translation of the tool */
                         translation?:Vector3;
                         /**  Rotation of the tool */
@@ -2496,13 +2503,13 @@ export const GbcConstants = {
             }
             /** @ignore */
             export type SerialConfig = {
-
+            
             }
-            /**
+            /** 
             Status of serial communication
              */
             export type SerialStatus = {
-
+            
                         /**  Status word for serial communication */
                         statusWord?:number;
                         /**  Length of the data received */
@@ -2510,11 +2517,11 @@ export const GbcConstants = {
                         /**  Data received over serial communication */
                         data?:number[];
             }
-            /**
+            /** 
             Command for serial communication
              */
             export type SerialCommand = {
-
+            
                         /**  Control word for serial communication */
                         controlWord?:number;
                         /**  Length of the data to send */
