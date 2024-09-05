@@ -52,7 +52,7 @@ const ModbusIntegerInputItem = ({ label, index, description }) => {
         )
     }
 
-    const { actValue, modbus_error_code, isError } = ainStatus
+    const { actValue, errorCode, isError } = ainStatus
 
     return (
         <StyledDiv key={index}>
@@ -68,10 +68,7 @@ const ModbusIntegerInputItem = ({ label, index, description }) => {
                 <Tag>{actValue}</Tag>
                 {isError && (
                     <>
-                        Error Code:{" "}
-                        <Tag title={ModbusErrorCodeString(modbus_error_code)}>
-                            {modbus_error_code}
-                        </Tag>
+                        Error Code: <Tag title={ModbusErrorCodeString(errorCode)}>{errorCode}</Tag>
                     </>
                 )}
             </div>
@@ -97,7 +94,7 @@ export const ModbusIntegerInputsTile = ({ labels = [] }: ModbusIntegerInputsTile
     return (
         <StyledTileContent>
             {iin?.map((iin, index) => {
-                const description = `Slave: ${iin.slave_num}, Address: ${iin.address}, Function: ${iin.function}
+                const description = `Slave: ${iin.slaveNum}, Address: ${iin.address}, Function: ${iin.function}
             `
                 return (
                     <ModbusIntegerInputItem

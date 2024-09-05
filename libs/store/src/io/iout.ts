@@ -260,7 +260,7 @@ export function useModbusIntegerOutputNumberofList() {
     // Check if modbusUiout is defined and is an array
     if (Array.isArray(config.modbusUiout)) {
         // Map over the array to get the start_address values
-        return config.modbusUiout.map(uiout => uiout.end_address - uiout.start_address + 1)
+        return config.modbusUiout.map(uiout => uiout.endAddress - uiout.startAddress + 1)
     }
     // Return an empty array if modbusDout is not defined or not an array
     return []

@@ -3,11 +3,7 @@
  */
 
 import React from "react"
-import {
-    useModbusDigitalInputList,
-    useModbusDigitalInputState,
-    useModbusUnsignedIntegerInputState
-} from "@glowbuzzer/store"
+import { useModbusDigitalInputList, useModbusDigitalInputState } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
 import { Tag, Tooltip } from "antd"
 
@@ -68,7 +64,7 @@ const ModbusDigitalInputItem = ({ label, description, index }) => {
         )
     }
 
-    const { actValue, modbus_error_code, isError } = dinStatus
+    const { actValue, errorCode, isError } = dinStatus
 
     return (
         <StyledDiv key={index}>
@@ -84,10 +80,7 @@ const ModbusDigitalInputItem = ({ label, description, index }) => {
                 <Tag color={actValue ? "green" : "red"}>{actValue ? "ON" : "OFF"}</Tag>
                 {isError && (
                     <>
-                        Error Code:{" "}
-                        <Tag title={ModbusErrorCodeString(modbus_error_code)}>
-                            {modbus_error_code}
-                        </Tag>
+                        Error Code: <Tag title={ModbusErrorCodeString(errorCode)}>{errorCode}</Tag>
                     </>
                 )}
             </div>
@@ -104,9 +97,9 @@ export const ModbusDigitalInputsTile = ({ labels = [] }: ModbusDigitalInputsTile
     return (
         <StyledTileContent>
             {dins?.map((din, index) => {
-                const description = `Slave: ${din.slave_num}, Address: ${din.address}, Function: ${
+                const description = `Slave: ${din.slaveNum}, Address: ${din.address}, Function: ${
                     din.function
-                }, Little Endian: ${din.little_endian ? "Yes" : "No"}, Inverted: ${
+                }, Little Endian: ${din.littleEndian ? "Yes" : "No"}, Inverted: ${
                     din.inverted ? "Yes" : "No"
                 }`
 

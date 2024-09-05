@@ -210,7 +210,7 @@ export function useModbusDigitalOutputNumberofList() {
     // Check if modbusDout is defined and is an array
     if (Array.isArray(config.modbusDout)) {
         // Map over the array to get the start_address values
-        return config.modbusDout.map(dout => dout.end_address - dout.start_address + 1)
+        return config.modbusDout.map(dout => dout.endAddress - dout.startAddress + 1)
     }
     // Return an empty array if modbusDout is not defined or not an array
     return []

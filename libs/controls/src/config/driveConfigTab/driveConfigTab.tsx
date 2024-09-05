@@ -87,7 +87,7 @@ export const DriveConfigTab: React.FC<{}> = () => {
     ) => {
         const updatedDrives = drives.map(drive =>
             drive.index === index
-                ? { ...drive, [key]: value, ...calculateDriveParameters(value, key) }
+                ? { ...drive, [key]: value, ...calculateDriveParameters(value, key, drive) }
                 : drive
         )
         setDrives(updatedDrives)
@@ -106,10 +106,13 @@ export const DriveConfigTab: React.FC<{}> = () => {
         return calculatedValues
     }
 
-    const driveCounts = drives.reduce((counts, drive) => {
-        counts[drive.type] = (counts[drive.type] || 0) + 1
-        return counts
-    }, {} as Record<DriveType, number>)
+    const driveCounts = drives.reduce(
+        (counts, drive) => {
+            counts[drive.type] = (counts[drive.type] || 0) + 1
+            return counts
+        },
+        {} as Record<DriveType, number>
+    )
 
     const selectedDrive = drives.find(drive => drive.index === selectedDriveIndex)
 

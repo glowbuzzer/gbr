@@ -123,8 +123,8 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
                         label={labels[index] || config.name || index.toString()}
                         numberOf={doutNumberof[index]}
                         description={config.description || "No description"}
-                        start_address={config.start_address}
-                        end_address={config.end_address}
+                        start_address={config.startAddress}
+                        end_address={config.endAddress}
                     />
                 ))}
             </StyledContainer>

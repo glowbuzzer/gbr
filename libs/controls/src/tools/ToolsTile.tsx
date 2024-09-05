@@ -8,7 +8,6 @@ import {
     configSlice,
     GlowbuzzerConfig,
     MachineState,
-    RootState,
     ToolConfig,
     useConfig,
     useMachineState,
@@ -16,7 +15,7 @@ import {
     useToolList
 } from "@glowbuzzer/store"
 import { ColumnType } from "antd/es/table"
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { ToolConfigEditor } from "./ToolConfigEditor"
 import { Button } from "antd"
 import { TileWithEditableTableSupport } from "../util"
@@ -24,6 +23,7 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useGLTF } from "@react-three/drei"
+import { Material, Object3D } from "three"
 
 interface GLBModelProps {
     url: string
@@ -31,8 +31,8 @@ interface GLBModelProps {
 }
 
 interface GLTFResult extends GLTF {
-    nodes: Record<string, THREE.Object3D>
-    materials: Record<string, THREE.Material>
+    nodes: Record<string, Object3D>
+    materials: Record<string, Material>
 }
 
 function GLBModel({ url, scale = 1000 }: GLBModelProps) {
@@ -40,7 +40,7 @@ function GLBModel({ url, scale = 1000 }: GLBModelProps) {
     return <primitive object={scene} scale={[scale, scale, scale]} />
 }
 
-export const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
+const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
     return (
         <Canvas style={{ height: 200, width: 200 }}>
             <ambientLight intensity={0.5} />
@@ -125,7 +125,9 @@ export const ToolsTile = () => {
         {
             title: "3D View",
             key: "3dview",
-            render: (_, record) => <GLBViewer url={record.url} scale={20} /> // Assuming `url` contains the GLB file URL
+            render: (_, record) => (
+                <GLBViewer url={"" /*record.url doesn't exist yet record.url*/} scale={20} />
+            ) // Assuming `url` contains the GLB file URL
         },
         {
             title: "Length",

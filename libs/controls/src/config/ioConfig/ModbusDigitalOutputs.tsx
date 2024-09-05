@@ -1,18 +1,6 @@
 import * as React from "react"
-import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
-import {
-    Button,
-    Checkbox,
-    Empty,
-    Input,
-    message,
-    Popconfirm,
-    Popover,
-    Select,
-    Space,
-    Switch,
-    Tooltip
-} from "antd"
+import { useEffect, useState } from "react"
+import { Button, Checkbox, Empty, Input, Popconfirm, Select, Space, Switch, Tooltip } from "antd"
 import styled from "styled-components"
 import {
     configSlice,
@@ -335,9 +323,9 @@ export const ModbusDigitalOutputs: React.FC = () => {
     function addOutput() {
         const newOutput: WithNameAndDescription<ModbusDoutConfig> = {
             name: "",
-            slave_num: 1,
-            start_address: 1,
-            end_address: 2,
+            slaveNum: 1,
+            startAddress: 1,
+            endAddress: 2,
             description: "New input"
             // Initialize other fields as necessary
         }

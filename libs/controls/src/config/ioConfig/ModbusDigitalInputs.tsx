@@ -295,7 +295,7 @@ export const ModbusDigitalInputs: React.FC = () => {
     const [tempInputs, setTempInputs] = useState(
         inputs.map(input => ({
             ...input,
-            tempSlaveNum: input.slave_num,
+            tempSlaveNum: input.slaveNum,
             tempAddress: input.address
         }))
     )
@@ -343,7 +343,7 @@ export const ModbusDigitalInputs: React.FC = () => {
     }
 
     function update_address(index, value) {
-        if (!isDuplicate(inputs[index].slave_num, value, index)) {
+        if (!isDuplicate(inputs[index].slaveNum, value, index)) {
             setInputs(current =>
                 current.map((input, i) => (i === index ? { ...input, address: value } : input))
             )
@@ -384,7 +384,7 @@ export const ModbusDigitalInputs: React.FC = () => {
     function addInput() {
         const newInput: WithNameAndDescription<ModbusDinConfig> = {
             name: "",
-            slave_num: 1,
+            slaveNum: 1,
             address: 1,
             function: 1,
             description: "New input"
@@ -407,7 +407,7 @@ export const ModbusDigitalInputs: React.FC = () => {
         return inputs.some((input, index) => {
             return (
                 index !== currentIndex &&
-                input.slave_num === slaveNumber &&
+                input.slaveNum === slaveNumber &&
                 input.address === address
             )
         })
@@ -415,14 +415,14 @@ export const ModbusDigitalInputs: React.FC = () => {
 
     function getConsecutiveIndices(inputs: WithNameAndDescription<ModbusDinConfig>[]): Set<number> {
         const sortedInputs = [...inputs].sort((a, b) =>
-            a.slave_num === b.slave_num ? a.address - b.address : a.slave_num - b.slave_num
+            a.slaveNum === b.slaveNum ? a.address - b.address : a.slaveNum - b.slaveNum
         )
         const consecutiveIndices = new Set<number>()
 
         for (let i = 1; i < sortedInputs.length; i++) {
             // Check if the addresses are consecutive and belong to the same slave number
             if (
-                sortedInputs[i].slave_num === sortedInputs[i - 1].slave_num &&
+                sortedInputs[i].slaveNum === sortedInputs[i - 1].slaveNum &&
                 sortedInputs[i].address === sortedInputs[i - 1].address + 1
             ) {
                 consecutiveIndices.add(inputs.indexOf(sortedInputs[i]))
