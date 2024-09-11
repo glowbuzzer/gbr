@@ -49,6 +49,7 @@ import {
     useLoadedRobotParts
 } from "@glowbuzzer/awlib"
 import { Environment, Sphere } from "@react-three/drei"
+import { AppStatusBar } from "./AppStatusBar"
 
 const definition_l: AwTubeRobotParts = {
     b0: Base.MM219_27,
@@ -131,6 +132,7 @@ export const App = () => {
                     DigitalOutputsTileDefinition,
                     SafetyDigitalOutputsTileDefinition
                 ]}
+                statusBarExtra={<AppStatusBar />}
             >
                 <DockLayout />
             </DockLayoutProvider>

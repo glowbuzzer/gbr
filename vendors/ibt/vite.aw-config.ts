@@ -43,7 +43,7 @@ export default function defineAutomationWareViteConfig(config = { port: 5175 }) 
             alias: {
                 "@glowbuzzer/controls": resolve(root, "./libs/controls/src/index.ts"),
                 "@glowbuzzer/store": resolve(root, "./libs/store/src/index.ts"),
-                "@glowbuzzer/awlib": resolve(root, "./vendors/automationware/awlib/src/index.ts")
+                "@glowbuzzer/awlib": resolve(root, "./vendors/ibt/awlib/src/index.ts")
             }
         }
     })

@@ -8,6 +8,7 @@ import {
     configMetadata,
     MachineMetadata,
     MachineState,
+    MACHINETARGET,
     possible_transitions,
     useConfig,
     useConnection,
@@ -42,6 +43,7 @@ export const StatusTraySafetyErrors = () => {
     const machine_meta = configMetadata(config.machine[0])
 
     const fault = machine.currentState === MachineState.FAULT
+    const sim = machine.requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
 
     useEffect(() => {
         // if in fault state, we should reset the fault as soon as overall safety state is good
@@ -50,7 +52,7 @@ export const StatusTraySafetyErrors = () => {
         }
     }, [overall, fault])
 
-    if (!connected || overall) {
+    if (!connected || overall || sim) {
         return null
     }
 

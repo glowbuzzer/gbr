@@ -28,6 +28,7 @@ import { AutoConnectionController } from "./AutoConnectionController"
 import { AutoDesiredModeController } from "./AutoDesiredModeController"
 import { UserModel, UserProvider } from "../usermgmt"
 import { ConnectionConfiguration } from "./types"
+import { AutoSimulatedSafetyInputsController } from "./AutoSimulatedSafetyInputsController"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
@@ -195,6 +196,7 @@ export const GlowbuzzerApp = ({
                                 <ConfigLiveEditProvider>
                                     <GlowbuzzerContainer userModel={userModel}>
                                         <AutoConnectionController enabled={!manualConnect} />
+                                        <AutoSimulatedSafetyInputsController />
                                         <AutoDesiredModeController enabled={autoOpEnabled}>
                                             {children}
                                         </AutoDesiredModeController>
