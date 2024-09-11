@@ -7,8 +7,8 @@ import react from "@vitejs/plugin-react"
 import svgr from "@svgr/rollup"
 import { viteStaticCopy } from "vite-plugin-static-copy"
 import { viteDracoPlugin } from "./awlib/src/vite-draco-plugin"
-
 import { basename, resolve } from "path"
+import { serveStatic } from "./static-file-plugin"
 
 const root = process.cwd()
 const [, , projectDir] = process.argv
@@ -17,11 +17,11 @@ const project = basename(projectDir)
 const cacheDir = resolve(root, "node_modules/.vite/" + project)
 console.log("Using cache dir", cacheDir)
 
-export default function defineAutomationWareViteConfig() {
+export default function defineAutomationWareViteConfig(config = { port: 5175 }) {
     return defineConfig({
         server: {
             host: true,
-            port: 5175
+            port: config.port
         },
         envDir: root, // load config from project root
         cacheDir,
@@ -34,15 +34,10 @@ export default function defineAutomationWareViteConfig() {
                     {
                         src: normalizePath(resolve(root, "examples/assets/environment")),
                         dest: "./assets"
-                        // },
-                        // {
-                        //     src: normalizePath(
-                        //         resolve(root, "vendors/automationware/assets/awtube-parts-v2")
-                        //     ),
-                        //     dest: "./assets"
                     }
                 ]
-            })
+            }),
+            serveStatic()
         ],
         resolve: {
             alias: {

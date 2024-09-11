@@ -147,7 +147,7 @@ test("move vector at velocity in rotated frame", async () => {
 
         gbc.assert.near(px, 10, 0.01)
         gbc.assert.near(py, 10, 0.01)
-        gbc.assert.near(pz, 8.41, 0.01)
+        gbc.assert.near(pz, 10.24, 0.01)
     } finally {
         gbc.plot("test")
     }

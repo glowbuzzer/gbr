@@ -177,10 +177,11 @@ export const JogTouchWidget = ({
             svgRef.current.addEventListener("touchend", handle_end, { passive: false })
             svgRef.current.addEventListener("pointerup", handle_end, { passive: false })
             return () => {
-                // svgRef.current.body.classList.remove("no-select")
-                svgRef.current.removeEventListener("mouseup", handle_end)
-                svgRef.current.removeEventListener("touchend", handle_end)
-                svgRef.current.removeEventListener("pointerup", handle_end)
+                if (svgRef.current) {
+                    svgRef.current.removeEventListener("mouseup", handle_end)
+                    svgRef.current.removeEventListener("touchend", handle_end)
+                    svgRef.current.removeEventListener("pointerup", handle_end)
+                }
             }
         }
     }, [state.active])

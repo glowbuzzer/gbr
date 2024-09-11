@@ -7,7 +7,8 @@ import {
     MachineState,
     OPERATION_ERROR,
     useConnection,
-    useMachine
+    useMachine,
+    useOverallSafetyStateInput
 } from "@glowbuzzer/store"
 import { StatusTrayItem } from "./StatusTrayItem"
 import { DismissType } from "./StatusTrayProvider"
@@ -49,6 +50,7 @@ function only_safety_error(fault: number) {
 export const StatusTrayFaults = () => {
     const machine = useMachine()
     const { connected } = useConnection()
+    const safety_enabled = useOverallSafetyStateInput() !== undefined
 
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
@@ -62,10 +64,10 @@ export const StatusTrayFaults = () => {
     }
 
     // the safety dedicated status tray item will take care of pure safety faults
-    if (!fault_active && only_safety_error(machine.faultHistory)) {
+    if (!fault_active && safety_enabled && only_safety_error(machine.faultHistory)) {
         return null
     }
-    if (fault_active && only_safety_error(machine.activeFault)) {
+    if (fault_active && safety_enabled && only_safety_error(machine.activeFault)) {
         return
     }
 

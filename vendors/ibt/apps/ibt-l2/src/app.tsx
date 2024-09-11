@@ -14,6 +14,7 @@ import {
     DockTileDefinitionBuilder,
     FeedRateTileDefinition,
     FlowEditorTileDefinition,
+    FlowRuntimeTileDefinition,
     FramesTileDefinition,
     JointDroTileDefinition,
     JointJogTileDefinition,
@@ -52,7 +53,6 @@ import { Environment, Sphere } from "@react-three/drei"
 import { SimpleMoveTileDefinition } from "./SimpleMoveTile"
 import { InterpolatedMoveTile } from "./InterpolatedMoveTile"
 import { AppStatusBar } from "./AppStatusBar"
-import { FlowRuntimeTileDefinition } from "../../../../../libs/controls/src/flow/runtime/FlowRuntimeTileDefinition"
 
 // construct the robot definition from the parts
 const definition_l2: AwTubeRobotParts = {
@@ -73,25 +73,6 @@ const definition_l2: AwTubeRobotParts = {
     j5: Joint.J20,
     s0: Spindle.M112
 }
-
-// const definition_l: AwTubeRobotParts = {
-//     b0: Base.MM219_27,
-//     j0: Joint.J40LP,
-//     p0: Plate.J40,
-//     c0: Clamp.J40_J40,
-//     j1: Joint.J40HP,
-//     l0: Link.L125_514,
-//     j2: Joint.J32,
-//     c1: Clamp.J32_J25,
-//     j3: Joint.J25,
-//     p1: Plate.J25,
-//     l1: Link.L100_494,
-//     j4: Joint.J25,
-//     p2: Plate.J25,
-//     m0: Monobraccio.M250,
-//     j5: Joint.J20,
-//     s0: Spindle.M112
-// }
 
 const LoadedAwTubeRobot = () => {
     const parts = useLoadedRobotParts(definition_l2)
@@ -130,49 +111,38 @@ const InterpolatedMoveTileDefinition = DockTileDefinitionBuilder()
 
 export const App = () => {
     return (
-        <InnoboticsModeProvider>
-            <DockLayoutProvider
-                tiles={[
-                    CustomSceneTileDefinition,
-                    AwTubeStatusTileDefinitionBuilder({
-                        showSoftwareStop: true,
-                        showToolInputs: true,
-                        showToolOutputs: true
-                    }),
-                    SerialCommunicationsTileDefinition,
-                    ConfigEditTileDefinition,
-                    DockTileDefinitionBuilder(CartesianJogTileDefinition)
-                        .wrap(InnoboticsJogTileWrapper)
-                        .build(),
-                    DockTileDefinitionBuilder(JointJogTileDefinition)
-                        .wrap(InnoboticsJogTileWrapper)
-                        .build(),
-                    FlowEditorTileDefinition,
-                    DockTileDefinitionBuilder(FlowRuntimeTileDefinition)
-                        .wrap(InnoboticsFlowTileWrapper)
-                        .build(),
-                    CartesianDroTileDefinition,
-                    JointDroTileDefinition,
-                    JointTorqueModesTileDefinition,
-                    ToolsTileDefinition,
-                    PointsTileDefinition,
-                    FramesTileDefinition,
-                    FeedRateTileDefinition,
-                    TelemetryTileDefinition,
-                    DiagnosticsTileDefinition,
-                    SimpleMoveTileDefinition,
-                    MonitorTileDefinition,
-                    PayloadTileDefinition,
-                    InterpolatedMoveTileDefinition,
-                    DigitalInputsTileDefinition,
-                    SafetyDigitalInputsTileDefinition,
-                    DigitalOutputsTileDefinition,
-                    SafetyDigitalOutputsTileDefinition
-                ]}
-                statusBarExtra={<AppStatusBar />}
-            >
-                <DockLayout />
-            </DockLayoutProvider>
-        </InnoboticsModeProvider>
+        <DockLayoutProvider
+            tiles={[
+                CustomSceneTileDefinition,
+                AwTubeStatusTileDefinitionBuilder({
+                    showSoftwareStop: true,
+                    showToolInputs: true,
+                    showToolOutputs: true
+                }),
+                ConfigEditTileDefinition,
+                CartesianJogTileDefinition,
+                JointJogTileDefinition,
+                FlowEditorTileDefinition,
+                FlowRuntimeTileDefinition,
+                CartesianDroTileDefinition,
+                JointDroTileDefinition,
+                JointTorqueModesTileDefinition,
+                ToolsTileDefinition,
+                PointsTileDefinition,
+                FramesTileDefinition,
+                FeedRateTileDefinition,
+                TelemetryTileDefinition,
+                DiagnosticsTileDefinition,
+                SimpleMoveTileDefinition,
+                MonitorTileDefinition,
+                PayloadTileDefinition,
+                InterpolatedMoveTileDefinition,
+                DigitalInputsTileDefinition,
+                DigitalOutputsTileDefinition
+            ]}
+            statusBarExtra={<AppStatusBar />}
+        >
+            <DockLayout />
+        </DockLayoutProvider>
     )
 }

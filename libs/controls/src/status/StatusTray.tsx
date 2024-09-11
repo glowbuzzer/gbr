@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import styled from "styled-components"
+import styled, { css } from "styled-components"
 import { useStatusTrayVisible } from "./StatusTrayProvider"
 import { StatusTrayModifiedConfiguration } from "./StatusTrayModifiedConfiguration"
 import { StatusTrayFaults } from "./StatusTrayFaults"
@@ -12,8 +12,9 @@ import { StatusTrayModeSwitch } from "./StatusTrayModeSwitch"
 import { StatusTrayConnect } from "./StatusTrayConnect"
 import { useEffect, useState } from "react"
 import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
+import { DownCircleOutlined, UpCircleOutlined } from "@ant-design/icons"
 
-const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
+const StyledDiv = styled.div<{ $visible: boolean; $collapsed: boolean; $bottomOffset: number }>`
     position: absolute;
     z-index: 500;
     bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 4px)`};
@@ -26,8 +27,16 @@ const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
 
     .tray {
         pointer-events: all;
-        width: 50%;
-        min-width: 500px;
+        ${props =>
+            props.$collapsed
+                ? css`
+                      width: 60px;
+                      min-height: 38px;
+                  `
+                : css`
+                      width: 50%;
+                      min-width: 500px;
+                  `}
         margin: 0 auto;
         height: 100%;
         border: 3px solid ${props => props.theme.colorWarningBorder};
@@ -36,6 +45,20 @@ const StyledDiv = styled.div<{ $visible: boolean; $bottomOffset: number }>`
         overflow-y: auto;
         border-radius: 14px;
         box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
+
+        .tray-header {
+            text-align: center;
+            transform: translate(0, 8px);
+            opacity: 0.8;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+
+        .tray-items.hidden {
+            display: none;
+        }
     }
 `
 
@@ -49,6 +72,14 @@ type StatusTrayProps = {
 export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
     const visible = useStatusTrayVisible()
     const [bottomOffset, setBottomOffset] = useState(0)
+    const [collapsed, setCollapsed] = useState(false)
+
+    useEffect(() => {
+        // ensure tray is expanded when it becomes visible, so that operator does not miss important information
+        if (visible) {
+            setCollapsed(false)
+        }
+    }, [visible])
 
     useEffect(() => {
         if (statusBarRef.current) {
@@ -69,17 +100,20 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
     }, [statusBarRef])
 
     return (
-        <StyledDiv $visible={visible} $bottomOffset={bottomOffset}>
+        <StyledDiv $visible={visible} $collapsed={collapsed} $bottomOffset={bottomOffset}>
             <div className="tray">
-                <StatusTraySafetyErrors />
-                {/*
-                <StatusTraySafetyOverrideMode />
-*/}
-                <StatusTrayConnect />
-                <StatusTrayModeSwitch />
-                <StatusTrayModifiedConfiguration />
-                <StatusTrayFaults />
-                <StatusTrayGbcVersionCheck />
+                <div className="tray-header" onClick={() => setCollapsed(v => !v)}>
+                    {collapsed ? <UpCircleOutlined /> : <DownCircleOutlined />}
+                </div>
+
+                <div className={collapsed ? "tray-items hidden" : ""}>
+                    <StatusTraySafetyErrors />
+                    <StatusTrayConnect />
+                    <StatusTrayModeSwitch />
+                    <StatusTrayModifiedConfiguration />
+                    <StatusTrayFaults />
+                    <StatusTrayGbcVersionCheck />
+                </div>
             </div>
         </StyledDiv>
     )

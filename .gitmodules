@@ -1,3 +1,3 @@
 [submodule "vendors/automationware/awlib"]
-	path = vendors/automationware/awlib
+	path = vendors/ibt/awlib
 	url = https://github.com/glowbuzzer/awlib.git

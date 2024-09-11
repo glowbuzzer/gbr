@@ -77,6 +77,7 @@ export const GlowbuzzerAppLifecycle = new (class {
                 return websocket
             }
 
+            // console.log("CONNECT", new Error().stack)
             import.meta.hot.data.url = url
             import.meta.hot.data.websocket = new WebSocket(url)
 

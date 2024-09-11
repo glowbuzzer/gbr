@@ -79,15 +79,16 @@ const GlowbuzzerContainer: FC<GlowbuzzerContainerProps> = ({ userModel, children
     const { state, autoConnect, reconnect } = connection
 
     useEffect(() => {
-        if (state === ConnectionState.DISCONNECTED && autoConnect) {
-            const timer = setTimeout(() => {
-                reconnect()
-            }, connectDelay.current)
-
-            connectDelay.current = 5000
-
-            return () => clearTimeout(timer)
-        }
+        // if (state === ConnectionState.DISCONNECTED && autoConnect) {
+        //     const timer = setTimeout(() => {
+        //         console.log("RECONNECT ON TIMER")
+        //         reconnect()
+        //     }, connectDelay.current)
+        //
+        //     connectDelay.current = 5000
+        //
+        //     return () => clearTimeout(timer)
+        // }
     }, [state, autoConnect, reconnect])
 
     useEffect(() => {

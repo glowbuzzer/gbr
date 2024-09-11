@@ -49,9 +49,12 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
 
         websocket.onmessage = msg => {
             const message: GlowbuzzerStatus = JSON.parse(msg.data)
-            if (message.status) {
-                setLastStatus(message.status)
-            }
+            // TODO: H: this is only used to pass current status to external flowmaker endpoint
+            //          it causes a problem because it always changes, and so causes a lot of re-renders,
+            //          and seems to cause max nested state change errors in React
+            // if (message.status) {
+            //     setLastStatus(message.status)
+            // }
             if (message.response) {
                 handler.response(message.response)
             } else {

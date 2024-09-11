@@ -68,7 +68,7 @@ export function useEnablingSwitchInput() {
 }
 
 export function useSafeStopInput() {
-    return !useMachineInputActive("safeStopInput")
+    return useMachineInputActive("safeStopInput") === false
 }
 
 export function useSafetyOverrideEnabledInput() {
