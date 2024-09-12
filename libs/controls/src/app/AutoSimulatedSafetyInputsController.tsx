@@ -2,6 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
+import * as React from "react"
 import { useEffect } from "react"
 import {
     MACHINETARGET,
@@ -49,5 +50,5 @@ export const AutoSimulatedSafetyInputsController = () => {
         }
     }, [overallSafetyStateInput, connected, sim])
 
-    return null
+    return <></>
 }
