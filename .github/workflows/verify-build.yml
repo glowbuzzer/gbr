@@ -19,15 +19,14 @@ jobs:
 
             -   uses: pnpm/action-setup@v4
                 with:
-                    version: 8
+                    version: 9
 
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: 18
-#                    cache: pnpm
+                    node-version: 20
 
             -   name: Install packages
-                run: pnpm install
+                run: pnpm install --frozen-lockfile
 
             -   name: Package libs
                 run: node build.mjs controls,store 0.0.0
