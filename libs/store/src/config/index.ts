@@ -89,6 +89,7 @@ type ConfigSliceReducers = {
     setRemoteConfig: (state: ConfigSliceState, action: PayloadAction<GbcConfigResponse>) => void
     setAppConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
     addConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
+    clearConfig: (state: ConfigSliceState) => void
     setConfig: (state: ConfigSliceState, action: PayloadAction<GlowbuzzerConfig>) => void
 }
 
@@ -144,7 +145,7 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
         remote: null
     } as ConfigSliceState,
     reducers: {
-        /** Set the app config - will overlay onto the current config (which may be loaded from local storage or empty) */
+        /** @deprecated We don't really support app config */
         setAppConfig(state, action) {
             // we will attempt to load the last config from local storage and overlay the app config
             const appConfig = action.payload
@@ -193,6 +194,16 @@ export const configSlice: Slice<ConfigSliceState, ConfigSliceReducers> = createS
                 local,
                 current,
                 requiresUpload
+            }
+        },
+
+        /** Clear the local config */
+        clearConfig(state) {
+            return {
+                ...state,
+                local: {},
+                current: merge(GlowbuzzerMinimalConfig, state.remote),
+                requiresUpload: false
             }
         },
 
@@ -257,6 +268,14 @@ export function useConfig() {
     return useSelector((state: RootState) => state.config.current)
 }
 
+export function useLocalConfig() {
+    return useSelector((state: RootState) => state.config.local)
+}
+
+export function useStaticAppConfig() {
+    return useSelector((state: RootState) => state.config.appConfig)
+}
+
 export function configMetadata<T extends { $metadata?: any }>(
     configItem: T,
     allowUndefined = false
@@ -282,7 +301,8 @@ export function useConfigLoader() {
 
 export function useConfigSync(): [boolean, () => Promise<void>] {
     const connection = useConnection()
-    const config = useConfig()
+    const localConfig = useLocalConfig()
+    const appConfig = useStaticAppConfig()
     const dispatch = useDispatch()
     const gbcInfo = useGbcConfigInfo()
     const requireSync = useSelector((state: RootState) => state.config.requiresUpload)
@@ -291,8 +311,15 @@ export function useConfigSync(): [boolean, () => Promise<void>] {
         requireSync,
         async () => {
             if (connection.connected) {
-                await connection.request("load config", { config })
-                dispatch(configSlice.actions.setRemoteConfig({ ...gbcInfo, ...config }))
+                const response = await connection.request("load config", {
+                    config: { ...appConfig, ...localConfig }
+                })
+                dispatch(configSlice.actions.clearConfig())
+                const next = {
+                    ...gbcInfo,
+                    ...response.config
+                }
+                dispatch(configSlice.actions.setRemoteConfig(next))
             }
         }
     ]
