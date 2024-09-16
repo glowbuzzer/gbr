@@ -49,7 +49,7 @@ type CartesianPositionEditModalProps = {
     value?: WithNameAndDescription<CartesianPosition>
     onChange: (position: WithNameAndDescription<CartesianPosition>) => void
     onSave: () => void
-    onClose: () => void
+    onCancel: () => void
 }
 
 export const CartesianPositionEditPanel = ({
@@ -58,7 +58,7 @@ export const CartesianPositionEditPanel = ({
     value: value_or_null,
     onChange,
     onSave,
-    onClose
+    onCancel
 }: CartesianPositionEditModalProps) => {
     const value = value_or_null || DEFAULT_VALUE
     const [name, setName] = useState(value.name)
@@ -88,7 +88,7 @@ export const CartesianPositionEditPanel = ({
             <Input value={name} placeholder="Enter name" onChange={update_name} />
             <CartesianPositionEdit value={value} onChange={handle_change} readonly={readonly} />
             <Space className="actions">
-                <Button onClick={onClose}>Cancel</Button>
+                <Button onClick={onCancel}>Cancel</Button>
                 <Button type="primary" onClick={onSave} disabled={!name?.length}>
                     {mode === CartesianPositionEditPanelMode.CREATE ? "Create" : "Save"}
                 </Button>

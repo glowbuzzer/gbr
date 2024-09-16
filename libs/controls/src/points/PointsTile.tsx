@@ -176,7 +176,7 @@ export const PointsTile = () => {
             mode={mode}
             onSave={save_points}
             onChange={update_point}
-            onClose={cancel_edit}
+            onCancel={cancel_edit}
         />
     )
 }

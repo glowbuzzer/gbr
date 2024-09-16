@@ -96,6 +96,11 @@ export type ToolMetadata = {
     index: number
 }
 
+export type FrameMetadata = {
+    readonly?: boolean
+    world?: boolean
+}
+
 type MachineIoItem = {
     safety?: boolean
     index: number
@@ -180,7 +185,7 @@ export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
     kinematicsConfiguration?: KinematicsConfigurationConfig[]
     moveParameters?: MoveParametersConfig[]
     joint?: JointConfig[]
-    frames?: FramesConfig[]
+    frames?: WithMetadata<FramesConfig, FrameMetadata>[]
     points?: PointsConfig[]
     task?: TaskConfig[]
     activity?: ActivityConfig[]

@@ -5,6 +5,7 @@
 import React, { useState } from "react"
 import {
     CartesianPosition,
+    configMetadata,
     configSlice,
     Frame,
     FramesConfig,
@@ -40,7 +41,7 @@ export const FramesTile = () => {
     // Note that `asList` is in tree order, whereas `frames` is in the order given in the config file (not necessarily the same)
     const { frames: editedFrames, setFrames, clearFrames } = useConfigLiveEdit()
     const { asTree } = useFrames(editedFrames)
-    const frames = useFramesList()
+    const framesList = useFramesList()
     const [selected, setSelected] = useSelectedFrame()
     const [mode, setMode] = useState<CartesianPositionEditPanelMode>(
         CartesianPositionEditPanelMode.NONE
@@ -91,7 +92,7 @@ export const FramesTile = () => {
     function frame_to_cartesian_position(
         frameIndex: number
     ): WithNameAndDescription<CartesianPosition> {
-        const frame = editedFrames?.[frameIndex] || frames[frameIndex]
+        const frame = editedFrames?.[frameIndex] || framesList[frameIndex]
         if (!frame) {
             return null
         }
@@ -112,7 +113,8 @@ export const FramesTile = () => {
         rotation,
         translation
     }: WithNameAndDescription<CartesianPosition>) {
-        const frameIndex = mode === CartesianPositionEditPanelMode.CREATE ? frames.length : selected
+        const frameIndex =
+            mode === CartesianPositionEditPanelMode.CREATE ? framesList.length : selected
         const modifiedFrame = {
             name,
             positionReference,
@@ -123,9 +125,9 @@ export const FramesTile = () => {
 
         // append or update list with modification
         const overrides: WithNameAndDescription<FramesConfig>[] =
-            frameIndex >= frames.length
-                ? [...frames, modifiedFrame]
-                : frames.map((frame, index) => {
+            frameIndex >= framesList.length
+                ? [...framesList, modifiedFrame]
+                : framesList.map((frame, index) => {
                       if (index === frameIndex) {
                           return modifiedFrame
                       }
@@ -135,10 +137,23 @@ export const FramesTile = () => {
         setFrames(overrides)
     }
 
+    function cancel_edit() {
+        switch (mode) {
+            case CartesianPositionEditPanelMode.CREATE:
+                clearFrames()
+                break
+            case CartesianPositionEditPanelMode.UPDATE:
+                break
+        }
+        setMode(CartesianPositionEditPanelMode.NONE)
+    }
     function save_frames() {
         store(editedFrames)
         clearFrames()
         setMode(CartesianPositionEditPanelMode.NONE)
+        if (mode === CartesianPositionEditPanelMode.CREATE) {
+            setSelected(editedFrames.length - 1)
+        }
     }
 
     function add_frame() {
@@ -146,26 +161,27 @@ export const FramesTile = () => {
     }
 
     function delete_frame() {
-        const next = frames.filter((_, index) => index !== selected)
+        const next = framesList.filter((_, index) => index !== selected)
         store(next)
         setSelected(selected > 0 ? selected - 1 : 0)
     }
 
     const treeData = make_tree(asTree)
+    const { readonly, world } = configMetadata(framesList[selected])
 
     return mode === CartesianPositionEditPanelMode.NONE ? (
         <CartesianPositionTable
             selected={selected}
             setSelected={setSelected}
             items={treeData}
-            onEdit={() => setMode(CartesianPositionEditPanelMode.UPDATE)}
+            onEdit={world ? undefined : () => setMode(CartesianPositionEditPanelMode.UPDATE)}
             onAdd={add_frame}
-            onDelete={delete_frame}
+            onDelete={world ? undefined : delete_frame}
         />
     ) : (
         <CartesianPositionEditPanel
             mode={mode}
-            readonly={selected === 1}
+            readonly={mode === CartesianPositionEditPanelMode.UPDATE && readonly}
             value={
                 mode === CartesianPositionEditPanelMode.UPDATE
                     ? frame_to_cartesian_position(selected)
@@ -173,7 +189,7 @@ export const FramesTile = () => {
             }
             onChange={update_frame}
             onSave={save_frames}
-            onClose={() => setMode(CartesianPositionEditPanelMode.NONE)}
+            onCancel={cancel_edit}
         />
     )
 }
