@@ -17,7 +17,7 @@ import {
 } from "@glowbuzzer/store"
 import { TreeDataNode } from "antd"
 import { Euler } from "three"
-import { CartesianPositionTable } from "../util/components/CartesianPositionTable"
+import { CartesianPositionTable } from "../util"
 import { useConfigLiveEdit } from "../config"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
@@ -165,6 +165,7 @@ export const FramesTile = () => {
     ) : (
         <CartesianPositionEditPanel
             mode={mode}
+            readonly={selected === 1}
             value={
                 mode === CartesianPositionEditPanelMode.UPDATE
                     ? frame_to_cartesian_position(selected)

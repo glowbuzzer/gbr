@@ -19,6 +19,7 @@ import { Button, Checkbox, Space } from "antd"
 import { FramesDropdown } from "../../frames"
 import { KinematicsDropdown } from "../../kinematics/KinematicsDropdown"
 import styled from "styled-components"
+import { DisabledContextProvider } from "antd/es/config-provider/DisabledContext"
 
 const StyledDiv = styled.div`
     .grid {
@@ -49,12 +50,14 @@ function to_euler(q: Quat): Euler {
 
 type CartesianPositionEditProps = {
     value: CartesianPosition
+    readonly?: boolean
     onChange: (value: CartesianPosition) => void
     ignoreFrame?: boolean
 }
 
 export const CartesianPositionEdit = ({
     value,
+    readonly,
     onChange,
     ignoreFrame
 }: CartesianPositionEditProps) => {
@@ -138,41 +141,43 @@ export const CartesianPositionEdit = ({
 
     return (
         <StyledDiv>
-            <div className="grid">
-                <div>Translation</div>
-                {["x", "y", "z"].map(axis => (
-                    <div className="input" key={"t-" + axis}>
-                        {axis.toUpperCase()}{" "}
-                        <PrecisionInput
-                            value={fromSI(translation[axis], "linear")}
-                            onChange={v =>
-                                update_translation({
-                                    ...translation,
-                                    [axis]: toSI(v, "linear")
-                                })
-                            }
-                            precision={linearPrecision}
-                        />
-                    </div>
-                ))}
-                <div>{linearUnits}</div>
-                <div>Rotation</div>
-                {["x", "y", "z"].map(axis => (
-                    <div className="input" key={"r-" + axis}>
-                        {axis.toUpperCase()}{" "}
-                        <PrecisionInput
-                            value={fromSI(rotationEuler[axis], "angular")}
-                            onChange={v => {
-                                const next = rotationEuler.clone()
-                                next[axis] = toSI(v, "angular")
-                                update_rotation(next)
-                            }}
-                            precision={angularPrecision}
-                        />
-                    </div>
-                ))}
-                <div>{angularUnits}</div>
-            </div>
+            <DisabledContextProvider disabled={readonly}>
+                <div className="grid">
+                    <div>Translation</div>
+                    {["x", "y", "z"].map(axis => (
+                        <div className="input" key={"t-" + axis}>
+                            {axis.toUpperCase()}{" "}
+                            <PrecisionInput
+                                value={fromSI(translation[axis], "linear")}
+                                onChange={v =>
+                                    update_translation({
+                                        ...translation,
+                                        [axis]: toSI(v, "linear")
+                                    })
+                                }
+                                precision={linearPrecision}
+                            />
+                        </div>
+                    ))}
+                    <div>{linearUnits}</div>
+                    <div>Rotation</div>
+                    {["x", "y", "z"].map(axis => (
+                        <div className="input" key={"r-" + axis}>
+                            {axis.toUpperCase()}{" "}
+                            <PrecisionInput
+                                value={fromSI(rotationEuler[axis], "angular")}
+                                onChange={v => {
+                                    const next = rotationEuler.clone()
+                                    next[axis] = toSI(v, "angular")
+                                    update_rotation(next)
+                                }}
+                                precision={angularPrecision}
+                            />
+                        </div>
+                    ))}
+                    <div>{angularUnits}</div>
+                </div>
+            </DisabledContextProvider>
             {ignoreFrame || (
                 <div className="frame">
                     <Space>
@@ -186,7 +191,7 @@ export const CartesianPositionEdit = ({
                             <FramesDropdown value={frameIndex || 0} onChange={update_frame_index} />
                         )}
                     </Space>
-                    {kinematicsConfigurations.length < 2 ? (
+                    {readonly ? null : kinematicsConfigurations.length < 2 ? (
                         <Button size="small" onClick={() => update_from_kc(0)}>
                             Set from current position
                         </Button>

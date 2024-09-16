@@ -15,9 +15,10 @@ import { VerticalAxisConfigTab } from "./verticalAxisConfigTab/verticalAxisConfi
 import { ToolConfigTab } from "./toolConfigTab/ToolConfigTab"
 import { DrivesTab } from "../diagnostics/DrivesTab"
 import { DriveConfigTab } from "./driveConfigTab/driveConfigTab"
+import { FramesConfigTab } from "./framesConfigTab/FramesConfigTab"
 
 const StyledDiv = styled.div`
-    padding: 10px;
+    //padding: 10px;
     //height: 100%;
 
     .ant-card {
@@ -43,7 +44,7 @@ export const ConfigEditTile = () => {
         drives: <DriveConfigTab />,
         tool: <ToolConfigTab />,
         machineEnvelope: <MachineEnvelopeConfigTab />,
-        frames: <p>Frames config content</p>,
+        frames: <FramesConfigTab />,
         verticalAxis: <VerticalAxisConfigTab />,
         debug: <p>Debug config content</p>,
         version: <VersionTab />
@@ -69,6 +70,7 @@ export const ConfigEditTile = () => {
         <StyledDiv>
             <EtherCatConfigProvider>
                 <Card
+                    bordered={false}
                     tabList={tabs}
                     size="small"
                     activeTabKey={currentTab}

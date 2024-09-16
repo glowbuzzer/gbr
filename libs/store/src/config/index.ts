@@ -284,7 +284,7 @@ export function configMetadata<T extends { $metadata?: any }>(
 }
     ? T["$metadata"]
     : never {
-    return (configItem as any).$metadata || (allowUndefined ? undefined : {})
+    return (configItem as any)?.$metadata || (allowUndefined ? undefined : {})
 }
 
 /**

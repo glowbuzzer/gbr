@@ -17,7 +17,7 @@ import { DownCircleOutlined, UpCircleOutlined } from "@ant-design/icons"
 const StyledDiv = styled.div<{ $visible: boolean; $collapsed: boolean; $bottomOffset: number }>`
     position: absolute;
     z-index: 500;
-    bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 4px)`};
+    bottom: ${props => `calc(100vh - ${props.$bottomOffset}px + 1px)`};
     // top: ${props => `${props.$bottomOffset}px`};
     //bottom: 40px;
     left: 0;
@@ -25,38 +25,57 @@ const StyledDiv = styled.div<{ $visible: boolean; $collapsed: boolean; $bottomOf
     pointer-events: none;
     display: ${props => (props.$visible ? "block" : "none")};
 
-    .tray {
-        pointer-events: all;
-        ${props =>
-            props.$collapsed
-                ? css`
-                      width: 60px;
-                      min-height: 38px;
-                  `
-                : css`
-                      width: 50%;
-                      min-width: 500px;
-                  `}
-        margin: 0 auto;
-        height: 100%;
-        border: 3px solid ${props => props.theme.colorWarningBorder};
-        background: ${props => props.theme.colorBgContainer};
-        max-height: ${props => `${props.$bottomOffset - 4}px`};
-        overflow-y: auto;
-        border-radius: 14px;
-        box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
-
+    .tray-interactive {
         .tray-header {
             text-align: center;
-            transform: translate(0, 8px);
+            transform: translate(0, ${props => (props.$collapsed ? "0" : "3px")});
             opacity: 0.8;
 
             &:hover {
                 opacity: 1;
             }
+
+            .button {
+                pointer-events: all;
+                display: inline-block;
+                padding: 6px 12px 4px 12px;
+                border: 3px solid ${props => props.theme.colorWarningBorder};
+                box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
+                border-radius: 12px 12px 0 0;
+                border-bottom: 3px solid ${props => props.theme.colorBgContainer};
+                background: ${props => props.theme.colorBgContainer};
+
+                //width: 100px;
+            }
         }
 
-        .tray-items.hidden {
+        .tray {
+            pointer-events: all;
+            ${props =>
+                props.$collapsed
+                    ? css`
+                          width: 60px;
+                          min-height: 38px;
+                      `
+                    : css`
+                          width: 50%;
+                          min-width: 500px;
+                      `}
+            margin: 0 auto;
+            height: 100%;
+            border: 3px solid ${props => props.theme.colorWarningBorder};
+            background: ${props => props.theme.colorBgContainer};
+            max-height: ${props => `${props.$bottomOffset - 4}px`};
+            overflow-y: auto;
+            border-radius: 14px;
+            box-shadow: 0 0 15px 3px ${props => props.theme.colorWarningBorder}; /* Glow effect */
+
+            .tray-items.hidden {
+                display: none;
+            }
+        }
+
+        .tray.hidden {
             display: none;
         }
     }
@@ -101,18 +120,21 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
 
     return (
         <StyledDiv $visible={visible} $collapsed={collapsed} $bottomOffset={bottomOffset}>
-            <div className="tray">
+            <div className="tray-interactive">
                 <div className="tray-header" onClick={() => setCollapsed(v => !v)}>
-                    {collapsed ? <UpCircleOutlined /> : <DownCircleOutlined />}
+                    <span className="button">
+                        {collapsed ? <UpCircleOutlined /> : <DownCircleOutlined />}
+                    </span>
                 </div>
-
-                <div className={collapsed ? "tray-items hidden" : ""}>
-                    <StatusTraySafetyErrors />
-                    <StatusTrayConnect />
-                    <StatusTrayModeSwitch />
-                    <StatusTrayModifiedConfiguration />
-                    <StatusTrayFaults />
-                    <StatusTrayGbcVersionCheck />
+                <div className={collapsed ? "tray hidden" : "tray"}>
+                    <div className={collapsed ? "tray-items hidden" : ""}>
+                        <StatusTraySafetyErrors />
+                        <StatusTrayConnect />
+                        <StatusTrayModeSwitch />
+                        <StatusTrayModifiedConfiguration />
+                        <StatusTrayFaults />
+                        <StatusTrayGbcVersionCheck />
+                    </div>
                 </div>
             </div>
         </StyledDiv>

@@ -45,6 +45,7 @@ const DEFAULT_VALUE: WithNameAndDescription<CartesianPosition> = {
 
 type CartesianPositionEditModalProps = {
     mode: CartesianPositionEditPanelMode
+    readonly?: boolean
     value?: WithNameAndDescription<CartesianPosition>
     onChange: (position: WithNameAndDescription<CartesianPosition>) => void
     onSave: () => void
@@ -53,13 +54,13 @@ type CartesianPositionEditModalProps = {
 
 export const CartesianPositionEditPanel = ({
     mode,
+    readonly,
     value: value_or_null,
     onChange,
     onSave,
     onClose
 }: CartesianPositionEditModalProps) => {
     const value = value_or_null || DEFAULT_VALUE
-    // const [position, setPosition] = React.useState(value)
     const [name, setName] = useState(value.name)
 
     if (mode === CartesianPositionEditPanelMode.NONE) {
@@ -85,7 +86,7 @@ export const CartesianPositionEditPanel = ({
     return (
         <StyledDiv>
             <Input value={name} placeholder="Enter name" onChange={update_name} />
-            <CartesianPositionEdit value={value} onChange={handle_change} />
+            <CartesianPositionEdit value={value} onChange={handle_change} readonly={readonly} />
             <Space className="actions">
                 <Button onClick={onClose}>Cancel</Button>
                 <Button type="primary" onClick={onSave} disabled={!name?.length}>

@@ -47,7 +47,7 @@ const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
             <directionalLight position={[10, 10, 5]} intensity={1.5} />
             <directionalLight position={[-10, -10, -5]} intensity={0.5} />
             <OrbitControls />
-            <GLBModel url={url} scale={scale} />
+            {url && <GLBModel url={url} scale={scale} />}
         </Canvas>
     )
 }
