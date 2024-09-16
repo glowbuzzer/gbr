@@ -15,7 +15,7 @@ import { useState } from "react"
 export const StatusTrayModifiedConfiguration = () => {
     const { connected } = useConnection()
     const [requiresSync, sync] = useConfigSync()
-    const [messageApi] = message.useMessage()
+    const [messageApi, messageContext] = message.useMessage()
     const [uploading, setUploading] = useState(false)
 
     function upload_config() {
@@ -45,6 +45,7 @@ export const StatusTrayModifiedConfiguration = () => {
                 </Space>
             }
         >
+            {messageContext}
             Local configuration is out of sync. You must upload your configuration changes.
         </StatusTrayItem>
     )

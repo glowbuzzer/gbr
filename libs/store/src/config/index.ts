@@ -311,8 +311,10 @@ export function useConfigSync(): [boolean, () => Promise<void>] {
         requireSync,
         async () => {
             if (connection.connected) {
+                // if app config is specified this will contain a machine name to check against remote name
+                const config = { ...appConfig, ...localConfig }
                 const response = await connection.request("load config", {
-                    config: { ...appConfig, ...localConfig }
+                    config
                 })
                 dispatch(configSlice.actions.clearConfig())
                 const next = {

@@ -55,6 +55,9 @@ export const GlowbuzzerAppLifecycle = new (class {
         store.dispatch(telemetrySlice.actions.loadSettings())
 
         if (configuration) {
+            if (!configuration.machine?.[0]?.name) {
+                throw new Error("Local app configuration must specify a machine name")
+            }
             store.dispatch(configSlice.actions.setAppConfig(configuration))
         }
 
