@@ -1,11 +1,11 @@
 export const EtherCatConfigInitialTabList = [
     {
         key: "editConfig",
-        tab: "EtherCAT slave config"
+        tab: "EtherCAT Slave Config"
     },
     {
         key: "readSdo",
-        tab: "Read EtherCAT slave objects"
+        tab: "Read EtherCAT Slave Objects"
     },
     // {
     //     key: "writeSdo",
@@ -13,6 +13,6 @@ export const EtherCatConfigInitialTabList = [
     // },
     {
         key: "optionalSlaves",
-        tab: "Optional EtherCAT slaves config"
+        tab: "Optional EtherCAT Slaves Config"
     }
 ]

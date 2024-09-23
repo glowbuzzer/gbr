@@ -38,7 +38,7 @@ export const StandardIntegerInputs: React.FC = () => {
 
     return (
         <StyledFlex>
-            <div className="integer-input-grid">
+            <div className="integer input-grid">
                 {inputs?.length === 0 ? (
                     <Empty
                         image={Empty.PRESENTED_IMAGE_SIMPLE}

@@ -1,33 +1,18 @@
-import React from "react"
-import { useEffect, useState, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
+    Card,
+    Collapse,
+    Empty,
     Form,
     Input,
     InputNumber,
-    Button,
-    Collapse,
-    message,
     Space,
-    Alert,
-    Card,
-    Table,
-    Empty,
     Spin,
-    Tooltip,
-    Switch
+    Switch,
+    Table,
+    Tooltip
 } from "antd"
-import {
-    EtherCatConfig,
-    DriveLimits,
-    Sdo,
-    Slave,
-    OptionalConfig,
-    GbParams,
-    GbDebugParams,
-    exampleConfig
-} from "../EtherCatConfigTypes"
-import { useConnection } from "@glowbuzzer/store"
-import { isEtherCatConfig } from "../isEtherCatConfig"
+import { EtherCatConfig, Sdo } from "../EtherCatConfigTypes"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import EtherCatConfigStatusIndicator from "../EtherCatConfigStatusIndicator" // Ensure these types are correctly imported or defined
 import type { ColumnsType } from "antd/es/table"
@@ -38,7 +23,7 @@ import { SimpleObject } from "../slavecatTypes/SimpleObject"
 import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined } from "@ant-design/icons"
 import styled, { useTheme } from "styled-components"
 import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
-import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
+import { RequireEstopGuard } from "../../util/RequireEstopGuard"
 
 const { Panel } = Collapse
 
@@ -76,7 +61,7 @@ const HeaderText = styled.div<{ isOptional: boolean }>`
     color: ${({ isOptional }) => (isOptional ? "grey" : "inherit")};
 `
 
-const findDataTypeString = datatypeNumber => {
+const findDataTypeString = (datatypeNumber: number) => {
     const dataType = ethercatDataTypes.find(type => type.index === datatypeNumber)
     return dataType ? dataType.dataType : "Unknown"
 }
@@ -486,23 +471,12 @@ const SlaveSDOTable: React.FC<Props> = ({ config, slaveData }) => {
 type EtherCatSlaveConfigTabProps = {}
 
 export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}) => {
-    const { request } = useConnection()
-
-    const {
-        config,
-        setConfig,
-        setEditedConfig,
-        editedConfig,
-        configLoaded,
-        setConfigLoaded,
-        setUseDummyConfig,
-        useDummyConfig
-    } = useEtherCatConfig()
+    const { editedConfig, configLoaded } = useEtherCatConfig()
 
     const slaveData: slave[] = useSlaveCat()
 
     return (
-        <ConditionalDisplayInOpEnabled>
+        <RequireEstopGuard>
             <EtherCatConfigStatusIndicator />
             <Space>
                 Edit the configuration of EtherCAT slaves (applied at start-up of the network)
@@ -528,6 +502,6 @@ export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}
                     imageStyle={{ height: 60 }}
                 />
             )}
-        </ConditionalDisplayInOpEnabled>
+        </RequireEstopGuard>
     )
 }

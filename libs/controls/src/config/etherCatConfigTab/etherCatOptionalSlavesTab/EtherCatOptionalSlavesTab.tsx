@@ -3,14 +3,10 @@
  */
 
 import * as React from "react"
-import { Button, Flex, Space, Row, Col, Card, Checkbox, Modal, message, Tag } from "antd"
-import TextArea from "antd/es/input/TextArea"
-import styled from "styled-components"
-import { useConnection } from "@glowbuzzer/store"
-import { useEffect, useState } from "react"
+import { Button, Checkbox, message, Space } from "antd"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import EtherCatConfigStatusIndicator from "../EtherCatConfigStatusIndicator"
-import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
+import { RequireEstopGuard } from "../../util/RequireEstopGuard"
 
 interface OptionalSlave {
     name: string
@@ -30,16 +26,7 @@ const slaveData: OptionalSlave[] = [
 ]
 
 export const EtherCatOptionalSlavesTab = () => {
-    const {
-        config,
-        setConfig,
-        setEditedConfig,
-        editedConfig,
-        configLoaded,
-        setConfigLoaded,
-        configEdited,
-        setConfigEdited
-    } = useEtherCatConfig()
+    const { config, setEditedConfig, editedConfig, setConfigEdited } = useEtherCatConfig()
 
     const handleCheckboxChange = (slaveIndex: number, checked: boolean) => {
         if (editedConfig) {
@@ -60,7 +47,7 @@ export const EtherCatOptionalSlavesTab = () => {
     }
 
     return (
-        <ConditionalDisplayInOpEnabled>
+        <RequireEstopGuard>
             <EtherCatConfigStatusIndicator />
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <div style={{ textAlign: "left", fontSize: "14px" }}>
@@ -88,6 +75,6 @@ export const EtherCatOptionalSlavesTab = () => {
                     <Button onClick={handleReset}>Reset</Button>
                 </Space>
             </Space>
-        </ConditionalDisplayInOpEnabled>
+        </RequireEstopGuard>
     )
 }

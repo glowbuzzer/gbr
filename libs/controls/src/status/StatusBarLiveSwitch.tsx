@@ -4,9 +4,10 @@
 
 import * as React from "react"
 import {
+    ECM_CYCLIC_STATE,
     MACHINETARGET,
     useConnection,
-    useLiveModeEnabled,
+    useEthercatMasterCyclicStatus,
     useMachine,
     useSimilationOnlyConfiguration
 } from "@glowbuzzer/store"
@@ -15,10 +16,11 @@ import { Button } from "antd"
 export const StatusBarLiveSwitch = () => {
     const simulationOnly = useSimilationOnlyConfiguration()
     const { connected } = useConnection()
-    const live_switch_enabled = useLiveModeEnabled()
+    const ecm_cyclic_state = useEthercatMasterCyclicStatus()
     const machine = useMachine()
 
     const disabled = simulationOnly || !connected
+    const live_switch_enabled = ecm_cyclic_state === ECM_CYCLIC_STATE.ECM_CYCLIC_RUNNING
 
     function change_target(v: MACHINETARGET) {
         machine.setDesiredMachineTarget(v)
@@ -33,7 +35,7 @@ export const StatusBarLiveSwitch = () => {
                 type={live ? "primary" : undefined}
                 loading={live && switching}
                 onClick={() => change_target(MACHINETARGET.MACHINETARGET_FIELDBUS)}
-                disabled={disabled || !live_switch_enabled}
+                // disabled={disabled || !live_switch_enabled}
             >
                 Normal
             </Button>

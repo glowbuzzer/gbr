@@ -130,16 +130,6 @@ export function useDockContext(
             }
         }
 
-        if (!definition.tile) {
-            console.log("Tile did not use DockTileDefinitionBuilder to create definition", id)
-            return {
-                id,
-                render() {
-                    return "Tile does not use DockTileDefinitionBuilder " + id
-                }
-            }
-        }
-
         return definition
         // use this for testing to render simple content in every tile
         // return {

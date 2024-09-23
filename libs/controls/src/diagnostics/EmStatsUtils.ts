@@ -27,20 +27,11 @@ export const lightenColor = (hex, factor) => {
 }
 
 export const StyledTable: any = styled(Table)`
-    /* Add your styles here */
-
     .highlight-row {
         font-weight: bold;
-            //background-color: ${props => props.theme.colorPrimary};
-
-
-        background-color: ${props => lightenColor(props.theme.colorPrimary, 0.4)};
-        /* Adjust the second parameter (0.2) to control the degree of lightening */
-    }
-
-    td {
-        /* Adjust the padding or margin as needed */
-        padding-left: 10px;
+        //font-size: 1.2em;
+        //position: sticky;
+        background-color: ${props => props.theme.colorPrimaryBgHover};
     }
 }
 `

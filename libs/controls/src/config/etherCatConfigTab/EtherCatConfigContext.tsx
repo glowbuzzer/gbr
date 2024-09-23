@@ -37,9 +37,9 @@ export const EtherCatConfigContext = createContext<EtherCatConfigContextType | u
 // Custom hook to use the context
 export const useEtherCatConfig = () => {
     const context = useContext(EtherCatConfigContext)
-    // if (!context) {
-    //     throw new Error("useEtherCatConfig must be used within an EtherCatConfigProvider")
-    // }
+    if (!context) {
+        throw new Error("useEtherCatConfig must be used within an EtherCatConfigProvider")
+    }
     return context
 }
 
@@ -150,8 +150,6 @@ export const EtherCatConfigProvider: React.FC<{ children: React.ReactNode }> = (
         message.error("Configuration validation failed. Please check the configuration format.")
         disableAll()
     }
-
-    const [activeTabKey, setActiveTabKey] = useState<string>("editConfig")
 
     const [disabledTabs, setDisabledTabs] = useState(["writeSdo", "readSdo", "optionalSlaves"])
 

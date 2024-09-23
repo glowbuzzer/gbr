@@ -9,49 +9,36 @@ export const StyledFlex = styled(Flex)<StyledFlexProps>`
     display: flex;
     flex-direction: column;
     gap: 1px;
-    justify-content: space-between;
+    height: 100%;
+    padding: 4px 10px;
 
     .ant-input {
         flex-grow: 1;
         font-family: monospace;
     }
 
-    .digital-input-grid {
+    .input-grid,
+    .output-grid {
         display: grid;
         align-items: center;
-        //justify-items: center;
+        gap: 10px;
+        overflow-y: auto;
+    }
+
+    .digital.input-grid {
         grid-template-columns: 4fr 3fr 1fr;
-        gap: 10px;
     }
 
-    .digital-input-grid .description-column {
-        //justify-items: left;
-    }
-
-    .digital-input-grid .input-column {
-        justify-self: center; /* Center horizontally in the grid cell */
-    }
-
-    .digital-output-grid {
-        display: grid;
-        align-items: center;
+    .digital.output-grid {
         grid-template-columns: 2fr 3fr 1fr;
-        gap: 10px;
     }
 
-    .integer-input-grid {
-        display: grid;
-        align-items: center;
+    .integer.input-grid {
         grid-template-columns: 2fr 3fr;
-        gap: 10px;
     }
 
-    .modbus-digital-input-grid {
-        display: grid;
-        align-items: center;
-        grid-template-columns: 1fr 3fr 1fr 1fr 2fr 1fr 1fr 1fr 1fr;
-        gap: 0;
-        position: relative;
+    .digital.input-grid .input-column {
+        justify-self: center; /* Center horizontally in the grid cell */
     }
 
     .actions {

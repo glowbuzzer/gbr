@@ -47,7 +47,7 @@ export const SafetyDigitalInputs: React.FC = () => {
 
     return (
         <StyledFlex>
-            <div className="digital-input-grid">
+            <div className="digital input-grid">
                 {" "}
                 {inputs?.length === 0 ? (
                     <Empty

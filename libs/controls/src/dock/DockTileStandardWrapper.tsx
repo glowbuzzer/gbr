@@ -5,15 +5,16 @@
 import * as React from "react"
 import { useConnection } from "@glowbuzzer/store"
 import { useOperationEnabled } from "../util"
-import { DockTileDisabled } from "./DockTileDisabled"
+import { DockTileDisabledWithNestedSupport } from "./DockTileDisabledWithNestedSupport"
 
 export const DockTileStandardWrapper = ({ children, requireOpEnabled }) => {
     const { connected } = useConnection()
     const op = useOperationEnabled()
 
-    if (!connected || (requireOpEnabled && !op)) {
-        return <DockTileDisabled children={children} />
-    }
-
-    return <>{children}</>
+    const disabled = !connected || (requireOpEnabled && !op)
+    return (
+        <DockTileDisabledWithNestedSupport disabled={disabled}>
+            {children}
+        </DockTileDisabledWithNestedSupport>
+    )
 }

@@ -10,14 +10,10 @@ import {
     useEtherCATMasterStatus,
     useMachine
 } from "@glowbuzzer/store"
-import { message, Table, TabsProps } from "antd"
-
-import styled from "styled-components"
-import { DockToolbar, DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { SaveOutlined } from "@ant-design/icons"
-import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { columns, lightenColor, StyledTable } from "./EmStatsUtils"
+import { message } from "antd"
+import { columns, StyledTable } from "./EmStatsUtils"
 import { toTableDataEmStat } from "./emStatDictionary"
+import { EcmStateGuard } from "../util/components/EcmStateGuard"
 
 function isBitSet(number: number, bitPosition: number): boolean {
     const mask = 1 << bitPosition
@@ -56,20 +52,8 @@ export const EmStatTab = () => {
     // }
 
     return (
-        <>
+        <EcmStateGuard requireCyclicRunning={false}>
             {messageContext}
-            {/*<DockToolbar>*/}
-            {/*    <DockToolbarButtonGroup>*/}
-            {/*        <GlowbuzzerIcon*/}
-            {/*            useFill*/}
-            {/*            Icon={SaveOutlined}*/}
-            {/*            button*/}
-            {/*            disabled={!download_enabled}*/}
-            {/*            onClick={download_drive_logs}*/}
-            {/*            title="Download Drive Logs"*/}
-            {/*        />*/}
-            {/*    </DockToolbarButtonGroup>*/}
-            {/*</DockToolbar>*/}
             <StyledTable
                 ref={tableRef}
                 rowClassName={getRowClassName}
@@ -81,6 +65,6 @@ export const EmStatTab = () => {
                 pagination={false}
                 showHeader={false}
             />
-        </>
+        </EcmStateGuard>
     )
 }

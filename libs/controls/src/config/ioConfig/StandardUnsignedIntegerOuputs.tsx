@@ -38,7 +38,7 @@ export const StandardUnsignedIntegerOuputs: React.FC = () => {
 
     return (
         <StyledFlex>
-            <div className="integer-input-grid">
+            <div className="integer input-grid">
                 {outputs?.length === 0 ? (
                     <Empty
                         image={Empty.PRESENTED_IMAGE_SIMPLE}

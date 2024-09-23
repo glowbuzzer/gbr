@@ -5,6 +5,7 @@ import { Tag, Tooltip, message, Button, Modal, Typography } from "antd"
 import { GBEM_REQUEST, useConnection } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { CheckCircleOutlined, CloseCircleOutlined, DownloadOutlined } from "@ant-design/icons"
+import { EcmStateGuard } from "../util/components/EcmStateGuard"
 
 const { Text } = Typography
 
@@ -239,12 +240,9 @@ export const SlaveFileOpsTab = () => {
         setModalContent("")
     }
 
-    console.log("config", config)
-
     return (
-        <>
+        <EcmStateGuard requireCyclicRunning={true}>
             <p>
-                {" "}
                 First, download the configuration of EtherCAT slaves by clicking on the Download
                 button on the right-hand-side.
             </p>
@@ -365,6 +363,6 @@ export const SlaveFileOpsTab = () => {
                     </pre>
                 </Modal>
             )}
-        </>
+        </EcmStateGuard>
     )
 }

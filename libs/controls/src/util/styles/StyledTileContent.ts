@@ -2,20 +2,14 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import styled, { css } from "styled-components"
-import React from "react"
+import styled from "styled-components"
 
 export const StyledTileContent = styled.div`
     padding: 10px;
 `
 
-export const StyledSafetyTileContent = styled.div<{ $outset?: boolean }>`
-    ${props =>
-        props.$outset &&
-        css`
-            margin: -10px;
-        `}
-    border: 2px solid yellow;
+export const StyledSafetyTileContent = styled.div<{ $dimmed?: boolean }>`
+    border: 2px solid rgba(255, 255, 0, ${props => (props.$dimmed ? "0.4" : "1")});
     border-radius: 5px;
     height: 100%;
 
@@ -46,13 +40,6 @@ export const StyledSafetyTileContent = styled.div<{ $outset?: boolean }>`
             }
         }
     }
-`
-
-export const StyledDivider = styled.div`
-    height: 1px; /* Set the height of the divider */
-    background-color: lightyellow;
-    margin: 5px 0; /* Reset margin */
-    padding: 0; /* Reset padding */
 `
 
 export const StyledToolTipDiv = styled.div`

@@ -18,6 +18,7 @@ import { SafetyDigitalInputs } from "./SafetyDigitalInputs"
 import { SafetyDigitalOutputs } from "./SafetyDigitalOutputs"
 import { ModbusIntegerInputs } from "./ModbusIntegerInputs"
 import { ModbusIntegerOutputs } from "./ModbusIntegerOutputs"
+import { CardMaximised } from "../util/CardMaximised"
 
 const tabList = [
     {
@@ -93,7 +94,8 @@ const IoCards: React.FC = () => {
     }
 
     return (
-        <Card
+        <CardMaximised
+            bordered={false}
             style={{ width: "100%" }}
             tabList={tabList}
             activeTabKey={activeTabKey}
@@ -101,7 +103,7 @@ const IoCards: React.FC = () => {
             size="small"
         >
             {contentList[activeTabKey]}
-        </Card>
+        </CardMaximised>
     )
 }
 

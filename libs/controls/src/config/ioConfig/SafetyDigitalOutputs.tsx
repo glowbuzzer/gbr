@@ -46,7 +46,7 @@ export const SafetyDigitalOutputs: React.FC = () => {
 
     return (
         <StyledFlex>
-            <div className="digital-output-grid">
+            <div className="digital output-grid">
                 {outputs?.length === 0 ? (
                     <Empty
                         image={Empty.PRESENTED_IMAGE_SIMPLE}

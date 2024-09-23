@@ -1,8 +1,9 @@
 import React from "react"
 import { useState, useEffect, useRef } from "react"
 import { GBEM_REQUEST, useConnection, useGbcConfigInfo } from "@glowbuzzer/store"
-import { Alert, Button, Card, Popover, Space, Tag } from "antd"
+import { Alert, Button, Card, Flex, Popover, Space, Tag } from "antd"
 import { check_gbc_version } from "../../status/StatusTrayGbcVersionCheck"
+import { DockTileDisabledWithNestedSupport } from "../../dock"
 
 /**
  * A component to display the software versions of the different software components.
@@ -40,40 +41,31 @@ export const VersionTab = () => {
             })
     }
 
-    if (!(gbcVersion && schemaVersion && connected)) {
-        return (
-            <Alert
-                message="No connection to the machine"
-                description="You can only read the software versions when connected to the machine."
-                type="warning"
-                showIcon
-            />
-        )
-    }
-
     const { message } = check_gbc_version(gbcVersion, schemaVersion)
     return (
-        <>
-            <Card title={"Core control (GBC) software version"} size="small">
-                <Popover content={message}>
-                    <span className="version-info">
-                        <Tag>GBC {gbcVersion}</Tag>
-                    </span>
-                </Popover>
-            </Card>
+        <DockTileDisabledWithNestedSupport disabled={!connected}>
+            <Flex style={{ padding: "10px" }} vertical gap="small">
+                <Card title={"Core control (GBC) software version"} size="small">
+                    <Popover content={message}>
+                        <span className="version-info">
+                            <Tag>GBC {gbcVersion}</Tag>
+                        </span>
+                    </Popover>
+                </Card>
 
-            <Card title={"Schema version"} size="small">
-                <Tag>GBC {schemaVersion}</Tag>
-            </Card>
+                <Card title={"Schema version"} size="small">
+                    <Tag>GBC {schemaVersion}</Tag>
+                </Card>
 
-            <Card title={"EtherCAT controller (GBEM) software version"} size="small">
-                <Button type="primary" onClick={send_request} size="small">
-                    Read version from EtherCAT controller
-                </Button>
-                <Tag style={{ marginLeft: "10px" }} color={isError ? "red" : "purple"}>
-                    {responseText}
-                </Tag>
-            </Card>
-        </>
+                <Card title={"EtherCAT controller (GBEM) software version"} size="small">
+                    <Button type="primary" onClick={send_request} size="small">
+                        Read version from EtherCAT controller
+                    </Button>
+                    <Tag style={{ marginLeft: "10px" }} color={isError ? "red" : "purple"}>
+                        {responseText}
+                    </Tag>
+                </Card>
+            </Flex>
+        </DockTileDisabledWithNestedSupport>
     )
 }

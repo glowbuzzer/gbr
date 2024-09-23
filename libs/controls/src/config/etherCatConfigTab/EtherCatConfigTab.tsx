@@ -12,6 +12,7 @@ import { EtherCatReadSlaveTab } from "./etherCatReadSlaveTab/EtherCatReadSlaveTa
 import { EtherCatConfigProvider, useEtherCatConfig } from "./EtherCatConfigContext"
 import { EtherCatOptionalSlavesTab } from "./etherCatOptionalSlavesTab/EtherCatOptionalSlavesTab"
 import { EtherCatWriteSlaveTab } from "./etherCatWriteSlaveTab/EtherCatWriteSlaveTab"
+import { CardMaximised } from "../util/CardMaximised"
 
 const StyledFlex = styled(Flex)`
     height: 100%;
@@ -57,9 +58,9 @@ export const EtherCatConfigTab = () => {
 
     return (
         <SlaveCatProvider>
-            {/*<EtherCatConfigProvider>*/}
             <StyledFlex>
-                <Card
+                <CardMaximised
+                    bordered={false}
                     style={{ width: "100%" }}
                     tabList={tabList}
                     activeTabKey={activeTabKey}
@@ -67,9 +68,8 @@ export const EtherCatConfigTab = () => {
                     size="small"
                 >
                     {ActiveContent({ enableAll, disableAll })}
-                </Card>
+                </CardMaximised>
             </StyledFlex>
-            {/*</EtherCatConfigProvider>*/}
         </SlaveCatProvider>
     )
 }

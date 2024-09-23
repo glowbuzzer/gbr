@@ -33,6 +33,7 @@ const { Option } = Select
 
 const GridContainer = styled.div`
     display: grid;
+    overflow-y: auto;
     //grid-template-columns: 1fr 3fr 1fr 1fr 2fr 1fr 1fr 1fr 1fr;
     gap: 1px; /* Optional for spacing */
 `
@@ -478,104 +479,102 @@ export const ModbusDigitalInputs: React.FC = () => {
     const buttonLabel = isSorted ? "Show ungrouped IO" : "Show IO groups" // Dynamic label based on isSorted
 
     return (
-        <>
-            <StyledFlex>
-                <GridContainer>
-                    {inputs.length === 0 && (
-                        <Empty
-                            image={Empty.PRESENTED_IMAGE_SIMPLE}
-                            description="No digital inputs have been configured"
-                            imageStyle={{ height: 60 }}
-                        />
-                    )}
-                    <Button size="small" onClick={toggleSort}>
-                        {buttonLabel}{" "}
-                    </Button>
-                    {isSorted
-                        ? consecutiveGroups.map((group, groupIndex) => (
-                              <React.Fragment key={`group-${groupIndex}`}>
-                                  {group.map(index => (
-                                      <GridRow key={`row-${index}`} groupIndex={groupIndex}>
-                                          <GridRowContent
-                                              index={index}
-                                              input={inputs[index]}
-                                              hexFormat={hexFormat}
-                                              update_name={update_name}
-                                              update_slave_num={update_slave_num}
-                                              toggleAddressFormat={toggleAddressFormat}
-                                              update_address={update_address}
-                                              update_function={update_function}
-                                              update_endian={update_endian}
-                                              update_inverted={update_inverted}
-                                              deleteInput={deleteInput}
-                                              grouped={true}
-                                          />
-                                      </GridRow>
-                                  ))}
-                              </React.Fragment>
-                          ))
-                        : inputs.map((input, index) => (
-                              <GridRow key={`row-${index}`} groupIndex={-1}>
-                                  <GridRowContent
-                                      index={index}
-                                      input={input}
-                                      hexFormat={hexFormat}
-                                      update_name={update_name}
-                                      update_slave_num={update_slave_num}
-                                      toggleAddressFormat={toggleAddressFormat}
-                                      update_address={update_address}
-                                      update_function={update_function}
-                                      update_endian={update_endian}
-                                      update_inverted={update_inverted}
-                                      deleteInput={deleteInput}
-                                      grouped={false}
-                                  />
-                              </GridRow>
-                          ))}
-                </GridContainer>
-                <div className="actions">
-                    <Space>
-                        <ActionButton
-                            onClick={save}
-                            disabled={!modified}
-                            tooltipTitle="Save the changes to the IO configuration"
-                            type="primary"
-                        >
-                            Save
-                        </ActionButton>
-
-                        <ActionButton
-                            onClick={reset}
-                            disabled={!modified}
-                            tooltipTitle="Reset the changes to the IO configuration"
-                            type="default"
-                        >
-                            Reset
-                        </ActionButton>
-
-                        <ActionButton
-                            onClick={addInput}
-                            disabled={inputs.length > 7}
-                            tooltipTitle={
-                                inputs.length > 7
-                                    ? "Maximum limit on inputs reached (8)"
-                                    : "Add a new input to the list"
-                            }
-                            type="default"
-                        >
-                            Add input
-                        </ActionButton>
-                    </Space>
-                    <Popover
-                        content={<ConsecutiveAddressesInfoContent />}
-                        title="More information on modbus IO grouping"
-                        placement="right"
-                        style={{ maxWidth: "200px" }}
+        <StyledFlex>
+            <GridContainer>
+                {inputs.length === 0 && (
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description="No digital inputs have been configured"
+                        imageStyle={{ height: 60 }}
+                    />
+                )}
+                <Button size="small" onClick={toggleSort}>
+                    {buttonLabel}{" "}
+                </Button>
+                {isSorted
+                    ? consecutiveGroups.map((group, groupIndex) => (
+                          <React.Fragment key={`group-${groupIndex}`}>
+                              {group.map(index => (
+                                  <GridRow key={`row-${index}`} groupIndex={groupIndex}>
+                                      <GridRowContent
+                                          index={index}
+                                          input={inputs[index]}
+                                          hexFormat={hexFormat}
+                                          update_name={update_name}
+                                          update_slave_num={update_slave_num}
+                                          toggleAddressFormat={toggleAddressFormat}
+                                          update_address={update_address}
+                                          update_function={update_function}
+                                          update_endian={update_endian}
+                                          update_inverted={update_inverted}
+                                          deleteInput={deleteInput}
+                                          grouped={true}
+                                      />
+                                  </GridRow>
+                              ))}
+                          </React.Fragment>
+                      ))
+                    : inputs.map((input, index) => (
+                          <GridRow key={`row-${index}`} groupIndex={-1}>
+                              <GridRowContent
+                                  index={index}
+                                  input={input}
+                                  hexFormat={hexFormat}
+                                  update_name={update_name}
+                                  update_slave_num={update_slave_num}
+                                  toggleAddressFormat={toggleAddressFormat}
+                                  update_address={update_address}
+                                  update_function={update_function}
+                                  update_endian={update_endian}
+                                  update_inverted={update_inverted}
+                                  deleteInput={deleteInput}
+                                  grouped={false}
+                              />
+                          </GridRow>
+                      ))}
+            </GridContainer>
+            <div className="actions">
+                <Space>
+                    <ActionButton
+                        onClick={save}
+                        disabled={!modified}
+                        tooltipTitle="Save the changes to the IO configuration"
+                        type="primary"
                     >
-                        <span style={{ fontStyle: "italic" }}>more info on IO grouping...</span>
-                    </Popover>
-                </div>
-            </StyledFlex>
-        </>
+                        Save
+                    </ActionButton>
+
+                    <ActionButton
+                        onClick={reset}
+                        disabled={!modified}
+                        tooltipTitle="Reset the changes to the IO configuration"
+                        type="default"
+                    >
+                        Reset
+                    </ActionButton>
+
+                    <ActionButton
+                        onClick={addInput}
+                        disabled={inputs.length > 7}
+                        tooltipTitle={
+                            inputs.length > 7
+                                ? "Maximum limit on inputs reached (8)"
+                                : "Add a new input to the list"
+                        }
+                        type="default"
+                    >
+                        Add input
+                    </ActionButton>
+                </Space>
+                <Popover
+                    content={<ConsecutiveAddressesInfoContent />}
+                    title="More information on modbus IO grouping"
+                    placement="right"
+                    style={{ maxWidth: "200px" }}
+                >
+                    <span style={{ fontStyle: "italic" }}>more info on IO grouping...</span>
+                </Popover>
+            </div>
+        </StyledFlex>
     )
 }

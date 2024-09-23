@@ -12,8 +12,7 @@ import { DrivesTab } from "./DrivesTab"
 import { SlaveFileOpsTab } from "./SlaveFileOpsTab"
 
 const StyledDiv = styled.div`
-    //padding: 10px;
-    //height: 100%;
+    height: 100%;
 
     .ant-card {
         height: 100%;
@@ -22,6 +21,8 @@ const StyledDiv = styled.div`
 
         .ant-card-body {
             flex-grow: 1;
+            overflow-y: auto;
+            padding: 1px 0;
         }
     }
 `
@@ -37,15 +38,15 @@ export const DiagnosticsTile = () => {
     }
 
     const tabs: TabsProps["items"] = [
-        { key: "etherCat", label: "EtherCAT diagnostics" },
-        { key: "drives", label: "Drives diagnostics" },
+        { key: "etherCat", label: "EtherCAT Diagnostics" },
+        { key: "drives", label: "Drives Diagnostics" },
         {
             key: "safety",
-            label: "Safety diagnostics"
+            label: "Safety Diagnostics"
         },
         {
             key: "files",
-            label: "Slave file operations"
+            label: "Slave File Operations"
         }
     ]
 
@@ -55,7 +56,13 @@ export const DiagnosticsTile = () => {
 
     return (
         <StyledDiv>
-            <Card tabList={tabs} size="small" activeTabKey={currentTab} onTabChange={switch_tab}>
+            <Card
+                bordered={false}
+                tabList={tabs}
+                size="small"
+                activeTabKey={currentTab}
+                onTabChange={switch_tab}
+            >
                 {tab_content[currentTab]}
             </Card>
         </StyledDiv>

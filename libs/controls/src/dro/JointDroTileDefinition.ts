@@ -7,6 +7,7 @@ import { createElement } from "react"
 import { JointDroTile } from "./JointDroTile"
 import { JointDroTileHelp } from "./JointDroTileHelp"
 import { DockTileDefinitionBuilder } from "../dock"
+import { EcmCyclicRunningTileGuard } from "../util/components/EcmCyclicRunningTileGuard"
 
 export const JointDroTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.JOINT_DRO)
@@ -17,4 +18,5 @@ export const JointDroTileDefinition = DockTileDefinitionBuilder()
     )
     .placement(0, 2)
     .requiresConnection()
+    .wrap(EcmCyclicRunningTileGuard)
     .build()

@@ -5,10 +5,13 @@
 import { createElement, FunctionComponent, ReactNode } from "react"
 import { DockTileDefinition } from "./DockTileDefinition"
 import { DockTileStandardWrapper } from "./DockTileStandardWrapper"
-import Element = React.JSX.Element
+
+type Factory = (child: any) => () => ReactNode
 
 export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
     return new (class {
+        public wrappers: Factory[] = []
+
         public definition: DockTileDefinition = {
             ...template
         }
@@ -28,17 +31,16 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
             renderHelpFn?: () => ReactNode,
             renderButtonsFn?: () => ReactNode
         ) {
-            this.definition.tile = template?.tile || renderFn
             this.definition.render = renderFn
             this.definition.renderHelp = renderHelpFn
             this.definition.renderButtons = renderButtonsFn
             return this
         }
 
-        wrap(element: FunctionComponent<{ children: ReactNode }>) {
-            this.definition.render = () =>
-                createElement(element, { children: this.definition.tile() })
-
+        wrap<T>(element: FunctionComponent<Omit<T, "children">>, props: T = null) {
+            this.wrappers.push(
+                child => () => createElement(element, { ...props, children: child() })
+            )
             return this
         }
 
@@ -48,6 +50,10 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
         }
 
         build(): DockTileDefinition {
+            this.definition.render = this.wrappers.reduce(
+                (acc, wrapper) => wrapper(acc),
+                this.definition.render
+            )
             return this.definition
         }
 
@@ -58,31 +64,11 @@ export function DockTileDefinitionBuilder(template?: DockTileDefinition) {
         }
 
         requiresConnection() {
-            if (!this.definition.tile) {
-                throw new Error("render function must be set before calling requiresConnection")
-            }
-            this.definition.render = () =>
-                createElement(DockTileStandardWrapper, {
-                    children: this.definition.tile(),
-                    requireOpEnabled: false
-                })
-
-            return this
+            return this.wrap(DockTileStandardWrapper, { requireOpEnabled: false })
         }
 
         requiresOperationEnabled() {
-            if (!this.definition.tile) {
-                throw new Error(
-                    "render function must be set before calling requiresOperationEnabled"
-                )
-            }
-            this.definition.render = () =>
-                createElement(DockTileStandardWrapper, {
-                    children: this.definition.tile(),
-                    requireOpEnabled: true
-                })
-
-            return this
+            return this.wrap(DockTileStandardWrapper, { requireOpEnabled: true })
         }
 
         requiresCapability(capability: symbol) {

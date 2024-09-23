@@ -19,6 +19,7 @@ const { Option } = Select
 
 const GridContainer = styled.div`
     display: grid;
+    overflow-y: auto;
     //grid-template-columns: 1fr 3fr 1fr 1fr 2fr 1fr 1fr 1fr 1fr;
     gap: 1px; /* Optional for spacing */
 `

@@ -3,8 +3,9 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { GlowbuzzerStatus, RootState } from ".."
+import { ECM_CYCLIC_STATE, GlowbuzzerStatus, RootState } from ".."
 import { useSelector } from "react-redux"
+import { useState } from "react"
 
 type EmStatType = GlowbuzzerStatus["emstat"]
 
@@ -12,17 +13,16 @@ export const emstatSlice: Slice<EmStatType> = createSlice({
     name: "emstat",
     initialState: null,
     reducers: {
-        status(state, action) {
+        status(_state, action) {
             return action.payload
         }
     }
 })
 
-export function useEtherCATMasterStatus(): EmStatType {
-    return useSelector<RootState, EmStatType>(state => state.emstat) || {}
+export function useEthercatMasterCyclicStatus(): ECM_CYCLIC_STATE {
+    return useSelector<RootState, ECM_CYCLIC_STATE>(state => state.emstat?.cs)
 }
 
-export function useLiveModeEnabled(): boolean {
-    const { bsbs } = useEtherCATMasterStatus()
-    return bsbs
+export function useEtherCATMasterStatus(): EmStatType {
+    return useSelector<RootState, EmStatType>(state => state.emstat) || {}
 }

@@ -385,12 +385,14 @@ export function toTableDataEmStatDrives(
         if (typeof obj[key] === "object" && obj[key] !== null) {
             const child_dict = dict?.type === "array" ? dict : dict?.children?.[key]
             const children = toTableDataEmStatDrives(obj[key], key, child_dict)
-            result.push({
-                key: parentKey + "/" + key,
-                property: obj[key][dict?.nameProperty] || key,
-                value: "",
-                children
-            })
+            if (children.length) {
+                result.push({
+                    key: parentKey + "/" + key,
+                    property: obj[key][dict?.nameProperty] || key,
+                    value: "",
+                    children
+                })
+            }
         } else {
             const leaf_dict = dict?.children?.[key]
             result.push({

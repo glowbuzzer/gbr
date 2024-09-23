@@ -5,9 +5,5 @@ import { ToolsTile } from "../../tools"
  * A component to configure tool configurations.
  */
 export const ToolConfigTab = () => {
-    return (
-        <div style={{ margin: "-10px" }}>
-            <ToolsTile />
-        </div>
-    )
+    return <ToolsTile />
 }

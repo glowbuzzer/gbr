@@ -269,7 +269,7 @@ export const MachineEnvelopeConfigTab = () => {
     }
 
     return (
-        <div>
+        <div style={{ padding: "10px" }}>
             <Select
                 value={selectedConstraint}
                 onChange={value => setSelectedConstraint(value as Constraint["type"])}
@@ -301,7 +301,7 @@ export const MachineEnvelopeConfigTab = () => {
 
             <Modal
                 title="Add Constraint Data"
-                visible={isModalVisible}
+                open={isModalVisible}
                 onOk={handleModalOk}
                 onCancel={handleModalCancel}
             >

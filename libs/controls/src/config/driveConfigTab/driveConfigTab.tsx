@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { Button, Card, Col, Row, Select, Slider, Table, Typography } from "antd"
+import { EcmCyclicRunningTileGuard } from "../../util/components/EcmCyclicRunningTileGuard"
 
 const { Option } = Select
 const { Text } = Typography
@@ -146,117 +147,119 @@ export const DriveConfigTab: React.FC<{}> = () => {
         : []
 
     return (
-        <div>
-            <Text>
-                Your machine contains {driveCounts[DriveType.SYNAPTICON_DRIVE] || 0} Synapticon
-                drives and {driveCounts[DriveType.ELM7813_DRIVE] || 0} Beckhoff drives.
-            </Text>
-            <br />
-            <br />
-            <Text>First, you need to select a drive that you want to configure:</Text>
-            <br />
-            <br />
-            <Select
-                placeholder="Select a drive to configure"
-                onChange={handleDriveChange}
-                size={"small"}
-                style={{ width: 300 }}
-            >
-                {drives.map(drive => (
-                    <Option key={drive.index} value={drive.index}>
-                        {`Index: ${drive.index}, Type: ${drive.type}`}
-                    </Option>
-                ))}
-            </Select>
-            <br />
-            <br />
-            <Text>Now, read the current drive values:</Text>
-            <br />
-            <br />
-            <Button type="primary" size={"small"}>
-                Read parameters
-            </Button>
+        <EcmCyclicRunningTileGuard includeSimMode>
+            <div style={{ padding: "10px" }}>
+                <Text>
+                    Your machine contains {driveCounts[DriveType.SYNAPTICON_DRIVE] || 0} Synapticon
+                    drives and {driveCounts[DriveType.ELM7813_DRIVE] || 0} Beckhoff drives.
+                </Text>
+                <br />
+                <br />
+                <Text>First, you need to select a drive that you want to configure:</Text>
+                <br />
+                <br />
+                <Select
+                    placeholder="Select a drive to configure"
+                    onChange={handleDriveChange}
+                    size={"small"}
+                    style={{ width: 300 }}
+                >
+                    {drives.map(drive => (
+                        <Option key={drive.index} value={drive.index}>
+                            {`Index: ${drive.index}, Type: ${drive.type}`}
+                        </Option>
+                    ))}
+                </Select>
+                <br />
+                <br />
+                <Text>Now, read the current drive values:</Text>
+                <br />
+                <br />
+                <Button type="primary" size={"small"}>
+                    Read parameters
+                </Button>
 
-            {selectedDriveIndex !== null && selectedDrive && (
-                <div>
-                    <Card
-                        title={`Damping Ratio: ${selectedDrive.dampingRatio.toFixed(2)}`}
-                        style={{ marginTop: 16 }}
-                        size={"small"}
-                    >
-                        <Row>
-                            <Col span={4} style={{ textAlign: "center" }}>
-                                <Text>0.3</Text>
-                            </Col>
-                            <Col span={16}>
-                                <Slider
-                                    min={0.3}
-                                    max={2}
-                                    step={0.01}
-                                    value={selectedDrive.dampingRatio}
-                                    onChange={(value: number) =>
-                                        handleSliderChange(
-                                            selectedDriveIndex,
-                                            value,
-                                            "dampingRatio"
-                                        )
-                                    }
-                                />
-                            </Col>
-                            <Col span={4} style={{ textAlign: "center" }}>
-                                <Text>2.0</Text>
-                            </Col>
-                        </Row>
-                    </Card>
-                    <Card
-                        title={`Settling Time: ${(selectedDrive.settlingTime * 1000).toFixed(
-                            1
-                        )} ms`}
-                        style={{ marginTop: 16 }}
-                        size={"small"}
-                    >
-                        <Row>
-                            <Col span={4} style={{ textAlign: "center" }}>
-                                <Text>20 ms</Text>
-                            </Col>
-                            <Col span={16}>
-                                <Slider
-                                    min={0.02}
-                                    max={0.5}
-                                    step={0.001}
-                                    value={selectedDrive.settlingTime}
-                                    onChange={(value: number) =>
-                                        handleSliderChange(
-                                            selectedDriveIndex,
-                                            value,
-                                            "settlingTime"
-                                        )
-                                    }
-                                />
-                            </Col>
-                            <Col span={4} style={{ textAlign: "center" }}>
-                                <Text>500 ms</Text>
-                            </Col>
-                        </Row>
-                    </Card>
-                    <Card title="Calculated Parameters" style={{ marginTop: 16 }}>
-                        <Table
-                            dataSource={dataSource}
-                            columns={columns}
-                            pagination={false}
-                            bordered
-                        />
-                    </Card>
-                </div>
-            )}
-            <br />
-            <br />
-            <Text>Finally, write the drive values to update them:</Text>
-            <br />
-            <br />
-            <Button type="primary" size={"small"}>
-                Write parameters
-            </Button>
-        </div>
+                {selectedDriveIndex !== null && selectedDrive && (
+                    <div>
+                        <Card
+                            title={`Damping Ratio: ${selectedDrive.dampingRatio.toFixed(2)}`}
+                            style={{ marginTop: 16 }}
+                            size={"small"}
+                        >
+                            <Row>
+                                <Col span={4} style={{ textAlign: "center" }}>
+                                    <Text>0.3</Text>
+                                </Col>
+                                <Col span={16}>
+                                    <Slider
+                                        min={0.3}
+                                        max={2}
+                                        step={0.01}
+                                        value={selectedDrive.dampingRatio}
+                                        onChange={(value: number) =>
+                                            handleSliderChange(
+                                                selectedDriveIndex,
+                                                value,
+                                                "dampingRatio"
+                                            )
+                                        }
+                                    />
+                                </Col>
+                                <Col span={4} style={{ textAlign: "center" }}>
+                                    <Text>2.0</Text>
+                                </Col>
+                            </Row>
+                        </Card>
+                        <Card
+                            title={`Settling Time: ${(selectedDrive.settlingTime * 1000).toFixed(
+                                1
+                            )} ms`}
+                            style={{ marginTop: 16 }}
+                            size={"small"}
+                        >
+                            <Row>
+                                <Col span={4} style={{ textAlign: "center" }}>
+                                    <Text>20 ms</Text>
+                                </Col>
+                                <Col span={16}>
+                                    <Slider
+                                        min={0.02}
+                                        max={0.5}
+                                        step={0.001}
+                                        value={selectedDrive.settlingTime}
+                                        onChange={(value: number) =>
+                                            handleSliderChange(
+                                                selectedDriveIndex,
+                                                value,
+                                                "settlingTime"
+                                            )
+                                        }
+                                    />
+                                </Col>
+                                <Col span={4} style={{ textAlign: "center" }}>
+                                    <Text>500 ms</Text>
+                                </Col>
+                            </Row>
+                        </Card>
+                        <Card title="Calculated Parameters" style={{ marginTop: 16 }}>
+                            <Table
+                                dataSource={dataSource}
+                                columns={columns}
+                                pagination={false}
+                                bordered
+                            />
+                        </Card>
+                    </div>
+                )}
+                <br />
+                <br />
+                <Text>Finally, write the drive values to update them:</Text>
+                <br />
+                <br />
+                <Button type="primary" size={"small"}>
+                    Write parameters
+                </Button>
+            </div>
+        </EcmCyclicRunningTileGuard>
     )
 }

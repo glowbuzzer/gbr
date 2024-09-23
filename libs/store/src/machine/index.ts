@@ -188,6 +188,10 @@ export function useMachine(): {
     }
 }
 
+export function useMachineRequestedTarget() {
+    return useSelector<RootState, MACHINETARGET>(state => state.machine.requestedTarget)
+}
+
 export {
     MachineState,
     DesiredState,

@@ -10,9 +10,5 @@ import { FramesTile } from "../../frames"
  * A component to configure tool configurations.
  */
 export const FramesConfigTab = () => {
-    return (
-        <div style={{ margin: "-10px" }}>
-            <FramesTile />
-        </div>
-    )
+    return <FramesTile />
 }

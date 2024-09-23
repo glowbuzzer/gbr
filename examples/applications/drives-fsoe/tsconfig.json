@@ -14,7 +14,7 @@
                 "./libs/store/src/index.ts"
             ],
             "@glowbuzzer/awlib": [
-                "./vendors/automationware/awlib/src/index.ts"
+                "./vendors/ibt/awlib/src/index.ts"
             ]
         }
     }

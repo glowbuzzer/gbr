@@ -16,19 +16,12 @@ import { ToolConfigTab } from "./toolConfigTab/ToolConfigTab"
 import { DrivesTab } from "../diagnostics/DrivesTab"
 import { DriveConfigTab } from "./driveConfigTab/driveConfigTab"
 import { FramesConfigTab } from "./framesConfigTab/FramesConfigTab"
+import { CardMaximised } from "./util/CardMaximised"
 
 const StyledDiv = styled.div`
-    //padding: 10px;
-    //height: 100%;
+    height: 100%;
 
     .ant-card {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-
-        .ant-card-body {
-            flex-grow: 1;
-        }
     }
 `
 
@@ -36,7 +29,7 @@ const StyledDiv = styled.div`
  * A component to edit the configuration of the machine.
  */
 export const ConfigEditTile = () => {
-    const [currentTab, setCurrentTab] = useState("etherCat")
+    const [currentTab, setCurrentTab] = useState("io")
 
     const tab_content = {
         io: <IoConfigTab />,
@@ -51,15 +44,15 @@ export const ConfigEditTile = () => {
     }
 
     const tabs: TabsProps["items"] = [
-        { key: "io", label: "IO config" },
-        { key: "etherCat", label: "EtherCAT config" },
-        { key: "drives", label: "Drives config" },
-        { key: "tool", label: "Tools config" },
-        { key: "machineEnvelope", label: "Machine envelope config" },
-        { key: "frames", label: "Frames config" },
-        { key: "verticalAxis", label: "Vertical axis config" },
-        { key: "debug", label: "Debug config" },
-        { key: "version", label: "Software versions" }
+        { key: "io", label: "IO Config" },
+        { key: "etherCat", label: "EtherCAT Config" },
+        { key: "drives", label: "Drives Config" },
+        { key: "tool", label: "Tools Config" },
+        { key: "machineEnvelope", label: "Machine Envelope Config" },
+        { key: "frames", label: "Frames Config" },
+        { key: "verticalAxis", label: "Vertical Axis Config" },
+        { key: "debug", label: "Debug Config" },
+        { key: "version", label: "Software Versions" }
     ]
 
     function switch_tab(e: string) {
@@ -67,9 +60,9 @@ export const ConfigEditTile = () => {
     }
 
     return (
-        <StyledDiv>
+        <StyledDiv data-x="$$$ConfigEditTile">
             <EtherCatConfigProvider>
-                <Card
+                <CardMaximised
                     bordered={false}
                     tabList={tabs}
                     size="small"
@@ -77,7 +70,7 @@ export const ConfigEditTile = () => {
                     onTabChange={switch_tab}
                 >
                     {tab_content[currentTab]}
-                </Card>
+                </CardMaximised>
             </EtherCatConfigProvider>
         </StyledDiv>
     )

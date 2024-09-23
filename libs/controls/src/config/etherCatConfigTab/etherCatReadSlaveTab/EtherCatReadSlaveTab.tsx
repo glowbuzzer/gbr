@@ -13,7 +13,7 @@ import { EtherCatConfig, Slave } from "../EtherCatConfigTypes"
 import { SlaveCatTree } from "../slaveCatTree/SlaveCatTree"
 import { useEtherCatConfig } from "../EtherCatConfigContext"
 import { slave } from "../slavecatTypes/Slave"
-import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
+import { RequireEstopGuard } from "../../util/RequireEstopGuard"
 
 const ScrollableTreeContainer = styled.div`
     max-height: 220px; /* Adjust the height as needed */
@@ -470,7 +470,7 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
     }
 
     return (
-        <ConditionalDisplayInOpEnabled>
+        <RequireEstopGuard>
             <StyledFlex>
                 <Space>
                     Selected slave{" "}
@@ -524,6 +524,6 @@ export const EtherCatReadSlaveTab: React.FC<EtherCatReadSlaveTabProps> = ({}) =>
                     />
                 )}
             </StyledFlex>
-        </ConditionalDisplayInOpEnabled>
+        </RequireEstopGuard>
     )
 }

@@ -7,6 +7,7 @@ import { createElement } from "react"
 import { CartesianDroTile } from "./CartesianDroTile"
 import { CartesianDroTileHelp } from "./CartesianDroTileHelp"
 import { DockTileDefinitionBuilder } from "../dock"
+import { EcmCyclicRunningTileGuard } from "../util/components/EcmCyclicRunningTileGuard"
 
 export const CartesianDroTileDefinition = DockTileDefinitionBuilder()
     .id(GlowbuzzerTileIdentifiers.CARTESIAN_DRO)
@@ -16,4 +17,6 @@ export const CartesianDroTileDefinition = DockTileDefinitionBuilder()
         () => createElement(CartesianDroTile, {}, null),
         () => createElement(CartesianDroTileHelp, {}, null)
     )
+    .requiresConnection()
+    .wrap(EcmCyclicRunningTileGuard)
     .build()

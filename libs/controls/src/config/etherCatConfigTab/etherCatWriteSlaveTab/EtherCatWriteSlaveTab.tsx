@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 
 import { GBEM_REQUEST, useConnection } from "@glowbuzzer/store"
 import { Alert, Button, Input } from "antd"
-import { ConditionalDisplayInOpEnabled } from "../../util/ConditionalDisplayInOpEnabled"
+import { RequireEstopGuard } from "../../util/RequireEstopGuard"
 
 export const EtherCatWriteSlaveTab: React.FC = ({}) => {
     const { request } = useConnection()
@@ -51,7 +51,7 @@ export const EtherCatWriteSlaveTab: React.FC = ({}) => {
         setRequestText(constructedRequestText)
     }, [])
     return (
-        <ConditionalDisplayInOpEnabled>
+        <RequireEstopGuard>
             <h3>Disabled - too dangerous even for the engineer who designed the system!</h3>
             {/*<Input.TextArea*/}
             {/*    rows={4}*/}
@@ -70,6 +70,6 @@ export const EtherCatWriteSlaveTab: React.FC = ({}) => {
             {/*        showIcon*/}
             {/*    />*/}
             {/*)}*/}
-        </ConditionalDisplayInOpEnabled>
+        </RequireEstopGuard>
     )
 }

@@ -8,6 +8,7 @@ import { Button, Checkbox, Empty, Input, Space, Tooltip } from "antd"
 import { StyledFlex, StyledToolTipDiv } from "./commonStyles"
 import { TooltipWrapper } from "./TooltipWrapper"
 import { ActionButton } from "./ActionButton"
+import { RequireEstopGuard } from "../util/RequireEstopGuard"
 
 /**
  * A component to configure standard digital inputs.
@@ -47,7 +48,7 @@ export const StandardDigitalInputs: React.FC = () => {
 
     return (
         <StyledFlex>
-            <div className="digital-input-grid">
+            <div className="digital input-grid">
                 {inputs?.length === 0 ? (
                     <Empty
                         image={Empty.PRESENTED_IMAGE_SIMPLE}

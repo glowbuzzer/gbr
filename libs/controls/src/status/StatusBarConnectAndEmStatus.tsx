@@ -4,9 +4,8 @@
 
 import * as React from "react"
 import { ConnectStatusIndicator } from "./ConnectStatusIndicator"
-import { useConnection, useEtherCATMasterStatus } from "@glowbuzzer/store"
-import { Space } from "antd"
-import { useConnectionUrls } from "../app/hooks"
+import { ECM_CYCLIC_STATE, useConnection, useEthercatMasterCyclicStatus } from "@glowbuzzer/store"
+import { Space, Spin } from "antd"
 
 const prod = import.meta.env.MODE === "production"
 
@@ -24,7 +23,7 @@ const DisconnectButtonHidden = ({ children }) => {
 
 export const StatusBarConnectAndEmStatus = () => {
     const { connected } = useConnection()
-    const { bsbs } = useEtherCATMasterStatus()
+    const ecm_cyclic_status = useEthercatMasterCyclicStatus()
 
     if (!connected) {
         return (
@@ -34,20 +33,33 @@ export const StatusBarConnectAndEmStatus = () => {
             </Space>
         )
     }
-    if (!bsbs) {
-        return (
-            <DisconnectButtonHidden>
-                <Space>
-                    <ConnectStatusIndicator color="orange" />
-                    <div>NO FIELDBUS</div>
-                </Space>
-            </DisconnectButtonHidden>
-        )
-    }
 
-    return (
-        <DisconnectButtonHidden>
-            <ConnectStatusIndicator color="green" />
-        </DisconnectButtonHidden>
-    )
+    console.log("ECM CYCLIC STATUS", ecm_cyclic_status)
+
+    switch (ecm_cyclic_status) {
+        case ECM_CYCLIC_STATE.ECM_NOT_RUNNING:
+            return (
+                <DisconnectButtonHidden>
+                    <Space>
+                        <ConnectStatusIndicator color="orange" />
+                        <div>NO ETHERCAT MASTER</div>
+                    </Space>
+                </DisconnectButtonHidden>
+            )
+        case ECM_CYCLIC_STATE.ECM_CYCLIC_RUNNING:
+            return (
+                <DisconnectButtonHidden>
+                    <ConnectStatusIndicator color="green" />
+                </DisconnectButtonHidden>
+            )
+        default:
+            return (
+                <DisconnectButtonHidden>
+                    <Space>
+                        <Spin size="small" />
+                        <div>ETHERCAT MASTER BOOT</div>
+                    </Space>
+                </DisconnectButtonHidden>
+            )
+    }
 }

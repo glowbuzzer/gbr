@@ -244,6 +244,14 @@ export type SafetyDigitalOutputStatus = Required<SafetyDoutStatus & SafetyDoutCo
 export type DigitalInputStatus = Required<DinStatus & DinCommand>
 export type SafetyDigitalInputStatus = Required<SafetyDinStatus & SafetyDinCommand>
 
+export enum ECM_CYCLIC_STATE {
+    ECM_NOT_RUNNING, // default and the state set on cleanup
+    ECM_PRE_BOOT,
+    ECM_BOOT_FINISHED,
+    ECM_CYCLIC_RUNNING,
+    ECM_ERROR
+}
+
 export type GlowbuzzerStatus = {
     /**
      * Provides information about activities that are being streamed to GBC.
@@ -349,5 +357,7 @@ export type GlowbuzzerStatus = {
     emstat?: {
         /** EtherCAT master boot state, boot successful */
         bsbs?: boolean
+        /** EtherCAT master cyclic state */
+        cs?: ECM_CYCLIC_STATE
     }
 }

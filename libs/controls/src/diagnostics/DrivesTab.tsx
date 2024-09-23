@@ -18,6 +18,7 @@ import styled from "styled-components"
 import { toTableDataEmStatDrives } from "./emStatDrivesDictionary"
 import { columns, StyledTable } from "./EmStatsUtils"
 import { StyledToolTipDiv } from "../util/styles/StyledTileContent"
+import { EcmStateGuard } from "../util/components/EcmStateGuard"
 
 const StyledTag = styled(Tag)`
     display: inline-block;
@@ -69,8 +70,8 @@ export const DrivesTab = () => {
     }
 
     return (
-        <>
-            <Card title="Drives status" size="small">
+        <EcmStateGuard requireCyclicRunning={true}>
+            <Card bordered={false} size="small">
                 <StyledTable
                     ref={tableRef}
                     rowClassName={getRowClassName}
@@ -108,6 +109,6 @@ export const DrivesTab = () => {
             {/*        Download Drive Model Files*/}
             {/*    </Button>*/}
             {/*</Card>*/}
-        </>
+        </EcmStateGuard>
     )
 }
