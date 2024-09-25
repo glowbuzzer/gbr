@@ -42,15 +42,8 @@ export const StatusTraySafetyErrors = () => {
     const config = useConfig()
     const machine_meta = configMetadata(config.machine[0])
 
-    const fault = machine.currentState === MachineState.FAULT
+    // const fault = machine.currentState === MachineState.FAULT
     const sim = machine.requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
-
-    useEffect(() => {
-        // if in fault state, we should reset the fault as soon as overall safety state is good
-        if (overall && fault) {
-            machine.setMachineControlWord(possible_transitions.FaultReset())
-        }
-    }, [overall, fault])
 
     if (!connected || overall || sim) {
         return null

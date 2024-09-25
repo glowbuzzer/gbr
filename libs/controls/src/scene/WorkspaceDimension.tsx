@@ -5,7 +5,8 @@
 import React from "react"
 import { Text } from "@react-three/drei"
 import { Euler, Vector3 } from "three"
-import { useScale } from "./ScaleProvider"
+
+import { useScale } from "../util"
 
 /** @ignore - internal to the tool path tile */
 export const WorkspaceDimensions = () => {

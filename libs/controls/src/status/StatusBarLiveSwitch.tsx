@@ -35,7 +35,7 @@ export const StatusBarLiveSwitch = () => {
                 type={live ? "primary" : undefined}
                 loading={live && switching}
                 onClick={() => change_target(MACHINETARGET.MACHINETARGET_FIELDBUS)}
-                // disabled={disabled || !live_switch_enabled}
+                disabled={disabled || !live_switch_enabled}
             >
                 Normal
             </Button>

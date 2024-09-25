@@ -60,9 +60,6 @@ export const sortingAppConfig: GlowbuzzerConfig = {
             participatingJoints: [0],
             participatingJointsCount: 1,
             kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-            extentsX: [-1000, 1000],
-            extentsY: [-1000, 1000],
-            extentsZ: [-1000, 1000],
             linearLimits: [
                 {
                     vmax: 2000,
@@ -92,9 +89,6 @@ export const sortingAppConfig: GlowbuzzerConfig = {
             participatingJoints: [1],
             participatingJointsCount: 1,
             kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-            extentsX: [-1000, 1000],
-            extentsY: [-1000, 1000],
-            extentsZ: [-1000, 1000],
             linearLimits: [
                 {
                     vmax: 200,

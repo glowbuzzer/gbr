@@ -3,9 +3,9 @@
  */
 
 import React from "react"
-import { useScale } from "@glowbuzzer/controls"
 import { Plane } from "@react-three/drei"
 import { useTheme } from "styled-components"
+import { useScale } from "@glowbuzzer/controls"
 
 export const PlaneShinyMetal = () => {
     const { extent } = useScale()

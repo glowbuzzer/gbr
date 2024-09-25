@@ -130,9 +130,6 @@ export const config: GlowbuzzerConfig = {
             participatingJointsCount: 6,
             kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_SIXDOF,
             supportedConfigurationBits: 7,
-            extentsX: [-1000, 1000],
-            extentsY: [-1000, 1000],
-            extentsZ: [0, 840],
             linearLimits: [
                 {
                     vmax: 200,

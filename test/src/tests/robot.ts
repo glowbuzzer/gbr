@@ -33,7 +33,6 @@ function init_robot_test() {
 }
 
 test.before.each(() => {
-    // gbc.reset("configs/tx40_config.json")
     gbc.config()
         .joints(6, {
             vmax: 20,

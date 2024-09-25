@@ -129,9 +129,6 @@ export const config: GlowbuzzerConfig = {
             participatingJointsCount: 6,
             kinematicsConfigurationType: 1,
             supportedConfigurationBits: 7,
-            extentsX: [-1000, 1000],
-            extentsY: [-1000, 1000],
-            extentsZ: [0, 840],
             linearLimits: [
                 {
                     vmax: 200,

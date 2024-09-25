@@ -10,6 +10,12 @@ import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useSafetyDigitalOutputState } from "./dout"
 
+export function useMachineInputMetadata(prop: keyof MachineMetadata) {
+    const config = useConfig()
+    const item = configMetadata(config.machine[0])[prop]
+    return item || { index: 0 }
+}
+
 function useMachineInputsActive(props: (keyof MachineMetadata)[]) {
     const config = useConfig()
     return useSelector<RootState, boolean[]>(state => {

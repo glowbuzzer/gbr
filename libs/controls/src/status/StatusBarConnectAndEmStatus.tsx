@@ -34,8 +34,6 @@ export const StatusBarConnectAndEmStatus = () => {
         )
     }
 
-    console.log("ECM CYCLIC STATUS", ecm_cyclic_status)
-
     switch (ecm_cyclic_status) {
         case ECM_CYCLIC_STATE.ECM_NOT_RUNNING:
             return (

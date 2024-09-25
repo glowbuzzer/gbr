@@ -9,7 +9,25 @@ import { assertNear } from "../util"
 const test = uvu.suite("frames alt")
 
 test.before.each(() => {
-    gbc.reset("configs/frames_alt.json")
+    // gbc.reset("configs/frames_alt.json")
+
+    gbc.config()
+        .joints(3, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .addFrame({
+            translation: {
+                x: 10
+            }
+        })
+        .cartesianKinematics(1, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .finalize()
 
     // gbc.disable_limit_check()
     //

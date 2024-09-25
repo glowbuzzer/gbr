@@ -316,8 +316,27 @@ export class GbcTest {
     }
 
     reset(configFile?) {
-        this.gbc.reset(configFile)
-        return this.init()
+        return this.config()
+            .joints(3, {
+                vmax: 200,
+                amax: 4000,
+                jmax: 80000
+            })
+            .cartesianKinematics(0, {
+                vmax: 200,
+                amax: 4000,
+                jmax: 80000
+            })
+            .addFrame({
+                translation: {
+                    x: 1,
+                    y: 1,
+                    z: 0
+                }
+            })
+            .digitalInputs(8)
+            .finalize()
+        // return this.init()
     }
 
     reset_from_json(json, restoreJoints = false) {

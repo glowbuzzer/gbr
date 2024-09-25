@@ -21,7 +21,7 @@ function valid_number(value: string) {
 }
 
 type PrecisionInputProps = {
-    value: number
+    value?: number
     onChange?: (value: number) => void
     onBlur?: (e: FocusEvent) => void
     precision: number
@@ -36,7 +36,7 @@ type PrecisionInputProps = {
  */
 export const PrecisionInput = forwardRef(
     (
-        { value, onChange, onBlur, precision, step, min, max, width }: PrecisionInputProps,
+        { value = 0, onChange, onBlur, precision, step, min, max, width }: PrecisionInputProps,
         ref: ForwardedRef<HTMLInputElement>
     ) => {
         const [valueString, setValueString] = React.useState(value.toFixed(precision))

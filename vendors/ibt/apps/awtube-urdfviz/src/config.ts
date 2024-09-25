@@ -194,9 +194,6 @@ const defaultKinematicsConfigurationProps = {
     participatingJointsCount: 6,
     kinematicsConfigurationType: 1,
     supportedConfigurationBits: 7,
-    extentsX: [-1000, 1000],
-    extentsY: [-1000, 1000],
-    extentsZ: [500, 1400],
     sphericalEnvelope: {
         center: {
             x: 0,

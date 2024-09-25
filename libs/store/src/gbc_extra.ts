@@ -81,6 +81,10 @@ type WithMetadata<T, M> = T & {
     $metadata?: M
 }
 
+export type ConfigTopLevelMetadata = {
+    workspaceSize?: number
+}
+
 export type SafetyIoMetadata = {
     0?: string
     1?: string
@@ -180,41 +184,44 @@ export type MachineMetadata = {
  *
  * See the individual types for each configuration item for further details.
  */
-export type GlowbuzzerConfig = WithNameAndDescriptionForArrayElements<{
-    machine?: WithMetadata<MachineConfig, MachineMetadata>[]
-    kinematicsConfiguration?: KinematicsConfigurationConfig[]
-    moveParameters?: MoveParametersConfig[]
-    joint?: JointConfig[]
-    frames?: WithMetadata<FramesConfig, FrameMetadata>[]
-    points?: PointsConfig[]
-    task?: TaskConfig[]
-    activity?: ActivityConfig[]
-    stream?: StreamConfig[]
-    soloActivity?: SoloActivityConfig[]
-    dout?: DoutConfig[]
-    aout?: AoutConfig[]
-    iout?: IoutConfig[]
-    uiout?: UioutConfig[]
-    din?: DinConfig[]
-    safetyDin?: WithMetadata<SafetyDinConfig, SafetyInputMetadata>[]
-    safetyDout?: WithMetadata<SafetyDoutConfig, SafetyIoMetadata>[]
-    modbusDin?: ModbusDinConfig[]
-    ain?: AinConfig[]
-    iin?: IinConfig[]
-    uiin?: UiinConfig[]
-    spindle?: SpindleConfig[]
-    tool?: WithMetadata<ToolConfig, ToolMetadata>[]
-    externalDin?: ExternalDinConfig[]
-    externalIin?: ExternalIinConfig[]
-    externalUiin?: ExternalUiinConfig[]
-    modbusUiin?: ModbusUiinConfig[]
-    externalDout?: ExternalDoutConfig[]
-    modbusDout?: ModbusDoutConfig[]
-    modbusUiout?: ModbusUioutConfig[]
-    externalIout?: ExternalIoutConfig[]
-    externalUiout?: ExternalUioutConfig[]
-    serial?: SerialConfig[]
-}>
+export type GlowbuzzerConfig = WithMetadata<
+    WithNameAndDescriptionForArrayElements<{
+        machine?: WithMetadata<MachineConfig, MachineMetadata>[]
+        kinematicsConfiguration?: KinematicsConfigurationConfig[]
+        moveParameters?: MoveParametersConfig[]
+        joint?: JointConfig[]
+        frames?: WithMetadata<FramesConfig, FrameMetadata>[]
+        points?: PointsConfig[]
+        task?: TaskConfig[]
+        activity?: ActivityConfig[]
+        stream?: StreamConfig[]
+        soloActivity?: SoloActivityConfig[]
+        dout?: DoutConfig[]
+        aout?: AoutConfig[]
+        iout?: IoutConfig[]
+        uiout?: UioutConfig[]
+        din?: DinConfig[]
+        safetyDin?: WithMetadata<SafetyDinConfig, SafetyInputMetadata>[]
+        safetyDout?: WithMetadata<SafetyDoutConfig, SafetyIoMetadata>[]
+        modbusDin?: ModbusDinConfig[]
+        ain?: AinConfig[]
+        iin?: IinConfig[]
+        uiin?: UiinConfig[]
+        spindle?: SpindleConfig[]
+        tool?: WithMetadata<ToolConfig, ToolMetadata>[]
+        externalDin?: ExternalDinConfig[]
+        externalIin?: ExternalIinConfig[]
+        externalUiin?: ExternalUiinConfig[]
+        modbusUiin?: ModbusUiinConfig[]
+        externalDout?: ExternalDoutConfig[]
+        modbusDout?: ModbusDoutConfig[]
+        modbusUiout?: ModbusUioutConfig[]
+        externalIout?: ExternalIoutConfig[]
+        externalUiout?: ExternalUioutConfig[]
+        serial?: SerialConfig[]
+    }>,
+    ConfigTopLevelMetadata
+>
 
 export type GlowbuzzerMachineStatus = MachineStatus & {
     /** The error message if an error has occurred. */

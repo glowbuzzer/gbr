@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "6a2c202c0466466a85b52a0f763f5d8c"
+export const GbcSchemaChecksum = "9910d773034de08d17706624cec1e30b"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -67,6 +67,7 @@ export const GbcConstants = {
         FSOE_SLAVE_TYPE_SCU_1_EC                           = (4),
         FSOE_SLAVE_TYPE_EL6900                             = (5),
         FSOE_SLAVE_TYPE_EL6910                             = (6),
+        FSOE_SLAVE_TYPE_ELM7231                            = (7),
     }
     export enum FSOE_MASTER_HIGH_LEVEL_STATE {
         FSOE_MASTER_HIGH_LEVEL_STATE_NONE                  = (0),
@@ -428,6 +429,26 @@ export const GbcConstants = {
   KC_AUXILIARYAXIS_Y ,
         /**  Linear auxiliary axis in Z */
   KC_AUXILIARYAXIS_Z ,
+    }
+    export enum KC_ENVELOPE_CONSTRAINT_TYPE {
+        /**  No envelope constraint */
+  KC_ENVELOPE_CONSTRAINT_NONE ,
+        /**  Plane envelope constraint */
+  KC_ENVELOPE_CONSTRAINT_PLANE ,
+        /**  Box envelope constraint */
+  KC_ENVELOPE_CONSTRAINT_BOX ,
+        /**  Cylinder envelope constraint */
+  KC_ENVELOPE_CONSTRAINT_CYLINDER ,
+        /**  Sphere envelope constraint */
+  KC_ENVELOPE_CONSTRAINT_SPHERE ,
+    }
+    export enum KC_ENVELOPE_CONSTRAINT_AXIS {
+        /**  X Axis */
+  KC_ENVELOPE_CONSTRAINT_AXIS_X ,
+        /**  Y Axis */
+  KC_ENVELOPE_CONSTRAINT_AXIS_Y ,
+        /**  Z Axis */
+  KC_ENVELOPE_CONSTRAINT_AXIS_Z ,
     }
     export enum BLENDTYPE {
         /**  No blend used for move */
@@ -992,12 +1013,64 @@ export const GbcConstants = {
                         friction?:number;
             }
             
+            export type PlanarEnvelope = {
+            
+                        /**  Direction of planar envelope */
+                        direction?:KC_ENVELOPE_CONSTRAINT_AXIS;
+                        /**  Distance from origin */
+                        position?:number;
+                        /**  Whether the envelope is inside or outside */
+                        outside?:boolean;
+            }
+            
+            export type BoxEnvelope = {
+            
+                        /**  Origin of box envelope */
+                        origin?:Vector3;
+                        /**  Extents of box envelope */
+                        extents?:Vector3;
+                        /**  Whether the envelope is inside or outside */
+                        outside?:boolean;
+            }
+            
+            export type CylinderEnvelope = {
+            
+                        /**  Center of cylinder envelope */
+                        center?:Vector3;
+                        /**  Radius of cylinder envelope */
+                        radius?:number;
+                        /**  Height of cylinder envelope */
+                        height?:number;
+                        /**  Axis of cylinder envelope */
+                        axis?:KC_ENVELOPE_CONSTRAINT_AXIS;
+                        /**  Whether the envelope is inside or outside */
+                        outside?:boolean;
+            }
+            
             export type SphericalEnvelope = {
             
                         /**  Center of spherical envelope (default 0, 0, 0) */
                         center?:Vector3;
-                        /**  Inner and outer radius of spherical envelope (disabled by default) */
-                        radius?:number[];
+                        /**  Radius of spherical envelope */
+                        radius?:number;
+                        /**  Whether the envelope is inside or outside */
+                        outside?:boolean;
+            }
+            
+            export type EnvelopeConstraint = {
+            
+                        /**  Type of envelope constraint */
+                        constraintType?:KC_ENVELOPE_CONSTRAINT_TYPE;
+    //              Start of Union
+                        /**  Planar envelope constraint */
+                         plane?: PlanarEnvelope,
+                        /**  Box envelope constraint */
+                         box?: BoxEnvelope,
+                        /**  Cylinder envelope constraint */
+                         cylinder?: CylinderEnvelope,
+                        /**  Sphere envelope constraint */
+                         sphere?: SphericalEnvelope,
+    //              End of Union
             }
             
             export type VelocityScaling = {
@@ -1024,12 +1097,6 @@ export const GbcConstants = {
                         participatingJoints?:number[];
                         /**  Number of joints */
                         participatingJointsCount?:number;
-                        /**  Extent (size) of workspace in X */
-                        extentsX?:number[];
-                        /**  Extent (size) of workspace in Y */
-                        extentsY?:number[];
-                        /**  Extent (size) of workspace in Z */
-                        extentsZ?:number[];
                         /**  Scale factor to apply to X axis */
                         scaleX?:number;
                         /**  Scale factor to apply to Y axis */
@@ -1046,10 +1113,8 @@ export const GbcConstants = {
                         kinChainParams?:MatrixInstanceDouble;
                         /**  Inverse dynamic parameters for the kinematics model */
                         inverseDynamicParams?:InverseDynamicParameters[];
-                        /**  Spherical envelope for the kinematics configuration */
-                        sphericalEnvelope?:SphericalEnvelope;
-                        /**  Inner and outer radius of cylindrical envelope (disabled by default) */
-                        cylindricalEnvelope?:number[];
+                        /**  List of envelope constraints for the kinematics configuration */
+                        envelopeConstraints?:EnvelopeConstraint[];
                         /**  Integrated auxiliary axis for the kinematics configuration, if supported */
                         auxiliaryAxisType?:KC_AUXILIARYAXISTYPE;
                         /**  Amount of the move that the auxiliary axis should cover, in range 0 to 1 */

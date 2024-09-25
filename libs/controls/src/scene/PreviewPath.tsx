@@ -7,7 +7,8 @@ import { useLayoutEffect, useMemo } from "react"
 import { Euler, Float32BufferAttribute, Vector3 } from "three"
 import { GCodeSegment } from "@glowbuzzer/store"
 import { Line, Text } from "@react-three/drei"
-import { useScale } from "./ScaleProvider"
+
+import { useScale } from "../util"
 
 function toVector3(vals: { x: number; y: number; z: number }) {
     const { x, y, z } = vals

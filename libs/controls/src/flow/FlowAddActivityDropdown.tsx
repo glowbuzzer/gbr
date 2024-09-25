@@ -26,7 +26,7 @@ export const FlowAddActivityDropdown = ({
         onClick() {
             onAddActivity(item.factory(cartesianPosition))
         },
-        disabled: item.configKey && !config[item.configKey]?.length
+        disabled: item.configKey && !(config[item.configKey] as [])?.length
     }))
 
     return (

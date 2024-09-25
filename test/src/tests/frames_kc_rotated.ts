@@ -14,7 +14,31 @@ const j1 = state => state.status.joint[0].actPos
  */
 
 test.before.each(() => {
-    gbc.reset("configs/frames_kc_rotated.json")
+    // gbc.reset("configs/frames_kc_rotated.json")
+
+    gbc.config()
+        .joints(3, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .addFrame({
+            translation: {
+                x: 20
+            },
+            rotation: {
+                x: 0,
+                y: 0,
+                z: 0.7071067812,
+                w: 0.7071067812
+            }
+        })
+        .cartesianKinematics(1, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .finalize()
 
     gbc.disable_limit_check()
 

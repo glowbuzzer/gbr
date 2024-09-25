@@ -4,8 +4,8 @@
 
 import * as React from "react"
 import { DoubleSide, Euler, Vector3 } from "three"
-import { useKinematicsExtents } from "@glowbuzzer/store"
-import { useScale } from "./ScaleProvider"
+
+import { useScale } from "../util"
 
 type FrustumProps = {
     scale?: number

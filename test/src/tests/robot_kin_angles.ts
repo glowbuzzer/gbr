@@ -9,7 +9,14 @@ import { gbc } from "../../gbc"
 const test = uvu.suite("robot kin angles")
 
 test.before.each(() => {
-    gbc.reset("configs/tx40_config.json")
+    gbc.config()
+        .joints(6, {
+            vmax: 20,
+            amax: 400,
+            jmax: 8000
+        })
+        .robotKinematics()
+        .finalize()
 })
 
 test("inverse kinematics should not return values outside -pi, pi", async () => {

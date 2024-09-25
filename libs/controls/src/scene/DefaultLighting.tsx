@@ -4,8 +4,8 @@
 
 import * as React from "react"
 import { useRef } from "react"
-import { useScale } from "./ScaleProvider"
 import { Plane } from "@react-three/drei"
+import { useScale } from "../util"
 
 export const DefaultLighting = () => {
     const pointLightRef = useRef()

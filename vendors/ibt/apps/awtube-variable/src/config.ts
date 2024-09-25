@@ -2,7 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { GlowbuzzerConfig } from "libs/store/src"
+import { GlowbuzzerConfig } from "@glowbuzzer/store"
 
 /**
  * This is the configuration for the AWTUBE L machine that can be pushed to the control if needed
@@ -167,9 +167,6 @@ export const config: GlowbuzzerConfig = {
             participatingJointsCount: 6,
             kinematicsConfigurationType: 1,
             supportedConfigurationBits: 7,
-            extentsX: [-1000, 1000],
-            extentsY: [-1000, 1000],
-            extentsZ: [0, 3000],
             linearLimits: [
                 {
                     vmax: 200,

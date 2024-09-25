@@ -14,8 +14,7 @@ import {
     GlowbuzzerTileDefinitionList,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
-    TrackPosition,
-    useScale
+    TrackPosition
 } from "@glowbuzzer/controls"
 import { ActivityApi, GCodeContextProvider } from "@glowbuzzer/store"
 import { createRoot } from "react-dom/client"

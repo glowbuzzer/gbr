@@ -50,7 +50,8 @@ function only_safety_error(fault: number) {
 export const StatusTrayFaults = () => {
     const machine = useMachine()
     const { connected } = useConnection()
-    const safety_enabled = useOverallSafetyStateInput() !== undefined
+    const overall = useOverallSafetyStateInput()
+    const safety_enabled = overall !== undefined
 
     const fault = machine.currentState === MachineState.FAULT
     const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE

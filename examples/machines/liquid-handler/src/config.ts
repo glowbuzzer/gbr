@@ -74,9 +74,6 @@ export const config: GlowbuzzerConfig = {
             participatingJoints: [0, 1, 2],
             participatingJointsCount: 3,
             kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
-            extentsX: [-700, 700],
-            extentsY: [-700, 700],
-            extentsZ: [-500, 500],
             linearLimits: [
                 {
                     vmax: 200,

@@ -8,7 +8,18 @@ import { gbc } from "../../gbc"
 const test = uvu.suite("spindle")
 
 test.before.each(() => {
-    gbc.reset()
+    gbc.config()
+        .joints(1)
+        .cartesianKinematics()
+        .addSpindle({
+            enableDigitalOutIndex: 0,
+            directionDigitalOutIndex: 1,
+            directionInvert: false,
+            speedAnalogOutIndex: 0
+        })
+        .digitalOutputs(2)
+        .finalize()
+
     gbc.enable_operation()
 })
 

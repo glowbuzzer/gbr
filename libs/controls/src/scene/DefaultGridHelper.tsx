@@ -5,8 +5,8 @@
 import { Euler, Vector3 } from "three"
 import { TriadHelper } from "./TriadHelper"
 import * as React from "react"
-import { useScale } from "./ScaleProvider"
-import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import { useGlowbuzzerTheme } from "../app"
+import { useScale } from "../util"
 
 export const DefaultGridHelper = () => {
     const { extent } = useScale()

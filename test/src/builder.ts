@@ -4,11 +4,13 @@
 
 import { GbcTest } from "./framework"
 import {
+    EnvelopeConstraint,
     FramesConfig,
     GlowbuzzerConfig,
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
     Quat,
+    SpindleConfig,
     TaskConfig
 } from "../../libs/store/src"
 
@@ -104,7 +106,8 @@ export class ConfigBuilder {
                 {
                     name: "default"
                 }
-            ]
+            ],
+            spindle: []
         }
     }
 
@@ -153,7 +156,6 @@ export class ConfigBuilder {
                 participatingJoints: Array.from({ length: jointCount }, (_, i) => i),
                 participatingJointsCount: jointCount,
                 kinematicsConfigurationType: 4,
-                extentsX: [-100, 100],
                 linearLimits: [limits]
             }
         ]
@@ -183,9 +185,6 @@ export class ConfigBuilder {
                 participatingJoints: [0, 1, 2, 3, 4, 5],
                 participatingJointsCount: 6,
                 kinematicsConfigurationType: 1,
-                extentsX: [-1000, 1000],
-                extentsY: [-1000, 1000],
-                extentsZ: [-1000, 1000],
                 linearLimits: [
                     {
                         vmax: 2000,
@@ -218,6 +217,11 @@ export class ConfigBuilder {
         return this
     }
 
+    addSpindle(param: SpindleConfig) {
+        this.json.spindle.push(param)
+        return this
+    }
+
     setFrame(index: number, param: FramesConfig) {
         this.json.frames[index] = param
         return this
@@ -240,6 +244,13 @@ export class ConfigBuilder {
         return this
     }
 
+    digitalOutputs(number: number) {
+        this.json.dout = Array.from({ length: number }, (_, i) => ({
+            name: "dout" + i
+        }))
+        return this
+    }
+
     addTool(length: number, x = 0, rotation: Quat = { x: 0, y: 0, z: 0, w: 1 }) {
         this.json.tool.push({
             translation: {
@@ -252,27 +263,32 @@ export class ConfigBuilder {
         return this
     }
 
-    limitZ(min: number, max: number, kinematicsConfigurationIndex = 0) {
-        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].extentsZ = [min, max]
+    envelopeConstraints(...constraints: EnvelopeConstraint[]) {
+        this.json.kinematicsConfiguration[0].envelopeConstraints = constraints
         return this
     }
 
-    cylindricalEnvelope(
-        innerRadius: number,
-        outerRadius: number,
-        kinematicsConfigurationIndex = 0
-    ) {
-        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].cylindricalEnvelope = [
-            innerRadius,
-            outerRadius
-        ]
-        return this
-    }
-
-    sphericalEnvelope(innerRadius: number, outerRadius: number, kinematicsConfigurationIndex = 0) {
-        this.json.kinematicsConfiguration[kinematicsConfigurationIndex].sphericalEnvelope = {
-            radius: [innerRadius, outerRadius]
-        }
-        return this
-    }
+    // limitZ(min: number, max: number, kinematicsConfigurationIndex = 0) {
+    //     this.json.kinematicsConfiguration[kinematicsConfigurationIndex].extentsZ = [min, max]
+    //     return this
+    // }
+    //
+    // cylindricalEnvelope(
+    //     innerRadius: number,
+    //     outerRadius: number,
+    //     kinematicsConfigurationIndex = 0
+    // ) {
+    //     this.json.kinematicsConfiguration[kinematicsConfigurationIndex].cylindricalEnvelope = [
+    //         innerRadius,
+    //         outerRadius
+    //     ]
+    //     return this
+    // }
+    //
+    // sphericalEnvelope(innerRadius: number, outerRadius: number, kinematicsConfigurationIndex = 0) {
+    //     this.json.kinematicsConfiguration[kinematicsConfigurationIndex].sphericalEnvelope = {
+    //         radius: [innerRadius, outerRadius]
+    //     }
+    //     return this
+    // }
 }

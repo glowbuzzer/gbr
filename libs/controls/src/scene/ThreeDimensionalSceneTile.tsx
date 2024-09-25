@@ -3,13 +3,12 @@
  */
 
 import * as React from "react"
-import { useState, useRef } from "react"
+import { useRef, useState } from "react"
 import { ReactReduxContext } from "react-redux"
 import { usePrefs, usePreview, useTrace } from "@glowbuzzer/store"
 import { Trace } from "./Trace"
 import { Canvas, useThree } from "@react-three/fiber"
 import { OrbitControls, useContextBridge } from "@react-three/drei"
-import { WorkspaceDimensions } from "./WorkspaceDimension"
 import { PreviewPath } from "./PreviewPath"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
@@ -22,7 +21,6 @@ import { ReactComponent as DownloadIcon } from "@material-symbols/svg-400/outlin
 import { FramesDisplay } from "./FramesDisplay"
 import { DefaultPerspectiveCamera } from "./DefaultPerspectiveCamera"
 import { DefaultGridHelper } from "./DefaultGridHelper"
-import { ScaleProvider, useScale } from "./ScaleProvider"
 import { DefaultViewCube } from "./DefaultViewCube"
 import { DefaultLighting } from "./DefaultLighting"
 import { PointsDisplay } from "./PointsDisplay"
@@ -123,27 +121,25 @@ export const ThreeDimensionalSceneTile = ({
             <Canvas shadows frameloop="demand">
                 <SceneExporter sceneRef={sceneRef} />
                 <ContextBridge>
-                    <ScaleProvider>
-                        {noCamera || <DefaultPerspectiveCamera position={initialCameraPosition} />}
-                        {noControls || <OrbitControls enableDamping={false} makeDefault />}
-                        {noViewCube || <DefaultViewCube />}
-                        {noLighting || <DefaultLighting />}
-                        {noGridHelper || <DefaultGridHelper />}
-                        {/*{hidePreview ? null : <WorkspaceDimensions />}*/}
-                        {hideTrace ? null : (
-                            <Trace
-                                kinematicsConfigurationIndex={kinematicsConfigurationIndex}
-                                color="red"
-                            />
-                        )}
-                        {disabled || hidePreview ? null : (
-                            <PreviewPath preview={segments} highlightLine={highlightLine} />
-                        )}
-                        {current.showFrames && <FramesDisplay />}
-                        {current.showPoints && <PointsDisplay />}
-                        {/* Render any react-three-fiber nodes supplied */}
-                        {children}
-                    </ScaleProvider>
+                    {noCamera || <DefaultPerspectiveCamera position={initialCameraPosition} />}
+                    {noControls || <OrbitControls enableDamping={false} makeDefault />}
+                    {noViewCube || <DefaultViewCube />}
+                    {noLighting || <DefaultLighting />}
+                    {noGridHelper || <DefaultGridHelper />}
+                    {/*{hidePreview ? null : <WorkspaceDimensions />}*/}
+                    {hideTrace ? null : (
+                        <Trace
+                            kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                            color="red"
+                        />
+                    )}
+                    {disabled || hidePreview ? null : (
+                        <PreviewPath preview={segments} highlightLine={highlightLine} />
+                    )}
+                    {current.showFrames && <FramesDisplay />}
+                    {current.showPoints && <PointsDisplay />}
+                    {/* Render any react-three-fiber nodes supplied */}
+                    {children}
                 </ContextBridge>
             </Canvas>
             <DockToolbar floating>

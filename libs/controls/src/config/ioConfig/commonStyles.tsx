@@ -17,6 +17,12 @@ export const StyledFlex = styled(Flex)<StyledFlexProps>`
         font-family: monospace;
     }
 
+    .content {
+        flex-grow: 1;
+        flex-basis: 0;
+        overflow-y: auto;
+    }
+
     .input-grid,
     .output-grid {
         display: grid;

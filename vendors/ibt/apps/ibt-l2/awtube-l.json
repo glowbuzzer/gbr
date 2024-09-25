@@ -239,18 +239,6 @@
             "participatingJointsCount": 6,
             "kinematicsConfigurationType": 1,
             "supportedConfigurationBits": 7,
-            "extentsX": [
-                -1500,
-                1500
-            ],
-            "extentsY": [
-                -1500,
-                1500
-            ],
-            "extentsZ": [
-                500,
-                1900
-            ],
             "sphericalEnvelope": {
                 "center": {
                     "x": 0,

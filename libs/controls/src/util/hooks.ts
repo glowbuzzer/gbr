@@ -5,6 +5,7 @@
 import {
     JointConfig,
     MachineState,
+    useConfig,
     useConnection,
     useJointConfigurationList,
     useKinematicsConfiguration,
@@ -26,18 +27,13 @@ export function useJointsForKinematicsConfigurationList(kinematicsConfigurationI
     }))
 }
 
-/**
- * @deprecated This hook may be removed in the future
- */
-export function useMotionAllowed(): boolean {
-    const { connected } = useConnection()
-    const machineState = useMachineState()
-    const { handGuidedModeActive } = useHandGuidedMode()
-
-    return connected && machineState === "OPERATION_ENABLED" && !handGuidedModeActive
-}
-
 export function useOperationEnabled() {
     const machineState = useMachineState()
     return machineState === MachineState.OPERATION_ENABLED
+}
+
+export function useScale() {
+    const config = useConfig()
+    const extent = config.$metadata?.workspaceSize || 2000 // default to 2m
+    return { extent }
 }

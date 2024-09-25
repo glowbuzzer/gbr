@@ -17,17 +17,32 @@ const test = uvu.suite("frames relative")
  */
 
 test.before.each(() => {
-    gbc.reset("configs/frames_relative.json")
-
-    // gbc.disable_limit_check()
-    //
-    // // move machine away from origin
-    // gbc.set_joint_pos(0, 10)
-    // gbc.set_joint_pos(1, 10)
-    // gbc.set_joint_pos(2, 0)
+    gbc.config()
+        .joints(3, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .addFrame({
+            translation: {
+                x: 10
+            }
+        })
+        .addFrame({
+            translation: {
+                x: 10
+            },
+            parentFrameIndex: 1,
+            positionReference: 1
+        })
+        .cartesianKinematics(2, {
+            vmax: 200,
+            amax: 4000,
+            jmax: 80000
+        })
+        .finalize()
 
     gbc.enable_operation()
-    // gbc.enable_limit_check()
 })
 
 test("initial kc local position", async () => {

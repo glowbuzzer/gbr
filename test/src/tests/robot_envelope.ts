@@ -4,7 +4,11 @@
 
 import * as uvu from "uvu"
 import { gbc } from "../../gbc"
-import { OPERATION_ERROR } from "../../../libs/store/src"
+import {
+    KC_ENVELOPE_CONSTRAINT_AXIS,
+    KC_ENVELOPE_CONSTRAINT_TYPE,
+    OPERATION_ERROR
+} from "../../../libs/store/src"
 import * as assert from "uvu/assert"
 
 const test = uvu.suite("robot envelope validation")
@@ -15,9 +19,47 @@ function init_test() {
     gbc.config()
         .joints(6)
         .robotKinematics()
-        .limitZ(90, 500)
-        .cylindricalEnvelope(150, 250)
-        .sphericalEnvelope(0 /* not set */, 400)
+        .envelopeConstraints(
+            {
+                constraintType: KC_ENVELOPE_CONSTRAINT_TYPE.KC_ENVELOPE_CONSTRAINT_PLANE,
+                plane: {
+                    direction: KC_ENVELOPE_CONSTRAINT_AXIS.KC_ENVELOPE_CONSTRAINT_AXIS_Z,
+                    position: 90,
+                    outside: true
+                }
+            },
+            {
+                constraintType: KC_ENVELOPE_CONSTRAINT_TYPE.KC_ENVELOPE_CONSTRAINT_PLANE,
+                plane: {
+                    direction: KC_ENVELOPE_CONSTRAINT_AXIS.KC_ENVELOPE_CONSTRAINT_AXIS_Z,
+                    position: 500
+                }
+            },
+            {
+                constraintType: KC_ENVELOPE_CONSTRAINT_TYPE.KC_ENVELOPE_CONSTRAINT_CYLINDER,
+                cylinder: {
+                    axis: KC_ENVELOPE_CONSTRAINT_AXIS.KC_ENVELOPE_CONSTRAINT_AXIS_Z,
+                    radius: 150,
+                    outside: true
+                }
+            },
+            {
+                constraintType: KC_ENVELOPE_CONSTRAINT_TYPE.KC_ENVELOPE_CONSTRAINT_CYLINDER,
+                cylinder: {
+                    axis: KC_ENVELOPE_CONSTRAINT_AXIS.KC_ENVELOPE_CONSTRAINT_AXIS_Z,
+                    radius: 250
+                }
+            },
+            {
+                constraintType: KC_ENVELOPE_CONSTRAINT_TYPE.KC_ENVELOPE_CONSTRAINT_SPHERE,
+                sphere: {
+                    radius: 400
+                }
+            }
+        )
+        // .limitZ(90, 500)
+        // .cylindricalEnvelope(150, 250)
+        // .sphericalEnvelope(0 /* not set */, 400)
         .finalize()
 
     gbc.disable_limit_check()

@@ -72,12 +72,7 @@ export const CartesianDro = ({
     warningThreshold
 }: CartesianDisplayProps) => {
     const kinematics = useKinematics(kinematicsConfigurationIndex)
-    const {
-        frameIndex: localFrameIndex,
-        extentsX,
-        extentsY,
-        extentsZ
-    } = useKinematicsConfiguration(kinematicsConfigurationIndex)
+    const { frameIndex: localFrameIndex } = useKinematicsConfiguration(kinematicsConfigurationIndex)
     const { convertToFrame } = useFrames()
 
     const p = convertToFrame(
@@ -90,7 +85,7 @@ export const CartesianDro = ({
     const { translation, rotation } = apply_offset(p, kinematics.offset, true)
 
     // this is the local xyz, used to warn when tcp is near/outside of kc limits
-    const local_translation = kinematics.position.translation
+    // const local_translation = kinematics.position.translation
 
     const euler = new Euler().setFromQuaternion(rotation)
 
@@ -112,27 +107,22 @@ export const CartesianDro = ({
         c: euler.z
     }
 
-    const extents = {
-        x: extentsX,
-        y: extentsY,
-        z: extentsZ
-    }
-
     const display = select ? select.split(",").map(s => s.trim()) : Object.keys(pos)
 
     return (
         <StyledGrid>
             {display.map(k => {
-                const axis_extents = extents[k]
-
-                function should_warn() {
-                    const value = local_translation[k]
-                    if (axis_extents) {
-                        const [min, max] = axis_extents
-                        const tolerance = (max - min) * warningThreshold
-                        return value < min + tolerance || value > max - tolerance
-                    }
-                }
+                // TODO: L: check against envelope constraints
+                // const axis_extents = extents[k]
+                //
+                // function should_warn() {
+                //     const value = local_translation[k]
+                //     if (axis_extents) {
+                //         const [min, max] = axis_extents
+                //         const tolerance = (max - min) * warningThreshold
+                //         return value < min + tolerance || value > max - tolerance
+                //     }
+                // }
 
                 return (
                     <DroItem
@@ -140,7 +130,7 @@ export const CartesianDro = ({
                         label={labels[k]}
                         value={pos[k]}
                         type={types[k]}
-                        error={should_warn()}
+                        // error={should_warn()}
                     />
                 )
             })}

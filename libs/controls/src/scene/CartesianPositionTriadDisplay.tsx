@@ -7,9 +7,9 @@ import { Sphere } from "@react-three/drei"
 import { CartesianPositionPopover } from "./CartesianPositionPopover"
 import { ThreeEvent } from "@react-three/fiber"
 import { MeshBasicMaterial, Quaternion, Vector3 } from "three"
-import { useScale } from "./ScaleProvider"
 import { TriadHelper } from "./TriadHelper"
 import { useTheme } from "styled-components"
+import { useScale } from "../util"
 
 type CartesianPositionTriadDisplayProps = {
     name: string

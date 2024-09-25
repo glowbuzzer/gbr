@@ -17,10 +17,7 @@ export const GlowbuzzerMinimalConfig: GlowbuzzerConfig = {
         {
             name: "default",
             linearLimits: [{}],
-            participatingJoints: [],
-            extentsX: [-100, 100],
-            extentsY: [-100, 100],
-            extentsZ: [-100, 100]
+            participatingJoints: []
         }
     ],
     joint: [],
