@@ -3,7 +3,8 @@
     "license": "MIT",
     "scripts": {
         "start": "vite",
-        "tags": "git tag --sort=-creatordate | head -5"
+        "tags": "git tag --sort=-creatordate | head -5",
+        "verify-build": "node build.mjs controls,store 0.0.0 && node react-docgen-verify.mjs && node typedoc-verify.mjs"
     },
     "private": true,
     "optionalDependencies": {
