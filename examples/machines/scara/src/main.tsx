@@ -18,13 +18,12 @@ import {
     JointDroTileDefinition,
     JointJogTileDefinition,
     PointsTileDefinition,
-    RobotKinematicsChainElement,
     ThreeDimensionalSceneTile,
     ThreeDimensionalSceneTileDefinition,
     ToolsTileDefinition
 } from "@glowbuzzer/controls"
 
-import { Environment, useGLTF } from "@react-three/drei"
+import { useGLTF } from "@react-three/drei"
 
 import {
     ActivityApi,
@@ -45,6 +44,7 @@ import { staubli_ts2_40_dh, staubli_tx40_dh } from "../../../util/kinematics/Kin
 import { fk_tx40 } from "../../../util/kinematics/RobotKin"
 import { config } from "./config"
 import { DefaultEnvironment } from "../../../util/DefaultEnvironment"
+import { RobotKinematicsChainElement } from "../../../tutorials/three-tutorial/src/robots"
 
 const DEFAULT_POSITION = new THREE.Vector3(0, 0, 0)
 const DEG90 = Math.PI / 2
@@ -54,6 +54,8 @@ const TS2_40_KIN_CHAIN: RobotKinematicsChainElement[] = [
     { rotateX: -DEG90, moveable: true, jointAngleAdjustment: -DEG90 },
     {}
 ]
+
+console.log("config", config)
 
 const ScaraRobot = ({ children = null }) => {
     const jointPositions = useJointPositions(0)

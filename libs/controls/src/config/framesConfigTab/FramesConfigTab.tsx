@@ -3,7 +3,6 @@
  */
 
 import React from "react"
-import { ToolsTile } from "../../tools"
 import { FramesTile } from "../../frames"
 
 /**

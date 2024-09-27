@@ -24,6 +24,11 @@ import { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, useGLTF } from "@react-three/drei"
 import { Material, Object3D } from "three"
+import { DockToolbarButtonGroup } from "../dock"
+import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
+import { ReactComponent as DatabaseIcon } from "@material-symbols/svg-400/outlined/dns.svg"
+import { useState } from "react"
+import { FileManagementModal } from "./FileManagementModal"
 
 interface GLBModelProps {
     url: string
@@ -72,7 +77,7 @@ export const ToolsTile = () => {
     const api = useSoloActivity(0)
     const currentState = useMachineState()
     const config = useConfig()
-    console.log("config", config)
+    const [showFileManagement, setShowFileManagement] = useState(false)
 
     // const getMetadataProperty = {}
 
@@ -194,15 +199,31 @@ export const ToolsTile = () => {
     }
 
     return (
-        <TileWithEditableTableSupport
-            columns={columns}
-            items={definitions}
-            onCreate={create_tool}
-            onUpdate={update_tool}
-            onDelete={delete_tool}
-            EditComponent={ToolConfigEditor}
-            factory={make_new_tool}
-            onVerify={item => item.name?.length > 0}
-        />
+        <>
+            <FileManagementModal
+                open={showFileManagement}
+                onClose={() => setShowFileManagement(false)}
+            />
+            <TileWithEditableTableSupport
+                columns={columns}
+                items={definitions}
+                onCreate={create_tool}
+                onUpdate={update_tool}
+                onDelete={delete_tool}
+                EditComponent={ToolConfigEditor}
+                factory={make_new_tool}
+                onVerify={item => item.name?.length > 0}
+                toolbarExtra={
+                    <DockToolbarButtonGroup>
+                        <GlowbuzzerIcon
+                            Icon={DatabaseIcon}
+                            title="Manage Model Files"
+                            button
+                            onClick={() => setShowFileManagement(true)}
+                        />
+                    </DockToolbarButtonGroup>
+                }
+            />
+        </>
     )
 }

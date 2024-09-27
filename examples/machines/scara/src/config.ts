@@ -7,7 +7,7 @@ import { GlowbuzzerConfig } from "@glowbuzzer/store"
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "STAUBLI TS2-50 SCARA",
+            name: "default",
             busCycleTime: 4
         }
     ],
@@ -126,44 +126,6 @@ export const config: GlowbuzzerConfig = {
             }
         }
     ],
-    fieldbus: [
-        {
-            name: "0",
-            jointCount: 10,
-            RxPdo: {
-                machineStatusWordOffset: 0,
-                activeFaultOffset: 4,
-                faultHistoryOffset: 8,
-                heartbeatOffset: 12,
-                jointStatuswordOffset: 16,
-                jointActualPositionOffset: 36,
-                jointActualVelocityOffset: 76,
-                jointActualTorqueOffset: 116,
-                digitalOffset: 156,
-                digitalCount: 8,
-                analogOffset: 164,
-                analogCount: 6,
-                integerOffset: 188,
-                integerCount: 2
-            },
-            TxPdo: {
-                machineControlWordOffset: 0,
-                gbcControlWordOffset: 4,
-                hlcControlWordOffset: 8,
-                heartbeatOffset: 12,
-                jointControlwordOffset: 16,
-                jointSetPositionOffset: 36,
-                jointSetVelocityOffset: 76,
-                jointSetTorqueOffset: 116,
-                digitalOffset: 156,
-                digitalCount: 10,
-                analogOffset: 164,
-                analogCount: 6,
-                integerOffset: 188,
-                integerCount: 2
-            }
-        }
-    ],
     frames: [
         {
             name: "Default",
@@ -276,31 +238,6 @@ export const config: GlowbuzzerConfig = {
             limitConfigurationIndex: 0,
             toolIndex: 1,
             vmaxPercentage: 25
-        }
-    ],
-    task: [
-        {
-            name: "MyTask",
-            activityCount: 2,
-            firstActivityIndex: 0
-        }
-    ],
-    activity: [
-        {
-            name: "move joints at speed 10",
-            activityType: 4,
-            moveJointsAtVelocity: {
-                jointVelocityArray: [10, 10, 10],
-                kinematicsConfigurationIndex: 0,
-                moveParamsIndex: 0
-            }
-        },
-        {
-            name: "dwell for 20",
-            activityType: 13,
-            dwell: {
-                msToDwell: 20
-            }
         }
     ]
 }

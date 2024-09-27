@@ -37,6 +37,7 @@ type TileEditableTableSupportProps<T extends { id: string | number }> = {
     EditComponent: ComponentType<EditComponent<T>>
     onVerify?: (item: T) => boolean
     factory: () => Omit<T, "id">
+    toolbarExtra?: React.ReactNode
 }
 
 enum EditMode {
@@ -67,6 +68,7 @@ enum EditMode {
  * @param EditComponent The component to render when creating or updating an item
  * @param onVerify Called to verify if the item is valid. If not provided, the create/update button will always be enabled.
  * @param factory Called to create a new item when entering create mode. The id property will be automatically generated.
+ * @param toolbarExtra Extra content to display in the toolbar
  */
 export function TileWithEditableTableSupport<T extends { id: string | number }>({
     columns,
@@ -77,7 +79,8 @@ export function TileWithEditableTableSupport<T extends { id: string | number }>(
     onSelect,
     EditComponent,
     onVerify,
-    factory
+    factory,
+    toolbarExtra
 }: TileEditableTableSupportProps<T>) {
     const [selected, setSelected] = useState<string | null>(null)
     const [mode, setMode] = useState<EditMode>(EditMode.None)
@@ -225,6 +228,7 @@ export function TileWithEditableTableSupport<T extends { id: string | number }>(
                         />
                     </Popconfirm>
                 </DockToolbarButtonGroup>
+                {toolbarExtra}
             </DockToolbar>
             <Table
                 size="small"

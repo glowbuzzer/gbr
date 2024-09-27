@@ -54,7 +54,6 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
 
 export function useEstopInput() {
     // inverted
-    console.log("estop", useMachineInputActive("estopStateInput"))
     return !useMachineInputActive("estopStateInput")
 }
 

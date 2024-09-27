@@ -37,7 +37,7 @@ export default function defineAutomationWareViteConfig(config = { port: 5175 }) 
                     }
                 ]
             }),
-            serveStatic()
+            serveStatic({ localPath: "c:/tmp/" })
         ],
         resolve: {
             alias: {
