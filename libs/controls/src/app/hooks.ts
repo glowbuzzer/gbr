@@ -26,12 +26,16 @@ export function useConnectionUrls() {
         )
     }
 
-    const host = prefs.current.hostname?.length ? prefs.current.hostname : staticHost || "localhost"
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws"
+    const auto_host=window.location.hostname
+    const github_codespaces=auto_host.endsWith("app.github.dev")
+
+    const host = prefs.current.hostname?.length ? prefs.current.hostname : staticHost || auto_host
     return {
         readonly: prod && staticHost,
         host,
         staticHost,
-        gbcWebsocketUrl: `ws://${host}:9001/ws`,
+        gbcWebsocketUrl: github_codespaces ? `wss://${host.replace("5173", "9001")}/ws` : `${protocol}://${host}:9001/ws`,
         pouchDbBase: remotePouchDb ? `http://${host}:5984/` : ""
     }
 }
