@@ -112,6 +112,9 @@ export const streamSlice: Slice<StreamSliceType[]> = createSlice({
         },
         reset(state, action) {
             const streamIndex = action.payload
+            if (!state[streamIndex]) {
+                return
+            }
             state[streamIndex].buffer.length = 0
             // state[streamIndex].readCount = -1
             // state[streamIndex].writeCount = 0

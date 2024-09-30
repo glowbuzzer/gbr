@@ -3,15 +3,14 @@
  */
 
 import * as React from "react"
-import { Card, Flex } from "antd"
-import styled from "styled-components"
 import { useState } from "react"
+import { Flex } from "antd"
+import styled from "styled-components"
 import { SlaveCatProvider } from "./slaveCatData/slaveCatProvider"
 import { EtherCatSlaveConfigTab } from "./etherCatSlaveConfigTab/EtherCatSlaveConfigTab"
 import { EtherCatReadSlaveTab } from "./etherCatReadSlaveTab/EtherCatReadSlaveTab"
-import { EtherCatConfigProvider, useEtherCatConfig } from "./EtherCatConfigContext"
+import { useEtherCatConfig } from "./EtherCatConfigContext"
 import { EtherCatOptionalSlavesTab } from "./etherCatOptionalSlavesTab/EtherCatOptionalSlavesTab"
-import { EtherCatWriteSlaveTab } from "./etherCatWriteSlaveTab/EtherCatWriteSlaveTab"
 import { CardMaximised } from "../util/CardMaximised"
 
 const StyledFlex = styled(Flex)`

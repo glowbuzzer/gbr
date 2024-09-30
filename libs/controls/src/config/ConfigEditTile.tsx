@@ -50,8 +50,8 @@ export const ConfigEditTile = () => {
         { key: "tool", label: "Tools Config" },
         { key: "machineEnvelope", label: "Machine Envelope Config" },
         { key: "frames", label: "Frames Config" },
-        { key: "verticalAxis", label: "Vertical Axis Config" },
-        { key: "debug", label: "Debug Config" },
+        // { key: "verticalAxis", label: "Vertical Axis Config" },
+        // { key: "debug", label: "Debug Config" },
         { key: "version", label: "Software Versions" }
     ]
 

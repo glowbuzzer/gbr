@@ -64,7 +64,7 @@ export function ik_RrprScara(
     const dh_d4 = dh[3].d
     const dh_a1 = dh[0].a
     const dh_a2 = dh[1].a
-    console.log("ik", "dh_a1", dh_a1, "dh_a2", dh_a2, "dh_d1", dh_d1, "dh_d4", dh_d4)
+    // console.log("ik", "dh_a1", dh_a1, "dh_a2", dh_a2, "dh_d1", dh_d1, "dh_d4", dh_d4)
 
     const cosine_joint_2 = (x * x + y * y - dh_a1 * dh_a1 - dh_a2 * dh_a2) / (2 * dh_a1 * dh_a2)
 

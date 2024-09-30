@@ -61,7 +61,11 @@ export const StatusTrayKinematicsConstraint = () => {
 
     if (
         timerTick === 0 &&
-        (!fault || operationError !== OPERATION_ERROR.OPERATION_ERROR_KINEMATICS_ENVELOPE_VIOLATION)
+        (!fault ||
+            ![
+                OPERATION_ERROR.OPERATION_ERROR_KINEMATICS_ENVELOPE_VIOLATION,
+                OPERATION_ERROR.OPERATION_ERROR_JOINT_LIMIT_EXCEEDED
+            ].includes(operationError))
     ) {
         return null
     }
@@ -89,13 +93,13 @@ export const StatusTrayKinematicsConstraint = () => {
             }
         >
             {timerTick < 0 ? (
-                <>Kinemantics envelope constraints are disabled until you re-enable them</>
+                <>Kinemantics constraints are disabled until you re-enable them</>
             ) : timerTick > 0 ? (
-                <>Kinemantics envelope constraints are temporarily disabled</>
+                <>Kinemantics constraints are temporarily disabled</>
             ) : (
                 <>
-                    A kinematics envelope constraint has been violated. You can disable the
-                    constraints and attempt to move the machine to a valid position
+                    A kinematics constraint has been violated. You can disable the constraints and
+                    attempt to move the machine to a valid position
                 </>
             )}
         </StatusTrayItem>

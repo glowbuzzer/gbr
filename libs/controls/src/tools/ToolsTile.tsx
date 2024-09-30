@@ -84,7 +84,6 @@ export const ToolsTile = () => {
     // Get metadata from the config
     const metadata = configMetadata(config.tool[0], true)
 
-    console.log("metadata", metadata)
     // // Check if metadata exists
     // if (!metadata) {
     //     return undefined
@@ -127,13 +126,13 @@ export const ToolsTile = () => {
             dataIndex: "description",
             key: "description"
         },
-        {
-            title: "3D View",
-            key: "3dview",
-            render: (_, record) => (
-                <GLBViewer url={"" /*record.url doesn't exist yet record.url*/} scale={20} />
-            ) // Assuming `url` contains the GLB file URL
-        },
+        // {
+        //     title: "3D View",
+        //     key: "3dview",
+        //     render: (_, record) => (
+        //         <GLBViewer url={"" /*record.url doesn't exist yet record.url*/} scale={20} />
+        //     ) // Assuming `url` contains the GLB file URL
+        // },
         {
             title: "Length",
             key: "length",

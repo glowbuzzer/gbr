@@ -8,7 +8,8 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "default",
-            busCycleTime: 4
+            busCycleTime: 4,
+            heartbeatTimeout: 20000
         }
     ],
     stream: [
@@ -24,6 +25,26 @@ export const config: GlowbuzzerConfig = {
             name: "aux"
         }
     ],
+    dout: [
+        {
+            name: "DOUT 1"
+        }
+    ],
+    iout: [
+        {
+            name: "IOUT 1"
+        }
+    ],
+    uiout: [
+        {
+            name: "UIOUT 1"
+        }
+    ],
+    aout: [
+        {
+            name: "AOUT 1"
+        }
+    ],
     joint: [
         {
             name: "0",
@@ -31,14 +52,14 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 4,
+                    amax: 40,
+                    jmax: 800
                 }
             ],
             scale: 10000000,
-            negLimit: -180,
-            posLimit: 180
+            negLimit: -360,
+            posLimit: 360
         },
         {
             name: "1",
@@ -46,14 +67,14 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 4,
+                    amax: 40,
+                    jmax: 800
                 }
             ],
             scale: 10000000,
-            negLimit: -143,
-            posLimit: 141
+            negLimit: -360,
+            posLimit: 360
         },
         {
             name: "2",
@@ -61,9 +82,9 @@ export const config: GlowbuzzerConfig = {
             jointType: 0,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 200,
+                    amax: 4000,
+                    jmax: 80000
                 }
             ],
             scale: 10000000,
@@ -76,14 +97,12 @@ export const config: GlowbuzzerConfig = {
             jointType: 1,
             limits: [
                 {
-                    vmax: 2,
-                    amax: 4,
-                    jmax: 8
+                    vmax: 20,
+                    amax: 400,
+                    jmax: 8000
                 }
             ],
-            scale: 10000000,
-            negLimit: -360,
-            posLimit: 360
+            scale: 10000000
         }
     ],
 
@@ -97,19 +116,19 @@ export const config: GlowbuzzerConfig = {
             supportedConfigurationBits: 1,
             linearLimits: [
                 {
-                    vmax: 40,
-                    amax: 80,
-                    jmax: 160
+                    vmax: 160,
+                    amax: 800,
+                    jmax: 8000
                 },
                 {
-                    vmax: 40,
-                    amax: 80,
-                    jmax: 160
+                    vmax: 160,
+                    amax: 800,
+                    jmax: 8000
                 },
                 {
-                    vmax: 40,
-                    amax: 80,
-                    jmax: 160
+                    vmax: 160,
+                    amax: 800,
+                    jmax: 8000
                 }
             ],
             angularLimits: [
@@ -167,55 +186,17 @@ export const config: GlowbuzzerConfig = {
     ],
     points: [
         {
-            name: "Origin"
-        },
-        {
-            name: "X10",
+            name: "Home",
             translation: {
-                x: 10
-            }
-        },
-        {
-            name: "R90",
-            rotation: {
-                x: 0.7071068,
+                x: -350,
                 y: 0,
-                z: 0,
-                w: 0.7071068
+                z: 120
             }
         }
     ],
     tool: [
         {
             name: "Default"
-        },
-        {
-            name: "Tool 1",
-            diameter: 10,
-            translation: {
-                z: -10
-            }
-        },
-        {
-            name: "Tool 2",
-            diameter: 10,
-            translation: {
-                z: -20
-            }
-        },
-        {
-            name: "Tool 3",
-            diameter: 10,
-            translation: {
-                z: -30
-            }
-        },
-        {
-            name: "Tool 4",
-            diameter: 10,
-            translation: {
-                z: -40
-            }
         }
     ],
     spindle: [
@@ -225,19 +206,6 @@ export const config: GlowbuzzerConfig = {
             directionDigitalOutIndex: 1,
             directionInvert: false,
             speedAnalogOutIndex: 0
-        }
-    ],
-    moveParameters: [
-        {
-            name: "Default",
-            amaxPercentage: 50,
-            blendTimePercentage: 60,
-            blendTolerance: 20,
-            blendType: 0,
-            jmaxPercentage: 10,
-            limitConfigurationIndex: 0,
-            toolIndex: 1,
-            vmaxPercentage: 25
         }
     ]
 }

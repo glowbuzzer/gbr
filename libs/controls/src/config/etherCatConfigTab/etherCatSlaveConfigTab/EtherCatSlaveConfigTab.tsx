@@ -24,6 +24,7 @@ import { CheckCircleOutlined, CloseCircleOutlined, EditOutlined } from "@ant-des
 import styled, { useTheme } from "styled-components"
 import { ethercatDataTypes } from "../slavecatTypes/ethercatTypes"
 import { RequireEstopGuard } from "../../util/RequireEstopGuard"
+import { EcmCyclicRunningTileGuard } from "../../../util/components/EcmCyclicRunningTileGuard"
 
 const { Panel } = Collapse
 
@@ -476,32 +477,34 @@ export const EtherCatSlaveConfigTab: React.FC<EtherCatSlaveConfigTabProps> = ({}
     const slaveData: slave[] = useSlaveCat()
 
     return (
-        <RequireEstopGuard>
-            <EtherCatConfigStatusIndicator />
-            <Space>
-                Edit the configuration of EtherCAT slaves (applied at start-up of the network)
-                {/*<Button*/}
-                {/*    size="small"*/}
-                {/*    onClick={() => {*/}
-                {/*        setUseDummyConfig(!useDummyConfig)*/}
-                {/*        setConfigLoaded(false) // Reset config loaded status*/}
-                {/*    }}*/}
-                {/*    style={{ marginLeft: 8 }}*/}
-                {/*>*/}
-                {/*    {useDummyConfig ? "Switch to Real Config" : "Switch to Dummy Config"}*/}
-                {/*</Button>*/}
-            </Space>
-            {configLoaded ? (
-                <div style={{ padding: 20 }}>
-                    <SlaveSDOTable config={editedConfig} slaveData={slaveData} />
-                </div>
-            ) : (
-                <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="No EtherCAT config has been loaded"
-                    imageStyle={{ height: 60 }}
-                />
-            )}
-        </RequireEstopGuard>
+        <EcmCyclicRunningTileGuard includeSimMode>
+            <RequireEstopGuard>
+                <EtherCatConfigStatusIndicator />
+                <Space>
+                    Edit the configuration of EtherCAT slaves (applied at start-up of the network)
+                    {/*<Button*/}
+                    {/*    size="small"*/}
+                    {/*    onClick={() => {*/}
+                    {/*        setUseDummyConfig(!useDummyConfig)*/}
+                    {/*        setConfigLoaded(false) // Reset config loaded status*/}
+                    {/*    }}*/}
+                    {/*    style={{ marginLeft: 8 }}*/}
+                    {/*>*/}
+                    {/*    {useDummyConfig ? "Switch to Real Config" : "Switch to Dummy Config"}*/}
+                    {/*</Button>*/}
+                </Space>
+                {configLoaded ? (
+                    <div style={{ padding: 20 }}>
+                        <SlaveSDOTable config={editedConfig} slaveData={slaveData} />
+                    </div>
+                ) : (
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description="No EtherCAT config has been loaded"
+                        imageStyle={{ height: 60 }}
+                    />
+                )}
+            </RequireEstopGuard>
+        </EcmCyclicRunningTileGuard>
     )
 }

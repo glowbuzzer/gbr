@@ -36,6 +36,9 @@ export const FileManagementModal = ({ open, onClose }: FileManagementModalProps)
         fetch("/__file")
             .then(res => res.json())
             .then(setFiles)
+            .catch(() => {
+                // TODO: M: handle error
+            })
     }, [])
 
     const columns = [
