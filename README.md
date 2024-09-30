@@ -18,7 +18,7 @@ You can start a full-featured demo using Github Codespaces, provided you have a 
 
   ![codespaces](images/codespaces.png)
 
-- Click the "+" button to create a Codespace on this branch
+- Click the "+" button to create a Codespace on this branch. Note that it takes a while to start the codespace the first time
 
 ## Run the demo
 When you start a Codespace, it opens a browser-based development environment. This is a virtualised environment that will run our real time control (GBC) and the development webserver which serves the GBR demo application.
@@ -46,4 +46,14 @@ You need to start the GBC and development webserver processes. To do so, follow 
 
     ![browser](images/browser.png)
 
-For more information, visit [glowbuzzer.com](https://www.glowbuzzer.com).
+- When the Scara demo application starts, you will be connected to the real time GBC control.
+
+    To begin, start by moving the machine to the 'home' position by clicking the Home button. 
+    
+    This moves the machine away from the outstretched singularity.
+
+    ![browser](images/home.png)
+
+    You can now use the cartesian and joint jog modes.
+
+For more information, visit [glowbuzzer.com](https://www.glowbuzzer.com), or email hello@glowbuzzer.com.
