@@ -3,6 +3,7 @@
  */
 
 import {
+    ActiveTool,
     CartesianDroTileDefinition,
     CartesianJogTileDefinition,
     ConfigEditTileDefinition,
@@ -79,6 +80,7 @@ const LoadedAwTubeRobot = () => {
             <Sphere scale={10}>
                 <meshStandardMaterial color="red" />
             </Sphere>
+            <ActiveTool />
         </AwTubeRobot>
     )
 }

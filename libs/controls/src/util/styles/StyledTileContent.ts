@@ -13,7 +13,7 @@ export const StyledSafetyTileContent = styled.div<{ $dimmed?: boolean }>`
     border-radius: 5px;
     height: 100%;
 
-    .content {
+    > .content {
         padding: 10px;
         overflow-y: auto;
         height: 100%;

@@ -20,6 +20,18 @@ export const ToolConfigEditor = ({
         onChange({ ...item, [e.target.name]: e.target.value })
     }
 
+    function update_filename(e: React.ChangeEvent<HTMLInputElement>) {
+        const filename = e.target.value.trim().length ? e.target.value.trim() : undefined
+
+        onChange({
+            ...item,
+            $metadata: {
+                ...item.$metadata,
+                filename
+            }
+        })
+    }
+
     function update_value(name: keyof ToolConfig, value: number) {
         onChange({ ...item, [name]: value })
     }
@@ -68,6 +80,9 @@ export const ToolConfigEditor = ({
         <Form labelCol={{ span: 4 }} size="small">
             <Form.Item label="Name">
                 <Input value={item.name} name="name" onChange={update} />
+            </Form.Item>
+            <Form.Item label="Model Filename">
+                <Input value={item.$metadata?.filename || ""} onChange={update_filename} />
             </Form.Item>
             <Form.Item label="Diameter">
                 <PrecisionInput

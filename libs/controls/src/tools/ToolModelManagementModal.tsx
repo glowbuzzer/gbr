@@ -22,12 +22,11 @@ type FileInfo = {
     modified: number
 }
 
-type FileManagementModalProps = {
-    open: boolean
+type ToolModelManagementModalProps = {
     onClose: () => void
 }
 
-export const FileManagementModal = ({ open, onClose }: FileManagementModalProps) => {
+export const ToolModelManagementModal = ({ onClose }: ToolModelManagementModalProps) => {
     const [files, setFiles] = React.useState<FileInfo[]>([])
     const [selected, setSelected] = React.useState<FileInfo>(null)
     const [messageApi, messageContext] = useMessage()
@@ -106,7 +105,7 @@ export const FileManagementModal = ({ open, onClose }: FileManagementModalProps)
 
     return (
         <Modal
-            open={open}
+            open={true}
             onCancel={onClose}
             title="Remote Model Files"
             footer={

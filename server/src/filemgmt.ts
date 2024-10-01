@@ -6,20 +6,27 @@ import * as express from "express"
 import { Router } from "express"
 import { ServerResponse } from "http"
 import * as fs from "fs"
+import { Plugin } from "vite"
 
-export type ServeStaticOptions = {
+export type ViteGbFileManagementPluginOptions = {
     localPath: string
+    fileLimit?: string
 }
 
-export function configureFileManagementRouter(app: Router, options: ServeStaticOptions) {
-    const { localPath } = options || {
-        localPath: process.env.DYNAMIC_FILE_LOCATION || "/gb"
-    }
+export function configureGbFileManagementRouter(
+    app: Router,
+    options: ViteGbFileManagementPluginOptions
+) {
+    const { localPath = "/gb", fileLimit = "100mb" }: ViteGbFileManagementPluginOptions = options
 
-    console.log("Serving of static files enabled. Requests to /gb will be mapped to:", localPath)
+    console.log(
+        "Serving of static files enabled and file management enabled. Requests to /gb will be mapped to:",
+        localPath
+    )
+
     app.use("/gb", express.static(localPath))
 
-    app.use("/__file/:name", express.raw({ type: "application/octet-stream", limit: "100mb" }))
+    app.use("/__file/:name", express.raw({ type: "application/octet-stream", limit: fileLimit }))
 
     function attempt(res: ServerResponse, fn) {
         try {
@@ -28,7 +35,6 @@ export function configureFileManagementRouter(app: Router, options: ServeStaticO
             res.write(JSON.stringify(response))
             res.end()
         } catch (e) {
-            console.log("ERROR IN FILE MANAGEMENT", e)
             res.writeHead(500)
             res.write(JSON.stringify({ success: false, error: e.message }))
             res.end()
@@ -67,4 +73,17 @@ export function configureFileManagementRouter(app: Router, options: ServeStaticO
             return { success: true }
         })
     })
+}
+
+export function viteGlowbuzzerFileManagementPlugin(
+    options?: ViteGbFileManagementPluginOptions
+): Plugin {
+    return {
+        name: "vite-gb-file-management-plugin",
+        configureServer(server) {
+            const router = Router()
+            configureGbFileManagementRouter(router, options)
+            server.middlewares.use(router)
+        }
+    }
 }

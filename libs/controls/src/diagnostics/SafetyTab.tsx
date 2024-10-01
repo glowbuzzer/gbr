@@ -133,8 +133,8 @@ export const SafetyTab = ({ labels = [] }: SafetyInputsTileProps) => {
     }
 
     return (
-        <SafetyTabContent>
-            <EcmStateGuard requireCyclicRunning>
+        <EcmStateGuard requireCyclicRunning>
+            <SafetyTabContent>
                 <Flex vertical gap="small">
                     <Card
                         bordered={false}
@@ -203,7 +203,7 @@ export const SafetyTab = ({ labels = [] }: SafetyInputsTileProps) => {
                         />
                     </Card>
                 </Flex>
-            </EcmStateGuard>
-        </SafetyTabContent>
+            </SafetyTabContent>
+        </EcmStateGuard>
     )
 }

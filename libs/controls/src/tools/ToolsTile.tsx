@@ -12,12 +12,13 @@ import {
     useConfig,
     useMachineState,
     useSoloActivity,
+    useToolIndex,
     useToolList
 } from "@glowbuzzer/store"
 import { ColumnType } from "antd/es/table"
 import { useDispatch } from "react-redux"
 import { ToolConfigEditor } from "./ToolConfigEditor"
-import { Button } from "antd"
+import { Button, Space } from "antd"
 import { TileWithEditableTableSupport } from "../util"
 import { GLTF } from "three/examples/jsm/loaders/GLTFLoader"
 
@@ -28,7 +29,8 @@ import { DockToolbarButtonGroup } from "../dock"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { ReactComponent as DatabaseIcon } from "@material-symbols/svg-400/outlined/dns.svg"
 import { useState } from "react"
-import { FileManagementModal } from "./FileManagementModal"
+import { ToolModelManagementModal } from "./ToolModelManagementModal"
+import { ToolPreviewButton } from "./ToolPreviewButton"
 
 interface GLBModelProps {
     url: string
@@ -57,59 +59,15 @@ const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
     )
 }
 
-export const mockToolUrls = [
-    {
-        id: 0,
-        url: "https://static.glowbuzzer.com/assets/tools/Schmalz_FQE_Xc_120x60.glb"
-    },
-    {
-        id: 1,
-        url: "https://static.glowbuzzer.com/assets/tools/Schmalz_FQE_Xc_220x80.glb"
-    }
-    // Add more tools as needed
-]
-
-export type ToolsTileTableEntry = ToolConfig & { name?: string; id: number }
+export type ToolsTileTableEntry = GlowbuzzerConfig["tool"][0] & { name?: string; id: number }
 
 export const ToolsTile = () => {
     const tools = useToolList()
     const dispatch = useDispatch()
     const api = useSoloActivity(0)
     const currentState = useMachineState()
-    const config = useConfig()
     const [showFileManagement, setShowFileManagement] = useState(false)
-
-    // const getMetadataProperty = {}
-
-    // Get metadata from the config
-    const metadata = configMetadata(config.tool[0], true)
-
-    // // Check if metadata exists
-    // if (!metadata) {
-    //     return undefined
-    // }
-    //
-    // // Return the requested property from metadata
-    // return metadata[propertyName]
-    // }
-
-    // Usage example:
-
-    // const definitions = tools.map((tool, index) => ({
-    //     id: index,
-    //     ...tool
-    // }))
-
-    // Merge real tool data with mock URLs
-    const toolsWithUrls = tools.map((tool, index) => ({
-        ...tool,
-        url: mockToolUrls.find(mockTool => mockTool.id === index)?.url
-    }))
-
-    const definitions = toolsWithUrls.map((tool, index) => ({
-        id: index,
-        ...tool
-    }))
+    const activeToolIndex = useToolIndex(0)
 
     function select(index: number) {
         return api.setToolOffset(index).promise()
@@ -122,10 +80,15 @@ export const ToolsTile = () => {
             key: "name"
         },
         {
-            title: "Description",
-            dataIndex: "description",
-            key: "description"
+            title: "Filename",
+            key: "filename",
+            render: (_, tool) => tool.$metadata?.filename
         },
+        // {
+        //     title: "Description",
+        //     dataIndex: "description",
+        //     key: "description"
+        // },
         // {
         //     title: "3D View",
         //     key: "3dview",
@@ -146,15 +109,23 @@ export const ToolsTile = () => {
         {
             title: "Actions",
             key: "actions",
-            render: (_, record) => (
-                <Button
-                    size="small"
-                    onClick={() => select(record.id)}
-                    disabled={currentState !== MachineState.OPERATION_ENABLED}
-                >
-                    Activate
-                </Button>
-            )
+            render: (_, tool) => {
+                return (
+                    <Space>
+                        <Button
+                            size="small"
+                            onClick={() => select(tool.id)}
+                            disabled={
+                                currentState !== MachineState.OPERATION_ENABLED ||
+                                activeToolIndex === tool.id
+                            }
+                        >
+                            Activate
+                        </Button>
+                        <ToolPreviewButton filename={tool.$metadata?.filename} />
+                    </Space>
+                )
+            }
         }
     ]
 
@@ -199,13 +170,12 @@ export const ToolsTile = () => {
 
     return (
         <>
-            <FileManagementModal
-                open={showFileManagement}
-                onClose={() => setShowFileManagement(false)}
-            />
+            {showFileManagement && (
+                <ToolModelManagementModal onClose={() => setShowFileManagement(false)} />
+            )}
             <TileWithEditableTableSupport
                 columns={columns}
-                items={definitions}
+                items={tools.map((tool, id) => ({ ...tool, id }))}
                 onCreate={create_tool}
                 onUpdate={update_tool}
                 onDelete={delete_tool}
