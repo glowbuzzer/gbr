@@ -3,7 +3,7 @@
  */
 
 import * as React from "react"
-import { Alert, Button, Card, Dropdown, Flex, List, StepProps, Steps } from "antd"
+import { Alert, Button, Card, Flex, StepProps, Steps } from "antd"
 import styled from "styled-components"
 import { ActivityStreamItem, useFlows } from "@glowbuzzer/store"
 import { FlowState } from "./types"
@@ -12,13 +12,11 @@ import { useFlowContext } from "../FlowContextProvider"
 import { DockTileWithToolbar } from "../../dock/DockTileWithToolbar"
 import { FlowRuntimeControls } from "./FlowRuntimeControls"
 import { FlowTriggerDisplay } from "../display/FlowTriggerDisplay"
-import { FlowSelectDropdown } from "../FlowSelectDropdown"
 import { useFlowCustomContext } from "../FlowCustomContextProvider"
 import { StyledEmpty } from "../styles"
 import { useUser } from "../../usermgmt"
 import { FlowMakerCapability } from "../FlowMakerCapability"
-import { ListGridType } from "antd/es/list"
-import { CaretRightOutlined } from "@ant-design/icons"
+import { CaretRightOutlined, CloseCircleOutlined } from "@ant-design/icons"
 
 const StyledDiv = styled.div`
     padding: 10px;
@@ -40,6 +38,17 @@ const StyledDiv = styled.div`
 
     .ant-steps-item-title {
         line-height: 24px !important;
+    }
+
+    .error {
+        color: red;
+        display: flex;
+        font-size: 1.2em;
+        gap: 6px;
+
+        .anticon {
+            font-size: 1.4em;
+        }
     }
 `
 
@@ -160,7 +169,8 @@ const FlowRuntimePicker = () => {
 
 export const FlowRuntimeTile = () => {
     const flows = useFlows()
-    const { active, activeFlow, activities, completedFlows, state, tag, close } = useFlowContext()
+    const { active, activeFlow, activities, completedFlows, state, integrationError, tag, close } =
+        useFlowContext()
     const { message } = useFlowCustomContext()
 
     if (!active) {
@@ -194,6 +204,10 @@ export const FlowRuntimeTile = () => {
                                             <FlowTriggerDisplay trigger={branch.trigger} />
                                         </React.Fragment>
                                     ))}
+                                </div>
+                            ) : state === FlowState.ERROR ? (
+                                <div className="error">
+                                    <CloseCircleOutlined /> {integrationError}
                                 </div>
                             ) : (
                                 <FlowRuntimeFlowDisplay

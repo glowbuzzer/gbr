@@ -59,7 +59,11 @@ const userModel: UserModel = {
 
         // add an anonymous role
         new RoleBuilder("anon")
-            .addCapabilities(SimpleMoveCapability.READ, FlowMakerCapability.RUN)
+            .addCapabilities(
+                SimpleMoveCapability.READ,
+                FlowMakerCapability.RUN,
+                FlowMakerCapability.EDIT
+            )
             .build()
     ]
 }

@@ -39,6 +39,7 @@ type FlowContextType = {
     tag: number
     active: boolean
     state: FlowState
+    integrationError: string
     start?: () => void
     startFlow(flow: Flow): void
     stop?: () => void
@@ -69,6 +70,7 @@ export const FlowContextProvider = ({ children }) => {
     const [error, setError] = useState(false)
     const [lastTag, setLastTag] = useState(0)
     const [activities, setActivities] = useState<ActivityStreamItem[]>([])
+    const [integrationError, setIntegrationError] = useState("")
 
     const state = useFlowDerivedState(
         connected,
@@ -101,11 +103,14 @@ export const FlowContextProvider = ({ children }) => {
         }
     }, [connected, machine_state])
 
-    // start the active flow when it changes
+    // start the
+    // when it changes
     useEffect(() => {
         if (activeFlow) {
             async function execute_active_flow() {
                 reset()
+                setActivities([])
+                setIntegrationError("")
                 const activities: ActivityStreamItem[] = []
                 switch (activeFlow.type) {
                     case FlowType.REGULAR:
@@ -113,8 +118,15 @@ export const FlowContextProvider = ({ children }) => {
                         break
 
                     case FlowType.INTEGRATION:
-                        const fetched = await call_http_endpoint(activeFlow, status)
-                        activities.push(...fetched)
+                        try {
+                            const fetched = await call_http_endpoint(activeFlow, status)
+                            activities.push(...fetched)
+                        } catch (err) {
+                            console.log(err)
+                            setIntegrationError(err.message)
+                            setError(true)
+                            return
+                        }
                         break
                 }
 
@@ -198,6 +210,7 @@ export const FlowContextProvider = ({ children }) => {
         activities,
         completedFlows,
         state,
+        integrationError,
         tag: lastTag,
         active,
         startFlow(flow: Flow) {
