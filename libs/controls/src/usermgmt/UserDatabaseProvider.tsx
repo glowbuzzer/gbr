@@ -7,6 +7,7 @@ import { UserProfile } from "./types"
 import { hashPassword } from "./UserLoginModal"
 import { ADMIN_ROLE_NAME } from "./util"
 import { useConnectionUrls } from "../app/hooks"
+import { useGlowbuzzerGlobalErrorHandler } from "../app/GlowbuzzerErrorContext"
 
 type UserDatabaseContextType = {
     users: UserProfile[]
@@ -22,25 +23,32 @@ export const UserDatabaseProvider = ({ enabled, children }) => {
     const { pouchDbBase } = useConnectionUrls()
     const [database, setDatabase] = useState<PouchDB.Database<UserProfile>>(null)
     const [users, setUsers] = useState<UserProfile[]>([])
+    const errorHandler = useGlowbuzzerGlobalErrorHandler()
 
     useEffect(() => {
         if (database) {
-            database.allDocs({ include_docs: true }).then(docs => {
-                const fetched_users = docs.rows.map(row => row.doc)
-                if (!fetched_users.some(user => user._id === "admin")) {
-                    const admin_user = {
-                        _id: "admin",
-                        _rev: null,
-                        roles: [ADMIN_ROLE_NAME],
-                        password: "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0" // 0000 hashed
+            database
+                .allDocs({ include_docs: true })
+                .then(docs => {
+                    const fetched_users = docs.rows.map(row => row.doc)
+                    if (!fetched_users.some(user => user._id === "admin")) {
+                        const admin_user = {
+                            _id: "admin",
+                            _rev: null,
+                            roles: [ADMIN_ROLE_NAME],
+                            password:
+                                "9af15b336e6a9619928537df30b2e6a2376569fcf9d7e773eccede65606529a0" // 0000 hashed
+                        }
+                        database.put(admin_user).then(() => {
+                            setUsers([admin_user, ...fetched_users])
+                        })
+                    } else {
+                        setUsers(fetched_users)
                     }
-                    database.put(admin_user).then(() => {
-                        setUsers([admin_user, ...fetched_users])
-                    })
-                } else {
-                    setUsers(fetched_users)
-                }
-            })
+                })
+                .catch(err => {
+                    errorHandler("UserDatabaseProvider", err)
+                })
         }
         // TODO: error handling in case of db issue
     }, [database])

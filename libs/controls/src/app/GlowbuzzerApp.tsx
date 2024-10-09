@@ -29,6 +29,7 @@ import { AutoDesiredModeController } from "./AutoDesiredModeController"
 import { UserModel, UserProvider } from "../usermgmt"
 import { ConnectionConfiguration } from "./types"
 import { AutoSimulatedSafetyInputsController } from "./AutoSimulatedSafetyInputsController"
+import { GlowbuzzerErrorProvider } from "./GlowbuzzerErrorContext"
 
 declare module "styled-components" {
     export interface DefaultTheme extends GlobalToken {}
@@ -190,21 +191,23 @@ export const GlowbuzzerApp = ({
         <connectionConfigurationContext.Provider value={connectionConfiguration}>
             <appNameContext.Provider value={appName}>
                 <GlowbuzzerThemeProvider>
-                    <Provider store={store}>
-                        <GbdbProvider configuration={persistenceConfiguration}>
-                            <ConnectionProvider autoConnect={!manualConnect}>
-                                <ConfigLiveEditProvider>
-                                    <GlowbuzzerContainer userModel={userModel}>
-                                        <AutoConnectionController enabled={!manualConnect} />
-                                        <AutoSimulatedSafetyInputsController />
-                                        <AutoDesiredModeController enabled={autoOpEnabled}>
-                                            {children}
-                                        </AutoDesiredModeController>
-                                    </GlowbuzzerContainer>
-                                </ConfigLiveEditProvider>
-                            </ConnectionProvider>
-                        </GbdbProvider>
-                    </Provider>
+                    <GlowbuzzerErrorProvider>
+                        <Provider store={store}>
+                            <GbdbProvider configuration={persistenceConfiguration}>
+                                <ConnectionProvider autoConnect={!manualConnect}>
+                                    <ConfigLiveEditProvider>
+                                        <GlowbuzzerContainer userModel={userModel}>
+                                            <AutoConnectionController enabled={!manualConnect} />
+                                            <AutoSimulatedSafetyInputsController />
+                                            <AutoDesiredModeController enabled={autoOpEnabled}>
+                                                {children}
+                                            </AutoDesiredModeController>
+                                        </GlowbuzzerContainer>
+                                    </ConfigLiveEditProvider>
+                                </ConnectionProvider>
+                            </GbdbProvider>
+                        </Provider>
+                    </GlowbuzzerErrorProvider>
                 </GlowbuzzerThemeProvider>
             </appNameContext.Provider>
         </connectionConfigurationContext.Provider>

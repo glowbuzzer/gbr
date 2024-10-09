@@ -13,7 +13,8 @@ import {
     RootState
 } from "@glowbuzzer/store"
 import { useGbdbDebugHelper } from "./debug"
-import { useConnectionUrls } from "../app/hooks"
+import { useConnectionUrls } from "../app"
+import { useGlowbuzzerGlobalErrorHandler } from "../app/GlowbuzzerErrorContext"
 
 export type GbdbItem = PouchDB.Core.IdMeta & PouchDB.Core.RevisionIdMeta
 
@@ -37,6 +38,7 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
     // use store and store.getState() rather than a selector on the entire state to avoid re-rendering on every state change
     const store = useStore<RootState>()
     const { pouchDbBase } = useConnectionUrls()
+    const errorHandler = useGlowbuzzerGlobalErrorHandler()
     const dispatch = useDispatch()
     const { facets } = configuration
     const gbdb = useSelector((state: RootState) => state.gbdb)
@@ -73,10 +75,7 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
                     )
                 })
                 .catch(err => {
-                    console.error(
-                        `Failed to initialise PouchDB for gbdb facets with base url '${pouchDbBase}'. Please check error message and that you have the 'pouchdb' and 'events' npm modules installed`,
-                        err
-                    )
+                    errorHandler("GbdbProvider", err)
                 })
         }
     }, [configuration])
