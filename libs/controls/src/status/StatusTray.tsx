@@ -14,6 +14,7 @@ import { useEffect, useState } from "react"
 import { StatusTraySafetyErrors } from "./StatusTraySafetyErrors"
 import { DownCircleOutlined, UpCircleOutlined } from "@ant-design/icons"
 import { StatusTrayKinematicsConstraint } from "./StatusTrayKinematicsConstraint"
+import { StatusTrayQuickStopIndicator } from "./StatusTrayQuickStopIndicator"
 
 const StyledDiv = styled.div<{ $visible: boolean; $collapsed: boolean; $bottomOffset: number }>`
     position: absolute;
@@ -129,6 +130,7 @@ export const StatusTray = ({ statusBarRef }: StatusTrayProps) => {
                 </div>
                 <div className={collapsed ? "tray hidden" : "tray"}>
                     <div className={collapsed ? "tray-items hidden" : ""}>
+                        <StatusTrayQuickStopIndicator />
                         <StatusTrayKinematicsConstraint />
                         <StatusTraySafetyErrors />
                         <StatusTrayConnect />
