@@ -17,7 +17,7 @@ export const ActiveTool = ({ kinematicsConfigurationIndex = 0 }) => {
     const activeToolIndex = useToolIndex(kinematicsConfigurationIndex)
 
     const activeTool = tools[activeToolIndex]
-    if (!activeTool.$metadata.filename) {
+    if (!activeTool?.$metadata?.filename) {
         return null
     }
 
