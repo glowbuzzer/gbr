@@ -6,13 +6,13 @@ import {
     ECM_CYCLIC_STATE,
     MACHINETARGET,
     useEthercatMasterCyclicStatus,
-    useMachineRequestedTarget
+    useMachineTargetState
 } from "@glowbuzzer/store"
 import * as React from "react"
 import { DockTileDisabledWithNestedSupport } from "../../dock"
 
 export const EcmCyclicRunningTileGuard = ({ children, includeSimMode = false }) => {
-    const target = useMachineRequestedTarget()
+    const [target] = useMachineTargetState()
     const status = useEthercatMasterCyclicStatus()
 
     const disabled =

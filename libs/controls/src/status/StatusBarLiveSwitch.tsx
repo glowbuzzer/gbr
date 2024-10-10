@@ -8,26 +8,30 @@ import {
     MACHINETARGET,
     useConnection,
     useEthercatMasterCyclicStatus,
-    useMachine,
+    useMachineTargetState,
     useSimilationOnlyConfiguration
 } from "@glowbuzzer/store"
 import { Button } from "antd"
+import { useCallback, useEffect } from "react"
 
 export const StatusBarLiveSwitch = () => {
     const simulationOnly = useSimilationOnlyConfiguration()
     const { connected } = useConnection()
     const ecm_cyclic_state = useEthercatMasterCyclicStatus()
-    const machine = useMachine()
+    const [currentTarget, requestedTarget, setDesiredMachineTarget] = useMachineTargetState()
 
     const disabled = simulationOnly || !connected
     const live_switch_enabled = ecm_cyclic_state === ECM_CYCLIC_STATE.ECM_CYCLIC_RUNNING
 
-    function change_target(v: MACHINETARGET) {
-        machine.setDesiredMachineTarget(v)
-    }
+    const change_target = useCallback(
+        (v: MACHINETARGET) => {
+            setDesiredMachineTarget(v)
+        },
+        [setDesiredMachineTarget]
+    )
 
-    const live = machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS
-    const switching = connected && machine.target !== machine.requestedTarget
+    const live = requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS
+    const switching = connected && currentTarget !== requestedTarget
 
     return (
         <Button.Group>

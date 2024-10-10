@@ -271,9 +271,10 @@ export const useStream = (
         shallowEqual
     )
     const connection = useConnection()
-    const dispatch = useDispatch()
     const default_move_params_from_config = useDefaultMoveParameters()
     const stable_default_move_params_param = useShallowStableValue(defaultMoveParams)
+
+    const dispatch = useDispatch()
 
     const api = useMemo(() => {
         const params = {
@@ -295,38 +296,41 @@ export const useStream = (
         readCount
     ])
 
-    return {
-        state,
-        time,
-        tag,
-        capacity,
-        queued,
-        pending,
-        send(factory: (api: ActivityApi) => Promise<any>[]) {
-            // deprecated in favour of `execute`
-            return Promise.all(factory(api))
-        },
-        execute(
-            factory: (
-                api: ActivityApi
-            ) => ActivityGeneratorReturnType | ActivityGeneratorReturnType[]
-        ) {
-            const activities = factory(api)
-            if (!Array.isArray(activities)) {
-                return promisify(activities) // single activity
-            }
+    return useMemo(
+        () => ({
+            state,
+            time,
+            tag,
+            capacity,
+            queued,
+            pending,
+            send(factory: (api: ActivityApi) => Promise<any>[]) {
+                // deprecated in favour of `execute`
+                return Promise.all(factory(api))
+            },
+            execute(
+                factory: (
+                    api: ActivityApi
+                ) => ActivityGeneratorReturnType | ActivityGeneratorReturnType[]
+            ) {
+                const activities = factory(api)
+                if (!Array.isArray(activities)) {
+                    return promisify(activities) // single activity
+                }
 
-            // multiple activities, so promisify each one and return promise for all
-            return Promise.all(activities.map(promisify))
-        },
-        sendCommand(streamCommand: STREAMCOMMAND) {
-            connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
-        },
-        reset() {
-            api.reset()
-            dispatch(streamSlice.actions.reset(streamIndex))
-        }
-    }
+                // multiple activities, so promisify each one and return promise for all
+                return Promise.all(activities.map(promisify))
+            },
+            sendCommand(streamCommand: STREAMCOMMAND) {
+                connection.send(updateStreamCommandMsg(streamIndex, streamCommand))
+            },
+            reset() {
+                api.reset()
+                dispatch(streamSlice.actions.reset(streamIndex))
+            }
+        }),
+        [state, time, tag, capacity, queued, pending, api, streamIndex, connection]
+    )
 }
 
 export * from "./api"

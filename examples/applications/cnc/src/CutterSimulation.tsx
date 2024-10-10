@@ -2,19 +2,19 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react"
-import { useLayoutEffect, useMemo, useRef } from "react"
-import { Vector3 } from "three"
-import { CustomGeometry } from "./CustomGeometry"
+import * as React from "react";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { Vector3 } from "three";
+import { CustomGeometry } from "./CustomGeometry";
 import {
     MachineState,
     useFrames,
     useKinematicsConfiguration,
-    useMachine,
+    useMachineCurrentState,
     useToolConfig,
     useToolIndex,
     useTrace
-} from "@glowbuzzer/store"
+} from "@glowbuzzer/store";
 
 function estimateBytesUsed(geometry) {
     // Return the estimated memory used by this geometry in bytes
@@ -34,7 +34,7 @@ function estimateBytesUsed(geometry) {
 const BLOCK_DEPTH = 20
 
 export const CutterSimulation = () => {
-    const { currentState } = useMachine()
+    const currentState = useMachineCurrentState()
     const { convertToFrame } = useFrames()
     const toolIndex = useToolIndex(0)
     const { diameter } = useToolConfig(toolIndex)

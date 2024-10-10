@@ -8,7 +8,8 @@ import {
     STREAMSTATE,
     TRIGGERACTION,
     TRIGGERON,
-    useMachine,
+    useMachineCurrentState,
+    useMachineHeartbeat,
     usePointsList,
     useSoloActivity,
     useStream
@@ -25,7 +26,8 @@ enum Mode {
 }
 
 export const DemoTile = () => {
-    const { heartbeat, currentState } = useMachine()
+    const currentState = useMachineCurrentState()
+    const heartbeat = useMachineHeartbeat()
     const threeAxisStream = useStream(0)
     const twoAxisStream = useStream(1)
     const threeAxisSoloApi = useSoloActivity(0)

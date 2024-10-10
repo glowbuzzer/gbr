@@ -8,7 +8,9 @@ import {
     DesiredState,
     MachineState,
     useConnection,
-    useMachine,
+    useMachineCurrentState,
+    useMachineDesiredState,
+    useMachineTargetAcquired,
     useSafeStopInput
 } from "@glowbuzzer/store"
 
@@ -16,15 +18,15 @@ const autoOpEnabledContext = createContext<boolean>(false)
 
 export const AutoDesiredModeController = ({ children, enabled }) => {
     const connection = useConnection()
-    const machine = useMachine()
+    const [, setDesiredState] = useMachineDesiredState()
     const safeStopped = useSafeStopInput()
+    const target_acquired = useMachineTargetAcquired()
+    const current_state = useMachineCurrentState()
+
     const connected = connection.connected && connection.statusReceived
-    const current_state = machine.currentState
     const fault = current_state === MachineState.FAULT
     const fault_active = current_state === MachineState.FAULT_REACTION_ACTIVE
-    const target_not_acquired = machine.target !== machine.requestedTarget
-
-    const disabled = !connected || fault || fault_active || target_not_acquired
+    const disabled = !connected || fault || fault_active || !target_acquired
 
     useEffect(() => {
         if (!enabled || disabled) {
@@ -33,13 +35,13 @@ export const AutoDesiredModeController = ({ children, enabled }) => {
         if (safeStopped) {
             if (current_state !== MachineState.QUICK_STOP) {
                 // go to quickstop
-                machine.setDesiredState(DesiredState.QUICKSTOP)
+                setDesiredState(DesiredState.QUICKSTOP)
             }
         } else if (current_state !== MachineState.OPERATION_ENABLED) {
             // go to op
-            machine.setDesiredState(DesiredState.OPERATIONAL)
+            setDesiredState(DesiredState.OPERATIONAL)
         }
-    }, [enabled, disabled, machine.desiredState, safeStopped])
+    }, [enabled, disabled, safeStopped])
 
     return <autoOpEnabledContext.Provider value={enabled}>{children}</autoOpEnabledContext.Provider>
 }

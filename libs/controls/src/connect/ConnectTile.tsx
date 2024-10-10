@@ -2,21 +2,24 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react";
-import { Button, Radio, Spin, Tag } from "antd";
+import * as React from "react"
+import { Button, Radio, RadioChangeEvent, Tag } from "antd"
 import {
-  ConnectionState,
-  DesiredState,
-  determine_machine_state,
-  MachineState,
-  MACHINETARGET,
-  possible_transitions,
-  useConnection,
-  useEstopInput,
-  useMachine,
-  useSimilationOnlyConfiguration
-} from "@glowbuzzer/store";
-import styled from "styled-components";
+    ConnectionState,
+    DesiredState,
+    MachineState,
+    MACHINETARGET,
+    possible_transitions,
+    useConnection,
+    useEstopInput,
+    useMachineControlWord,
+    useMachineCurrentState,
+    useMachineDesiredState,
+    useMachineTargetAcquired,
+    useMachineTargetState,
+    useSimilationOnlyConfiguration
+} from "@glowbuzzer/store"
+import styled from "styled-components"
 
 const StyledDiv = styled.div`
     padding: 5px;
@@ -106,31 +109,32 @@ const StyledDiv = styled.div`
  */
 export const ConnectTile = () => {
     const connection = useConnection()
-    const machine = useMachine()
     const estopActive = useEstopInput()
     const simulationOnly = useSimilationOnlyConfiguration()
+    const state = useMachineCurrentState()
+    const [, setDesiredState] = useMachineDesiredState()
+    const [, setMachineControlWord] = useMachineControlWord()
+    const targetAcquired = useMachineTargetAcquired()
+    const [currentTarget, , setDesiredMachineTarget] = useMachineTargetState()
 
-    function change_target(e) {
-        machine.setDesiredMachineTarget(e.target.value)
+    function change_target(e: RadioChangeEvent) {
+        setDesiredMachineTarget(e.target.value)
     }
 
-    function change_desired_state(e) {
-        machine.setDesiredState(e.target.value)
+    function change_desired_state(e: RadioChangeEvent) {
+        setDesiredState(e.target.value)
     }
-
-    const state = determine_machine_state(machine.statusWord)
 
     const connected = connection.connected && connection.statusReceived
-    const fault = machine.currentState === MachineState.FAULT
-    const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
-    const target_not_acquired = machine.target !== machine.requestedTarget
-    const op = machine.currentState === MachineState.OPERATION_ENABLED
+    const fault = state === MachineState.FAULT
+    const fault_active = state === MachineState.FAULT_REACTION_ACTIVE
+    const op = state === MachineState.OPERATION_ENABLED
 
     function issue_reset() {
-        machine.setMachineControlWord(possible_transitions.FaultReset())
+        setMachineControlWord(possible_transitions.FaultReset())
     }
 
-    const no_change_operation_mode = !connected || fault || fault_active || target_not_acquired
+    const no_change_operation_mode = !connected || fault || fault_active || !targetAcquired
 
     return (
         <StyledDiv>
@@ -140,7 +144,7 @@ export const ConnectTile = () => {
                     <Radio.Group
                         disabled={connection.state !== ConnectionState.CONNECTED}
                         size={"small"}
-                        value={machine.target}
+                        value={currentTarget}
                         onChange={change_target}
                     >
                         <Radio.Button value={MACHINETARGET.MACHINETARGET_SIMULATION}>
@@ -151,12 +155,6 @@ export const ConnectTile = () => {
                             className="danger"
                             value={MACHINETARGET.MACHINETARGET_FIELDBUS}
                         >
-                            {target_not_acquired &&
-                            machine.requestedTarget === MACHINETARGET.MACHINETARGET_FIELDBUS ? (
-                                <span>
-                                    <Spin size="small" />{" "}
-                                </span>
-                            ) : null}
                             Live
                         </Radio.Button>
                     </Radio.Group>
@@ -193,7 +191,7 @@ export const ConnectTile = () => {
                 <div className="label">Current State</div>
                 <div className="controls">
                     <Tag color={fault || fault_active ? "red" : op ? "green" : undefined}>
-                        {connected ? MachineState[machine.currentState] || "Unknown" : "None"}
+                        {connected ? MachineState[state] || "Unknown" : "None"}
                     </Tag>
                     {connected && fault && (
                         <div className="reset-button">

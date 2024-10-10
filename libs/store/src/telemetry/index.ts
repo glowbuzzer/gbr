@@ -7,7 +7,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import deepEqual from "fast-deep-equal"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import {
     CaptureState,
     TelemetryDomainProvider,
@@ -21,11 +21,11 @@ import {
 } from "./types"
 import {
     append_telemetry_items,
-    telemetry_circular_buffer,
-    telemetry_cached_domains,
     get_telemetry_values,
     MAX_SAMPLES,
-    reset_telemetry_state
+    reset_telemetry_state,
+    telemetry_cached_domains,
+    telemetry_circular_buffer
 } from "./storage"
 
 const { load, save } = settings<TelemetrySettingsType>("telemetry")
@@ -91,7 +91,9 @@ export const telemetrySlice: Slice<
                 // if waiting for trigger, find the first item of data that deviates from last capture
                 // TODO: ?: we use `set` property but could be `act` also that triggers capture
                 for (let n = 0; n < count; n++) {
-                    if (!deepEqual(state.lastCapture.set, action.payload[n].set)) {
+                    const { t: _t1, ...last } = state.lastCapture
+                    const { t: _t2, ...next } = action.payload[n]
+                    if (!deepEqual(last, next)) {
                         state.captureState = CaptureState.CAPTURING
                         // clear data and append from this point in the incoming data
                         reset_telemetry_state(state)
@@ -138,47 +140,53 @@ export const telemetrySlice: Slice<
  */
 export const useTelemetryControls = () => {
     const captureState = useSelector<RootState, TelemetrySliceType["captureState"]>(
-        (state: RootState) => state.telemetry.captureState,
-        shallowEqual
+        (state: RootState) => state.telemetry.captureState
     )
-    const lastCapture = useSelector((state: RootState) => state.telemetry.lastCapture, shallowEqual)
+    const enabled = useSelector<RootState, boolean>(
+        (state: RootState) => !!state.telemetry.lastCapture
+    )
+
     const { captureDuration, plot }: TelemetrySettingsType = useSelector(
         (state: RootState) => state.telemetry.settings,
         shallowEqual
     )
+
     const dispatch = useDispatch()
-    return {
-        captureState,
-        lastCapture,
-        captureDuration,
-        plot,
-        pause() {
-            dispatch(telemetrySlice.actions.pause())
-        },
-        resume() {
-            dispatch(telemetrySlice.actions.resume())
-        },
-        startCapture() {
-            dispatch(telemetrySlice.actions.startCapture())
-        },
-        cancelCapture() {
-            dispatch(telemetrySlice.actions.cancelCapture())
-        },
-        setDuration(value: number) {
-            dispatch(
-                telemetrySlice.actions.settings({
-                    captureDuration: value
-                })
-            )
-        },
-        setPlot(value: TelemetryPVAT) {
-            dispatch(
-                telemetrySlice.actions.settings({
-                    plot: value
-                })
-            )
-        }
-    }
+    return useMemo(
+        () => ({
+            captureState,
+            enabled,
+            captureDuration,
+            plot,
+            pause() {
+                dispatch(telemetrySlice.actions.pause())
+            },
+            resume() {
+                dispatch(telemetrySlice.actions.resume())
+            },
+            startCapture() {
+                dispatch(telemetrySlice.actions.startCapture())
+            },
+            cancelCapture() {
+                dispatch(telemetrySlice.actions.cancelCapture())
+            },
+            setDuration(value: number) {
+                dispatch(
+                    telemetrySlice.actions.settings({
+                        captureDuration: value
+                    })
+                )
+            },
+            setPlot(value: TelemetryPVAT) {
+                dispatch(
+                    telemetrySlice.actions.settings({
+                        plot: value
+                    })
+                )
+            }
+        }),
+        [captureState, enabled, captureDuration, plot]
+    )
 }
 
 /**

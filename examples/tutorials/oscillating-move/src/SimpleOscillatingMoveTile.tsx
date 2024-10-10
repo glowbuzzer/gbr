@@ -3,7 +3,12 @@
  */
 
 import React, { useState } from "react"
-import { MachineState, useConnection, useMachine, useSoloActivity } from "@glowbuzzer/store"
+import {
+    MachineState,
+    useConnection,
+    useMachineCurrentState,
+    useSoloActivity
+} from "@glowbuzzer/store"
 import { StyledTileContent } from "../../../../libs/controls/src/util/styles/StyledTileContent"
 import { Button } from "antd"
 import { DockTileDefinitionBuilder } from "@glowbuzzer/controls"
@@ -13,7 +18,7 @@ const SimpleOscillatingMoveTile = () => {
     const [pass, setPass] = useState(0)
     const soloActivity = useSoloActivity(0)
     const { connected } = useConnection()
-    const { currentState } = useMachine()
+    const currentState = useMachineCurrentState()
 
     async function do_promise() {
         setPass(1)

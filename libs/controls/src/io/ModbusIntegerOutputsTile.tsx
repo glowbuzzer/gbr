@@ -2,32 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { useState } from "react"
+import React, { useState } from "react"
 import {
     useModbusIntegerOutputList,
-    useIntegerOutputState,
-    useSoloActivity,
-    useMachine,
-    MachineState,
-    useModbusIntegerOutputNumberofList
+    useModbusIntegerOutputNumberofList,
+    useSoloActivity
 } from "@glowbuzzer/store"
-import { NumericOutputWidget } from "./NumericOutputWidget"
 import styled from "styled-components"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
-import {
-    Alert,
-    Button,
-    Card,
-    Col,
-    InputNumber,
-    Row,
-    Space,
-    Spin,
-    Switch,
-    Tooltip,
-    Typography
-} from "antd"
+import { Button, Card, Col, InputNumber, Row, Space, Spin, Tooltip, Typography } from "antd"
 
 const { Text } = Typography
 
@@ -54,19 +37,6 @@ const TitleContent = styled.div`
     display: flex;
     align-items: center;
     gap: 8px;
-`
-
-const StyledDiv = styled.div`
-    > div {
-        display: flex;
-        gap: 10px;
-        //align-items: center;
-        flex-wrap: wrap;
-    }
-
-    .output-label {
-        flex-grow: 1;
-    }
 `
 
 interface ModbusIntegerOutputItemProps {
@@ -207,20 +177,6 @@ type IntegerOutputsTileProps = {
 export const ModbusIntegerOutputsTile = ({ labels = [] }: IntegerOutputsTileProps) => {
     const uiouts = useModbusIntegerOutputList()
     const uioutNumberof = useModbusIntegerOutputNumberofList()
-
-    const machineState = useMachine().currentState
-    // if (machineState !== MachineState.OPERATION_ENABLED) {
-    //     return (
-    //         <StyledTileContent>
-    //             <Alert
-    //                 message="Not in machine state Operation Enabled"
-    //                 description="You can only set Modbus Integer Outputs in Operation Enabled."
-    //                 type="warning"
-    //                 showIcon
-    //             />
-    //         </StyledTileContent>
-    //     )
-    // }
 
     return (
         <StyledTileContent>

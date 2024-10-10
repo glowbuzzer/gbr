@@ -2,17 +2,16 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import React, { useEffect, useState } from "react"
-import { Alert, Button, Checkbox, Input, Space, Tabs, TabsProps } from "antd"
+import React, { useEffect, useState } from "react";
+import { Alert, Button, Checkbox, Input, Space, Tabs, TabsProps } from "antd";
 import {
     GbcConstants,
     JointCommand,
     useConnection,
     useJointConfigurationList,
-    useMachine,
+    useMachineCurrentState,
     useSoloActivity
-} from "@glowbuzzer/store"
-import { index, number } from "mathjs"
+} from "@glowbuzzer/store";
 
 enum Activity {
     NONE,
@@ -31,7 +30,7 @@ export const DrivesMoveTile = () => {
     const connection = useConnection()
     const joints = useJointConfigurationList()
     const api = useSoloActivity(0)
-    const { currentState } = useMachine()
+    const currentState = useMachineCurrentState()
 
     useEffect(() => {
         if (!connection.connected || currentState !== "OPERATION_ENABLED") {

@@ -4,12 +4,7 @@
 
 import * as React from "react"
 import styled from "styled-components"
-import {
-    useConnectionMonitorReset,
-    useConnectionMonitorStats,
-    useMachine,
-    useMachineConfig
-} from "@glowbuzzer/store"
+import { useConnectionMonitorReset, useConnectionMonitorStats } from "@glowbuzzer/store"
 import { Button, Card, Space } from "antd"
 
 const StyledDiv = styled.div`

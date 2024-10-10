@@ -8,7 +8,8 @@ import {
     MachineState,
     MoveParametersConfig,
     STREAMCOMMAND,
-    useMachine,
+    useMachineCurrentState,
+    useMachineHeartbeat,
     useSoloActivity,
     useStream
 } from "@glowbuzzer/store"
@@ -23,7 +24,8 @@ enum Mode {
 }
 
 export const DemoTile = () => {
-    const { currentState } = useMachine()
+    const currentState = useMachineCurrentState()
+    const heartbeat = useMachineHeartbeat()
     const thomasStream = useStream(0)
     const thomasSoloActivity = useSoloActivity(0)
 

@@ -7,8 +7,8 @@ import { useEffect } from "react"
 import {
     MACHINETARGET,
     useConnection,
-    useMachine,
     useMachineInputMetadata,
+    useMachineTargetState,
     useOverallSafetyStateInput,
     useSafetyDigitalInputList,
     useSafetyDigitalInputState
@@ -16,14 +16,13 @@ import {
 
 export const AutoSimulatedSafetyInputsController = () => {
     const { connected, send } = useConnection()
-    const machine = useMachine()
+    const [, requestedTarget] = useMachineTargetState()
     const safetyInputs = useSafetyDigitalInputList()
     const overallSafetyStateInput = useOverallSafetyStateInput()
     const metadata = useMachineInputMetadata("safetyStateInput")
     const [overallSafetyInput] = useSafetyDigitalInputState(metadata.index)
 
-    const enabled =
-        metadata.safety && machine.requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
+    const enabled = metadata.safety && requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
 
     useEffect(() => {
         // this can be 'undefined' if no safety configured, so we want to test for explicit false

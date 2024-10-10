@@ -7,7 +7,7 @@ import { useEffect } from "react"
 import { DismissType, useStatusTray } from "./StatusTrayProvider"
 import styled from "styled-components"
 import { Button } from "antd"
-import { possible_transitions, useMachine } from "@glowbuzzer/store"
+import { possible_transitions, useMachineControlWord } from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`
     width: 100%;
@@ -52,8 +52,8 @@ export const StatusTrayItem = ({
     children,
     actions = null
 }: StatusTrayItemProps) => {
-    const machine = useMachine()
     const { registerItem, unregisterItem, dismissItem, visible } = useStatusTray(id)
+    const [, setMachineControlWord] = useMachineControlWord()
 
     useEffect(() => {
         // register this item with the status tray, and unregister on unmount
@@ -63,7 +63,7 @@ export const StatusTrayItem = ({
 
     function reset() {
         // issue a fault reset
-        machine.setMachineControlWord(possible_transitions.FaultReset())
+        setMachineControlWord(possible_transitions.FaultReset())
     }
 
     if (!visible) {

@@ -9,11 +9,11 @@ import {
     useExternalIntegerInputs,
     useExternalUnsignedIntegerInputs,
     useIntegerInputs,
-    useMachine,
+    useMachineHeartbeat,
     useSafetyDigitalInputs,
     useUnsignedIntegerInputs
 } from "@glowbuzzer/store"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { FlowState, MachineInputsState } from "./types"
 
 export function useFlowTriggerInputsState(): MachineInputsState {
@@ -24,7 +24,7 @@ export function useFlowTriggerInputsState(): MachineInputsState {
     const unsignedIntegerInputs = useUnsignedIntegerInputs()
     const externalIntegerInputs = useExternalIntegerInputs()
     const externalUnsignedIntegerInputs = useExternalUnsignedIntegerInputs()
-    const { heartbeat } = useMachine()
+    const heartbeat = useMachineHeartbeat()
 
     return useMemo(
         () => ({

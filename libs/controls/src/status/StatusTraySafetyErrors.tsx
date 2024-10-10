@@ -7,19 +7,16 @@ import { StatusTrayItem } from "./StatusTrayItem"
 import {
     configMetadata,
     MachineMetadata,
-    MachineState,
     MACHINETARGET,
-    possible_transitions,
     useConfig,
     useConnection,
-    useMachine,
+    useMachineTargetState,
     useOverallSafetyStateInput,
     useSafetyDigitalInputList,
     useSafetyDigitalInputs
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 import { Tag } from "antd"
-import { useEffect } from "react"
 
 const StyledGrid = styled.div`
     display: grid;
@@ -34,8 +31,8 @@ const StyledGrid = styled.div`
 `
 
 export const StatusTraySafetyErrors = () => {
-    const machine = useMachine()
     const { connected } = useConnection()
+    const [, requestedTarget] = useMachineTargetState()
     const overall = useOverallSafetyStateInput()
     const values = useSafetyDigitalInputs()
     const safety_dins = useSafetyDigitalInputList()
@@ -43,7 +40,7 @@ export const StatusTraySafetyErrors = () => {
     const machine_meta = configMetadata(config.machine[0])
 
     // const fault = machine.currentState === MachineState.FAULT
-    const sim = machine.requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
+    const sim = requestedTarget === MACHINETARGET.MACHINETARGET_SIMULATION
 
     if (!connected || overall || sim) {
         return null

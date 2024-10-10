@@ -8,7 +8,9 @@ import {
     MachineState,
     useConnection,
     useEstopInput,
-    useMachine
+    useMachineCurrentState,
+    useMachineDesiredState,
+    useMachineTargetState
 } from "@glowbuzzer/store"
 import { Button, Space } from "antd"
 import styled from "styled-components"
@@ -28,23 +30,28 @@ const StyledSpace = styled(Space)`
 
 export const StatusBarEnableOperation = () => {
     const connection = useConnection()
-    const machine = useMachine()
+    // const machine = useMachine()
+    const currentState = useMachineCurrentState()
+    const [target] = useMachineTargetState()
+    const [, requestedTarget] = useMachineTargetState()
+    const [desiredState, setDesiredState] = useMachineDesiredState()
+
     const estopActive = useEstopInput()
     const connected = connection.connected && connection.statusReceived
-    const fault = machine.currentState === MachineState.FAULT
-    const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
-    const target_not_acquired = machine.target !== machine.requestedTarget
+    const fault = currentState === MachineState.FAULT
+    const fault_active = currentState === MachineState.FAULT_REACTION_ACTIVE
+    const target_not_acquired = target !== requestedTarget
 
     const disabled = !connected || fault || fault_active || target_not_acquired
 
-    const op = machine.currentState === MachineState.OPERATION_ENABLED
-    const loading = !op && machine.desiredState === DesiredState.OPERATIONAL
+    const op = currentState === MachineState.OPERATION_ENABLED
+    const loading = !op && desiredState === DesiredState.OPERATIONAL
 
     function enable() {
-        machine.setDesiredState(DesiredState.OPERATIONAL)
+        setDesiredState(DesiredState.OPERATIONAL)
     }
     function disable() {
-        machine.setDesiredState(DesiredState.STANDBY)
+        setDesiredState(DesiredState.STANDBY)
     }
 
     return (

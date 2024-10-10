@@ -7,7 +7,8 @@ import {
     MachineState,
     OPERATION_ERROR,
     useConnection,
-    useMachine,
+    useMachineCurrentState,
+    useMachineFaults,
     useOverallSafetyStateInput
 } from "@glowbuzzer/store"
 import { StatusTrayItem } from "./StatusTrayItem"
@@ -48,13 +49,14 @@ function only_safety_error(fault: number) {
  * Status tray item for faults (active or not)
  */
 export const StatusTrayFaults = () => {
-    const machine = useMachine()
+    const currentState = useMachineCurrentState()
+    const { activeFault, faultHistory, operationError, operationErrorMessage } = useMachineFaults()
     const { connected } = useConnection()
     const overall = useOverallSafetyStateInput()
     const safety_enabled = overall !== undefined
 
-    const fault = machine.currentState === MachineState.FAULT
-    const fault_active = machine.currentState === MachineState.FAULT_REACTION_ACTIVE
+    const fault = currentState === MachineState.FAULT
+    const fault_active = currentState === MachineState.FAULT_REACTION_ACTIVE
 
     if (!connected) {
         return null
@@ -65,14 +67,14 @@ export const StatusTrayFaults = () => {
     }
 
     // the safety dedicated status tray item will take care of pure safety faults
-    if (!fault_active && safety_enabled && only_safety_error(machine.faultHistory)) {
+    if (!fault_active && safety_enabled && only_safety_error(faultHistory)) {
         return null
     }
-    if (fault_active && safety_enabled && only_safety_error(machine.activeFault)) {
+    if (fault_active && safety_enabled && only_safety_error(activeFault)) {
         return
     }
 
-    const show_error = !!machine.activeFault || !!machine.faultHistory || !!machine.operationError
+    const show_error = !!activeFault || !!faultHistory || !!operationError
 
     return (
         <StatusTrayItem
@@ -82,16 +84,15 @@ export const StatusTrayFaults = () => {
             <StyledDiv>
                 {show_error && (
                     <div className="errors">
-                        {filter_fault_causes(machine.faultHistory).map(({ code, description }) => (
+                        {filter_fault_causes(faultHistory).map(({ code, description }) => (
                             <Tag color="red" key={code}>
                                 {description}
                             </Tag>
                         ))}
                         <div className="error-message">
-                            {machine.operationError ===
-                            OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
+                            {operationError === OPERATION_ERROR.OPERATION_ERROR_HLC_HEARTBEAT_LOST
                                 ? "Heartbeat lost"
-                                : machine.operationErrorMessage}
+                                : operationErrorMessage}
                         </div>
                     </div>
                 )}

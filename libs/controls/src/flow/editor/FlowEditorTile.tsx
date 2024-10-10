@@ -26,6 +26,7 @@ import { useFlowContext } from "../FlowContextProvider"
 import { FlowIntegrationDisplay } from "../display/FlowIntegrationDisplay"
 import { FlowSelectDropdown } from "../FlowSelectDropdown"
 import { StyledEmpty } from "../styles"
+import { useEffect } from "react"
 
 const StyledDiv = styled.div`
     padding: 10px;

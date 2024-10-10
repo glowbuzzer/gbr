@@ -7,7 +7,8 @@ import {
     MACHINETARGET,
     useDigitalInputOverrides,
     useDigitalOutputState,
-    useMachine,
+    useMachineCurrentState,
+    useMachineTargetState,
     useRawJointPositions
 } from "@glowbuzzer/store"
 import { useEffect } from "react"
@@ -23,7 +24,8 @@ const MAGIC_EYE_TRIGGER_MAX = 350
  * This component is responsible for simulating aspects of the machine behavior (when in simulation mode only).
  */
 export const SimulationController = () => {
-    const { currentState, target } = useMachine()
+    const currentState = useMachineCurrentState()
+    const [target] = useMachineTargetState()
     const [{ effectiveValue: cylinderTriggered }] = useDigitalOutputState(DigitalOutput.CYLINDER)
     const { set } = useDigitalInputOverrides()
     const [, setMagicEyeLoopback] = useDigitalOutputState(DigitalOutput.MAGIC_EYE_LOOPBACK)

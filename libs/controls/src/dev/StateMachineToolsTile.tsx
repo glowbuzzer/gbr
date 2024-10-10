@@ -3,10 +3,15 @@
  */
 
 import * as React from "react"
-import {Button, Tag} from "antd"
-import {determine_machine_state, MachineState, possible_transitions, useMachine} from "@glowbuzzer/store"
+import { Button, Tag } from "antd"
+import {
+    MachineState,
+    possible_transitions,
+    useMachineControlWord,
+    useMachineCurrentState
+} from "@glowbuzzer/store"
 import styled from "styled-components"
-import {StyledTileContent} from "../util/styles/StyledTileContent"
+import { StyledTileContent } from "../util/styles/StyledTileContent"
 
 const CurrentMachineState = styled.div`
     display: flex;
@@ -21,15 +26,11 @@ const MachineTransitionsDiv = styled.div`
 `
 
 const MachineTransitions = ({ state }: { state: MachineState }) => {
-    const machine = useMachine()
-
-    if (!machine) {
-        throw new Error("Invalidate state - no machine")
-    }
+    const [controlWord, setControlWord] = useMachineControlWord()
 
     const result = {}
 
-    function add(...keys) {
+    function add(...keys: string[]) {
         for (const key of keys) {
             result[key] = possible_transitions[key]
         }
@@ -62,8 +63,8 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
             break
     }
 
-    function updateControlWord(key) {
-        machine.setMachineControlWord(possible_transitions[key](machine.controlWord))
+    function updateControlWord(key: string) {
+        setControlWord(possible_transitions[key](controlWord))
     }
 
     return (
@@ -81,9 +82,7 @@ const MachineTransitions = ({ state }: { state: MachineState }) => {
  * @ignore
  */
 export const StateMachineToolsTile = () => {
-    const machine = useMachine()
-
-    const currentMachineState = determine_machine_state(machine.statusWord)
+    const currentMachineState = useMachineCurrentState()
 
     return (
         <StyledTileContent>

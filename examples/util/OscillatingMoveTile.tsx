@@ -5,7 +5,7 @@
 import {
     ActivityBuilder,
     MachineState,
-    useMachine,
+    useMachineCurrentState,
     usePointsList,
     useSoloActivity
 } from "@glowbuzzer/store"
@@ -21,7 +21,7 @@ export const OscillatingMoveTile = () => {
     const [iterations, setIterations] = useState(1)
     const [moveType, setMoveType] = useState(0)
     const [running, setRunning] = useState(false)
-    const { currentState } = useMachine()
+    const currentState = useMachineCurrentState()
 
     const api = useSoloActivity(0)
 

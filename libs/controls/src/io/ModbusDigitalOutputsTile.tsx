@@ -2,33 +2,15 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import React from "react"
-import { useState } from "react"
-import {
-    Alert,
-    Button,
-    Card,
-    Col,
-    Row,
-    Select,
-    Space,
-    Switch,
-    Tag,
-    Tooltip,
-    Typography
-} from "antd"
+import React, { useState } from "react"
+import { Button, Card, Col, Row, Space, Switch, Tooltip, Typography } from "antd"
 import styled from "styled-components"
 import {
-    MachineState,
-    useMachine,
     useModbusDigitalOutputList,
     useModbusDigitalOutputNumberofList,
     useSoloActivity
 } from "@glowbuzzer/store"
 import { StyledTileContent } from "../util/styles/StyledTileContent"
-import { ControlOutlined } from "@ant-design/icons"
-
-const { Option } = Select
 
 const { Text } = Typography
 
@@ -57,32 +39,6 @@ const StyledCard = styled(Card)`
     }
 `
 
-const SwitchContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    flex-wrap: wrap;
-`
-
-const StyledDiv = styled.div`
-    //padding-top: 20px;
-
-    > div {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-    }
-
-    .dout-label {
-        flex-grow: 1;
-    }
-
-    .ant-tag {
-        width: 40px;
-        text-align: center;
-    }
-`
-
 type DigitalOutputsTileProps = {
     /**
      * Override labels to use for outputs, in the order given in the configuration
@@ -98,21 +54,6 @@ export const ModbusDigitalOutputsTile = ({ labels = [] }: DigitalOutputsTileProp
     const douts = useModbusDigitalOutputList()
     const doutNumberof = useModbusDigitalOutputNumberofList()
 
-    const machineState = useMachine().currentState
-
-    //todo i can't possibly forget this again?
-    // if (machineState !== MachineState.OPERATION_ENABLED) {
-    //     return (
-    //         <StyledTileContent>
-    //             <Alert
-    //                 message="Not in machine state Operation Enabled"
-    //                 description="You can only set Modbus Digital Outputs in Operation Enabled."
-    //                 type="warning"
-    //                 showIcon
-    //             />
-    //         </StyledTileContent>
-    //     )
-    // }
     return (
         <StyledTileContent>
             <StyledContainer>

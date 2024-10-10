@@ -187,7 +187,7 @@ export const TelemetryTile = () => {
                         <StyledCaptureState>
                             {CaptureState[capture.captureState]}
                         </StyledCaptureState>
-                        {capture.lastCapture ? null : <Tag color="red">NO DATA</Tag>}
+                        {capture.enabled ? null : <Tag color="red">NO DATA</Tag>}
                     </Space>
                 </>
             }

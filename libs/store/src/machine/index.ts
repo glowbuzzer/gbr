@@ -12,15 +12,36 @@ import {
 } from "./MachineStateHandler"
 import { useConnection } from "../connect"
 import { updateMachineControlWordMsg, updateMachineTargetMsg } from "./machine_api"
-import {
-    GlowbuzzerConfig,
-    GlowbuzzerMachineStatus,
-    MachineConfig,
-    MACHINETARGET,
-    OPERATION_ERROR
-} from "../gbc"
+import { GlowbuzzerConfig, GlowbuzzerMachineStatus, MACHINETARGET, OPERATION_ERROR } from "../gbc"
 import { useConfig } from "../config"
 import { RootState } from "../root"
+import { useCallback, useEffect, useMemo } from "react"
+
+function shallowEqualCustom(objA: any, objB: any) {
+    if (objA === objB) return true
+
+    if (typeof objA !== "object" || objA === null || typeof objB !== "object" || objB === null) {
+        return false
+    }
+
+    const keysA = Object.keys(objA)
+    const keysB = Object.keys(objB)
+
+    if (keysA.length !== keysB.length) {
+        return false
+    }
+
+    for (let i = 0; i < keysA.length; i++) {
+        if (
+            // !Object.prototype.hasOwnProperty.call(objB, keysA[i]) ||
+            !(objA[keysA[i]] === objB[keysA[i]])
+        ) {
+            return false
+        }
+    }
+
+    return true
+}
 
 // this is transitory app state
 type MachineStateHandling = {
@@ -114,12 +135,7 @@ export function useMachineConfig(): GlowbuzzerConfig["machine"][0] {
 }
 
 /**
- * Returns the current status and methods to interact with the machine.
- *
- * The machine in GBC implements the CIA 402 state machine. The machine can be running in simulation mode or be connected to the
- * fieldbus for live operation. You can also request a desired machine state of operational (enabled) or standby (disabled),
- * and GBR will drive the CIA 402 state machine to `OPERATION_ENABLED` or `SWITCH_ON_DISABLED` accordingly. Faults are captured and exposed.
- * Finally, GBC increments a heartbeat on the machine so that GBR knows it is running.
+ * @deprecated For performance reasons, use the more specific hooks available
  */
 export function useMachine(): {
     /** The name of the machine */
@@ -159,8 +175,12 @@ export function useMachine(): {
     /** Sets the low level CIA 402 machine control word */
     setMachineControlWord(controlWord: number): void
 } {
-    const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqual)
+    const machine: MachineSliceType = useSelector(({ machine }) => machine, shallowEqualCustom)
     const config = useConfig()
+
+    useEffect(() => {
+        console.log("Machine changed!")
+    }, [machine])
 
     // this is our hook giving access to the underlying websocket connection
     const connection = useConnection()
@@ -188,8 +208,91 @@ export function useMachine(): {
     }
 }
 
-export function useMachineRequestedTarget() {
-    return useSelector<RootState, MACHINETARGET>(state => state.machine.requestedTarget)
+export function useMachineHeartbeat(): number {
+    return useSelector<RootState, number>(state => state.machine.heartbeat)
+}
+
+export function useMachineControlWord(): [number, (controlWord: number) => void] {
+    const connection = useConnection()
+    const controlWord = useSelector<RootState, number>(state => state.machine.controlWord)
+
+    const setControlWord = useCallback(
+        (controlWord: number) => {
+            connection.send(updateMachineControlWordMsg(controlWord))
+        },
+        [connection]
+    )
+
+    return [controlWord, setControlWord]
+}
+
+export function useMachineTargetState(): [
+    current: MACHINETARGET,
+    requested: MACHINETARGET,
+    change: (target: MACHINETARGET) => void
+] {
+    const connection = useConnection()
+    const target = useSelector<RootState, MACHINETARGET>(state => state.machine.target)
+    const requestedTarget = useSelector<RootState, MACHINETARGET>(
+        state => state.machine.requestedTarget
+    )
+
+    const dispatch = useDispatch()
+
+    return useMemo(
+        () => [
+            target,
+            requestedTarget,
+            (target: MACHINETARGET) => {
+                connection.send(updateMachineTargetMsg(target))
+                dispatch(machineSlice.actions.setRequestedTarget(target))
+            }
+        ],
+        [connection, target, requestedTarget, dispatch]
+    )
+}
+
+export function useMachineTargetAcquired(): boolean {
+    return useSelector<RootState, boolean>(
+        state => state.machine.requestedTarget === state.machine.target
+    )
+}
+
+export function useMachineCurrentState(): MachineState {
+    return useSelector<RootState, MachineState>(state => state.machine.currentState)
+}
+
+export function useMachineDesiredState(): [DesiredState, (state: DesiredState) => void] {
+    const dispatch = useDispatch()
+    const current = useSelector<RootState, DesiredState>(state => state.machine.desiredState)
+
+    return useMemo(
+        () => [
+            current,
+            (state: DesiredState) => {
+                dispatch(machineSlice.actions.setDesiredState(state))
+            }
+        ],
+        [dispatch, current]
+    )
+}
+
+export function useMachineFaults() {
+    return useSelector<
+        RootState,
+        Pick<
+            MachineSliceType,
+            "faultHistory" | "activeFault" | "operationError" | "operationErrorMessage"
+        >
+    >(state => {
+        const { activeFault, faultHistory, operationError, operationErrorMessage } = state.machine
+        return {
+            activeFault,
+            faultHistory,
+            operationError,
+            operationErrorMessage
+        }
+    }, shallowEqual)
 }
 
 export {
