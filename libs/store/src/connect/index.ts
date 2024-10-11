@@ -27,6 +27,8 @@ export type GlowbuzzerConnectionContextType = {
     statusReceived: boolean
     /** Whether the connection should be reestablished automatically if it drops */
     autoConnect: boolean
+    /** Retry attempts */
+    retryCount: number
     /** The last status message received */
     lastStatus: GlowbuzzerStatus["status"]
 }

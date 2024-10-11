@@ -29,6 +29,7 @@ export const GlowbuzzerAppLifecycle = new (class {
         persistenceConfiguration: GbdbConfiguration = { facets: {} }
     ) {
         if (typeof import.meta !== "undefined" && import.meta?.hot?.data.store) {
+            // console.log("GlowbuzzerAppLifecycle: reusing existing store (hot reload)")
             return import.meta.hot.data.store
         }
 

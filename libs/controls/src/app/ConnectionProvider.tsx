@@ -19,12 +19,14 @@ type ConnectionProviderPrivateState = {
     connection: WebSocket
     connectionState: ConnectionState
     autoConnect: boolean
+    retryCount: number
 }
 
 const DISCONNECTED_STATE: ConnectionProviderPrivateState = {
     connection: null,
     connectionState: ConnectionState.DISCONNECTED,
-    autoConnect: false
+    autoConnect: false,
+    retryCount: 0
 }
 
 export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }) => {
@@ -33,9 +35,11 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
 
     const [state, setState] = useState<ConnectionProviderPrivateState>({
         ...DISCONNECTED_STATE,
-        autoConnect: defaultAutoConnect
+        autoConnect: defaultAutoConnect,
+        retryCount: 0
     })
-    const { connectionState, connection, autoConnect } = state
+
+    const { connectionState, connection, autoConnect, retryCount } = state
     const [lastStatus, setLastStatus] = useState<GlowbuzzerStatus["status"]>(null)
 
     const process_status = useStatusProcessor(connection)
@@ -45,8 +49,6 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
     const urlRef = useRef("")
 
     function init_connection(websocket: WebSocket) {
-        // console.log("✅ connection open", "reconnect enabled=", autoConnectRef.current)
-
         websocket.onmessage = msg => {
             const message: GlowbuzzerStatus = JSON.parse(msg.data)
             // TODO: H: this is only used to pass current status to external flowmaker endpoint
@@ -82,11 +84,22 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
             setState({
                 connection: websocket,
                 connectionState: ConnectionState.CONNECTED,
-                autoConnect: true
+                autoConnect: true,
+                retryCount: 0
             })
             init_connection(websocket)
         }
     }, [])
+
+    useEffect(() => {
+        if (retryCount) {
+            const timer = setTimeout(() => {
+                connect(urlRef.current)
+            }, 1000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [retryCount])
 
     function connect(url: string, autoConnect = true) {
         urlRef.current = url
@@ -97,7 +110,8 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
         setState({
             connection: null,
             connectionState: ConnectionState.CONNECTING,
-            autoConnect
+            autoConnect,
+            retryCount: retryCount
         })
 
         connection.onopen = () => {
@@ -105,23 +119,28 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
             setState({
                 connection,
                 connectionState: ConnectionState.CONNECTED,
-                autoConnect: autoConnectRef.current
+                autoConnect: autoConnectRef.current,
+                retryCount: 0
             })
         }
 
-        connection.onclose = () => {
-            console.log("❌ connection closed", "reconnect enabled=", autoConnectRef.current)
+        function handle_close() {
+            console.log(
+                "Connection closed",
+                "reconnect enabled=",
+                autoConnectRef.current,
+                "retry count=",
+                retryCount
+            )
             handler.clear()
-            setState({ ...DISCONNECTED_STATE, autoConnect: autoConnectRef.current })
-        }
-
-        connection.onerror = () => {
             setState({
-                connection: null,
-                connectionState: ConnectionState.DISCONNECTED,
-                autoConnect: autoConnectRef.current
+                ...DISCONNECTED_STATE,
+                autoConnect: autoConnectRef.current,
+                retryCount: autoConnectRef.current ? retryCount + 1 : 0
             })
         }
+
+        connection.onclose = handle_close
     }
 
     function send(msg: string) {
@@ -139,6 +158,7 @@ export const ConnectionProvider = ({ autoConnect: defaultAutoConnect, children }
     const context: GlowbuzzerConnectionContextType = useMemo(
         () => ({
             autoConnect,
+            retryCount,
             state: connectionState,
             statusReceived: true,
             lastStatus,
