@@ -1,64 +1,35 @@
 /*
- * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ * Copyright (c) 2023-2024. Glowbuzzer. All rights reserved
  */
 
 import {
+    KinematicsConfigurationConfig,
     TelemetryPVAT,
     TelemetryVisibilityOptions,
     useJointConfigurationList,
-    useTelemetryControls
+    useTelemetryControls,
+    WithNameAndDescription
 } from "@glowbuzzer/store"
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { useLocalStorage } from "../util/LocalStorageHook"
-import { Radio, Tag } from "antd"
-import styled from "styled-components"
-import { TelemetryChartCombined } from "./TelemetryChartCombined"
+import { Radio } from "antd"
+import { TelemetryChartCombinedJoints } from "./TelemetryChartCombinedJoints"
 import { axis_colors } from "./update"
+import { StyledAxisToggle, StyledTelemetryForKinematicsConfiguration } from "./styles"
 
-const StyledTelemetryForKinematicsConfiguration = styled.div`
-    user-select: none;
-    padding: 10px;
-    height: 100%;
-    margin-bottom: 4px;
-    // background: ${props => props.theme.colorBgContainer};
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    //background: grey;
+type TelemetryForKinematicsConfigurationProps = {
+    kinematicsConfiguration: WithNameAndDescription<KinematicsConfigurationConfig>
+    visible: boolean
+}
 
-    .controls {
-        display: flex;
-        gap: 5px;
-
-        align-items: center;
-
-        .title {
-            flex-grow: 1;
-            text-align: right;
-        }
-
-        .ant-tag:hover {
-            outline: 1px solid grey;
-        }
-    }
-`
-
-const StyledAxisToggle = styled(Tag)<{ axiscolor: string; selected: boolean }>`
-    cursor: pointer;
-
-    span {
-        display: block;
-        min-width: 18px;
-        margin-bottom: 3px;
-        text-align: center;
-        border-bottom: 2px solid ${props => (props.selected ? props.axiscolor : "transparent")};
-    }
-`
-export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, visible }) => {
+export const TelemetryForKinematicsConfigurationJoints = ({
+    kinematicsConfiguration,
+    visible
+}: TelemetryForKinematicsConfigurationProps) => {
     const { plot } = useTelemetryControls()
     const joints = useJointConfigurationList()
-    const [selected, setSelected] = useState(
+    const [selected, setSelected] = useState<boolean[]>(
         kinematicsConfiguration.participatingJoints.map(() => true)
     )
 
@@ -71,8 +42,7 @@ export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, v
         TelemetryVisibilityOptions.SET
     )
 
-    function toggle_selected(index) {
-        console.log("toggle", index, selected)
+    function toggle_selected(index: number) {
         setSelected(selected.map((v, i) => (i === index ? !v : v)))
     }
 
@@ -117,7 +87,7 @@ export const TelemetryForKinematicsConfiguration = ({ kinematicsConfiguration, v
                 <div className="title">{kinematicsConfiguration.name}</div>
             </div>
             {visible && (
-                <TelemetryChartCombined
+                <TelemetryChartCombinedJoints
                     kinematicsConfiguration={kinematicsConfiguration}
                     selected={selected}
                     view={view}

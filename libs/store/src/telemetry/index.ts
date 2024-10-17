@@ -7,7 +7,7 @@ import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { settings } from "../util/settings"
 import deepEqual from "fast-deep-equal"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 import {
     CaptureState,
     TelemetryDomainProvider,
@@ -15,13 +15,11 @@ import {
     TelemetryEntryWithEdges,
     TelemetryGenerator,
     TelemetryPVAT,
-    TelemetrySelector,
     TelemetrySettingsType,
     TelemetryVisibilityOptions
 } from "./types"
 import {
     append_telemetry_items,
-    get_telemetry_values,
     MAX_SAMPLES,
     reset_telemetry_state,
     telemetry_cached_domains,
@@ -146,7 +144,7 @@ export const useTelemetryControls = () => {
         (state: RootState) => !!state.telemetry.lastCapture
     )
 
-    const { captureDuration, plot }: TelemetrySettingsType = useSelector(
+    const { captureDuration, plot, showXyz }: TelemetrySettingsType = useSelector(
         (state: RootState) => state.telemetry.settings,
         shallowEqual
     )
@@ -158,6 +156,7 @@ export const useTelemetryControls = () => {
             enabled,
             captureDuration,
             plot,
+            showXyz,
             pause() {
                 dispatch(telemetrySlice.actions.pause())
             },
@@ -183,9 +182,16 @@ export const useTelemetryControls = () => {
                         plot: value
                     })
                 )
+            },
+            setShowXyz(value: boolean) {
+                dispatch(
+                    telemetrySlice.actions.settings({
+                        showXyz: value
+                    })
+                )
             }
         }),
-        [captureState, enabled, captureDuration, plot]
+        [captureState, enabled, captureDuration, plot, showXyz]
     )
 }
 
@@ -199,7 +205,6 @@ export function useTelemetryData(): {
     lastTimecode: number
     count: number
     data: TelemetryGenerator
-    selector: TelemetrySelector
     domains: TelemetryDomainProvider
 } {
     const { start, count } = useSelector<RootState, Pick<TelemetrySliceType, "start" | "count">>(
@@ -228,7 +233,6 @@ export function useTelemetryData(): {
                     yield e
                 }
             },
-            selector: get_telemetry_values,
             domains(jointIndex: number, plot: TelemetryPVAT, view: TelemetryVisibilityOptions) {
                 return telemetry_cached_domains[jointIndex]?.[plot]?.[view] || [0, 0]
             }
@@ -236,20 +240,5 @@ export function useTelemetryData(): {
     }, [start, count])
 }
 
-/**
- * @ignore - Internal to TelemetryTile
- */
-export function useTelemetrySettings(): TelemetrySettingsType {
-    return useSelector(({ telemetry: { settings } }: RootState) => ({ settings }), shallowEqual)
-        .settings
-}
-
 export * from "./types"
-
-// export {
-//     TelemetryEntry,
-//     TelemetryGenerator,
-//     TelemetryPVAT,
-//     TelemetrySelector,
-//     TelemetryVisibilityOptions
-// } from "./types"
+export { get_telemetry_values_joints } from "./storage"

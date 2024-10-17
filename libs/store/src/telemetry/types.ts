@@ -22,6 +22,7 @@ export enum TelemetryVisibilityOptions {
 export type TelemetrySettingsType = {
     captureDuration: number
     plot: TelemetryPVAT
+    showXyz: boolean
 }
 
 export enum CaptureState {
@@ -51,9 +52,12 @@ export type TelemetryGenerator = (
 
 export type TelemetrySelector = (
     e: TelemetryEntry,
-    index: number,
+    selectionIndex: number,
     view: TelemetryVisibilityOptions,
-    plot: TelemetryPVAT
+    plot: TelemetryPVAT,
+    kinematicsConfigurationIndex?: number,
+    arrIndex?: number,
+    arr?: TelemetryEntry[]
 ) => number[]
 
 export type TelemetryDomainProvider = (

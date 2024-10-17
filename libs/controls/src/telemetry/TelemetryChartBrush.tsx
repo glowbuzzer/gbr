@@ -1,36 +1,24 @@
 /*
- * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ * Copyright (c) 2023-2024. Glowbuzzer. All rights reserved
  */
 
-import {
-    TelemetryVisibilityOptions,
-    useTelemetryData,
-    useTelemetrySettings
-} from "@glowbuzzer/store"
+import { useTelemetryData } from "@glowbuzzer/store"
 import React, { useEffect } from "react"
 import * as d3 from "d3"
 import { update } from "./update"
 import { useElementSize } from "./hooks"
+import { TelemetrySeries } from "./types"
 
 type TelemetryChartBrushProps = {
-    joints: number[]
-    selected: boolean[]
-    view: TelemetryVisibilityOptions
+    series: TelemetrySeries[]
     onBrush: (v: { selection: number[] }) => void
     domain: number[]
 }
 /**
  * Renders a brushable chart below the primary chart when the telemetry is paused
  */
-export const TelemetryChartBrush = ({
-    joints,
-    selected,
-    view,
-    onBrush,
-    domain
-}: TelemetryChartBrushProps) => {
-    const { plot } = useTelemetrySettings()
-    const { firstTimecode, lastTimecode, data, selector } = useTelemetryData()
+export const TelemetryChartBrush = ({ series, onBrush, domain }: TelemetryChartBrushProps) => {
+    const { firstTimecode, lastTimecode, data } = useTelemetryData()
     const [svgRef, width, height] = useElementSize<SVGSVGElement>()
 
     useEffect(() => {
@@ -51,22 +39,8 @@ export const TelemetryChartBrush = ({
         // render the brushable chart when the data or size changes
         // here we will render all the available data
         const x_domain = [firstTimecode, lastTimecode]
-        update(
-            svgRef.current,
-            data,
-            selector,
-            joints,
-            selected,
-            plot,
-            view,
-            x_domain,
-            domain,
-            0,
-            false,
-            0,
-            undefined
-        )
-    }, [lastTimecode, joints, view, plot, domain, width, height])
+        update(svgRef.current, data, series, x_domain, domain, 0, false, 0, undefined)
+    }, [lastTimecode, series, domain, width, height])
 
     // the brushable chart is the `g` element of the svg, and we reduce the width by the right axis margin
     return (

@@ -33,7 +33,7 @@ export function generate_telemetry_download(joints: JointConfig[], generator: Te
             ]
                 .concat(
                     data.map(d => {
-                        const { t, set, act, e, di, do: douts, sdi, sdo } = d
+                        const { t: _t, set, act, e: _e, di, do: douts, sdi, sdo } = d
                         const values = joints
                             .map((_v, index) => {
                                 return [
@@ -95,7 +95,8 @@ export function parse_telemetry_csv(csv: string): TelemetryEntry[] {
             sdi,
             sdo,
             set,
-            act
+            act,
+            p: []
         }
     })
 }

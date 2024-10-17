@@ -2,48 +2,30 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import {
-    TelemetryPVAT,
-    TelemetryVisibilityOptions,
-    useTelemetryControls,
-    useTelemetryData
-} from "@glowbuzzer/store"
+import { useTelemetryControls, useTelemetryData } from "@glowbuzzer/store"
 import { useElementSize } from "./hooks"
 import React, { useEffect } from "react"
 import { update } from "./update"
 import * as d3 from "d3"
+import { TelemetrySeries } from "./types"
 
 type TelemetryChartGenericProps = {
-    joints: number[]
-    selected: boolean[]
-    plot: TelemetryPVAT
-    view: TelemetryVisibilityOptions
+    series: TelemetrySeries[]
     domain: number[]
     brush?: number[]
 }
 
-export const TelemetryChartPrimary = ({
-    joints,
-    selected,
-    plot,
-    view,
-    domain,
-    brush
-}: TelemetryChartGenericProps) => {
+export const TelemetryChartPrimary = ({ series, domain, brush }: TelemetryChartGenericProps) => {
     const { captureDuration } = useTelemetryControls()
-    const { firstTimecode, lastTimecode, data, count, selector } = useTelemetryData()
+    const { firstTimecode, lastTimecode, data, count } = useTelemetryData()
     const [svgRef, width, height] = useElementSize<SVGSVGElement>()
 
     useEffect(() => {
-        function exec_update(x_domain, from, to) {
+        function exec_update(x_domain: number[], from: number, to: number) {
             const [x_scale, y_scale] = update(
                 svgRef.current,
                 data,
-                selector,
-                joints,
-                selected,
-                plot,
-                view,
+                series,
                 x_domain,
                 domain,
                 30,
@@ -75,19 +57,7 @@ export const TelemetryChartPrimary = ({
             const from = -captureDuration
             exec_update(x_domain, from, undefined)
         }
-    }, [
-        firstTimecode,
-        lastTimecode,
-        width,
-        height,
-        brush,
-        captureDuration,
-        joints,
-        selected,
-        view,
-        plot,
-        domain
-    ])
+    }, [firstTimecode, lastTimecode, width, height, brush, captureDuration, domain, series])
 
     return (
         <svg className="main" ref={svgRef}>

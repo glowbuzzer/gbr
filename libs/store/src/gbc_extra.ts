@@ -359,6 +359,9 @@ export type GlowbuzzerStatus = {
         // these are the set and act values on the joints
         set: { p: number; v: number; a: number; t: number; to: number }[]
         act: { p: number; v: number; t: number; e: number }[]
+
+        // tcp position (array of xyz, per kinematics configuration)
+        p: [][]
     }[]
     response: any // used for promise resolution
     emstat?: {

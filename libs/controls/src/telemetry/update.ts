@@ -1,17 +1,10 @@
 /*
- * Copyright (c) 2023. Glowbuzzer. All rights reserved
+ * Copyright (c) 2023-2024. Glowbuzzer. All rights reserved
  */
 
-import {
-    TelemetryEntry,
-    TelemetryEntryWithEdges,
-    TelemetryGenerator,
-    TelemetryPVAT,
-    TelemetrySelector,
-    TelemetryVisibilityOptions,
-    TRIGGERTYPE
-} from "@glowbuzzer/store"
+import { TelemetryEntryWithEdges, TelemetryGenerator, TRIGGERTYPE } from "@glowbuzzer/store"
 import * as d3 from "d3"
+import { TelemetrySeries } from "./types"
 
 export const axis_colors = [
     "#a6cee3",
@@ -35,11 +28,7 @@ const bits = Array.from({ length: 16 }, (_, i) => i)
 export function update(
     el: SVGSVGElement,
     data: TelemetryGenerator,
-    selector: TelemetrySelector,
-    joints: number[],
-    selected: boolean[],
-    plot: TelemetryPVAT,
-    view: TelemetryVisibilityOptions,
+    series: TelemetrySeries[],
     x_domain: number[],
     y_domain: number[],
     margin: number,
@@ -59,79 +48,37 @@ export function update(
         .domain(y_domain)
         .range([el.clientHeight - margin, 0])
 
-    const selected_data = Array.from(data([from, to]))
+    const data_range = Array.from(data([from, to]))
 
-    const joint_line = d3
+    const line = d3
         .line<{ t: number; value: number }>()
         .x(d => x_scale(d.t))
         .y(d => y_scale(d.value))
 
-    const joints_to_render = joints
-        .map((jointNum, index) => {
-            const color = axis_colors[index]
-            switch (view) {
-                case TelemetryVisibilityOptions.BOTH:
-                    return [
-                        {
-                            key: TelemetryVisibilityOptions.SET,
-                            jointNum,
-                            select: 0,
-                            color,
-                            dashArray: undefined
-                        },
-                        {
-                            key: TelemetryVisibilityOptions.ACT,
-                            jointNum,
-                            select: 1,
-                            color,
-                            dashArray: "2,2"
-                        }
-                    ]
-                case TelemetryVisibilityOptions.ACT:
-                    return [
-                        {
-                            key: TelemetryVisibilityOptions.ACT,
-                            jointNum,
-                            select: 0,
-                            color,
-                            dashArray: "2,2"
-                        }
-                    ]
-                default:
-                    return [{ key: view, jointNum, select: 0, color, dashArray: "" }]
-            }
-        })
-        .filter((_, i) => selected[i])
-        .flat()
-        .map(v => ({
-            ...v,
-            value: (e: TelemetryEntry) => selector(e, v.jointNum, view, plot)[v.select]
-        }))
+    const lines = svg
+        .selectAll<SVGPathElement, unknown>(".series")
+        .data(series, (r: TelemetrySeries) => r.key)
 
-    const joint_lines = svg
-        .selectAll<SVGPathElement, unknown>(".joint")
-        .data(joints_to_render, (r: (typeof joints_to_render)[0]) => `${r.jointNum}-${r.key}`)
-
-    joint_lines
+    lines
         .enter()
         .append("path")
-        .attr("class", "joint line")
-        .attr("stroke", r => r.color)
-        .attr("stroke-dasharray", r => r.dashArray)
-        .merge(joint_lines)
+        .attr("class", "series line")
+        .attr("stroke", r => axis_colors[r.colourIndex])
+        .attr("stroke-dasharray", r => (r.secondary ? "2,2" : ""))
+        .merge(lines)
         .attr("d", r => {
-            const lineData = selected_data.map(d => {
-                const value = r.value(d)
+            const lineData = data_range.map((item, index, arr) => {
+                const value = r.value(item, index, arr)
                 return {
-                    t: d.t,
+                    t: item.t,
                     value
                 }
             })
-            return joint_line(lineData)
+            return line(lineData)
         })
-    joint_lines.exit().remove()
+    lines.exit().remove()
 
-    const edges = selected_data.filter(d => {
+    const edges = data_range.filter(d => {
         return Object.values(d.e).some(v => v.some(e => e > 0))
     })
 
@@ -154,7 +101,7 @@ export function update(
             .filter(type_filter(type))
             .append("path")
             .attr("class", `edge-line-${type}`)
-            .attr("stroke", r => "grey")
+            .attr("stroke", "grey")
             .attr(
                 "d",
                 `M${rising ? 10 : -10},${edge_top} L0,${edge_top} L0,${edge_bottom} L${
@@ -178,7 +125,7 @@ export function update(
 
             text_node.each(d => {
                 // const text = d3.select(this)
-                const data_items = Object.entries(d.e).filter(([k, v]) => v[type as number] > 0)
+                const data_items = Object.entries(d.e).filter(([_, v]) => v[type as number] > 0)
 
                 for (const [index, [key, value]] of Object.entries(data_items)) {
                     const indexes = bits.filter(n => value[type as number] & (1 << n)).join(", ")

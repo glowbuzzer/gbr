@@ -7,6 +7,7 @@ import {
     TelemetryEntryWithEdges,
     TelemetryIoEdges,
     TelemetryPVAT,
+    TelemetrySelector,
     TelemetryVisibilityOptions
 } from "./types"
 
@@ -19,38 +20,36 @@ export const telemetry_circular_buffer: TelemetryEntryWithEdges[] = Array(MAX_SA
 export const telemetry_cached_domains = []
 
 /**
- * Function to get the data point (or points) for a given view and plot. Note that this
- * function operates on a single telemetry entry, and only returns multiple values
- * when TelemetryVisibilityOptions.BOTH is specified.
- *
- * For torque, we need to add the torque and torque offsets from the set values,
- * but the act torque is already combined.
+ * @internal to the telemetry module
  */
-export function get_telemetry_values(
+export const get_telemetry_values_joints: TelemetrySelector = (
     item: TelemetryEntry,
-    index: number,
+    selectionIndex: number,
     view: TelemetryVisibilityOptions,
     plot: TelemetryPVAT
-) {
+): number[] => {
     switch (view) {
         case TelemetryVisibilityOptions.SET:
             switch (plot) {
                 case TelemetryPVAT.TORQUE:
-                    return [item.set[index].t + item.set[index].to]
+                    return [item.set[selectionIndex].t + item.set[selectionIndex].to]
                 default:
-                    return [item.set[index][plot]]
+                    return [item.set[selectionIndex][plot]]
             }
         case TelemetryVisibilityOptions.ACT:
-            return [item.act[index][plot]]
+            return [item.act[selectionIndex][plot]]
         case TelemetryVisibilityOptions.BOTH:
             switch (plot) {
                 case TelemetryPVAT.TORQUE:
-                    return [item.set[index].t + item.set[index].to, item.act[index].t]
+                    return [
+                        item.set[selectionIndex].t + item.set[selectionIndex].to,
+                        item.act[selectionIndex].t
+                    ]
                 default:
-                    return [item.set[index][plot], item.act[index][plot]]
+                    return [item.set[selectionIndex][plot], item.act[selectionIndex][plot]]
             }
         case TelemetryVisibilityOptions.DIFF:
-            return [item.set[index][plot] - item.act[index][plot]]
+            return [item.set[selectionIndex][plot] - item.act[selectionIndex][plot]]
     }
 }
 
@@ -97,7 +96,7 @@ function update_telemetry_domains(items: TelemetryEntry[]) {
                         Number.POSITIVE_INFINITY,
                         Number.NEGATIVE_INFINITY
                     ])
-                    const values = get_telemetry_values(d, i, view, plot).flat()
+                    const values = get_telemetry_values_joints(d, i, view, plot).flat()
                     domain[0] = Math.min(domain[0], ...values)
                     domain[1] = Math.max(domain[1], ...values)
                 }

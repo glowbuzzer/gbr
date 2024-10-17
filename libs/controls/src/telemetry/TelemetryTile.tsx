@@ -5,10 +5,9 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { Button, message, Radio, RadioChangeEvent, Slider, Space, Tag, Upload } from "antd"
+import { Button, Radio, RadioChangeEvent, Slider, Space, Tag, Upload } from "antd"
 import {
     CaptureState,
-    JOINT_TYPE,
     TelemetryPVAT,
     telemetrySlice,
     useJointConfigurationList,
@@ -17,13 +16,14 @@ import {
     useTelemetryData
 } from "@glowbuzzer/store"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { TelemetryForKinematicsConfiguration } from "./TelemetryForKinematicsConfiguration"
+import { DockToolbarButtonGroup } from "../dock"
+import { TelemetryForKinematicsConfigurationJoints } from "./TelemetryForKinematicsConfigurationJoints"
 import { generate_telemetry_download, parse_telemetry_csv } from "./download"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
-import { CloudDownloadOutlined, DownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
-import { ReactComponent as FileOpenIcon } from "@material-symbols/svg-400/outlined/folder_open.svg"
+import { CloudDownloadOutlined, FolderOpenOutlined } from "@ant-design/icons"
 import { useDispatch } from "react-redux"
+import { XyIcon } from "../icons/XyIcon"
+import { TelemetryForKinematicsConfigurationCartesian } from "./TelemetryForKinematicsConfigurationCartesian"
 
 const StyledTelemetryGroup = styled.div`
     display: flex;
@@ -93,10 +93,22 @@ export const TelemetryTile = () => {
         capture.captureState === CaptureState.COMPLETE ||
         capture.captureState === CaptureState.PAUSED
 
+    const { showXyz } = capture
+
     return (
         <DockTileWithToolbar
             toolbar={
                 <>
+                    <DockToolbarButtonGroup>
+                        <GlowbuzzerIcon
+                            useFill={true}
+                            Icon={XyIcon}
+                            button
+                            title={showXyz ? "Show Joints" : "Show XYZ"}
+                            checked={showXyz}
+                            onClick={() => capture.setShowXyz(!showXyz)}
+                        />
+                    </DockToolbarButtonGroup>
                     <DockToolbarButtonGroup>
                         <Radio.Group
                             size="small"
@@ -193,13 +205,22 @@ export const TelemetryTile = () => {
             }
         >
             <StyledTelemetryGroup>
-                {kinematicsConfigurations.map((kinematicsConfiguration, index) => (
-                    <TelemetryForKinematicsConfiguration
-                        key={index}
-                        kinematicsConfiguration={kinematicsConfiguration}
-                        visible={isVisible}
-                    />
-                ))}
+                {kinematicsConfigurations.map((kinematicsConfiguration, index) =>
+                    showXyz ? (
+                        <TelemetryForKinematicsConfigurationCartesian
+                            key={index}
+                            title={kinematicsConfiguration.name}
+                            kinematicsConfigurationIndex={index}
+                            visible={isVisible}
+                        />
+                    ) : (
+                        <TelemetryForKinematicsConfigurationJoints
+                            key={index}
+                            kinematicsConfiguration={kinematicsConfiguration}
+                            visible={isVisible}
+                        />
+                    )
+                )}
             </StyledTelemetryGroup>
         </DockTileWithToolbar>
     )
