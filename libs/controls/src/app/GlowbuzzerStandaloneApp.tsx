@@ -56,6 +56,7 @@ export const GlowbuzzerStandaloneApp = ({
         autoConnect: false,
         statusReceived: false,
         lastStatus: null,
+        retryCount: 0,
         connect(url: string, autoConnect?: boolean) {
             throw new Error("Not implemented")
         },
