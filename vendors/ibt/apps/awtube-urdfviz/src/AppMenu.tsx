@@ -5,7 +5,6 @@ import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { ItemType } from "antd/es/menu/hooks/useItems"
 import { AwTubeModel, useAwTubeModel } from "./model/ModelProvider"
-import { useConfigLoader } from "@glowbuzzer/store"
 
 const StyledDiv = styled.div`
     display: flex;
@@ -25,13 +24,13 @@ const StyledDiv = styled.div`
 export const AppMenu = () => {
     const viewMenu = useDockViewMenu()
     const [showPrefs, setShowPrefs] = useState(false)
-    const loader = useConfigLoader()
     const { config, changeModel } = useAwTubeModel()
 
     useEffect(() => {
-        loader(config, true).then(() => {
-            console.log("switched")
-        })
+        console.log("Config switching not currently implemented")
+        // loader(config, true).then(() => {
+        //     console.log("switched")
+        // })
     }, [config])
 
     function switch_l() {

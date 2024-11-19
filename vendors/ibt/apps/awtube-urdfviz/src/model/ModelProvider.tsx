@@ -78,7 +78,7 @@ export const ModelProvider = ({ children }: { children: ReactNode }) => {
     const context = useMemo(() => {
         return {
             model,
-            config: model === AwTubeModel.AWTUBE_L ? config_awtube_l : config_awtube_l2,
+            // config: model === AwTubeModel.AWTUBE_L ? config_awtube_l : config_awtube_l2,
             parts: model === AwTubeModel.AWTUBE_L ? definition_l : definition_l2,
             changeModel
         }

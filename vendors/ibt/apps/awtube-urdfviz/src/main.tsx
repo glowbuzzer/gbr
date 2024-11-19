@@ -19,7 +19,9 @@ const ConfigSwitcher = () => {
     const { config } = useAwTubeModel()
 
     return (
-        <GlowbuzzerApp appName="aware-urdfviz" configuration={config}>
+        <GlowbuzzerApp appName="aware-urdfviz"
+                       // configuration={config}
+        >
             <App />
         </GlowbuzzerApp>
     )
