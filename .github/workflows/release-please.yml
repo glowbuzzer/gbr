@@ -33,20 +33,20 @@ jobs:
             access: public
         secrets: inherit
 
-    publish-example-generic:
-        needs: release-please
-        if: ${{ needs.release-please.outputs.release_created }}
-        uses: ./.github/workflows/publish-example.yml
-        with:
-            example: generic
-            site: examples.glowbuzzer.com
-        secrets: inherit
-
-    publish-example-staubli:
-        needs: release-please
-        if: ${{ needs.release-please.outputs.release_created }}
-        uses: ./.github/workflows/publish-example.yml
-        with:
-            example: machines/staubli
-            site: examples.glowbuzzer.com
-        secrets: inherit
+#    publish-example-generic:
+#        needs: release-please
+#        if: ${{ needs.release-please.outputs.release_created }}
+#        uses: ./.github/workflows/publish-example.yml
+#        with:
+#            example: generic
+#            site: examples.glowbuzzer.com
+#        secrets: inherit
+#
+#    publish-example-staubli:
+#        needs: release-please
+#        if: ${{ needs.release-please.outputs.release_created }}
+#        uses: ./.github/workflows/publish-example.yml
+#        with:
+#            example: machines/staubli
+#            site: examples.glowbuzzer.com
+#        secrets: inherit
