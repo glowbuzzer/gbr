@@ -137,10 +137,24 @@ export function useSafetyDigitalOutputState(index: number): [
     return useGenericDigitalOutputState(index, "safetyDout")
 }
 
+/**
+ * Returns the state of all digital outputs as a list.
+ *
+ * The information returned includes the effective value, the set value and whether the set value overrides the value last set by an activity.
+ *
+ * @returns The current state of digital outputs
+ */
 export function useDigitalOutputStates(): DigitalOutputStatus[] {
     return useSelector(({ dout }: RootState) => dout, deepEqual)
 }
 
+/**
+ * Returns the state of all safety digital outputs as a list.
+ *
+ * The information returned includes the effective value, the set value and whether the set value overrides the value last set by an activity.
+ *
+ * @returns The current state of safety digital outputs
+ */
 export function useSafetyDigitalOutputStates(): SafetyDigitalOutputStatus[] {
     return useSelector(({ safetyDout }: RootState) => safetyDout, deepEqual)
 }
@@ -157,7 +171,7 @@ export const externalDigitalOutputsSlice: StatusUpdateSlice<DigitalOutputStatus[
 })
 
 /**
- * Returns the list of configured digital outputs. The indexes of items in the list can be used with {@link useDigitalOutputState} to get and manipulate the output.
+ * Returns the list of configured external digital outputs. The indexes of items in the list can be used with {@link useExternalDigitalOutputState} to get and manipulate the output.
  */
 export function useExternalDigitalOutputList() {
     const config = useConfig()
@@ -186,6 +200,13 @@ export function useExternalDigitalOutputState(index: number): [
     return useGenericDigitalOutputState(index, "externalDout")
 }
 
+/**
+ * Returns the state of all external digital outputs as a list.
+ *
+ * The information returned includes the effective value, the set value and whether the set value overrides the value last set by an activity.
+ *
+ * @returns The current state of external digital outputs
+ */
 export function useExternalDigitalOutputStates(): DigitalOutputStatus[] {
     return useSelector((root: RootState) => root.externalDout, deepEqual)
 }

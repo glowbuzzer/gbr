@@ -17,6 +17,9 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * @ignore - internal component used for connection diagnostics
+ */
 export const MonitorTile = () => {
     const { heartbeat, status } = useConnectionMonitorStats()
     const reset = useConnectionMonitorReset()

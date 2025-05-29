@@ -26,6 +26,7 @@ const StyledDiv = styled.div`
 `
 
 /**
+ * @ignore
  * A component to edit the configuration of the machine.
  */
 export const ConfigEditTile = () => {

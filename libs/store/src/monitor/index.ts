@@ -102,6 +102,7 @@ export const monitorSlice = createSlice<MonitorSliceState, MonitorSliceReducers>
     }
 })
 
+/** @ignore */
 export function useConnectionMonitorStats() {
     const { busCycleTime } = useMachineConfig()
 
@@ -123,6 +124,7 @@ export function useConnectionMonitorStats() {
     )
 }
 
+/** @ignore */
 export function useConnectionMonitorReset() {
     const dispatch = useDispatch()
 

@@ -167,6 +167,9 @@ const FlowRuntimePicker = () => {
     )
 }
 
+/**
+ * Displays the runtime state of a flow, including the current activity, the state of the flow, and any errors.
+ */
 export const FlowRuntimeTile = () => {
     const flows = useFlows()
     const { active, activeFlow, activities, completedFlows, state, integrationError, tag, close } =

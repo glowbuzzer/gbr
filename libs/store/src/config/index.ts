@@ -4,7 +4,7 @@
 
 import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
-import { GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
+import { GbcConstants, GlowbuzzerConfig, MoveParametersConfig, ToolConfig } from "../gbc"
 import { RootState } from "../root"
 import deepEqual from "fast-deep-equal"
 import { useConnection } from "../connect"
@@ -226,12 +226,18 @@ export function useConfigVersion(): number {
     return useSelector((state: RootState) => state.config.version)
 }
 
+/**
+ * Provides the currently configured heartbeat timeout in GBC, or the default timeout (2 seconds) if not configured.
+ */
 export function useHeartbeatTimeout(): number {
-    return useSelector((state: RootState) => state.config.current.machine?.[0].heartbeatTimeout)
+    return useSelector((state: RootState) => state.config.current.machine?.[0].heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE)
 }
 
+/**
+ * Provides the currently configured bus cycle time in GBC, or the default (4ms) if not configured.
+ */
 export function useBusCycleTime(): number {
-    return useSelector((state: RootState) => state.config.current.machine?.[0].busCycleTime)
+    return useSelector((state: RootState) => state.config.current.machine?.[0].busCycleTime || 4)
 }
 
 /** @ignore */
@@ -254,7 +260,8 @@ export function useGbcConfigInfo() {
     }
 }
 
-export function useSimilationOnlyConfiguration() {
+/** @ignore */
+export function useSimulationOnlyConfiguration() {
     return useSelector((state: RootState) => state.config.simulationOnly)
 }
 
@@ -296,6 +303,7 @@ export function useConfigLoader() {
     )
 }
 
+/** @ignore */
 export function useConfigSync(): [boolean, () => Promise<void>] {
     const connection = useConnection()
     const localConfig = useLocalConfig()
@@ -355,7 +363,7 @@ export function useToolConfig(toolIndex: number): ToolConfig {
  * Returns the configuration for all tools.
  */
 export function useToolList(): GlowbuzzerConfig["tool"] {
-    return useSelector((state: RootState) => state.config.current.tool, deepEqual)
+    return useSelector((state: RootState) => state.config.current.tool || [], deepEqual)
 }
 
 /**

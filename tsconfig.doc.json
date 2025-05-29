@@ -8,23 +8,13 @@
         "noEmit": true,
         "esModuleInterop": true,
         "downlevelIteration": true,
-        //        "allowSyntheticDefaultImports": true,
+        "skipLibCheck": true,
         "jsx": "react",
-        //        "target": "ES6",
-        //        "downlevelIteration": true
-//                "noResolve": true,
-//                "skipLibCheck": true
     },
     "exclude": [
-        //        "apps/**/**",
-        //        "public/static/**/**",
-        "**/node_modules/**"
+        "node_modules/**"
     ],
     "files": [
         "./libs/store/src/index.ts",
-//        "./test.ts"
     ]
-    //    "include": [
-    //        "./@glowbuzzer/store/**/*.ts"
-    //    ]
 }

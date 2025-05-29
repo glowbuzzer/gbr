@@ -2,7 +2,7 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {Command} from "commander"
+import { Command } from "commander"
 import * as esbuild from "esbuild"
 
 const program = new Command()
@@ -13,8 +13,7 @@ program
     .option("-s, --source <file>", "specify source file")
 
 program.parse(process.argv)
-const {source, outfile, watch} = program.opts()
-
+const { source, outfile, watch } = program.opts()
 
 const options = {
     define: {
@@ -25,18 +24,20 @@ const options = {
     platform: "node",
     entryPoints: [source || "./index.ts"],
     bundle: true,
-    outfile: outfile || "../../gbc/libs/gbc-node/build/index.js",
-    plugins: [{
-        name: "info",
-        setup(build) {
-            build.onEnd(() => console.log("Build complete", new Date().toISOString()))
+    outfile: outfile || "../../../clion/gbc/libs/gbc-node/build/index.js",
+    plugins: [
+        {
+            name: "info",
+            setup(build) {
+                build.onEnd(() => console.log("Build complete", new Date().toISOString()))
+            }
         }
-    }]
-};
+    ]
+}
 
 if (watch) {
     esbuild.context(options).then(async c => {
-        await c.watch();
+        await c.watch()
     })
 } else {
     esbuild.build(options).catch(() => process.exit(1))

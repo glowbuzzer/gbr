@@ -10,12 +10,18 @@ import { RootState } from "../root"
 import { useConnection } from "../connect"
 import { useSafetyDigitalOutputState } from "./dout"
 
+/**
+ * @ignore
+ */
 export function useMachineInputMetadata(prop: keyof MachineMetadata) {
     const config = useConfig()
     const item = configMetadata(config.machine[0])[prop]
     return item || { index: 0 }
 }
 
+/**
+ * @ignore
+ */
 function useMachineInputsActive(props: (keyof MachineMetadata)[]) {
     const config = useConfig()
     return useSelector<RootState, boolean[]>(state => {
@@ -33,6 +39,9 @@ function useMachineInputsActive(props: (keyof MachineMetadata)[]) {
     }, shallowEqual)
 }
 
+/**
+ * @ignore
+ */
 export function useMachineInputActive(prop: keyof MachineMetadata) {
     const config = useConfig()
     return useSelector<RootState, boolean>(state => {
@@ -52,35 +61,75 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
     })
 }
 
+/**
+ * The state of the estop input.
+ *
+ * @returns true if the estop is active, false if it is not, or undefined if estop is not configured.
+ */
 export function useEstopInput() {
     // inverted
     return !useMachineInputActive("estopStateInput")
 }
 
+/**
+ * The state of the reset needed input.
+ *
+ * @returns true if a reset is needed, false if it is not, or undefined if reset needed is not configured.
+ */
 export function useResetNeededInput() {
     return useMachineInputActive("resetNeededInput")
 }
 
+/**
+ * The overall safety state input.
+ *
+ * @returns true if the machine is in a safe state, false if it is not, or undefined if the safety state is not configured.
+ */
 export function useOverallSafetyStateInput() {
     return useMachineInputActive("safetyStateInput")
 }
 
+/**
+ * The state of the auto mode enabled input (normally a keyswitch).
+ *
+ * @returns true if auto mode is enabled, false if it is not, or undefined if auto mode is not configured.
+ */
 export function useAutoModeActiveInput() {
     return useMachineInputActive("autoModeEnabledInput")
 }
 
+/**
+ * The state of the motion enabled input.
+ *
+ * @returns true if motion is enabled, false if it is not, or undefined if motion enabled is not configured.
+ */
 export function useEnablingSwitchInput() {
     return useMachineInputActive("motionEnabledInput")
 }
 
+/**
+ * The state of the safe stop input.
+ *
+ * @returns true if safe stop is active, false if it is not, or undefined if safe stop is not configured.
+ */
 export function useSafeStopInput() {
     return useMachineInputActive("safeStopInput") === false
 }
 
+/**
+ * The state of the safety override input.
+ *
+ * @returns true if safety override is active, false if it is not, or undefined if safety override is not configured.
+ */
 export function useSafetyOverrideEnabledInput() {
     return useMachineInputActive("overrideEnabledInput")
 }
 
+/**
+ * The state of the drives safe position valid input.
+ *
+ * @returns true if the drives safe position is valid, false if not, or undefined if the drives safe position is not configured.
+ */
 export function useDrivesSafePositionValidInput() {
     return useMachineInputActive("drivesSafePositionValidInput")
 }
@@ -90,7 +139,12 @@ type SafeyOverrideProcessRequiredMetadata = Pick<
     "drivesSafePositionValidInput" | "faultTcpSwmInput" | "faultJointsSlpInput"
 >
 
-export function useSafetyOverrideProcessesRequired() {
+/**
+ * Indicates whether any of the manual safety override processes are required. This is a combination of other safety inputs.
+ *
+ * @returns An object with properties for each of the safety overrides and whether they are required.
+ */
+export function useSafetyOverrideProcessesRequired(): Record<"drivesSafePositionValidInput" | "faultTcpSwmInput" | "faultJointsSlpInput", boolean> {
     const props: (keyof SafeyOverrideProcessRequiredMetadata)[] = [
         "drivesSafePositionValidInput",
         "faultTcpSwmInput",
@@ -104,6 +158,12 @@ export function useSafetyOverrideProcessesRequired() {
     >
 }
 
+/**
+ * Enables a reset of the drives safe position, after the drives have been moved inside the safe area.
+ * This is a safety output and will be cleared automatically when the drives are in a safe position as signalled by the drives safe position valid input.
+ *
+ * @returns A function to set the reset flag.
+ */
 export function useDrivesSafePositionReset(): (reset: boolean) => void {
     const config = useConfig()
     const safetyOverrideEnabled = useSafetyOverrideEnabledInput()
@@ -142,6 +202,11 @@ export enum ManualMode {
     HAND_GUIDED = 0b11
 }
 
+/**
+ * Provides the current manual mode and allows you to set the mode. This is a safety output.
+ *
+ * @returns A tuple containing the current manual mode and a function to set the mode.
+ */
 export function useManualMode(): [ManualMode, (mode: ManualMode) => void] {
     const connection = useConnection()
     const config = useConfig()

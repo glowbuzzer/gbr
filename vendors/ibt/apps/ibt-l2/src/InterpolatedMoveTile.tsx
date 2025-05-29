@@ -17,6 +17,52 @@ export const InterpolatedMoveTile = () => {
     const { execute } = useStream(0)
 
     useEffect(() => {
+        fetch("/trajectory2.csv")
+            .then(response => response.text())
+            .then(text => {
+                const data = text
+                    .split("\n")
+                    .slice(1)
+                    .map(line => line.split(","))
+                    .filter(line => line.every(n => n.length > 0))
+                    .map(line => parseFloat(line[2]))
+
+                const result = []
+                let t = 0
+                for (let i = 0; i < data.length; i += 3 * 6) {
+                    const [
+                        p0,
+                        v0,
+                        _a0,
+                        p1,
+                        v1,
+                        _a1,
+                        p2,
+                        v2,
+                        _a2,
+                        p3,
+                        v3,
+                        _a3,
+                        p4,
+                        v4,
+                        _a4,
+                        p5,
+                        v5,
+                        _a5
+                    ] = data.slice(i, i + 3 * 6)
+
+                    result.push({
+                        t,
+                        p: [p0, p1, p2, p3, p4, p5],
+                        v: [v0, v1, v2, v3, v4, v5]
+                    })
+                    t += 0.1
+                }
+
+                console.log("NEW", result)
+                setData(result)
+            })
+
         fetch("/trajectory.csv")
             .then(response => response.text())
             .then(text => {
@@ -35,7 +81,8 @@ export const InterpolatedMoveTile = () => {
                         }
                     })
 
-                setData(data)
+                console.log("ORIG", data)
+                // setData(data)
             })
     }, [])
 

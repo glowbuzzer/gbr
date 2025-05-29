@@ -3,11 +3,12 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "9910d773034de08d17706624cec1e30b"
+export const GbcSchemaChecksum = "5b12e066d814a6987cf926db474af2ee"
 
 // CONSTANTS
 export const GbcConstants = {
     DEFAULT_HLC_HEARTBEAT_TOLERANCE: 2000,
+    MAX_NUMBER_OF_WHEELS_IN_AGV: 4,
     JOINT_CONTROL_WORD_CST_POS_VEL_DISABLE_BIT: 1,
 }
 
@@ -287,6 +288,8 @@ export const GbcConstants = {
   ACTIVITYTYPE_SETMODBUSDOUT ,
         /**  Set an unsigned integer out onmodbus */
   ACTIVITYTYPE_SETMODBUSUIOUT ,
+        /**  Set initial position for a kinematics configuration */
+  ACTIVITYTYPE_SETINITIALPOSITION ,
     }
     export enum ACTIVITYSTATE {
         /**  Activity is inactive (not being executed) */
@@ -315,8 +318,10 @@ export const GbcConstants = {
   TRIGGERTYPE_RISING ,
         /**  Falling edge trigger (activates on the falling edge of a signal 1->0 */
   TRIGGERTYPE_FALLING ,
-        /**  No trigger is defined */
-  TRIGGERTYPE_NONE ,
+        /**  High level trigger (activates when signal is high) */
+  TRIGGERTYPE_HIGH ,
+        /**  Low level trigger (activates when signal is low) */
+  TRIGGERTYPE_LOW ,
     }
     export enum ARCTYPE {
         /**  Arc is specified as a centre */
@@ -401,6 +406,8 @@ export const GbcConstants = {
   KC_WMR ,
         /**  The kinematics configuration will have the MOVEABLE_SIXDOF kinematics model (algorithm) applied */
   KC_MOVEABLE_SIXDOF ,
+        /**  The kinematics configuration will have the KC_AGV kinematics model (algorithm) applied */
+  KC_AGV ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */
@@ -584,7 +591,7 @@ export const GbcConstants = {
                         /**  Indicates an operation error in GBC that is recoverable */
                         operationError?:OPERATION_ERROR;
                         /**  @ignore Reserved for internal use */
-                        operationErrorMessage?:string[];
+                        operationErrorMessage?:string;
             }
             
             export type MachineCommand = {
@@ -1084,6 +1091,14 @@ export const GbcConstants = {
                         /**  Scale factor when active, between 0 and 1 */
                         scaleFactor?:number;
             }
+            
+            export type AgvWheel = {
+            
+                        /**  Position of wheel relative to center of AGV */
+                        position?:Vector3;
+                        /**  Radius of wheel */
+                        radius?:number;
+            }
             /** Configuration parameters for a kinematics configuration */
             export type KinematicsConfigurationConfig = {
             
@@ -1113,6 +1128,8 @@ export const GbcConstants = {
                         kinChainParams?:MatrixInstanceDouble;
                         /**  Inverse dynamic parameters for the kinematics model */
                         inverseDynamicParams?:InverseDynamicParameters[];
+                        /**  List of wheels for AGV kinematics configuration (half the number of joints) */
+                        agvWheels?:AgvWheel[];
                         /**  List of envelope constraints for the kinematics configuration */
                         envelopeConstraints?:EnvelopeConstraint[];
                         /**  Integrated auxiliary axis for the kinematics configuration, if supported */
@@ -1369,7 +1386,7 @@ export const GbcConstants = {
                         endAddress?:number;
             }
             /** 
-            Configuration parameters for an analogue input
+            There are currently no configuration parameteters apart from `name` and `description`.
              */
             export type AinConfig = {
             
@@ -1991,6 +2008,34 @@ export const GbcConstants = {
                         cartesianPosition?:CartesianPositionsConfig;
             }
             /** 
+            Parameters for set initial position activity
+             */
+            export type SetInitialPositionActivityParams = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        cartesianPosition?:CartesianPositionsConfig;
+            }
+            /** @ignore */
+            export type SetInitialPositionActivityStatus = {
+            
+            }
+            /** @ignore */
+            export type SetInitialPositionActivityCommand = {
+            
+            }
+            /** 
+            Parameters for a streamed set initial position activity
+             */
+            export type SetInitialPositionStream = {
+            
+                        /**  Index of the Kinematics Configuration (KC) to use */
+                        kinematicsConfigurationIndex?:number;
+                        
+                        cartesianPosition?:CartesianPositionsConfig;
+            }
+            /** 
             Parameters for a set digital output activity
              */
             export type SetDoutActivityParams = {
@@ -2300,6 +2345,8 @@ export const GbcConstants = {
                          moveInstant?: MoveInstantActivityParams,
                         /**  Configuration parameters for move to position activity */
                          moveToPosition?: MoveToPositionActivityParams,
+                        /**  Configuration parameters for set initial position activity */
+                         setInitialPosition?: SetInitialPositionActivityParams,
                         /**  @ignore Configuration parameters for gear in position activity */
                          gearInPos?: GearInPosActivityParams,
                         /**  @ignore Configuration parameters for gear in velocity activity */
@@ -2355,6 +2402,8 @@ export const GbcConstants = {
                         /**  @ignore */
                          moveToPosition?: MoveToPositionActivityStatus,
                         /**  @ignore */
+                         setInitialPosition?: SetInitialPositionActivityStatus,
+                        /**  @ignore */
                          gearInPos?: GearInPosActivityStatus,
                         /**  @ignore */
                          gearInVelo?: GearInVeloActivityStatus,
@@ -2406,6 +2455,8 @@ export const GbcConstants = {
                          moveInstant?: MoveInstantActivityCommand,
                         /**  Move to position command object for activity */
                          moveToPosition?: MoveToPositionActivityCommand,
+                        /**  @ignore */
+                         setInitialPosition?: SetInitialPositionActivityCommand,
                         /**  Gear in position command object for activity */
                          gearInPos?: GearInPosActivityCommand,
                         /**  Gear in velocity command object for activity */
@@ -2468,6 +2519,8 @@ export const GbcConstants = {
                          moveInstant?: MoveInstantStream,
                         /**  Parameters for a streamed move to position */
                          moveToPosition?: MoveToPositionStream,
+                        /**  Parameters for a streamed set initial position */
+                         setInitialPosition?: SetInitialPositionStream,
                         /**  Parameters for a streamed set dout */
                          setDout?: SetDoutActivityParams,
                         /**  Parameters for a streamed set external dout */

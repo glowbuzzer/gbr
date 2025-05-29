@@ -7,6 +7,7 @@ import { resolve, basename } from "path"
 import { normalizePath } from "vite"
 import svgr from "@svgr/rollup"
 import { viteStaticCopy } from "vite-plugin-static-copy"
+import { viteDracoPlugin } from "../vendors/ibt/awlib/src/vite-draco-plugin"
 
 const root = process.cwd()
 
@@ -52,7 +53,8 @@ export function defineExampleViteConfig(options: ExampleViteConfigOptions = {}) 
             svgr(),
             viteStaticCopy({
                 targets
-            })
+            }),
+            viteDracoPlugin()
         ],
         resolve: {
             alias: {

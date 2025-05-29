@@ -63,14 +63,9 @@ import {
 
 // contains additional types that should be included in the generated typedoc, eg. config type and status type
 
-// export type WithName<T> = T & { name?: string }
-//
-// // export type WithDescription<T> = T & { description?: string }
-//
-// type WithNameForArrayElements<T> = {
-//     [P in keyof T]: T[P] extends Array<infer U> ? WithName<U>[] : T[P]
-// }
-
+/**
+ * Utility type to add `name` and `description` properties to another type.
+ */
 export type WithNameAndDescription<T> = T & { name?: string; description?: string }
 
 type WithNameAndDescriptionForArrayElements<T> = {
@@ -361,7 +356,9 @@ export type GlowbuzzerStatus = {
         act: { p: number; v: number; t: number; e: number }[]
 
         // tcp position (array of xyz, per kinematics configuration)
-        p: [][]
+        p: number[][]
+        // tcp rotation (array of xyzw, per kinematics configuration)
+        q: number[][]
     }[]
     response: any // used for promise resolution
     emstat?: {

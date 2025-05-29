@@ -4,11 +4,13 @@
 
 import { GbcTest } from "./framework"
 import {
+    AgvWheel,
     EnvelopeConstraint,
     FramesConfig,
     GlowbuzzerConfig,
     JOINT_FINITECONTINUOUS,
     JOINT_TYPE,
+    KC_KINEMATICSCONFIGURATIONTYPE,
     Quat,
     SpindleConfig,
     TaskConfig
@@ -157,6 +159,35 @@ export class ConfigBuilder {
                 participatingJointsCount: jointCount,
                 kinematicsConfigurationType: 4,
                 linearLimits: [limits]
+            }
+        ]
+        return this
+    }
+
+    agvKinematics(wheels: AgvWheel[] = []) {
+        const jointCount = this.json.joint.length || 8
+        this.json.kinematicsConfiguration = [
+            {
+                name: "cartesian",
+                frameIndex: 0,
+                participatingJoints: Array.from({ length: jointCount }, (_, i) => i),
+                participatingJointsCount: jointCount,
+                kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_AGV,
+                linearLimits: [
+                    {
+                        vmax: 20,
+                        amax: 400,
+                        jmax: 8000
+                    }
+                ],
+                angularLimits: [
+                    {
+                        vmax: 1,
+                        amax: 10,
+                        jmax: 100
+                    }
+                ],
+                agvWheels: wheels
             }
         ]
         return this

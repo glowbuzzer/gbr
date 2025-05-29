@@ -2,52 +2,45 @@
  * Copyright (c) 2022. Glowbuzzer. All rights reserved
  */
 
-import {configSlice} from "./config"
-import {telemetrySlice} from "./telemetry"
-import {prefsSlice} from "./prefs"
-import {machineSlice} from "./machine"
-import {jointsSlice} from "./joints"
-import {traceSlice} from "./trace"
-import {kinematicsSlice} from "./kinematics"
-import {previewSlice} from "./preview"
+import { configSlice } from "./config"
+import { telemetrySlice } from "./telemetry"
+import { prefsSlice } from "./prefs"
+import { machineSlice } from "./machine"
+import { jointsSlice } from "./joints"
+import { traceSlice } from "./trace"
+import { kinematicsSlice } from "./kinematics"
+import { previewSlice } from "./preview"
 import {
+    analogInputsSlice,
+    analogOutputsSlice,
     digitalInputsSlice,
-    externalDigitalInputsSlice,
-    safetyDigitalInputsSlice,
-    modbusDigitalInputsSlice
-} from "./io/din"
-import {
     digitalOutputsSlice,
+    externalDigitalInputsSlice,
     externalDigitalOutputsSlice,
-    safetyDigitalOutputsSlice,
-} from "./io/dout"
-import {analogInputsSlice} from "./io/ain"
-import {analogOutputsSlice} from "./io/aout"
-import {
     externalIntegerInputsSlice,
-    externalUnsignedIntegerInputsSlice,
-    modbusUnsignedIntegerInputsSlice,
-    integerInputsSlice,
-    unsignedIntegerInputsSlice
-} from "./io/iin"
-import {
     externalIntegerOutputsSlice,
+    externalUnsignedIntegerInputsSlice,
     externalUnsignedIntegerOutputsSlice,
+    integerInputsSlice,
     integerOutputsSlice,
+    modbusDigitalInputsSlice,
+    modbusUnsignedIntegerInputsSlice,
+    safetyDigitalInputsSlice,
+    safetyDigitalOutputsSlice,
+    unsignedIntegerInputsSlice,
     unsignedIntegerOutputsSlice
-} from "./io/iout"
-import {tasksSlice} from "./tasks"
-import {framesSlice} from "./frames"
-import {activitySlice} from "./activity"
-import {pointsSlice} from "./points"
-import {streamSlice} from "./stream"
-import {emstatSlice} from "./emstat"
-import {serialSlice} from "./serial"
+} from "./io"
+import { tasksSlice } from "./tasks"
+import { framesSlice } from "./frames"
+import { activitySlice } from "./activity"
+import { pointsSlice } from "./points"
+import { streamSlice } from "./stream"
+import { emstatSlice } from "./emstat"
+import { serialSlice } from "./serial"
 import undoable from "redux-undo"
-import {flowSlice} from "./flow"
-import {monitorSlice} from "./monitor"
-import {overrideable} from "./overrideable"
-import {gbdbSlice} from "./gbdb"
+import { flowSlice } from "./flow"
+import { monitorSlice } from "./monitor"
+import { gbdbSlice } from "./gbdb"
 
 export const standardReducers = {
     gbdb: gbdbSlice.reducer,
@@ -64,7 +57,6 @@ export const standardReducers = {
     // safetyDin: overrideable<boolean>(safetyDigitalInputsSlice),
     din: digitalInputsSlice.reducer,
     safetyDin: safetyDigitalInputsSlice.reducer,
-
 
     externalDin: externalDigitalInputsSlice.reducer,
     // modbusDin: overrideable<boolean>(modbusDigitalInputsSlice),

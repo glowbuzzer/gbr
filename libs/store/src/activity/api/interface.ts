@@ -21,7 +21,8 @@ import {
     MoveVectorAtVelocityBuilder,
     SetPayloadBuilder,
     SpindleActivityBuilder,
-    ToolOffsetBuilder
+    ToolOffsetBuilder,
+    SetInitialPositionBuilder
 } from "./builders"
 import { ActivityStreamItem, SPINDLEDIRECTION } from "../../gbc"
 
@@ -117,6 +118,15 @@ export interface ActivityApi {
      * @param z Target z position
      */
     moveToPosition(x?: number, y?: number, z?: number): MoveToPositionBuilder
+
+    /**
+     * Set the initial position of the machine. Only applicable for machines with a kinematic configuration that can have a fluid initial position, such as an AGV.
+     *
+     * @param x Initial x position
+     * @param y Initial y position
+     * @param z Initial z position
+     */
+    setInitialPosition(x?: number, y?: number, z?: number): SetInitialPositionBuilder
 
     /**
      * Set a digital output. Completes in a single cycle.

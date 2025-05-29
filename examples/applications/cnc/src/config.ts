@@ -19,7 +19,7 @@ const DEFAULT_LINEAR_LIMITS = {
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "GENERIC CARTESIAN",
+            name: "default",
             busCycleTime: 4
         }
     ],

@@ -46,6 +46,9 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * Provides editing capability for Flow Maker tasks, which are complex sequences of activities on a machine.
+ */
 export const FlowEditorTile = () => {
     const flows = useFlows()
     const { selectedFlowIndex, setSelectedFlowIndex } = useFlowContext()

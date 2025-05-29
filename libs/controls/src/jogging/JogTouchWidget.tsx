@@ -78,22 +78,26 @@ export enum JogTouchWidgetMode {
 
 type JogTouchWidgetProps = {
     mode: JogTouchWidgetMode
+    value?: { x?: number; y?: number }
     lockXy?: boolean
-    lockSpeed: boolean
+    lockSpeed?: boolean
     onJogStart(vx: number, vy: number): void
-    onJogEnd(): void
+    onJogEnd?(): void
     disabled?: boolean
+    rubberBand?: boolean
 }
 
 export const JogTouchWidget = ({
     mode,
+    value,
     lockXy,
     lockSpeed,
     onJogStart,
     onJogEnd,
-    disabled
+    disabled,
+    rubberBand = true
 }: JogTouchWidgetProps) => {
-    const { width, height, lock_xy, pointer_info } = (() => {
+    const { width, height, lock_xy, pointer_info, inverse } = (() => {
         switch (mode) {
             case JogTouchWidgetMode.XY:
                 return {
@@ -107,6 +111,12 @@ export const JogTouchWidget = ({
                             distance = Math.sqrt(dx * dx + dy * dy)
 
                         return { c, dx, dy, distance }
+                    },
+                    inverse(vx: number, vy: number) {
+                        return {
+                            x: vx * (radius - sm) + width / 2,
+                            y: -vy * (radius - sm) + height / 2
+                        }
                     }
                 }
             case JogTouchWidgetMode.VERTICAL:
@@ -120,6 +130,9 @@ export const JogTouchWidget = ({
                             distance = Math.abs(dy)
 
                         return { c, dx: 0, dy, distance }
+                    },
+                    inverse(_vx: number, vy: number) {
+                        return { x: width / 2, y: -vy * (radius - sm) + height / 2 }
                     }
                 }
             case JogTouchWidgetMode.HORIZONTAL:
@@ -133,6 +146,9 @@ export const JogTouchWidget = ({
                             distance = Math.abs(dx)
 
                         return { c, dx, dy: 0, distance }
+                    },
+                    inverse(vx: number, _vy: number) {
+                        return { x: vx * (radius - sm) + width / 2, y: height / 2 }
                     }
                 }
         }
@@ -143,8 +159,23 @@ export const JogTouchWidget = ({
         y: height / 2,
         active: false
     })
+
     const [animate, setAnimate] = React.useState(true)
     const svgRef = React.useRef<SVGSVGElement | null>(null)
+
+    useEffect(() => {
+        if (value) {
+            const timer = setTimeout(() => {
+                const { x, y } = inverse(value.x, value.y)
+                setState(current => ({
+                    ...current,
+                    x,
+                    y
+                }))
+            }, 500)
+            return () => clearTimeout(timer)
+        }
+    }, [value])
 
     useEffect(() => {
         const prevent_default = (e: Event) => {
@@ -160,8 +191,6 @@ export const JogTouchWidget = ({
 
     useEffect(() => {
         if (state.active && svgRef.current) {
-            // document.body.classList.add("no-select")
-
             const timer = setTimeout(() => {
                 setAnimate(false)
             }, 200)
@@ -169,7 +198,11 @@ export const JogTouchWidget = ({
             function handle_end() {
                 // e.preventDefault()
                 clearTimeout(timer)
-                setState({ x: width / 2, y: height / 2, active: false })
+                if (rubberBand) {
+                    setState({ x: width / 2, y: height / 2, active: false })
+                } else {
+                    setState(current => ({ ...current, active: false }))
+                }
                 setAnimate(true)
             }
 
@@ -184,7 +217,7 @@ export const JogTouchWidget = ({
                 }
             }
         }
-    }, [state.active])
+    }, [state.active, rubberBand])
 
     useEffect(() => {
         if (state.active) {
@@ -200,7 +233,7 @@ export const JogTouchWidget = ({
 
             onJogStart(vx, -vy)
         } else {
-            onJogEnd()
+            onJogEnd?.()
         }
     }, [state.x, state.y, state.active])
 

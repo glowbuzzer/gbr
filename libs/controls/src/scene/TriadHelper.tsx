@@ -30,15 +30,34 @@ declare global {
 /**
  * The TriadHelper component renders a simple triad of colored arrows showing orientation.
  */
-export const TriadHelper = ({ size, opacity = 1 }: { size: number; opacity?: number }) => {
+export const TriadHelper = ({
+    size,
+    opacity = 1,
+    include = [0, 1, 2]
+}: {
+    size: number
+    opacity?: number
+    include?: number[]
+}) => {
     return (
         <group>
-            {triadArrowVectors.map((v, i) => (
-                <arrowHelperWithOpacity
-                    key={i + ":" + size}
-                    args={[v, undefined, size, triadArrowColors[i], opacity, undefined, size / 10]}
-                />
-            ))}
+            {include.map(axis => {
+                const v = triadArrowVectors[axis]
+                return (
+                    <arrowHelperWithOpacity
+                        key={axis + ":" + size}
+                        args={[
+                            v,
+                            undefined,
+                            size,
+                            triadArrowColors[axis],
+                            opacity,
+                            undefined,
+                            size / 10
+                        ]}
+                    />
+                )
+            })}
         </group>
     )
 }

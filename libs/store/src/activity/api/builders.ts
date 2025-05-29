@@ -32,9 +32,11 @@ import {
     SPINDLEDIRECTION,
     SYNCTYPE,
     TriggerParams,
-    Vector3
+    Vector3,
+    SetInitialPositionStream
 } from "../../gbc"
 import { Euler, EulerOrder, Quaternion } from "three"
+import { c } from "tar"
 
 export type ActivityPromiseResult = { tag: number; completed: boolean }
 
@@ -404,6 +406,42 @@ export class MoveToPositionBuilder extends CartesianMoveBuilder {
     protected build(): MoveToPositionStream {
         return {
             ...super.build(),
+            cartesianPosition: {
+                position: this.cartesianPosition,
+                configuration: this._configuration
+            }
+        }
+    }
+}
+
+export class SetInitialPositionBuilder extends CartesianMoveBuilder {
+    protected commandName = "setInitialPosition"
+    protected activityType = ACTIVITYTYPE.ACTIVITYTYPE_SETINITIALPOSITION
+    /** @ignore */
+    private _configuration = 255 // magic for "null" / not specified
+
+    /** The configuration (waist, elbow, wrist) for the target position. */
+    configuration(c: number) {
+        this._configuration = c
+        return this
+    }
+
+    relative(_isRelative: boolean = true): this {
+        throw new Error("Relative positions are not valid for setInitialPosition")
+    }
+
+    params(_params: MoveParametersConfig): this {
+        throw new Error("Move params are not valid for setInitialPosition")
+    }
+
+    duration(_durationInMillis: number): this {
+        throw new Error("Duration is not valid for setInitialPosition")
+    }
+
+    /** @ignore */
+    protected build(): SetInitialPositionStream {
+        return {
+            kinematicsConfigurationIndex: this.controller.kinematicsConfigurationIndex,
             cartesianPosition: {
                 position: this.cartesianPosition,
                 configuration: this._configuration
@@ -783,7 +821,10 @@ export class SetPayloadBuilder extends ActivityBuilder {
 }
 
 export class ActivityStreamItemBuilder extends ActivityBuilder {
-    constructor(controller: ActivityController, private readonly activity: ActivityStreamItem) {
+    constructor(
+        controller: ActivityController,
+        private readonly activity: ActivityStreamItem
+    ) {
         super(controller)
     }
 

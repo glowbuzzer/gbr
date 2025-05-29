@@ -33,7 +33,8 @@ import {
     SetPayloadBuilder,
     SpindleActivityBuilder,
     ToolOffsetBuilder,
-    UioutBuilder
+    UioutBuilder,
+    SetInitialPositionBuilder
 } from "./builders"
 import { ActivityApi } from "./interface"
 
@@ -126,6 +127,10 @@ export abstract class ActivityApiBase implements ActivityApi {
         return new MoveToPositionBuilder(this)
             .params(this.defaultMoveParameters)
             .translation(nullify(x), nullify(y), nullify(z))
+    }
+
+    setInitialPosition(x?: number, y?: number, z?: number) {
+        return new SetInitialPositionBuilder(this).translation(nullify(x), nullify(y), nullify(z))
     }
 
     setDout(index: number, value: boolean) {

@@ -27,6 +27,9 @@ const StyledDiv = styled.div`
     }
 `
 
+/**
+ * Provides a set of diagnostic tools for the machine, including EtherCAT diagnostics, drive diagnostics, safety diagnostics, and slave file operations.
+ */
 export const DiagnosticsTile = () => {
     const [currentTab, setCurrentTab] = useState("etherCat")
 

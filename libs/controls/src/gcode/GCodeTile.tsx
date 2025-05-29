@@ -10,32 +10,31 @@ import "ace-builds/src-noconflict/theme-gruvbox.js"
 import "ace-builds/src-noconflict/mode-gcode.js"
 import "ace-builds/src-noconflict/mode-text.js"
 
-import { Radio, Space, Tag } from "antd"
+import { Radio, Tag } from "antd"
 import {
     GCodeMode,
     settings,
     STREAMCOMMAND,
     STREAMSTATE,
+    useActiveFrame,
     useConfig,
     useConnection,
-    useFrames,
+    useFramesList,
     useGCode,
-    useStream,
     useGCodeContext,
     useKinematicsCartesianPosition,
     useKinematicsOffset,
     usePrefs,
     usePreview,
-    useActiveFrame,
-    useFramesList
+    useStream
 } from "@glowbuzzer/store"
 import styled, { css } from "styled-components"
 import { CaretRightOutlined, PauseOutlined, ReloadOutlined } from "@ant-design/icons"
 import { StopIcon } from "../util/StopIcon"
 import { DockTileWithToolbar } from "../dock/DockTileWithToolbar"
 import { GCodeWorkOffsetSelect } from "./GCodeWorkOffsetSelect"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
-import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import { DockToolbarButtonGroup } from "../dock"
+import { useGlowbuzzerTheme } from "../app"
 
 const AceEditorFixed = (AceEditor as any).default ? (AceEditor as any).default : AceEditor
 

@@ -66,26 +66,6 @@ export const SimpleMoveTile = () => {
     return (
         <div style={{ padding: "10px" }}>
             <Space direction="vertical">
-                <UserCapabilityGuard
-                    capability={SimpleMoveCapability.READ}
-                    alternative={<>READ NOT allowed</>}
-                >
-                    READ IS allowed
-                </UserCapabilityGuard>
-                <UserCapabilityGuard
-                    capability={SimpleMoveCapability.WRITE}
-                    alternative={<>WRITE NOT allowed</>}
-                >
-                    WRITE IS allowed
-                </UserCapabilityGuard>
-                <UserCapabilityGuard capability={SimpleMoveCapability.READ} disableOnly>
-                    <Input type="text" value="READX" />
-                </UserCapabilityGuard>
-                <UserCapabilityGuard capability={SimpleMoveCapability.WRITE} disableOnly>
-                    <Input type="text" value="WRITE" />
-                    <Button>DISABLED</Button>
-                </UserCapabilityGuard>
-
                 <div>Click the button below to perform move</div>
                 <Button size="small" onClick={go}>
                     PERFORM MOVE

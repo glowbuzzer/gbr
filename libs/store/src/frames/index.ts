@@ -46,7 +46,7 @@ export const useFrames = (overrides?: FramesConfig[]) => {
     const activeFrame = useSelector((state: RootState) => state.frames.activeFrame, shallowEqual)
 
     return useMemo(() => {
-        const asTree = build_tree2(overrides || config.frames)
+        const asTree = build_tree2(overrides || config.frames || [])
         const asList = build_list(asTree)
 
         return {

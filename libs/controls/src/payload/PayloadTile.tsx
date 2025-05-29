@@ -4,9 +4,12 @@
 
 import * as React from "react"
 import { Button, message, Space } from "antd"
-import { PrecisionInput } from "../util/components/PrecisionInput"
+import { PrecisionInput } from "../util"
 import { useSoloActivity } from "@glowbuzzer/store"
 
+/**
+ * Provides a tile for setting the payload on the machine.
+ */
 export const PayloadTile = () => {
     const [payload, setPayload] = React.useState(0)
     const api = useSoloActivity(0)

@@ -14,7 +14,6 @@ import {
     StyledDockLayout,
     useAppName,
     useDockContext,
-    useDockLayoutContext,
     useDockViewMenu
 } from "@glowbuzzer/controls"
 import { createRoot } from "react-dom/client"
@@ -22,7 +21,7 @@ import { createRoot } from "react-dom/client"
 import "antd/dist/reset.css"
 import "dseg/css/dseg.css"
 import "flexlayout-react/style/light.css"
-import { Button, Menu } from "antd"
+import { Menu } from "antd"
 
 function SampleTile() {
     return <div>Sample Tile!</div>

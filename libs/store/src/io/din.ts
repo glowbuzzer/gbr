@@ -97,7 +97,7 @@ function useGenericDigitalInputState(
  * Returns the state of a digital input, and a function to set the desired state.
  *
  * The effective value is determined by GBC and is the setValue (if override is true) or the value last set by an activity
- * (see `setDout` in {@link ActivityCommand} or {@link ActivityStreamItem}) ?????????????????????
+ * (see `setDout` in {@link ActivityCommand} or {@link ActivityStreamItem}).
  *
  * @param index The index in the configuration of the digital output
  */

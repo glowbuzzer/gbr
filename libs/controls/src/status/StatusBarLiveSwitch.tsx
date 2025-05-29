@@ -9,13 +9,13 @@ import {
     useConnection,
     useEthercatMasterCyclicStatus,
     useMachineTargetState,
-    useSimilationOnlyConfiguration
+    useSimulationOnlyConfiguration
 } from "@glowbuzzer/store"
 import { Button } from "antd"
 import { useCallback, useEffect } from "react"
 
 export const StatusBarLiveSwitch = () => {
-    const simulationOnly = useSimilationOnlyConfiguration()
+    const simulationOnly = useSimulationOnlyConfiguration()
     const { connected } = useConnection()
     const ecm_cyclic_state = useEthercatMasterCyclicStatus()
     const [currentTarget, requestedTarget, setDesiredMachineTarget] = useMachineTargetState()

@@ -19,7 +19,7 @@ export const analogInputsSlice: StatusUpdateSlice<number[]> = createSlice({
 })
 
 /**
- * Returns the list of configured analog input names. The index of names in the list can be used with {@link useAnalogInputState}.
+ * Returns the list of configured analog inputs. The index of items in the list can be used with {@link useAnalogInputState}.
  *
  * @returns The list of configured analog input names.
  */
@@ -28,6 +28,11 @@ export function useAnalogInputList() {
     return config.ain || []
 }
 
+/**
+ * Returns the state of all analog inputs as a list.
+ *
+ * @returns The current state of analog inputs
+ */
 export function useAnalogInputs(): number[] {
     return useSelector((state: RootState) => state.ain, shallowEqual)
 }

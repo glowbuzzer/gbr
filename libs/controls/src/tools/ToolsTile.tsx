@@ -61,6 +61,9 @@ const GLBViewer = ({ url, scale = 1 }: GLBModelProps) => {
 
 export type ToolsTileTableEntry = GlowbuzzerConfig["tool"][0] & { name?: string; id: number }
 
+/**
+ * @ignore
+ */
 export const ToolsTile = () => {
     const tools = useToolList()
     const dispatch = useDispatch()

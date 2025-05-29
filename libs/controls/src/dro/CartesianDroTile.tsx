@@ -15,7 +15,7 @@ import { DownOutlined } from "@ant-design/icons"
 import * as React from "react"
 import { useState } from "react"
 import { CartesianDro } from "./CartesianDro"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock"
 import { ReactComponent as CopyIcon } from "@material-symbols/svg-400/outlined/content_copy.svg"
 import { ReactComponent as ZeroDRO } from "@material-symbols/svg-400/outlined/ads_click.svg"
 import { ReactComponent as ResetDRO } from "@material-symbols/svg-400/outlined/block.svg"
@@ -58,9 +58,10 @@ type CartesianDroTileProps = {
 }
 
 /**
- * The cartesian DRO tile shows the current position of a kinematics configuration. It also provides an option to
- * zero the current X, Y and Z using the Zero DRO button. When you zero the DRO, all subsequent moves will be translated
- * such that the origin is the current tool position. The orientation of the tool is unaffected by this setting.
+ * The cartesian DRO tile shows the current position of a kinematics configuration.
+ *
+ * It provides an option to zero the current X, Y and Z using the Zero DRO button. When you zero the DRO, all subsequent moves
+ * will be translated such that the origin is the current tool position. The orientation of the tool is unaffected by this setting.
  *
  * The clipboard mode property gives options to let the user to copy the current position in various formats. Valid options are:
  *
@@ -98,7 +99,6 @@ export const CartesianDroTile = ({
     clipboardMode = true
 }: CartesianDroTileProps) => {
     const [frameIndex, setFrameIndex] = useState(0)
-    const [precision, setPrecision] = useLocalStorage("dro.cartesian.precision", 4)
     const [kinematicsConfigurationIndex, setKinematicsConfigurationIndex] = useState(
         fixedKinematicsConfigurationIndex || 0
     )

@@ -37,7 +37,7 @@ const EMPTY_ARRAY: string[] = []
  * StatusTrayItem components register themselves with this provider. It's important that we don't go into a
  * re-render loop when descendents register themselves, hence heavy use of useCallback and useMemo.
  */
-export const StatusTrayProvider = ({ statusBarElement, children }) => {
+export const StatusTrayProvider = ({ statusBarElement = null, children }) => {
     const [items, setItems] = useState<{ [index: string]: StatusTrayRegisteredItem }>({})
     const [dismissed, setDismissed] = useLocalStorage("status.tray.dismissed.items", EMPTY_ARRAY)
 

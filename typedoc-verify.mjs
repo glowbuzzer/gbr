@@ -12,9 +12,10 @@ function loadTypedoc(entryPoint, tsconfig) {
     app.bootstrap({
         entryPoints: [entryPoint],
         tsconfig,
-        skipErrorChecking:true
+        // skipErrorChecking:true
         // excludeExternals: true,
-        // externalPattern: "**/node_modules/**",
+        externalPattern: ["**/node_modules/**"],
+
     })
 
     try {
@@ -34,7 +35,6 @@ function loadTypedoc(entryPoint, tsconfig) {
 }
 
 const entryPoint = "./libs/store/src/index.ts"
-// const entryPoint = "./test.ts"
 const tsconfig = "./tsconfig.doc.json"
 console.log("Generate typedoc, entryPoint=", entryPoint, "tsconfig=", tsconfig)
 loadTypedoc(entryPoint, tsconfig)

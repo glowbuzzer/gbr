@@ -18,6 +18,8 @@ import { appNameContext } from "./hooks"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
 import { Provider } from "react-redux"
 import { GbdbProvider } from "../gbdb"
+import { GlowbuzzerErrorProvider } from "./GlowbuzzerErrorContext"
+import { UserProvider } from "../usermgmt"
 
 type GlowbuzzerStandaloneAppProps = {
     /** The unique name for the application, used to prefix local storage keys */
@@ -78,11 +80,13 @@ export const GlowbuzzerStandaloneApp = ({
         <GlowbuzzerConnectionContext.Provider value={connectionContext}>
             <appNameContext.Provider value={appName}>
                 <GlowbuzzerThemeProvider>
-                    <Provider store={store}>
-                        <GbdbProvider configuration={persistenceConfiguration}>
-                            {children}
-                        </GbdbProvider>
-                    </Provider>
+                    <GlowbuzzerErrorProvider>
+                        <Provider store={store}>
+                            <GbdbProvider configuration={persistenceConfiguration}>
+                                <UserProvider>{children}</UserProvider>
+                            </GbdbProvider>
+                        </Provider>
+                    </GlowbuzzerErrorProvider>
                 </GlowbuzzerThemeProvider>
             </appNameContext.Provider>
         </GlowbuzzerConnectionContext.Provider>

@@ -17,14 +17,14 @@ import { GlowbuzzerStatus } from "../gbc_extra"
 import { tasksSlice } from "../tasks"
 import { activitySlice } from "../activity"
 import { jointsSlice } from "../joints"
-import { digitalInputsSlice, safetyDigitalInputsSlice, modbusDigitalInputsSlice } from "../io/din"
+import { digitalInputsSlice, modbusDigitalInputsSlice, safetyDigitalInputsSlice } from "../io/din"
 import { digitalOutputsSlice, safetyDigitalOutputsSlice } from "../io/dout"
 import { analogInputsSlice } from "../io/ain"
 import { analogOutputsSlice } from "../io/aout"
 import {
     integerInputsSlice,
-    unsignedIntegerInputsSlice,
-    modbusUnsignedIntegerInputsSlice
+    modbusUnsignedIntegerInputsSlice,
+    unsignedIntegerInputsSlice
 } from "../io/iin"
 import { integerOutputsSlice, unsignedIntegerOutputsSlice } from "../io/iout"
 import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../config"
@@ -142,7 +142,7 @@ export function useStatusProcessor(connection: WebSocket) {
         // ensure frequency is at least once per second
         const heartbeat_frequency_ms = Math.min(
             2000, // will be halved below
-            heartbeatTimeout || GbcConstants.DEFAULT_HLC_HEARTBEAT_TOLERANCE
+            heartbeatTimeout
         )
 
         // send heartbeat twice as often as required to allow for delays
@@ -152,6 +152,7 @@ export function useStatusProcessor(connection: WebSocket) {
                 updateMachineCommandMsg({ heartbeat /* echo the machine status heartbeat */ })
             )
             lastHeartbeat.current = heartbeat
+        } else {
         }
     }, [heartbeat, connection])
 

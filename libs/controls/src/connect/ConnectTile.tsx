@@ -17,7 +17,7 @@ import {
     useMachineDesiredState,
     useMachineTargetAcquired,
     useMachineTargetState,
-    useSimilationOnlyConfiguration
+    useSimulationOnlyConfiguration
 } from "@glowbuzzer/store"
 import styled from "styled-components"
 
@@ -102,6 +102,7 @@ const StyledDiv = styled.div`
 `
 
 /**
+ * @ignore
  * The connect tile allows you to connect and disconnect from a running GBC, and interact with the basic state of the machine.
  *
  * To change the connection url, use the settings cog in the top right of the tile. Once connected you can switch
@@ -110,7 +111,7 @@ const StyledDiv = styled.div`
 export const ConnectTile = () => {
     const connection = useConnection()
     const estopActive = useEstopInput()
-    const simulationOnly = useSimilationOnlyConfiguration()
+    const simulationOnly = useSimulationOnlyConfiguration()
     const state = useMachineCurrentState()
     const [, setDesiredState] = useMachineDesiredState()
     const [, setMachineControlWord] = useMachineControlWord()

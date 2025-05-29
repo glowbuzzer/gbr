@@ -7,7 +7,7 @@ import { GlowbuzzerConfig } from "@glowbuzzer/store"
 export const config: GlowbuzzerConfig = {
     machine: [
         {
-            name: "WMR",
+            name: "default",
             busCycleTime: 4
         }
     ],
@@ -31,7 +31,7 @@ export const config: GlowbuzzerConfig = {
                     jmax: 200
                 }
             ],
-            scale: 79577.47155,
+            scale: 100000,
             jointType: 1
         },
         {
@@ -43,11 +43,15 @@ export const config: GlowbuzzerConfig = {
                     jmax: 200
                 }
             ],
-            scale: 76394.37268,
+            scale: 100000,
             jointType: 1
         }
     ],
-    frames: [{}],
+    frames: [
+        {
+            name: "default"
+        }
+    ],
     kinematicsConfiguration: [
         {
             name: "default",
@@ -68,53 +72,7 @@ export const config: GlowbuzzerConfig = {
                     amax: 10,
                     jmax: 100
                 }
-            ],
-            kinChainParams: {
-                numRows: 6,
-                numCols: 5,
-                data: [
-                    -90, 0, 0, 0, 0, 0, 0, -90, 225, 0, 90, 0, 90, 0, 35, -90, 0, 0, 0, 225, 90, 0,
-                    0, 0, 0, 0, 0, 0, 0, 65
-                ]
-            }
-        }
-    ],
-    fieldbus: [
-        {
-            name: "0",
-            jointCount: 10,
-            RxPdo: {
-                machineStatusWordOffset: 0,
-                activeFaultOffset: 4,
-                faultHistoryOffset: 8,
-                heartbeatOffset: 12,
-                jointStatuswordOffset: 16,
-                jointActualPositionOffset: 36,
-                jointActualVelocityOffset: 76,
-                jointActualTorqueOffset: 116,
-                digitalOffset: 156,
-                digitalCount: 8,
-                analogOffset: 164,
-                analogCount: 6,
-                integerOffset: 188,
-                integerCount: 2
-            },
-            TxPdo: {
-                machineControlWordOffset: 0,
-                gbcControlWordOffset: 4,
-                hlcControlWordOffset: 8,
-                heartbeatOffset: 12,
-                jointControlwordOffset: 16,
-                jointSetPositionOffset: 36,
-                jointSetVelocityOffset: 76,
-                jointSetTorqueOffset: 116,
-                digitalOffset: 156,
-                digitalCount: 10,
-                analogOffset: 164,
-                analogCount: 6,
-                integerOffset: 188,
-                integerCount: 2
-            }
+            ]
         }
     ]
 }

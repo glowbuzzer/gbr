@@ -1,10 +1,18 @@
+// noinspection TypeScriptCheckImport
+
+// @ts-ignore
 import { StatusBar } from "expo-status-bar"
+// @ts-ignore
 import { Image, StyleSheet, View } from "react-native"
 import { configureStore } from "@reduxjs/toolkit"
 import { Provider } from "react-redux"
+// @ts-ignore
 import { rootReducer } from "@glowbuzzer/store"
+// @ts-ignore
 import { SimpleConnectView } from "./SimpleConnectView"
+// @ts-ignore
 import { SimpleMoveView } from "./SimpleMoveView"
+import * as React from "react"
 
 const style = StyleSheet.create({
     container: {
@@ -26,6 +34,7 @@ export default function App() {
     })
 
     return (
+        // @ts-ignore
         <Provider store={store}>
             <View style={style.container}>
                 <Image source={require("./assets/react-icon.png")} />
