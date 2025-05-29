@@ -96,7 +96,8 @@ export function parse_telemetry_csv(csv: string): TelemetryEntry[] {
             sdo,
             set,
             act,
-            p: []
+            p: [],
+            q: []
         }
     })
 }
