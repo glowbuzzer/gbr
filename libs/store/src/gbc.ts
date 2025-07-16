@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "5b12e066d814a6987cf926db474af2ee"
+export const GbcSchemaChecksum = "74ffb7a2ff153f5677b6e4766ed5a9f0"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -408,6 +408,10 @@ export const GbcConstants = {
   KC_MOVEABLE_SIXDOF ,
         /**  The kinematics configuration will have the KC_AGV kinematics model (algorithm) applied */
   KC_AGV ,
+        /**  The kinematics configuration will have the KC_KX2 kinematics model (algorithm) applied */
+  KC_KX2 ,
+        /**  The kinematics configuration will have the KC_SLAB2 kinematics model (algorithm) applied */
+  KC_SLAB2 ,
     }
     export enum KC_SHOULDERCONFIGURATION {
         /**  for 6DOF and SCARA robots the robot is in the lefty configuration */

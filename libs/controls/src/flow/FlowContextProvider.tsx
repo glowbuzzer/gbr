@@ -6,6 +6,7 @@ import * as React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import {
     ActivityStreamItem,
+    BLENDTYPE,
     Flow,
     FlowType,
     MachineState,
@@ -52,7 +53,16 @@ const FlowContext = createContext<FlowContextType>(null)
 
 export const FlowContextProvider = ({ children }) => {
     const flows = useFlows()
-    const { state: stream_state, execute, sendCommand, tag, reset: stream_reset } = useStream(0)
+    const {
+        state: stream_state,
+        execute,
+        sendCommand,
+        tag,
+        reset: stream_reset
+    } = useStream(0, {
+        blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
+        blendTimePercentage: 100
+    })
     const { busCycleTime } = useMachineConfig()
     const { connected } = useConnection()
     const status = useLastStatus()

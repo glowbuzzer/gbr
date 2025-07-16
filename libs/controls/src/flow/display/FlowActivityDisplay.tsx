@@ -17,6 +17,7 @@ import { ItemType } from "antd/es/menu/hooks/useItems"
 type FlowActivityProps = {
     item: ActivityStreamItem
     onEdit?(): void
+    onExecute?(): void
     onDelete?(): void
     onMoveUp?(): void
     onMoveDown?(): void
@@ -25,6 +26,7 @@ export const FlowActivityDisplay = ({
     item,
     onEdit,
     onDelete,
+    onExecute,
     onMoveUp,
     onMoveDown
 }: FlowActivityProps) => {
@@ -33,6 +35,11 @@ export const FlowActivityDisplay = ({
             key: "delete",
             label: "Delete Activity",
             onClick: onDelete
+        },
+        {
+            key: "exec",
+            label: "Execute Activity",
+            onClick: onExecute
         },
         {
             key: "move-up",
