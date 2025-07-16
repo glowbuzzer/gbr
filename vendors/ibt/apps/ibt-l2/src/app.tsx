@@ -79,10 +79,14 @@ const LoadedAwTubeRobot = () => {
 
     return (
         <AwTubeRobot parts={parts}>
+            {/*
             <TriadHelper size={400} />
+*/}
+            {/*
             <Sphere scale={10}>
                 <meshStandardMaterial color="red" />
             </Sphere>
+*/}
         </AwTubeRobot>
     )
 }
