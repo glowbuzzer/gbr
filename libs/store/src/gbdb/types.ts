@@ -20,9 +20,15 @@ export type GbdbSliceConfiguration<S = any, P = any> = {
  */
 export type GbdbFacetConfiguration = {
     [facetName: string]: {
+        /** Whether this facet is a singleton, meaning it can only have one instance in the store. */
         singleton?: boolean
+        /** The name of the singleton instance, if this facet is a singleton. */
+        singletonName?: string
+        /** Whether this facet should be automatically saved to the gbdb store upon changes. */
         autoSave?: boolean
+        /** The facets that this depends on. */
         dependencies?: string[]
+        /** A list of Redux store slices that this facet will store to and load from. */
         slices: GbdbSliceConfiguration[]
     }
 }
