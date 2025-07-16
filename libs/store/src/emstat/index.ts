@@ -9,7 +9,11 @@ import { useState } from "react"
 
 type EmStatType = GlowbuzzerStatus["emstat"]
 
-export const emstatSlice: Slice<EmStatType> = createSlice({
+type EmStatCaseReducers = {
+    status: (state: EmStatType | null, action: { payload: EmStatType }) => EmStatType | null
+}
+
+export const emstatSlice: Slice<EmStatType, EmStatCaseReducers> = createSlice({
     name: "emstat",
     initialState: null,
     reducers: {
