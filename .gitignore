@@ -48,3 +48,4 @@ dist
 .vite
 .cache
 .env.local
+/vendors/ibt/apps/stewart-aw-piattaforma/public/teeth.zip
