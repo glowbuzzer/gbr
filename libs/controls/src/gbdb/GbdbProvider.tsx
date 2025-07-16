@@ -208,9 +208,9 @@ export const GbdbProvider = ({ configuration = { facets: {} }, children }: GbdbP
             ([name]) => databases[name]
         )) {
             if (facet.singleton) {
-                open(facetName, "Default").catch(err => {
+                open(facetName, facet.singletonName || "Default").catch(err => {
                     if (err.status === 404) {
-                        save(facetName, "Default").catch(console.error)
+                        save(facetName, facet.singletonName || "Default").catch(console.error)
                     }
                 })
             }
