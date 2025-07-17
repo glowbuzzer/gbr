@@ -234,11 +234,11 @@ function EcStateToString(value: number) {
     return EC_STATE[value] || "UNKNOWN"
 }
 
-function CiaCommandToString(value: number) {
+export function CiaCommandToString(value: number) {
     return CIA_COMMAND[value] || "Unknown"
 }
 
-function CiaStateToString(value: CIA_STATE) {
+export function CiaStateToString(value: CIA_STATE) {
     return CIA_STATE[value]
 }
 
@@ -246,7 +246,7 @@ function MooToString(value: MOO) {
     return MOO[value]
 }
 
-function BoolToString(value: boolean) {
+export function BoolToString(value: boolean) {
     return value ? "True" : "False"
 }
 
