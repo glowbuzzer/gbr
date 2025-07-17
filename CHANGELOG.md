@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/glowbuzzer/gbr/compare/v1.14.1...v1.15.0) (2025-07-17)
+
+
+### Feature
+
+* Provide a way to set the singleton gbdb document id ([e4bec0a](https://github.com/glowbuzzer/gbr/commit/e4bec0af557c642c81ea52f9b1dbe67ea85b9c34))
+* Provide execute menu option for flow sequence items ([dfd2234](https://github.com/glowbuzzer/gbr/commit/dfd2234308f331583b21ea8285f07cab947d232c))
+
+
+### Chore
+
+* add docs ([d059e8f](https://github.com/glowbuzzer/gbr/commit/d059e8f94d3bd448443b84741664bedaae66d619))
+* add drives-gbsm, plus other changes ([928aa15](https://github.com/glowbuzzer/gbr/commit/928aa15fc4b789b0faccc30641081f4f679e23f5))
+* add three bvh ([ef87a4e](https://github.com/glowbuzzer/gbr/commit/ef87a4e3af0a7cae6518d3b4b37f52584605789f))
+* add to sm diagnostics ([2cc4c10](https://github.com/glowbuzzer/gbr/commit/2cc4c109adfe9d98f0363be2fe510980c4af7c35))
+* add typing ([7d6fe64](https://github.com/glowbuzzer/gbr/commit/7d6fe64be8e507026b6081b809a095d4c8d04750))
+* remove ecm cyclic tile guard from dros ([22abcaa](https://github.com/glowbuzzer/gbr/commit/22abcaa9a198b5605b3edde66760d189676e7984))
+* trivial changes ([4dc1ffb](https://github.com/glowbuzzer/gbr/commit/4dc1ffb0389e03570d5171aabb5cfead2bf44b84))
+* tweak example utils ([96a4969](https://github.com/glowbuzzer/gbr/commit/96a49697b664d2a74188e15859d28a986d45a7a1))
+* update awlib dependencies ([1aea965](https://github.com/glowbuzzer/gbr/commit/1aea965f2a7f91e9497b26c26d553e6a3fda98b7))
+
 ## [1.14.1](https://github.com/glowbuzzer/gbr/compare/v1.14.0...v1.14.1) (2025-05-29)
 
 
