@@ -41,6 +41,7 @@ import undoable from "redux-undo"
 import { flowSlice } from "./flow"
 import { monitorSlice } from "./monitor"
 import { gbdbSlice } from "./gbdb"
+import { smstatSlice } from "./smstat"
 
 export const standardReducers = {
     gbdb: gbdbSlice.reducer,
@@ -80,6 +81,7 @@ export const standardReducers = {
     trace: traceSlice.reducer,
     kinematics: kinematicsSlice.reducer,
     emstat: emstatSlice.reducer,
+    smstat: smstatSlice.reducer,
     serial: serialSlice.reducer,
     flow: undoable(flowSlice.reducer),
     monitor: monitorSlice.reducer

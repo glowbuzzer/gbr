@@ -31,6 +31,7 @@ import { useBusCycleTime, useConfigVersion, useHeartbeatTimeout } from "../confi
 import { emstatSlice } from "../emstat"
 import { serialSlice } from "../serial"
 import { monitorSlice } from "../monitor"
+import { smstatSlice } from "../smstat"
 
 function status(status, heartbeat) {
     return {
@@ -225,5 +226,6 @@ export function useStatusProcessor(connection: WebSocket) {
         msg.stream && dispatch(streamSlice.actions.status(msg.stream))
         msg.telemetry && dispatch(telemetrySlice.actions.data(msg.telemetry))
         msg.emstat && dispatch(emstatSlice.actions.status(msg.emstat))
+        msg.smstat && dispatch(smstatSlice.actions.status(msg.smstat))
     }
 }

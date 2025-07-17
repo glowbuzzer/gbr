@@ -7,3 +7,5 @@
 
 export * from "./DiagnosticsTileDefinition"
 export * from "./DiagnosticsTile"
+export * from "./DiagnosticsTileStepMasterDefinition"
+export * from "./DiagnosticsTileStepMaster"

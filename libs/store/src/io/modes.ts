@@ -68,7 +68,8 @@ export function useMachineInputActive(prop: keyof MachineMetadata) {
  */
 export function useEstopInput() {
     // inverted
-    return !useMachineInputActive("estopStateInput")
+    const value = useMachineInputActive("estopStateInput")
+    return value === undefined ? undefined : !value
 }
 
 /**
@@ -144,7 +145,10 @@ type SafeyOverrideProcessRequiredMetadata = Pick<
  *
  * @returns An object with properties for each of the safety overrides and whether they are required.
  */
-export function useSafetyOverrideProcessesRequired(): Record<"drivesSafePositionValidInput" | "faultTcpSwmInput" | "faultJointsSlpInput", boolean> {
+export function useSafetyOverrideProcessesRequired(): Record<
+    "drivesSafePositionValidInput" | "faultTcpSwmInput" | "faultJointsSlpInput",
+    boolean
+> {
     const props: (keyof SafeyOverrideProcessRequiredMetadata)[] = [
         "drivesSafePositionValidInput",
         "faultTcpSwmInput",

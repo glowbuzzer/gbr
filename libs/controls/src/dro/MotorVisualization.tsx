@@ -4,6 +4,7 @@
 
 import * as React from "react"
 import { useEffect, useRef } from "react"
+import { radToDeg } from "three/src/math/MathUtils"
 
 type MotorVisualizationProps = {
     /**
@@ -23,7 +24,7 @@ export const MotorVisualization = ({ width, value }: MotorVisualizationProps) =>
     const spinner = useRef<SVGSVGElement>(null)
 
     useEffect(() => {
-        spinner.current?.setAttribute("transform", `rotate(${value})`)
+        spinner.current?.setAttribute("transform", `rotate(${radToDeg(value)})`)
     }, [value])
 
     return (

@@ -631,9 +631,7 @@ export const GbcConstants = {
                         
                         streamCommand?:STREAMCOMMAND;
             }
-            /** 
-            Configuration parameters for move parameters
-             */
+            /** Configuration parameters for move parameters */
             export type MoveParametersConfig = {
             
                         /**  Vmax (max velocity) for move */

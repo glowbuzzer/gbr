@@ -367,4 +367,8 @@ export type GlowbuzzerStatus = {
         /** EtherCAT master cyclic state */
         cs?: ECM_CYCLIC_STATE
     }
+    smstat?: {
+        // THIS IS NOT CORRECT - NEED TO EXPOSE THE SMSTAT FROM GBC STATUS TASK
+        cs?: ECM_CYCLIC_STATE
+    }
 }

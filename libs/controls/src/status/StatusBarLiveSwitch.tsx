@@ -14,14 +14,15 @@ import {
 import { Button } from "antd"
 import { useCallback, useEffect } from "react"
 
-export const StatusBarLiveSwitch = () => {
+export const StatusBarLiveSwitch = ({ forceEnabled = false }) => {
     const simulationOnly = useSimulationOnlyConfiguration()
     const { connected } = useConnection()
     const ecm_cyclic_state = useEthercatMasterCyclicStatus()
     const [currentTarget, requestedTarget, setDesiredMachineTarget] = useMachineTargetState()
 
     const disabled = simulationOnly || !connected
-    const live_switch_enabled = ecm_cyclic_state === ECM_CYCLIC_STATE.ECM_CYCLIC_RUNNING
+    const live_switch_enabled =
+        forceEnabled || ecm_cyclic_state === ECM_CYCLIC_STATE.ECM_CYCLIC_RUNNING
 
     const change_target = useCallback(
         (v: MACHINETARGET) => {

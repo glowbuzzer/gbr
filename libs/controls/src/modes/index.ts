@@ -3,3 +3,4 @@
  */
 
 export * from "./GlowbuzzerModeProvider"
+export * from "./StatusBarModeSwitch"

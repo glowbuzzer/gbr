@@ -510,7 +510,7 @@ export function toTableDataEmStat(
 ) {
     const result = []
 
-    const validKeys = extractValidKeys(emStatDictionary)
+    const validKeys = extractValidKeys(dict)
 
     for (const key in obj) {
         if (!validKeys.includes(key) && isNaN(Number(key))) {
