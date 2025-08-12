@@ -518,12 +518,28 @@ export function toTableDataEmStat(
         }
 
         if (typeof obj[key] === "object" && obj[key] !== null) {
-            const child_dict = dict?.type === "array" ? dict : dict?.children?.[key]
-            const children = toTableDataEmStat(obj[key], key, child_dict)
+            const isArrayBranch = dict?.type === "array"
+            const child_dict: DictionaryNode | undefined = isArrayBranch
+                ? dict
+                : (dict?.children as Record<string, DictionaryNode> | undefined)?.[key];           const children = toTableDataEmStat(obj[key], key, child_dict)
             if (children.length) {
+                let propertyName: string
+
+                if (isArrayBranch) {
+                    // Prefer array item label from nameProperty; else use numeric index
+                    const fromNameProp = dict?.nameProperty
+                        ? obj[key]?.[dict.nameProperty as any]
+                        : undefined
+                    const indexLabel = String(key) // "0", "1", "2", ...
+                    propertyName = fromNameProp ?? indexLabel
+                } else {
+                    // Object group: use the dictionary node's friendly name; else fallback to key
+                    propertyName = child_dict?.name ?? key
+                }
+
                 result.push({
                     key: parentKey + "/" + key,
-                    property: obj[key][dict?.nameProperty] || key,
+                    property: propertyName,
                     value: "",
                     children
                 })
@@ -537,6 +553,7 @@ export function toTableDataEmStat(
                 value: leaf_dict?.convert?.(obj[key], obj) || obj[key]
             })
         }
+
     }
 
     return result
