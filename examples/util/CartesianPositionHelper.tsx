@@ -1,7 +1,15 @@
 import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
 
-export const CartesianPositionHelper = ({ children }: { children: React.ReactNode }) => {
-    const { position } = useKinematicsCartesianPosition(0)
+type CartesianPositionHelperProps = {
+    kinematicsConfigurationIndex?: number
+    children: React.ReactNode
+}
+
+export const CartesianPositionHelper = ({
+    kinematicsConfigurationIndex = 0,
+    children
+}: CartesianPositionHelperProps) => {
+    const { position } = useKinematicsCartesianPosition(kinematicsConfigurationIndex)
 
     const { translation, rotation } = position
 
