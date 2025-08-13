@@ -60,6 +60,7 @@ export const FlowContextProvider = ({ children }) => {
         tag,
         reset: stream_reset
     } = useStream(0, {
+        // THIS DOESN'T WORK BECAUSE BUILDERS AREN'T USED, SEE execute_activity_flow BELOW
         blendType: BLENDTYPE.BLENDTYPE_OVERLAPPED,
         blendTimePercentage: 100
     })

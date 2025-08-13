@@ -12,6 +12,7 @@ import { useKinematicsCartesianPosition } from "@glowbuzzer/store"
 import { StyledEditTabCardContent, StyledEditTabCardTitle } from "../styles"
 import { FlowEditTabTitleRadioGroup } from "../common/FlowEditTabTitleRadioGroup"
 import { FlowEditFrameSelectCard } from "../common/FlowEditFrameSelectCard"
+import { FlowEditKcSelectCard } from "../common/FlowEditKcSelectCard"
 
 export const FlowEditMoveToPositionSettings = ({
     item,
@@ -19,6 +20,7 @@ export const FlowEditMoveToPositionSettings = ({
 }: FlowActivityEditParametersProps) => {
     const { configuration, position } = useKinematicsCartesianPosition(0)
 
+    const kinematicsConfigurationIndex = item.moveToPosition.kinematicsConfigurationIndex
     const moveToPosition = item.moveToPosition
     const cartesianPosition = moveToPosition.cartesianPosition
 
@@ -60,6 +62,16 @@ export const FlowEditMoveToPositionSettings = ({
                     ...cartesianPosition,
                     position
                 }
+            }
+        })
+    }
+
+    function update_kc_index(kinematicsConfigurationIndex: number) {
+        onChange({
+            ...item,
+            moveToPosition: {
+                ...moveToPosition,
+                kinematicsConfigurationIndex
             }
         })
     }
@@ -135,6 +147,10 @@ export const FlowEditMoveToPositionSettings = ({
                 <FlowEditFrameSelectCard
                     frame={cartesianPosition.position.frameIndex}
                     onChange={update_frame}
+                />
+                <FlowEditKcSelectCard
+                    kinematicsConfigurationIndex={kinematicsConfigurationIndex}
+                    onChange={update_kc_index}
                 />
             </Flex>
         </StyledEditTabCardContent>
