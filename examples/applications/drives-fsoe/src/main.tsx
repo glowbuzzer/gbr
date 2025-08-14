@@ -27,7 +27,6 @@ root.render(
             appName="drives-fsoe"
             // configuration={config}
             persistenceConfiguration={persistence}
-            autoConnect={true}
             autoOpEnabled={true}
         >
             <App />
