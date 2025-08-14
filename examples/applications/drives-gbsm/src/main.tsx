@@ -12,6 +12,7 @@ root.render(
     <StrictMode>
         <GlowbuzzerApp
             appName="drives-gbdm"
+            stepMasterMode
             // If you want to use local config and push it, uncomment the following line
             // configuration={config}
         >

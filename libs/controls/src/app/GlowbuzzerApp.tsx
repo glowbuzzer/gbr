@@ -19,7 +19,7 @@ import { Button, GlobalToken } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import { Provider } from "react-redux"
 import { ConfigLiveEditProvider } from "../config"
-import { appNameContext, connectionConfigurationContext } from "./hooks"
+import { appNameContext, connectionConfigurationContext, masterModeContext } from "./hooks"
 import { ConnectionProvider } from "./ConnectionProvider"
 import { GlowbuzzerAppLifecycle } from "./lifecycle"
 import { GlowbuzzerThemeProvider } from "./GlowbuzzerThemeProvider"
@@ -153,6 +153,8 @@ type GlowbuzzerAppProps = {
     userModel?: UserModel
     /** Whether to auto-enable operation */
     autoOpEnabled?: boolean
+    /** Whether in step master mode */
+    stepMasterMode?: boolean
     /** Your application */
     children: ReactNode
 }
@@ -175,6 +177,7 @@ export const GlowbuzzerApp = ({
     connectionConfiguration = {},
     autoOpEnabled,
     userModel,
+    stepMasterMode,
     children
 }: GlowbuzzerAppProps) => {
     initSettings(appName)
@@ -188,28 +191,32 @@ export const GlowbuzzerApp = ({
     )
 
     return (
-        <connectionConfigurationContext.Provider value={connectionConfiguration}>
-            <appNameContext.Provider value={appName}>
-                <GlowbuzzerThemeProvider>
-                    <GlowbuzzerErrorProvider>
-                        <Provider store={store}>
-                            <GbdbProvider configuration={persistenceConfiguration}>
-                                <ConnectionProvider autoConnect={!manualConnect}>
-                                    <ConfigLiveEditProvider>
-                                        <GlowbuzzerContainer userModel={userModel}>
-                                            <AutoConnectionController enabled={!manualConnect} />
-                                            <AutoSimulatedSafetyInputsController />
-                                            <AutoDesiredModeController enabled={autoOpEnabled}>
-                                                {children}
-                                            </AutoDesiredModeController>
-                                        </GlowbuzzerContainer>
-                                    </ConfigLiveEditProvider>
-                                </ConnectionProvider>
-                            </GbdbProvider>
-                        </Provider>
-                    </GlowbuzzerErrorProvider>
-                </GlowbuzzerThemeProvider>
-            </appNameContext.Provider>
-        </connectionConfigurationContext.Provider>
+        <masterModeContext.Provider value={stepMasterMode}>
+            <connectionConfigurationContext.Provider value={connectionConfiguration}>
+                <appNameContext.Provider value={appName}>
+                    <GlowbuzzerThemeProvider>
+                        <GlowbuzzerErrorProvider>
+                            <Provider store={store}>
+                                <GbdbProvider configuration={persistenceConfiguration}>
+                                    <ConnectionProvider autoConnect={!manualConnect}>
+                                        <ConfigLiveEditProvider>
+                                            <GlowbuzzerContainer userModel={userModel}>
+                                                <AutoConnectionController
+                                                    enabled={!manualConnect}
+                                                />
+                                                <AutoSimulatedSafetyInputsController />
+                                                <AutoDesiredModeController enabled={autoOpEnabled}>
+                                                    {children}
+                                                </AutoDesiredModeController>
+                                            </GlowbuzzerContainer>
+                                        </ConfigLiveEditProvider>
+                                    </ConnectionProvider>
+                                </GbdbProvider>
+                            </Provider>
+                        </GlowbuzzerErrorProvider>
+                    </GlowbuzzerThemeProvider>
+                </appNameContext.Provider>
+            </connectionConfigurationContext.Provider>
+        </masterModeContext.Provider>
     )
 }

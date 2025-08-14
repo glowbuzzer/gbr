@@ -3,9 +3,8 @@
  */
 
 import { createSlice, Slice } from "@reduxjs/toolkit"
-import { ECM_CYCLIC_STATE, GlowbuzzerStatus, RootState } from ".."
+import { GlowbuzzerStatus, RootState } from ".."
 import { useSelector } from "react-redux"
-import { useState } from "react"
 
 type SmStatType = GlowbuzzerStatus["smstat"]
 
@@ -23,8 +22,8 @@ export const smstatSlice: Slice<SmStatType, SmStatCaseReducers> = createSlice({
     }
 })
 
-export function useStepMasterCyclicStatus(): ECM_CYCLIC_STATE {
-    return useSelector<RootState, ECM_CYCLIC_STATE>(state => state.smstat?.cs)
+export function useStepMasterBootSuccessful(): boolean {
+    return useSelector<RootState, boolean>(state => state.smstat?.bs?.boot_successful)
 }
 
 export function useStepMasterStatus(): SmStatType {

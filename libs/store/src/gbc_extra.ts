@@ -368,7 +368,20 @@ export type GlowbuzzerStatus = {
         cs?: ECM_CYCLIC_STATE
     }
     smstat?: {
-        // THIS IS NOT CORRECT - NEED TO EXPOSE THE SMSTAT FROM GBC STATUS TASK
-        cs?: ECM_CYCLIC_STATE
+        cycle_count?: number
+        drive_count?: number
+        shared_mem_busy_count?: number
+        machine_state?: number
+        commanded_machine_state?: number
+        bs?: {
+            init_done: boolean
+            io_initialised: boolean
+            all_drives_initialised: boolean
+            all_drives_configured: boolean
+            all_drives_homed: boolean
+            all_drives_operational: boolean
+            boot_successful: boolean
+        }
+        Drives?: any[] // untyped for now
     }
 }

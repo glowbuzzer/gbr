@@ -13,7 +13,7 @@ import { StatusBarEnableOperation } from "./StatusBarEnableOperation"
 import { StatusBarLayoutControls } from "./StatusBarLayoutControls"
 import { StatusBarModeSwitch } from "../modes/StatusBarModeSwitch"
 import { useAutoOpEnabled } from "../app/AutoDesiredModeController"
-import { StatusBarConnectAndEmStatus } from "./StatusBarConnectAndEmStatus"
+import { StatusBarConnectAndMasterStatus } from "./StatusBarConnectAndMasterStatus"
 import { StatusBarHandGuidedIndicator } from "./StatusBarHandGuidedIndicator"
 import { StatusBarUser } from "../usermgmt/StatusBarUser"
 
@@ -54,8 +54,8 @@ export const StatusBar = forwardRef<HTMLDivElement, StatusBarProps>(({ children 
 
     return (
         <Flex justify="space-between" ref={ref} className="status-bar" style={{ zIndex: 550 }}>
-            <StyledSpace split={<Divider type="vertical" />}>
-                <StatusBarConnectAndEmStatus />
+            <StyledSpace>
+                <StatusBarConnectAndMasterStatus />
                 <StatusBarModeSwitch />
                 <StatusBarHandGuidedIndicator />
                 {!!dismissed.length && (
