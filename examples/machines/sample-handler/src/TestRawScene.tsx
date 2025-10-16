@@ -96,7 +96,7 @@ export const TestRawScene = () => {
                     <TriadHelper size={2} />
                     <OrbitControls enableDamping={false} />
 
-                    {ambientLight && <ambientLight intensity={50} />}
+                    {ambientLight && <ambientLight intensity={0.5} />}
                     {spotLight && (
                         <CustomSpotLighting position={[1, 1, 2]} targetPosition={[1, 0, 0]} />
                     )}
