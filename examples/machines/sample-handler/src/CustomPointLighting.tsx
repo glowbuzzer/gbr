@@ -4,7 +4,7 @@ import { PointLight, PointLightHelper, SpotLight, SpotLightHelper } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
 import { TriadHelper } from "@glowbuzzer/controls"
 
-export const CustomPointLighting = ({ position }) => {
+export const CustomPointLighting = ({ position, intensity = 10 }) => {
     const lightRef = useRef<PointLight>()
     const helperRef = useRef<PointLightHelper>()
     const { scene } = useThree()
@@ -21,5 +21,5 @@ export const CustomPointLighting = ({ position }) => {
         }
     }, [scene])
 
-    return <pointLight position={position} ref={lightRef} intensity={10} />
+    return <pointLight position={position} ref={lightRef} intensity={intensity} castShadow />
 }

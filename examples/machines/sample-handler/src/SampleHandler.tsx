@@ -1,6 +1,6 @@
 import { useGLTF } from "@react-three/drei"
 import { useRawJointPositions } from "@glowbuzzer/store"
-import { Mesh } from "three"
+import { Mesh, MeshStandardMaterial } from "three"
 import { useMemo } from "react"
 
 export const SampleHandler = ({ children }) => {
@@ -13,9 +13,19 @@ export const SampleHandler = ({ children }) => {
     )
 }
 
-export const SampleHandlerModel = ({ x, y, z, r, scale = 1, deMetal = false, children = null }) => {
+export const SampleHandlerModel = ({
+    x,
+    y,
+    z,
+    r,
+    scale = 1,
+    deMetal = false,
+    castShadow = false,
+    reduceEnvMapIntensity = false,
+    children = null
+}) => {
     const parts = useGLTF([
-        "/assets/base.glb",
+        "/assets/base3.glb",
         "/assets/x.glb",
         "/assets/y.glb",
         "/assets/z - no rotation.glb",
@@ -27,11 +37,15 @@ export const SampleHandlerModel = ({ x, y, z, r, scale = 1, deMetal = false, chi
             parts.map(m => {
                 const scene = m.scene
                 scene.traverse((o: Mesh) => {
-                    const material = o.material as any
+                    const material = o.material as MeshStandardMaterial
                     if (o.isMesh && material && material.isMeshStandardMaterial) {
                         if (!o.userData.__backup) {
                             o.userData.__backup = material.clone()
+                            o.userData.__envMapIntensity = material.envMapIntensity
+                            o.userData.__castShadow = o.castShadow
+                            o.userData.__receiveShadow = o.receiveShadow
                         }
+
                         if (deMetal) {
                             material.metalness = 0
                             material.roughness = 0
@@ -39,11 +53,28 @@ export const SampleHandlerModel = ({ x, y, z, r, scale = 1, deMetal = false, chi
                             material.metalness = o.userData.__backup.metalness
                             material.roughness = o.userData.__backup.roughness
                         }
+
+                        if (castShadow) {
+                            o.castShadow = true
+                            o.receiveShadow = true
+                        } else {
+                            o.castShadow = o.userData.__castShadow
+                            o.receiveShadow = o.userData.__receiveShadow
+                        }
+
+                        if (reduceEnvMapIntensity) {
+                            material.envMapIntensity = 0.25
+                        } else {
+                            material.envMapIntensity = 1
+                        }
+                        material.needsUpdate = true
+                        o.geometry.computeVertexNormals()
+                        o.updateMatrixWorld(true)
                     }
                 })
                 return scene
             }),
-        [parts, deMetal]
+        [parts, deMetal, castShadow, reduceEnvMapIntensity]
     )
 
     return (
