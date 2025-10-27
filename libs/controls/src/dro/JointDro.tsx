@@ -14,11 +14,12 @@ import {
     usePrefs
 } from "@glowbuzzer/store"
 import styled from "styled-components"
-import { MathUtils } from "three"
+import { PosSlider } from "./PosSlider"
+import { degToRad } from "three/src/math/MathUtils"
 
-const StyledGrid = styled.div<{ cols }>`
+const StyledGrid = styled.div`
     display: grid;
-    grid-template-columns: ${props => (props.cols === 2 ? "auto 1fr" : "auto auto 1fr")};
+    grid-template-columns: auto 1fr auto;
     align-items: center;
     column-gap: 8px;
 
@@ -29,6 +30,7 @@ const StyledGrid = styled.div<{ cols }>`
         padding: 0 4px;
     }
     .value {
+        min-width: 10em;
         text-align: right;
     }
 `
@@ -50,7 +52,7 @@ const JointDroItem = ({ index, warningThreshold, valueKey }) => {
 
     const { units, precision } = is_torque ? { units: "Nm", precision: 3 } : getUnits(type)
     const [min, max] = [negLimit, posLimit].map(limit =>
-        type === "angular" ? MathUtils.degToRad(limit) : limit
+        type === "angular" ? degToRad(limit) : limit
     )
     const current_in_si_units = j[valueKey]
     const current = is_torque ? current_in_si_units : fromSI(current_in_si_units, type)
@@ -63,6 +65,9 @@ const JointDroItem = ({ index, warningThreshold, valueKey }) => {
     return (
         <>
             <div className="label">{name}</div>
+            <div className="slider">
+                {showSlider && <PosSlider min={min} max={max} current={current_in_si_units} />}
+            </div>
             <div className="value">
                 <SegmentDisplay
                     value={current}
@@ -72,19 +77,6 @@ const JointDroItem = ({ index, warningThreshold, valueKey }) => {
                 />
                 {units}
             </div>
-            {showSlider && (
-                <div className="slider-wrapper">
-                    {min.toPrecision(4)}
-                    <Slider
-                        min={min}
-                        max={max}
-                        disabled
-                        value={j?.actPos}
-                        tooltip={{ open: false }}
-                    />
-                    {max.toPrecision(4)}
-                </div>
-            )}
         </>
     )
 }
@@ -113,15 +105,8 @@ export const JointDro = ({
 
     const jointConfigs = useJointConfigurationList()
 
-    // determine if we need to show a slider for any of the joints
-    const cols = joints.some(
-        j => jointConfigs[j].finiteContinuous === JOINT_FINITECONTINUOUS.JOINT_FINITE
-    )
-        ? 3
-        : 2
-
     return (
-        <StyledGrid cols={cols}>
+        <StyledGrid>
             {joints.map(j => (
                 <JointDroItem
                     key={j}
