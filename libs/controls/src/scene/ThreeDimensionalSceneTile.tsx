@@ -7,7 +7,7 @@ import { useRef, useState } from "react"
 import { ReactReduxContext } from "react-redux"
 import { usePrefs, usePreview, useTrace } from "@glowbuzzer/store"
 import { Trace } from "./Trace"
-import { Canvas, useThree } from "@react-three/fiber"
+import { Canvas, RenderProps, useThree } from "@react-three/fiber"
 import { OrbitControls, useContextBridge } from "@react-three/drei"
 import { PreviewPath } from "./PreviewPath"
 import { DockToolbar, DockToolbarButtonGroup } from "../dock"
@@ -24,7 +24,7 @@ import { DefaultGridHelper } from "./DefaultGridHelper"
 import { DefaultViewCube } from "./DefaultViewCube"
 import { DefaultLighting } from "./DefaultLighting"
 import { PointsDisplay } from "./PointsDisplay"
-import { Vector3 } from "three"
+import { Scene, Vector3 } from "three"
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter"
 
 type ThreeDimensionalSceneTileProps = {
@@ -46,6 +46,10 @@ type ThreeDimensionalSceneTileProps = {
     noViewCube?: boolean
     /** Optional, initial camera position */
     initialCameraPosition?: Vector3
+    /** Optional, detailed WebGL props */
+    gl?: RenderProps<any>["gl"]
+    /** Optional, frameloop */
+    frameloop?: RenderProps<any>["frameloop"]
     /** Optional react-three-fiber children to render */
     children?: React.ReactNode
 }
@@ -77,7 +81,8 @@ export const ThreeDimensionalSceneTile = ({
     hideTrace: defaultHideTrace = undefined,
     hidePreview: defaultHidePreview = undefined,
     initialCameraPosition,
-    children = undefined
+    children = undefined,
+    ...canvasProps
 }: ThreeDimensionalSceneTileProps) => {
     const { reset } = useTrace(kinematicsConfigurationIndex)
     const { current, update } = usePrefs()
@@ -85,7 +90,7 @@ export const ThreeDimensionalSceneTile = ({
     const [hidePreview, setHidePreview] = useState(defaultHidePreview || false)
     const { segments, highlightLine, disabled } = usePreview()
     const ContextBridge = useContextBridge(ReactReduxContext)
-    const sceneRef = useRef<THREE.Scene | null>(null)
+    const sceneRef = useRef<Scene | null>(null)
 
     function toggle_preview() {
         setHidePreview(current => !current)
@@ -96,7 +101,9 @@ export const ThreeDimensionalSceneTile = ({
     }
 
     function downloadGLTF() {
-        if (!sceneRef.current) return
+        if (!sceneRef.current) {
+            return
+        }
 
         const exporter = new GLTFExporter()
         exporter.parse(
@@ -118,7 +125,7 @@ export const ThreeDimensionalSceneTile = ({
 
     return (
         <>
-            <Canvas shadows frameloop="demand">
+            <Canvas shadows {...canvasProps}>
                 <SceneExporter sceneRef={sceneRef} />
                 <ContextBridge>
                     {noCamera || <DefaultPerspectiveCamera position={initialCameraPosition} />}
@@ -126,7 +133,6 @@ export const ThreeDimensionalSceneTile = ({
                     {noViewCube || <DefaultViewCube />}
                     {noLighting || <DefaultLighting />}
                     {noGridHelper || <DefaultGridHelper />}
-                    {/*{hidePreview ? null : <WorkspaceDimensions />}*/}
                     {hideTrace ? null : (
                         <Trace
                             kinematicsConfigurationIndex={kinematicsConfigurationIndex}
