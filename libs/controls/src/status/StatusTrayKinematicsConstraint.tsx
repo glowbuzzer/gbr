@@ -2,20 +2,20 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import * as React from "react";
+import * as React from "react"
 import {
     MachineState,
     OPERATION_ERROR,
     useKinematicsLimitsDisabled,
     useMachineCurrentState,
     useMachineFaults
-} from "@glowbuzzer/store";
-import { StatusTrayItem } from "./StatusTrayItem";
-import { Button, Dropdown } from "antd";
+} from "@glowbuzzer/store"
+import { StatusTrayItem } from "./StatusTrayItem"
+import { Button, Dropdown } from "antd"
 
 export const StatusTrayKinematicsConstraint = () => {
-    const currentState=useMachineCurrentState()
-    const {operationError}=useMachineFaults()
+    const currentState = useMachineCurrentState()
+    const { operationError } = useMachineFaults()
     const [, setDisabled] = useKinematicsLimitsDisabled(0)
     const [timerTick, setTimerTick] = React.useState(0)
     const fault = currentState === MachineState.FAULT

@@ -12,7 +12,7 @@ import {
     useSimulationOnlyConfiguration,
     useStepMasterBootSuccessful
 } from "@glowbuzzer/store"
-import { Button } from "antd"
+import { Button, Space } from "antd"
 import { useCallback, useEffect } from "react"
 import { useMasterBootSuccessful, useStepMasterMode } from "../app"
 
@@ -36,7 +36,7 @@ export const StatusBarLiveSwitch = ({ forceEnabled = false }) => {
     const switching = connected && currentTarget !== requestedTarget
 
     return (
-        <Button.Group>
+        <Space.Compact>
             <Button
                 type={live ? "primary" : undefined}
                 loading={live && switching}
@@ -53,6 +53,6 @@ export const StatusBarLiveSwitch = ({ forceEnabled = false }) => {
             >
                 Simulation
             </Button>
-        </Button.Group>
+        </Space.Compact>
     )
 }
