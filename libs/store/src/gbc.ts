@@ -3,7 +3,7 @@
 
 export * from "./gbc_extra"
 
-export const GbcSchemaChecksum = "74ffb7a2ff153f5677b6e4766ed5a9f0"
+export const GbcSchemaChecksum = "e3bf6ab13547fe84e42f883321067c26"
 
 // CONSTANTS
 export const GbcConstants = {
@@ -33,6 +33,7 @@ export const GbcConstants = {
         FAULT_CAUSE_MOVE_NOT_OP_EN_BIT_NUM                 = (16),
         FAULT_CAUSE_DRIVE_STATE_MISMATCH_BIT_NUM           = (17),
         FAULT_CAUSE_FSOE_ERROR_BIT_NUM                     = (18),
+        FAULT_CAUSE_FREEZE_BIT_NUM                         = (19),
     }
     export enum STATUS_WORD_GBEM {
         STATUS_WORD_GBEM_ALIVE_BIT_NUM                      = (16),
@@ -743,9 +744,9 @@ export const GbcConstants = {
                         /**  Whether to use shortest or longest SLERP between start and end rotations */
                         rotationInterpolation?:ROTATIONINTERPOLATION;
     //              Start of Union
-                        /**  Is the centre defined absolutely or relatively */
+                        /** Is the centre defined absolutely or relatively */
                          centre?: PositionAbsRel,
-                        /**  Radius of the arc */
+                        /** Radius of the arc */
                          radius?: DoubleValue,
     //              End of Union
             }
@@ -1071,13 +1072,13 @@ export const GbcConstants = {
                         /**  Type of envelope constraint */
                         constraintType?:KC_ENVELOPE_CONSTRAINT_TYPE;
     //              Start of Union
-                        /**  Planar envelope constraint */
+                        /** Planar envelope constraint */
                          plane?: PlanarEnvelope,
-                        /**  Box envelope constraint */
+                        /** Box envelope constraint */
                          box?: BoxEnvelope,
-                        /**  Cylinder envelope constraint */
+                        /** Cylinder envelope constraint */
                          cylinder?: CylinderEnvelope,
-                        /**  Sphere envelope constraint */
+                        /** Sphere envelope constraint */
                          sphere?: SphericalEnvelope,
     //              End of Union
             }
@@ -2329,51 +2330,51 @@ export const GbcConstants = {
                         
                         triggers?:TriggerParams[];
     //              Start of Union
-                        /**  Configuration parameters for move joints activity */
+                        /** Configuration parameters for move joints activity */
                          moveJoints?: MoveJointsActivityParams,
-                        /**  Configuration parameters for move joints activity */
+                        /** Configuration parameters for move joints activity */
                          moveJointsInterpolated?: MoveJointsInterpolatedActivityParams,
-                        /**  Configuration parameters for move joints at velocity activity */
+                        /** Configuration parameters for move joints at velocity activity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityParams,
-                        /**  Configuration parameters for move line activity */
+                        /** Configuration parameters for move line activity */
                          moveLine?: MoveLineActivityParams,
-                        /**  Configuration parameters for move vector at velocity activity */
+                        /** Configuration parameters for move vector at velocity activity */
                          moveVectorAtVelocity?: MoveVectorAtVelocityActivityParams,
-                        /**  Configuration parameters for move rotation at velocity activity */
+                        /** Configuration parameters for move rotation at velocity activity */
                          moveRotationAtVelocity?: MoveRotationAtVelocityActivityParams,
-                        /**  Configuration parameters for move arc activity */
+                        /** Configuration parameters for move arc activity */
                          moveArc?: MoveArcActivityParams,
-                        /**  Configuration parameters for a instant move activity */
+                        /** Configuration parameters for a instant move activity */
                          moveInstant?: MoveInstantActivityParams,
-                        /**  Configuration parameters for move to position activity */
+                        /** Configuration parameters for move to position activity */
                          moveToPosition?: MoveToPositionActivityParams,
-                        /**  Configuration parameters for set initial position activity */
+                        /** Configuration parameters for set initial position activity */
                          setInitialPosition?: SetInitialPositionActivityParams,
-                        /**  @ignore Configuration parameters for gear in position activity */
+                        /** @ignore Configuration parameters for gear in position activity */
                          gearInPos?: GearInPosActivityParams,
-                        /**  @ignore Configuration parameters for gear in velocity activity */
+                        /** @ignore Configuration parameters for gear in velocity activity */
                          gearInVelo?: GearInVeloActivityParams,
-                        /**  Configuration parameters for set dout activity */
+                        /** Configuration parameters for set dout activity */
                          setDout?: SetDoutActivityParams,
-                        /**  Configuration parameters for set external dout activity */
+                        /** Configuration parameters for set external dout activity */
                          setExternalDout?: SetDoutActivityParams,
-                        /**  Configuration parameters for set analog out activity */
+                        /** Configuration parameters for set analog out activity */
                          setAout?: SetAoutActivityParams,
-                        /**  Configuration parameters for set integer out activity */
+                        /** Configuration parameters for set integer out activity */
                          setIout?: SetIoutActivityParams,
-                        /**  Configuration parameters for set unsigned integer out activity */
+                        /** Configuration parameters for set unsigned integer out activity */
                          setUiout?: SetUioutActivityParams,
-                        /**  Configuration parameters for set external integer out activity */
+                        /** Configuration parameters for set external integer out activity */
                          setExternalIout?: SetIoutActivityParams,
-                        /**  Configuration parameters for set external unsigned integer out activity */
+                        /** Configuration parameters for set external unsigned integer out activity */
                          setExternalUiout?: SetUioutActivityParams,
-                        /**  Configuration parameters for dwell activity */
+                        /** Configuration parameters for dwell activity */
                          dwell?: DwellActivityParams,
-                        /**  Configuration parameters for spindle activity */
+                        /** Configuration parameters for spindle activity */
                          spindle?: SpindleActivityParams,
-                        /**  Configuration parameters for set modbus dout activity */
+                        /** Configuration parameters for set modbus dout activity */
                          setModbusDout?: SetModbusDoutActivityParams,
-                        /**  Configuration parameters for set modbus unsigned integer out activity */
+                        /** Configuration parameters for set modbus unsigned integer out activity */
                          setModbusUiout?: SetModbusUioutActivityParams,
     //              End of Union
             }
@@ -2385,51 +2386,51 @@ export const GbcConstants = {
                         /**  User defined. Used by Glowbuzzer React to correlate activities */
                         tag?:number;
     //              Start of Union
-                        /**  @ignore */
+                        /** @ignore */
                          moveJoints?: MoveJointsActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveJointsInterpolated?: MoveJointsInterpolatedActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveLine?: MoveLineActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveVectorAtVelocity?: MoveVectorAtVelocityActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveRotationAtVelocity?: MoveRotationAtVelocityActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveArc?: MoveArcActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveInstant?: MoveInstantActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          moveToPosition?: MoveToPositionActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setInitialPosition?: SetInitialPositionActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          gearInPos?: GearInPosActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          gearInVelo?: GearInVeloActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setDout?: SetDoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setExternalDout?: SetDoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setAout?: SetAoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setIout?: SetIoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setUiout?: SetUioutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setExternalIout?: SetIoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setExternalUiout?: SetUioutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          dwell?: DwellActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          spindle?: SpindleActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setModbusDout?: SetModbusDoutActivityStatus,
-                        /**  @ignore */
+                        /** @ignore */
                          setModbusUiout?: SetModbusUioutActivityStatus,
     //              End of Union
             }
@@ -2439,55 +2440,55 @@ export const GbcConstants = {
             export type ActivityCommand = {
             
     //              Start of Union
-                        /**  Move joints command object for activity */
+                        /** Move joints command object for activity */
                          moveJoints?: MoveJointsActivityCommand,
-                        /**  Move joints command object for activity */
+                        /** Move joints command object for activity */
                          moveJointsInterpolated?: MoveJointsInterpolatedActivityCommand,
-                        /**  Move joints at velocity command object for activity */
+                        /** Move joints at velocity command object for activity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityActivityCommand,
-                        /**  Move line command object for activity */
+                        /** Move line command object for activity */
                          moveLine?: MoveLineActivityCommand,
-                        /**  Move line at velocity command object for activity */
+                        /** Move line at velocity command object for activity */
                          moveVectorAtVelocity?: MoveVectorAtVelocityActivityCommand,
-                        /**  Move rotation at velocity command object for activity */
+                        /** Move rotation at velocity command object for activity */
                          moveRotationAtVelocity?: MoveRotationAtVelocityActivityCommand,
-                        /**  @ignore */
+                        /** @ignore */
                          moveArc?: MoveArcActivityCommand,
-                        /**  Move instant command object for activity */
+                        /** Move instant command object for activity */
                          moveInstant?: MoveInstantActivityCommand,
-                        /**  Move to position command object for activity */
+                        /** Move to position command object for activity */
                          moveToPosition?: MoveToPositionActivityCommand,
-                        /**  @ignore */
+                        /** @ignore */
                          setInitialPosition?: SetInitialPositionActivityCommand,
-                        /**  Gear in position command object for activity */
+                        /** Gear in position command object for activity */
                          gearInPos?: GearInPosActivityCommand,
-                        /**  Gear in velocity command object for activity */
+                        /** Gear in velocity command object for activity */
                          gearInVelo?: GearInVeloActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setDout?: SetDoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setExternalDout?: SetDoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setAout?: SetAoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setIout?: SetIoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setUiout?: SetUioutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setExternalIout?: SetIoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setExternalUiout?: SetUioutActivityCommand,
-                        /**  Set dwell command object for activity */
+                        /** Set dwell command object for activity */
                          dwell?: DwellActivityCommand,
-                        /**  Set spindle command object for activity */
+                        /** Set spindle command object for activity */
                          spindle?: SpindleActivityCommand,
-                        /**  Parameters for a streamed setting of tool offset */
+                        /** Parameters for a streamed setting of tool offset */
                          setToolOffset?: ToolOffsetActivityParams,
-                        /**  Parameters for a streamed setting of payload */
+                        /** Parameters for a streamed setting of payload */
                          setPayload?: SetPayloadActivityParams,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setModbusDout?: SetModbusDoutActivityCommand,
-                        /**  @ignore - no command properties */
+                        /** @ignore - no command properties */
                          setModbusUiout?: SetModbusUioutActivityCommand,
     //              End of Union
             }
@@ -2503,51 +2504,51 @@ export const GbcConstants = {
                         
                         triggers?:TriggerParams[];
     //              Start of Union
-                        /**  Parameters for a streamed move joints */
+                        /** Parameters for a streamed move joints */
                          moveJoints?: MoveJointsStream,
-                        /**  Parameters for a streamed move joints interpolated */
+                        /** Parameters for a streamed move joints interpolated */
                          moveJointsInterpolated?: MoveJointsInterpolatedStream,
-                        /**  Parameters for a streamed move joints at velocity */
+                        /** Parameters for a streamed move joints at velocity */
                          moveJointsAtVelocity?: MoveJointsAtVelocityStream,
-                        /**  Parameters for a streamed move line */
+                        /** Parameters for a streamed move line */
                          moveLine?: MoveLineStream,
-                        /**  Parameters for a streamed move vector at velocity */
+                        /** Parameters for a streamed move vector at velocity */
                          moveVectorAtVelocity?: MoveVectorAtVelocityStream,
-                        /**  Parameters for a streamed move rotation at velocity */
+                        /** Parameters for a streamed move rotation at velocity */
                          moveRotationAtVelocity?: MoveRotationAtVelocityStream,
-                        /**  Parameters for a streamed move arc */
+                        /** Parameters for a streamed move arc */
                          moveArc?: MoveArcStream,
-                        /**  Parameters for a streamed instant move */
+                        /** Parameters for a streamed instant move */
                          moveInstant?: MoveInstantStream,
-                        /**  Parameters for a streamed move to position */
+                        /** Parameters for a streamed move to position */
                          moveToPosition?: MoveToPositionStream,
-                        /**  Parameters for a streamed set initial position */
+                        /** Parameters for a streamed set initial position */
                          setInitialPosition?: SetInitialPositionStream,
-                        /**  Parameters for a streamed set dout */
+                        /** Parameters for a streamed set dout */
                          setDout?: SetDoutActivityParams,
-                        /**  Parameters for a streamed set external dout */
+                        /** Parameters for a streamed set external dout */
                          setExternalDout?: SetDoutActivityParams,
-                        /**  Parameters for a streamed set modbus dout */
+                        /** Parameters for a streamed set modbus dout */
                          setModbusDout?: SetModbusDoutActivityParams,
-                        /**  Parameters for a streamed set aout */
+                        /** Parameters for a streamed set aout */
                          setAout?: SetAoutActivityParams,
-                        /**  Parameters for a streamed set iout */
+                        /** Parameters for a streamed set iout */
                          setIout?: SetIoutActivityParams,
-                        /**  Parameters for a streamed set unsigned iout */
+                        /** Parameters for a streamed set unsigned iout */
                          setUiout?: SetUioutActivityParams,
-                        /**  Parameters for a streamed set external iout */
+                        /** Parameters for a streamed set external iout */
                          setExternalIout?: SetIoutActivityParams,
-                        /**  Parameters for a streamed set external unsigned iout */
+                        /** Parameters for a streamed set external unsigned iout */
                          setExternalUiout?: SetUioutActivityParams,
-                        /**  Parameters for a streamed set modbus unsigned iout */
+                        /** Parameters for a streamed set modbus unsigned iout */
                          setModbusUiout?: SetModbusUioutActivityParams,
-                        /**  Parameters for a streamed dwell */
+                        /** Parameters for a streamed dwell */
                          dwell?: DwellActivityParams,
-                        /**  Parameters for a streamed spindle change */
+                        /** Parameters for a streamed spindle change */
                          spindle?: SpindleActivityParams,
-                        /**  Parameters for a streamed setting of tool offset */
+                        /** Parameters for a streamed setting of tool offset */
                          setToolOffset?: ToolOffsetActivityParams,
-                        /**  Parameters for a streamed setting of payload */
+                        /** Parameters for a streamed setting of payload */
                          setPayload?: SetPayloadActivityParams,
     //              End of Union
             }

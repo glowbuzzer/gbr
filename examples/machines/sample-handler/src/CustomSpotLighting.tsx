@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useRef } from "react"
-import { SpotLight, SpotLightHelper } from "three"
+import { SpotLight, SpotLightHelper, Vector2 } from "three"
 import { useFrame, useThree } from "@react-three/fiber"
 import { TriadHelper } from "@glowbuzzer/controls"
 
@@ -10,9 +10,8 @@ export const CustomSpotLighting = ({
     angle = 0.5,
     intensity = 10
 }) => {
-    const lightRef = useRef<SpotLight>()
-    const helperRef = useRef<SpotLightHelper>()
-    const { scene } = useThree()
+    const lightRef = useRef<SpotLight>(null)
+    const helperRef = useRef<SpotLightHelper>(null)
 
     useEffect(() => {
         if (lightRef.current) {
@@ -21,6 +20,9 @@ export const CustomSpotLighting = ({
                 targetPosition[1],
                 targetPosition[2]
             )
+            lightRef.current.shadow.mapSize.set(2048, 2048)
+            lightRef.current.shadow.normalBias = 0.02
+
             helperRef.current = new SpotLightHelper(lightRef.current, "#660000")
             lightRef.current.parent.add(helperRef.current)
 
@@ -29,7 +31,7 @@ export const CustomSpotLighting = ({
                 helperRef.current.dispose()
             }
         }
-    }, [scene])
+    }, [targetPosition])
 
     return (
         <spotLight
@@ -38,8 +40,8 @@ export const CustomSpotLighting = ({
             ref={lightRef}
             intensity={intensity}
             angle={angle}
-            // penumbra={0.5}
-            distance={0}
+            penumbra={0.1}
+            distance={100}
         />
     )
 }

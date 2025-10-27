@@ -2,13 +2,23 @@ import { useGLTF } from "@react-three/drei"
 import { useRawJointPositions } from "@glowbuzzer/store"
 import { Mesh, MeshStandardMaterial } from "three"
 import { useMemo } from "react"
+import { TriadHelper } from "@glowbuzzer/controls"
+import { WorldPosition } from "../../../../vendors/ibt/apps/awtube-urdfviz/src/WorldPosition"
 
-export const SampleHandler = ({ children }) => {
+export const SampleHandler = ({ showPositionHelpers = false, children }) => {
     const [x, y, z, r] = useRawJointPositions()
 
     return (
-        <SampleHandlerModel x={x} y={y} z={z} r={r} scale={1000}>
-            {children}
+        <SampleHandlerModel x={x} y={y} z={z} r={r} scale={1} deMetal castShadow>
+            <group rotation={[Math.PI / 2, 0, 0]}>
+                {showPositionHelpers && (
+                    <>
+                        <WorldPosition title="Scene" position="left" precision={3} />
+                        <TriadHelper size={0.2} />
+                    </>
+                )}
+                {children}
+            </group>
         </SampleHandlerModel>
     )
 }
@@ -21,11 +31,10 @@ export const SampleHandlerModel = ({
     scale = 1,
     deMetal = false,
     castShadow = false,
-    reduceEnvMapIntensity = false,
     children = null
 }) => {
     const parts = useGLTF([
-        "/assets/base3.glb",
+        "/assets/base4.glb",
         "/assets/x.glb",
         "/assets/y.glb",
         "/assets/z - no rotation.glb",
@@ -62,11 +71,6 @@ export const SampleHandlerModel = ({
                             o.receiveShadow = o.userData.__receiveShadow
                         }
 
-                        if (reduceEnvMapIntensity) {
-                            material.envMapIntensity = 0.25
-                        } else {
-                            material.envMapIntensity = 1
-                        }
                         material.needsUpdate = true
                         o.geometry.computeVertexNormals()
                         o.updateMatrixWorld(true)
@@ -74,17 +78,17 @@ export const SampleHandlerModel = ({
                 })
                 return scene
             }),
-        [parts, deMetal, castShadow, reduceEnvMapIntensity]
+        [parts, deMetal, castShadow]
     )
 
     return (
         <group scale={scale}>
             <primitive object={base} rotation={[Math.PI, 0, Math.PI / 2]} />
-            <group position={[0.95, y, 0.635]}>
+            <group position={[0.95, -z, 0.635]}>
                 <primitive object={y_model} rotation={[Math.PI, 0, Math.PI / 2]} />
                 <group position={[x, 0, 0]}>
                     <primitive object={x_model} rotation={[Math.PI, 0, Math.PI / 2]} />
-                    <group position={[-0.65, 0.15, 0.1 + z]}>
+                    <group position={[-0.65, 0.15, 0.1 + y]}>
                         <primitive object={z_norot} rotation={[Math.PI, 0, Math.PI / 2]} />
                         <group position={[0, 0.055, -0.389]} rotation={[0, 0, r]}>
                             <primitive object={z_rot} rotation={[-Math.PI / 2, 0, 0]} />

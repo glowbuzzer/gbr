@@ -24,6 +24,20 @@ export const config: GlowbuzzerConfig = {
     frames: [
         {
             name: "default"
+        },
+        {
+            name: "machine",
+            translation: {
+                x: 0.3,
+                y: 0.335,
+                z: -0.205
+            }
+            // rotation: {
+            //     x: -0.70710678,
+            //     y: 0,
+            //     z: 0,
+            //     w: 0.70710678
+            // }
         }
     ],
     joint: [
@@ -79,10 +93,17 @@ export const config: GlowbuzzerConfig = {
     kinematicsConfiguration: [
         {
             name: "default",
-            frameIndex: 0,
-            participatingJoints: [0, 1, 2, 3],
-            participatingJointsCount: 4,
-            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED
+            frameIndex: 1,
+            participatingJoints: [0, 1, 2],
+            participatingJointsCount: 3,
+            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
+            linearLimits: [
+                {
+                    vmax: 0.2,
+                    amax: 2,
+                    jmax: 20
+                }
+            ]
         }
     ]
 }
