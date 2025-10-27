@@ -3,10 +3,9 @@
  */
 
 import * as React from "react"
-import { Button, Space, Tag } from "antd"
+import { Button, Space } from "antd"
 import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons"
 import { StopIcon } from "../../util/StopIcon"
-import { FlowState } from "./types"
 import { useFlowContext } from "../FlowContextProvider"
 
 export const FlowRuntimeControls = () => {
@@ -14,7 +13,7 @@ export const FlowRuntimeControls = () => {
 
     return (
         <Space>
-            <Button.Group size="large">
+            <Space.Compact>
                 <Button disabled={!start} onClick={start} icon={<CaretRightOutlined />}>
                     Start
                 </Button>
@@ -24,7 +23,7 @@ export const FlowRuntimeControls = () => {
                 <Button disabled={!stop} onClick={stop} icon={<StopIcon />}>
                     Stop
                 </Button>
-            </Button.Group>
+            </Space.Compact>
             {/*
             {state === FlowState.ACTIVE && <Tag>{FlowState[state]}</Tag>}
 */}
