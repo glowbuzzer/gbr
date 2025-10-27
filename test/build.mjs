@@ -15,6 +15,7 @@ program
 program.parse(process.argv)
 const { source, outfile, watch } = program.opts()
 
+const target_file = outfile || "../../../clion/gbc/libs/gbc-node/build/index.js"
 const options = {
     define: {
         "process.env.NODE_ENV": '"production"'
@@ -24,12 +25,14 @@ const options = {
     platform: "node",
     entryPoints: [source || "./index.ts"],
     bundle: true,
-    outfile: outfile || "../../../clion/gbc/libs/gbc-node/build/index.js",
+    outfile: target_file,
     plugins: [
         {
             name: "info",
             setup(build) {
-                build.onEnd(() => console.log("Build complete", new Date().toISOString()))
+                build.onEnd(() =>
+                    console.log("Build complete to", target_file, "at", new Date().toISOString())
+                )
             }
         }
     ]

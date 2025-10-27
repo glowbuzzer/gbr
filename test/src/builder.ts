@@ -131,6 +131,14 @@ export class ConfigBuilder {
         return this
     }
 
+    jointLimits(min: number, max: number) {
+        this.json.joint.forEach(j => {
+            j.negLimit = min
+            j.posLimit = max
+        })
+        return this
+    }
+
     linearLimits(vmax: number, amax: number, jmax: number, kinematicsConfigurationIndex = 0) {
         this.json.kinematicsConfiguration[kinematicsConfigurationIndex].linearLimits = [
             {

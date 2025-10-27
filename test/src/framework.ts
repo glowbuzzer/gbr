@@ -238,6 +238,17 @@ export class GbcTest {
                 const active = this.status_msg.status.machine.faultHistory & (1 << code)
                 assert.ok(active, "Fault not found (fault history): " + FAULT_CAUSE[code])
                 return this
+            },
+            machineState: (state: MachineState) => {
+                const status_word = this.status_msg.status.machine.statusWord
+                const actual = determine_machine_state(status_word)
+                assert.ok(
+                    actual === state,
+                    `Machine state mismatch: ${MachineState[actual]} (status=${status_word.toString(
+                        2
+                    )})`
+                )
+                return this
             }
         }
     }
