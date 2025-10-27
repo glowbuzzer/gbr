@@ -98,6 +98,9 @@ export function useJoint(index: number): {
  * Returns the actual position of all configured joints.
  */
 export function useRawJointPositions(): number[] {
-    const joints = useSelector(({ joints }: RootState) => joints, deepEqual)
-    return joints.map(j => j.actPos)
+    const { joints, count } = useSelector<RootState, { joints: JointsState; count: number }>(
+        ({ joints, config }: RootState) => ({ joints, count: config.current.joint.length }),
+        deepEqual
+    )
+    return Array.from({ length: count }, (_, i) => joints[i]?.actPos || 0)
 }
