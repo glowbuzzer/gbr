@@ -34,10 +34,12 @@ const StyledGrid = styled.div<{ position: "left" | "right" }>`
 
 export const WorldPosition = ({
     title,
-    position
+    position,
+    precision = 2
 }: {
     title: string
     position: "left" | "right"
+    precision?: number
 }) => {
     const [pos, setPos] = useState<{ translation: Vector3; rotation: Euler }>(null)
     const componentRef = useRef<Group>(null)
@@ -66,9 +68,9 @@ export const WorldPosition = ({
                             <div>Y</div>
                             <div>Z</div>
                             <div>POS</div>
-                            <div>{pos.translation.x.toFixed(2)}</div>
-                            <div>{pos.translation.y.toFixed(2)}</div>
-                            <div>{pos.translation.z.toFixed(2)}</div>
+                            <div>{pos.translation.x.toFixed(precision)}</div>
+                            <div>{pos.translation.y.toFixed(precision)}</div>
+                            <div>{pos.translation.z.toFixed(precision)}</div>
                             <div>ROT</div>
                             <div>{prefs.fromSI(pos.rotation.x, "angular").toFixed(2)}</div>
                             <div>{prefs.fromSI(pos.rotation.y, "angular").toFixed(2)}</div>
