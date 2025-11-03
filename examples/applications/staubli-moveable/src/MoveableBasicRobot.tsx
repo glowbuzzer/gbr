@@ -1,3 +1,4 @@
+// noinspection TypeScriptCheckImport
 import {
     BasicRobotElement,
     BasicRobotProps,
@@ -78,13 +79,16 @@ export const MoveableBasicRobot = ({
         elements
             .slice()
             .reverse()
-            .reduce((child, parent, index) => {
-                return (
-                    <primitive key={index} object={parent.group}>
-                        {child}
-                    </primitive>
-                )
-            }, <>{children}</>) || (
+            .reduce(
+                (child, parent, index) => {
+                    return (
+                        <primitive key={index} object={parent.group}>
+                            {child}
+                        </primitive>
+                    )
+                },
+                <>{children}</>
+            ) || (
             /**
              * This is only here to keep react-docgen happy, it will never be rendered
              */ <></>

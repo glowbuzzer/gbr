@@ -34,11 +34,11 @@ export const SampleHandlerModel = ({
     children = null
 }) => {
     const parts = useGLTF([
-        "/assets/base4.glb",
-        "/assets/x.glb",
-        "/assets/y.glb",
-        "/assets/z - no rotation.glb",
-        "/assets/z - rotation.glb"
+        "/assets/base4-transformed.glb",
+        "/assets/x-transformed.glb",
+        "/assets/y-transformed.glb",
+        "/assets/z - no rotation-transformed.glb",
+        "/assets/z - rotation-transformed.glb"
     ])
 
     const [base, x_model, y_model, z_norot, z_rot] = useMemo(

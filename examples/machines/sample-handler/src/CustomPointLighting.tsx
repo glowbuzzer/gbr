@@ -5,8 +5,8 @@ import { useFrame, useThree } from "@react-three/fiber"
 import { TriadHelper } from "@glowbuzzer/controls"
 
 export const CustomPointLighting = ({ position, intensity = 10 }) => {
-    const lightRef = useRef<PointLight>()
-    const helperRef = useRef<PointLightHelper>()
+    const lightRef = useRef<PointLight>(null)
+    const helperRef = useRef<PointLightHelper>(null)
     const { scene } = useThree()
 
     useEffect(() => {

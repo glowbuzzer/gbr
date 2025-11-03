@@ -6,20 +6,29 @@ import { combineReducers, createSlice } from "@reduxjs/toolkit"
 import { useSelector } from "react-redux"
 
 export enum SampleLocation {
-    PICK,
-    CENTRIFUGE,
-    ROBOT,
-    PLACE
+    PICK = "PICK",
+    CENTRIFUGE = "CENTRIFUGE",
+    ROBOT = "ROBOT",
+    PLACE = "PLACE",
+    CAMERA = "CAMERA"
 }
 
 export const appSlice = createSlice({
     name: "sample",
     initialState: {
-        location: SampleLocation.PICK
+        location: SampleLocation.PICK,
+        trackingCamera: false,
+        centrifugeRunning: false
     },
     reducers: {
         setLocation(state, value) {
             state.location = value.payload
+        },
+        setTrackingCamera(state, value) {
+            state.trackingCamera = value.payload
+        },
+        setCentrifugeRunning(state, value) {
+            state.centrifugeRunning = value.payload
         }
     }
 })

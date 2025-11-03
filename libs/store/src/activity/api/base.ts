@@ -34,7 +34,8 @@ import {
     SpindleActivityBuilder,
     ToolOffsetBuilder,
     UioutBuilder,
-    SetInitialPositionBuilder
+    SetInitialPositionBuilder,
+    PauseProgramBuilder
 } from "./builders"
 import { ActivityApi } from "./interface"
 
@@ -177,6 +178,10 @@ export abstract class ActivityApiBase implements ActivityApi {
         return new SetPayloadBuilder(this).mass(mass)
     }
 
+    pauseProgram(): PauseProgramBuilder {
+        return new PauseProgramBuilder(this)
+    }
+
     spindle(
         spindleIndex,
         enable?: boolean,
@@ -255,10 +260,11 @@ export abstract class ActivityApiBaseWithPromises extends ActivityApiBase {
         // if complete (idle) we can resolve all promises
         // if stopped we can reject all promises
         while (promiseFifo.length && (idle || stopped || promiseFifo[0].tag < tag)) {
+            const item = promiseFifo.shift()
             if (stopped) {
-                promiseFifo.shift()?.reject({ tag, completed: false })
+                item.reject({ tag, completed: false })
             } else {
-                promiseFifo.shift()?.resolve({ tag, completed: true })
+                item.resolve({ tag, completed: true })
             }
         }
     }

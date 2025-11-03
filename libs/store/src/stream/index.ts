@@ -2,12 +2,12 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, Slice } from "@reduxjs/toolkit"
+import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { Dispatch } from "redux"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import {
     ActivityStreamItem,
-    GlowbuzzerKinematicsConfigurationStatus,
+    GlowbuzzerStatus,
     MoveParametersConfig,
     STREAMCOMMAND,
     STREAMSTATE
@@ -55,7 +55,8 @@ const DEFAULT_STREAM_STATE: StreamSliceType = {
     tag: 0
 }
 
-function changed(state, status) {
+function changed(state: StreamSliceType, status: GlowbuzzerStatus["stream"][number]) {
+    // partial comparison
     for (const key of Object.keys(status)) {
         if (key === "capacity" || key === "time") {
             continue
@@ -75,19 +76,22 @@ function promisify(activity: ActivityGeneratorReturnType) {
     }
 }
 
-export const streamSlice: Slice<StreamSliceType[]> = createSlice({
+type StreamSliceReducers = {
+    append: CaseReducer<
+        StreamSliceType[],
+        PayloadAction<{ streamIndex: number; buffer: ActivityStreamItem[] }>
+    >
+    consume: CaseReducer<StreamSliceType[], PayloadAction<{ streamIndex: number; count: number }>>
+    reset: CaseReducer<StreamSliceType[], PayloadAction<number>>
+    status: CaseReducer<StreamSliceType[], PayloadAction<GlowbuzzerStatus["stream"]>>
+    pause: CaseReducer<StreamSliceType[], PayloadAction<number>>
+    resume: CaseReducer<StreamSliceType[], PayloadAction<number>>
+}
+
+export const streamSlice: Slice<StreamSliceType[], StreamSliceReducers> = createSlice({
     name: "stream",
     initialState: [DEFAULT_STREAM_STATE], // we need a single stream on startup to avoid errors
     reducers: {
-        init(state, action) {
-            // payload is array containing stream status per configured stream (which corresponds to kc)
-            return action.payload.map((status: GlowbuzzerKinematicsConfigurationStatus) => {
-                return {
-                    ...DEFAULT_STREAM_STATE,
-                    ready: true
-                }
-            })
-        },
         append(state, action) {
             // add to back of queue
             const { streamIndex, buffer } = action.payload
@@ -123,18 +127,18 @@ export const streamSlice: Slice<StreamSliceType[]> = createSlice({
             state[streamIndex].paused = false
             state[streamIndex].pending = 0
         },
-        status: (state, action) => {
+        status(state, action) {
             const status = action.payload
             return status.map((update, streamIndex) => {
                 const current = state[streamIndex] || DEFAULT_STREAM_STATE
                 return changed(current, update) ? { ...current, ...update } : current
             })
         },
-        pause: (state, action) => {
+        pause(state, action) {
             const streamIndex = action.payload
             state[streamIndex].paused = true
         },
-        resume: (state, action) => {
+        resume(state, action) {
             const streamIndex = action.payload
             state[streamIndex].paused = false
         }
@@ -147,7 +151,7 @@ export const StreamHandler = {
         streamIndex: number,
         state: StreamSliceType,
         machineState: MachineState,
-        send: (any) => void
+        send: (items: ActivityStreamItem[]) => void
     ) {
         if (machineState !== MachineState.OPERATION_ENABLED) {
             // not enabled, so clear down buffer and return
@@ -165,7 +169,6 @@ export const StreamHandler = {
                 // buffer is not empty, so we need to send the next slice
                 if (!paused && capacity > 0) {
                     const items = buffer.slice(0, capacity)
-                    // console.log("sending stream slice, capacity=", capacity, "items=", items.length)
                     send(items)
                     dispatch(streamSlice.actions.consume({ streamIndex, count: items.length }))
                     return
@@ -249,7 +252,6 @@ export const useStream = (
     execute(
         fn: (api: ActivityApi) => ActivityGeneratorReturnType[] | ActivityGeneratorReturnType
     ): Promise<ActivityPromiseResult[] | ActivityPromiseResult>
-    // api: StreamingActivityApi
     /** Send a stream command, for example pause, resume and cancel */
     sendCommand(state: STREAMCOMMAND): void
     /** Reset the local stream queue */

@@ -15,7 +15,7 @@ import { ExampleAppMenu } from "../../../util/ExampleAppMenu"
 import * as React from "react"
 import { Scene } from "./Scene"
 import { appReducers } from "./store"
-import { JobTile } from "./JobTile"
+import { WorkflowTile } from "./WorkflowTile"
 
 const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefinition)
     .render(() => {
@@ -23,11 +23,11 @@ const CustomSceneTile = DockTileDefinitionBuilder(ThreeDimensionalSceneTileDefin
     })
     .build()
 
-const JobTileDefition = DockTileDefinitionBuilder()
-    .id("job-tile")
-    .name("Job")
+const WorkflowTileDefinition = DockTileDefinitionBuilder()
+    .id("workflow-tile")
+    .name("Workflow")
     .placement(0, 0)
-    .render(() => <JobTile />)
+    .render(() => <WorkflowTile />)
     .build()
 
 export const App = () => (
@@ -40,7 +40,7 @@ export const App = () => (
         <DockLayoutProvider
             tiles={[
                 CustomSceneTile,
-                JobTileDefition,
+                WorkflowTileDefinition,
                 JointDroTileDefinition,
                 JointJogTileDefinition,
                 CartesianDroTileDefinition,

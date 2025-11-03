@@ -14,23 +14,23 @@ export const CustomSpotLighting = ({
     const helperRef = useRef<SpotLightHelper>(null)
 
     useEffect(() => {
-        if (lightRef.current) {
-            lightRef.current.target.position.set(
-                targetPosition[0],
-                targetPosition[1],
-                targetPosition[2]
-            )
-            lightRef.current.shadow.mapSize.set(2048, 2048)
-            lightRef.current.shadow.normalBias = 0.02
-
-            helperRef.current = new SpotLightHelper(lightRef.current, "#660000")
-            lightRef.current.parent.add(helperRef.current)
-
-            return () => {
-                helperRef.current.parent?.remove(helperRef.current)
-                helperRef.current.dispose()
-            }
-        }
+        // if (lightRef.current) {
+        //     lightRef.current.target.position.set(
+        //         targetPosition[0],
+        //         targetPosition[1],
+        //         targetPosition[2]
+        //     )
+        //     lightRef.current.shadow.mapSize.set(2048, 2048)
+        //     lightRef.current.shadow.normalBias = 0.02
+        //
+        //     helperRef.current = new SpotLightHelper(lightRef.current, "#660000")
+        //     lightRef.current.parent.add(helperRef.current)
+        //
+        //     return () => {
+        //         helperRef.current.parent?.remove(helperRef.current)
+        //         helperRef.current.dispose()
+        //     }
+        // }
     }, [targetPosition])
 
     return (

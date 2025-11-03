@@ -22,9 +22,9 @@ export type StateMachineDefinition = {
             | Promise<void | string | { state: string; data: unknown }>
 
         /**
-         * Called when exiting a state
+         * Called when exiting a state. This function is called synchronously and cannot return a value or a promise
          */
-        exit?(): void
+        exit?(): undefined
 
         /**
          * Possible transitions out of this state. The keys of the object are the target
@@ -100,6 +100,7 @@ export class StateMachine {
     }
 
     private transition(machine: StateMachineDefinition, to_state_ext) {
+        console.log("Transition", this.currentState, "->", to_state_ext)
         // execute the exit function on current state if it exists
         const current = machine[this.currentState]
         current?.exit?.()
@@ -119,19 +120,16 @@ export class StateMachine {
         // trigger state change in hook to cause re-render
         this.triggerChangeEffect()
 
-        const result = next?.enter?.()
-        // check if promise
-        if (result && typeof result["then"] === "function") {
-            result["then"](r => {
-                if (r) {
-                    // only transition if state hasn't changed since entry
-                    if (this.currentState === to_state) {
-                        this.transition(machine, r)
-                    }
+        const enter = next?.enter
+        if (enter) {
+            console.log("Enter", to_state)
+            Promise.resolve(enter()).then(result => {
+                console.log("Enter", to_state, "done, result=", result)
+                if (result && result !== this.currentState) {
+                    console.log("New state: ", result)
+                    this.transition(machine, result)
                 }
             })
-        } else if (result) {
-            this.transition(machine, result)
         }
     }
 }

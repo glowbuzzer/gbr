@@ -22,7 +22,8 @@ import {
     SetPayloadBuilder,
     SpindleActivityBuilder,
     ToolOffsetBuilder,
-    SetInitialPositionBuilder
+    SetInitialPositionBuilder,
+    PauseProgramBuilder
 } from "./builders"
 import { ActivityStreamItem, SPINDLEDIRECTION } from "../../gbc"
 
@@ -228,6 +229,13 @@ export interface ActivityApi {
         speed?: number,
         direction?: SPINDLEDIRECTION
     ): SpindleActivityBuilder
+
+    /**
+     * This will pause the stream until the stream is resumed by sending a stream resume command.
+     * This is useful, for example, for tool changes where the operator has to perform
+     * a task before resuming execution.
+     */
+    pauseProgram(): PauseProgramBuilder
 
     /**
      * Create an activity from an existing activity stream item. A builder is created that can be executed as part of a stream.

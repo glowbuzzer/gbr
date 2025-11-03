@@ -8,7 +8,12 @@ import {
     EndProgramBuilder,
     PauseProgramBuilder
 } from "../activity"
-import { ActivityApiBaseWithPromises, ActivityStreamItem, MoveParametersConfig } from "../api"
+import {
+    ActivityApiBaseWithPromises,
+    ActivityStreamItem,
+    ACTIVITYTYPE,
+    MoveParametersConfig
+} from "../api"
 
 export class StreamingActivityApi
     extends ActivityApiBaseWithPromises
@@ -47,14 +52,5 @@ export class StreamingActivityApi
      */
     endProgram() {
         return new EndProgramBuilder(this)
-    }
-
-    /**
-     * This will pause the stream until the stream is resumed by sending a stream resume command.
-     * This is useful, for example, for tool changes where the operator has to perform
-     * a task before resuming execution.
-     */
-    pauseProgram() {
-        return new PauseProgramBuilder(this)
     }
 }

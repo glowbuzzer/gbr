@@ -3,7 +3,7 @@
  */
 
 import { ActivityController, CancelActivityBuilder } from "../api/builders"
-import { ActivityStreamItem, MoveParametersConfig } from "../../gbc"
+import { ActivityStreamItem, ACTIVITYTYPE, MoveParametersConfig } from "../../gbc"
 import { ActivityApiBaseWithPromises } from "../api/base"
 import { ActivityApi } from "../api/interface"
 

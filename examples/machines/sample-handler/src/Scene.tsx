@@ -1,6 +1,6 @@
 import { SampleHandler } from "./SampleHandler"
 import { SampleTube } from "./SampleTube"
-import { PerspectiveCamera, Sphere, useContextBridge } from "@react-three/drei"
+import { OrbitControls, useContextBridge } from "@react-three/drei"
 import * as React from "react"
 import { ReactReduxContext } from "react-redux"
 import { CanvasFancy } from "./CanvasFancy"
@@ -10,10 +10,13 @@ import { FrameHelper } from "../../../util/FrameHelper"
 import { CartesianPositionHelper } from "../../../util/CartesianPositionHelper"
 import { TriadHelper } from "@glowbuzzer/controls"
 import { WorldPosition } from "../../../../vendors/ibt/apps/awtube-urdfviz/src/WorldPosition"
+import { TrackingCamera } from "./TrackingCamera"
+import { CameraLedLight } from "./CameraLedLight"
+import { CentrifugeLid } from "./CentrifugeLid"
+import { StripLight } from "./StripLight"
 
 export const Scene = ({ showPositionHelpers = false }) => {
-    const ContextBridge = useContextBridge(ReactReduxContext)
-    const { location } = useSampleState()
+    const { location, centrifugeRunning } = useSampleState()
 
     return (
         <CanvasFancy
@@ -22,38 +25,35 @@ export const Scene = ({ showPositionHelpers = false }) => {
             lightingIntensity={5}
             deMetal
             castShadow
+            ambientLight
             spotLight
             directionalLight
             frameloop="demand"
         >
-            <ContextBridge>
-                {showPositionHelpers && (
-                    <FrameHelper frameName="machine">
-                        <CartesianPositionHelper>
-                            <WorldPosition title="Kins" position="right" />
-                            <TriadHelper size={0.1} />
-                        </CartesianPositionHelper>
-                    </FrameHelper>
-                )}
-                <group position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                    <SampleHandler>
-                        {location === SampleLocation.ROBOT && (
-                            <group position={[0, -0.135, 0]}>
-                                <SampleTube />
-                            </group>
-                        )}
-                    </SampleHandler>
-                </group>
-                <SampleTubeAtLocation />
+            {showPositionHelpers && (
+                <FrameHelper frameName="machine">
+                    <CartesianPositionHelper>
+                        <WorldPosition title="Kins" position="right" />
+                        <TriadHelper size={0.1} />
+                    </CartesianPositionHelper>
+                </FrameHelper>
+            )}
+            <group position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                <SampleHandler>
+                    {location === SampleLocation.ROBOT && (
+                        <group position={[0, -0.135, 0]}>
+                            <SampleTube />
+                        </group>
+                    )}
+                </SampleHandler>
+            </group>
+            <SampleTubeAtLocation />
+            <CentrifugeLid />
 
-                <PerspectiveCamera
-                    makeDefault
-                    position={[3, 3, 5]}
-                    // far={10000}
-                    // near={1}
-                    // up={[0, 0, 1]}
-                />
-            </ContextBridge>
+            <TrackingCamera />
+            <CameraLedLight position={[0.72, 0.31, -0.55]} />
+
+            {centrifugeRunning && <StripLight position={[1.404, 0.117, -0.19]} />}
         </CanvasFancy>
     )
 }

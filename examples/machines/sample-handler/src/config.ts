@@ -8,17 +8,30 @@ export const config: GlowbuzzerConfig = {
     machine: [
         {
             name: "default",
-            busCycleTime: 4
+            busCycleTime: 4,
+            heartbeatTimeout: 20000
         }
     ],
     stream: [
         {
             name: "default"
+        },
+        {
+            name: "spindle"
+        },
+        {
+            name: "lid"
         }
     ],
     soloActivity: [
         {
             name: "default"
+        },
+        {
+            name: "spindle"
+        },
+        {
+            name: "lid"
         }
     ],
     frames: [
@@ -32,12 +45,6 @@ export const config: GlowbuzzerConfig = {
                 y: 0.335,
                 z: -0.205
             }
-            // rotation: {
-            //     x: -0.70710678,
-            //     y: 0,
-            //     z: 0,
-            //     w: 0.70710678
-            // }
         }
     ],
     joint: [
@@ -88,6 +95,18 @@ export const config: GlowbuzzerConfig = {
             ],
             scale: 10000,
             jointType: JOINT_TYPE.JOINT_REVOLUTE
+        },
+        {
+            name: "LID",
+            limits: [
+                {
+                    vmax: 0.5,
+                    amax: 5,
+                    jmax: 50
+                }
+            ],
+            scale: 10000,
+            jointType: JOINT_TYPE.JOINT_PRISMATIC
         }
     ],
     kinematicsConfiguration: [
@@ -97,6 +116,34 @@ export const config: GlowbuzzerConfig = {
             participatingJoints: [0, 1, 2],
             participatingJointsCount: 3,
             kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_CARTESIAN,
+            linearLimits: [
+                {
+                    vmax: 0.2,
+                    amax: 2,
+                    jmax: 20
+                }
+            ]
+        },
+        {
+            name: "spindle",
+            frameIndex: 0,
+            participatingJoints: [3],
+            participatingJointsCount: 1,
+            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED,
+            linearLimits: [
+                {
+                    vmax: 0.2,
+                    amax: 2,
+                    jmax: 20
+                }
+            ]
+        },
+        {
+            name: "lid",
+            frameIndex: 0,
+            participatingJoints: [4],
+            participatingJointsCount: 1,
+            kinematicsConfigurationType: KC_KINEMATICSCONFIGURATIONTYPE.KC_NAKED,
             linearLimits: [
                 {
                     vmax: 0.2,
