@@ -14,7 +14,6 @@ export const SampleHandler = ({ showPositionHelpers = false, children }) => {
                 {showPositionHelpers && (
                     <>
                         <WorldPosition title="Scene" position="left" precision={3} />
-                        <TriadHelper size={0.2} />
                     </>
                 )}
                 {children}

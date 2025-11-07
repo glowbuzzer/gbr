@@ -71,8 +71,6 @@ export const CanvasFancy = ({
                     <shaderPass args={[GammaCorrectionShader]} />
             */}
 
-                <TriadHelper size={2} />
-
                 {/* circle on the floor to receive shadows */}
                 <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
                     <circleGeometry args={[6, 64]} />

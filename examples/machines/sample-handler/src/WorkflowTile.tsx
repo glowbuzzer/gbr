@@ -91,6 +91,21 @@ export const WorkflowTile = () => {
         set_location(SampleLocation.ROBOT)
     }
 
+    async function move_start() {
+        const [x, y, z] = sample_positions[SampleLocation.PICK]
+        await Promise.allSettled([
+            close_lid(),
+            spindle.moveJoints([0]).promise(),
+            execute(api =>
+                api
+                    .moveToPosition(x, y + 0.2, z)
+                    .frameIndex(0)
+                    .promise()
+            )
+        ])
+        dispatch(appSlice.actions.setLocation(SampleLocation.PICK))
+    }
+
     const { currentState, definition } = useStateMachine(
         {
             idle: {
@@ -108,11 +123,7 @@ export const WorkflowTile = () => {
             start: {
                 label: "Start",
                 enter: async () => {
-                    await Promise.allSettled([
-                        await close_lid(),
-                        await spindle.moveJoints([0]).promise()
-                    ])
-                    dispatch(appSlice.actions.setLocation(SampleLocation.PICK))
+                    await move_start()
                     return "pick"
                 },
                 implicitTransitions: ["pick"]
@@ -210,8 +221,15 @@ export const WorkflowTile = () => {
                 </Space>
 */}
                 <Space>
-                    <Button onClick={() => setJobEnabled(true)}>Start Job</Button>
-                    <Button onClick={() => setJobEnabled(false)}>Cancel</Button>{" "}
+                    {jobEnabled ? (
+                        <Button onClick={() => setJobEnabled(false)}>Cancel</Button>
+                    ) : (
+                        <>
+                            <Button onClick={() => setJobEnabled(true)}>Start Job</Button>
+                            <Button onClick={move_start}>Reset</Button>
+                        </>
+                    )}
+
                     <div>
                         Tracking Camera{" "}
                         <Switch value={trackingCamera} onChange={set_tracking_camera} />

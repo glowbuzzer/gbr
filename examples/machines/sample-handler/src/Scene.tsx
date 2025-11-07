@@ -14,6 +14,7 @@ import { TrackingCamera } from "./TrackingCamera"
 import { CameraLedLight } from "./CameraLedLight"
 import { CentrifugeLid } from "./CentrifugeLid"
 import { StripLight } from "./StripLight"
+import { SceneExtras } from "./SceneExtras"
 
 export const Scene = ({ showPositionHelpers = false }) => {
     const { location, centrifugeRunning } = useSampleState()
@@ -26,7 +27,7 @@ export const Scene = ({ showPositionHelpers = false }) => {
             deMetal
             castShadow
             ambientLight
-            spotLight
+            // spotLight
             directionalLight
             frameloop="demand"
         >
@@ -54,6 +55,8 @@ export const Scene = ({ showPositionHelpers = false }) => {
             <CameraLedLight position={[0.72, 0.31, -0.55]} />
 
             {centrifugeRunning && <StripLight position={[1.404, 0.117, -0.19]} />}
+
+            <SceneExtras />
         </CanvasFancy>
     )
 }
