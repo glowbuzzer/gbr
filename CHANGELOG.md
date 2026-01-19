@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.3](https://github.com/glowbuzzer/gbr/compare/v1.15.2...v1.15.3) (2026-01-19)
+
+
+### Bug Fix
+
+* tweak permissions for npm ([2965efa](https://github.com/glowbuzzer/gbr/commit/2965efac57711cc0567add04aacb2b4efd811ab9))
+
+
+### Chore
+
+* add permission for pull-requests in release-please.yml ([9022a72](https://github.com/glowbuzzer/gbr/commit/9022a72cf909868a2860a7dd93b7be0821b13be1))
+* add permission for pull-requests in release-please.yml ([d8b1df6](https://github.com/glowbuzzer/gbr/commit/d8b1df6f823debc4e78d237618e44f4ea8c3217e))
+
 ## [1.15.2](https://github.com/glowbuzzer/gbr/compare/v1.15.1...v1.15.2) (2026-01-19)
 
 
