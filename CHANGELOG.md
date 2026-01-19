@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.1](https://github.com/glowbuzzer/gbr/compare/v1.15.0...v1.15.1) (2026-01-19)
+
+
+### Bug Fix
+
+* fix typescript errors due to lib version changes ([996dc89](https://github.com/glowbuzzer/gbr/commit/996dc89a93a5f8ebcc9e82f717e733c9c29119ee))
+
 ## [1.15.0](https://github.com/glowbuzzer/gbr/compare/v1.14.1...v1.15.0) (2026-01-19)
 
 
