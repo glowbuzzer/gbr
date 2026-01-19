@@ -2,6 +2,49 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.0](https://github.com/glowbuzzer/gbr/compare/v1.14.1...v1.15.0) (2026-01-19)
+
+
+### Feature
+
+* Add ability to set kc for CartesianPositionHelper ([941251f](https://github.com/glowbuzzer/gbr/commit/941251f1c8b4151e45cbfd159ff8d4f5ae2da84b))
+* add ability to set kc in flowmaker activity ([51492ca](https://github.com/glowbuzzer/gbr/commit/51492ca26e153a9d063ff9c53759f7133a40ebbc))
+* Provide a way to set the singleton gbdb document id ([e4bec0a](https://github.com/glowbuzzer/gbr/commit/e4bec0af557c642c81ea52f9b1dbe67ea85b9c34))
+* Provide execute menu option for flow sequence items ([dfd2234](https://github.com/glowbuzzer/gbr/commit/dfd2234308f331583b21ea8285f07cab947d232c))
+
+
+### Chore
+
+* add docs ([d059e8f](https://github.com/glowbuzzer/gbr/commit/d059e8f94d3bd448443b84741664bedaae66d619))
+* add drives-gbsm, plus other changes ([928aa15](https://github.com/glowbuzzer/gbr/commit/928aa15fc4b789b0faccc30641081f4f679e23f5))
+* add examples/machines/sample-handler ([4700748](https://github.com/glowbuzzer/gbr/commit/4700748602e079d1c777f8a2f1a8df9e43a8c385))
+* add extras to the scene ([9973f05](https://github.com/glowbuzzer/gbr/commit/9973f05035ec2de23159955baf102fba04449ca8))
+* add more options ([3452581](https://github.com/glowbuzzer/gbr/commit/3452581e25ab234fe5902583e90b398feb62b0d4))
+* add precision to WorldPosition.tsx ([aa9c5c5](https://github.com/glowbuzzer/gbr/commit/aa9c5c5ee6192da129fb7aca60a148315f3c1081))
+* add three bvh ([ef87a4e](https://github.com/glowbuzzer/gbr/commit/ef87a4e3af0a7cae6518d3b4b37f52584605789f))
+* add to sm diagnostics ([2cc4c10](https://github.com/glowbuzzer/gbr/commit/2cc4c109adfe9d98f0363be2fe510980c4af7c35))
+* add typing ([7d6fe64](https://github.com/glowbuzzer/gbr/commit/7d6fe64be8e507026b6081b809a095d4c8d04750))
+* bump drei version ([5110298](https://github.com/glowbuzzer/gbr/commit/5110298ba9bd4c1d93b32a2d89c73fd057c4d6e9))
+* downgrade drei ([aee10ae](https://github.com/glowbuzzer/gbr/commit/aee10ae3b2f4117d0f70085559e1b797ed66de66))
+* ensure joint positions are non-null ([1c0d0db](https://github.com/glowbuzzer/gbr/commit/1c0d0db943c83658ea5a8f8be3f4ec18fc059953))
+* fix typescript errors ([1b826a1](https://github.com/glowbuzzer/gbr/commit/1b826a123515d5f644311d87c45645451840b0b9))
+* improve joint dro ([d986885](https://github.com/glowbuzzer/gbr/commit/d986885cb298b578bf6ea81f13fa0184a1c8f527))
+* invalid prop ([2015ffd](https://github.com/glowbuzzer/gbr/commit/2015ffdefadc53d0081e08263a370f7899c2a992))
+* provide more options to scene ([0e1daf1](https://github.com/glowbuzzer/gbr/commit/0e1daf11fe53f657bcdb00d0503a663a129acb9f))
+* reduce ambient light intensity ([6ed3ba1](https://github.com/glowbuzzer/gbr/commit/6ed3ba174e910659a79d14c241c3e446df3db239))
+* remove deprecated antd component ([e8c9d6b](https://github.com/glowbuzzer/gbr/commit/e8c9d6beca087cb3e377d79da91452124f7b4a92))
+* remove ecm cyclic tile guard from dros ([22abcaa](https://github.com/glowbuzzer/gbr/commit/22abcaa9a198b5605b3edde66760d189676e7984))
+* rework master status to support step master ([8415239](https://github.com/glowbuzzer/gbr/commit/8415239ed366b3e54d7605bca8b5504066b14640))
+* sample handler changes ([6e87dff](https://github.com/glowbuzzer/gbr/commit/6e87dff874c048bc95a82c39be116408c7b0940e))
+* test changes ([c8e93cf](https://github.com/glowbuzzer/gbr/commit/c8e93cf71717bb1ec441b4530377c315d5ea6bea))
+* trivial changes ([ac43879](https://github.com/glowbuzzer/gbr/commit/ac4387919dfc5f78c461fe88a83331e0f24fc009))
+* trivial changes ([4dc1ffb](https://github.com/glowbuzzer/gbr/commit/4dc1ffb0389e03570d5171aabb5cfead2bf44b84))
+* tweak example utils ([96a4969](https://github.com/glowbuzzer/gbr/commit/96a49697b664d2a74188e15859d28a986d45a7a1))
+* update awlib dependencies ([1aea965](https://github.com/glowbuzzer/gbr/commit/1aea965f2a7f91e9497b26c26d553e6a3fda98b7))
+* update node packages ([ec37f40](https://github.com/glowbuzzer/gbr/commit/ec37f40ff9d8a85cdf1d896670e9a28d04e4e11a))
+* update sample handler project ([a19b5d0](https://github.com/glowbuzzer/gbr/commit/a19b5d0f84fe73888ad358b51437b7df0377234f))
+* Update smstat ([e146cb2](https://github.com/glowbuzzer/gbr/commit/e146cb221e11a03f74257e834b71f1c6b2b3701d))
+
 ## [1.14.1](https://github.com/glowbuzzer/gbr/compare/v1.14.0...v1.14.1) (2025-05-29)
 
 
