@@ -10,7 +10,7 @@
  * of a move).
  */
 import React, { createContext, useContext, useMemo, useState } from "react"
-import { StoreEnhancer } from "@reduxjs/toolkit"
+import { Store, StoreEnhancer } from "@reduxjs/toolkit"
 
 let values = []
 
@@ -64,7 +64,7 @@ export function useDigitalInputOverrides() {
 export const digitalInputEnhancer: StoreEnhancer<any> = createStore => {
     return (rootReducer, preloadedState) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const store = createStore<any>(rootReducer, preloadedState)
+        const store: Store<any> = createStore(rootReducer, preloadedState)
         return {
             ...store,
             getState() {

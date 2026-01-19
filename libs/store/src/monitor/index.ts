@@ -2,7 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { MachineStatus } from "../gbc"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
@@ -80,7 +80,7 @@ function calc(stats: MonitorStats, factor = 1) {
     }
 }
 
-export const monitorSlice = createSlice<MonitorSliceState, MonitorSliceReducers>({
+export const monitorSlice: Slice<MonitorSliceState, MonitorSliceReducers> = createSlice({
     name: "monitor",
     initialState: INITIAL_STATE,
     reducers: {

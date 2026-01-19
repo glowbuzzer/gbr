@@ -3,7 +3,7 @@
  */
 
 import { PointsConfig, WithNameAndDescription } from "../gbc"
-import { CaseReducer, createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { CaseReducer, createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { shallowEqual, useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 
@@ -15,7 +15,7 @@ type PointsSliceReducers = {
     setSelectedPoint: CaseReducer<PointsSliceState, PayloadAction<number>>
 }
 
-export const pointsSlice = createSlice<PointsSliceState, PointsSliceReducers>({
+export const pointsSlice: Slice<PointsSliceState, PointsSliceReducers> = createSlice({
     name: "points",
     initialState: {
         selectedPoint: null

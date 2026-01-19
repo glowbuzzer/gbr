@@ -2,7 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction, Slice } from "@reduxjs/toolkit"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "../root"
 import { ActivityStreamItem } from "../gbc"
@@ -67,7 +67,7 @@ function regular_flow(flow: Flow) {
     return flow
 }
 
-export const flowSlice = createSlice<FlowSliceState, FlowSliceReducers>({
+export const flowSlice: Slice<FlowSliceState, FlowSliceReducers> = createSlice({
     name: "flow",
     initialState: () =>
         load({

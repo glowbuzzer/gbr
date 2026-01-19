@@ -4,7 +4,6 @@
 
 import { parseStringSync } from "./GCodeParser"
 import { CartesianPosition, POSITIONREFERENCE } from "../gbc"
-import { and } from "three/examples/jsm/nodes/shadernode/ShaderNodeBaseElements"
 
 /**
  * Code heavily adapted from https://github.com/cncjs/gcode-interpreter/blob/master/src/Interpreter.js

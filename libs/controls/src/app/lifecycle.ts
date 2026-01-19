@@ -2,13 +2,7 @@
  * Copyright (c) 2023. Glowbuzzer. All rights reserved
  */
 
-import {
-    combineReducers,
-    configureStore,
-    Middleware,
-    Reducer,
-    StoreEnhancer
-} from "@reduxjs/toolkit"
+import { combineReducers, configureStore, Reducer, StoreEnhancer, Tuple } from "@reduxjs/toolkit"
 import {
     configSlice,
     framesSlice,
@@ -33,13 +27,6 @@ export const GlowbuzzerAppLifecycle = new (class {
             return import.meta.hot.data.store
         }
 
-        const middleware = (getDefault: (options: any) => Middleware[]) => {
-            return getDefault({
-                immutableCheck: false,
-                serializableCheck: false
-            }).concat(gbdbMiddleware(persistenceConfiguration.facets))
-        }
-
         const reducer = gbdbHigherOrderReducerFactory(
             persistenceConfiguration.facets,
             combineReducers({ ...standardReducers, ...additionalReducers })
@@ -47,8 +34,12 @@ export const GlowbuzzerAppLifecycle = new (class {
 
         const store = configureStore({
             reducer,
-            middleware,
-            enhancers: storeEnhancers
+            middleware: getDefaultMiddleware =>
+                getDefaultMiddleware({
+                    immutableCheck: false,
+                    serializableCheck: false
+                }).concat(gbdbMiddleware(persistenceConfiguration.facets)),
+            enhancers: () => new Tuple(...storeEnhancers)
         })
 
         store.dispatch(prefsSlice.actions.loadSettings(null))

@@ -2,7 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { AnyAction, Middleware, Store } from "@reduxjs/toolkit"
+import { Middleware, Store, UnknownAction } from "@reduxjs/toolkit"
 import {
     GbdbFacetConfiguration,
     gbdbLoadActionCreator,
@@ -18,7 +18,7 @@ class Debounce {
 
     constructor(readonly store: Pick<Store, "dispatch">) {}
 
-    post(update: AnyAction) {
+    post(update: UnknownAction) {
         if (this.timer) {
             clearTimeout(this.timer)
         }
@@ -49,14 +49,14 @@ export const gbdbMiddleware =
             })
         )
 
-        return next => async action => {
+        return next => async (action: UnknownAction) => {
             // Note that middleware cannot affect the state directly, so we must dispatch an action to update the state
 
             // run the action through the reducer chain to update the state before we see it
             const result = next(action)
             const state = store.getState()
 
-            if (action.type === gbdbLoadActionCreator.type) {
+            if (gbdbLoadActionCreator.match(action)) {
                 const facetName = action.payload.facetName
                 // notify slices that might be affected by the load
                 store.dispatch(gbdbSliceNotificationAction(facetName))

@@ -7,7 +7,8 @@ import {
     CaseReducer,
     createAction,
     createSlice,
-    PayloadAction
+    PayloadAction,
+    Slice
 } from "@reduxjs/toolkit"
 import { NoInfer, useSelector } from "react-redux"
 import { Reducer } from "react"
@@ -45,7 +46,7 @@ type GbDbReducers = {
     >
 }
 
-export const gbdbSlice = createSlice<GbdbSliceState, GbDbReducers>({
+export const gbdbSlice: Slice<GbdbSliceState, GbDbReducers> = createSlice({
     name: "gbdb",
     initialState: {},
     reducers: {

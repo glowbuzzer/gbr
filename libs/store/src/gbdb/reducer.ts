@@ -2,7 +2,7 @@
  * Copyright (c) 2024. Glowbuzzer. All rights reserved
  */
 
-import { CombinedState, createAction, Reducer } from "@reduxjs/toolkit"
+import { createAction, Reducer } from "@reduxjs/toolkit"
 import { GbdbFacetConfiguration } from "./types"
 
 /**
@@ -24,12 +24,12 @@ export const gbdbLoadActionCreator = createAction(
  * @param facets The gbdb facet configuration
  * @param reducer The reducer to wrap (the combined Redux reducer)
  */
-export function gbdbHigherOrderReducerFactory(
+export function gbdbHigherOrderReducerFactory<S>(
     facets: GbdbFacetConfiguration,
-    reducer: Reducer
-): Reducer<CombinedState<any>> {
+    reducer: Reducer<S>
+): Reducer<S> {
     return (state, action) => {
-        if (action.type === gbdbLoadActionCreator.type) {
+        if (gbdbLoadActionCreator.match(action)) {
             const { facetName, loadedState } = action.payload
             const config = facets[facetName]
             if (!config) {
