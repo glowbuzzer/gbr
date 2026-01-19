@@ -10,7 +10,7 @@ env:
     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 permissions:
-    contents: read
+    contents: write
     id-token: write
     pull-requests: write
 
