@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.2](https://github.com/glowbuzzer/gbr/compare/v1.15.1...v1.15.2) (2026-01-19)
+
+
+### Bug Fix
+
+* update to trusted publisher for npm publish ([572bba5](https://github.com/glowbuzzer/gbr/commit/572bba57ec448e72e732da9ca06c45eab63ee507))
+
 ## [1.15.1](https://github.com/glowbuzzer/gbr/compare/v1.15.0...v1.15.1) (2026-01-19)
 
 
