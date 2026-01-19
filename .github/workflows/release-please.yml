@@ -9,6 +9,10 @@ env:
     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+permissions:
+    contents: read
+    id-token: write
+
 jobs:
     release-please:
         runs-on: ubuntu-22.04
@@ -25,9 +29,6 @@ jobs:
 
     publish-npm-packages:
         needs: release-please
-        permissions:
-            contents: read
-            id-token: write
         if: ${{ needs.release-please.outputs.release_created }}
         uses: ./.github/workflows/publish-packages.yml
         with:

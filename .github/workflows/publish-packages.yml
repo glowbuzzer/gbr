@@ -16,6 +16,10 @@ on:
                 type: string
                 default: restricted
 
+permissions:
+    contents: read
+    id-token: write
+
 jobs:
     publish:
         runs-on: ubuntu-22.04
