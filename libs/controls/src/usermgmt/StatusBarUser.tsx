@@ -6,10 +6,10 @@ import React from "react"
 import { useUser } from "./index"
 import { Dropdown, Space } from "antd"
 import { UserOutlined } from "@ant-design/icons"
-import { MenuItemType } from "antd/es/menu/hooks/useItems"
 import { UserManagementCapability } from "./capabilities"
 import { UserManagementModal } from "./UserManagementModal"
 import { UserChangePinModal } from "./UserChangePinModal"
+import { MenuItemType } from "antd/es/menu/interface"
 
 type EnhancedMenuItem = MenuItemType & { capability?: symbol | symbol[] }
 

@@ -6,12 +6,12 @@ import { ReactComponent as HomeIcon } from "@material-symbols/svg-400/outlined/h
 import { ReactComponent as FramesIcon } from "@material-symbols/svg-400/outlined/account_tree.svg"
 import { GlowbuzzerIcon } from "../util/GlowbuzzerIcon"
 import { DownOutlined } from "@ant-design/icons"
-import { DockToolbarButtonGroup } from "../dock/DockToolbar"
+import { DockToolbarButtonGroup } from "../dock"
 import { PointsConfig, useFramesList, usePointsList, useSoloActivity } from "@glowbuzzer/store"
 import { Dropdown } from "antd"
 import styled from "styled-components"
 import { CssPointNameWithFrame } from "../util/styles/CssPointNameWithFrame"
-import { ItemType } from "antd/es/menu/hooks/useItems"
+import { ItemType } from "antd/es/menu/interface"
 
 const StyledMenuItem = styled.div`
     ${CssPointNameWithFrame}

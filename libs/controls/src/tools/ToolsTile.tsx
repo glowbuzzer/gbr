@@ -43,7 +43,7 @@ interface GLTFResult extends GLTF {
 }
 
 function GLBModel({ url, scale = 1000 }: GLBModelProps) {
-    const { scene } = useGLTF(url) as GLTFResult
+    const { scene } = useGLTF(url)
     return <primitive object={scene} scale={[scale, scale, scale]} />
 }
 

@@ -12,7 +12,7 @@ export type DockLayoutContextType = {
     appName: string
     model: Model
     factory: (node: TabNode) => React.ReactNode
-    settingsFactory: (node: TabNode) => ({ open, onClose }) => JSX.Element
+    settingsFactory: (node: TabNode) => React.FC<{ open: boolean; onClose(): void }>
     headerFactory: (node: TabNode) => React.ReactNode
     buttonsFactory: (node: TabNode) => React.ReactNode
     helpFactory: (node: TabNode) => React.ReactNode

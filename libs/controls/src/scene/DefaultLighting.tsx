@@ -8,7 +8,7 @@ import { Plane } from "@react-three/drei"
 import { useScale } from "../util"
 
 export const DefaultLighting = () => {
-    const pointLightRef = useRef()
+    const pointLightRef = useRef(null)
     const { extent } = useScale()
     const distance = extent * 2
 

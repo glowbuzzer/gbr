@@ -3,7 +3,7 @@
  */
 
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useAppName } from "../app/hooks"
+import { useAppName } from "../app"
 
 function parseJSON<T>(value: string | null): T | undefined {
     try {
@@ -45,7 +45,7 @@ export function useLocalStorage<T>(
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = useState<T>(readValue)
 
-    const setValueRef = useRef<SetValue<T>>()
+    const setValueRef = useRef<SetValue<T>>(null)
 
     setValueRef.current = value => {
         // Prevent build error "window is undefined" but keeps working

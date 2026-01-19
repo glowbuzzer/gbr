@@ -4,6 +4,7 @@
 
 import { IJsonTabNode } from "flexlayout-react"
 import { ReactNode } from "react"
+import * as React from "react"
 
 type DockTilePlacement = {
     column: number
@@ -15,7 +16,7 @@ export interface DockTileDefinition extends IJsonTabNode {
 
     render(props?): ReactNode
 
-    renderSettings?(): ({ open, onClose }) => JSX.Element
+    renderSettings?(): React.FC<{ open: boolean; onClose(): void }>
 
     renderHeader?(): ReactNode
 

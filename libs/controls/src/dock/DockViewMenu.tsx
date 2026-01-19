@@ -6,9 +6,9 @@ import React from "react"
 import { Menu, Space } from "antd"
 import { CheckOutlined } from "@ant-design/icons"
 import { useDockLayoutContext, useDockTiles } from "./hooks"
-import { ItemType, MenuItemType } from "antd/es/menu/hooks/useItems"
-import { useGlowbuzzerTheme } from "../app/GlowbuzzerThemeProvider"
+import { useGlowbuzzerTheme } from "../app"
 import { useUser } from "../usermgmt"
+import { ItemType, MenuItemType } from "antd/es/menu/interface"
 
 /**
  * This component renders a sub-menu containing available tiles and allows the user to show or hide them. It should be used in conjunction with

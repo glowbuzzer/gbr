@@ -4,11 +4,11 @@
 
 import * as React from "react"
 import { Select } from "antd"
-import { ItemType } from "antd/es/menu/hooks/useItems"
 import { useFlows } from "@glowbuzzer/store"
 import { useFlowContext } from "./FlowContextProvider"
 import { useUser } from "../usermgmt"
 import { FlowMakerCapability } from "./FlowMakerCapability"
+import { ItemType } from "antd/es/menu/interface"
 
 export const FlowSelectDropdown = ({ runnable = false }) => {
     const flows = useFlows()

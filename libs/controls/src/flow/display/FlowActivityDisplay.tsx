@@ -12,7 +12,7 @@ import { GlowbuzzerIcon } from "../../util/GlowbuzzerIcon"
 import { ReactComponent as EditIcon } from "@material-symbols/svg-400/outlined/edit.svg"
 import { ReactComponent as MoreVerticalIcon } from "@material-symbols/svg-400/outlined/more_vert.svg"
 import { Dropdown } from "antd"
-import { ItemType } from "antd/es/menu/hooks/useItems"
+import { ItemType } from "antd/es/menu/interface"
 
 type FlowActivityProps = {
     item: ActivityStreamItem

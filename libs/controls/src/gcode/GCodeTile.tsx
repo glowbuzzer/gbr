@@ -101,7 +101,7 @@ export const GCodeTile = ({ kinematicsConfigurationIndex = 0 }) => {
     const mode = gCodeContext?.mode || GCodeMode.CARTESIAN
 
     const editorRef = useRef<AceEditor>(null)
-    const timerRef = useRef<any>()
+    const timerRef = useRef<any>(null)
 
     // we need to pass linear vmax to gcode interpreter to support F code calcs
     const vmax = Object.values(config.kinematicsConfiguration)[0]?.linearLimits?.[0].vmax
