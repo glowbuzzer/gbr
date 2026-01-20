@@ -1,5 +1,8 @@
 {
     "name": "gbr",
+    "repository": {
+        "url": "https://github.com/glowbuzzer/gbr"
+    },
     "license": "MIT",
     "scripts": {
         "start": "vite",
