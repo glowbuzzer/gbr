@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.5](https://github.com/glowbuzzer/gbr/compare/v1.15.4...v1.15.5) (2026-01-20)
+
+
+### Chore
+
+* add repository url to package.json ([548bdcf](https://github.com/glowbuzzer/gbr/commit/548bdcf269e06a4aa9a70ead440d02379e69526d))
+
 ## [1.15.4](https://github.com/glowbuzzer/gbr/compare/v1.15.3...v1.15.4) (2026-01-20)
 
 
