@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.4](https://github.com/glowbuzzer/gbr/compare/v1.15.3...v1.15.4) (2026-01-20)
+
+
+### Chore
+
+* npm registry URL, debug logging, update node ([436f35b](https://github.com/glowbuzzer/gbr/commit/436f35bae88edf14d2a5d8a7a10d380130a03515))
+
 ## [1.15.3](https://github.com/glowbuzzer/gbr/compare/v1.15.2...v1.15.3) (2026-01-19)
 
 
