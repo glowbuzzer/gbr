@@ -1,5 +1,8 @@
 {
     "name": "@glowbuzzer/store",
+    "repository": {
+        "url": "https://github.com/glowbuzzer/gbr"
+    },
     "version": "0.0.0",
     "exports": {
         ".": {}

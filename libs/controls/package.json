@@ -1,35 +1,25 @@
 {
     "name": "@glowbuzzer/controls",
+    "repository": {
+        "url": "https://github.com/glowbuzzer/gbr"
+    },
     "version": "0.0.0",
     "dependencies": {
         "@glowbuzzer/store": "latest"
     },
     "exports": {
-        ".": {
-        },
-        "./app": {
-        },
-        "./connect": {
-        },
-        "./scene": {
-        },
-        "./tasks": {
-        },
-        "./io": {
-        },
-        "./prefs": {
-        },
-        "./telemetry": {
-        },
-        "./dev": {
-        },
-        "./gcode": {
-        },
-        "./feedrate": {
-        },
-        "./jogging": {
-        },
-        "./dro": {
-        }
+        ".": {},
+        "./app": {},
+        "./connect": {},
+        "./scene": {},
+        "./tasks": {},
+        "./io": {},
+        "./prefs": {},
+        "./telemetry": {},
+        "./dev": {},
+        "./gcode": {},
+        "./feedrate": {},
+        "./jogging": {},
+        "./dro": {}
     }
 }
