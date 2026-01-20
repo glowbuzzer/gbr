@@ -32,8 +32,8 @@ jobs:
 
             -   uses: actions/setup-node@v4
                 with:
-                    node-version: 20
-#                    cache: pnpm
+                    node-version: 24
+                    registry-url: https://registry.npmjs.org
 
             -   name: Install packages
                 run: pnpm install --frozen-lockfile
@@ -46,6 +46,12 @@ jobs:
 
             -   name: Generate react component docs
                 run: node_modules/.bin/react-docgen -x tsx -o dist/controls/component-docs.json libs/controls/src
+
+            - run: |
+                  node -v
+                  npm -v
+                  npm config get registry
+                  env | grep -E 'NODE_AUTH_TOKEN|NPM_TOKEN' || true
 
             -   name: Publish dist/store
                 run: npm publish --tag ${{ inputs.tag }} --access ${{ inputs.access }} dist/store/
